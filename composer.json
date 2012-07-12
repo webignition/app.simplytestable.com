@@ -1,6 +1,6 @@
 {
-    "name": "symfony/framework-standard-edition",
-    "description": "The \"Symfony Standard Edition\" distribution",
+    "name": "webignition/app.simplytestable.com",
+    "description": "Source for app.simplytestable.com",
     "autoload": {
         "psr-0": { "": "src/" }
     },
