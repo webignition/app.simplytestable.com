@@ -1,0 +1,21 @@
+test_start:
+    pattern: /tests/{site_root_url}/start/
+    defaults: { _controller: SimplyTestableApiBundle:Tests:start, _format: json }
+    requirements:
+        site_root_url: ".+"
+    
+test_status:
+    pattern: /tests/{site_root_url}/{test_id}/status/
+    defaults: { _controller: SimplyTestableApiBundle:Tests:status, _format: json }    
+    requirements:
+        site_root_url: ".+"    
+    
+test_results:
+    pattern: /tests/{site_root_url}/{test_id}/results/
+    defaults: { _controller: SimplyTestableApiBundle:Tests:results, _format: json }    
+    requirements:
+        site_root_url: ".+"
+        
+SimplyTestableApiBundle_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: SimplyTestableApiBundle:Default:index }

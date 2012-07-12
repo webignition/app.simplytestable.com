@@ -1,0 +1,7 @@
+parameters:
+#    simply_testable_api.example.class: SimplyTestable\ApiBundle\Example
+
+services:
+#    simply_testable_api.example:
+#        class: %simply_testable_api.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
