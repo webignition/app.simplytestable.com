@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="simplytestable.com" default="update">
+    
+    <property name="environments" value="dev,prod" />
+    <property name="dir.app" value="${project.basedir}/app" />
+    <property name="dir.src" value="${project.basedir}/src" />
+    <property name="dir.cache" value="${dir.app}/cache" />
+    <property name="dir.logs" value="${dir.app}/logs" /> 
+    <property name="dir.vendor" value="${project.basedir}/vendor" />
+    
+    <target name="install" depends="prepare">
+        <echo message="Installing app.simplytestable.com" />
+        <echo message="Creating database from configuration in ${dir.app}/config/parameters.ini" />
+        <exec command="php app/console doctrine:database:create" passthru="true" />
+        
+        <exec command="php bin/vendors update" passthru="true" />
+        <phingcall target="update" />        
+    </target>
+    
+    <target name="test" depends="prepare">
+        <exec command="phpunit -c ${dir.app}" passthru="true" />
+    </target>
+
+    <target name="update" depends="prepare,assets:install">
+        <phingcall target="clear-cache" />
+    </target>
+    
+    <target name="prepare" depends="clear-cache,create-log-directory,set-log-permissions,assets:install">        
+    </target>
+    
+    <target name="assets:install">
+        <SymfonyConsole command="assets:install web"/>
+    </target>   
+    
+    <target name="create-log-directory">
+        <mkdir dir="${dir.logs}" />
+    </target>        
+    
+    <target name="set-log-permissions">
+        <chmod file="${dir.logs}" mode="0777" />
+    </target>
+    
+    <target name="clear-cache" depends="delete-cache,create-cache" />
+    
+    <target name="delete-cache">
+        <foreach list="${environments}" param="environment" target="delete-cache-environment-directory" />
+    </target>    
+    
+    <target name="delete-cache-environment-directory">
+        <delete dir="${dir.cache}/${environment}" includeemptydirs="true" failonerror="true" />
+    </target>    
+    
+    <target name="create-cache">                
+        <mkdir dir="${dir.cache}" />
+        <foreach list="${environments}" param="environment" target="create-cache-environment-directory" />
+        <exec command="chmod -R 0777 ${dir.cache}" />
+    </target>
+    
+    <target name="create-cache-environment-directory">
+        <mkdir dir="${dir.cache}/${environment}" />
+    </target>    
+        
+</project>
