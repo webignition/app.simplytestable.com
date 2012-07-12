@@ -1,5 +1,5 @@
 <?php
-namespace SimplyTestable\ApiBundleBundle\Entity;
+namespace SimplyTestable\ApiBundle\Entity;
 
 use FOS\UserBundle\Entity\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
