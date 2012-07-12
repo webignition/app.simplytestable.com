@@ -1,6 +1,6 @@
 {
     "name": "webignition/app.simplytestable.com",
-    "description": "Source for app.simplytestable.com",
+    "description": "The \"Symfony Standard Edition\" distribution",
     "autoload": {
         "psr-0": { "": "src/" }
     },
