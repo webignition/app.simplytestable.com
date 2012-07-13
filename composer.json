@@ -1,6 +1,6 @@
 {
-    "name": "symfony/framework-standard-edition",
-    "description": "The \"Symfony Standard Edition\" distribution",
+    "name": "webignition/app.simplytestable.com",
+    "description": "Source for http://app.simplytestable.com",
     "autoload": {
         "psr-0": { "": "src/" }
     },
@@ -20,7 +20,8 @@
         "jms/di-extra-bundle": "1.0.*",
         "friendsofsymfony/user-bundle": "*",
         "doctrine/migrations": "*",
-        "doctrine/doctrine-migrations-bundle": "*"
+        "doctrine/doctrine-migrations-bundle": "*",
+        "glit/resque": "*"
     },
     "scripts": {
         "post-install-cmd": [
