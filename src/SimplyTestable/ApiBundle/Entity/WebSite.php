@@ -1,4 +1,4 @@
-<?php
+ st<?php
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -25,12 +25,6 @@ class WebSite
      * @ORM\Column(type="string", unique=true)
      */
     protected $canonicalUrl;
-
-    public function __construct()
-    {
-        parent::__construct();
-        // your own logic
-    }
 
     /**
      * Get id
