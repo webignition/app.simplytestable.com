@@ -28,4 +28,36 @@ class Job
     protected $canonicalUrl;
 
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set canonicalUrl
+     *
+     * @param string $canonicalUrl
+     * @return Job
+     */
+    public function setCanonicalUrl($canonicalUrl)
+    {
+        $this->canonicalUrl = $canonicalUrl;
+        return $this;
+    }
+
+    /**
+     * Get canonicalUrl
+     *
+     * @return string 
+     */
+    public function getCanonicalUrl()
+    {
+        return $this->canonicalUrl;
+    }
 }
