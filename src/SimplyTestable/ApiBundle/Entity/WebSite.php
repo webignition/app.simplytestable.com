@@ -1,4 +1,4 @@
- st<?php
+<?php
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
