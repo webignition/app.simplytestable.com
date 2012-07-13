@@ -21,12 +21,13 @@ security:
             id: fos_user.user_provider.username
 
     firewalls:
-        main:
+        main:         
             pattern: ^/
             anonymous: ~
-            http_basic: true
-            form_login: false
+            form_login: false            
             provider: fos_user_bundle
+            http_basic:
+                realm: "Simply Testable Core Application"                        
 
     access_control:
         - { path: ^/tests/, role: ROLE_USER }
