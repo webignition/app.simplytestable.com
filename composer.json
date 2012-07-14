@@ -19,8 +19,9 @@
         "jms/security-extra-bundle": "1.1.*",
         "jms/di-extra-bundle": "1.0.*",
         "friendsofsymfony/user-bundle": "*",
-        "doctrine/migrations": "*",
-        "doctrine/doctrine-migrations-bundle": "*",
+        "doctrine/migrations": "*",        
+        "webignition/doctrine-migrations-bundle": "*",
+        "webignition/container-aware-migration": "*",        
         "glit/resque": "*"
     },
     "scripts": {
