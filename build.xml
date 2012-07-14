@@ -23,11 +23,6 @@
         <exec command="php app/console doctrine:database:create" passthru="true" />  
     </target>
     
-    <target name="install:create-public-user">
-        <SymfonyConsole command="fos:user:create public public@simplytestable.com public" />
-        <SymfonyConsole command="fos:user:activate public" />
-    </target>
-    
     <!-- Building -->
     <target name="build:update" depends="build:prepare">
         <exec command="composer.phar update" passthru="true" />
