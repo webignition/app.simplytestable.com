@@ -7,56 +7,50 @@ use webignition\NormalisedUrl\NormalisedUrl;
 
 class WebSiteService extends EntityService {
     
-    /**
-     *
-     * @var \Doctrine\ORM\EntityManager 
-     */
-    //private $entityManager;
-    
+    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WebSite';
+    const IDENIFIER_FIELD = 'canonicalUrl';    
     
     /**
      *
-     * @param \Doctrine\ORM\EntityManager $entityManager 
+     * @return string
      */
-//    public function __construct(EntityManager $entityManager) {
-//        $this->entityManager = $entityManager;
-//    }
-    
-    // Doctrine\ORM\EntityRepository
+    protected function getEntityName() {
+        return self::ENTITY_NAME;
+    }
     
     
-//    /**
-//     *
-//     * @return \Doctrine\ORM\EntityManager 
-//     */
-//    public function getEntityManager() {
-//        return $this->entityManager;
-//    }
+    /**
+     *
+     * @return string
+     */
+    protected function getIdentifierField() {
+        return self::IDENIFIER_FIELD;
+    }    
     
     
+    /**
+     *
+     * @param string $identifier
+     * @return \SimplyTestable\ApiBundle\Entity\WebSite 
+     */
     public function fetch($identifier) {
-        $url = new NormalisedUrl($identifier);
+        $identifier = (string)new NormalisedUrl($identifier);        
+        if (!$this->has($identifier)) {
+            $this->create($identifier);
+        }
         
-        $website = $this->entityManager->getRepository('SimplyTestable\ApiBundle\Entity\WebSite')->findOneByCanonicalUrl((string)$url);
-        var_dump($website, get_class($this->entityManager->getRepository('SimplyTestable\ApiBundle\Entity\WebSite')));
-        exit();
-        
-    }
-    
-    public function persist(Object $entity) {
-        
+        return $this->findByIdentifier($identifier);        
     }
     
     
-//    public function persist(WebSite $website) {
-//        
-////            $state = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\State')->findOneByName($stateName);
-////            $this->getEntityManager()->remove($state);
-////            $this->getEntityManager()->flush();        
-//        
-//    }
-    
-    public function createWebSite() {
+    /**
+     *
+     * @param string $canonicalUrl 
+     */
+    public function create($canonicalUrl) {
+        $website = new WebSite();
+        $website->setCanonicalUrl($canonicalUrl);
         
+        $this->persistAndFlush($website);
     }
 }

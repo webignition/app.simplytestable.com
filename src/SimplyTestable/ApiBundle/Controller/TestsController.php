@@ -9,12 +9,10 @@ use SimplyTestable\ApiBundle\Entity\WebSite;
 class TestsController extends Controller
 {
     public function startAction($site_root_url)
-    {
-        $this->getWebsite($site_root_url);
-        exit();
-        
+    {        
         $job = new Job();
         $job->setUser($this->getUser());
+        $job->setWebsite($this->getWebsite($site_root_url));
         var_dump($job);
         exit();
         
@@ -39,10 +37,13 @@ class TestsController extends Controller
         )));
     }
     
+    
+    /**
+     *
+     * @param string $site_root_url
+     * @return \SimplyTestable\ApiBundle\Entity\WebSite 
+     */
     private function getWebsite($site_root_url) {
-        $website = new WebSite();
-        $websiteService = $this->get('simplytestable.services.websiteservice');
-        
-        $websiteService->fetch($site_root_url);
+        return $this->get('simplytestable.services.websiteservice')->fetch($site_root_url);
     }
 }
