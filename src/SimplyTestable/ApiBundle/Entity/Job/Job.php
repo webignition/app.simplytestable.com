@@ -10,15 +10,11 @@ use SimplyTestable\ApiBundle\Entity\State;
  * 
  * @ORM\Entity
  * @ORM\Table(
- *     name="Job",
- *     indexes={
- *        @ORM\Index(name="user_index", columns={"user_id"}),
- *        @ORM\Index(name="website_index", columns={"website_id"}),
- *        @ORM\Index(name="state_index", columns={"state_id"})}
+ *     name="Job"
  * )
  */
 class Job
-{
+{    
     /**
      * 
      * @var integer
@@ -33,16 +29,15 @@ class Job
      *
      * @var SimplyTestable\ApiBundle\Entity\User
      * 
-     * @ORM\Column(type="integer", nullable=false, name="user_id")
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      */
     protected $user;
+    
     
     /**
      *
      * @var SimplyTestable\ApiBundle\Entity\WebSite
      * 
-     * @ORM\Column(type="integer", nullable=false, name="website_id")
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\WebSite")
      */
     protected $website;
@@ -52,10 +47,10 @@ class Job
      *
      * @var SimplyTestable\ApiBundle\Entity\State
      * 
-     * @ORM\Column(type="integer", nullable=false, name="state_id")
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
      */
-    protected $state;     
+    protected $state; 
+    
     
     /**
      *
@@ -63,13 +58,12 @@ class Job
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
      */
-    protected $tasks;
+    protected $tasks;    
     
-    
-    public function __construct()
-    {
-        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
-    }
+//    public function __construct()
+//    {
+//        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+//    }
     
     /**
      * Get id

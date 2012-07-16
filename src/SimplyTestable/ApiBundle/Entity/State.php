@@ -90,14 +90,4 @@ class State
     {
         return $this->nextState;
     }
-    
-    
-    /**
-     *
-     * @return boolean
-     */
-    public function hasNextState()
-    {
-        return $this->getNextState() instanceof State;
-    }
 }

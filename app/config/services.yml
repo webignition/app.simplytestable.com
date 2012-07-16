@@ -8,3 +8,8 @@ services:
     class:  SimplyTestable\ApiBundle\Services\StateService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"        
+        
+  simplytestable.services.jobservice:
+    class:  SimplyTestable\ApiBundle\Services\JobService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"

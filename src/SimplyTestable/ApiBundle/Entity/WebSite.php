@@ -10,7 +10,7 @@ class WebSite
 {
     /**
      * 
-     * @var type integer
+     * @var integer
      * 
      * @ORM\Id
      * @ORM\Column(type="integer")
