@@ -61,4 +61,116 @@ class Job
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
      */
     protected $tasks;
+    public function __construct()
+    {
+        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set user
+     *
+     * @param integer $user
+     * @return Job
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return integer 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set website
+     *
+     * @param integer $website
+     * @return Job
+     */
+    public function setWebsite($website)
+    {
+        $this->website = $website;
+        return $this;
+    }
+
+    /**
+     * Get website
+     *
+     * @return integer 
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * Set state
+     *
+     * @param integer $state
+     * @return Job
+     */
+    public function setState($state)
+    {
+        $this->state = $state;
+        return $this;
+    }
+
+    /**
+     * Get state
+     *
+     * @return integer 
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * Add tasks
+     *
+     * @param SimplyTestable\ApiBundle\Entity\Task\Task $tasks
+     * @return Job
+     */
+    public function addTask(\SimplyTestable\ApiBundle\Entity\Task\Task $tasks)
+    {
+        $this->tasks[] = $tasks;
+        return $this;
+    }
+
+    /**
+     * Remove tasks
+     *
+     * @param <variableType$tasks
+     */
+    public function removeTask(\SimplyTestable\ApiBundle\Entity\Task\Task $tasks)
+    {
+        $this->tasks->removeElement($tasks);
+    }
+
+    /**
+     * Get tasks
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
 }
