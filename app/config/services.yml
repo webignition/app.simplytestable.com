@@ -3,3 +3,8 @@ services:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
+        
+  simplytestable.services.stateservice:
+    class:  SimplyTestable\ApiBundle\Services\StateService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"        
