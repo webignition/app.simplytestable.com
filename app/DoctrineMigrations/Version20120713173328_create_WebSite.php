@@ -8,7 +8,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration,
 /**
  * Auto-generated Migration: Please modify to your need!
  */
-class Version20120713173328 extends AbstractMigration
+class Version20120713173328_create_WebSite extends AbstractMigration
 {
     public function up(Schema $schema)
     {
