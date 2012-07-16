@@ -8,7 +8,6 @@ use webignition\NormalisedUrl\NormalisedUrl;
 class WebSiteService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WebSite';
-    const IDENIFIER_FIELD = 'canonicalUrl';    
     
     /**
      *
@@ -17,40 +16,42 @@ class WebSiteService extends EntityService {
     protected function getEntityName() {
         return self::ENTITY_NAME;
     }
-    
-    
-    /**
-     *
-     * @return string
-     */
-    protected function getIdentifierField() {
-        return self::IDENIFIER_FIELD;
-    }    
-    
+
     
     /**
-     *
-     * @param string $identifier
-     * @return \SimplyTestable\ApiBundle\Entity\WebSite 
+     * @param string $canonicalUrl
+     * @return \SimplyTestable\ApiBundle\Entity\WebSite
      */
-    public function fetch($identifier) {
-        $identifier = (string)new NormalisedUrl($identifier);        
-        if (!$this->has($identifier)) {
-            $this->create($identifier);
+    public function fetch($canonicalUrl) {
+        $normalisedUrl = (string)new NormalisedUrl($canonicalUrl);        
+        if (!$this->has($normalisedUrl)) {
+            $this->create($normalisedUrl);
         }
-        
-        return $this->findByIdentifier($identifier);        
+
+        return $this->getEntityRepository()->findOneByCanonicalUrl($normalisedUrl);
+    }
+    
+    
+    /**
+     *
+     * @param string $canonicalUrl
+     * @return boolean
+     */
+    public function has($canonicalUrl) {
+        return !is_null($this->getEntityRepository()->findOneByCanonicalUrl($canonicalUrl));
     }
     
     
     /**
      *
      * @param string $canonicalUrl 
+     * @return \SimplyTestable\ApiBundle\Entity\WebSite
      */
     public function create($canonicalUrl) {
         $website = new WebSite();
         $website->setCanonicalUrl($canonicalUrl);
         
         $this->persistAndFlush($website);
+        return $website;
     }
 }

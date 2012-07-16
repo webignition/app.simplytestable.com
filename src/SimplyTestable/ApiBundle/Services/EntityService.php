@@ -5,8 +5,7 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use webignition\NormalisedUrl\NormalisedUrl;
 
-abstract class EntityService {
-    
+abstract class EntityService {    
     
     /**
      *
@@ -28,12 +27,9 @@ abstract class EntityService {
      */
     public function __construct(EntityManager $entityManager) {
         $this->entityManager = $entityManager;      
-    }
-    
-    abstract public function fetch($identifier);    
-    abstract protected function getEntityName();
-    abstract protected function getIdentifierField();    
-    
+    }    
+  
+    abstract protected function getEntityName();    
     
     /**
      *
@@ -41,15 +37,6 @@ abstract class EntityService {
      */
     public function setEntityName($entityName) {
         $this->entityName = $entityName;
-    }
-    
-    
-    /**
-     *
-     * @param string $identifierField 
-     */
-    public function setIdentifierField($identifierField) {
-        $this->identifierField = $identifierField;
     }
     
     
@@ -72,30 +59,6 @@ abstract class EntityService {
         }
         
         return $this->entityRepository;
-    }
-    
-    
-    /**
-     * Find an entity by a given identifier.
-     * 
-     * An identifier is assumed unique; this will return a single entity only.
-     * 
-     * @param mixed $identifier
-     * @return mixed
-     */
-    public function findByIdentifier($identifier) {
-        $findByMethodName = 'findOneBy' . ucfirst($this->getIdentifierField());        
-        return $this->getEntityRepository()->$findByMethodName($identifier);
-    } 
-    
-    
-    /**
-     *
-     * @param mixed $identifier
-     * @return boolean
-     */
-    public function has($identifier) {
-        return !is_null($this->findByIdentifier($identifier));
     }
     
     
