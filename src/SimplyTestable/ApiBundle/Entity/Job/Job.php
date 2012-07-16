@@ -2,6 +2,9 @@
 namespace SimplyTestable\ApiBundle\Entity\Job;
 
 use Doctrine\ORM\Mapping as ORM;
+use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\WebSite;
+use SimplyTestable\ApiBundle\Entity\State;
 
 /**
  * 
@@ -28,7 +31,7 @@ class Job
     
     /**
      *
-     * @var User
+     * @var SimplyTestable\ApiBundle\Entity\User
      * 
      * @ORM\Column(type="integer", nullable=false, name="user_id")
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
@@ -61,6 +64,8 @@ class Job
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
      */
     protected $tasks;
+    
+    
     public function __construct()
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
@@ -79,10 +84,10 @@ class Job
     /**
      * Set user
      *
-     * @param integer $user
+     * @param User $user
      * @return Job
      */
-    public function setUser($user)
+    public function setUser(User $user)
     {
         $this->user = $user;
         return $this;
@@ -91,7 +96,7 @@ class Job
     /**
      * Get user
      *
-     * @return integer 
+     * @return SimplyTestable\ApiBundle\Entity\User 
      */
     public function getUser()
     {
@@ -101,10 +106,10 @@ class Job
     /**
      * Set website
      *
-     * @param integer $website
+     * @param  $website
      * @return Job
      */
-    public function setWebsite($website)
+    public function setWebsite(WebSite $website)
     {
         $this->website = $website;
         return $this;
@@ -113,7 +118,7 @@ class Job
     /**
      * Get website
      *
-     * @return integer 
+     * @return SimplyTestable\ApiBundle\Entity\Website 
      */
     public function getWebsite()
     {
@@ -123,10 +128,10 @@ class Job
     /**
      * Set state
      *
-     * @param integer $state
+     * @param use SimplyTestable\ApiBundle\Entity\State $state
      * @return Job
      */
-    public function setState($state)
+    public function setState(State $state)
     {
         $this->state = $state;
         return $this;
@@ -135,7 +140,7 @@ class Job
     /**
      * Get state
      *
-     * @return integer 
+     * @return use SimplyTestable\ApiBundle\Entity\State 
      */
     public function getState()
     {
@@ -145,23 +150,23 @@ class Job
     /**
      * Add tasks
      *
-     * @param SimplyTestable\ApiBundle\Entity\Task\Task $tasks
+     * @param SimplyTestable\ApiBundle\Entity\Task\Task $task
      * @return Job
      */
-    public function addTask(\SimplyTestable\ApiBundle\Entity\Task\Task $tasks)
+    public function addTask(\SimplyTestable\ApiBundle\Entity\Task\Task $task)
     {
-        $this->tasks[] = $tasks;
+        $this->tasks[] = $task;
         return $this;
     }
 
     /**
      * Remove tasks
      *
-     * @param <variableType$tasks
+     * @param <SimplyTestable\ApiBundle\Entity\Task\Task $task
      */
-    public function removeTask(\SimplyTestable\ApiBundle\Entity\Task\Task $tasks)
+    public function removeTask(\SimplyTestable\ApiBundle\Entity\Task\Task $task)
     {
-        $this->tasks->removeElement($tasks);
+        $this->tasks->removeElement($task);
     }
 
     /**
