@@ -22,7 +22,8 @@
         "doctrine/migrations": "*",        
         "webignition/doctrine-migrations-bundle": "*",
         "webignition/container-aware-migration": "*",        
-        "glit/resque": "*"
+        "glit/resque": "*",
+        "webignition/url": "*"
     },
     "scripts": {
         "post-install-cmd": [
