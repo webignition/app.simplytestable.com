@@ -28,8 +28,18 @@ class WebSiteService extends EntityService {
             $this->create($normalisedUrl);
         }
 
-        return $this->getEntityRepository()->findOneByCanonicalUrl($normalisedUrl);
+        return $this->find($normalisedUrl);
     }
+    
+    
+    /**
+     *
+     * @param string $canonicalUrl
+     * @return \SimplyTestable\ApiBundle\Entity\WebSite 
+     */
+    public function find($canonicalUrl) {
+        return $this->getEntityRepository()->findOneByCanonicalUrl($canonicalUrl);
+    }    
     
     
     /**
@@ -38,7 +48,7 @@ class WebSiteService extends EntityService {
      * @return boolean
      */
     public function has($canonicalUrl) {
-        return !is_null($this->getEntityRepository()->findOneByCanonicalUrl($canonicalUrl));
+        return !is_null($this->find($canonicalUrl));
     }
     
     
