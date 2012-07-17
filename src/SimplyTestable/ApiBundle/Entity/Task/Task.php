@@ -29,6 +29,7 @@ class Task
      * @var SimplyTestable\ApiBundle\Entity\Job\Job 
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="tasks")
+     * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)
      */
     protected $job;
     
@@ -46,6 +47,7 @@ class Task
      * @var SimplyTestable\ApiBundle\Entity\State
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
+     * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      */
     protected $state;
     
