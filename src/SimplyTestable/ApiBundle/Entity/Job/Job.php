@@ -30,6 +30,7 @@ class Job
      * @var SimplyTestable\ApiBundle\Entity\User
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     protected $user;
     
@@ -39,6 +40,7 @@ class Job
      * @var SimplyTestable\ApiBundle\Entity\WebSite
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\WebSite")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
      */
     protected $website;
     
@@ -48,6 +50,7 @@ class Job
      * @var SimplyTestable\ApiBundle\Entity\State
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
+     * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      */
     protected $state; 
     
