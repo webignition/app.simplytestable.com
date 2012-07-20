@@ -2,9 +2,9 @@ parameters:
     database_driver: pdo_mysql
     database_host: localhost
     database_port: null
-    database_name: set-to-match-database-to-which-below-user-has-access
-    database_user: database-user
-    database_password: database-password
+    database_name: ci_app_simplytestable_com
+    database_user: ci_user
+    database_password: ci_password
     mailer_transport: smtp
     mailer_host: localhost
     mailer_user: null
