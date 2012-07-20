@@ -5,8 +5,8 @@ php:
   
 before_script:  
   # Installing phing
-  - pear channel-discover pear.phing.info
-  - pear install --alldeps phing/phing
+  - pyrus channel-discover pear.phing.info
+  - pyrus install phing/phing
   
   # Installing pecl_http module
   - printf "\n\n\n\n" | pecl install pecl_http
