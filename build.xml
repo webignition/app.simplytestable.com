@@ -4,10 +4,13 @@
     
     <property name="environments" value="dev,prod" />
     <property name="dir.app" value="${project.basedir}/app" />
+    <property name="dir.app.config" value="${dir.app}/config" />
     <property name="dir.src" value="${project.basedir}/src" />
     <property name="dir.cache" value="${dir.app}/cache" />
     <property name="dir.logs" value="${dir.app}/logs" /> 
     <property name="dir.symfony2.web" value="web" />
+    <property name="file.config.parameters" value="${dir.app.config}/parameters.yml" />
+    <property name="file.config.parameters.travis" value="${file.config.parameters}.travis" />
     
     <!-- Installation -->    
     <target name="build:install" depends="build:prepare">       
@@ -15,7 +18,12 @@
         <phingcall target="install:create-database" />
      
         <exec command="composer.phar install" passthru="true" />
-        <phingcall target="build:refresh" />
+    </target>
+    
+    <target name="build:install:ci:travis">
+        <copy file="${file.config.parameters.travis}" tofile="${file.config.parameters}" overwrite="true"/>
+<!--        <phingcall target="build:install" />-->
+        <exec command="composer.phar install" passthru="true" />
     </target>
     
     <target name="install:create-database">
