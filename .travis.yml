@@ -9,7 +9,7 @@ before_script:
   #- pyrus install phing/phing
   - wget -O phing.phar http://www.phing.info/get/phing-2.4.12.phar && chmod +x phing.phar
   - export PHP_COMMAND=php
-  - export PHING_HOME=phar://phing.phar
+  - export PHING_HOME=phing.phar
   - export PHP_CLASSPATH=${PHING_HOME}/classes
   - alias phing="${PHP_COMMAND} ${PHING_HOME}"  
   - phing -h
