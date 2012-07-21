@@ -10,7 +10,7 @@ before_script:
   - git clone https://github.com/phingofficial/phing.git build/phing
   
   # Installing pecl_http module
-  - printf "\n\n\n\n" | pecl install pecl_http
+  - printf "\n\n\n\n" | pecl -q install pecl_http
   - echo "extension=http.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`  
   
 # Create ci database and user

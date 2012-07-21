@@ -56,7 +56,7 @@
     </target>    
     
     <target name="prepare:delete-cache-environment-directory">
-        <delete dir="${dir.cache}/${environment}" includeemptydirs="true" failonerror="true" />
+        <delete dir="${dir.cache}/${environment}" includeemptydirs="true" quiet="true" />
     </target>    
     
     <target name="prepare:create-cache">
