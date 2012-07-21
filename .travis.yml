@@ -7,7 +7,7 @@ before_script:
   # Installing phing
   #- pyrus channel-discover pear.phing.info
   #- pyrus install phing/phing
-  - git clone https://github.com/phingofficial/phing.git build/phing && cd build/phing && git checkout 2.4.12
+  - git clone https://github.com/phingofficial/phing.git build/phing
   - build/phing/bin/phing -h
   
   # Installing pecl_http module
