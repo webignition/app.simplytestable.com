@@ -3,10 +3,13 @@ namespace SimplyTestable\ApiBundle\Entity;
 
 use FOS\UserBundle\Entity\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="fos_user")
+ * 
+ * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class User extends BaseUser
 {

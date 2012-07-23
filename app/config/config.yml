@@ -63,3 +63,10 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: SimplyTestable\ApiBundle\Entity\User
+    
+jms_serializer:
+    metadata:
+        directories:
+            FOSUB:
+                namespace_prefix: "FOS\\UserBundle"
+                path: "%kernel.root_dir%/config/serializer/FOSUB"    
