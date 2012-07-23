@@ -24,7 +24,7 @@
         <copy file="${file.config.parameters.travis}" tofile="${file.config.parameters}" overwrite="true"/>
         <exec command="php composer.phar install" passthru="true" />
         <phingcall target="build:prepare" />
-        <exec command='printf "y\n\" | php app/console doctrine:migrations:migrate' passthru="true" />
+        <exec command="printf 'y\n\' | php app/console doctrine:migrations:migrate" passthru="true" />
     </target>
     
     <target name="install:create-database">
