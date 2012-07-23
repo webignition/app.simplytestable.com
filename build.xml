@@ -11,6 +11,8 @@
     <property name="dir.symfony2.web" value="web" />
     <property name="file.config.parameters" value="${dir.app.config}/parameters.yml" />
     <property name="file.config.parameters.travis" value="${file.config.parameters}.travis" />
+    <property name="file.config.travis" value="${dir.app.config}/config_travis.yml" />
+    <property name="file.config.test" value="${dir.app.config}/config_test.yml" />
     
     <!-- Installation -->    
     <target name="build:install" depends="build:prepare">       
@@ -22,6 +24,7 @@
     
     <target name="build:install:ci:travis">
         <copy file="${file.config.parameters.travis}" tofile="${file.config.parameters}" overwrite="true"/>
+        <copy file="${file.config.travis}" tofile="${file.config.test}" overwrite="true"/>
         <exec command="php composer.phar install" passthru="true" />
         <phingcall target="build:prepare" />
         <exec command="printf 'y\n\' | php app/console doctrine:migrations:migrate" passthru="true" />

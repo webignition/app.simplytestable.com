@@ -19,5 +19,4 @@ before_script:
   - build/phing/bin/phing build:install:ci:travis
   
 script:
-  - export SYMFONY_ENV=travis
   - phpunit -c app
