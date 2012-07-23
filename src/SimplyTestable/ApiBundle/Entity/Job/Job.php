@@ -71,10 +71,11 @@ class Job
      */
     protected $startDateTime;
     
-//    public function __construct()
-//    {
-//        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
-//    }
+    public function __construct()
+    {
+        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->startDateTime = new \DateTime();
+    }
     
     /**
      * Get id
@@ -182,10 +183,6 @@ class Job
     public function getTasks()
     {
         return $this->tasks;
-    }
-    public function __construct()
-    {
-        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
