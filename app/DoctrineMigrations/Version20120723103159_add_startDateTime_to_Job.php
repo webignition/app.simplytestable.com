@@ -8,7 +8,7 @@ use Doctrine\DBAL\Migrations\AbstractMigration,
 /**
  * Auto-generated Migration: Please modify to your need!
  */
-class Version20120723103159 extends AbstractMigration
+class Version20120723103159_add_startDateTime_to_Job extends AbstractMigration
 {
     public function up(Schema $schema)
     {
