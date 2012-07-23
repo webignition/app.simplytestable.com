@@ -17,12 +17,12 @@
         <echo message="Installing app.simplytestable.com" />
         <phingcall target="install:create-database" />
      
-        <exec command="composer.phar install" passthru="true" />
+        <exec command="php composer.phar install" passthru="true" />
     </target>
     
     <target name="build:install:ci:travis">
         <copy file="${file.config.parameters.travis}" tofile="${file.config.parameters}" overwrite="true"/>
-        <exec command="composer.phar install" passthru="true" />
+        <exec command="php composer.phar install" passthru="true" />
         <phingcall target="build:prepare" />
     </target>
     
