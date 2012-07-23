@@ -13,3 +13,12 @@ services:
     class:  SimplyTestable\ApiBundle\Services\JobService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
+        
+  simplytestable.services.userservice:
+    class:  SimplyTestable\ApiBundle\Services\UserService
+    arguments:
+        encoderFactory: "@security.encoder_factory"
+        usernameCanonicalizer: "@fos_user.util.username_canonicalizer"
+        emailCanonicalizer: "@fos_user.util.email_canonicalizer"
+        objectManager: "@doctrine.orm.entity_manager"
+        class: %fos_user.model.user.class%      
