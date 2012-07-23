@@ -61,7 +61,15 @@ class Job
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
      */
-    protected $tasks;    
+    protected $tasks;
+    
+    
+    /**
+     *
+     * @var \DateTime
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    protected $startDateTime;
     
 //    public function __construct()
 //    {
@@ -174,5 +182,31 @@ class Job
     public function getTasks()
     {
         return $this->tasks;
+    }
+    public function __construct()
+    {
+        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Set startDateTime
+     *
+     * @param datetime $startDateTime
+     * @return Job
+     */
+    public function setStartDateTime($startDateTime)
+    {
+        $this->startDateTime = $startDateTime;
+        return $this;
+    }
+
+    /**
+     * Get startDateTime
+     *
+     * @return datetime 
+     */
+    public function getStartDateTime()
+    {
+        return $this->startDateTime;
     }
 }
