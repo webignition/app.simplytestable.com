@@ -17,12 +17,32 @@ class BaseControllerTestCase extends WebTestCase {
      * @var appTestDebugProjectContainer
      */
     protected $container;
-   
 
-    public function setUp() {
+    public function setUp() {        
         $this->client = static::createClient();
         $this->container = $this->client->getKernel()->getContainer();
+
+        $kernel = new \AppKernel("test", true);
+        $kernel->boot();
+        $this->_application = new \Symfony\Bundle\FrameworkBundle\Console\Application($kernel);
+        $this->_application->setAutoExit(false);
+    }    
+
+    protected function runConsole($command, Array $options = array()) {
+        $options["-e"] = "test";
+        $options["-n"] = null;
+        $options["-q"] = null;
+        $options = array_merge($options, array('command' => $command));
+        
+        return $this->_application->run(new \Symfony\Component\Console\Input\ArrayInput($options));
     }
+    
+    protected function setupDatabase() {
+        $this->runConsole("doctrine:database:drop", array("--force" => true));
+        $this->runConsole("doctrine:database:create");        
+        exec('php app/console doctrine:migrations:migrate --no-interaction -e test');
+        $this->runConsole("cache:warmup");        
+    }    
 
     /**
      * Builds a Controller object and the request to satisfy it. Attaches the request
@@ -32,7 +52,7 @@ class BaseControllerTestCase extends WebTestCase {
      * @param array An array of parameters to pass into the request.
      * @return \Symfony\Bundle\FrameworkBundle\Controller\Controller The built Controller object.
      */
-    protected function createController($controllerClass, array $parameters = array(), array $query = array()) {        
+    protected function createController($controllerClass, array $parameters = array(), array $query = array()) {
         $request = $this->createWebRequest();
         $request->request->add($parameters);
         $request->query->add($query);
@@ -55,7 +75,7 @@ class BaseControllerTestCase extends WebTestCase {
         $request = new \Symfony\Component\HttpFoundation\Request;
         $request->server->set('REMOTE_ADDR', '127.0.0.1');
 
-        return $request ;
+        return $request;
     }
 
 }

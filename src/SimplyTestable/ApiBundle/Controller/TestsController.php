@@ -8,9 +8,13 @@ use SimplyTestable\ApiBundle\Entity\WebSite;
 
 class TestsController extends Controller
 {
+    private $siteRootUrl = null;
     
-    public function startAction()
-    {
+    
+    public function startAction($site_root_url)
+    {        
+        $this->siteRootUrl = $site_root_url;  
+        
         $state = $this->get('simplytestable.services.stateservice')->fetch('job-new');
         
         if (!$this->hasNew()) {
@@ -47,17 +51,37 @@ class TestsController extends Controller
             'site_root_url' => $site_root_url,
             'test_id' => $test_id
         )));
+    } 
+    
+    
+    /**
+     *
+     * @return boolean
+     */
+    private function isTestEnvironment() {
+        return $this->get('kernel')->getEnvironment() == 'test';
     }
     
     
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Entity\WebSite 
+     * @return \SimplyTestable\ApiBundle\Entity\User 
      */
-    private function getWebsite() {
-        return $this->get('simplytestable.services.websiteservice')->fetch($this->getRequest()->get('site_root_url'));
+    public function getUser() {
+        if (!$this->isTestEnvironment()) {
+            return parent::getUser();
+        }
+        
+        return $this->get('simplytestable.services.userservice')->getPublicUser();
     }
     
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\WebSite 
+     */
+    private function getWebsite() {        
+        return $this->get('simplytestable.services.websiteservice')->fetch($this->siteRootUrl);
+    }
     
     /**
      *
