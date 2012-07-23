@@ -90,4 +90,13 @@ class State
     {
         return $this->nextState;
     }
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function __toString() {
+        return str_replace('job-', '', $this->getName());
+    }
 }

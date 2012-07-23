@@ -57,4 +57,13 @@ class WebSite
     {
         return $this->canonicalUrl;
     }
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function __toString() {
+        return $this->getCanonicalUrl();
+    }
 }
