@@ -13,7 +13,6 @@ before_script:
   
   # Install composer for dependency management
   - wget http://getcomposer.org/composer.phar 
-  - php composer.phar install
   
   # Build!
   #- phing build:install:ci:travis

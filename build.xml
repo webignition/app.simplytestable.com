@@ -22,6 +22,7 @@
     
     <target name="build:install:ci:travis">
         <copy file="${file.config.parameters.travis}" tofile="${file.config.parameters}" overwrite="true"/>
+        <exec command="composer.phar install" passthru="true" />
         <phingcall target="build:prepare" />
     </target>
     
