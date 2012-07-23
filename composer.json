@@ -24,7 +24,8 @@
         "webignition/container-aware-migration": "*",        
         "glit/resque": "*",
         "webignition/url": "*",
-        "jms/serializer-bundle": "dev-master"
+        "jms/serializer-bundle": "dev-master",
+        "webignition/json-pretty-print":"dev-master"
     },
     "scripts": {
         "post-install-cmd": [
