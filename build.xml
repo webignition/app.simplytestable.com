@@ -24,6 +24,7 @@
         <copy file="${file.config.parameters.travis}" tofile="${file.config.parameters}" overwrite="true"/>
         <exec command="php composer.phar install" passthru="true" />
         <phingcall target="build:prepare" />
+        <SymfonyConsole command="doctrine:migrations:migrate"/>
     </target>
     
     <target name="install:create-database">
