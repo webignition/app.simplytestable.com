@@ -15,7 +15,7 @@ before_script:
   - wget http://getcomposer.org/composer.phar 
   
   # Build!
-  #- phing build:install:ci:travis
+  - mysql -e "create database myapp_test;"
   - build/phing/bin/phing build:install:ci:travis
   
 script:
