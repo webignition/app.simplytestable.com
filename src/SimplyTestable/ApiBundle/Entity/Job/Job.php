@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * 
@@ -31,6 +32,8 @@ class Job
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * 
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
      */
     protected $user;
     
@@ -41,6 +44,8 @@ class Job
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\WebSite")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
+     * 
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedWebsite")
      */
     protected $website;
     
@@ -51,6 +56,8 @@ class Job
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
+     * 
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
      */
     protected $state; 
     
@@ -61,7 +68,7 @@ class Job
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
      */
-    protected $tasks;
+    private $tasks;
     
     
     /**
@@ -76,6 +83,33 @@ class Job
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
         $this->startDateTime = new \DateTime();
     }
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedUser() {
+        return $this->getUser()->getUsername();
+    }
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedWebsite() {
+        return (string)$this->getWebsite();
+    }
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedState() {
+        return (string)$this->getState();
+    }
+    
     
     /**
      * Get id
@@ -181,7 +215,7 @@ class Job
      * @return Doctrine\Common\Collections\Collection 
      */
     public function getTasks()
-    {
+    {        
         return $this->tasks;
     }
     

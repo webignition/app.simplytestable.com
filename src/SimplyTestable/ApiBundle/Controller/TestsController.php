@@ -32,10 +32,13 @@ class TestsController extends Controller
             'state' => $state
         ));
         
-        return new \Symfony\Component\HttpFoundation\Response(json_encode(array(
-            'job_id' => $job->getId()
-        )));
-    }    
+        $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter();
+        
+        $output = $this->container->get('serializer')->serialize($job, 'json');       
+   
+        return new \Symfony\Component\HttpFoundation\Response($formatter->format($output));
+    }
+    
     
     public function statusAction($site_root_url, $test_id)
     {
