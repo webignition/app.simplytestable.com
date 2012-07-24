@@ -80,6 +80,8 @@ class Job
      *      joinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")},
      *      inverseJoinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")}
      * )
+     * 
+     * @SerializerAnnotation\SerializedName("tasks")
      */
     private $requestedTaskTypes;
     

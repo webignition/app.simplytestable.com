@@ -2,11 +2,13 @@
 namespace SimplyTestable\ApiBundle\Entity\Task\Type;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * 
  * @ORM\Entity
  * @ORM\Table(name="TaskType")
+ * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class Type
 {
@@ -25,6 +27,7 @@ class Type
      *
      * @var string
      * @ORM\Column(type="string", unique=true, nullable=false)
+     * @SerializerAnnotation\Expose
      */
     protected $name;
     
