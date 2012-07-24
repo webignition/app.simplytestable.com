@@ -263,6 +263,7 @@ class Job
      */
     public function addRequestedTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType)
     {
+        $requestedTaskType->addJob($this);
         $this->requestedTaskTypes[] = $requestedTaskType;
         return $this;
     }
