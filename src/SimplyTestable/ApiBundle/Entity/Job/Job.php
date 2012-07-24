@@ -67,6 +67,7 @@ class Job
      * @var \Doctrine\Common\Collections\Collection
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
+     * @SerializerAnnotation\Exclude
      */
     private $tasks;
     
@@ -81,7 +82,7 @@ class Job
      *      inverseJoinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")}
      * )
      * 
-     * @SerializerAnnotation\SerializedName("tasks")
+     * @SerializerAnnotation\SerializedName("task_types")
      */
     private $requestedTaskTypes;
     
