@@ -63,9 +63,9 @@ class Task
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\Task\Type
+     * @var SimplyTestable\ApiBundle\Entity\Task\Type\Type
      * 
-     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type")
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
      * @ORM\JoinColumn(name="tasktype_id", referencedColumnName="id", nullable=false)
      */
     protected $type;
