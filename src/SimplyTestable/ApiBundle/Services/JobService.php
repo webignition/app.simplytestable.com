@@ -18,4 +18,24 @@ class JobService extends EntityService {
     protected function getEntityName() {
         return self::ENTITY_NAME;
     }
+    
+    
+    /**
+     *
+     * @param int $id
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
+     */
+    public function getById($id) {
+        return $this->getEntityRepository()->find($id);
+    }
+    
+    
+    /**
+     *
+     * @param int $id
+     * @return boolean
+     */
+    public function has($id) {
+        return !is_null($this->getById($id));
+    }
 }
