@@ -59,4 +59,14 @@ class Task
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Worker", inversedBy="tasks")
      */
     protected $worker;
+    
+    
+    /**
+     *
+     * @var SimplyTestable\ApiBundle\Entity\Task\Type\Type
+     * 
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
+     * @ORM\JoinColumn(name="tasktype_id", referencedColumnName="id", nullable=false)
+     */
+    protected $type;
 }
