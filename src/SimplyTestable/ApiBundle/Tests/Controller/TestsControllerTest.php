@@ -8,6 +8,7 @@ class TestsControllerTest extends BaseControllerJsonTestCase {
 
     public function testStartAction() {        
         $this->setupDatabase();
+        exit();
         
         $controllerName = 'SimplyTestable\ApiBundle\Controller\TestsController';
         $controller = $this->createController($controllerName);       

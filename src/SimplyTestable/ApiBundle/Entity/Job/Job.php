@@ -73,6 +73,19 @@ class Job
     
     /**
      *
+     * @var \Doctrine\Common\Collections\Collection
+     * 
+     * @ORM\ManyToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type", mappedBy="jobs")
+     * @ORM\JoinTable(name="JobTaskTypes",
+     *      joinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")}
+     * )
+     */
+    private $requestedTaskTypes;
+    
+    
+    /**
+     *
      * @var \DateTime
      * @ORM\Column(type="datetime", nullable=false)
      */
@@ -81,6 +94,7 @@ class Job
     public function __construct()
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->requestedTaskTypes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->startDateTime = new \DateTime();
     }
     
@@ -239,5 +253,37 @@ class Job
     public function getStartDateTime()
     {
         return $this->startDateTime;
+    }
+
+    /**
+     * Add requestedTaskTypeClasses
+     *
+     * @param SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType
+     * @return Job
+     */
+    public function addRequestedTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType)
+    {
+        $this->requestedTaskTypes[] = $requestedTaskType;
+        return $this;
+    }
+
+    /**
+     * Remove requestedTaskTypeClasses
+     *
+     * @param <variableType$requestedTaskTypeClasses
+     */
+    public function removeRequestedTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType)
+    {
+        $this->requestedTaskTypes->removeElement($requestedTaskType);
+    }
+
+    /**
+     * Get requestedTaskTypeClasses
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getRequestedTaskTypes()
+    {
+        return $this->requestedTaskTypes;
     }
 }

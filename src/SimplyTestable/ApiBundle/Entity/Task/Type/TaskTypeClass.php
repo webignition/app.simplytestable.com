@@ -34,9 +34,7 @@ class TaskTypeClass
      * @var string
      * @ORM\Column(type="text", name="description", nullable=true)
      */
-    protected $description;
-    
-    
+    protected $description;    
     
 
     /**
@@ -53,7 +51,7 @@ class TaskTypeClass
      * Set name
      *
      * @param string $name
-     * @return TaskTypeClass
+     * @return Type
      */
     public function setName($name)
     {
@@ -75,7 +73,7 @@ class TaskTypeClass
      * Set description
      *
      * @param text $description
-     * @return TaskTypeClass
+     * @return Type
      */
     public function setDescription($description)
     {
