@@ -13,21 +13,30 @@ class TestsControllerTest extends BaseControllerJsonTestCase {
         $controller = $this->createController($controllerName);       
         /* @var $controller \SimplyTestable\ApiBundle\Controller\TestsController */        
         
-        $response1 = $controller->startAction('http:\/\/one.example.com');
+        $response1 = $controller->startAction('http://one.example.com');
         $response1JsonObject = json_decode($response1->getContent());
         
-        $response2 = $controller->startAction('http:\/\/two.example.com');
+        $response2 = $controller->startAction('http://two.example.com');
         $response2JsonObject = json_decode($response2->getContent());
         
-        $response3 = $controller->startAction('http:\/\/one.example.com');
+        $response3 = $controller->startAction('http://one.example.com');
         $response3JsonObject = json_decode($response3->getContent());        
 
         $this->assertEquals(200, $response1->getStatusCode());
         $this->assertEquals(200, $response2->getStatusCode());
         $this->assertEquals(200, $response3->getStatusCode());
-        $this->assertEquals(1, $response1JsonObject->job_id);
-        $this->assertEquals(2, $response2JsonObject->job_id);
-        $this->assertEquals(1, $response3JsonObject->job_id);
+        
+        $this->assertEquals(1, $response1JsonObject->id);
+        $this->assertEquals('public', $response1JsonObject->user);
+        $this->assertEquals('http://one.example.com/', $response1JsonObject->website);        
+        $this->assertEquals('new', $response1JsonObject->state);
+        
+        $this->assertEquals(2, $response2JsonObject->id);
+        $this->assertEquals('public', $response2JsonObject->user);
+        $this->assertEquals('http://two.example.com/', $response2JsonObject->website);
+        $this->assertEquals('new', $response2JsonObject->state);
+        
+        $this->assertTrue($response1 == $response3);
     }
     
     public function testStatusAction() {
