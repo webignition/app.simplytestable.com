@@ -26,7 +26,9 @@
         "webignition/url": "*",
         "jms/serializer-bundle": "dev-master",
         "webignition/json-pretty-print":"dev-master",
-        "webignition/website-sitemap-finder":"dev-master"
+        "webignition/website-sitemap-finder":"dev-master",
+        "querypath/QueryPath": ">=3.0.0",
+        "webignition/http-client":"dev-master"
     },
     "scripts": {
         "post-install-cmd": [
