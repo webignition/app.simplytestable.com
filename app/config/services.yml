@@ -1,8 +1,13 @@
 services:
+  simplytestable.services.httpClient:
+    class:  webignition\Http\Client\Client
+    public: false
+  
   simplytestable.services.websiteservice:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
+        httpClient: "@simplytestable.services.httpClient"
         
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService
@@ -21,4 +26,4 @@ services:
         usernameCanonicalizer: "@fos_user.util.username_canonicalizer"
         emailCanonicalizer: "@fos_user.util.email_canonicalizer"
         objectManager: "@doctrine.orm.entity_manager"
-        class: %fos_user.model.user.class%      
+        class: %fos_user.model.user.class%
