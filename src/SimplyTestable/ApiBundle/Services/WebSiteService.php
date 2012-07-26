@@ -4,6 +4,8 @@ namespace SimplyTestable\ApiBundle\Services;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use webignition\NormalisedUrl\NormalisedUrl;
+use webignition\WebsiteSitemapFinder\WebsiteSitemapFinder;
+use webignition\WebsiteSitemapUrlRetriever\WebsiteSitemapUrlRetriever;
 
 class WebSiteService extends EntityService {
     
@@ -13,8 +15,7 @@ class WebSiteService extends EntityService {
      *
      * @var \webignition\Http\Client\Client
      */
-    private $httpClient;        
-    
+    private $httpClient;
     
     /**
      *
@@ -24,6 +25,7 @@ class WebSiteService extends EntityService {
     public function __construct(EntityManager $entityManager, \webignition\Http\Client\Client $httpClient) {
         parent::__construct($entityManager);
         $this->httpClient = $httpClient;
+        $this->httpClient->redirectHandler()->enable();
     }
     
 
@@ -90,5 +92,29 @@ class WebSiteService extends EntityService {
         
         $this->persistAndFlush($website);
         return $website;
+    }
+    
+    
+    /**
+     * Get collection of URLs to be tested for a given website
+     * 
+     * @param WebSite $website
+     * @return array
+     */
+    public function getUrls(WebSite $website) {
+        $sitemapFinder = new WebsiteSitemapFinder();
+        $sitemapFinder->setRootUrl($website->getCanonicalUrl());
+        $sitemapFinder->setHttpClient($this->getHttpClient());
+        
+        $sitemapUrl = $sitemapFinder->getSitemapUrl();        
+        if ($sitemapUrl === false) {
+            return array();
+        }
+        
+        $urlRetriever = new WebsiteSitemapUrlRetriever();
+        $urlRetriever->setHttpClient($this->getHttpClient());
+        $urlRetriever->setSitemapUrl($sitemapUrl);
+        
+        return $urlRetriever->getUrls();
     }
 }
