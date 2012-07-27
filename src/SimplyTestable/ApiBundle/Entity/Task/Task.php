@@ -157,6 +157,16 @@ class Task
         $this->worker = $worker;
         return $this;
     }
+    
+    
+    /**
+     *
+     * @return Task
+     */
+    public function clearWorker() {
+        return $this->setWorker(null);
+    }
+    
 
     /**
      * Get worker
