@@ -26,7 +26,7 @@ class Version20120716214711_create_TaskTypeClass extends BaseMigration
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 description LONGTEXT DEFAULT NULL)",
-            "CREATE INDEX UNIQ_F92FE5F25E237E06 ON TaskTypeClass (name)"
+            "CREATE UNIQUE INDEX UNIQ_F92FE5F25E237E06 ON TaskTypeClass (name)"
         );
         
         parent::up($schema);
