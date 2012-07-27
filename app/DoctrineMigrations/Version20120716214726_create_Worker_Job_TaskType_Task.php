@@ -31,16 +31,19 @@ class Version20120716214726_create_Worker_Job_TaskType_Task extends BaseMigratio
                 state_id INT NOT NULL,
                 worker_id INT DEFAULT NULL,
                 url LONGTEXT NOT NULL,
+                tasktype_id INT NOT NULL,
                 INDEX IDX_F24C741BBE04EA9 (job_id),
                 INDEX IDX_F24C741B5D83CC1 (state_id),
                 INDEX IDX_F24C741B6B20BA36 (worker_id),
+                INDEX IDX_F24C741B7D6EFC3 (tasktype_id),
                 PRIMARY KEY(id)) ENGINE = InnoDB",
             "ALTER TABLE Job ADD CONSTRAINT FK_C395A618A76ED395 FOREIGN KEY (user_id) REFERENCES fos_user (id)",
             "ALTER TABLE Job ADD CONSTRAINT FK_C395A61818F45C82 FOREIGN KEY (website_id) REFERENCES WebSite (id)",
             "ALTER TABLE Job ADD CONSTRAINT FK_C395A6185D83CC1 FOREIGN KEY (state_id) REFERENCES State (id)",
             "ALTER TABLE Task ADD CONSTRAINT FK_F24C741BBE04EA9 FOREIGN KEY (job_id) REFERENCES Job (id)",
             "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B5D83CC1 FOREIGN KEY (state_id) REFERENCES State (id)",
-            "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B6B20BA36 FOREIGN KEY (worker_id) REFERENCES Worker (id)"
+            "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B6B20BA36 FOREIGN KEY (worker_id) REFERENCES Worker (id)",
+            "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B7D6EFC3 FOREIGN KEY (tasktype_id) REFERENCES TaskType (id)"
         );
         
         $this->statements['sqlite'] = array(
@@ -66,20 +69,24 @@ class Version20120716214726_create_Worker_Job_TaskType_Task extends BaseMigratio
                 state_id INT NOT NULL,
                 worker_id INT DEFAULT NULL,
                 url LONGTEXT NOT NULL,
+                tasktype_id INT NOT NULL,
                 FOREIGN KEY(job_id) REFERENCES Job (id),
                 FOREIGN KEY(state_id) REFERENCES State (id),
-                FOREIGN KEY(worker_id) REFERENCES Worker (id))"                
-        );
+                FOREIGN KEY(worker_id) REFERENCES Worker (id),
+                FOREIGN KEY(tasktype_id) REFERENCES TaskType (id))",
+            "CREATE INDEX IDX_F24C741B7D6EFC3 ON Task (tasktype_id)"
+        ); 
         
         parent::up($schema);
     }
    
 
     public function down(Schema $schema)
-    {
+    {        
         $this->statements['mysql'] = array(
             "ALTER TABLE Task DROP FOREIGN KEY FK_F24C741B6B20BA36",
             "ALTER TABLE Task DROP FOREIGN KEY FK_F24C741BBE04EA9",
+            "ALTER TABLE Task DROP FOREIGN KEY FK_F24C741B7D6EFC3",
             "DROP TABLE Worker",
             "DROP TABLE Job",
             "DROP TABLE TaskType",
