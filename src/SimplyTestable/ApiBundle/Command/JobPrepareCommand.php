@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
@@ -31,30 +32,32 @@ class JobPrepareCommand extends ContainerAwareCommand
         
         $id = (int)$input->getArgument('id');
         $job = $this->getContainer()->get('simplytestable.services.jobservice')->getById($id);
-        
-        $websiteService = $this->getContainer()->get('simplytestable.services.websiteservice');
-        $urls = $websiteService->getUrls($job->getWebsite());
-        $requestedTaskTypes = $job->getRequestedTaskTypes();
-        $newTaskState = $this->getNewTaskState();
-        
-        $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
-        
-        foreach ($urls as $url) {
-            foreach ($requestedTaskTypes as $taskType) {
-                $task = new Task();
-                $task->setJob($job);
-                $task->setType($taskType);
-                $task->setUrl($url);
-                $task->setState($newTaskState);
-                
-                $entityManager->persist($task);
+
+        if ($job->getState()->getName() == JobService::STARTING_STATE) {
+            $websiteService = $this->getContainer()->get('simplytestable.services.websiteservice');
+            $urls = $websiteService->getUrls($job->getWebsite());
+            $requestedTaskTypes = $job->getRequestedTaskTypes();
+            $newTaskState = $this->getNewTaskState();
+
+            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+
+            foreach ($urls as $url) {
+                foreach ($requestedTaskTypes as $taskType) {
+                    $task = new Task();
+                    $task->setJob($job);
+                    $task->setType($taskType);
+                    $task->setUrl($url);
+                    $task->setState($newTaskState);
+
+                    $entityManager->persist($task);
+                }
             }
+
+            $job->setNextState();
+            $entityManager->persist($job);
+
+            $entityManager->flush();            
         }
-        
-        $job->setNextState();
-        $entityManager->persist($job);
-        
-        $entityManager->flush();
     }
     
     

@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
-class BaseControllerJsonTestCase extends BaseControllerTestCase {   
+use SimplyTestable\ApiBundle\Tests\BaseTestCase;
+
+class BaseControllerJsonTestCase extends BaseTestCase {   
     
     protected function createWebRequest() {
         $request = parent::createWebRequest();

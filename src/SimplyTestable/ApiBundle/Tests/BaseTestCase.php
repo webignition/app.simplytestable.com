@@ -1,10 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller;
+namespace SimplyTestable\ApiBundle\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class BaseControllerTestCase extends WebTestCase {
+abstract class BaseTestCase extends WebTestCase {
 
     /**
      *
