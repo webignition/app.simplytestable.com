@@ -18,6 +18,7 @@ class Version20120716214712_create_TaskType extends BaseMigration
                 name VARCHAR(255) NOT NULL,
                 tasktypeclass_id INT NOT NULL,
                 description LONGTEXT NOT NULL,
+                selectable TINYINT(1) NOT NULL,
                 UNIQUE INDEX UNIQ_F7737B3C5E237E06 (name),
                 INDEX IDX_F7737B3CAEA19A54 (tasktypeclass_id),
                 PRIMARY KEY(id)) ENGINE = InnoDB",
@@ -30,6 +31,7 @@ class Version20120716214712_create_TaskType extends BaseMigration
                 name VARCHAR(255) NOT NULL,
                 tasktypeclass_id INT NOT NULL,
                 description LONGTEXT NOT NULL,
+                selectable TINYINT(1) NOT NULL,
                 FOREIGN KEY(tasktypeclass_id) REFERENCES TaskTypeClass (id))",
             "CREATE UNIQUE INDEX UNIQ_F7737B3C5E237E06 ON TaskType (name)",
             "CREATE INDEX IDX_F7737B3CAEA19A54 ON TaskType (tasktypeclass_id)"
