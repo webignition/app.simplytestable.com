@@ -31,6 +31,8 @@ class Version20120712145445_create_fos_user extends BaseMigration
         $this->statements['sqlite'] = array(
             "DROP TABLE fos_user"
         );
+        
+        parent::down($schema);        
     }
     
     public function postUp(Schema $schema) {
