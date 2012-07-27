@@ -8,12 +8,11 @@ use SimplyTestable\ApiBundle\Migration\BaseMigration,
 /**
  * Auto-generated Migration: Please modify to your need!
  */
-class Version20120716214726_create_TaskType_Task extends BaseMigration
+class Version20120716214726_create_Task extends BaseMigration
 {
     public function up(Schema $schema)
     {
         $this->statements['mysql'] = array(
-            "CREATE TABLE TaskType (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_F7737B3C5E237E06 (name), PRIMARY KEY(id)) ENGINE = InnoDB",
             "CREATE TABLE Task (
                 id INT AUTO_INCREMENT NOT NULL,
                 job_id INT NOT NULL,
@@ -33,8 +32,6 @@ class Version20120716214726_create_TaskType_Task extends BaseMigration
         );
         
         $this->statements['sqlite'] = array(
-            "CREATE TABLE TaskType (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL)",
-            "CREATE UNIQUE INDEX UNIQ_F7737B3C5E237E06 ON TaskType (name)",
             "CREATE TABLE Task (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 job_id INT NOT NULL,
@@ -59,12 +56,10 @@ class Version20120716214726_create_TaskType_Task extends BaseMigration
             "ALTER TABLE Task DROP FOREIGN KEY FK_F24C741B6B20BA36",
             "ALTER TABLE Task DROP FOREIGN KEY FK_F24C741BBE04EA9",
             "ALTER TABLE Task DROP FOREIGN KEY FK_F24C741B7D6EFC3",
-            "DROP TABLE TaskType",
             "DROP TABLE Task"
         );
         
         $this->statements['sqlite'] = array(
-            "DROP TABLE TaskType",
             "DROP TABLE Task"
         );      
         
