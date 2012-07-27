@@ -17,7 +17,8 @@ services:
   simplytestable.services.taskservice:
     class:  SimplyTestable\ApiBundle\Services\TaskService
     arguments: 
-        entityManager: "@doctrine.orm.entity_manager"         
+        entityManager: "@doctrine.orm.entity_manager"      
+        stateService: "@simplytestable.services.stateservice"
         
   simplytestable.services.jobservice:
     class:  SimplyTestable\ApiBundle\Services\JobService
