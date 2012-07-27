@@ -79,8 +79,8 @@ class Job
      * 
      * @ORM\ManyToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
      * @ORM\JoinTable(name="JobTaskTypes",
-     *      joinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")}
+     *      inverseJoinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")},
+     *      joinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")}
      * )
      * 
      * @SerializerAnnotation\SerializedName("task_types")
