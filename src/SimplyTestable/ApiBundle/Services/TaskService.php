@@ -41,7 +41,31 @@ class TaskService extends EntityService {
     }
     
     
-    public function cancel(Task $task) {
-        $task->setState();
+    /**
+     *
+     * @param Task $task
+     * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
+     */
+    public function cancel(Task $task) {        
+        if ($task->getState()->equals($this->stateService->fetch(self::CANCELLED_STATE))) {
+            return $task;
+        }
+        
+        $task->setState($this->stateService->fetch(self::CANCELLED_STATE));
+        $task->clearWorker();
+        
+        return $this->persistAndFlush($task);
     }
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @return Task
+     */
+    public function persistAndFlush(Task $task) {
+        $this->getEntityManager()->persist($task);
+        $this->getEntityManager()->flush();
+        return $task;
+    }    
 }

@@ -90,17 +90,37 @@ class JobService extends EntityService {
         }
         
         $statesToCheckFor = array(
+            'job-in-progress',
             'job-queued',
             'job-new'
         );
         
         foreach($statesToCheckFor as $stateToCheckFor) {
             $job->setState($this->stateService->fetch($stateToCheckFor));
-            if ($this->has($job)) {
-                return $this->fetch($job);
+            if ($this->has($job)) {                
+                $this->cancel($this->fetch($job));
             }
         }
         
+        $job->setState($this->stateService->fetch(self::STARTING_STATE));
+        return $this->persistAndFlush($job);
+    }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
+     */
+    public function cancel(Job $job) {
+        $tasks = $job->getTasks();        
+        
+        /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
+        foreach ($tasks as $task) {            
+            $this->taskService->cancel($task);
+        }
+        
+        $job->setState($this->stateService->fetch(self::CANCELLED_STATE));
         return $this->persistAndFlush($job);
     }
     
@@ -110,12 +130,12 @@ class JobService extends EntityService {
      * @param Job $job
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job|boolean 
      */
-    public function fetch(Job $job) {
+    public function fetch(Job $job) {        
         $jobs = $this->getEntityRepository()->findBy(array(
             'state' => $job->getState(),
             'user' => $job->getUser(),
             'website' => $job->getWebsite()
-        ));
+        ));        
         
         /* @var $comparator Job */
         foreach ($jobs as $comparator) {
