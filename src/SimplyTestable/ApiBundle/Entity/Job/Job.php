@@ -68,7 +68,6 @@ class Job
      * @var \Doctrine\Common\Collections\Collection
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
-     * @SerializerAnnotation\Exclude
      */
     private $tasks;
     

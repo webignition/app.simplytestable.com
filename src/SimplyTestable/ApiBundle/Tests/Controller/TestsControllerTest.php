@@ -19,7 +19,8 @@ class TestsControllerTest extends BaseControllerJsonTestCase {
         $response2 = $controller->startAction('http://two.example.com');
         $response2JsonObject = json_decode($response2->getContent());
         
-        $response3 = $controller->startAction('http://one.example.com');     
+        $response3 = $controller->startAction('http://one.example.com');
+        $response3JsonObject = json_decode($response3->getContent());
 
         $this->assertEquals(200, $response1->getStatusCode());
         $this->assertEquals(200, $response2->getStatusCode());
@@ -37,7 +38,11 @@ class TestsControllerTest extends BaseControllerJsonTestCase {
         $this->assertEquals('new', $response2JsonObject->state);
         $this->assertEquals(0, count($response2JsonObject->tasks));
         
-        $this->assertTrue($response1 == $response3);
+        $this->assertEquals(3, $response3JsonObject->id);
+        $this->assertEquals('public', $response3JsonObject->user);
+        $this->assertEquals('http://one.example.com/', $response3JsonObject->website);
+        $this->assertEquals('new', $response3JsonObject->state);
+        $this->assertEquals(0, count($response3JsonObject->tasks));
     }
     
     public function testStatusAction() {
