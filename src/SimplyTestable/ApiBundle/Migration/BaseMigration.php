@@ -10,6 +10,22 @@ abstract class BaseMigration extends ContainerAwareMigration {
     
     protected $statements = array();
     
+    
+    /**
+     * Add a statement for all database drivers
+     * 
+     * @param string $statement
+     */
+    public function addCommonStatement($statement) {
+        foreach ($this->databaseDrivers as $databaseDriver) {
+            if (!isset($this->statements[$databaseDriver])) {
+                $this->statements[$databaseDriver] = array();
+            }
+            
+            $this->statements[$databaseDriver][] = $statement;
+        }
+    }
+    
     public function preUp(Schema $schema) {
         $this->abortIf(!in_array($this->connection->getDatabasePlatform()->getName(), $this->databaseDrivers), "Unknown database driver");
     }
