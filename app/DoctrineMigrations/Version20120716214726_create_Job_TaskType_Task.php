@@ -8,12 +8,11 @@ use SimplyTestable\ApiBundle\Migration\BaseMigration,
 /**
  * Auto-generated Migration: Please modify to your need!
  */
-class Version20120716214726_create_Worker_Job_TaskType_Task extends BaseMigration
+class Version20120716214726_create_Job_TaskType_Task extends BaseMigration
 {
     public function up(Schema $schema)
     {
         $this->statements['mysql'] = array(
-            "CREATE TABLE Worker (id INT AUTO_INCREMENT NOT NULL, url VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_981EBA54F47645AE (url), PRIMARY KEY(id)) ENGINE = InnoDB",
             "CREATE TABLE Job (
                 id INT AUTO_INCREMENT NOT NULL,
                 user_id INT NOT NULL,
@@ -47,8 +46,6 @@ class Version20120716214726_create_Worker_Job_TaskType_Task extends BaseMigratio
         );
         
         $this->statements['sqlite'] = array(
-            "CREATE TABLE Worker (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, url VARCHAR(255) NOT NULL)",
-            "CREATE UNIQUE INDEX UNIQ_981EBA54F47645AE ON Worker (url)",
             "CREATE TABLE Job (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 user_id INT NOT NULL,
@@ -87,14 +84,12 @@ class Version20120716214726_create_Worker_Job_TaskType_Task extends BaseMigratio
             "ALTER TABLE Task DROP FOREIGN KEY FK_F24C741B6B20BA36",
             "ALTER TABLE Task DROP FOREIGN KEY FK_F24C741BBE04EA9",
             "ALTER TABLE Task DROP FOREIGN KEY FK_F24C741B7D6EFC3",
-            "DROP TABLE Worker",
             "DROP TABLE Job",
             "DROP TABLE TaskType",
             "DROP TABLE Task"
         );
         
         $this->statements['sqlite'] = array(
-            "DROP TABLE Worker",
             "DROP TABLE Job",
             "DROP TABLE TaskType",
             "DROP TABLE Task"
