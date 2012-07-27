@@ -1,10 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Migration;
 
-use webignition\ContainerAwareMigration\ContainerAwareMigration;
 use Doctrine\DBAL\Schema\Schema;
 
-abstract class EntityModificationMigration extends ContainerAwareMigration {
+abstract class EntityModificationMigration extends BaseMigration {
     
     /**
      *
