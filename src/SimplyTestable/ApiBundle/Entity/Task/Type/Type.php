@@ -49,17 +49,12 @@ class Type
      */
     protected $class;
     
-    /**
-     *
-     * @var \Doctrine\Common\Collections\Collection
-     * 
-     * @ORM\ManyToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="requestedTaskTypes")
-     * @ORM\JoinTable(name="JobTaskTypes",
-     *      joinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")}
-     * )
-     */
-    protected $jobs;
+//    /**
+//     *
+//     * @var \Doctrine\Common\Collections\Collection
+//     * 
+//     */
+//    protected $jobs;
     
     
     /**
@@ -149,7 +144,7 @@ class Type
     
     public function __construct()
     {
-        $this->jobs = new \Doctrine\Common\Collections\ArrayCollection();
+//        $this->jobs = new \Doctrine\Common\Collections\ArrayCollection();
         $this->selectable = false;
     }
     
@@ -175,37 +170,41 @@ class Type
         return $this->selectable;
     }
 
-    /**
-     * Add jobs
-     *
-     * @param SimplyTestable\ApiBundle\Entity\Job\Job $jobs
-     * @return Type
-     */
-    public function addJob(\SimplyTestable\ApiBundle\Entity\Job\Job $jobs)
-    {
-        $this->jobs[] = $jobs;
-        return $this;
-    }
-
-    /**
-     * Remove jobs
-     *
-     * @param <variableType$jobs
-     */
-    public function removeJob(\SimplyTestable\ApiBundle\Entity\Job\Job $jobs)
-    {
-        $this->jobs->removeElement($jobs);
-    }
-
-    /**
-     * Get jobs
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getJobs()
-    {
-        return $this->jobs;
-    }
+//    /**
+//     * Add jobs
+//     *
+//     * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
+//     * @return Type
+//     */
+//    public function addJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
+//    {
+//        
+//        if (!$this->jobs->contains($job)) {
+//            $this->jobs[] = $job;
+//        }
+//        
+//        return $this;
+//    }
+//
+//    /**
+//     * Remove jobs
+//     *
+//     * @param SimplyTestable\ApiBundle\Entity\Job\Job $jo
+//     */
+//    public function removeJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
+//    {
+//        $this->jobs->removeElement($job);
+//    }
+//
+//    /**
+//     * Get jobs
+//     *
+//     * @return Doctrine\Common\Collections\Collection 
+//     */
+//    public function getJobs()
+//    {
+//        return $this->jobs;
+//    }
     
     
     /**

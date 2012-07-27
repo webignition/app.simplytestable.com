@@ -77,10 +77,10 @@ class Job
      *
      * @var \Doctrine\Common\Collections\Collection
      * 
-     * @ORM\ManyToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type", mappedBy="jobs")
+     * @ORM\ManyToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
      * @ORM\JoinTable(name="JobTaskTypes",
-     *      joinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")}
+     *      joinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")}
      * )
      * 
      * @SerializerAnnotation\SerializedName("task_types")
@@ -277,12 +277,14 @@ class Job
      * @return Job
      */
     public function addRequestedTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType)
-    {
-        $requestedTaskType->addJob($this);
-        $this->requestedTaskTypes[] = $requestedTaskType;
+    {        
+        if (!$this->requestedTaskTypes->contains($requestedTaskType)) {            
+            $this->requestedTaskTypes[] = $requestedTaskType;            
+        }
+        
         return $this;
     }
-
+    
     /**
      * Remove requestedTaskTypeClasses
      *
@@ -338,7 +340,7 @@ class Job
     private function requestedTaskTypesEquals(\Doctrine\Common\Collections\Collection $requestedTaskTypes) {
         /* @var $comparatorTaskType TaskType */
         /* @var $requestedTaskType TaskType */
-        foreach ($requestedTaskTypes as $comparatorTaskType) {
+        foreach ($requestedTaskTypes as $comparatorTaskType) {            
             foreach ($this->getRequestedTaskTypes() as $requestedTaskType) {
                 if (!$requestedTaskType->equals(($comparatorTaskType))) {
                     return false;
