@@ -9,12 +9,12 @@ use SimplyTestable\ApiBundle\Migration\EntityModificationMigration,
 /**
  * Auto-generated Migration: Please modify to your need!
  */
-class Version20120724153736_add_job_cancelled_state extends EntityModificationMigration
+class Version20120724153738_add_task_cancelled_state extends EntityModificationMigration
 {
     public function postUp(Schema $schema)
     {        
         $state_completed = new State();
-        $state_completed->setName('job-cancelled');        
+        $state_completed->setName('task-cancelled');        
         $this->getEntityManager()->persist($state_completed);
         $this->getEntityManager()->flush();      
     }
@@ -22,7 +22,7 @@ class Version20120724153736_add_job_cancelled_state extends EntityModificationMi
     public function postDown(Schema $schema)
     {
         $stateNames = array(
-            'job-cancelled'
+            'task-cancelled'
         );
         
         foreach ($stateNames as $stateName) {
