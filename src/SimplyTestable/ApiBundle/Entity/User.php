@@ -25,4 +25,14 @@ class User extends BaseUser
         parent::__construct();
         // your own logic
     }
+    
+    
+    /**
+     *
+     * @param User $user
+     * @return boolean
+     */
+    public function equals(User $user) {
+        return $this->getEmailCanonical() == $user->getEmailCanonical();
+    }
 }

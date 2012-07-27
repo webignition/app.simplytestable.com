@@ -99,4 +99,14 @@ class State
     public function __toString() {
         return str_replace('job-', '', $this->getName());
     }
+    
+    
+    /**
+     *
+     * @param State $state
+     * @return boolean
+     */
+    public function equals(State $state) {
+        return $this->getName() == $state->getName();
+    }
 }

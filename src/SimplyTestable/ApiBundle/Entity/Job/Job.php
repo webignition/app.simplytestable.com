@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
@@ -300,5 +301,51 @@ class Job
     public function getRequestedTaskTypes()
     {
         return $this->requestedTaskTypes;
+    }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return boolean 
+     */
+    public function equals(Job $job) {
+        if (!$this->getState()->equals($job->getState())) {
+            return false;
+        }
+        
+        if (!$this->getUser()->equals($job->getUser())) {
+            return false;
+        }
+        
+        if (!$this->getWebsite()->equals($job->getWebsite())) {
+            return false;
+        }
+        
+        if (!$this->requestedTaskTypesEquals($job->getRequestedTaskTypes())) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    
+    /**
+     *
+     * @param \Doctrine\Common\Collections\Collection $requestedTaskTypes
+     * @return boolean
+     */
+    private function requestedTaskTypesEquals(\Doctrine\Common\Collections\Collection $requestedTaskTypes) {
+        /* @var $comparatorTaskType TaskType */
+        /* @var $requestedTaskType TaskType */
+        foreach ($requestedTaskTypes as $comparatorTaskType) {
+            foreach ($this->getRequestedTaskTypes() as $requestedTaskType) {
+                if (!$requestedTaskType->equals(($comparatorTaskType))) {
+                    return false;
+                }
+            }            
+        }
+        
+        return true;
     }
 }

@@ -206,4 +206,14 @@ class Type
     {
         return $this->jobs;
     }
+    
+    
+    /**
+     *
+     * @param Type $taskType
+     * @return boolean
+     */
+    public function equals(Type $taskType) {
+        return $this->getName() == $taskType->getName();
+    }
 }

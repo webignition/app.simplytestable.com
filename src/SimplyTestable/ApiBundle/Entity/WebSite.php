@@ -66,4 +66,14 @@ class WebSite
     public function __toString() {
         return $this->getCanonicalUrl();
     }
+    
+    
+    /**
+     *
+     * @param Website $website
+     * @return boolean
+     */
+    public function equals(Website $website) {
+        return $this->getCanonicalUrl() == $website->getCanonicalUrl();
+    }
 }
