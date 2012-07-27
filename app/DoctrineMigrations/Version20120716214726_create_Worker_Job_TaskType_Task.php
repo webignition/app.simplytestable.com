@@ -60,8 +60,8 @@ class Version20120716214726_create_Worker_Job_TaskType_Task extends BaseMigratio
             "CREATE UNIQUE INDEX UNIQ_F7737B3C5E237E06 ON TaskType (name)",
             "CREATE TABLE Task (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                job_id INT DEFAULT NULL,
-                state_id INT DEFAULT NULL,
+                job_id INT NOT NULL,
+                state_id INT NOT NULL,
                 worker_id INT DEFAULT NULL,
                 url LONGTEXT NOT NULL,
                 FOREIGN KEY(job_id) REFERENCES Job (id),
