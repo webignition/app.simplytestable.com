@@ -100,7 +100,7 @@ class WebSiteService extends EntityService {
      * @param WebSite $job
      * @return WebSite
      */
-    public function persistAndFlush(State $website) {
+    public function persistAndFlush(WebSite $website) {
         $this->getEntityManager()->persist($website);
         $this->getEntityManager()->flush();
         return $website;
