@@ -11,22 +11,36 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 class JobService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Job\Job';
+    const STARTING_STATE = 'job-new';
+    const CANCELLED_STATE = 'job-cancelled';
     
     /**
      *
-     * @var \webignition\Http\Client\Client
+     * @var \SimplyTestable\ApiBundle\Services\StateService
      */
-    private $stateService;    
+    private $stateService;
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\TaskService
+     */
+    private $taskService;      
     
     
     /**
      *
      * @param EntityManager $entityManager
      * @param \SimplyTestable\ApiBundle\Services\StateService $stateService 
+     * @param \SimplyTestable\ApiBundle\Services\TaskService $taskService
      */
-    public function __construct(EntityManager $entityManager, \SimplyTestable\ApiBundle\Services\StateService $stateService) {
-        parent::__construct($entityManager);
+    public function __construct(
+            EntityManager $entityManager,
+            \SimplyTestable\ApiBundle\Services\StateService $stateService,
+            \SimplyTestable\ApiBundle\Services\TaskService $taskService)
+    {
+        parent::__construct($entityManager);        
         $this->stateService = $stateService;
+        $this->taskService = $taskService;
     }
     
     /**

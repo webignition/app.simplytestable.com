@@ -24,6 +24,7 @@ services:
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
         stateService: "@simplytestable.services.stateservice"
+        taskService: "@simplytestable.services.taskservice"
         
   simplytestable.services.userservice:
     class:  SimplyTestable\ApiBundle\Services\UserService
