@@ -9,7 +9,23 @@ use SimplyTestable\ApiBundle\Services\StateService;
 
 class JobService extends EntityService {
     
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Job\Job';    
+    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Job\Job';
+    
+    /**
+     *
+     * @var \webignition\Http\Client\Client
+     */
+    private $stateService;
+    
+    /**
+     *
+     * @param EntityManager $entityManager
+     * @param \SimplyTestable\ApiBundle\Services\StateService $stateService 
+     */
+    public function __construct(EntityManager $entityManager, \SimplyTestable\ApiBundle\Services\StateService $stateService) {
+        parent::__construct($entityManager);
+        $this->stateService = $stateService;
+    }
     
     /**
      *
@@ -37,5 +53,14 @@ class JobService extends EntityService {
      */
     public function has($id) {
         return !is_null($this->getById($id));
+    }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\StateService
+     */
+    public function getStateService() {
+        return $this->stateService;                
     }
 }
