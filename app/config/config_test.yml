@@ -13,10 +13,12 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
     
-parameters:    
-    database_driver: pdo_mysql
-    database_host: localhost
-    database_port: null
-    database_name: test_app_simplytestable_com
-    database_user: st_app_test
-    database_password: st_app_test_password
+doctrine:
+     dbal:
+         driver:   pdo_sqlite
+         path:     ":memory:"
+         memory:   true
+
+     orm:
+         auto_generate_proxy_classes: true
+         auto_mapping: true    
