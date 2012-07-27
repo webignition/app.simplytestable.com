@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\WebSite;
+use SimplyTestable\ApiBundle\Entity\State;
 
 class TestsController extends Controller
 {
@@ -13,36 +14,21 @@ class TestsController extends Controller
     
     public function startAction($site_root_url)
     {        
-        $this->siteRootUrl = $site_root_url;  
+        $this->siteRootUrl = $site_root_url;         
         
-        $state = $this->get('simplytestable.services.stateservice')->fetch('job-new');
+        /* @var $jobService \SimplyTestable\ApiBundle\Services\JobService */
+        $jobService = $this->get('simplytestable.services.jobservice');
+        $job = $jobService->create(
+            $this->getUser(),
+            $this->getWebsite(),
+            $this->getTaskTypes()
+        );
+     
+        $output = $this->container->get('serializer')->serialize($job, 'json');   
+        $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter(); 
         
-        if (!$this->hasNew()) {
-            $job = new Job();
-            $job->setUser($this->getUser());
-            $job->setWebsite($this->getWebsite());
-            $job->setState($state);          
-
-            $taskTypes = $this->getTaskTypes();
-            foreach ($taskTypes as $taskType) {
-                $job->addRequestedTaskType($taskType);
-            }            
-            
-            $this->get('simplytestable.services.jobservice')->persistAndFlush($job);
-        }
-        
-        $job = $this->get('simplytestable.services.jobservice')->getEntityRepository()->findOneBy(array(
-            'user' => $this->getUser(),
-            'website' => $this->getWebsite(),
-            'state' => $state
-        ));
-        
-        $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter();
-        
-        $output = $this->container->get('serializer')->serialize($job, 'json');       
-   
         return new \Symfony\Component\HttpFoundation\Response($formatter->format($output));
-    }
+    }    
     
     public function statusAction($site_root_url, $test_id)
     {
@@ -110,14 +96,34 @@ class TestsController extends Controller
         return $this->get('simplytestable.services.websiteservice')->fetch($this->siteRootUrl);
     }
     
+    
+    /**
+     * Does the submitted website have a test job that has not yet started?
+     * It does if there are new or queued jobs that exist.
+     * 
+     * @return boolean 
+     */
+    private function hasUnstartedTest() {
+        $unstartedStateNames = array('job-new', 'job-queued');
+        foreach ($unstartedStateNames as $unstartedStateName) {
+            if ($this->hasByState($this->get('simplytestable.services.stateservice')->fetch($unstartedStateName))) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    
     /**
      *
      * @return boolean
      */
-    private function hasNew() {        
+    private function hasByState(State $state) {        
         return count($this->get('simplytestable.services.jobservice')->getEntityRepository()->findBy(array(
             'user' => $this->getUser(),
-            'website' => $this->getWebsite()
+            'website' => $this->getWebsite(),
+            'state' => $state
         ))) > 0;
     }
 }

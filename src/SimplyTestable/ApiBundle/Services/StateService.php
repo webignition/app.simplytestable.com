@@ -63,4 +63,15 @@ class StateService extends EntityService {
         $this->persistAndFlush($name);
         return $state;
     }
+    
+    /**
+     *
+     * @param State $job
+     * @return State
+     */
+    public function persistAndFlush(State $state) {
+        $this->getEntityManager()->persist($state);
+        $this->getEntityManager()->flush();
+        return $state;
+    }    
 }

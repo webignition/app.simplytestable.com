@@ -59,17 +59,6 @@ abstract class EntityService {
         }
         
         return $this->entityRepository;
-    }
-    
-    
-    /**
-     *
-     * @param mixed $entity 
-     */
-    public function persistAndFlush($entity) {
-        $this->getEntityManager()->persist($entity);
-        $this->getEntityManager()->flush();
-    }
-    
+    }   
 
 }
