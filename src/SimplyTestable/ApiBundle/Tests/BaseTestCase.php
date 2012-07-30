@@ -3,6 +3,8 @@
 namespace SimplyTestable\ApiBundle\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
 
 abstract class BaseTestCase extends WebTestCase {
 
@@ -17,6 +19,14 @@ abstract class BaseTestCase extends WebTestCase {
      * @var appTestDebugProjectContainer
      */
     protected $container;
+    
+    
+    /**
+     *
+     * @var Symfony\Bundle\FrameworkBundle\Console\Application
+     */
+    private $application;
+    
 
     public function setUp() {        
         $this->client = static::createClient();
@@ -24,24 +34,37 @@ abstract class BaseTestCase extends WebTestCase {
 
         $kernel = new \AppKernel("test", true);
         $kernel->boot();
-        $this->_application = new \Symfony\Bundle\FrameworkBundle\Console\Application($kernel);
-        $this->_application->setAutoExit(false);
+        $this->application = new Application($kernel);
+        $this->application->setAutoExit(false);
     }    
 
     protected function runConsole($command, Array $options = array()) {
-        $options["-e"] = "test";
-        $options["-n"] = null;
-        $options["-q"] = null;
-        $options = array_merge($options, array('command' => $command));
+        $args = array(
+            'app/console',
+            $command,
+            '-e',
+            'test',
+            '-q',
+            '-n'
+        );        
         
-        return $this->_application->run(new \Symfony\Component\Console\Input\ArrayInput($options));
+        foreach ($options as $key => $value) {
+            $args[] = $key;
+            
+            if (!is_null($value) && !is_bool($value)) {
+                $args[] = $value;
+            }
+        }
+
+
+        $input = new ArgvInput($args);                 
+        return $this->application->run($input);
     }
     
     protected function setupDatabase() {
         $this->runConsole("doctrine:database:drop", array("--force" => true));
         $this->runConsole("doctrine:database:create");        
-        exec('php app/console doctrine:migrations:migrate --no-interaction -e test');
-        $this->runConsole("cache:warmup");        
+        $this->runConsole("doctrine:migrations:migrate", array("--no-interaction" => true));        
     }    
 
     /**
