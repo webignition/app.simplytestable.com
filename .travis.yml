@@ -5,7 +5,7 @@ php:
   
 before_script:  
   # Installing phing
-  - git clone https://github.com/phingofficial/phing.git build/phing
+  #- git clone https://github.com/phingofficial/phing.git build/phing
   
   # Installing pecl_http module
   - printf "\n\n\n\n" | pecl -q install pecl_http
@@ -15,8 +15,17 @@ before_script:
   - wget http://getcomposer.org/composer.phar 
   
   # Build!
-  - mysql -e "create database myapp_test;"
-  - build/phing/bin/phing build:install:ci:travis
+  #- mysql -e "create database myapp_test;"
+  - mkdir app/cache
+  - mkdir app/cache/test  
+  - mv app/config/parameters.yml.travis app/config/parameters.yml
+  - rm app/config/config_test.yml
+  - mv app/config/config_travis.yml app/config/config_test.yml
+  - php composer.phar install
+  - php app/console doctrine:database:create
+  - php app/console doctrine:migrations:migrate --no-interaction
+  #- php app/console doctrine:database:create
+  #- build/phing/bin/phing build:install:ci:travis
   
 script:
   - phpunit -c app
