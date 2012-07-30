@@ -43,9 +43,9 @@ abstract class BaseTestCase extends WebTestCase {
             'app/console',
             $command,
             '-e',
-            'test',
-            '-q',
-            '-n'
+            'test'//,
+            //'-q',
+            //'-n'
         );        
         
         foreach ($options as $key => $value) {
