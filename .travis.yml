@@ -16,7 +16,7 @@ before_script:
   
   # Build!
   #- mysql -e "create database myapp_test;"
-  - mkdir app/cache
+  #- mkdir app/cache
   - mkdir app/cache/test  
   - mv app/config/parameters.yml.travis app/config/parameters.yml
   - rm app/config/config_test.yml
