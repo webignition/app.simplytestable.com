@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Entity\Task;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * 
@@ -48,6 +49,8 @@ class Task
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
+     * 
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
      */
     protected $state;
     
@@ -67,8 +70,27 @@ class Task
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
      * @ORM\JoinColumn(name="tasktype_id", referencedColumnName="id", nullable=false)
+     * 
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedType")
      */
     protected $type;
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedState() {
+        return (string)$this->getState();
+    }  
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedType() {
+        return (string)$this->getType();
+    }       
+    
 
     /**
      * Get id

@@ -47,15 +47,7 @@ class Type
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass")
      * @ORM\JoinColumn(name="tasktypeclass_id", referencedColumnName="id", nullable=false)
      */
-    protected $class;
-    
-//    /**
-//     *
-//     * @var \Doctrine\Common\Collections\Collection
-//     * 
-//     */
-//    protected $jobs;
-    
+    protected $class;   
     
     /**
      *
@@ -169,42 +161,6 @@ class Type
     {
         return $this->selectable;
     }
-
-//    /**
-//     * Add jobs
-//     *
-//     * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
-//     * @return Type
-//     */
-//    public function addJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
-//    {
-//        
-//        if (!$this->jobs->contains($job)) {
-//            $this->jobs[] = $job;
-//        }
-//        
-//        return $this;
-//    }
-//
-//    /**
-//     * Remove jobs
-//     *
-//     * @param SimplyTestable\ApiBundle\Entity\Job\Job $jo
-//     */
-//    public function removeJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
-//    {
-//        $this->jobs->removeElement($job);
-//    }
-//
-//    /**
-//     * Get jobs
-//     *
-//     * @return Doctrine\Common\Collections\Collection 
-//     */
-//    public function getJobs()
-//    {
-//        return $this->jobs;
-//    }
     
     
     /**
@@ -214,5 +170,14 @@ class Type
      */
     public function equals(Type $taskType) {
         return $this->getName() == $taskType->getName();
+    }
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function __toString() {
+        return $this->getName();
     }
 }
