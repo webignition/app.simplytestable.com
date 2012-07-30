@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
@@ -27,15 +28,32 @@ class TestsController extends Controller
         $output = $this->container->get('serializer')->serialize($job, 'json');   
         $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter(); 
         
-        return new \Symfony\Component\HttpFoundation\Response($formatter->format($output));
+        return new Response($formatter->format($output));
     }    
     
     public function statusAction($site_root_url, $test_id)
-    {
-        return new \Symfony\Component\HttpFoundation\Response(json_encode(array(
-            'site_root_url' => $site_root_url,
-            'test_id' => $test_id
-        )));
+    {        
+        $this->siteRootUrl = $site_root_url;
+        
+        /* @var $jobService \SimplyTestable\ApiBundle\Services\JobService */
+        $jobService = $this->get('simplytestable.services.jobservice');
+        
+        $job = $jobService->getEntityRepository()->findOneBy(array(
+            'id' => $test_id,
+            'user' => $this->getUser(),
+            'website' => $this->getWebsite()
+        ));        
+        
+        if (is_null($job)) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;            
+        }
+        
+        $output = $this->container->get('serializer')->serialize($job, 'json');   
+        $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter(); 
+        
+        return new \Symfony\Component\HttpFoundation\Response($formatter->format($output));
     }
     
     public function resultsAction($site_root_url, $test_id)

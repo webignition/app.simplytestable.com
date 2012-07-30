@@ -8,7 +8,7 @@ test_status:
     pattern: /tests/{site_root_url}/{test_id}/status/
     defaults: { _controller: SimplyTestableApiBundle:Tests:status, _format: json }    
     requirements:
-        site_root_url: ".+"    
+        site_root_url: ".+"
     
 test_results:
     pattern: /tests/{site_root_url}/{test_id}/results/
