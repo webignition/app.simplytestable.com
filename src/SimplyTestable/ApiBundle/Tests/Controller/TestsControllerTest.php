@@ -44,17 +44,24 @@ class TestsControllerTest extends BaseControllerJsonTestCase {
     }
     
     public function testStatusAction() {
-        $controllerName = 'SimplyTestable\ApiBundle\Controller\TestsController';
-        $controller = $this->createController($controllerName);
         /* @var $controller \SimplyTestable\ApiBundle\Controller\TestsController */
         
-        $response = $controller->statusAction('http:\/\/example.com', 1);
+        $this->setupDatabase();
+        
+        $controllerName = 'SimplyTestable\ApiBundle\Controller\TestsController';
+        $controller = $this->createController($controllerName);
+        $controller->startAction('http://example.com');        
+        
+        $response = $controller->statusAction('http://example.com', 1);
         $responseJsonObject = json_decode($response->getContent());
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $this->assertEquals('http:\/\/example.com', $responseJsonObject->site_root_url);
-        $this->assertEquals(1, $responseJsonObject->test_id);
+        $this->assertEquals(1, $responseJsonObject->id);
+        $this->assertEquals('public', $responseJsonObject->user);
+        $this->assertEquals('http://example.com/', $responseJsonObject->website);        
+        $this->assertEquals('new', $responseJsonObject->state);
+        $this->assertEquals(0, count($responseJsonObject->tasks));
     }    
     
     public function testResultsAction() {
