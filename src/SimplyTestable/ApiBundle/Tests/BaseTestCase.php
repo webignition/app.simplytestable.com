@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 
 abstract class BaseTestCase extends WebTestCase {
+    
+    const FIXTURES_DATA_RELATIVE_PATH = '/Fixtures/Data';
 
     /**
      *
@@ -36,16 +38,17 @@ abstract class BaseTestCase extends WebTestCase {
         $kernel->boot();
         $this->application = new Application($kernel);
         $this->application->setAutoExit(false);
-    }    
+    }
+    
 
     protected function runConsole($command, Array $options = array()) {
         $args = array(
             'app/console',
             $command,
             '-e',
-            'test'//,
-            //'-q',
-            //'-n'
+            'test',
+            '-q',
+            '-n'
         );        
         
         foreach ($options as $key => $value) {
@@ -62,9 +65,11 @@ abstract class BaseTestCase extends WebTestCase {
     }
     
     protected function setupDatabase() {
-        $this->runConsole("doctrine:database:drop", array("--force" => true));
-        $this->runConsole("doctrine:database:create");        
-        $this->runConsole("doctrine:migrations:migrate", array("--no-interaction" => true));        
+        exec('php app/console doctrine:database:drop -e test --force && php app/console doctrine:database:create -e test && php app/console doctrine:migrations:migrate -e test --no-interaction');
+        //$this->runConsole("doctrine:database:drop", array("--force" => true));
+        //$this->runConsole("doctrine:database:create");        
+        //$this->runConsole("doctrine:migrations:migrate", array("--no-interaction" => true));        
+        //exec('php app/console doctrine:migrations:migrate --no-interaction');
     }    
 
     /**
@@ -100,5 +105,15 @@ abstract class BaseTestCase extends WebTestCase {
 
         return $request;
     }
+    
+    
+    /**
+     *
+     * @param string $testName
+     * @return string
+     */
+    protected function getFixturesDataPath($testName) {
+        return __DIR__ . self::FIXTURES_DATA_RELATIVE_PATH . '/' . str_replace('\\', DIRECTORY_SEPARATOR, get_class($this)) . '/' . $testName;
+    }    
 
 }
