@@ -80,7 +80,7 @@ class Task
      * @return string
      */
     public function getPublicSerializedState() {
-        return (string)$this->getState();
+        return str_replace('task-', '', (string)$this->getState());
     }  
     
     /**

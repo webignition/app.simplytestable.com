@@ -97,7 +97,7 @@ class State
      * @return string
      */
     public function __toString() {
-        return str_replace('job-', '', $this->getName());
+        return $this->getName();
     }
     
     
