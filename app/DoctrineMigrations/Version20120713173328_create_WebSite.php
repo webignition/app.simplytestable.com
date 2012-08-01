@@ -2,7 +2,7 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\ApiBundle\Migration\BaseMigration,
+use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
     Doctrine\DBAL\Schema\Schema;
 
 /**

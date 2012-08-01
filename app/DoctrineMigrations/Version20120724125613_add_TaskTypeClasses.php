@@ -2,7 +2,7 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\ApiBundle\Migration\EntityModificationMigration,
+use SimplyTestable\BaseMigrationsBundle\Migration\EntityModificationMigration,
  SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass,
     Doctrine\DBAL\Schema\Schema;
 
