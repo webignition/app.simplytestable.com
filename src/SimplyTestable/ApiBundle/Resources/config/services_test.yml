@@ -1,6 +1,6 @@
 services:
   simplytestable.services.httpClient:
-    class:  webignition\Http\Client\Client
+    class:  webignition\Http\Mock\Client\Client
     public: false
   
   simplytestable.services.websiteservice:
