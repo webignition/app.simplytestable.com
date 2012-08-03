@@ -95,7 +95,7 @@ class JobPrepareCommand extends ContainerAwareCommand
             $this->websiteService = $this->getContainer()->get('simplytestable.services.websiteservice');
             
             if (!is_null($this->httpFixturePath)) {
-                $this->websiteService->getHttpClient()->setMockResponsesPath($this->httpFixturePath);
+                $this->websiteService->getHttpClient()->getStoredResponseList()->setFixturesPath($this->httpFixturePath);
             }
         }
         
