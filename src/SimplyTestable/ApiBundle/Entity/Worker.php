@@ -24,7 +24,7 @@ class Worker
      * 
      * @ORM\Column(type="string", unique=true, nullable=false)
      */
-    protected $url;
+    protected $hostname;
     
     
     /**
