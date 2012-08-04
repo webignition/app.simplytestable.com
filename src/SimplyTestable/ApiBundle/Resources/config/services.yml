@@ -1,8 +1,7 @@
 services:
   simplytestable.services.httpClient:
     class:  webignition\Http\Client\Client
-    public: false
-  
+
   simplytestable.services.websiteservice:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
     arguments: 
