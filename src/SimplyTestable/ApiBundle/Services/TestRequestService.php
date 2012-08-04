@@ -12,7 +12,7 @@ class TestRequestService extends RequestService {
      * @return \SimplyTestable\ApiBundle\Services\RequestService 
      */
     public function setRequest(Request $request) {
-        $this->request = null;
+        $this->request = null;        
         return $this;
     }
     

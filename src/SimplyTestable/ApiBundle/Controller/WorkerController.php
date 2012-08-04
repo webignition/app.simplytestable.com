@@ -3,32 +3,44 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-//use Symfony\Component\HttpFoundation\Response;
-//use SimplyTestable\ApiBundle\Entity\Job\Job;
-//use SimplyTestable\ApiBundle\Entity\WebSite;
-//use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Services\WorkerService;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputDefinition;
 
-class WorkerController extends Controller
+class WorkerController extends ApiController
 {    
+    public function __construct() {
+        $this->setInputDefinitions(array(
+            'activateAction' => new InputDefinition(array(
+                new InputArgument('hostname', InputArgument::REQUIRED, 'Hostname of the worker to be activated'),
+                new InputArgument('token', InputArgument::REQUIRED, 'Token to pass back to worker to verfiy')
+            ))
+        ));
+        
+        $this->setRequestTypes(array(
+            'activateAction' => HTTP_METH_GET
+        ));
+    }
+    
     
     public function activateAction()
     {        
-        var_dump("cp01");
-        exit();
-//        $this->siteRootUrl = $site_root_url;         
-//        
-//        /* @var $jobService \SimplyTestable\ApiBundle\Services\JobService */
-//        $jobService = $this->get('simplytestable.services.jobservice');
-//        $job = $jobService->create(
-//            $this->getUser(),
-//            $this->getWebsite(),
-//            $this->getTaskTypes()
-//        );
-//     
-//        $output = $this->container->get('serializer')->serialize($job, 'json');   
-//        $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter(); 
-//        
-//        return new Response($formatter->format($output));
-    }    
+        $this->getWorkerService()->verify($arguments->get('hostname'), $arguments->get('token'));
+        return $this->sendResponse('ok');
+    }
+    
+    
+    /**
+     *
+     * @return WorkerService
+     */
+    private function getWorkerService() {
+        return $this->container->get('simplytestable.services.workerservice');
+    }
+    
+    
+
 
 }

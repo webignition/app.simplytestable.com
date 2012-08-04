@@ -115,8 +115,8 @@ abstract class BaseTestCase extends WebTestCase {
      *
      * @return \Symfony\Component\HttpFoundation\Request The hydrated Request object.
      */
-    protected function createWebRequest() {
-        $request = new \Symfony\Component\HttpFoundation\Request;
+    protected function createWebRequest() {        
+        $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
         $request->server->set('REMOTE_ADDR', '127.0.0.1');
 
         return $request;

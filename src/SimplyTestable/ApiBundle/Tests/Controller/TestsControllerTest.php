@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class TestsControllerTest extends BaseControllerJsonTestCase {
 
-    public function testStartAction() {        
+    public function testStartAction() {           
         $this->setupDatabase();
         
         $controllerName = 'SimplyTestable\ApiBundle\Controller\TestsController';
