@@ -35,3 +35,11 @@ services:
         emailCanonicalizer: "@fos_user.util.email_canonicalizer"
         objectManager: "@doctrine.orm.entity_manager"
         class: %fos_user.model.user.class%
+        
+  simplytestable.services.workerservice:
+    class:  SimplyTestable\ApiBundle\Services\WorkerService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"
+        
+  simplytestable.services.requestservice:
+    class:   SimplyTestable\ApiBundle\Services\RequestService
