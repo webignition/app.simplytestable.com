@@ -20,13 +20,14 @@ class WorkerController extends ApiController
         ));
         
         $this->setRequestTypes(array(
-            'activateAction' => HTTP_METH_GET
+            'activateAction' => HTTP_METH_POST
         ));
     }
     
     
     public function activateAction()
     {        
+        $arguments = $this->getArguments('activateAction');
         $this->getWorkerService()->verify($arguments->get('hostname'), $arguments->get('token'));
         return $this->sendResponse('ok');
     }

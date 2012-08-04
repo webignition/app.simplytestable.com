@@ -103,7 +103,7 @@ abstract class ApiController extends Controller
      * @param string $methodName
      * @return ParameterBag
      */
-    public function getArguments($methodName) {
+    public function getArguments($methodName) {        
         if (is_null($this->arguments)) {            
             if ($this->getRequestType($methodName) === HTTP_METH_POST) {
                 $this->arguments = $this->getRequestService()->getRequest()->request;

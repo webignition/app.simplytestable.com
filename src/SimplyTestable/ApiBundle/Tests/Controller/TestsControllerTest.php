@@ -8,7 +8,7 @@ class TestsControllerTest extends BaseControllerJsonTestCase {
         $this->setupDatabase();
         
         $controllerName = 'SimplyTestable\ApiBundle\Controller\TestsController';
-        $controller = $this->createController($controllerName);       
+        $controller = $this->createController($controllerName, 'startAction');       
         /* @var $controller \SimplyTestable\ApiBundle\Controller\TestsController */        
         
         $response1 = $controller->startAction('http://one.example.com');
@@ -49,7 +49,7 @@ class TestsControllerTest extends BaseControllerJsonTestCase {
         $this->setupDatabase();
         
         $controllerName = 'SimplyTestable\ApiBundle\Controller\TestsController';
-        $controller = $this->createController($controllerName);
+        $controller = $this->createController($controllerName, 'statusAction');
         $controller->startAction('http://example.com');        
         
         $response = $controller->statusAction('http://example.com', 1);
@@ -66,7 +66,7 @@ class TestsControllerTest extends BaseControllerJsonTestCase {
     
     public function testResultsAction() {
         $controllerName = 'SimplyTestable\ApiBundle\Controller\TestsController';
-        $controller = $this->createController($controllerName);
+        $controller = $this->createController($controllerName, 'resultsAction');
         /* @var $controller \SimplyTestable\ApiBundle\Controller\TestsController */
         
         $response = $controller->resultsAction('http:\/\/example.com', 1);

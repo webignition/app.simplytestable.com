@@ -58,7 +58,7 @@ class JobPrepareCommandTest extends BaseTestCase {
      * @return Job
      */
     private function createJob($canonicalUrl) {
-        return $this->getTestsController()->startAction($canonicalUrl);
+        return $this->getTestsController('startAction')->startAction($canonicalUrl);
     }
     
     
@@ -69,17 +69,18 @@ class JobPrepareCommandTest extends BaseTestCase {
      * @return Job
      */
     private function fetchJob($canonicalUrl, $id) {        
-        return $this->getTestsController()->statusAction($canonicalUrl, $id);    
+        return $this->getTestsController('statusAction')->statusAction($canonicalUrl, $id);    
     }
     
     
     /**
      *
+     * @param string $methodName
      * @return SimplyTestable\ApiBundle\Controller\TestsController
      */
-    private function getTestsController() {
+    private function getTestsController($methodName) {
         if (is_null($this->testsController)) {
-            $this->testsController = $this->createController(self::TESTS_CONTROLLER_NAME);
+            $this->testsController = $this->createController(self::TESTS_CONTROLLER_NAME, $methodName);
         }        
         
         return $this->testsController;
