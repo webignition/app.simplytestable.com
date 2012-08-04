@@ -16,6 +16,10 @@ test_results:
     requirements:
         site_root_url: ".+"
         
+worker_activate:
+  pattern: /worker/activate/
+  defaults: { _controller: SimplyTestableApiBundle:Worker:activate, _format: json }   
+        
 SimplyTestableApiBundle_homepage:
     pattern:  /hello/{name}
     defaults: { _controller: SimplyTestableApiBundle:Default:index }
