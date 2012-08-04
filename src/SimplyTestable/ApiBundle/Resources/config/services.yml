@@ -39,10 +39,10 @@ services:
     class:  SimplyTestable\ApiBundle\Services\WorkerService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
+        httpClient: "@simplytestable.services.httpClient"
         
   simplytestable.services.requestservice:
     class:   SimplyTestable\ApiBundle\Services\RequestService
-    
     
   simplytestable.controller.action_listener:
     class: SimplyTestable\ApiBundle\EventListener\BeforeListener

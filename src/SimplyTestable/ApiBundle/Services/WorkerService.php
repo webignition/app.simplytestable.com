@@ -11,6 +11,23 @@ class WorkerService extends EntityService {
     
     /**
      *
+     * @var \webignition\Http\Client\Client
+     */
+    private $httpClient;
+    
+    /**
+     *
+     * @param EntityManager $entityManager
+     * @param \webignition\Http\Client\Client $httpClient 
+     */
+    public function __construct(EntityManager $entityManager, \webignition\Http\Client\Client $httpClient) {
+        parent::__construct($entityManager);
+        $this->httpClient = $httpClient;
+        $this->httpClient->redirectHandler()->enable();
+    }    
+    
+    /**
+     *
      * @return string
      */
     protected function getEntityName() {
