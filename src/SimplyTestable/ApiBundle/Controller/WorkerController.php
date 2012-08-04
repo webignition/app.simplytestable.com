@@ -26,10 +26,13 @@ class WorkerController extends ApiController
     
     
     public function activateAction()
-    {        
-        $arguments = $this->getArguments('activateAction');
-        $this->getWorkerService()->verify($arguments->get('hostname'), $arguments->get('token'));
-        return $this->sendResponse('ok');
+    {
+        $verificationResponse = $this->getWorkerService()->verify(
+            $this->getArguments('activateAction')->get('hostname'),
+            $this->getArguments('activateAction')->get('token')
+        );
+        
+        return ($verificationResponse === true) ? $this->sendSuccessResponse() : $this->sendFailureResponse();
     }
     
     

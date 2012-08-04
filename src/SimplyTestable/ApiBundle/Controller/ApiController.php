@@ -147,7 +147,30 @@ abstract class ApiController extends Controller
     }
     
     
+    /**
+     *
+     * @param string $methodName
+     * @return Response
+     */
     public function sendMissingRequiredArgumentResponse($methodName) {
         return $this->sendResponse($this->getInputDefinition($methodName));        
+    }
+    
+    
+    /**
+     *
+     * @return Response
+     */
+    public function sendSuccessResponse() {
+        return $this->sendResponse('ok');
+    }
+    
+    
+    /**
+     * 
+     * @return Response
+     */
+    public function sendFailureResponse() {
+        return $this->sendResponse('failure');
     }
 }
