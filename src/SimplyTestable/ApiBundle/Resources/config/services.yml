@@ -43,3 +43,9 @@ services:
         
   simplytestable.services.requestservice:
     class:   SimplyTestable\ApiBundle\Services\RequestService
+    
+    
+  simplytestable.controller.action_listener:
+    class: SimplyTestable\ApiBundle\EventListener\BeforeListener
+    tags:
+      - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }    

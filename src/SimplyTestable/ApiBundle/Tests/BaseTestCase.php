@@ -5,6 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpFoundation\Request;
 
 abstract class BaseTestCase extends WebTestCase {
     
@@ -32,11 +35,8 @@ abstract class BaseTestCase extends WebTestCase {
 
     public function setUp() {        
         $this->client = static::createClient();
-        $this->container = $this->client->getKernel()->getContainer();
-
-        $kernel = new \AppKernel("test", true);
-        $kernel->boot();
-        $this->application = new Application($kernel);
+        $this->container = $this->client->getKernel()->getContainer();        
+        $this->application = new Application(self::$kernel);
         $this->application->setAutoExit(false);
     }
     
@@ -75,22 +75,38 @@ abstract class BaseTestCase extends WebTestCase {
     /**
      * Builds a Controller object and the request to satisfy it. Attaches the request
      * to the object and to the container.
+     * 
+     * 'kernel_controller' events are fired.
      *
      * @param string The full path to the Controller class.
+     * @param string $controllerMethod Name of the method that will be called on the controller
      * @param array An array of parameters to pass into the request.
      * @return \Symfony\Bundle\FrameworkBundle\Controller\Controller The built Controller object.
      */
-    protected function createController($controllerClass, array $parameters = array(), array $query = array()) {
+    protected function createController($controllerClass, $controllerMethod, array $parameters = array(), array $query = array()) {
         $request = $this->createWebRequest();
+        $request->attributes->set('_controller', $controllerClass.'::'.$controllerMethod);
         $request->request->add($parameters);
         $request->query->add($query);
-
         $this->container->set('request', $request);
+              
+        $controllerCallable = $this->getControllerCallable($request);        
+        $controllerCallable[0]->setContainer($this->container);
+        
+        $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher->dispatch('kernel.controller', new \Symfony\Component\HttpKernel\Event\FilterControllerEvent(
+                self::$kernel,
+                $controllerCallable,
+                $request,
+                HttpKernelInterface::MASTER_REQUEST
+        ));
 
-        $controller = new $controllerClass;
-        $controller->setContainer($this->container);
-
-        return($controller);
+        return $controllerCallable[0];
+    }
+    
+    private function getControllerCallable(Request $request) {
+        $controllerResolver = new \Symfony\Component\HttpKernel\Controller\ControllerResolver();        
+        return $controllerResolver->getController($request);                
     }
 
     /**
