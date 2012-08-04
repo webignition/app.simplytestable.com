@@ -8,7 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
 
-class TestsController extends Controller
+class TestsController extends ApiController
 {
     private $siteRootUrl = null;
     
@@ -24,11 +24,8 @@ class TestsController extends Controller
             $this->getWebsite(),
             $this->getTaskTypes()
         );
-     
-        $output = $this->container->get('serializer')->serialize($job, 'json');   
-        $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter(); 
         
-        return new Response($formatter->format($output));
+        return $this->sendResponse($job);
     }    
     
     public function statusAction($site_root_url, $test_id)
@@ -50,10 +47,7 @@ class TestsController extends Controller
             return $response;            
         }
         
-        $output = $this->container->get('serializer')->serialize($job, 'json');   
-        $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter(); 
-        
-        return new \Symfony\Component\HttpFoundation\Response($formatter->format($output));
+        return $this->sendResponse($job);
     }
     
     public function resultsAction($site_root_url, $test_id)
