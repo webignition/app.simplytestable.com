@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Entity\State;
+use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 
 
 class WorkerActivationRequestService extends EntityService {
@@ -14,22 +15,44 @@ class WorkerActivationRequestService extends EntityService {
     
     /**
      *
+     * @var Logger
+     */
+    private $logger;    
+    
+    /**
+     *
      * @var \SimplyTestable\ApiBundle\Services\StateService
      */
     private $stateService;    
     
     /**
      *
+     * @var \webignition\Http\Client\Client
+     */
+    private $httpClient;      
+    
+    /**
+     *
      * @param EntityManager $entityManager
+     * @param Logger $logger
      * @param \SimplyTestable\ApiBundle\Services\StateService $stateService 
+     * @param \webignition\Http\Client\Client $httpClient 
      */
     public function __construct(
             EntityManager $entityManager,
-            \SimplyTestable\ApiBundle\Services\StateService $stateService)
+            Logger $logger,
+            \SimplyTestable\ApiBundle\Services\StateService $stateService,
+            \webignition\Http\Client\Client $httpClient)
     {
         parent::__construct($entityManager);        
+        
+        $this->logger = $logger;
         $this->stateService = $stateService;
-    }    
+        $this->httpClient = $httpClient;
+    }  
+    
+   
+    
     
     /**
      *
@@ -51,6 +74,33 @@ class WorkerActivationRequestService extends EntityService {
         }
         
         return $this->fetch($worker);     
+    }
+    
+    
+    /**
+     *
+     * @param WorkerActivationRequest $activationRequest
+     * @return boolean
+     */
+    public function verify(WorkerActivationRequest $activationRequest) {
+        $this->logger->info("WorkerActivationRequestService::verify: Initialising");
+        
+        $verifyUrl = 'http:// ' . $activationRequest->getWorker()->getHostname() . '/verify/';
+        
+        $httpRequest = new \HttpRequest($verifyUrl, HTTP_METH_POST);        
+        
+        $this->logger->info("WorkerActivationRequestService::verify: Requesting verification with " . $verifyUrl);
+
+        $response = $this->httpClient->getResponse($httpRequest);
+
+        $this->logger->info("WorkerActivationRequestService::verify: " . $verifyUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
+
+        if ($response->getResponseCode() !== 200) {
+            $this->logger->warn("WorkerActivationRequestService::verify: Activation request failed");
+            return false;
+        }
+
+        return true;        
     }
     
     

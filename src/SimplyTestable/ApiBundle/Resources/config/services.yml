@@ -54,4 +54,6 @@ services:
     class:  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
+        logger: "@logger"
         stateService: "@simplytestable.services.stateservice"
+        httpClient: "@simplytestable.services.httpClient"

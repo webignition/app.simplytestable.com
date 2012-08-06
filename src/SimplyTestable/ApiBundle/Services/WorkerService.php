@@ -51,6 +51,16 @@ class WorkerService extends EntityService {
     
     /**
      *
+     * @param int $id
+     * @return \SimplyTestable\ApiBundle\Entity\Worker
+     */
+    public function getById($id) {
+        return $this->getEntityRepository()->find($id);
+    }
+    
+    
+    /**
+     *
      * @return Worker
      */
     public function get($hostname) {
