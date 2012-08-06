@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * @ORM\Entity
@@ -27,6 +28,28 @@ class WorkerActivationRequest
      * 
      */  
     protected $worker;
+    
+    
+    /**
+     *
+     * @var SimplyTestable\ApiBundle\Entity\State
+     * 
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
+     * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
+     * 
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
+     */
+    protected $state;   
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedState() {
+        return str_replace('worker-activation-request-', '', (string)$this->getState());
+    }    
+    
 
     /**
      * Get id
@@ -60,4 +83,37 @@ class WorkerActivationRequest
     {
         return $this->worker;
     }
+    
+    
+    /**
+     * Set state
+     *
+     * @param SimplyTestable\ApiBundle\Entity\State $state
+     * @return \SimplyTestable\ApiBundle\Entity\WorkerActivationRequest
+     */
+    public function setState(State $state)
+    {
+        $this->state = $state;
+        return $this;
+    }
+
+    /**
+     * Get state
+     *
+     * @return use SimplyTestable\ApiBundle\Entity\State 
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\WorkerActivationRequest 
+     */
+    public function setNextState() {
+        $this->state = $this->getState()->getNextState();
+        return $this;
+    }    
 }
