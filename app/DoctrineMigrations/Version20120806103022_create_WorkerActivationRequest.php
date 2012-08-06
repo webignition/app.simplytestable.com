@@ -11,13 +11,7 @@ use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
 class Version20120806103022_create_WorkerActivationRequest extends BaseMigration
 {
     public function up(Schema $schema)
-    {
-/**
-        //$this->addSql("ALTER TABLE WorkerActivationRequest ADD state_id INT NOT NULL");
-        //$this->addSql("ALTER TABLE WorkerActivationRequest ADD CONSTRAINT FK_57FF32525D83CC1 FOREIGN KEY (state_id) REFERENCES State (id)");
-        $this->addSql("CREATE INDEX IDX_57FF32525D83CC1 ON WorkerActivationRequest (state_id)"); 
- */        
-        
+    {       
         
         $this->statements['mysql'] = array(
             "CREATE TABLE WorkerActivationRequest (
