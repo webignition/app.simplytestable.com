@@ -2,52 +2,95 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
-class WorkerControllerTest extends BaseControllerJsonTestCase {
+use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
+use SimplyTestable\ApiBundle\Services\WorkerService;
 
-    public function testActivateActionWithValidToken() {         
+class WorkerControllerTest extends BaseControllerJsonTestCase {
+    
+    const WORKER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\WorkerController';
+
+    public function testActivateAction() {
         $this->setupDatabase();
         
+        $hostname = 'test.worker.simplytestable.com';
+        $token = 'valid-token';
+        
         $_POST = array(
-            'hostname' => 'test.worker.simplytestable.com',
-            'token' => 'valid-token'
+            'hostname' => $hostname,
+            'token' => $token
         );        
         
-        $controllerName = 'SimplyTestable\ApiBundle\Controller\WorkerController';
-        $controller = $this->createController($controllerName, 'activateAction');
         /* @var $controller \SimplyTestable\ApiBundle\Controller\WorkerController */
+        $controller = $this->createController(self::WORKER_CONTROLLER_NAME, 'activateAction');        
         
         $this->container->get('simplytestable.services.httpClient')->getStoredResponseList()->setFixturesPath(
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'                
         );
         
         $response = $controller->activateAction();
-        $responseObject = json_decode($response->getContent());
+        
+        $worker = $this->getWorkerService()->get($_POST['hostname']);
+        $activationRequest = $this->getWorkerRequestActivationService()->get($worker);
         
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals("ok", $responseObject);
-    }    
-
+        $this->assertEquals($hostname, $worker->getHostname());        
+        $this->assertTrue($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState()));
+        $this->assertTrue($activationRequest->getWorker()->equals($worker));                
+    }
     
-    public function testActivateActionWithInValidToken() {         
-//        $this->setupDatabase();
-//        
-//        $_POST = array(
-//            'hostname' => 'test.worker.simplytestable.com',
-//            'token' => 'invalid-token'
-//        );        
-//        
-//        $controllerName = 'SimplyTestable\ApiBundle\Controller\WorkerController';
-//        $controller = $this->createController($controllerName, 'activateAction');
-//        /* @var $controller \SimplyTestable\ApiBundle\Controller\WorkerController */
-//        
-//        $this->container->get('simplytestable.services.httpClient')->getStoredResponseList()->setFixturesPath(
-//            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'                
-//        );
-//        
-//        $response = $controller->activateAction();
-//        $responseObject = json_decode($response->getContent());
-//        
-//        $this->assertEquals(200, $response->getStatusCode());
-//        $this->assertEquals("failure", $responseObject);
-    }     
+    public function testActivateActionWithMissingHostname() {
+        $this->setupDatabase();
+        
+        $token = 'valid-token';
+        
+        $_POST = array(
+            'token' => $token
+        );        
+        
+        try {
+            $this->createController(self::WORKER_CONTROLLER_NAME, 'activateAction');
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $httpException) {
+            return $this->assertEquals(400, $httpException->getStatusCode());
+        } 
+        
+        $this->fail('WorkerController::activateAction() didn\'t throw a 400 HttpException for a missing hostname');  
+    }
+    
+    public function testActivateActionWithMissingToken() {
+        $this->setupDatabase();
+        
+        $hostname = 'test.worker.simplytestable.com';
+        
+        $_POST = array(
+            'hostname' => $hostname
+        );        
+        
+        try {
+            $this->createController(self::WORKER_CONTROLLER_NAME, 'activateAction');
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $httpException) {
+            return $this->assertEquals(400, $httpException->getStatusCode());
+        } 
+        
+        $this->fail('WorkerController::activateAction() didn\'t throw a 400 HttpException for a missing hostname');  
+    }    
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\WorkerService
+     */
+    private function getWorkerService() {
+        return $this->container->get('simplytestable.services.workerservice');
+    }
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\WorkerActivationRequestService 
+     */
+    private function getWorkerRequestActivationService() {
+        return $this->container->get('simplytestable.services.workeractivationrequestservice');
+    }
+    
 }
+
+

@@ -7,4 +7,3 @@ Accept-Ranges: bytes
 Content-Length: 0
 Vary: Accept-Encoding,User-Agent
 Content-Type: application/json
-

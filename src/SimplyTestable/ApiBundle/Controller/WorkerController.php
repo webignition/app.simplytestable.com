@@ -4,10 +4,14 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use SimplyTestable\ApiBundle\Services\WorkerService;
+use SimplyTestable\ApiBundle\Services\WorkerRequestActivationService;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputDefinition;
+use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
+
 
 class WorkerController extends ApiController
 {    
@@ -27,12 +31,17 @@ class WorkerController extends ApiController
     
     public function activateAction()
     {
-        $verificationResponse = $this->getWorkerService()->verify(
-            $this->getArguments('activateAction')->get('hostname'),
-            $this->getArguments('activateAction')->get('token')
-        );
+        $worker = $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname'));
+        $activationRequest = $this->getWorkerRequestActivationService()->get($worker);
         
-        return ($verificationResponse === true) ? $this->sendSuccessResponse() : $this->sendFailureResponse();
+        if ($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState())) {
+            return $this->sendSuccessResponse();
+        }
+        
+        $activationRequest->setState($this->getWorkerRequestActivationService()->getStartingState());
+        $this->getWorkerRequestActivationService()->persistAndFlush($activationRequest);
+        
+        return $this->sendSuccessResponse();
     }
     
     
@@ -42,6 +51,15 @@ class WorkerController extends ApiController
      */
     private function getWorkerService() {
         return $this->container->get('simplytestable.services.workerservice');
+    }
+    
+    
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\WorkerActivationRequestService 
+     */
+    private function getWorkerRequestActivationService() {
+        return $this->container->get('simplytestable.services.workeractivationrequestservice');        
     }
     
     

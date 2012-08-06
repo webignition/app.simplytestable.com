@@ -55,13 +55,17 @@ abstract class ApiController extends Controller
     /**
      *
      * @param mixed $object
+     * @param int statusCode
      * @return \Symfony\Component\HttpFoundation\Response 
      */
-    protected function sendResponse($object) {        
+    protected function sendResponse($object, $statusCode = 200) {        
         $output = $this->container->get('serializer')->serialize($object, 'json');   
         $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter(); 
         
-        return new Response($formatter->format($output)); 
+        $response = new Response($formatter->format($output)); 
+        $response->setStatusCode($statusCode);
+        
+        return $response;
     }
     
     
@@ -162,7 +166,7 @@ abstract class ApiController extends Controller
      * @return Response
      */
     public function sendSuccessResponse() {
-        return $this->sendResponse('ok');
+        return $this->sendResponse('');
     }
     
     
@@ -171,6 +175,6 @@ abstract class ApiController extends Controller
      * @return Response
      */
     public function sendFailureResponse() {
-        return $this->sendResponse('failure');
+        return $this->sendResponse('', 400);
     }
 }

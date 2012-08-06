@@ -39,6 +39,7 @@ services:
     class:  SimplyTestable\ApiBundle\Services\WorkerService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
+        workeractivationRequestService: "@simplytestable.services.workeractivationrequestservice"
         httpClient: "@simplytestable.services.httpClient"
         
   simplytestable.services.requestservice:
@@ -48,3 +49,9 @@ services:
     class: SimplyTestable\ApiBundle\EventListener\BeforeListener
     tags:
       - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }    
+      
+  simplytestable.services.workeractivationrequestservice:
+    class:  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"
+        stateService: "@simplytestable.services.stateservice"
