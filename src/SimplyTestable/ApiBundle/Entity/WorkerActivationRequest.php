@@ -39,7 +39,16 @@ class WorkerActivationRequest
      * 
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
      */
-    protected $state;   
+    protected $state;
+    
+    
+    /**
+     *
+     * @var string 
+     * 
+     * @ORM\Column(type="string", nullable=false)
+     */  
+    protected $token;
     
     
     /**
@@ -115,5 +124,25 @@ class WorkerActivationRequest
     public function setNextState() {
         $this->state = $this->getState()->getNextState();
         return $this;
-    }    
+    } 
+    
+    
+    /**
+     *
+     * @param type $token
+     * @return \SimplyTestable\ApiBundle\Entity\WorkerActivationRequest 
+     */
+    public function setToken($token) {
+        $this->token = $token;
+        return $this;
+    }
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function getToken() {
+        return $this->token;
+    }
 }

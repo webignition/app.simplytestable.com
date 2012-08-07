@@ -18,6 +18,7 @@ class Version20120806103022_create_WorkerActivationRequest extends BaseMigration
                 id INT AUTO_INCREMENT NOT NULL,
                 worker_id INT DEFAULT NULL,
                 state_id INT NOT NULL,
+                token VARCHAR(255) NOT NULL,
                 UNIQUE INDEX UNIQ_57FF325218F45C82 (worker_id),
                 INDEX IDX_57FF32525D83CC1(state_id),
                 PRIMARY KEY(id))
@@ -31,6 +32,7 @@ class Version20120806103022_create_WorkerActivationRequest extends BaseMigration
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 worker_id INT DEFAULT NULL,
                 state_id INT NOT NULL,
+                token VARCHAR(255) NOT NULL,
                 FOREIGN KEY(worker_id) REFERENCES Worker (id),
                 FOREIGN KEY(state_id) REFERENCES State (id))",
             "CREATE UNIQUE INDEX UNIQ_57FF325218F45C82 ON WorkerActivationRequest (worker_id)",
