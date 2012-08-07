@@ -46,7 +46,9 @@ services:
     class:   SimplyTestable\ApiBundle\Services\RequestService
     
   simplytestable.controller.action_listener:
-    class: SimplyTestable\ApiBundle\EventListener\BeforeListener
+    class: SimplyTestable\ApiBundle\EventListener\BeforeListener    
+    arguments:
+        logger: "@logger"
     tags:
       - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }    
       
@@ -57,3 +59,7 @@ services:
         logger: "@logger"
         stateService: "@simplytestable.services.stateservice"
         httpClient: "@simplytestable.services.httpClient"
+        urlService: "@simplytestable.services.urlService"
+        
+  simplytestable.services.urlService:
+    class:  SimplyTestable\ApiBundle\Services\UrlService           
