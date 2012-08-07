@@ -30,13 +30,11 @@ class WorkerController extends ApiController
     
     
     public function activateAction()
-    {
-        $worker = $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname'));
-        if ($this->getWorkerRequestActivationService()->has($worker)) {
-            $activationRequest = $this->getWorkerRequestActivationService()->fetch($worker);
-        } else {
-            $this->getWorkerRequestActivationService()->create($worker, $this->getArguments('activateAction')->get('token'));
-        }
+    {      
+        $activationRequest = $this->getActivationRequest(
+            $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname')),
+            $this->getArguments('activateAction')->get('token')
+        );
         
         if ($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState())) {
             return $this->sendSuccessResponse();
@@ -46,6 +44,21 @@ class WorkerController extends ApiController
         $this->getWorkerRequestActivationService()->persistAndFlush($activationRequest);
         
         return $this->sendSuccessResponse();
+    }
+    
+    
+    /**
+     *
+     * @param Worker $worker
+     * @param string $token
+     * @return SimplyTestable\ApiBundle\Entity\WorkerActivationRequest 
+     */
+    private function getActivationRequest(Worker $worker, $token = null) {
+        if ($this->getWorkerRequestActivationService()->has($worker)) {
+            return $this->getWorkerRequestActivationService()->fetch($worker);
+        }
+        
+        return $this->getWorkerRequestActivationService()->create($worker, $token);
     }
     
     
