@@ -32,7 +32,11 @@ class WorkerController extends ApiController
     public function activateAction()
     {
         $worker = $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname'));
-        $activationRequest = $this->getWorkerRequestActivationService()->get($worker);
+        if ($this->getWorkerRequestActivationService()->has($worker)) {
+            $activationRequest = $this->getWorkerRequestActivationService()->fetch($worker);
+        } else {
+            $this->getWorkerRequestActivationService()->create($worker, $this->getArguments('activateAction')->get('token'));
+        }
         
         if ($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState())) {
             return $this->sendSuccessResponse();

@@ -29,7 +29,13 @@ class WorkerActivationRequestService extends EntityService {
      *
      * @var \webignition\Http\Client\Client
      */
-    private $httpClient;      
+    private $httpClient;  
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Service\UrlService $urlService
+     */
+    private $urlService;    
     
     /**
      *
@@ -37,18 +43,21 @@ class WorkerActivationRequestService extends EntityService {
      * @param Logger $logger
      * @param \SimplyTestable\ApiBundle\Services\StateService $stateService 
      * @param \webignition\Http\Client\Client $httpClient 
+     * @param \SimplyTestable\ApiBundle\Services\UrlService $urlService
      */
     public function __construct(
             EntityManager $entityManager,
             Logger $logger,
             \SimplyTestable\ApiBundle\Services\StateService $stateService,
-            \webignition\Http\Client\Client $httpClient)
+            \webignition\Http\Client\Client $httpClient,
+            \SimplyTestable\ApiBundle\Services\UrlService $urlService)            
     {
         parent::__construct($entityManager);        
         
         $this->logger = $logger;
         $this->stateService = $stateService;
         $this->httpClient = $httpClient;
+        $this->urlService = $urlService;
     }  
     
    
@@ -65,42 +74,40 @@ class WorkerActivationRequestService extends EntityService {
     
     /**
      *
-     * @param Worker $worker
-     * @return SimplyTestable\ApiBundle\Entity\WorkerActivationRequest
-     */
-    public function get(Worker $worker) {       
-        if (!$this->has($worker)) {
-            $this->create($worker);
-        }
-        
-        return $this->fetch($worker);     
-    }
-    
-    
-    /**
-     *
      * @param WorkerActivationRequest $activationRequest
      * @return boolean
      */
     public function verify(WorkerActivationRequest $activationRequest) {
         $this->logger->info("WorkerActivationRequestService::verify: Initialising");
         
-        $verifyUrl = 'http:// ' . $activationRequest->getWorker()->getHostname() . '/verify/';
+        $verifyUrl = $this->urlService->prepare('http://' . $activationRequest->getWorker()->getHostname() . '/verify/');        
         
-        $httpRequest = new \HttpRequest($verifyUrl, HTTP_METH_POST);        
+        $httpRequest = new \HttpRequest($verifyUrl, HTTP_METH_POST);
+        $httpRequest->setPostFields(array(
+            'hostname' => $activationRequest->getWorker()->getHostname(),
+            'token' => $activationRequest->getToken()
+        ));
         
         $this->logger->info("WorkerActivationRequestService::verify: Requesting verification with " . $verifyUrl);
+        
+        try {
+            $response = $this->httpClient->getResponse($httpRequest);
+            $this->logger->info("WorkerActivationRequestService::verify: " . $verifyUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
 
-        $response = $this->httpClient->getResponse($httpRequest);
+            if ($response->getResponseCode() !== 200) {
+                $this->logger->warn("WorkerActivationRequestService::verify: Activation request failed");
+                return false;
+            }
+            
+            $activationRequest->setNextState();
+            $this->persistAndFlush($activationRequest);
 
-        $this->logger->info("WorkerActivationRequestService::verify: " . $verifyUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
-
-        if ($response->getResponseCode() !== 200) {
-            $this->logger->warn("WorkerActivationRequestService::verify: Activation request failed");
+            return true;           
+            
+        } catch (CurlException $curlException) {
+            $this->logger->info("WorkerActivationRequestService::verify: " . $verifyUrl . ": " . $curlException->getMessage());            
             return false;
-        }
-
-        return true;        
+        }    
     }
     
     
@@ -109,7 +116,7 @@ class WorkerActivationRequestService extends EntityService {
      * @param Worker $worker
      * @return boolean
      */
-    private function has(Worker $worker) {
+    public function has(Worker $worker) {
         return !is_null($this->fetch($worker));
     }
     
@@ -119,7 +126,7 @@ class WorkerActivationRequestService extends EntityService {
      * @param Worker $worker
      * @return WorkerActivationRequest 
      */
-    private function fetch(Worker $worker) {
+    public function fetch(Worker $worker) {
         return $this->getEntityRepository()->findOneBy(
             array('worker' => $worker
         ));
@@ -129,12 +136,14 @@ class WorkerActivationRequestService extends EntityService {
     /**
      *
      * @param Worker $worker
+     * @param string $token
      * @return WorkerActivationRequest 
      */
-    private function create(Worker $worker) {             
+    public function create(Worker $worker, $token) {             
         $activationRequest = new WorkerActivationRequest();
         $activationRequest->setState($this->getStartingState());
         $activationRequest->setWorker($worker);
+        $activationRequest->setToken($token);
         
         return $this->persistAndFlush($activationRequest);
     }    

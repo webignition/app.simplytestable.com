@@ -25,12 +25,16 @@ class WorkerActivateVerifyCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {         
         if ($input->hasArgument('http-fixture-path')) {
-            $this->getContainer()->get('simplytestable.services.httpclient')->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
+            $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
+            
+            if ($httpClient instanceof \webignition\Http\Mock\Client\Client) {
+                $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
+            }            
         }
         
         $id = (int)$input->getArgument('id');
         $worker = $this->getWorkerService()->getById($id);
-        $activationRequest = $this->getWorkerActivationRequestService()->get($worker);
+        $activationRequest = $this->getWorkerActivationRequestService()->fetch($worker);
         
         if ($this->getWorkerActivationRequestService()->verify($activationRequest) === false) {
             throw new \LogicException('Worker activation verification failed, check log for details');
