@@ -6,9 +6,27 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\Console\Input\InputArgument;
 use SimplyTestable\ApiBundle\Controller\ApiController;
+use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 
 class BeforeListener
 {
+    
+    /**
+     *
+     * @var Logger
+     */
+    private $logger;
+    
+    /**
+     *
+     * @param Logger $logger
+     */
+    public function __construct(
+            Logger $logger
+    )
+    {        
+        $this->logger = $logger;
+    }    
 
     public function onKernelController(FilterControllerEvent $event)
     {     
@@ -32,6 +50,7 @@ class BeforeListener
                 /* @var $inputArgument InputArgument */
                 if ($inputArgument->isRequired()) {
                     if (!$methodArguments->has($inputArgument->getName())) {
+                        $this->logger->warn('BeforeListener' . get_class($controller) . '::' . $methodName.': missing required argument');
                         throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
                     }
                 }
