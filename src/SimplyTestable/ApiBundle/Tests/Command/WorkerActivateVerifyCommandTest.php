@@ -6,25 +6,19 @@ use SimplyTestable\ApiBundle\Tests\BaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 
-class WorkerActivateVerifyCommandTest extends BaseTestCase {    
-    
-    const TESTS_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TestsController';
-    
-    
-    /**
-     *
-     * @var SimplyTestable\ApiBundle\Controller\TestsController
-     */
-    private $testsController = null;
+class WorkerActivateVerifyCommandTest extends BaseTestCase {
 
     public function testSuccessfulActivateVerifyWorker() {        
         $this->setupDatabase();
         
-        $worker = $this->getWorkerService()->get('test.worker.simplytestable.com');
-        $this->assertEquals(1, $worker->getId());
-        $this->assertEquals($worker->getHostname(), 'test.worker.simplytestable.com');
+        $workerHostname = 'test.worker.simplytestable.com';
+        $activationRequestToken = 'token';
         
-        $activationRequest = $this->createActivationRequest($worker);
+        $worker = $this->getWorkerService()->get($workerHostname);
+        $this->assertEquals(1, $worker->getId());
+        $this->assertEquals($workerHostname, $worker->getHostname());
+        
+        $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
         
         $this->assertTrue($activationRequest->getWorker()->equals($worker));
         $this->assertTrue($activationRequest->getState()->equals($this->getWorkerActivationRequestService()->getStartingState()));
@@ -32,7 +26,7 @@ class WorkerActivateVerifyCommandTest extends BaseTestCase {
         $response = $this->runConsole('simplytestable:worker:activate:verify', array(
             $worker->getId() =>  true,
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        )); 
+        ));
         
         $this->assertEquals(0, $response);
     }
@@ -41,11 +35,14 @@ class WorkerActivateVerifyCommandTest extends BaseTestCase {
     public function testFailedActivateVerifyWorker() {        
         $this->setupDatabase();
         
-        $worker = $this->getWorkerService()->get('test.worker.simplytestable.com');
-        $this->assertEquals(1, $worker->getId());
-        $this->assertEquals($worker->getHostname(), 'test.worker.simplytestable.com');
+        $workerHostname = 'test.worker.simplytestable.com';
+        $activationRequestToken = 'invalid-token';
         
-        $activationRequest = $this->createActivationRequest($worker);
+        $worker = $this->getWorkerService()->get($workerHostname);
+        $this->assertEquals(1, $worker->getId());
+        $this->assertEquals($worker->getHostname(), $workerHostname);
+        
+        $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
         
         $this->assertTrue($activationRequest->getWorker()->equals($worker));
         $this->assertTrue($activationRequest->getState()->equals($this->getWorkerActivationRequestService()->getStartingState()));
@@ -62,46 +59,11 @@ class WorkerActivateVerifyCommandTest extends BaseTestCase {
     /**
      *
      * @param Worker $worker
+     * @param string $token
      * @return \SimplyTestable\ApiBundle\Entity\WorkerActivationRequest
      */
-    private function createActivationRequest(Worker $worker) {
-        return $this->getWorkerActivationRequestService()->get($worker);
-    }
-    
-    
-    
-    /**
-     *
-     * @param string $canonicalUrl
-     * @return Job
-     */
-    private function createJob($canonicalUrl) {
-        return $this->getWorkerController('startAction')->startAction($canonicalUrl);
-    }
-    
-    
-    /**
-     *
-     * @param string $canonicalUrl
-     * @param int $id
-     * @return Job
-     */
-    private function fetchJob($canonicalUrl, $id) {        
-        return $this->getWorkerController('statusAction')->statusAction($canonicalUrl, $id);    
-    }
-    
-    
-    /**
-     *
-     * @param string $methodName
-     * @return SimplyTestable\ApiBundle\Controller\TestsController
-     */
-    private function getWorkerController($methodName) {
-        if (is_null($this->testsController)) {
-            $this->testsController = $this->createController(self::TESTS_CONTROLLER_NAME, $methodName);
-        }        
-        
-        return $this->testsController;
+    private function createActivationRequest(Worker $worker, $token) {
+        return $this->getWorkerActivationRequestService()->create($worker, $token);
     }
     
     

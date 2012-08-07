@@ -90,8 +90,9 @@ class WorkerActivationRequestService extends EntityService {
         
         $this->logger->info("WorkerActivationRequestService::verify: Requesting verification with " . $verifyUrl);
         
-        try {
+        try {            
             $response = $this->httpClient->getResponse($httpRequest);
+            
             $this->logger->info("WorkerActivationRequestService::verify: " . $verifyUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
 
             if ($response->getResponseCode() !== 200) {
