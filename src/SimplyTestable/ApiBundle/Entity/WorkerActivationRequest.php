@@ -122,7 +122,10 @@ class WorkerActivationRequest
      * @return \SimplyTestable\ApiBundle\Entity\WorkerActivationRequest 
      */
     public function setNextState() {
-        $this->state = $this->getState()->getNextState();
+        if (!is_null($this->getState()->getNextState())) {
+            $this->state = $this->getState()->getNextState();
+        }        
+        
         return $this;
     } 
     

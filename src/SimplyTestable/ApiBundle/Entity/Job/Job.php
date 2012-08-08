@@ -210,7 +210,10 @@ class Job
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
     public function setNextState() {
-        $this->state = $this->getState()->getNextState();
+        if (!is_null($this->getState()->getNextState())) {
+            $this->state = $this->getState()->getNextState();
+        }        
+        
         return $this;
     }   
     
