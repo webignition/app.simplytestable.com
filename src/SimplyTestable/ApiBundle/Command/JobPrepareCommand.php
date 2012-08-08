@@ -1,17 +1,17 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
-class JobPrepareCommand extends ContainerAwareCommand
+class JobPrepareCommand extends BaseCommand
 {
     /**
      *
@@ -43,37 +43,48 @@ class JobPrepareCommand extends ContainerAwareCommand
         /* @var $websiteService \SimplyTestable\ApiBundle\Services\WebsiteService */
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         
-        if ($input->hasArgument('http-fixture-path')) {
+        $this->getLogger()->info("simplytestable:job:prepare running for job [".$input->getArgument('id')."]");
+        
+        if ($input->hasArgument('http-fixture-path') && $input->getArgument('http-fixture-path') != '') {
+            $this->getLogger()->debug("simplytestable:job:prepare: using fixure path [".$input->getArgument('http-fixture-path')."]");
             $this->httpFixturePath = $input->getArgument('http-fixture-path');
         }
         
-        $id = (int)$input->getArgument('id');
-        $job = $this->getContainer()->get('simplytestable.services.jobservice')->getById($id);
-
-        if ($job->getState()->getName() == JobService::STARTING_STATE) {
-            $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
-            $requestedTaskTypes = $job->getRequestedTaskTypes();
-            $newTaskState = $this->getNewTaskState();
-
-            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();          
-
-            foreach ($urls as $url) {                
-                foreach ($requestedTaskTypes as $taskType) {
-                    $task = new Task();
-                    $task->setJob($job);
-                    $task->setType($taskType);
-                    $task->setUrl($url);
-                    $task->setState($newTaskState);
-                    
-                    $entityManager->persist($task);
-               }
-            }
-
-            $job->setNextState();
-            $entityManager->persist($job);
-
-            $entityManager->flush();          
+        $job = $this->getContainer()->get('simplytestable.services.jobservice')->getById(
+            (int)$input->getArgument('id')
+        );
+        
+        if ($job->getState()->getName() != JobService::STARTING_STATE) {
+            return $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
         }
+
+        $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
+        $requestedTaskTypes = $job->getRequestedTaskTypes();
+        $newTaskState = $this->getNewTaskState();
+
+        $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();          
+
+        $jobCount = 0;
+        foreach ($urls as $url) {                
+            foreach ($requestedTaskTypes as $taskType) {
+                $jobCount++;
+                
+                $task = new Task();
+                $task->setJob($job);
+                $task->setType($taskType);
+                $task->setUrl($url);
+                $task->setState($newTaskState);
+
+                $entityManager->persist($task);
+            }
+        }
+
+        $job->setNextState();
+        $entityManager->persist($job);
+
+        $entityManager->flush();
+        
+        $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
     }
     
     
@@ -100,5 +111,5 @@ class JobPrepareCommand extends ContainerAwareCommand
         }
         
         return $this->websiteService;
-    }   
+    }
 }
