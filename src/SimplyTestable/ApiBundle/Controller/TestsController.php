@@ -25,6 +25,14 @@ class TestsController extends ApiController
             $this->getTaskTypes()
         );
         
+        $this->getResqueQueue()->add(
+            'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
+            'job-prepare',
+             array(
+                 'id' => $job->getId()
+             )
+        );        
+        
         return $this->sendResponse($job);
     }    
     
@@ -137,5 +145,14 @@ class TestsController extends ApiController
             'website' => $this->getWebsite(),
             'state' => $state
         ))) > 0;
+    }
+    
+    
+    /**
+     * 
+     * @return \Glit\ResqueBundle\Resque\Queue
+     */
+    private function getResqueQueue() {
+        return $this->container->get('glit_resque.queue_manager');
     }
 }
