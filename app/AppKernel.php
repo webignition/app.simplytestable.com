@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle($this),
+            new Glit\ResqueBundle\GlitResqueBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
