@@ -29,7 +29,7 @@ class Job
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\User
+     * @var \SimplyTestable\ApiBundle\Entity\User
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
@@ -41,7 +41,7 @@ class Job
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\WebSite
+     * @var \SimplyTestable\ApiBundle\Entity\WebSite
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\WebSite")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
@@ -53,7 +53,7 @@ class Job
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\State
+     * @var \SimplyTestable\ApiBundle\Entity\State
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
@@ -89,10 +89,11 @@ class Job
     
     /**
      *
-     * @var \DateTime
-     * @ORM\Column(type="datetime", nullable=true)
+     * @var \SimplyTestable\ApiBundle\Entity\TimePeriod
+     * 
+     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist"})
      */
-    protected $startDateTime;
+    protected $timePeriod;
     
     public function __construct()
     {
@@ -250,26 +251,27 @@ class Job
     }
     
     /**
-     * Set startDateTime
+     * Set timePeriod
      *
-     * @param datetime $startDateTime
-     * @return Job
+     * @param \SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod
+     * @return Task
      */
-    public function setStartDateTime($startDateTime)
+    public function setTimePeriod(\SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod = null)
     {
-        $this->startDateTime = $startDateTime;
+        $this->timePeriod = $timePeriod;
+    
         return $this;
     }
 
     /**
-     * Get startDateTime
+     * Get timePeriod
      *
-     * @return datetime 
+     * @return \SimplyTestable\ApiBundle\Entity\TimePeriod 
      */
-    public function getStartDateTime()
+    public function getTimePeriod()
     {
-        return $this->startDateTime;
-    }
+        return $this->timePeriod;
+    } 
 
     /**
      * Add requestedTaskTypeClasses

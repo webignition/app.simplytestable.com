@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Entity\TimePeriod;
 
 class JobPrepareCommand extends BaseCommand
 {
@@ -52,17 +53,17 @@ class JobPrepareCommand extends BaseCommand
         
         $job = $this->getContainer()->get('simplytestable.services.jobservice')->getById(
             (int)$input->getArgument('id')
-        );
+        );      
         
         if ($job->getState()->getName() != JobService::STARTING_STATE) {
             return $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
         }
-
+        
         $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
         $requestedTaskTypes = $job->getRequestedTaskTypes();
         $newTaskState = $this->getNewTaskState();
 
-        $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();          
+        $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
         $jobCount = 0;
         foreach ($urls as $url) {                
@@ -78,11 +79,14 @@ class JobPrepareCommand extends BaseCommand
                 $entityManager->persist($task);
             }
         }
+        
+        $timePeriod = new TimePeriod();
+        $timePeriod->setStartDateTime(new \DateTime());
 
-        $job->setNextState();
-        $job->setStartDateTime(new \DateTime());
+        $job->setNextState();        
+        $job->setTimePeriod($timePeriod);   
+        
         $entityManager->persist($job);
-
         $entityManager->flush();
         
         $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
