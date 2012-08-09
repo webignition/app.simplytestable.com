@@ -4,6 +4,8 @@ namespace SimplyTestable\ApiBundle\Services;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Entity\Worker;
 
 class TaskService extends EntityService {
     
@@ -94,5 +96,25 @@ class TaskService extends EntityService {
         $this->getEntityManager()->persist($task);
         $this->getEntityManager()->flush();
         return $task;
-    }    
+    } 
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @param Worker $worker
+     * @param int $remoteId
+     * @return Task 
+     */
+    public function setStarted(Task $task, Worker $worker, $remoteId) {
+        $timePeriod = new TimePeriod();
+        $timePeriod->setStartDateTime(new \DateTime());
+
+        $task->setRemoteId($remoteId);
+        $task->setNextState();
+        $task->setTimePeriod($timePeriod);
+        $task->setWorker($worker);        
+        
+        return $this->persistAndFlush($task);
+    }
 }

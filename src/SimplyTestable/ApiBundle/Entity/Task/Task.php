@@ -67,7 +67,7 @@ class Task
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\Task\Type\Type
+     * @var \SimplyTestable\ApiBundle\Entity\Task\Type\Type
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
      * @ORM\JoinColumn(name="tasktype_id", referencedColumnName="id", nullable=false)
@@ -78,7 +78,7 @@ class Task
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\TimePeriod
+     * @var \SimplyTestable\ApiBundle\Entity\TimePeriod
      * 
      * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist"})
      */
@@ -174,6 +174,18 @@ class Task
         $this->state = $state;
         return $this;
     }
+    
+    /**
+     *
+     * @return Task
+     */
+    public function setNextState() {
+        if (!is_null($this->getState()->getNextState())) {
+            $this->state = $this->getState()->getNextState();
+        }        
+        
+        return $this;
+    }       
 
     /**
      * Get state
@@ -268,7 +280,7 @@ class Task
      * @param SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod
      * @return Task
      */
-    public function setTimePeriod(SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod = null)
+    public function setTimePeriod(\SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod = null)
     {
         $this->timePeriod = $timePeriod;
     

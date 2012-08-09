@@ -69,3 +69,14 @@ services:
     arguments:
       queueManager: "@glit_resque.queue_manager"
       logger: "@logger"
+      
+  simplytestable.services.workertaskassignmentservice:
+    class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"
+        logger: "@logger"
+        workerService: "@simplytestable.services.workerservice"
+        stateService: "@simplytestable.services.stateservice"
+        httpClient: "@simplytestable.services.httpClient"
+        urlService: "@simplytestable.services.urlService"      
+        taskService: "@simplytestable.services.taskservice"
