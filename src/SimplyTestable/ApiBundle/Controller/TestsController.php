@@ -118,24 +118,6 @@ class TestsController extends ApiController
     
     
     /**
-     * Does the submitted website have a test job that has not yet started?
-     * It does if there are new or queued jobs that exist.
-     * 
-     * @return boolean 
-     */
-    private function hasUnstartedTest() {
-        $unstartedStateNames = array('job-new', 'job-queued');
-        foreach ($unstartedStateNames as $unstartedStateName) {
-            if ($this->hasByState($this->get('simplytestable.services.stateservice')->fetch($unstartedStateName))) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    
-    /**
      *
      * @return boolean
      */
