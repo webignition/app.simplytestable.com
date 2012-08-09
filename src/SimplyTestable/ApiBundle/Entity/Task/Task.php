@@ -77,6 +77,17 @@ class Task
     
     /**
      *
+     * @var \DateTime
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    protected $startDateTime;
+    
+    public function __construct() {
+        $this->startDateTime = new \DateTime();
+    }
+    
+    /**
+     *
      * @return string
      */
     public function getPublicSerializedState() {
@@ -221,4 +232,26 @@ class Task
     {
         return $this->type;
     }
+    
+    /**
+     * Set startDateTime
+     *
+     * @param datetime $startDateTime
+     * @return Task
+     */
+    public function setStartDateTime($startDateTime)
+    {
+        $this->startDateTime = $startDateTime;
+        return $this;
+    }
+
+    /**
+     * Get startDateTime
+     *
+     * @return datetime 
+     */
+    public function getStartDateTime()
+    {
+        return $this->startDateTime;
+    }    
 }
