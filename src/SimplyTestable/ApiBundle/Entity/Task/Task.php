@@ -80,7 +80,7 @@ class Task
      *
      * @var SimplyTestable\ApiBundle\Entity\TimePeriod
      * 
-     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod")
+     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist"})
      */
     protected $timePeriod;
     
