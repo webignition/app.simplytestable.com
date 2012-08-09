@@ -11,13 +11,7 @@ use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
 class Version20120716214726_create_Task extends BaseMigration
 {
     public function up(Schema $schema)
-    {
-        /**
-         *         $this->addSql("ALTER TABLE Task ADD remoteId BIGINT DEFAULT NULL");
-        $this->addSql("CREATE INDEX remoteId_idx ON Task (remoteId)");
-         *  
-         */
-        
+    {        
         $this->statements['mysql'] = array(
             "CREATE TABLE Task (
                 id INT AUTO_INCREMENT NOT NULL,
@@ -32,6 +26,7 @@ class Version20120716214726_create_Task extends BaseMigration
                 INDEX IDX_F24C741B5D83CC1 (state_id),
                 INDEX IDX_F24C741B6B20BA36 (worker_id),
                 INDEX IDX_F24C741B7D6EFC3 (tasktype_id),
+                UNIQUE INDEX UNIQ_F24C741BE43FFED1 (timePeriod_id),
                 INDEX remoteId_idx (remoteId),
                 PRIMARY KEY(id)) ENGINE = InnoDB",
             "ALTER TABLE Task ADD CONSTRAINT FK_F24C741BBE04EA9 FOREIGN KEY (job_id) REFERENCES Job (id)",
@@ -60,6 +55,7 @@ class Version20120716214726_create_Task extends BaseMigration
             "CREATE INDEX IDX_F24C741B5D83CC1 ON Task (state_id)",
             "CREATE INDEX IDX_F24C741B6B20BA36 ON Task (worker_id)",
             "CREATE INDEX IDX_F24C741B7D6EFC3 ON Task (tasktype_id)",
+            "CREATE UNIQUE INDEX UNIQ_F24C741BE43FFED1 ON Task (timePeriod_id)",
             "CREATE INDEX remoteId_idx ON Task (remoteId)"
         ); 
         
