@@ -27,54 +27,45 @@ class WorkerControllerTest extends BaseControllerJsonTestCase {
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'                
         );
         
-        $response = $controller->activateAction();
-        var_dump($response);
-        exit();
-//        
-//        $worker = $this->getWorkerService()->get($_POST['hostname']);
-//        $activationRequest = $this->getWorkerRequestActivationService()->get($worker);
-//        
-//        $this->assertEquals(200, $response->getStatusCode());
-//        $this->assertEquals($hostname, $worker->getHostname());        
-//        $this->assertTrue($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState()));
-//        $this->assertTrue($activationRequest->getWorker()->equals($worker));                
+        $response = $controller->activateAction();       
+        $this->assertEquals(200, $response->getStatusCode());              
     }
     
-//    public function testActivateActionWithMissingHostname() {
-//        $this->setupDatabase();
-//        
-//        $token = 'valid-token';
-//        
-//        $_POST = array(
-//            'token' => $token
-//        );        
-//        
-//        try {
-//            $this->createController(self::WORKER_CONTROLLER_NAME, 'activateAction');
-//        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $httpException) {
-//            return $this->assertEquals(400, $httpException->getStatusCode());
-//        } 
-//        
-//        $this->fail('WorkerController::activateAction() didn\'t throw a 400 HttpException for a missing hostname');  
-//    }
-//    
-//    public function testActivateActionWithMissingToken() {
-//        $this->setupDatabase();
-//        
-//        $hostname = 'test.worker.simplytestable.com';
-//        
-//        $_POST = array(
-//            'hostname' => $hostname
-//        );        
-//        
-//        try {
-//            $this->createController(self::WORKER_CONTROLLER_NAME, 'activateAction');
-//        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $httpException) {
-//            return $this->assertEquals(400, $httpException->getStatusCode());
-//        } 
-//        
-//        $this->fail('WorkerController::activateAction() didn\'t throw a 400 HttpException for a missing hostname');  
-//    }    
+    public function testActivateActionWithMissingHostname() {
+        $this->setupDatabase();
+        
+        $token = 'valid-token';
+        
+        $_POST = array(
+            'token' => $token
+        );        
+        
+        try {
+            $this->createController(self::WORKER_CONTROLLER_NAME, 'activateAction');
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $httpException) {
+            return $this->assertEquals(400, $httpException->getStatusCode());
+        } 
+        
+        $this->fail('WorkerController::activateAction() didn\'t throw a 400 HttpException for a missing hostname');  
+    }
+    
+    public function testActivateActionWithMissingToken() {
+        $this->setupDatabase();
+        
+        $hostname = 'test.worker.simplytestable.com';
+        
+        $_POST = array(
+            'hostname' => $hostname
+        );        
+        
+        try {
+            $this->createController(self::WORKER_CONTROLLER_NAME, 'activateAction');
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $httpException) {
+            return $this->assertEquals(400, $httpException->getStatusCode());
+        } 
+        
+        $this->fail('WorkerController::activateAction() didn\'t throw a 400 HttpException for a missing hostname');  
+    }    
     
     
     /**
