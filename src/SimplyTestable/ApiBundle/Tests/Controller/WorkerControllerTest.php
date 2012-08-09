@@ -28,6 +28,8 @@ class WorkerControllerTest extends BaseControllerJsonTestCase {
         );
         
         $response = $controller->activateAction();
+        var_dump($response);
+        exit();
 //        
 //        $worker = $this->getWorkerService()->get($_POST['hostname']);
 //        $activationRequest = $this->getWorkerRequestActivationService()->get($worker);

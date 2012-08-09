@@ -31,17 +31,31 @@ class WorkerController extends ApiController
     
     public function activateAction()
     {      
-        $activationRequest = $this->getActivationRequest(
-            $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname')),
-            $this->getArguments('activateAction')->get('token')
-        );
+        $worker = $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname'));
+        if ($this->getWorkerRequestActivationService()->has($worker)) {
+            $activationRequest = $this->getWorkerRequestActivationService()->fetch($worker);
+            
+            if ($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState())) {
+                return $this->sendSuccessResponse();
+            }
+            
+            $activationRequest->setState($this->getWorkerRequestActivationService()->getStartingState());
+        } else {
+            $activationRequest = $this->getWorkerRequestActivationService()->create(
+                $worker,
+                $this->getArguments('activateAction')->get('token')
+            );
+        }        
         
-        if ($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState())) {
-            return $this->sendSuccessResponse();
-        }
-        
-        $activationRequest->setState($this->getWorkerRequestActivationService()->getStartingState());
         $this->getWorkerRequestActivationService()->persistAndFlush($activationRequest);
+        
+        $this->container->get('simplytestable.services.resqueQueueService')->add(
+            'SimplyTestable\ApiBundle\Resque\Job\WorkerActivateVerifyJob',
+            'worker-activate-verify',
+            array(
+                'id' => $activationRequest->getWorker()->getId()
+            )                
+        );
         
         return $this->sendSuccessResponse();
     }
