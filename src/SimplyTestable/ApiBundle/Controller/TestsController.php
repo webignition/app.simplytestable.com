@@ -115,17 +115,4 @@ class TestsController extends ApiController
     private function getWebsite() {        
         return $this->get('simplytestable.services.websiteservice')->fetch($this->siteRootUrl);
     }
-    
-    
-    /**
-     *
-     * @return boolean
-     */
-    private function hasByState(State $state) {        
-        return count($this->get('simplytestable.services.jobservice')->getEntityRepository()->findBy(array(
-            'user' => $this->getUser(),
-            'website' => $this->getWebsite(),
-            'state' => $state
-        ))) > 0;
-    }
 }
