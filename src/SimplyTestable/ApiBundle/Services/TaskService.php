@@ -10,6 +10,7 @@ class TaskService extends EntityService {
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Task\Task';
     const STARTING_STATE = 'task-new';
     const CANCELLED_STATE = 'task-cancelled';
+    const QUEUED_STATE = 'task-queued';
     
     /**
      *
@@ -55,6 +56,32 @@ class TaskService extends EntityService {
         $task->clearWorker();
         
         return $this->persistAndFlush($task);
+    }
+    
+    /**
+     *
+     * @param int $id
+     * @return \SimplyTestable\ApiBundle\Entity\Task\Task
+     */
+    public function getById($id) {
+        return $this->getEntityRepository()->find($id);
+    }
+    
+    
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State
+     */
+    public function getStartingState() {
+        return $this->stateService->fetch(self::STARTING_STATE);
+    }
+    
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State
+     */
+    public function getQueuedState() {
+        return $this->stateService->fetch(self::QUEUED_STATE);
     }
     
     
