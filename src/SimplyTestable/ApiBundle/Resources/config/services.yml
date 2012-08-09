@@ -63,3 +63,9 @@ services:
         
   simplytestable.services.urlService:
     class:  SimplyTestable\ApiBundle\Services\UrlService           
+    
+  simplytestable.services.resqueQueueService:
+    class:   SimplyTestable\ApiBundle\Services\ResqueQueueService
+    arguments:
+      queueManager: "@glit_resque.queue_manager"
+      logger: "@logger"
