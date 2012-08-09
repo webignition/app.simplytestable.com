@@ -7,7 +7,7 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 /**
  * @ORM\Entity
  */
-class WorkerLastTask
+class WorkerTaskAssignment
 {
     /**
      * 
