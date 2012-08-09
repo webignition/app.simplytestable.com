@@ -80,6 +80,7 @@ class JobPrepareCommand extends BaseCommand
         }
 
         $job->setNextState();
+        $job->setStartDateTime(new \DateTime());
         $entityManager->persist($job);
 
         $entityManager->flush();
