@@ -6,6 +6,7 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\WorkerTaskAssignmentRepository")
  */
 class WorkerTaskAssignment
 {
