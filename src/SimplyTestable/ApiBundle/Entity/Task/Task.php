@@ -78,13 +78,9 @@ class Task
     /**
      *
      * @var \DateTime
-     * @ORM\Column(type="datetime", nullable=false)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     protected $startDateTime;
-    
-    public function __construct() {
-        $this->startDateTime = new \DateTime();
-    }
     
     /**
      *

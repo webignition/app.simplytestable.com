@@ -90,7 +90,7 @@ class Job
     /**
      *
      * @var \DateTime
-     * @ORM\Column(type="datetime", nullable=false)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     protected $startDateTime;
     
@@ -98,7 +98,6 @@ class Job
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
         $this->requestedTaskTypes = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->startDateTime = new \DateTime();
     }
     
     
