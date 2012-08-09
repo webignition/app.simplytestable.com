@@ -8,7 +8,8 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * 
  * @ORM\Entity
  * @ORM\Table(
- *     name="Task"
+ *     name="Task",
+ *     indexes={@ORM\Index(name="remoteId_idx", columns={"remoteId"})}
  * )
  * 
  */
@@ -81,6 +82,14 @@ class Task
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $startDateTime;
+    
+    
+    /**
+     *
+     * @var int
+     * @ORM\Column(type="bigint", nullable=true)
+     */
+    protected $remoteId;
     
     /**
      *
@@ -249,5 +258,28 @@ class Task
     public function getStartDateTime()
     {
         return $this->startDateTime;
-    }    
+    }   
+    
+    /**
+     * Set remoteId
+     *
+     * @param int $remoteId
+     * @return Task
+     */
+    public function setRemoteId($remoteId)
+    {
+        $this->remoteId = $remoteId;
+        return $this;
+    }
+
+    /**
+     * Get remoteId
+     *
+     * @return int 
+     */
+    public function getRemoteId()
+    {
+        return $this->remoteId;
+    }      
+    
 }

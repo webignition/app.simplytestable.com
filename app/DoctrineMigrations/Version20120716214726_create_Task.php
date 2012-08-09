@@ -12,6 +12,12 @@ class Version20120716214726_create_Task extends BaseMigration
 {
     public function up(Schema $schema)
     {
+        /**
+         *         $this->addSql("ALTER TABLE Task ADD remoteId BIGINT DEFAULT NULL");
+        $this->addSql("CREATE INDEX remoteId_idx ON Task (remoteId)");
+         *  
+         */
+        
         $this->statements['mysql'] = array(
             "CREATE TABLE Task (
                 id INT AUTO_INCREMENT NOT NULL,
@@ -21,10 +27,12 @@ class Version20120716214726_create_Task extends BaseMigration
                 url LONGTEXT NOT NULL,
                 tasktype_id INT NOT NULL,
                 startDateTime DATETIME DEFAULT NULL,
+                remoteId BIGINT DEFAULT NULL,
                 INDEX IDX_F24C741BBE04EA9 (job_id),
                 INDEX IDX_F24C741B5D83CC1 (state_id),
                 INDEX IDX_F24C741B6B20BA36 (worker_id),
                 INDEX IDX_F24C741B7D6EFC3 (tasktype_id),
+                INDEX remoteId_idx (remoteId),
                 PRIMARY KEY(id)) ENGINE = InnoDB",
             "ALTER TABLE Task ADD CONSTRAINT FK_F24C741BBE04EA9 FOREIGN KEY (job_id) REFERENCES Job (id)",
             "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B5D83CC1 FOREIGN KEY (state_id) REFERENCES State (id)",
@@ -41,11 +49,16 @@ class Version20120716214726_create_Task extends BaseMigration
                 url LONGTEXT NOT NULL,
                 tasktype_id INT NOT NULL,
                 startDateTime DATETIME DEFAULT NULL,
+                remoteId BIGINT DEFAULT NULL,
                 FOREIGN KEY(job_id) REFERENCES Job (id),
                 FOREIGN KEY(state_id) REFERENCES State (id),
                 FOREIGN KEY(worker_id) REFERENCES Worker (id),
                 FOREIGN KEY(tasktype_id) REFERENCES TaskType (id))",
-            "CREATE INDEX IDX_F24C741B7D6EFC3 ON Task (tasktype_id)"
+            "CREATE INDEX IDX_F24C741BBE04EA9 ON Task (job_id)",
+            "CREATE INDEX IDX_F24C741B5D83CC1 ON Task (state_id)",
+            "CREATE INDEX IDX_F24C741B6B20BA36 ON Task (worker_id)",
+            "CREATE INDEX IDX_F24C741B7D6EFC3 ON Task (tasktype_id)",
+            "CREATE INDEX remoteId_idx ON Task (remoteId)"
         ); 
         
         parent::up($schema);
