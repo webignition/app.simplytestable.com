@@ -2,12 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job;
 
-use SimplyTestable\ApiBundle\Exception\JobPrepareException;
+use SimplyTestable\ApiBundle\Exception\WorkerActivateVerifyException;
 
-class JobPrepareJob extends CommandLineJob {    
+class WorkerActivateVerifyJob extends CommandLineJob {    
     
-    const QUEUE_NAME = 'job-prepare';
-    const COMMAND = 'php app/console simplytestable:job:prepare';
+    const QUEUE_NAME = 'worker-activate-verify';
+    const COMMAND = 'php app/console simplytestable:worker:activate:verify';
     
     protected function getQueueName() {
         return self::QUEUE_NAME;
@@ -22,6 +22,6 @@ class JobPrepareJob extends CommandLineJob {
     }
     
     protected function failureHandler($output, $returnValue) {
-        throw new JobPrepareException(implode("\n", $output), $returnValue);
+        throw new WorkerActivateVerifyException(implode("\n", $output), $returnValue);
     }   
 }
