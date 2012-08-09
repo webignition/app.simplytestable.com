@@ -8,7 +8,7 @@ use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
 /**
  * Auto-generated Migration: Please modify to your need!
  */
-class Version20120716214707_create_Job extends BaseMigration
+class Version20120716214708_create_Job extends BaseMigration
 {
     public function up(Schema $schema)
     {

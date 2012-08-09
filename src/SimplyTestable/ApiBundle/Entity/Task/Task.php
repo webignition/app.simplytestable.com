@@ -78,10 +78,11 @@ class Task
     
     /**
      *
-     * @var \DateTime
-     * @ORM\Column(type="datetime", nullable=true)
+     * @var SimplyTestable\ApiBundle\Entity\TimePeriod
+     * 
+     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod")
      */
-    protected $startDateTime;
+    protected $timePeriod;
     
     
     /**
@@ -236,29 +237,7 @@ class Task
     public function getType()
     {
         return $this->type;
-    }
-    
-    /**
-     * Set startDateTime
-     *
-     * @param datetime $startDateTime
-     * @return Task
-     */
-    public function setStartDateTime($startDateTime)
-    {
-        $this->startDateTime = $startDateTime;
-        return $this;
-    }
-
-    /**
-     * Get startDateTime
-     *
-     * @return datetime 
-     */
-    public function getStartDateTime()
-    {
-        return $this->startDateTime;
-    }   
+    } 
     
     /**
      * Set remoteId
@@ -281,5 +260,29 @@ class Task
     {
         return $this->remoteId;
     }      
+    
+    
+    /**
+     * Set timePeriod
+     *
+     * @param SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod
+     * @return Task
+     */
+    public function setTimePeriod(SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod = null)
+    {
+        $this->timePeriod = $timePeriod;
+    
+        return $this;
+    }
+
+    /**
+     * Get timePeriod
+     *
+     * @return SimplyTestable\ApiBundle\Entity\TimePeriod 
+     */
+    public function getTimePeriod()
+    {
+        return $this->timePeriod;
+    }    
     
 }

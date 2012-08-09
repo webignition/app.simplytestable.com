@@ -26,7 +26,7 @@ class Version20120716214726_create_Task extends BaseMigration
                 worker_id INT DEFAULT NULL,
                 url LONGTEXT NOT NULL,
                 tasktype_id INT NOT NULL,
-                startDateTime DATETIME DEFAULT NULL,
+                timePeriod_id INT DEFAULT NULL,
                 remoteId BIGINT DEFAULT NULL,
                 INDEX IDX_F24C741BBE04EA9 (job_id),
                 INDEX IDX_F24C741B5D83CC1 (state_id),
@@ -37,7 +37,8 @@ class Version20120716214726_create_Task extends BaseMigration
             "ALTER TABLE Task ADD CONSTRAINT FK_F24C741BBE04EA9 FOREIGN KEY (job_id) REFERENCES Job (id)",
             "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B5D83CC1 FOREIGN KEY (state_id) REFERENCES State (id)",
             "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B6B20BA36 FOREIGN KEY (worker_id) REFERENCES Worker (id)",
-            "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B7D6EFC3 FOREIGN KEY (tasktype_id) REFERENCES TaskType (id)"
+            "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B7D6EFC3 FOREIGN KEY (tasktype_id) REFERENCES TaskType (id)",
+            "ALTER TABLE Task ADD CONSTRAINT FK_F24C741BE43FFED1 FOREIGN KEY (timePeriod_id) REFERENCES TimePeriod (id)"
         );
         
         $this->statements['sqlite'] = array(
@@ -48,12 +49,13 @@ class Version20120716214726_create_Task extends BaseMigration
                 worker_id INT DEFAULT NULL,
                 url LONGTEXT NOT NULL,
                 tasktype_id INT NOT NULL,
-                startDateTime DATETIME DEFAULT NULL,
+                timePeriod_id INT DEFAULT NULL,
                 remoteId BIGINT DEFAULT NULL,
                 FOREIGN KEY(job_id) REFERENCES Job (id),
                 FOREIGN KEY(state_id) REFERENCES State (id),
                 FOREIGN KEY(worker_id) REFERENCES Worker (id),
-                FOREIGN KEY(tasktype_id) REFERENCES TaskType (id))",
+                FOREIGN KEY(tasktype_id) REFERENCES TaskType (id),
+                FOREIGN KEY(timePeriod_id) REFERENCES TimePeriod (id))",
             "CREATE INDEX IDX_F24C741BBE04EA9 ON Task (job_id)",
             "CREATE INDEX IDX_F24C741B5D83CC1 ON Task (state_id)",
             "CREATE INDEX IDX_F24C741B6B20BA36 ON Task (worker_id)",
