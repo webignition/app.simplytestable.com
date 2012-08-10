@@ -121,7 +121,7 @@ class Task
      * @return string
      */
     public function getPublicSerializedWorker() {
-        return $this->getWorker()->getHostname();
+        return (is_null($this->getWorker())) ? '' : $this->getWorker()->getHostname();
     }
     
 
