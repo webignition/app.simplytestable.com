@@ -39,6 +39,14 @@ EOF
         if ($this->getWorkerTaskAssignmentService()->assign($task) === false) {
             throw new \LogicException('Task assignment to worker failed, check log for details');
         }
+        
+        if ($task->getJob()->getState()->getName() == 'job-queued') {
+            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+            $task->getJob()->setNextState();
+            
+            $entityManager->persist($task->getJob());
+            $entityManager->flush();               
+        }
     }
     
     
