@@ -11,6 +11,7 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  *     name="Task",
  *     indexes={@ORM\Index(name="remoteId_idx", columns={"remoteId"})}
  * )
+ * @SerializerAnnotation\ExclusionPolicy("all")
  * 
  */
 class Task
@@ -22,6 +23,7 @@ class Task
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @SerializerAnnotation\Expose
      */
     protected $id;
     
@@ -31,7 +33,7 @@ class Task
      * @var SimplyTestable\ApiBundle\Entity\Job\Job 
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="tasks")
-     * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)     
      */
     protected $job;
     
@@ -40,6 +42,7 @@ class Task
      *
      * @var string
      * @ORM\Column(type="text", nullable=false)
+     * @SerializerAnnotation\Expose
      */
     protected $url;
     
@@ -52,6 +55,7 @@ class Task
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      * 
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
+     * @SerializerAnnotation\Expose
      */
     protected $state;
     
@@ -61,6 +65,8 @@ class Task
      * @var SimplyTestable\ApiBundle\Entity\Worker 
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Worker", inversedBy="tasks")
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedWorker")
+     * @SerializerAnnotation\Expose
      */
     protected $worker;
     
@@ -73,6 +79,7 @@ class Task
      * @ORM\JoinColumn(name="tasktype_id", referencedColumnName="id", nullable=false)
      * 
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedType")
+     * @SerializerAnnotation\Expose
      */
     protected $type;
     
@@ -81,6 +88,7 @@ class Task
      * @var \SimplyTestable\ApiBundle\Entity\TimePeriod
      * 
      * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist"})
+     * @SerializerAnnotation\Expose
      */
     protected $timePeriod;
     
@@ -106,7 +114,15 @@ class Task
      */
     public function getPublicSerializedType() {
         return (string)$this->getType();
-    }       
+    }     
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedWorker() {
+        return $this->getWorker()->getHostname();
+    }
     
 
     /**

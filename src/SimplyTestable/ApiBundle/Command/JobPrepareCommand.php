@@ -77,6 +77,15 @@ class JobPrepareCommand extends BaseCommand
                 $task->setState($newTaskState);
 
                 $entityManager->persist($task);
+                $entityManager->flush();
+                
+                $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
+                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+                    'task-assign',
+                    array(
+                        'id' => $task->getId()
+                    )                
+                );                 
             }
         }
         
@@ -87,7 +96,7 @@ class JobPrepareCommand extends BaseCommand
         $job->setTimePeriod($timePeriod);   
         
         $entityManager->persist($job);
-        $entityManager->flush();
+        $entityManager->flush();       
         
         $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
     }

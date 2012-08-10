@@ -2,10 +2,12 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * 
  * @ORM\Entity
+ * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class TimePeriod
 {    
@@ -24,6 +26,7 @@ class TimePeriod
      *
      * @var \DateTime
      * @ORM\Column(type="datetime", nullable=true)
+     * @SerializerAnnotation\Expose
      */
     protected $startDateTime;
     
@@ -32,6 +35,7 @@ class TimePeriod
      *
      * @var \DateTime
      * @ORM\Column(type="datetime", nullable=true)
+     * @SerializerAnnotation\Expose
      */
     protected $endDateTime;    
 
