@@ -194,10 +194,12 @@ class WorkerTaskAssignmentService extends EntityService {
 
         try {            
             $response = $this->httpClient->getResponse($httpRequest);
+            $responseObject = json_decode($response->getBody());
 
             $this->logger->info("WorkerTaskAssignmentService::assignToWorker " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
+            $this->logger->info("WorkerTaskAssignmentService::assignToWorker: remoteId [".$responseObject->id."]");
             
-            return ($response->getResponseCode() === 200) ? json_decode($response->getBody())->id : false;
+            return ($response->getResponseCode() === 200) ? $responseObject->id : false;
         } catch (CurlException $curlException) {
             $this->logger->info("WorkerTaskAssignmentService::assignToWorker: " . $requestUrl . ": " . $curlException->getMessage());
         }         
