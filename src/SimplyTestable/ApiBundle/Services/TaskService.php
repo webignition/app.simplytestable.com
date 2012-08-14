@@ -170,5 +170,19 @@ class TaskService extends EntityService {
         
         return $task;
     }
+    
+    
+    /**
+     *
+     * @param Worker $worker
+     * @param int $remoteId
+     * @return Task
+     */
+    public function getByWorkerAndRemoteId(Worker $worker, $remoteId) {
+        return $this->getEntityRepository()->findOneBy(array(
+            'worker' => $worker,
+            'remoteId' => $remoteId
+        ));
+    }
   
 }

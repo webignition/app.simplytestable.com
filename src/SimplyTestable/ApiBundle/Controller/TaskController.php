@@ -14,7 +14,6 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 class TaskController extends ApiController
 {
     private $workerHostname;
-    private $remoteTaskId;   
     
     public function __construct() {
         $this->setInputDefinitions(array(
@@ -31,26 +30,16 @@ class TaskController extends ApiController
     
     public function completeAction($worker_hostname, $remote_task_id)
     {      
-        $this->workerHostname = $worker_hostname;
-        $this->remoteTaskId = $remote_task_id;
+        $this->workerHostname = $worker_hostname;        
         
-        $worker = $this->getWorker();
-        $task = $this->getTask();
-
-        $endDateTime = new \DateTime($this->getArguments('startAction')->get('end_date_time'));
-        $output = $this->getArguments('startAction')->get('output');
-        
-        if (is_null($worker)) {
-            return $this->sendFailureResponse();
-        }
+        $task = $this->getTaskService()->getByWorkerAndRemoteId($this->getWorker(), $remote_task_id);
         
         if (is_null($task)) {
             return $this->sendFailureResponse();
         }
-        
-        if (!$task->getWorker()->equals($worker)) {
-            return $this->sendFailureResponse();
-        }
+
+        $endDateTime = new \DateTime($this->getArguments('startAction')->get('end_date_time'));
+        $output = $this->getArguments('startAction')->get('output');
         
         if (!$task->getState()->equals($this->getTaskService()->getInProgressState())) {
             return $this->sendFailureResponse();
@@ -67,15 +56,6 @@ class TaskController extends ApiController
      */
     private function getWorker() {
         return $this->get('simplytestable.services.workerservice')->fetch($this->workerHostname);
-    }
-    
-    
-    /**
-     *
-     * @return Task
-     */
-    private function getTask() {
-        return $this->get('simplytestable.services.taskservice')->getById($this->remoteTaskId);
     }
     
     
