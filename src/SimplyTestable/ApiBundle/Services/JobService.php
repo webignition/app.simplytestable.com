@@ -223,7 +223,9 @@ class JobService extends EntityService {
             return $job;
         }
         
+        $job->getTimePeriod()->setEndDateTime(new \DateTime());        
         $job->setNextState();       
+        
         return $this->persistAndFlush($job);
     }
 }
