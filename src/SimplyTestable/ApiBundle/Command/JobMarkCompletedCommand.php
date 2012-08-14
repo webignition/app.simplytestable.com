@@ -36,11 +36,13 @@ EOF
         $job = $this->getJobService()->getById((int)$input->getArgument('id'));
         
         if (!$job->getState()->equals($this->getJobService()->getInProgressState())) {
-            return $this->getLogger()->info("simplytestable:job:markcompleted: nothing to do, job has a state of [".$job->getState()->getName()."]");
+            $this->getLogger()->info("simplytestable:job:markcompleted: nothing to do, job has a state of [".$job->getState()->getName()."]");
+            return;
         }
         
         if ($this->getJobService()->hasIncompleteTasks($job)) {
-            return $this->getLogger()->info("simplytestable:job:markcompleted: can't mark as complete, job has outstanding incomplete tasks");
+            $this->getLogger()->info("simplytestable:job:markcompleted: can't mark as complete, job has outstanding incomplete tasks");
+            return;
         }
         
         $this->getJobService()->complete($job);

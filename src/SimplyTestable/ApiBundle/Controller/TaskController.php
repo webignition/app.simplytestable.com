@@ -47,6 +47,14 @@ class TaskController extends ApiController
 
         $this->getTaskService()->complete($task, $endDateTime, $output);
         
+        $this->container->get('simplytestable.services.resqueQueueService')->add(
+            'SimplyTestable\ApiBundle\Resque\Job\JobMarkCompletedJob',
+            'job-mark-completed',
+            array(
+                'id' => $task->getJob()->getId()
+            )                
+        );        
+        
         return $this->sendSuccessResponse();
     }
     
