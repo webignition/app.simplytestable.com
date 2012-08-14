@@ -102,6 +102,15 @@ class Task
      */
     protected $remoteId;
     
+    
+    /**
+     *
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     * @SerializerAnnotation\Expose
+     */    
+    protected $output;
+    
     /**
      *
      * @return string
@@ -315,4 +324,26 @@ class Task
         return $this->timePeriod;
     }    
     
+    
+    /**
+     * Set output
+     *
+     * @param text $url
+     * @return Task
+     */
+    public function setOutput($output)
+    {
+        $this->output = $output;
+        return $this;
+    }
+
+    /**
+     * Get output
+     *
+     * @return text 
+     */
+    public function getOutput()
+    {
+        return $this->output;
+    }    
 }
