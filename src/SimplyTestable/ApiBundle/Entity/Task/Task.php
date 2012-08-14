@@ -245,6 +245,15 @@ class Task
         return $this->setWorker(null);
     }
     
+    
+     /**
+     *
+     * @return Task
+     */
+    public function clearRemoteId() {
+        return $this->setRemoteId(null);
+    }
+    
 
     /**
      * Get worker

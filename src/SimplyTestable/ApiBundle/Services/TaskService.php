@@ -13,6 +13,8 @@ class TaskService extends EntityService {
     const STARTING_STATE = 'task-new';
     const CANCELLED_STATE = 'task-cancelled';
     const QUEUED_STATE = 'task-queued';
+    const IN_PROGRESS_STATE = 'task-in-progress';
+    const COMPLETED_STATE = 'task-completed';
     
     /**
      *
@@ -86,6 +88,23 @@ class TaskService extends EntityService {
         return $this->stateService->fetch(self::QUEUED_STATE);
     }
     
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State
+     */
+    public function getInProgressState() {
+        return $this->stateService->fetch(self::IN_PROGRESS_STATE);
+    }    
+    
+    
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State
+     */
+    public function getCompletedState() {
+        return $this->stateService->fetch(self::COMPLETED_STATE);
+    }      
+    
     
     /**
      *
@@ -117,4 +136,39 @@ class TaskService extends EntityService {
         
         return $this->persistAndFlush($task);
     }
+    
+    
+    /**
+     *
+     * @param int $remoteId
+     * @return \SimplyTestable\ApiBundle\Entity\Task\Task
+     */
+    public function getByRemoteId($remoteId) {
+        return $this->getEntityRepository()->findBy(array(
+            'remoteId' => $remoteId
+        ));
+    } 
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @param \DateTime $endDateTime
+     * @param string $output
+     * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
+     */
+    public function complete(Task $task, \DateTime $endDateTime, $output) {
+        if ($task->getState()->equals($this->getInProgressState())) {
+            $task->getTimePeriod()->setEndDateTime($endDateTime);
+            $task->setOutput($output);
+            $task->setNextState();            
+            $task->clearWorker();
+            $task->clearRemoteId();
+            
+            $this->persistAndFlush($task);
+        }
+        
+        return $task;
+    }
+  
 }

@@ -83,7 +83,7 @@ class WorkerService extends EntityService {
      *
      * @return Worker 
      */
-    private function fetch($hostname) {
+    public function fetch($hostname) {
         return $this->getEntityRepository()->findOneByHostname($hostname);
     }
     

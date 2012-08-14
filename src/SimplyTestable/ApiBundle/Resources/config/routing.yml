@@ -19,6 +19,10 @@ test_results:
 worker_activate:
   pattern: /worker/activate/
   defaults: { _controller: SimplyTestableApiBundle:Worker:activate, _format: json }   
+  
+task_complete:
+  pattern: /task/{worker_hostname}/{remote_task_id}/complete/
+  defaults: { _controller: SimplyTestableApiBundle:Task:complete, _format: json }     
         
 SimplyTestableApiBundle_homepage:
     pattern:  /hello/{name}
