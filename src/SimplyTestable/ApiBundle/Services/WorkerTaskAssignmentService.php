@@ -216,14 +216,56 @@ class WorkerTaskAssignmentService extends EntityService {
             return $this->workerService->getEntityRepository()->findAll();
         }
         
-        $workers = array();
-        foreach ($workerTaskAssignments as $workerTaskAssignment) {
-            /* @var $workerTaskAssignment WorkerTaskAssignment */
-            $workers[] = $workerTaskAssignment->getWorker();
+        $selectedWorkers = $this->getWorkersNeverAssignedTasks();
+        if (count($selectedWorkers) > 0) {
+            return $selectedWorkers;
         }
         
-        return $workers;
+        foreach ($workerTaskAssignments as $workerTaskAssignment) {
+            /* @var $workerTaskAssignment WorkerTaskAssignment */
+            $selectedWorkers[] = $workerTaskAssignment->getWorker();
+        }
+        
+        return $selectedWorkers;
     } 
+    
+    
+    private function getWorkersNeverAssignedTasks() {
+        $workerTaskAssignments = $this->getEntityRepository()->findAllOrderedByDateTime();
+        if (count($workerTaskAssignments) === 0) {
+            return $this->workerService->getEntityRepository()->findAll();
+        }
+        
+        $selectedWorkers = array();        
+        $allWorkers = $this->workerService->getEntityRepository()->findAll();
+        
+        foreach ($allWorkers as $worker) {
+            /* @var $worker Worker */
+            if (!$this->hasWorkerEverBeenAssignedATask($worker)) {
+                $selectedWorkers[] = $worker;
+            }
+        }
+        
+        return $selectedWorkers;        
+    }
+    
+    
+    /**
+     *
+     * @param Worker $worker
+     * @return boolean 
+     */
+    private function hasWorkerEverBeenAssignedATask(Worker $worker) {
+        $workerTaskAssignments = $this->getEntityRepository()->findAllOrderedByDateTime();
+        foreach ($workerTaskAssignments as $workerTaskAssignment) {
+            /* @var $workerTaskAssignment WorkerTaskAssignment */
+            if ($workerTaskAssignment->getWorker()->equals($worker)) {
+                return true;
+            }
+        }        
+        
+        return false;
+    }
 
     
     /**
