@@ -7,12 +7,15 @@ use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 class JobService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Job\Job';
     const STARTING_STATE = 'job-new';
     const CANCELLED_STATE = 'job-cancelled';
+    const COMPLETED_STATE = 'job-completed';
+    const IN_PROGRESS_STATE = 'job-in-progress';
     
     /**
      *
@@ -70,6 +73,24 @@ class JobService extends EntityService {
         return $this->stateService;                
     }
     
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getCompletedState() {
+        return $this->stateService->fetch(self::COMPLETED_STATE);
+    }
+
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getInProgressState() {
+        return $this->stateService->fetch(self::IN_PROGRESS_STATE);
+    }
+        
     
     /**
      *
@@ -167,5 +188,42 @@ class JobService extends EntityService {
         $this->getEntityManager()->persist($job);
         $this->getEntityManager()->flush();
         return $job;
+    }
+    
+    
+    /**
+     * Does a job have any tasks which have not yet completed?
+     * 
+     * @param Job $job
+     * @return boolean 
+     */
+    public function hasIncompleteTasks(Job $job) {
+        foreach ($job->getTasks() as $task) {
+            /* @var $task Task */
+            if (!$task->getState()->equals($this->taskService->getCompletedState())) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+            
+    
+    /**
+     *
+     * @param Job $job
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
+     */
+    public function complete(Job $job) {
+        if (!$job->getState()->equals($this->getInProgressState())) {
+            return $job;
+        }        
+        
+        if ($this->hasIncompleteTasks($job)) {
+            return $job;
+        }
+        
+        $job->setNextState();       
+        return $this->persistAndFlush($job);
     }
 }
