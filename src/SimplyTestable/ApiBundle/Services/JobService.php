@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\TimePeriod;
 
 class JobService extends EntityService {
     
@@ -139,6 +140,14 @@ class JobService extends EntityService {
         /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
         foreach ($tasks as $task) {            
             $this->taskService->cancel($task);
+        }
+        
+        if ($job->getTimePeriod() instanceof TimePeriod) {
+            $job->getTimePeriod()->setEndDateTime(new \DateTime());
+        } else {
+            $job->setTimePeriod(new TimePeriod());
+            $job->getTimePeriod()->setStartDateTime(new \DateTime());
+            $job->getTimePeriod()->setEndDateTime(new \DateTime());            
         }
         
         $job->setState($this->stateService->fetch(self::CANCELLED_STATE));
