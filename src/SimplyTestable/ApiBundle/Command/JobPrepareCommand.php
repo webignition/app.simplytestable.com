@@ -59,6 +59,8 @@ class JobPrepareCommand extends BaseCommand
             return $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
         }
         
+        $job->setNextState();
+        
         $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
         $requestedTaskTypes = $job->getRequestedTaskTypes();
         $newTaskState = $this->getNewTaskState();
@@ -89,10 +91,10 @@ class JobPrepareCommand extends BaseCommand
             }
         }
         
+        $job->setNextState();
+        
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());
-
-        $job->setNextState();        
         $job->setTimePeriod($timePeriod);   
         
         $entityManager->persist($job);

@@ -22,17 +22,23 @@ class Version20120716192143_create_job_states extends EntityModificationMigratio
         $state_in_progress->setName('job-in-progress');
         $state_in_progress->setNextState($state_completed);        
         $this->getEntityManager()->persist($state_in_progress);
-        $this->getEntityManager()->flush();        
+        $this->getEntityManager()->flush();  
         
         $state_queued = new State();
         $state_queued->setName('job-queued');
         $state_queued->setNextState($state_in_progress);        
         $this->getEntityManager()->persist($state_queued);
-        $this->getEntityManager()->flush();
+        $this->getEntityManager()->flush();                
         
+        $state_preparing = new State();
+        $state_preparing->setName('job-preparing');
+        $state_preparing->setNextState($state_queued);        
+        $this->getEntityManager()->persist($state_preparing);
+        $this->getEntityManager()->flush();        
+
         $state_new = new State();
         $state_new->setName('job-new');
-        $state_new->setNextState($state_queued);        
+        $state_new->setNextState($state_preparing);        
         $this->getEntityManager()->persist($state_new);
         $this->getEntityManager()->flush();        
     }
@@ -41,7 +47,8 @@ class Version20120716192143_create_job_states extends EntityModificationMigratio
     {
         $stateNames = array(
             'job-new',
-            'job-queued',
+            'job-preparing',
+            'job-queued',            
             'job-in-progress',
             'job-completed'
         );
