@@ -12,6 +12,7 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  *     indexes={@ORM\Index(name="remoteId_idx", columns={"remoteId"})}
  * )
  * @SerializerAnnotation\ExclusionPolicy("all")
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TaskRepository")
  * 
  */
 class Task

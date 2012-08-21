@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 
 class TaskService extends EntityService {
     
@@ -183,6 +184,16 @@ class TaskService extends EntityService {
             'worker' => $worker,
             'remoteId' => $remoteId
         ));
+    }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return int
+     */
+    public function getUrlCountByJob(Job $job) {
+        return $this->getEntityRepository()->findUrlCountByJob($job); 
     }
   
 }

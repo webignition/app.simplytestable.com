@@ -47,7 +47,9 @@ class TestsController extends ApiController
             'id' => $test_id,
             'user' => $this->getUser(),
             'website' => $this->getWebsite()
-        ));        
+        ));    
+        
+        $job->setUrlTotal($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
         
         if (is_null($job)) {
             $response = new Response();

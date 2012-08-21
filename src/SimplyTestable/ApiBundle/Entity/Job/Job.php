@@ -64,6 +64,13 @@ class Job
     
     
     /**
+     * @var int
+     *
+     */
+    protected $urlTotal;    
+    
+    
+    /**
      *
      * @var \Doctrine\Common\Collections\Collection
      * 
@@ -352,5 +359,26 @@ class Job
         }
         
         return true;
+    }
+    
+    
+    /**
+     *
+     * @return int 
+     */
+    public function getUrlTotal() {
+        return $this->urlTotal;
+    }
+    
+    
+    /**
+     *
+     * @param int $urlTotal
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
+     */    
+    public function setUrlTotal($urlTotal) {
+        $this->urlTotal = $urlTotal;
+        return $this;
+                
     }
 }
