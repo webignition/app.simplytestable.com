@@ -16,6 +16,12 @@ test_results:
     requirements:
         site_root_url: ".+"
         
+test_cancel:
+    pattern: /tests/{site_root_url}/{test_id}/cancel/
+    defaults: { _controller: SimplyTestableApiBundle:Tests:cancel, _format: json }    
+    requirements:
+        site_root_url: ".+"        
+        
 worker_activate:
   pattern: /worker/activate/
   defaults: { _controller: SimplyTestableApiBundle:Worker:activate, _format: json }   

@@ -58,6 +58,29 @@ class TestsController extends ApiController
         return $this->sendResponse($job);
     }
     
+    public function cancelAction($site_root_url, $test_id)
+    {        
+        $this->siteRootUrl = $site_root_url;
+        
+        /* @var $jobService \SimplyTestable\ApiBundle\Services\JobService */
+        $jobService = $this->get('simplytestable.services.jobservice');
+        
+        $job = $jobService->getEntityRepository()->findOneBy(array(
+            'id' => $test_id,
+            'user' => $this->getUser(),
+            'website' => $this->getWebsite()
+        ));        
+        
+        if (is_null($job)) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;            
+        }
+        
+        $jobService->cancel($job);        
+        return $this->sendSuccessResponse();
+    }    
+    
     public function resultsAction($site_root_url, $test_id)
     {
         return new \Symfony\Component\HttpFoundation\Response(json_encode(array(
