@@ -107,7 +107,6 @@ class Task
      *
      * @var string
      * @ORM\Column(type="text", nullable=true)
-     * @SerializerAnnotation\Expose
      */    
     protected $output;
     
