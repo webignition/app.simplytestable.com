@@ -37,4 +37,19 @@ class TaskRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult();
         return (int)($result[0]['url_total']);
     }
+    
+    /**
+     *
+     * @param Job $job
+     * @return array
+     */
+    public function findUrlsByJob(Job $job)
+    {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('DISTINCT Task.url');
+        $queryBuilder->where('Task.job = :Job');
+        $queryBuilder->setParameter('Job', $job);        
+        
+        return $queryBuilder->getQuery()->getArrayResult();
+    }
 }

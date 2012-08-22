@@ -195,5 +195,10 @@ class TaskService extends EntityService {
     public function getUrlCountByJob(Job $job) {
         return $this->getEntityRepository()->findUrlCountByJob($job); 
     }
+    
+    
+    public function getUrlsByJob(Job $job) {
+        return $this->getEntityRepository()->findUrlsByJob($job); 
+    }
   
 }
