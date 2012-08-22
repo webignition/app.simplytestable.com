@@ -60,7 +60,7 @@ class TaskService extends EntityService {
         $task->setState($this->stateService->fetch(self::CANCELLED_STATE));
         $task->clearWorker();
         
-        return $this->persistAndFlush($task);
+        return $task;
     }
     
     /**
