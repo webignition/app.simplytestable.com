@@ -75,6 +75,7 @@ class Job
      * @var \Doctrine\Common\Collections\Collection
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedTasks")
      */
     private $tasks;
     
@@ -132,6 +133,21 @@ class Job
      */
     public function getPublicSerializedState() {
         return str_replace('job-', '', (string)$this->getState());
+    }
+    
+
+    /**
+     * 
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getPublicSerializedTasks() {
+        $tasks = clone $this->getTasks();        
+        foreach ($tasks as $task) {
+            /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
+            $task->setOutput(null);
+        }
+        
+        return $tasks;
     }
     
     

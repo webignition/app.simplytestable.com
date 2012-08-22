@@ -11,15 +11,14 @@ use SimplyTestable\ApiBundle\Entity\State;
 class TestsController extends ApiController
 {
     private $siteRootUrl = null;
+    private $testId = null;
     
     
     public function startAction($site_root_url)
     {        
-        $this->siteRootUrl = $site_root_url;         
-        
-        /* @var $jobService \SimplyTestable\ApiBundle\Services\JobService */
-        $jobService = $this->get('simplytestable.services.jobservice');
-        $job = $jobService->create(
+        $this->siteRootUrl = $site_root_url;
+
+        $job = $this->getJobService()->create(
             $this->getUser(),
             $this->getWebsite(),
             $this->getTaskTypes()
@@ -37,49 +36,33 @@ class TestsController extends ApiController
     }    
     
     public function statusAction($site_root_url, $test_id)
-    {        
+    { 
         $this->siteRootUrl = $site_root_url;
+        $this->testId = $test_id;
         
-        /* @var $jobService \SimplyTestable\ApiBundle\Services\JobService */
-        $jobService = $this->get('simplytestable.services.jobservice');
-        
-        $job = $jobService->getEntityRepository()->findOneBy(array(
-            'id' => $test_id,
-            'user' => $this->getUser(),
-            'website' => $this->getWebsite()
-        ));    
-        
-        $job->setUrlTotal($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
-        
-        if (is_null($job)) {
+        $job = $this->getJob();
+        if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);
-            return $response;            
+            return $response;  
         }
         
         return $this->sendResponse($job);
     }
     
     public function cancelAction($site_root_url, $test_id)
-    {        
+    { 
         $this->siteRootUrl = $site_root_url;
+        $this->testId = $test_id;
         
-        /* @var $jobService \SimplyTestable\ApiBundle\Services\JobService */
-        $jobService = $this->get('simplytestable.services.jobservice');
-        
-        $job = $jobService->getEntityRepository()->findOneBy(array(
-            'id' => $test_id,
-            'user' => $this->getUser(),
-            'website' => $this->getWebsite()
-        ));        
-        
-        if (is_null($job)) {
+        $job = $this->getJob();
+        if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);
-            return $response;            
+            return $response;  
         }
         
-        $jobService->cancel($job);        
+        $this->getJobService()->cancel($job);        
         return $this->sendSuccessResponse();
     }    
     
@@ -90,6 +73,50 @@ class TestsController extends ApiController
             'test_id' => $test_id
         )));
     }
+    
+    
+    public function taskStatusAction($site_root_url, $test_id, $task_id) {
+        $this->siteRootUrl = $site_root_url;
+        $this->testId = $test_id;
+        
+        $job = $this->getJob();
+        if ($job === false) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;  
+        }
+        
+        $task = $this->getTaskService()->getById($task_id);
+        if (is_null($task) || !$job->getTasks()->contains($task)) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;              
+        }
+        
+        return $this->sendResponse($task);
+    }
+    
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
+     */
+    private function getJob() {        
+        $job = $this->getJobService()->getEntityRepository()->findOneBy(array(
+            'id' => $this->testId,
+            'user' => $this->getUser(),
+            'website' => $this->getWebsite()
+        ));        
+        
+        if (is_null($job)) {
+            return false;           
+        }
+        
+        $job->setUrlTotal($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
+        return $job;      
+    }   
+    
     
     
     /**
@@ -139,5 +166,25 @@ class TestsController extends ApiController
      */
     private function getWebsite() {        
         return $this->get('simplytestable.services.websiteservice')->fetch($this->siteRootUrl);
+    }
+    
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobService 
+     */
+    private function getJobService() {
+        return $this->get('simplytestable.services.jobservice');
+    }
+    
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskService 
+     */
+    private function getTaskService() {
+        return $this->get('simplytestable.services.taskservice');
     }
 }

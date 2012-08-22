@@ -4,6 +4,12 @@ test_start:
     requirements:
         site_root_url: ".+"
     
+task_status:
+  pattern: /tasks/{site_root_url}/{test_id}/{task_id}/status/
+  defaults: { _controller: SimplyTestableApiBundle:Tests:taskStatus, _format: json } 
+  requirements:
+    site_root_url: ".+"    
+    
 test_status:
     pattern: /tests/{site_root_url}/{test_id}/status/
     defaults: { _controller: SimplyTestableApiBundle:Tests:status, _format: json }    

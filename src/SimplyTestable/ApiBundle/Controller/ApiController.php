@@ -59,7 +59,7 @@ abstract class ApiController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response 
      */
     protected function sendResponse($object, $statusCode = 200) {        
-        $output = $this->container->get('serializer')->serialize($object, 'json');   
+        $output = $this->getSerializer()->serialize($object, 'json');   
         $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter(); 
         
         $response = new Response($formatter->format($output)); 
@@ -176,5 +176,14 @@ abstract class ApiController extends Controller
      */
     public function sendFailureResponse() {
         return $this->sendResponse('', 400);
+    }
+    
+    
+    /**
+     *
+     * @return \JMS\SerializerBundle\Serializer\Serializer
+     */
+    protected function getSerializer() {
+        return $this->container->get('serializer');
     }
 }
