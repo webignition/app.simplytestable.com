@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
@@ -155,10 +156,10 @@ class TaskService extends EntityService {
      *
      * @param Task $task
      * @param \DateTime $endDateTime
-     * @param string $output
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Output $output
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
-    public function complete(Task $task, \DateTime $endDateTime, $output) {
+    public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output) {
         if ($task->getState()->equals($this->getInProgressState())) {
             $task->getTimePeriod()->setEndDateTime($endDateTime);
             $task->setOutput($output);

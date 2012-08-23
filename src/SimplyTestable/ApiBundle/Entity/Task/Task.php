@@ -102,15 +102,16 @@ class Task
      * @SerializerAnnotation\SerializedName("remote_id")
      */
     protected $remoteId;
-    
+
     
     /**
      *
-     * @var string
-     * @ORM\Column(type="text", nullable=true)
+     * @var \SimplyTestable\ApiBundle\Entity\Task\Output
+     * 
+     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Output", cascade={"persist"})
      * @SerializerAnnotation\Expose
-     */    
-    protected $output;
+     */
+    protected $output;    
     
     /**
      *
@@ -338,22 +339,23 @@ class Task
     /**
      * Set output
      *
-     * @param text $url
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Output $output
      * @return Task
      */
     public function setOutput($output)
     {
         $this->output = $output;
+    
         return $this;
     }
 
     /**
      * Get output
      *
-     * @return text 
+     * @return SimplyTestable\ApiBundle\Entity\Task\Output 
      */
     public function getOutput()
     {
         return $this->output;
-    }    
+    }  
 }

@@ -11,6 +11,7 @@ use webignition\InternetMediaType\InternetMediaType;
  * @ORM\Table(
  *     name="TaskOutput"
  * )
+ * @SerializerAnnotation\ExclusionPolicy("all")
  * 
  */
 class Output
@@ -30,6 +31,7 @@ class Output
      *
      * @var string
      * @ORM\Column(type="text", nullable=true)
+     * @SerializerAnnotation\Expose
      */
     protected $output;
     
@@ -38,6 +40,7 @@ class Output
      *
      * @var \webignition\InternetMediaType\InternetMediaType 
      * @ORM\Column(type="string", nullable=true)
+     * @SerializerAnnotation\Expose
      */
     protected $contentType;
 

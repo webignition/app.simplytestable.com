@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 
@@ -19,7 +20,8 @@ class TaskController extends ApiController
         $this->setInputDefinitions(array(
             'completeAction' => new InputDefinition(array(
                 new InputArgument('end_date_time', InputArgument::REQUIRED, 'Task end date and time'),
-                new InputArgument('output', InputArgument::REQUIRED, 'Task output')
+                new InputArgument('output', InputArgument::REQUIRED, 'Task output'),
+                new InputArgument('contentType', InputArgument::REQUIRED, 'Task output content type')
             ))
         ));
         
@@ -39,11 +41,18 @@ class TaskController extends ApiController
         }
 
         $endDateTime = new \DateTime($this->getArguments('startAction')->get('end_date_time'));
-        $output = $this->getArguments('startAction')->get('output');
+        $rawOutput = $this->getArguments('startAction')->get('output');
+        
+        $mediaTypeParser = new \webignition\InternetMediaType\Parser\Parser();
+        $contentType = $mediaTypeParser->parse($this->getArguments('startAction')->get('contentType'));
         
         if (!$task->getState()->equals($this->getTaskService()->getInProgressState())) {
             return $this->sendFailureResponse();
-        }       
+        }
+        
+        $output = new Output();
+        $output->setOutput($rawOutput);
+        $output->setContentType($contentType);
 
         $this->getTaskService()->complete($task, $endDateTime, $output);
         
