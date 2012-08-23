@@ -1,5 +1,5 @@
 {
-    "hash": "d9fdbd72bb67faf3210ff0a8e6bdf0ba",
+    "hash": "9ce592256268f1ef68963717bb93fd1a",
     "packages": [
         {
             "package": "doctrine/common",
@@ -234,10 +234,18 @@
             "commit-date": "1344029348"
         },
         {
+            "package": "webignition/internet-media-type",
+            "version": "0.4"
+        },
+        {
             "package": "webignition/json-pretty-print",
             "version": "dev-master",
             "source-reference": "72831627c3264374766f100145ca11fee3581729",
             "commit-date": "1343085751"
+        },
+        {
+            "package": "webignition/quoted-string",
+            "version": "0.2"
         },
         {
             "package": "webignition/robots-txt-file",
@@ -254,6 +262,10 @@
         {
             "package": "webignition/simplytestable-base-migrations-bundle",
             "version": "1.1"
+        },
+        {
+            "package": "webignition/string-parser",
+            "version": "0.1"
         },
         {
             "package": "webignition/url",

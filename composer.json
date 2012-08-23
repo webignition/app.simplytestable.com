@@ -26,7 +26,8 @@
         "webignition/website-sitemap-finder":"dev-master",
         "webignition/website-sitemap-url-retriever":"dev-master",
         "webignition/simplytestable-base-migrations-bundle":"1.1",
-        "glit/resque-bundle":"*"
+        "glit/resque-bundle":"*",
+        "webignition/internet-media-type":">=0.1,<2.0"
     },
     "scripts": {
         "post-install-cmd": [
