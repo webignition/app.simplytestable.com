@@ -31,6 +31,7 @@ security:
 
     access_control:
         - { path: ^/tests/, role: ROLE_USER }
+        - { path: ^/tasks/, role: ROLE_USER }        
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
 
