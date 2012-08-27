@@ -91,7 +91,25 @@ class JobService extends EntityService {
     public function getInProgressState() {
         return $this->stateService->fetch(self::IN_PROGRESS_STATE);
     }
+    
         
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getCancelledState() {
+        return $this->stateService->fetch(self::CANCELLED_STATE);
+    } 
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getStartingState() {
+        return $this->stateService->fetch(self::STARTING_STATE);
+    }        
+    
     
     /**
      *
@@ -124,7 +142,7 @@ class JobService extends EntityService {
             }
         }
         
-        $job->setState($this->stateService->fetch(self::STARTING_STATE));
+        $job->setState($this->getStartingState());
         return $this->persistAndFlush($job);
     }
     
@@ -135,6 +153,14 @@ class JobService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job
      */
     public function cancel(Job $job) {
+        if ($this->isCancelled($job)) {
+            return $job;
+        }
+        
+        if ($this->isCompleted($job)) {
+            return $job;
+        }        
+        
         $tasks = $job->getTasks();        
         
         /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
@@ -150,9 +176,39 @@ class JobService extends EntityService {
             $job->getTimePeriod()->setEndDateTime(new \DateTime());            
         }
         
-        $job->setState($this->stateService->fetch(self::CANCELLED_STATE));
+        $job->setState($this->getCancelledState());
         return $this->persistAndFlush($job);
     }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return boolean 
+     */
+    private function isCancelled(Job $job) {
+        return $job->getState()->equals($this->getCancelledState());
+    }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return boolean 
+     */
+    private function isCompleted(Job $job) {
+        return $job->getState()->equals($this->getCompletedState());
+    }    
+    
+
+    /**
+     *
+     * @param Job $job
+     * @return boolean 
+     */
+    private function isInProgress(Job $job) {
+        return $job->getState()->equals($this->getInProgressState());
+    }     
     
     
     /**
@@ -224,7 +280,7 @@ class JobService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
     public function complete(Job $job) {
-        if (!$job->getState()->equals($this->getInProgressState())) {
+        if (!$this->isInProgress($job)) {
             return $job;
         }        
         

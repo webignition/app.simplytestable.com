@@ -62,8 +62,12 @@ class TaskService extends EntityService {
      * @param Task $task
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
-    public function cancel(Task $task) {        
-        if ($task->getState()->equals($this->stateService->fetch(self::CANCELLED_STATE))) {
+    public function cancel(Task $task) { 
+        if ($this->isCancelled($task)) {
+            return $task;
+        }   
+        
+        if ($this->isCompleted($task)) {
             return $task;
         }
         
@@ -122,7 +126,46 @@ class TaskService extends EntityService {
      */
     public function getCompletedState() {
         return $this->stateService->fetch(self::COMPLETED_STATE);
-    }      
+    }     
+    
+    
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State
+     */
+    public function getCancelledState() {
+        return $this->stateService->fetch(self::CANCELLED_STATE);
+    }  
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @return boolean
+     */
+    private function isCancelled(Task $task) {
+        return $task->getState()->equals($this->getCancelledState());
+    }
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @return boolean
+     */
+    private function isCompleted(Task $task) {
+        return $task->getState()->equals($this->getCompletedState());
+    } 
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @return boolean
+     */
+    private function isInProgress(Task $task) {
+        return $task->getState()->equals($this->getInProgressState());
+    }       
     
     
     /**
@@ -177,17 +220,17 @@ class TaskService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
     public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output) {
-        if ($task->getState()->equals($this->getInProgressState())) {
-            $task->getTimePeriod()->setEndDateTime($endDateTime);
-            $task->setOutput($output);
-            $task->setNextState();            
-            $task->clearWorker();
-            $task->clearRemoteId();
-            
-            $this->persistAndFlush($task);
-        }
-        
-        return $task;
+        if (!$this->isInProgress($task)) {
+            return $task;
+        }        
+
+        $task->getTimePeriod()->setEndDateTime($endDateTime);
+        $task->setOutput($output);
+        $task->setNextState();            
+        $task->clearWorker();
+        $task->clearRemoteId();
+
+        return $this->persistAndFlush($task);
     }
     
     
