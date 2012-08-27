@@ -78,7 +78,7 @@ class TaskService extends EntityService {
             'SimplyTestable\ApiBundle\Resque\Job\TaskCancelJob',
             'task-cancel',
             array(
-                'id' => $task->getJob()->getId()
+                'id' => $task->getRemoteId()
             )                
         );         
         
