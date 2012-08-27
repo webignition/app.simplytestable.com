@@ -27,15 +27,24 @@ class TaskService extends EntityService {
     
     /**
      *
+     * @var \SimplyTestable\ApiBundle\Services\ResqueQueueService 
+     */
+    private $resqueQueueService;
+    
+    
+    /**
+     *
      * @param EntityManager $entityManager
      * @param \SimplyTestable\ApiBundle\Services\StateService $stateService 
      */
     public function __construct(
             EntityManager $entityManager,
-            \SimplyTestable\ApiBundle\Services\StateService $stateService)
+            \SimplyTestable\ApiBundle\Services\StateService $stateService,
+            \SimplyTestable\ApiBundle\Services\ResqueQueueService $resqueQueueService)
     {
         parent::__construct($entityManager);        
         $this->stateService = $stateService;
+        $this->resqueQueueService = $resqueQueueService;
     }    
     
     
@@ -61,7 +70,7 @@ class TaskService extends EntityService {
         $task->setState($this->stateService->fetch(self::CANCELLED_STATE));
         $task->clearWorker();
         
-        $this->container->get('simplytestable.services.resqueQueueService')->add(
+        $this->resqueQueueService->add(
             'SimplyTestable\ApiBundle\Resque\Job\TaskCancelJob',
             'task-cancel',
             array(

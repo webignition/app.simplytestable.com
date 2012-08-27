@@ -18,6 +18,7 @@ services:
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"      
         stateService: "@simplytestable.services.stateservice"
+        resqueQueueService: "@simplytestable.services.resqueQueueService"
         
   simplytestable.services.jobservice:
     class:  SimplyTestable\ApiBundle\Services\JobService
