@@ -143,7 +143,7 @@ class TaskService extends EntityService {
      * @param Task $task
      * @return boolean
      */
-    private function isCancelled(Task $task) {
+    public function isCancelled(Task $task) {
         return $task->getState()->equals($this->getCancelledState());
     }
     
@@ -153,7 +153,7 @@ class TaskService extends EntityService {
      * @param Task $task
      * @return boolean
      */
-    private function isCompleted(Task $task) {
+    public function isCompleted(Task $task) {
         return $task->getState()->equals($this->getCompletedState());
     } 
     
@@ -163,7 +163,7 @@ class TaskService extends EntityService {
      * @param Task $task
      * @return boolean
      */
-    private function isInProgress(Task $task) {
+    public function isInProgress(Task $task) {
         return $task->getState()->equals($this->getInProgressState());
     }       
     
