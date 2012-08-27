@@ -23,7 +23,7 @@ class WorkerTaskCancellationService extends WorkerTaskService {
     
     
     public function cancel(Task $task) {
-        
+        return true;
     }
     
     

@@ -93,7 +93,7 @@ services:
         taskService: "@simplytestable.services.taskservice"
         
   simplytestable.services.workertaskcancellationservice:
-    class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
+    class:  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
         logger: "@logger"
