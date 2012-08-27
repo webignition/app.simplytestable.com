@@ -10,77 +10,9 @@ use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 
 
-class WorkerTaskAssignmentService extends EntityService {
+class WorkerTaskAssignmentService extends WorkerTaskService {
     
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WorkerTaskAssignment';   
-    const STARTING_STATE = 'worker-activation-request-awaiting-verification';
-    
-    /**
-     *
-     * @var Logger
-     */
-    private $logger;  
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\WorkerService
-     */
-    private $workerService;    
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\StateService
-     */
-    private $stateService;
-    
-    /**
-     *
-     * @var \webignition\Http\Client\Client
-     */
-    private $httpClient;  
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\UrlService
-     */
-    private $urlService; 
-    
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\TaskService
-     */    
-    private $taskService;
-    
-    /**
-     *
-     * @param EntityManager $entityManager
-     * @param Logger $logger
-     * @param \SimplyTestable\ApiBundle\Services\WorkerService $workerService 
-     * @param \SimplyTestable\ApiBundle\Services\StateService $stateService 
-     * @param \webignition\Http\Client\Client $httpClient 
-     * @param \SimplyTestable\ApiBundle\Services\UrlService $urlService
-     * @param \SimplyTestable\ApiBundle\Services\TaskService $taskService
-     */
-    public function __construct(
-            EntityManager $entityManager,
-            Logger $logger,
-            \SimplyTestable\ApiBundle\Services\WorkerService $workerService,
-            \SimplyTestable\ApiBundle\Services\StateService $stateService,
-            \webignition\Http\Client\Client $httpClient,
-            \SimplyTestable\ApiBundle\Services\UrlService $urlService,
-            \SimplyTestable\ApiBundle\Services\TaskService $taskService)            
-    {
-        parent::__construct($entityManager);        
-        
-        $this->logger = $logger;
-        $this->workerService = $workerService;
-        $this->stateService = $stateService;
-        $this->httpClient = $httpClient;
-        $this->urlService = $urlService;
-        $this->taskService = $taskService;
-    }  
-    
+    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WorkerTaskAssignment';    
     
     /**
      *
