@@ -61,6 +61,14 @@ class TaskService extends EntityService {
         $task->setState($this->stateService->fetch(self::CANCELLED_STATE));
         $task->clearWorker();
         
+        $this->container->get('simplytestable.services.resqueQueueService')->add(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskCancelJob',
+            'task-cancel',
+            array(
+                'id' => $task->getJob()->getId()
+            )                
+        );         
+        
         return $task;
     }
     
