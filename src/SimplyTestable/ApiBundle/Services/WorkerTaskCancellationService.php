@@ -24,7 +24,7 @@ class WorkerTaskCancellationService extends WorkerTaskService {
     
     public function cancel(Task $task) {        
         $this->logger->info("WorkerTaskCancellationService::cancel: Initialising");
-        $this->logger->info("WorkerTaskCancellationService::cancel: Processing task [".$task->getId()."] [".$task->getType()."] [".$task->getUrl()."]");
+        $this->logger->info("WorkerTaskCancellationService::cancel: Processing task [".$task->getId()."] [".$task->getRemoteId()."] [".$task->getType()."] [".$task->getUrl()."]");
         
         if (!$this->taskService->isAwaitingCancellation($task)) {
             $this->logger->info("WorkerTaskCancellationService::cancel: Task is not awaiting cancellation [".$task->getState()->getName()."]");
