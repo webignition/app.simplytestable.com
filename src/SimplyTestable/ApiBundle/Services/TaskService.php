@@ -194,6 +194,16 @@ class TaskService extends EntityService {
         return $task->getState()->equals($this->getCompletedState());
     } 
     
+
+    /**
+     *
+     * @param Task $task
+     * @return boolean
+     */
+    public function isQueued(Task $task) {
+        return $task->getState()->equals($this->getQueuedState());
+    }    
+    
     
     /**
      *

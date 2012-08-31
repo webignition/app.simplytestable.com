@@ -164,8 +164,12 @@ class JobService extends EntityService {
         $tasks = $job->getTasks();        
         
         /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
-        foreach ($tasks as $task) {            
-            $this->taskService->setAwaitingCancellation($task);
+        foreach ($tasks as $task) {
+            if ($this->taskService->isInProgress($task)) {
+                $this->taskService->setAwaitingCancellation($task);
+            } else {
+                $this->taskService->cancel($task);
+            }           
         }
         
         if ($job->getTimePeriod() instanceof TimePeriod) {
