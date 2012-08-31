@@ -26,17 +26,12 @@ class WorkerTaskCancellationService extends WorkerTaskService {
         $this->logger->info("WorkerTaskCancellationService::cancel: Initialising");
         $this->logger->info("WorkerTaskCancellationService::cancel: Processing task [".$task->getId()."] [".$task->getType()."] [".$task->getUrl()."]");
         
-        if ($this->taskService->isCancelled($task)) {
-            $this->logger->info("WorkerTaskCancellationService::cancel: Task is cancelled, nothing to do");
+        if (!$this->taskService->isAwaitingCancellation($task)) {
+            $this->logger->info("WorkerTaskCancellationService::cancel: Task is not awaiting cancellation [".$task->getState()->getName()."]");
             return true;            
         }
         
-        if ($this->taskService->isCompleted($task)) {
-            $this->logger->info("WorkerTaskCancellationService::cancel: Task is completed, nothing to do");
-            return true;            
-        }
-        
-        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/cancel/');
+        $requestUrl = $this->urlService->prepare('http://' . $task->getWorker()->getHostname() . '/task/cancel/');
 
         $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);
         $httpRequest->setPostFields(array(
@@ -48,6 +43,8 @@ class WorkerTaskCancellationService extends WorkerTaskService {
             $responseObject = json_decode($response->getBody());
 
             $this->logger->info("WorkerTaskCancellationService::cancel " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
+            
+            $this->taskService->cancel($task);
             
             return ($response->getResponseCode() === 200) ? $responseObject->id : false;
         } catch (CurlException $curlException) {

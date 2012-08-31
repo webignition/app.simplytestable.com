@@ -17,6 +17,7 @@ class TaskService extends EntityService {
     const QUEUED_STATE = 'task-queued';
     const IN_PROGRESS_STATE = 'task-in-progress';
     const COMPLETED_STATE = 'task-completed';
+    const AWAITING_CANCELLATION_STATE = 'task-awaiting-cancellation';
     
     /**
      *
@@ -63,6 +64,25 @@ class TaskService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
     public function cancel(Task $task) { 
+        if (!$this->isAwaitingCancellation($task)) {
+            return $task;
+        }
+        
+        $task->setState($this->getCancelledState());
+        $task->clearWorker();
+        
+        $this->getEntityManager()->persist($task);
+        $this->getEntityManager()->flush();      
+        
+        return $task;
+    }
+    
+    
+    public function setAwaitingCancellation(Task $task) {
+        if ($this->isAwaitingCancellation($task)) {
+            return $task;
+        }          
+        
         if ($this->isCancelled($task)) {
             return $task;
         }   
@@ -71,8 +91,7 @@ class TaskService extends EntityService {
             return $task;
         }
         
-        $task->setState($this->stateService->fetch(self::CANCELLED_STATE));
-        $task->clearWorker();
+        $task->setState($this->getAwaitingCancellationState());
         
         $this->resqueQueueService->add(
             'SimplyTestable\ApiBundle\Resque\Job\TaskCancelJob',
@@ -82,7 +101,7 @@ class TaskService extends EntityService {
             )                
         );         
         
-        return $task;
+        return $task;        
     }
     
     /**
@@ -137,6 +156,15 @@ class TaskService extends EntityService {
         return $this->stateService->fetch(self::CANCELLED_STATE);
     }  
     
+
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State
+     */
+    public function getAwaitingCancellationState() {
+        return $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
+    }      
+    
     
     /**
      *
@@ -146,6 +174,15 @@ class TaskService extends EntityService {
     public function isCancelled(Task $task) {
         return $task->getState()->equals($this->getCancelledState());
     }
+            
+    /**
+     *
+     * @param Task $task
+     * @return boolean
+     */
+    public function isAwaitingCancellation(Task $task) {
+        return $task->getState()->equals($this->getAwaitingCancellationState());
+    }            
     
     
     /**
