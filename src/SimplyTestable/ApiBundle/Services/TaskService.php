@@ -75,6 +75,14 @@ class TaskService extends EntityService {
         $task->setState($this->getCancelledState());
         $task->clearWorker();
         
+        if ($task->getTimePeriod() instanceof TimePeriod) {
+            $task->getTimePeriod()->setEndDateTime(new \DateTime());
+        } else {
+            $task->setTimePeriod(new TimePeriod());
+            $task->getTimePeriod()->setStartDateTime(new \DateTime());
+            $task->getTimePeriod()->setEndDateTime(new \DateTime());            
+        }        
+        
         $this->getEntityManager()->persist($task);
         $this->getEntityManager()->flush();      
         
