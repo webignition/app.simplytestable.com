@@ -64,7 +64,11 @@ class TaskService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
     public function cancel(Task $task) { 
-        if (!$this->isAwaitingCancellation($task)) {
+        if ($this->isCompleted($task)) {
+            return $task;
+        }
+        
+        if ($this->isCancelled($task)) {
             return $task;
         }
         
