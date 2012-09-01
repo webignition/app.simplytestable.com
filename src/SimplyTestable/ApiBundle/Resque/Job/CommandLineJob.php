@@ -12,12 +12,6 @@ abstract class CommandLineJob extends AbstractJob {
     abstract protected function getCommand();
     abstract protected function failureHandler($output, $returnValue);
     
-    
-    public function __construct(ContainerInterface $container) {
-        parent::__construct($container);
-        $this->setQueue($this->getQueueName());
-    }
-    
     public function perform() {
         $output = array();
         $returnValue = null;       
