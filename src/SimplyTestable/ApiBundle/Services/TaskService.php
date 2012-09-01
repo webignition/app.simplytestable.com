@@ -103,15 +103,7 @@ class TaskService extends EntityService {
             return $task;
         }
         
-        $task->setState($this->getAwaitingCancellationState());
-        
-        $this->resqueQueueService->add(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskCancelJob',
-            'task-cancel',
-            array(
-                'id' => $task->getId()
-            )                
-        );         
+        $task->setState($this->getAwaitingCancellationState());      
         
         return $task;        
     }
@@ -317,8 +309,28 @@ class TaskService extends EntityService {
     }
     
     
+    /**
+     *
+     * @param Job $job
+     * @return array 
+     */
     public function getUrlsByJob(Job $job) {
         return $this->getEntityRepository()->findUrlsByJob($job); 
     }
+    
+    
+    /**   
+     * 
+     * @param Job $job
+     * @return array 
+     */
+    public function getAwaitingCancellationByJob(Job $job) {
+        return $this->getEntityRepository()->findBy(array(
+            'job' => $job,
+            'state' => $this->getAwaitingCancellationState()
+        ));
+    }
+    
+    
   
 }

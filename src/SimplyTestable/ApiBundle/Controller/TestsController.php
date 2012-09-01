@@ -62,7 +62,23 @@ class TestsController extends ApiController
             return $response;  
         }
         
-        $this->getJobService()->cancel($job);        
+        $this->getJobService()->cancel($job);
+        
+        $tasksAwaitingCancellation = $this->getTaskService()->getAwaitingCancellationByJob($job);
+        $taskIds = array();
+        
+        foreach($tasksAwaitingCancellation as $task) {
+            $taskIds[] = $task->getId();
+        }
+        
+        $this->get('simplytestable.services.resqueQueueService')->add(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
+            'task-cancel',
+            array(
+                'ids' => implode(',', $taskIds)
+            )                
+        );       
+        
         return $this->sendSuccessResponse();
     }    
     

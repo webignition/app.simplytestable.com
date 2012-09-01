@@ -52,5 +52,43 @@ class WorkerTaskCancellationService extends WorkerTaskService {
         }        
         
         return true;
-    }    
+    }  
+    
+    
+    public function cancelCollection($tasks) {
+        $remoteTaskIds = array();
+        foreach ($tasks as $task) {
+            /* @var Task $task */
+            $remoteTaskIds[] = $task->getRemoteId();
+        }
+        
+        $remoteTaskIdsString = implode(',', $remoteTaskIds);
+        
+        $this->logger->info("WorkerTaskCancellationService::cancelCollection: Initialising");
+        $this->logger->info("WorkerTaskCancellationService::cancelCollection: Processing remote IDs [".$remoteTaskIdsString."]");        
+        
+        $requestUrl = $this->urlService->prepare('http://' . $tasks[0]->getWorker()->getHostname() . '/task/cancel/collection/');
+
+        $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);
+        $httpRequest->setPostFields(array(
+            'ids' => $remoteTaskIdsString
+        ));
+
+        try {            
+            $response = $this->httpClient->getResponse($httpRequest);
+            $responseObject = json_decode($response->getBody());
+
+            $this->logger->info("WorkerTaskCancellationService::cancelCollection " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
+            
+            foreach ($tasks as $task) {
+                $this->taskService->cancel($task);
+            }
+            
+            return ($response->getResponseCode() === 200) ? $responseObject->id : false;
+        } catch (CurlException $curlException) {
+            $this->logger->info("WorkerTaskCancellationService::cancelCollection: " . $requestUrl . ": " . $curlException->getMessage());
+        }        
+        
+        return true;        
+    }
 }
