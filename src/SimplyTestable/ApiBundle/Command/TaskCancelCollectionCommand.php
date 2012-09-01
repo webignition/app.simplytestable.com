@@ -34,16 +34,24 @@ EOF
             }            
         }
         
+        $this->getContainer()->get('logger')->info('TaskCancelCollectionCommand::execute: raw ids ['.$input->getArgument('ids').']');
+        
         $taskIds = explode(',', $input->getArgument('ids'));
         
         $taskIdsByWorker = array();        
         foreach ($taskIds as $taskId) {
+            $this->getContainer()->get('logger')->info('TaskCancelCollectionCommand::execute: taskId ['.$taskId.']');
             $task = $this->getTaskService()->getById($taskId);
-            if (!isset($tasksByWorker[$task->getWorker()->getHostname()])) {
-                $tasksByWorker[$task->getWorker()->getHostname()] = array();
-            }
             
-            $tasksByWorker[$task->getWorker()->getHostname()][] = $task;
+            if ($task->hasWorker()) {
+                if (!isset($tasksByWorker[$task->getWorker()->getHostname()])) {
+                    $tasksByWorker[$task->getWorker()->getHostname()] = array();
+                }
+
+                $tasksByWorker[$task->getWorker()->getHostname()][] = $task;                
+            } else {
+                $this->getTaskService()->cancel($task);
+            }
         }
         
         foreach ($taskIdsByWorker as $tasks) {

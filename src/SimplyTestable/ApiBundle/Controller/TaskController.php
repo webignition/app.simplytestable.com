@@ -39,6 +39,11 @@ class TaskController extends ApiController
         if (is_null($task)) {
             return $this->sendFailureResponse();
         }
+        
+        if ($this->getTaskService()->isAwaitingCancellation($task)) {
+            $this->getTaskService()->cancel($task);
+            return $this->sendSuccessResponse();
+        }        
 
         $endDateTime = new \DateTime($this->getArguments('startAction')->get('end_date_time'));
         $rawOutput = $this->getArguments('startAction')->get('output');

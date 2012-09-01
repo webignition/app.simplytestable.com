@@ -358,4 +358,14 @@ class Task
     {
         return $this->output;
     }  
+    
+    
+    /**
+     *
+     * @return boolean
+     */
+    public function hasWorker()
+    {
+        return !is_null($this->getWorker());
+    }
 }
