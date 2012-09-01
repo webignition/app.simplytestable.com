@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job;
 
-use Resque\Job\AbstractInstance as BaseJob;
+use Glit\ResqueBundle\Job\BaseJob;
 
 abstract class AbstractJob extends BaseJob {    
 }
