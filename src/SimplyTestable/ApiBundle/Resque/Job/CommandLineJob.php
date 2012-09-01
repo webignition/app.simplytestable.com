@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Resque\Job;
 
 use SimplyTestable\ApiBundle\Exception\JobPrepareException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class CommandLineJob extends AbstractJob {    
     
@@ -12,7 +13,8 @@ abstract class CommandLineJob extends AbstractJob {
     abstract protected function failureHandler($output, $returnValue);
     
     
-    public function __constuct() {
+    public function __construct(ContainerInterface $container) {
+        parent::__construct($container);
         $this->setQueue($this->getQueueName());
     }
     
