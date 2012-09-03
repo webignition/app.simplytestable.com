@@ -60,9 +60,8 @@ abstract class ApiController extends Controller
      */
     protected function sendResponse($object, $statusCode = 200) {        
         $output = $this->getSerializer()->serialize($object, 'json');   
-        $formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter(); 
         
-        $response = new Response($formatter->format($output)); 
+        $response = new Response($output); 
         $response->setStatusCode($statusCode);
         
         return $response;
