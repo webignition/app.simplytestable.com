@@ -72,19 +72,17 @@ class TestsController extends ApiController
                     'id' => $job->getId()
                 )                
             );
-        }
-        
-        if ($preCancellationState->equals($this->getJobService()->getPreparingState()) || $preCancellationState->equals($this->getJobService()->getQueuedState())) {     
-            foreach ($job->getTasks() as $task) {
-                $this->get('simplytestable.services.resqueQueueService')->remove(
-                    'task-assign',
-                    array(
-                        'id' => $task->getId()
-                    )
-                );                
-            }
         }        
-        
+
+        foreach ($job->getTasks() as $task) {
+            $this->get('simplytestable.services.resqueQueueService')->remove(
+                'task-assign',
+                array(
+                    'id' => $task->getId()
+                )
+            );                
+        }      
+
         $tasksAwaitingCancellation = $this->getTaskService()->getAwaitingCancellationByJob($job);
         $taskIds = array();
         
