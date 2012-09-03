@@ -43,6 +43,11 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         
         $this->logger->info("WorkerTaskAssignmentService::assign: [".count($workerSelection)."] workers selected");
         
+        if (count($workerSelection) == 0) {
+            $this->logger->info("WorkerTaskAssignmentService::assign: Cannot assign, no workers.");
+            return true;
+        }
+        
         foreach ($workerSelection as $workerIndex => $worker) {            
             $remoteTaskId = $this->assignToWorker($task, $worker);
             if (is_int($remoteTaskId)) {
