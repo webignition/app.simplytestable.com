@@ -55,10 +55,6 @@ class TaskController extends ApiController
         $mediaTypeParser = new \webignition\InternetMediaType\Parser\Parser();
         $contentType = $mediaTypeParser->parse($this->getArguments('startAction')->get('contentType'));
         
-        if (!$task->getState()->equals($this->getTaskService()->getInProgressState())) {
-            return $this->sendFailureResponse();
-        }
-        
         $output = new Output();
         $output->setOutput($rawOutput);
         $output->setContentType($contentType);
