@@ -71,6 +71,7 @@ services:
       queueManager: "@glit_resque.queue_manager"
       logger: "@logger"
       resqueJobFactoryService: "@simplytestable.services.ResqueJobFactoryService"
+      resquePrefix: "%glit_resque.prefix%"
 
   simplytestable.services.workertaskservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
