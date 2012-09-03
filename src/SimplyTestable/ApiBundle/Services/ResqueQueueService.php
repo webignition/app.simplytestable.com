@@ -97,7 +97,7 @@ class ResqueQueueService {
      * @param array $argCollection 
      */
     public function removeCollection($job_name, $queue_name, $argCollection) {        
-        $values = $this->findRedisValues($job_name, $queue_name, $argCollection);
+        $values = $this->findRedisValues($job_name, $queue_name, $argCollection);      
         
         foreach ($values as $redisValue) {
             \Resque\Resque::redis()->lrem(self::QUEUE_KEY . ':' . $queue_name, 1, $redisValue);
@@ -117,7 +117,7 @@ class ResqueQueueService {
         $queueLength = $this->getQueueLength($queue_name);
         
         for ($queueIndex = 0; $queueIndex < $queueLength; $queueIndex++) {            
-            $jobDetails = json_decode(\Resque\Resque::redis()->lindex(self::QUEUE_KEY . ':' . $queue_name, $queueIndex));
+            $jobDetails = json_decode(@\Resque\Resque::redis()->lindex(self::QUEUE_KEY . ':' . $queue_name, $queueIndex));
             
             if ($this->match($jobDetails, $job_name, $args)) {
                 return json_encode($jobDetails);
@@ -128,12 +128,12 @@ class ResqueQueueService {
     }
     
     
-    private function findRedisValues($job_name, $queue_name, $argCollection) {
+    private function findRedisValues($job_name, $queue_name, $argCollection) {        
         $queueLength = $this->getQueueLength($queue_name);
         $values = array();
         
         for ($queueIndex = 0; $queueIndex < $queueLength; $queueIndex++) {            
-            $job_details = json_decode(\Resque\Resque::redis()->lindex(self::QUEUE_KEY . ':' . $queue_name, $queueIndex));
+            $job_details = json_decode(@\Resque\Resque::redis()->lindex(self::QUEUE_KEY . ':' . $queue_name, $queueIndex));
             
             foreach ($argCollection as $args) {                
                 if ($this->match($job_details, $job_name, $args)) {
@@ -190,7 +190,12 @@ class ResqueQueueService {
      * @return int
      */
     private function getQueueLength($queue_name) {
-        return $this->getResqueRedis()->llen(self::QUEUE_KEY . ':' . $queue_name);
+        try {
+            return @$this->getResqueRedis()->llen(self::QUEUE_KEY . ':' . $queue_name);          
+        } catch (\Exception $exception) {
+            $this->logger->warn('ResqueQueueService::add: Redis error ['.$exception->getMessage().']');
+            return 0;
+        }
     }
     
     
