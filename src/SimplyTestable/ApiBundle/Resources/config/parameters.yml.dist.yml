@@ -8,3 +8,4 @@ parameters:
     "job-mark-completed": "SimplyTestable\ApiBundle\Resque\Job\JobMarkCompletedJob"
     "task-assign": "SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob"       
     "task-cancel": "SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob"  
+  resque_pid: "simplytestable_apibundle"        
