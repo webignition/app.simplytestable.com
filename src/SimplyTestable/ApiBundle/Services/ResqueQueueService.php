@@ -173,9 +173,7 @@ class ResqueQueueService {
      *
      * @return \Resque\Redis
      */
-    private function getResqueRedis() {
-        var_dump($this->resquePrefix, json_encode($this->resquePrefix));
-        
+    private function getResqueRedis() {        
         if (is_null($this->resqueRedis)) {
             $this->resqueRedis = \Resque\Resque::redis();
             $this->resqueRedis->prefix($this->resquePrefix . ':resque:');
