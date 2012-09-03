@@ -17,6 +17,8 @@ class JobService extends EntityService {
     const CANCELLED_STATE = 'job-cancelled';
     const COMPLETED_STATE = 'job-completed';
     const IN_PROGRESS_STATE = 'job-in-progress';
+    const PREPARING_STATE = 'job-preparing';
+    const QUEUED_STATE = 'job-queued';
     
     /**
      *
@@ -108,7 +110,25 @@ class JobService extends EntityService {
      */
     public function getStartingState() {
         return $this->stateService->fetch(self::STARTING_STATE);
-    }        
+    }  
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getPreparingState() {
+        return $this->stateService->fetch(self::PREPARING_STATE);
+    }  
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getQueuedState() {
+        return $this->stateService->fetch(self::QUEUED_STATE);
+    }      
     
     
     /**
