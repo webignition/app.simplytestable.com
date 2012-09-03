@@ -24,8 +24,7 @@ class TestsController extends ApiController
             $this->getTaskTypes()
         );
         
-        $this->container->get('simplytestable.services.resqueQueueService')->add(
-            'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
+        $this->get('simplytestable.services.resqueQueueService')->add(
             'job-prepare',
             array(
                 'id' => $job->getId()
@@ -72,7 +71,6 @@ class TestsController extends ApiController
         }
         
         $this->get('simplytestable.services.resqueQueueService')->add(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
             'task-cancel',
             array(
                 'ids' => implode(',', $taskIds)

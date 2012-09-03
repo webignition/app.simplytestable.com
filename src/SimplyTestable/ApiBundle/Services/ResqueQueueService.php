@@ -29,26 +29,29 @@ class ResqueQueueService {
     private $logger;
     
     
+    private $resqueJobFactoryService;
+    
+    
     public function __construct(
             \Glit\ResqueBundle\Resque\Queue $queueManager,
-            \Symfony\Component\HttpKernel\Log\LoggerInterface $logger
+            \Symfony\Component\HttpKernel\Log\LoggerInterface $logger,
+            \SimplyTestable\ApiBundle\Services\ResqueJobFactoryService $resqueJobFactoryService
     ) {
         $this->queueManager = $queueManager;
         $this->logger = $logger;
-        
+        $this->resqueJobFactoryService = $resqueJobFactoryService;
     }
     
     
     /**
      *
-     * @param string $job_name Fully qualified job class name
      * @param string $queue_name Name of the queue to which to add the job
      * @param array $args
      * @return string 
      */
-    public function add($job_name, $queue_name, $args = null) {
+    public function add($queue_name, $args = null) {                
         try {
-            return @$this->queueManager->add($job_name, $queue_name, $args);            
+            return @$this->queueManager->add($this->resqueJobFactoryService->getJobName($queue_name), $queue_name, $args);            
         } catch (\Exception $exception) {
             $this->logger->warn('ResqueQueueService::add: Redis error ['.$exception->getMessage().']');
             return 0;

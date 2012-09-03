@@ -82,12 +82,11 @@ class JobPrepareCommand extends BaseCommand
                 $entityManager->flush();
                 
                 $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
-                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
                     'task-assign',
                     array(
                         'id' => $task->getId()
-                    )                
-                );                 
+                    )
+                );              
             }
         }
         
@@ -127,5 +126,13 @@ class JobPrepareCommand extends BaseCommand
         }
         
         return $this->websiteService;
+    }
+    
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\ResqueJobFactoryService 
+     */
+    private function getResqueJobFactoryService() {
+        return $this->getContainer()->get('simplytestable.services.ResqueJobFactoryService');
     }
 }
