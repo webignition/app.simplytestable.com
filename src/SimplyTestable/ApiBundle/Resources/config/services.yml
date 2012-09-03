@@ -70,6 +70,7 @@ services:
     arguments:
       queueManager: "@glit_resque.queue_manager"
       logger: "@logger"
+      resqueJobFactoryService: "@simplytestable.services.ResqueJobFactoryService"
 
   simplytestable.services.workertaskservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
@@ -102,4 +103,9 @@ services:
         stateService: "@simplytestable.services.stateservice"
         httpClient: "@simplytestable.services.httpClient"
         urlService: "@simplytestable.services.urlService"      
-        taskService: "@simplytestable.services.taskservice"        
+        taskService: "@simplytestable.services.taskservice" 
+        
+  simplytestable.services.ResqueJobFactoryService:
+    class:  SimplyTestable\ApiBundle\Services\ResqueJobFactoryService
+    arguments:
+      jobClassMap: "%resque-job-class-map%"
