@@ -22,7 +22,6 @@
         "glit/resque": "*",
         "webignition/url": "*",
         "jms/serializer-bundle": "dev-master",
-        "webignition/json-pretty-print":"dev-master",
         "webignition/website-sitemap-finder":"dev-master",
         "webignition/website-sitemap-url-retriever":"dev-master",
         "webignition/simplytestable-base-migrations-bundle":"1.1",
