@@ -9,6 +9,8 @@ class StateService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\State';
     
+    private $states = array();
+    
     /**
      *
      * @return string
@@ -22,12 +24,16 @@ class StateService extends EntityService {
      * @param string $name
      * @return \SimplyTestable\ApiBundle\Entity\State
      */
-    public function fetch($name) {        
-        if (!$this->has($name)) {
-            $this->create($name);
-        }
-
-        return $this->find($name);
+    public function fetch($name) {
+        if (!isset($this->states[$name])) {            
+            if (!$this->has($name)) {
+                $this->create($name);
+            }            
+            
+            $this->states[$name] = $this->find($name);
+        }        
+        
+        return $this->states[$name];
     }
     
     

@@ -83,8 +83,7 @@ class TaskService extends EntityService {
             $task->getTimePeriod()->setEndDateTime(new \DateTime());            
         }        
         
-        $this->getEntityManager()->persist($task);
-        $this->getEntityManager()->flush();      
+        $this->getEntityManager()->persist($task);    
         
         return $task;
     }
@@ -214,9 +213,9 @@ class TaskService extends EntityService {
      * @param Task $task
      * @return boolean
      */
-    public function isInProgress(Task $task) {
+    public function isInProgress(Task $task) {        
         return $task->getState()->equals($this->getInProgressState());
-    }       
+    }
     
     
     /**

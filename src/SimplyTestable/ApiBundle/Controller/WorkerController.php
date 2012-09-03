@@ -50,6 +50,7 @@ class WorkerController extends ApiController
         $this->getWorkerRequestActivationService()->persistAndFlush($activationRequest);
         
         $this->container->get('simplytestable.services.resqueQueueService')->add(
+            'SimplyTestable\ApiBundle\Resque\Job\WorkerActivateVerifyJob',
             'worker-activate-verify',
             array(
                 'id' => $activationRequest->getWorker()->getId()

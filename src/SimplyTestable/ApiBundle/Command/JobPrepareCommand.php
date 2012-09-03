@@ -59,8 +59,6 @@ class JobPrepareCommand extends BaseCommand
             return $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
         }
         
-        $job->setNextState();
-        
         $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
         $requestedTaskTypes = $job->getRequestedTaskTypes();
         $newTaskState = $this->getNewTaskState();
@@ -68,6 +66,7 @@ class JobPrepareCommand extends BaseCommand
         $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
         $jobCount = 0;
+        
         foreach ($urls as $url) {                
             foreach ($requestedTaskTypes as $taskType) {
                 $jobCount++;
@@ -77,15 +76,8 @@ class JobPrepareCommand extends BaseCommand
                 $task->setType($taskType);
                 $task->setUrl($url);
                 $task->setState($newTaskState);
-
-                $entityManager->persist($task);
                 
-                $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
-                    'task-assign',
-                    array(
-                        'id' => $task->getId()
-                    )
-                );              
+                $entityManager->persist($task);                             
             }
         }
         
@@ -96,7 +88,17 @@ class JobPrepareCommand extends BaseCommand
         $job->setTimePeriod($timePeriod);   
         
         $entityManager->persist($job);
-        $entityManager->flush();       
+        $entityManager->flush(); 
+        
+        foreach ($job->getTasks() as $task) {
+            $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+                'task-assign',
+                array(
+                    'id' => $task->getId()
+                )
+            );             
+        }
         
         $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
     }

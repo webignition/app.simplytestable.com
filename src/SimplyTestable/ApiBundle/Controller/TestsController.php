@@ -25,6 +25,7 @@ class TestsController extends ApiController
         );
         
         $this->get('simplytestable.services.resqueQueueService')->add(
+            'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
             'job-prepare',
             array(
                 'id' => $job->getId()
@@ -63,25 +64,32 @@ class TestsController extends ApiController
         
         $preCancellationState = clone $job->getState();
 
-        $this->getJobService()->cancel($job);
+        $this->getJobService()->cancel($job);        
         
         if ($preCancellationState->equals($this->getJobService()->getStartingState())) {            
             $this->get('simplytestable.services.resqueQueueService')->remove(
+                'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
                 'job-prepare',
                 array(
                     'id' => $job->getId()
                 )                
             );
-        }        
+        }  
+        
+        $tasksToDeAssign = array();
+
 
         foreach ($job->getTasks() as $task) {
-            $this->get('simplytestable.services.resqueQueueService')->remove(
-                'task-assign',
-                array(
-                    'id' => $task->getId()
-                )
-            );                
+            $tasksToDeAssign[] = array(
+                'id' => $task->getId()
+            );
         }      
+        
+        $this->get('simplytestable.services.resqueQueueService')->removeCollection(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+            'task-assign',
+            $tasksToDeAssign
+        );
 
         $tasksAwaitingCancellation = $this->getTaskService()->getAwaitingCancellationByJob($job);
         $taskIds = array();
@@ -92,10 +100,11 @@ class TestsController extends ApiController
         
         if (count($taskIds) > 0) {
             $this->get('simplytestable.services.resqueQueueService')->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
                 'task-cancel',
                 array(
                     'ids' => implode(',', $taskIds)
-                )                
+                )              
             );               
         }    
         
