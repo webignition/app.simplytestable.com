@@ -79,7 +79,6 @@ class JobPrepareCommand extends BaseCommand
                 $task->setState($newTaskState);
 
                 $entityManager->persist($task);
-                $entityManager->flush();
                 
                 $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
                     'task-assign',
