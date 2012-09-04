@@ -32,6 +32,11 @@ abstract class CommandLineJob extends AbstractJob {
      */
     private function buildCommand() {
         $command = $this->getCommand();
+        
+        if (!is_array($this->args) || count($this->args) == 0) {
+            return $command;
+        }
+        
         $argumentOrder = $this->getArgumentOrder();
         
         $argumentString = '';

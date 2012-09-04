@@ -356,4 +356,36 @@ class JobService extends EntityService {
         
         return $this->persistAndFlush($job);
     }
+    
+    
+    /**
+     *
+     * @return array
+     */
+    public function getJobsWithQueuedTasks() {
+        $queuedTasks = $this->taskService->getEntityRepository()->findBy(array(
+            'state' => $this->taskService->getQueuedState()
+        ));
+        
+        $jobs = array();
+        $jobIds = array();
+        
+        foreach ($queuedTasks as $task) {
+            if (!in_array($task->getJob()->getId(), $jobIds)) {
+                $jobs[] = $task->getJob();
+                $jobIds[] = $task->getJob()->getId();
+            }
+        }
+        
+        return $jobs;
+    }
+    
+    public function getOldestQueuedTask(Job $job) {
+        return $this->taskService->getEntityRepository()->findOneBy(array(
+            'job' => $job,
+            'state' => $this->taskService->getQueuedState()
+        ), array(
+            'creationDateTime' => 'asc'
+        ));
+    }
 }

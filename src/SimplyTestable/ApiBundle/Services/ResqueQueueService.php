@@ -189,13 +189,23 @@ class ResqueQueueService {
      * @param string $queue_name
      * @return int
      */
-    private function getQueueLength($queue_name) {
+    public function getQueueLength($queue_name) {
         try {
             return @$this->getResqueRedis()->llen(self::QUEUE_KEY . ':' . $queue_name);          
         } catch (\Exception $exception) {
             $this->logger->warn('ResqueQueueService::add: Redis error ['.$exception->getMessage().']');
             return 0;
         }
+    }
+    
+    
+    /**
+     *
+     * @param string $queue_name
+     * @return boolean
+     */
+    public function isEmpty($queue_name) {
+        return $this->getQueueLength($queue_name) == 0;        
     }
     
     

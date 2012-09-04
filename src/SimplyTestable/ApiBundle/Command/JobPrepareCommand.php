@@ -87,6 +87,7 @@ class JobPrepareCommand extends BaseCommand
                 $task->setType($taskType);
                 $task->setUrl($url);
                 $task->setState($newTaskState);
+                $task->setCreationDateTime(new \DateTime());
                 
                 $entityManager->persist($task);                             
             }
@@ -101,13 +102,10 @@ class JobPrepareCommand extends BaseCommand
         $entityManager->persist($job);
         $entityManager->flush(); 
         
-        foreach ($job->getTasks() as $task) {
-            $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
-                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
-                'task-assign',
-                array(
-                    'id' => $task->getId()
-                )
+        if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
+            $this->getResqueQueueService()->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                'task-assignment-selection'
             );             
         }
         
@@ -148,4 +146,13 @@ class JobPrepareCommand extends BaseCommand
     private function getJobService() {
         return $this->getContainer()->get('simplytestable.services.jobservice');
     }
+    
+    
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
+     */        
+    private function getResqueQueueService() {
+        return $this->getContainer()->get('simplytestable.services.resqueQueueService');
+    }    
 }

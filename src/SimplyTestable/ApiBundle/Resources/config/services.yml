@@ -104,3 +104,9 @@ services:
         httpClient: "@simplytestable.services.httpClient"
         urlService: "@simplytestable.services.urlService"      
         taskService: "@simplytestable.services.taskservice"
+        
+  simplytestable.services.taskassignmentselectionservice:
+    class:  SimplyTestable\ApiBundle\Services\TaskAssignmentSelectionService
+    arguments:             
+        jobService: "@simplytestable.services.jobservice"        
+        taskService: "@simplytestable.services.taskservice"        
