@@ -56,6 +56,7 @@ class Version20120716214726_create_Task extends BaseMigration
                 timePeriod_id INT DEFAULT NULL,
                 remoteId BIGINT DEFAULT NULL,
                 output_id INT DEFAULT NULL,
+                creationDateTime DATETIME NOT NULL,
                 FOREIGN KEY(job_id) REFERENCES Job (id),
                 FOREIGN KEY(state_id) REFERENCES State (id),
                 FOREIGN KEY(worker_id) REFERENCES Worker (id),

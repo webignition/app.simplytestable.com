@@ -9,7 +9,10 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * @ORM\Entity
  * @ORM\Table(
  *     name="Task",
- *     indexes={@ORM\Index(name="remoteId_idx", columns={"remoteId"})}
+ *     indexes={
+ *         @ORM\Index(name="remoteId_idx", columns={"remoteId"}),
+ *         @ORM\Index(name="creationDateTime_idx", columns={"creationDateTime"})
+ *     }
  * )
  * @SerializerAnnotation\ExclusionPolicy("all")
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TaskRepository")
@@ -112,6 +115,22 @@ class Task
      * @SerializerAnnotation\Expose
      */
     protected $output;    
+
+    
+    /**
+     *
+     * @var \DateTime
+     * 
+     * @ORM\Column(type="datetime", nullable=false) 
+     */
+    protected $creationDateTime;
+    
+    
+    public function __construct() {
+        $this->setCreationDateTime(new \DateTime());
+    }
+        
+    
     
     /**
      *
@@ -367,5 +386,27 @@ class Task
     public function hasWorker()
     {
         return !is_null($this->getWorker());
+    }
+    
+    
+    /**
+     *
+     * @param type $creationDateTime
+     * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
+     */
+    public function setCreationDateTime($creationDateTime)
+    {
+        $this->creationDateTime = $creationDateTime;
+        return $this;
+    }
+    
+    
+    /**
+     *
+     * @return \DateTime
+     */
+    public function getCreationDateTime()
+    {
+        return $this->creationDateTime;
     }
 }
