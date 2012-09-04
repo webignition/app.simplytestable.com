@@ -62,6 +62,15 @@ class JobPrepareCommand extends BaseCommand
         $job->setNextState();        
         
         $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
+        
+        if ($urls === false) {
+            $job->setState($this->getJobService()->getNoSitemapState());
+            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+            $entityManager->persist($job);
+            $entityManager->flush();
+            return $this->getLogger()->info("simplytestable:job:prepare: no sitemap found for [".(string)$job->getWebsite()."]");
+        }
+        
         $requestedTaskTypes = $job->getRequestedTaskTypes();
         $newTaskState = $this->getNewTaskState();
 
@@ -131,11 +140,12 @@ class JobPrepareCommand extends BaseCommand
         return $this->websiteService;
     }
     
+    
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\ResqueJobFactoryService 
-     */
-    private function getResqueJobFactoryService() {
-        return $this->getContainer()->get('simplytestable.services.ResqueJobFactoryService');
+     * @return SimplyTestable\ApiBundle\Services\JobService
+     */    
+    private function getJobService() {
+        return $this->getContainer()->get('simplytestable.services.jobservice');
     }
 }

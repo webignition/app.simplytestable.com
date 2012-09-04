@@ -19,6 +19,7 @@ class JobService extends EntityService {
     const IN_PROGRESS_STATE = 'job-in-progress';
     const PREPARING_STATE = 'job-preparing';
     const QUEUED_STATE = 'job-queued';
+    const NO_SITEMAP_STATE = 'job-no-sitemap';
     
     /**
      *
@@ -128,7 +129,16 @@ class JobService extends EntityService {
      */
     public function getQueuedState() {
         return $this->stateService->fetch(self::QUEUED_STATE);
-    }      
+    }
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getNoSitemapState() {
+        return $this->stateService->fetch(self::NO_SITEMAP_STATE);
+    }
+    
     
     
     /**
@@ -173,13 +183,9 @@ class JobService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job
      */
     public function cancel(Job $job) {
-        if ($this->isCancelled($job)) {
+        if ($this->isFinished($job)) {
             return $job;
-        }
-        
-        if ($this->isCompleted($job)) {
-            return $job;
-        }        
+        }       
         
         $tasks = $job->getTasks();        
         
@@ -202,6 +208,29 @@ class JobService extends EntityService {
         
         $job->setState($this->getCancelledState());
         return $this->persistAndFlush($job);
+    }
+    
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return boolean 
+     */
+    private function isFinished(Job $job) {
+        if ($this->isCancelled($job)) {
+            return true;
+        }
+        
+        if ($this->isCompleted($job)) {
+            return true;
+        }    
+        
+        if ($this->hasNoSitemap($job)) {
+            return true;
+        }
+        
+        return false;
     }
     
     
@@ -233,6 +262,16 @@ class JobService extends EntityService {
     private function isInProgress(Job $job) {
         return $job->getState()->equals($this->getInProgressState());
     }     
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return boolean 
+     */
+    private function hasNoSitemap(Job $job) {
+        return $job->getState()->equals($this->getNoSitemapState());
+    }        
     
     
     /**

@@ -120,7 +120,7 @@ class WebSiteService extends EntityService {
         
         $sitemapUrl = $sitemapFinder->getSitemapUrl();        
         if ($sitemapUrl === false) {
-            return array();
+            return false;
         }
         
         $urlRetriever = new WebsiteSitemapUrlRetriever();
