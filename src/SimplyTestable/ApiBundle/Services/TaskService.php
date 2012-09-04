@@ -18,6 +18,7 @@ class TaskService extends EntityService {
     const IN_PROGRESS_STATE = 'task-in-progress';
     const COMPLETED_STATE = 'task-completed';
     const AWAITING_CANCELLATION_STATE = 'task-awaiting-cancellation';
+    const QUEUED_FOR_ASSIGNMENT_STATE = 'task-queued-for-assignment';
     
     /**
      *
@@ -159,6 +160,15 @@ class TaskService extends EntityService {
         return $this->stateService->fetch(self::CANCELLED_STATE);
     }  
     
+    
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State
+     */
+    public function getQueuedForAssignmentState() {
+        return $this->stateService->fetch(self::QUEUED_FOR_ASSIGNMENT_STATE);
+    }      
+    
 
     /**
      *
@@ -206,6 +216,16 @@ class TaskService extends EntityService {
     public function isQueued(Task $task) {
         return $task->getState()->equals($this->getQueuedState());
     }    
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @return boolean
+     */
+    public function isQueuedForAssignment(Task $task) {
+        return $task->getState()->equals($this->getQueuedForAssignmentState());
+    }      
     
     
     /**

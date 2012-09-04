@@ -34,8 +34,16 @@ EOF
         }
         
         $tasks = $this->getTaskAssignmentSelectionService()->selectTasks();
+        if (count($tasks) == 0) {
+            return true;
+        }
         
-        foreach ($tasks as $task) {
+        $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();            
+
+        foreach ($tasks as $task) {            
+            $task->setState($this->getTaskService()->getQueuedForAssignmentState());
+            $entityManager->persist($task);
+            
             $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
                 'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
                 'task-assign',
@@ -44,6 +52,8 @@ EOF
                 )
             );             
         }
+        
+        $entityManager->flush();
         
         if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
             $this->getResqueQueueService()->add(
@@ -70,4 +80,13 @@ EOF
     private function getResqueQueueService() {
         return $this->getContainer()->get('simplytestable.services.resqueQueueService');
     }     
+    
+
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\TaskService
+     */        
+    private function getTaskService() {
+        return $this->getContainer()->get('simplytestable.services.taskservice');
+    }      
 }

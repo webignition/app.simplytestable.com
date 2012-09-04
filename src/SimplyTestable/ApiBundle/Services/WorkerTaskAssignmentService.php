@@ -34,7 +34,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         $this->logger->info("WorkerTaskAssignmentService::assign: Initialising");
         $this->logger->info("WorkerTaskAssignmentService::assign: Processing task [".$task->getId()."] [".$task->getType()."] [".$task->getUrl()."]");
         
-        if (!$task->getState()->equals($this->taskService->getQueuedState())) {
+        if (!$this->taskService->isQueued($task) && !$this->taskService->isQueuedForAssignment($task)) {
             $this->logger->info("WorkerTaskAssignmentService::assign: Task is not queued, nothing to do.");
             return true;
         }
