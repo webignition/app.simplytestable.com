@@ -381,7 +381,7 @@ class JobService extends EntityService {
     }
     
     public function getOldestQueuedTasks(Job $job, $limit = 1) {
-        return $this->taskService->getEntityRepository()->find(array(
+        return $this->taskService->getEntityRepository()->findBy(array(
             'job' => $job,
             'state' => $this->taskService->getQueuedState()
         ), array(
