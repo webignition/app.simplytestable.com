@@ -372,5 +372,16 @@ class TaskService extends EntityService {
         return $this->getEntityRepository()->getCountByTaskTypeAndState($taskType, $state);        
     }
     
+    
+    /**
+     *
+     * @param Job $job
+     * @param State $state
+     * @return int 
+     */
+    public function getCountByJobAndState(Job $job, State $state) {
+        return $this->getEntityRepository()->getCountByJobAndState($job, $state);
+    }
+    
   
 }

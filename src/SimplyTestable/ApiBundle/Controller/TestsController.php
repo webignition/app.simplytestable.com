@@ -49,6 +49,33 @@ class TestsController extends ApiController
         
         return $this->sendResponse($job);
     }
+
+    
+    public function summaryAction($site_root_url, $test_id)
+    { 
+        $this->siteRootUrl = $site_root_url;
+        $this->testId = $test_id;
+        
+        $job = $this->getJob();
+        if ($job === false) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;  
+        }
+        
+        $jobData = array(
+            'id' => $job->getId(),
+            'user' => $job->getPublicSerializedUser(),
+            'website' => $job->getPublicSerializedWebsite(),
+            'state' => $job->getPublicSerializedState(),
+            'url_total' => $job->getUrlTotal(),
+            'task_count_by_state' => $this->getTaskCountByState($job),
+            'task_types' => $job->getRequestedTaskTypes()
+        );
+        
+        return $this->sendResponse($jobData);
+    }    
+    
     
     public function cancelAction($site_root_url, $test_id)
     { 
@@ -167,7 +194,9 @@ class TestsController extends ApiController
             'id' => $this->testId,
             'user' => $this->getUser(),
             'website' => $this->getWebsite()
-        ));        
+        ));
+        
+        $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());
         
         if (is_null($job)) {
             return false;           
@@ -176,6 +205,24 @@ class TestsController extends ApiController
         $job->setUrlTotal($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
         return $job;      
     }   
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return array 
+     */
+    private function getTaskCountByState(Job $job) {
+        $taskCountByState = array();
+        $taskCountByState['awaiting-cancellation'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getAwaitingCancellationState());
+        $taskCountByState['cancelled'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCancelledState());
+        $taskCountByState['completed'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());
+        $taskCountByState['in-progress'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getInProgressState());
+        $taskCountByState['queued'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getQueuedState());
+        $taskCountByState['queued-for-assignment'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getQueuedForAssignmentState());        
+        
+        return $taskCountByState;
+    }
     
     
     

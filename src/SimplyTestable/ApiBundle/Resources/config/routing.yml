@@ -19,6 +19,12 @@ test_status:
     defaults: { _controller: SimplyTestableApiBundle:Tests:status, _format: json }    
     requirements:
         site_root_url: ".+"
+        
+test_summary:
+    pattern: /tests/{site_root_url}/{test_id}/summary/
+    defaults: { _controller: SimplyTestableApiBundle:Tests:summary, _format: json }    
+    requirements:
+        site_root_url: ".+"        
     
 test_results:
     pattern: /tests/{site_root_url}/{test_id}/results/
