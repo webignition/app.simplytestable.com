@@ -110,3 +110,8 @@ services:
     arguments:             
         jobService: "@simplytestable.services.jobservice"        
         taskService: "@simplytestable.services.taskservice"        
+        
+  simplytestable.services.tasktypeservice:
+    class:  SimplyTestable\ApiBundle\Services\TaskTypeService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"      

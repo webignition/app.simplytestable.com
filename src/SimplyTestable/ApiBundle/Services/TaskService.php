@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
@@ -357,6 +358,16 @@ class TaskService extends EntityService {
      */
     public function getJobsWithQueuedTasks() {
         return $this->getEntityRepository()->findJobsbyTaskState($this->getQueuedState());      
+    }
+    
+    
+    /**
+     *
+     * @param TaskType $taskType
+     * @return int
+     */
+    public function getCountByTaskType(TaskType $taskType) {
+        return $this->getEntityRepository()->getCountByTaskType($taskType);        
     }
     
   

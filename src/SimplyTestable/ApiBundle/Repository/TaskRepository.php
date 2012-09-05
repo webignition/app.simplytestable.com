@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
 class TaskRepository extends EntityRepository
 {
@@ -51,5 +52,23 @@ class TaskRepository extends EntityRepository
         $queryBuilder->setParameter('Job', $job);        
         
         return $queryBuilder->getQuery()->getArrayResult();
+    }
+    
+    
+    /**
+     *
+     * @param TaskType $taskType
+     * @return integer 
+     */
+    public function getCountByTaskType(TaskType $taskType)
+    {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->setMaxResults(1);
+        $queryBuilder->select('count(DISTINCT Task.id) as task_type_total');
+        $queryBuilder->where('Task.type = :Type');
+        $queryBuilder->setParameter('Type', $taskType);
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        return (int)($result[0]['task_type_total']);        
     }
 }
