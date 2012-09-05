@@ -380,12 +380,13 @@ class JobService extends EntityService {
         return $jobs;
     }
     
-    public function getOldestQueuedTask(Job $job) {
-        return $this->taskService->getEntityRepository()->findOneBy(array(
+    public function getOldestQueuedTasks(Job $job, $limit = 1) {
+        return $this->taskService->getEntityRepository()->find(array(
             'job' => $job,
             'state' => $this->taskService->getQueuedState()
         ), array(
             'creationDateTime' => 'asc'
-        ));
+        ),
+        $limit);
     }
 }

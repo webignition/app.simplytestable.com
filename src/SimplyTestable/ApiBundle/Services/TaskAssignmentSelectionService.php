@@ -39,12 +39,12 @@ class TaskAssignmentSelectionService {
      * 
      * @return array
      */
-    public function selectTasks() {
+    public function selectTasks($limitPerJob = 1) {
         $jobs = $this->jobService->getJobsWithQueuedTasks();        
 
         $tasks = array();
         foreach ($jobs as $job) {
-            $tasks[] = $this->jobService->getOldestQueuedTask($job);
+            $tasks[] = $this->jobService->getOldestQueuedTasks($job, $limitPerJob);
         }
         
         return $tasks;
