@@ -34,6 +34,7 @@ EOF
         }
         
         $tasks = $this->getTaskAssignmentSelectionService()->selectTasks(2);
+        
         $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: tasks found ['.count($tasks).']');
         if (count($tasks) == 0) {
             return true;
