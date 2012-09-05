@@ -12,12 +12,9 @@ use SimplyTestable\BaseMigrationsBundle\Migration\EntityModificationMigration,
 class Version20120904172838_add_task_queued_for_assignment_state extends EntityModificationMigration
 {
     public function postUp(Schema $schema)
-    {      
-        $state_queued = $this->container->get('simplytestable.services.taskservice')->getQueuedState();
-        
+    {        
         $state = new State();
         $state->setName('task-queued-for-assignment');        
-        $state->setNextState($state_queued);
         $this->getEntityManager()->persist($state);
         $this->getEntityManager()->flush();      
     }

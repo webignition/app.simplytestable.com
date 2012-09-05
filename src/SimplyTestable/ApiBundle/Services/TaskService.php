@@ -262,7 +262,7 @@ class TaskService extends EntityService {
         $timePeriod->setStartDateTime(new \DateTime());
 
         $task->setRemoteId($remoteId);
-        $task->setNextState();
+        $task->setState($this->getInProgressState());
         $task->setTimePeriod($timePeriod);
         $task->setWorker($worker);        
         

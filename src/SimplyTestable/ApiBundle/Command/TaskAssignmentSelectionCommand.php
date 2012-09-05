@@ -34,15 +34,19 @@ EOF
         }
         
         $tasks = $this->getTaskAssignmentSelectionService()->selectTasks();
+        $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: tasks found ['.count($tasks).']');
         if (count($tasks) == 0) {
             return true;
         }
         
         $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();            
 
-        foreach ($tasks as $task) {            
+        foreach ($tasks as $task) {
+            $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: selected task id ['.$task->getId().']');
+            
             $task->setState($this->getTaskService()->getQueuedForAssignmentState());
             $entityManager->persist($task);
+            $entityManager->flush();
             
             $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
                 'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
@@ -53,7 +57,6 @@ EOF
             );             
         }
         
-        $entityManager->flush();
         
         if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
             $this->getResqueQueueService()->add(
