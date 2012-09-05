@@ -1,3 +1,7 @@
+test_list:
+    pattern: /tests/list/{limit}/
+    defaults: { _controller: SimplyTestableApiBundle:Tests:list, limit: 1, _format: json }    
+
 test_start:
     pattern: /tests/{site_root_url}/start/
     defaults: { _controller: SimplyTestableApiBundle:Tests:start, _format: json }
@@ -24,7 +28,7 @@ test_summary:
     pattern: /tests/{site_root_url}/{test_id}/summary/
     defaults: { _controller: SimplyTestableApiBundle:Tests:summary, _format: json }    
     requirements:
-        site_root_url: ".+"        
+        site_root_url: ".+"       
     
 test_results:
     pattern: /tests/{site_root_url}/{test_id}/results/

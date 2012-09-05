@@ -14,6 +14,7 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * @ORM\Table(
  *     name="Job"
  * )
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\JobRepository")
  */
 class Job
 {    

@@ -63,7 +63,17 @@ class TestsController extends ApiController
             return $response;  
         }
         
-        $jobData = array(
+        return $this->sendResponse($this->getSummary($job));
+    }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return array 
+     */
+    private function getSummary(Job $job) {
+        return array(
             'id' => $job->getId(),
             'user' => $job->getPublicSerializedUser(),
             'website' => $job->getPublicSerializedWebsite(),
@@ -71,11 +81,28 @@ class TestsController extends ApiController
             'url_total' => $job->getUrlTotal(),
             'task_count_by_state' => $this->getTaskCountByState($job),
             'task_types' => $job->getRequestedTaskTypes()
-        );
-        
-        return $this->sendResponse($jobData);
-    }    
+        );        
+    }
     
+    
+    public function listAction($limit = 1)
+    {
+        $limit = filter_var($limit, FILTER_VALIDATE_INT, array(
+            'options' => array(
+                'default' => 1,
+                'min_range' => 0
+            )
+        ));
+        
+        $jobs = $this->getJobService()->getEntityRepository()->findAllOrderedByIdDesc($limit);
+        $jobSummaries = array();
+        
+        foreach ($jobs as $job) {
+            $jobSummaries[] = $this->getSummary($job);
+        }
+        
+        return $this->sendResponse($jobSummaries);       
+    }    
     
     public function cancelAction($site_root_url, $test_id)
     { 
