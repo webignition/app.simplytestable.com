@@ -11,7 +11,7 @@ task_status:
     site_root_url: ".+"
     
 task_type_count:
-  pattern: /tasks/{task_type}/count/
+  pattern: /tasks/{task_type}/{state_name}/count/
   defaults: { _controller: SimplyTestableApiBundle:Task:taskTypeCount, _format: json } 
     
 test_status:

@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\State;
 
 class TaskService extends EntityService {
     
@@ -364,10 +365,11 @@ class TaskService extends EntityService {
     /**
      *
      * @param TaskType $taskType
+     * @param State $state
      * @return int
      */
-    public function getCountByTaskType(TaskType $taskType) {
-        return $this->getEntityRepository()->getCountByTaskType($taskType);        
+    public function getCountByTaskTypeAndState(TaskType $taskType, State $state) {
+        return $this->getEntityRepository()->getCountByTaskTypeAndState($taskType, $state);        
     }
     
   

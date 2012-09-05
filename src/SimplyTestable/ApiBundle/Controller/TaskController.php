@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\StateService;
 
 class TaskController extends ApiController
 {
@@ -73,15 +74,20 @@ class TaskController extends ApiController
         return $this->sendSuccessResponse();
     }
     
-    public function taskTypeCountAction($task_type)
+    public function taskTypeCountAction($task_type, $state_name)
     {        
         if (!$this->getTaskTypeService()->exists($task_type)) {
             return new Response('', 404);
         }
         
-        $taskType = $this->getTaskTypeService()->getByName($task_type);       
+        if (!$this->getStateService()->has('task-' . $state_name)) {
+            return new Response('', 404);
+        }
         
-        return new Response(json_encode($this->getTaskService()->getCountByTaskType($taskType)), 200);
+        $taskType = $this->getTaskTypeService()->getByName($task_type);       
+        $state = $this->getStateService()->find($state_name);
+        
+        return new Response(json_encode($this->getTaskService()->getCountByTaskTypeAndState($taskType, $state)), 200);
     }
     
     
@@ -111,4 +117,12 @@ class TaskController extends ApiController
     private function getTaskTypeService() {
         return $this->container->get('simplytestable.services.tasktypeservice');
     }     
+    
+    /**
+     *
+     * @return StateService
+     */
+    private function getStateService() {
+        return $this->container->get('simplytestable.services.stateservice');
+    }      
 }
