@@ -16,6 +16,12 @@
         {
             "package": "doctrine/doctrine-bundle",
             "version": "dev-master",
+            "alias-pretty-version": "1.0.x-dev",
+            "alias-version": "1.0.9999999.9999999-dev"
+        },
+        {
+            "package": "doctrine/doctrine-bundle",
+            "version": "dev-master",
             "source-reference": "3600872919186e1a40e8fd556e65f6dca6337cc9",
             "commit-date": "1346617185"
         },
@@ -52,6 +58,12 @@
         {
             "package": "glit/resque-bundle",
             "version": "dev-master",
+            "alias-pretty-version": "1.0.x-dev",
+            "alias-version": "1.0.9999999.9999999-dev"
+        },
+        {
+            "package": "glit/resque-bundle",
+            "version": "dev-master",
             "source-reference": "e80844924d9f4f914e44a14c9d6fb601a93a9ab4",
             "commit-date": "1346661882"
         },
@@ -65,21 +77,9 @@
         },
         {
             "package": "jms/di-extra-bundle",
-            "version": "dev-master",
-            "alias-pretty-version": "1.1.x-dev",
-            "alias-version": "1.1.9999999.9999999-dev"
-        },
-        {
-            "package": "jms/di-extra-bundle",
-            "version": "dev-master",
-            "alias-pretty-version": "1.2.x-dev",
-            "alias-version": "1.2.9999999.9999999-dev"
-        },
-        {
-            "package": "jms/di-extra-bundle",
-            "version": "dev-master",
-            "source-reference": "a949d13485eff40b5672d29a136f3ecd34ed0f85",
-            "commit-date": "1346498128"
+            "version": "1.1.x-dev",
+            "source-reference": "1.1.0-RC",
+            "commit-date": "1345140102"
         },
         {
             "package": "jms/metadata",
@@ -90,6 +90,12 @@
             "version": "1.2.x-dev",
             "source-reference": "81070f525ec24f9e6cf6509532b260bc54c42ea5",
             "commit-date": "1346345841"
+        },
+        {
+            "package": "jms/serializer-bundle",
+            "version": "dev-master",
+            "alias-pretty-version": "0.9.x-dev",
+            "alias-version": "0.9.9999999.9999999-dev"
         },
         {
             "package": "jms/serializer-bundle",
@@ -154,6 +160,12 @@
         {
             "package": "sensio/generator-bundle",
             "version": "dev-master",
+            "alias-pretty-version": "2.1.x-dev",
+            "alias-version": "2.1.9999999.9999999-dev"
+        },
+        {
+            "package": "sensio/generator-bundle",
+            "version": "dev-master",
             "source-reference": "v2.1.0-RC2",
             "commit-date": "1346138171"
         },
@@ -172,14 +184,32 @@
         {
             "package": "symfony/assetic-bundle",
             "version": "dev-master",
+            "alias-pretty-version": "2.1.x-dev",
+            "alias-version": "2.1.9999999.9999999-dev"
+        },
+        {
+            "package": "symfony/assetic-bundle",
+            "version": "dev-master",
             "source-reference": "4e7e8a039fa19434f04558473adbb201118af942",
             "commit-date": "1346199949"
         },
         {
             "package": "symfony/monolog-bundle",
             "version": "dev-master",
+            "alias-pretty-version": "2.1.x-dev",
+            "alias-version": "2.1.9999999.9999999-dev"
+        },
+        {
+            "package": "symfony/monolog-bundle",
+            "version": "dev-master",
             "source-reference": "v2.1.0-RC2",
             "commit-date": "1345557954"
+        },
+        {
+            "package": "symfony/swiftmailer-bundle",
+            "version": "dev-master",
+            "alias-pretty-version": "2.1.x-dev",
+            "alias-version": "2.1.9999999.9999999-dev"
         },
         {
             "package": "symfony/swiftmailer-bundle",
@@ -196,8 +226,8 @@
         {
             "package": "symfony/symfony",
             "version": "dev-master",
-            "source-reference": "v2.1.0",
-            "commit-date": "1346922116"
+            "source-reference": "cba2a31e3631ab9043389f8f7df873da0e6c8f47",
+            "commit-date": "1346926365"
         },
         {
             "package": "twig/extensions",
