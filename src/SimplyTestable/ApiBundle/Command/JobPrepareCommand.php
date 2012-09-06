@@ -87,7 +87,6 @@ class JobPrepareCommand extends BaseCommand
                 $task->setType($taskType);
                 $task->setUrl($url);
                 $task->setState($newTaskState);
-                $task->setCreationDateTime(new \DateTime());
                 
                 $entityManager->persist($task);                             
             }
