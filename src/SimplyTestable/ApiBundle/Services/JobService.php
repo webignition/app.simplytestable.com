@@ -385,7 +385,7 @@ class JobService extends EntityService {
             'job' => $job,
             'state' => $this->taskService->getQueuedState()
         ), array(
-            'creationDateTime' => 'asc'
+            'id' => 'asc'
         ),
         $limit);
     }
