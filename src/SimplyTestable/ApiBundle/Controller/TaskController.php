@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\JobService;
 
 class TaskController extends ApiController
 {
@@ -63,13 +64,9 @@ class TaskController extends ApiController
 
         $this->getTaskService()->complete($task, $endDateTime, $output);
         
-        $this->get('simplytestable.services.resqueQueueService')->add(
-            'SimplyTestable\ApiBundle\Resque\Job\JobMarkCompletedJob',
-            'job-mark-completed',
-            array(
-                'id' => $task->getJob()->getId()
-            )                
-        );        
+        if (!$this->getJobService()->hasIncompleteTasks($task->getJob())) {
+            $this->getJobService()->complete($task->getJob());
+        }       
         
         return $this->sendSuccessResponse();
     }
@@ -109,7 +106,16 @@ class TaskController extends ApiController
      */
     private function getTaskService() {
         return $this->container->get('simplytestable.services.taskservice');
-    } 
+    }
+    
+    
+    /**
+     *
+     * @return JobService
+     */
+    private function getJobService() {
+        return $this->container->get('simplytestable.services.jobservice');
+    }     
     
     
     /**
