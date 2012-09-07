@@ -1,5 +1,5 @@
 {
-    "hash": "c4363354b8f59e748a2bf740b73609e3",
+    "hash": "bc24d5f68448523baa9dc15620b0ddd6",
     "packages": [
         {
             "package": "doctrine/common",
@@ -22,8 +22,8 @@
         {
             "package": "doctrine/migrations",
             "version": "dev-master",
-            "source-reference": "b86b4cc0a39714f0aa53b908d495beacfa0e4011",
-            "commit-date": "1343202693"
+            "source-reference": "17f4b56bf0af0274cabdf3ae9b644059246d66b7",
+            "commit-date": "1347005884"
         },
         {
             "package": "doctrine/orm",
@@ -44,12 +44,6 @@
             "commit-date": "1341416027"
         },
         {
-            "package": "glit/resque-bundle",
-            "version": "dev-master",
-            "source-reference": "e80844924d9f4f914e44a14c9d6fb601a93a9ab4",
-            "commit-date": "1346661882"
-        },
-        {
             "package": "jms/aop-bundle",
             "version": "1.0.0"
         },
@@ -60,8 +54,8 @@
         {
             "package": "jms/di-extra-bundle",
             "version": "1.1.x-dev",
-            "source-reference": "1.1.0-RC",
-            "commit-date": "1345140102"
+            "source-reference": "af219527024c584d7311aa855d7522429c5bdb67",
+            "commit-date": "1346947722"
         },
         {
             "package": "jms/metadata",
@@ -70,8 +64,8 @@
         {
             "package": "jms/security-extra-bundle",
             "version": "1.2.x-dev",
-            "source-reference": "81070f525ec24f9e6cf6509532b260bc54c42ea5",
-            "commit-date": "1346345841"
+            "source-reference": "9ab6aceda50fc7a2b07d741ba4b3f0695508afcb",
+            "commit-date": "1346947943"
         },
         {
             "package": "jms/serializer-bundle",
@@ -112,8 +106,14 @@
         {
             "package": "sensio/distribution-bundle",
             "version": "dev-master",
-            "source-reference": "v2.1.0",
-            "commit-date": "1346859132"
+            "alias-pretty-version": "2.1.x-dev",
+            "alias-version": "2.1.9999999.9999999-dev"
+        },
+        {
+            "package": "sensio/distribution-bundle",
+            "version": "dev-master",
+            "source-reference": "98921298951598e8707258cba2b6180b96faa91c",
+            "commit-date": "1347023757"
         },
         {
             "package": "sensio/framework-extra-bundle",
@@ -166,8 +166,14 @@
         {
             "package": "symfony/symfony",
             "version": "dev-master",
-            "source-reference": "cba2a31e3631ab9043389f8f7df873da0e6c8f47",
-            "commit-date": "1346926365"
+            "alias-pretty-version": "2.2.x-dev",
+            "alias-version": "2.2.9999999.9999999-dev"
+        },
+        {
+            "package": "symfony/symfony",
+            "version": "dev-master",
+            "source-reference": "4dc197c3e1ea227e36cab7ea93877fa44ecc569b",
+            "commit-date": "1346957130"
         },
         {
             "package": "twig/extensions",
@@ -184,8 +190,8 @@
         {
             "package": "twig/twig",
             "version": "dev-master",
-            "source-reference": "459720ff3b74ee0c0d159277c6f2f5df89d8a4f6",
-            "commit-date": "1346397138"
+            "source-reference": "68b8c4619c5bbe82bd345fe56070dec8c356610a",
+            "commit-date": "1347025342"
         },
         {
             "package": "webignition/absolute-url-deriver",
@@ -224,6 +230,18 @@
         {
             "package": "webignition/quoted-string",
             "version": "0.2"
+        },
+        {
+            "package": "webignition/resque-bundle",
+            "version": "dev-master",
+            "alias-pretty-version": "1.0.x-dev",
+            "alias-version": "1.0.9999999.9999999-dev"
+        },
+        {
+            "package": "webignition/resque-bundle",
+            "version": "dev-master",
+            "source-reference": "fa5cf0274a253c595d242102391977d61507293c",
+            "commit-date": "1347027078"
         },
         {
             "package": "webignition/robots-txt-file",

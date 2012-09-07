@@ -25,7 +25,7 @@
         "webignition/website-sitemap-finder":"dev-master",
         "webignition/website-sitemap-url-retriever":"dev-master",
         "webignition/simplytestable-base-migrations-bundle":"1.1",
-        "glit/resque-bundle":"*",
+        "webignition/resque-bundle":"*",
         "webignition/internet-media-type":">=0.1,<2.0"
     },
     "scripts": {
@@ -49,5 +49,11 @@
     "extra": {
         "symfony-app-dir": "app",
         "symfony-web-dir": "web"
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/webignition/ResqueBundle"
+        }
+    ]
 }
