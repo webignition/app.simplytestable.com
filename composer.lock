@@ -22,8 +22,8 @@
         {
             "package": "doctrine/doctrine-bundle",
             "version": "dev-master",
-            "source-reference": "3600872919186e1a40e8fd556e65f6dca6337cc9",
-            "commit-date": "1346617185"
+            "source-reference": "v1.0.0",
+            "commit-date": "1347052701"
         },
         {
             "package": "doctrine/migrations",
@@ -264,12 +264,6 @@
         {
             "package": "webignition/resque-bundle",
             "version": "dev-master",
-            "alias-pretty-version": "1.0.x-dev",
-            "alias-version": "1.0.9999999.9999999-dev"
-        },
-        {
-            "package": "webignition/resque-bundle",
-            "version": "dev-master",
             "source-reference": "2813e77c97fc2582d0d468557e27770423bfd599",
             "commit-date": "1347050600"
         },
@@ -308,8 +302,8 @@
         {
             "package": "webignition/website-sitemap-url-retriever",
             "version": "dev-master",
-            "source-reference": "369ad50811c54ddff82b782c21003fcac15242cd",
-            "commit-date": "1346925509"
+            "source-reference": "4cc36e67e0e732b0a0db0a5e55569756328a84b7",
+            "commit-date": "1347060311"
         }
     ],
     "packages-dev": null,
