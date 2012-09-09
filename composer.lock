@@ -40,12 +40,6 @@
         {
             "package": "friendsofsymfony/user-bundle",
             "version": "dev-master",
-            "alias-pretty-version": "2.0.x-dev",
-            "alias-version": "2.0.9999999.9999999-dev"
-        },
-        {
-            "package": "friendsofsymfony/user-bundle",
-            "version": "dev-master",
             "source-reference": "878b7c8320159fb09e8e94d446c498b00142b206",
             "commit-date": "1347102006"
         },
@@ -302,8 +296,8 @@
         {
             "package": "webignition/website-sitemap-finder",
             "version": "dev-master",
-            "source-reference": "e89b5ca14c1294b35ec74b418a242e32ab093b47",
-            "commit-date": "1346938350"
+            "source-reference": "86333e4e44756e3691c64461cc821a2c0ccfacdc",
+            "commit-date": "1347192472"
         },
         {
             "package": "webignition/website-sitemap-url-retriever",
