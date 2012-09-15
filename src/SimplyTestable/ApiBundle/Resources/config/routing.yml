@@ -12,6 +12,12 @@ task_status:
   pattern: /tasks/{site_root_url}/{test_id}/{task_id}/status/
   defaults: { _controller: SimplyTestableApiBundle:Tests:taskStatus, _format: json } 
   requirements:
+    site_root_url: ".+"   
+    
+task_status_collection:
+  pattern: /tasks/{site_root_url}/{test_id}/{task_ids}/status/collection/
+  defaults: { _controller: SimplyTestableApiBundle:Tests:taskCollectionStatus, _format: json } 
+  requirements:
     site_root_url: ".+"
     
 task_type_count:

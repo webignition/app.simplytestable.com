@@ -183,7 +183,7 @@ class TestsController extends ApiController
     }
     
     
-    public function taskStatusAction($site_root_url, $test_id, $task_id) {
+    public function taskStatusAction($site_root_url, $test_id, $task_id) {        
         $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
@@ -194,7 +194,7 @@ class TestsController extends ApiController
             return $response;  
         }
         
-        $task = $this->getTaskService()->getById($task_id);
+        $task = $this->getTaskService()->getById($task_id);       
         if (is_null($task) || !$job->getTasks()->contains($task)) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -202,6 +202,48 @@ class TestsController extends ApiController
         }
         
         return $this->sendResponse($task);
+    }
+    
+    
+    public function taskCollectionStatusAction($site_root_url, $test_id, $task_ids) {        
+        $this->siteRootUrl = $site_root_url;
+        $this->testId = $test_id;
+        
+        $job = $this->getJob();
+        if ($job === false) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;  
+        }
+        
+        $taskIds = $this->getSanitizedTaskIds($task_ids);
+        
+        $queryBuilder = $this->getTaskService()->getEntityRepository()->createQueryBuilder('Task');
+        $queryBuilder->select('Task');
+        $queryBuilder->where('Task.id IN ('.  implode(',', $taskIds).')');
+        $queryBuilder->andWhere('Task.job = :Job');
+        $queryBuilder->setParameter('Job', $job);
+     
+        return $this->sendResponse($queryBuilder->getQuery()->getResult());        
+    }
+    
+    
+    /**
+     *
+     * @param string $taskIdsString
+     * @return array
+     */
+    private function getSanitizedTaskIds($taskIdsString) {
+        $taskIds = array();
+        
+        $rawTaskIds = explode(',', $taskIdsString);
+        foreach ($rawTaskIds as $taskId) {
+            if (ctype_digit($taskId)) {
+                $taskIds[] = (int)$taskId;                
+            }
+        }
+        
+        return $taskIds;
     }
     
     
