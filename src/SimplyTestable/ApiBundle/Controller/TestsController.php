@@ -36,7 +36,7 @@ class TestsController extends ApiController
     }    
     
     public function statusAction($site_root_url, $test_id)
-    { 
+    {         
         $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
@@ -45,6 +45,15 @@ class TestsController extends ApiController
             $response = new Response();
             $response->setStatusCode(403);
             return $response;  
+        }
+        
+        $requestTaskIds = $this->getRequestTaskIds();
+        if (is_array($requestTaskIds)) {
+            foreach ($job->getTasks() as $task) {                
+                if (!in_array($task->getId(), $requestTaskIds)) {                    
+                    $job->getTasks()->removeElement($task);
+                }
+            }            
         }
         
         return $this->sendResponse($job);
@@ -321,4 +330,26 @@ class TestsController extends ApiController
     private function getTaskService() {
         return $this->get('simplytestable.services.taskservice');
     }
+    
+    
+    /**
+     *
+     * @return array|null
+     */
+    private function getRequestTaskIds() {
+        if (!$this->getRequest()->query->has('taskIds')) {
+            return null;
+        }
+        
+        $rawRequestTaskIds = explode(',', $this->getRequest()->query->get('taskIds'));
+        $requestTaskIds = array();
+        
+        foreach ($rawRequestTaskIds as $requestTaskId) {
+            if (ctype_digit($requestTaskId)) {
+                $requestTaskIds[] = (int)$requestTaskId;
+            }
+        }
+        
+        return (count($requestTaskIds) > 0) ? $requestTaskIds : null;
+    }     
 }
