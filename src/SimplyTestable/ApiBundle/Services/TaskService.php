@@ -262,7 +262,7 @@ class TaskService extends EntityService {
      * @return boolean
      */
     public function isFailedNoRetryAvailable(Task $task) {
-        return $task->getState()->equal($this->getFailedNoRetryAvailableState());
+        return $task->getState()->equals($this->getFailedNoRetryAvailableState());
     }
     
     
@@ -272,7 +272,7 @@ class TaskService extends EntityService {
      * @return boolean
      */
     public function isFailedRetryLimitReached(Task $task) {
-        return $task->getState()->equal($this->getFailedRetryLimitReachedState());
+        return $task->getState()->equals($this->getFailedRetryLimitReachedState());
     }    
     
     
