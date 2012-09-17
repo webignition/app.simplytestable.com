@@ -24,7 +24,8 @@ class TaskController extends ApiController
             'completeAction' => new InputDefinition(array(
                 new InputArgument('end_date_time', InputArgument::REQUIRED, 'Task end date and time'),
                 new InputArgument('output', InputArgument::REQUIRED, 'Task output'),
-                new InputArgument('contentType', InputArgument::REQUIRED, 'Task output content type')
+                new InputArgument('contentType', InputArgument::REQUIRED, 'Task output content type'),
+                new InputArgument('state', InputArgument::REQUIRED, 'Task ending state')
             ))
         ));
         
@@ -34,7 +35,7 @@ class TaskController extends ApiController
     }    
     
     public function completeAction($worker_hostname, $remote_task_id)
-    {      
+    {           
         $this->workerHostname = $worker_hostname;        
         
         $task = $this->getTaskService()->getByWorkerAndRemoteId($this->getWorker(), $remote_task_id);
@@ -53,22 +54,46 @@ class TaskController extends ApiController
         }
 
         $endDateTime = new \DateTime($this->getArguments('startAction')->get('end_date_time'));
-        $rawOutput = $this->getArguments('startAction')->get('output');
+        $rawOutput = $this->getArguments('completeAction')->get('output');
         
         $mediaTypeParser = new \webignition\InternetMediaType\Parser\Parser();
-        $contentType = $mediaTypeParser->parse($this->getArguments('startAction')->get('contentType'));
+        $contentType = $mediaTypeParser->parse($this->getArguments('completeAction')->get('contentType'));
         
         $output = new Output();
         $output->setOutput($rawOutput);
         $output->setContentType($contentType);
+        
+        $state = $this->getTaskEndState($this->getArguments('completeAction')->get('state'));
 
-        $this->getTaskService()->complete($task, $endDateTime, $output);
+        $this->getTaskService()->complete($task, $endDateTime, $output, $state);
         
         if (!$this->getJobService()->hasIncompleteTasks($task->getJob())) {
             $this->getJobService()->complete($task->getJob());
         }       
         
         return $this->sendSuccessResponse();
+    }
+    
+    
+    /**
+     *
+     * @param string $stateFromRequest
+     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     */
+    private function getTaskEndState($stateFromRequest) {        
+        if ($stateFromRequest == $this->getTaskService()->getFailedNoRetryAvailableState()->getName()) {
+            return $this->getTaskService()->getFailedNoRetryAvailableState();
+        }
+        
+        if ($stateFromRequest == $this->getTaskService()->getFailedRetryAvailableState()->getName()) {
+            return $this->getTaskService()->getFailedRetryAvailableState();
+        }
+        
+        if ($stateFromRequest == $this->getTaskService()->getFailedRetryLimitReachedState()->getName()) {
+            return $this->getTaskService()->getFailedRetryLimitReachedState();
+        }
+        
+        return $this->getTaskService()->getCompletedState();
     }
     
     public function taskTypeCountAction($task_type, $state_name)

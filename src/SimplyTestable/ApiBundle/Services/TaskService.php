@@ -21,6 +21,9 @@ class TaskService extends EntityService {
     const COMPLETED_STATE = 'task-completed';
     const AWAITING_CANCELLATION_STATE = 'task-awaiting-cancellation';
     const QUEUED_FOR_ASSIGNMENT_STATE = 'task-queued-for-assignment';
+    const TASK_FAILED_NO_RETRY_AVAILABLE_STATE = 'task-failed-no-retry-available';
+    const TASK_FAILED_RETRY_AVAILABLE_STATE = 'task-failed-retry-available';
+    const TASK_FAILED_RETRY_LIMIT_REACHED_STATE = 'task-failed-retry-limit-reached';    
     
     /**
      *
@@ -178,7 +181,34 @@ class TaskService extends EntityService {
      */
     public function getAwaitingCancellationState() {
         return $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
+    } 
+    
+    
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     */
+    public function getFailedNoRetryAvailableState() {
+        return $this->stateService->fetch(self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE);
     }      
+    
+    
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     */
+    public function getFailedRetryAvailableState() {
+        return $this->stateService->fetch(self::TASK_FAILED_RETRY_AVAILABLE_STATE);
+    }   
+    
+    
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     */
+    public function getFailedRetryLimitReachedState() {
+        return $this->stateService->fetch(self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE);
+    }     
     
     
     /**
@@ -289,16 +319,17 @@ class TaskService extends EntityService {
      * @param Task $task
      * @param \DateTime $endDateTime
      * @param \SimplyTestable\ApiBundle\Entity\Task\Output $output
+     * @param \SimlpyTestable\ApiBundle\Entity\State $state
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
-    public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output) {
+    public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state) {
         if (!$this->isInProgress($task)) {
             return $task;
         }        
 
         $task->getTimePeriod()->setEndDateTime($endDateTime);
         $task->setOutput($output);
-        $task->setNextState();            
+        $task->setState($state);           
         $task->clearWorker();
         $task->clearRemoteId();
 
