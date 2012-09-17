@@ -70,11 +70,7 @@ class TaskService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
     public function cancel(Task $task) { 
-        if ($this->isCompleted($task)) {
-            return $task;
-        }
-        
-        if ($this->isCancelled($task)) {
+        if ($this->isFinished($task)) {
             return $task;
         }
         
@@ -257,7 +253,27 @@ class TaskService extends EntityService {
      */
     public function isQueuedForAssignment(Task $task) {
         return $task->getState()->equals($this->getQueuedForAssignmentState());
-    }      
+    } 
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @return boolean
+     */
+    public function isFailedNoRetryAvailable(Task $task) {
+        return $task->getState()->equal($this->getFailedNoRetryAvailableState());
+    }
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @return boolean
+     */
+    public function isFailedRetryLimitReached(Task $task) {
+        return $task->getState()->equal($this->getFailedRetryLimitReachedState());
+    }    
     
     
     /**
@@ -267,6 +283,32 @@ class TaskService extends EntityService {
      */
     public function isInProgress(Task $task) {        
         return $task->getState()->equals($this->getInProgressState());
+    }
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @return boolean 
+     */
+    public function isFinished(Task $task) {
+        if ($this->isCompleted($task)) {
+            return true;
+        }
+        
+        if ($this->isCancelled($task)) {
+            return true;
+        }
+        
+        if ($this->isFailedNoRetryAvailable($task)) {
+            return true;
+        }
+        
+        if ($this->isFailedRetryLimitReached($task)) {
+            return true;
+        }   
+        
+        return false;
     }
     
     
