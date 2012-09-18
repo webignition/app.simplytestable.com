@@ -7,11 +7,26 @@ use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
 
 class TestsController extends ApiController
 {
     private $siteRootUrl = null;
     private $testId = null;
+    
+    
+    public function __construct() {
+        $this->setInputDefinitions(array(
+            'taskCollectionStatusAction' => new InputDefinition(array(
+                new InputArgument('task_ids', InputArgument::REQUIRED, 'IDs of tasks to get status for')
+            ))
+        ));
+        
+        $this->setRequestTypes(array(
+            'taskCollectionStatusAction' => HTTP_METH_POST
+        ));
+    }      
     
     
     public function startAction($site_root_url)
@@ -205,7 +220,7 @@ class TestsController extends ApiController
     }
     
     
-    public function taskCollectionStatusAction($site_root_url, $test_id, $task_ids) {        
+    public function taskCollectionStatusAction($site_root_url, $test_id) {        
         $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
@@ -214,9 +229,9 @@ class TestsController extends ApiController
             $response = new Response();
             $response->setStatusCode(403);
             return $response;  
-        }
+        }        
         
-        $taskIds = $this->getSanitizedTaskIds($task_ids);
+        $taskIds = $this->getSanitizedTaskIds($this->getArguments('completeAction')->get('task_ids'));
         
         $queryBuilder = $this->getTaskService()->getEntityRepository()->createQueryBuilder('Task');
         $queryBuilder->select('Task');
@@ -273,13 +288,12 @@ class TestsController extends ApiController
             'user' => $this->getUser(),
             'website' => $this->getWebsite()
         ));
-        
-        $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());
-        
+
         if (is_null($job)) {
             return false;           
-        }
+        }        
         
+        $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());        
         $job->setUrlTotal($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
         return $job;      
     }   
