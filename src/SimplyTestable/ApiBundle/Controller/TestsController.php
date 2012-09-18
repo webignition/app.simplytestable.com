@@ -297,6 +297,7 @@ class TestsController extends ApiController
         $taskCountByState['completed'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());
         $taskCountByState['in-progress'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getInProgressState());
         $taskCountByState['queued'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getQueuedState());
+        $taskCountByState['queued-for-assignment'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getQueuedForAssignmentState());
         $taskCountByState['failed-no-retry-available'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getFailedNoRetryAvailableState());        
         $taskCountByState['failed-retry-available'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getFailedRetryAvailableState());        
         $taskCountByState['failed-retry-limit-reached'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getFailedRetryLimitReachedState());        
