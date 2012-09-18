@@ -1,5 +1,5 @@
 {
-    "hash": "59939071ddbf4462264da7e0892ae503",
+    "hash": "232dd6387727f86b12983ef6484b4d27",
     "packages": [
         {
             "package": "doctrine/common",
@@ -36,12 +36,6 @@
             "version": "2.3.x-dev",
             "source-reference": "c6101317cd71cbf320e96f4ce461f8a5a54bf56d",
             "commit-date": "1347883749"
-        },
-        {
-            "package": "friendsofsymfony/user-bundle",
-            "version": "dev-master",
-            "alias-pretty-version": "2.0.x-dev",
-            "alias-version": "2.0.9999999.9999999-dev"
         },
         {
             "package": "friendsofsymfony/user-bundle",
@@ -106,8 +100,8 @@
         {
             "package": "monolog/monolog",
             "version": "dev-master",
-            "source-reference": "0f3dc95c4a0ed7d17bec237d07af3da6c0c1071a",
-            "commit-date": "1347363321"
+            "source-reference": "09b3a80cfaf3e323e348a5e817afeee98d5e6b48",
+            "commit-date": "1347983448"
         },
         {
             "package": "querypath/QueryPath",
@@ -117,39 +111,15 @@
         },
         {
             "package": "sensio/distribution-bundle",
-            "version": "dev-master",
-            "alias-pretty-version": "2.1.x-dev",
-            "alias-version": "2.1.9999999.9999999-dev"
-        },
-        {
-            "package": "sensio/distribution-bundle",
-            "version": "dev-master",
-            "alias-pretty-version": "2.2.x-dev",
-            "alias-version": "2.2.9999999.9999999-dev"
-        },
-        {
-            "package": "sensio/distribution-bundle",
-            "version": "dev-master",
-            "source-reference": "4e86595e02c6e3d76971f790d7c06ec434e1b513",
-            "commit-date": "1347635342"
+            "version": "2.1.x-dev",
+            "source-reference": "2eee3cb4cd761c851f0d766649fb9ff6f4c97002",
+            "commit-date": "1347340208"
         },
         {
             "package": "sensio/framework-extra-bundle",
-            "version": "dev-master",
-            "alias-pretty-version": "2.1.x-dev",
-            "alias-version": "2.1.9999999.9999999-dev"
-        },
-        {
-            "package": "sensio/framework-extra-bundle",
-            "version": "dev-master",
-            "alias-pretty-version": "2.2.x-dev",
-            "alias-version": "2.2.9999999.9999999-dev"
-        },
-        {
-            "package": "sensio/framework-extra-bundle",
-            "version": "dev-master",
-            "source-reference": "03e32da3fd1bb37e4c6f3c77f1b4cb8a3a78e0a8",
-            "commit-date": "1347340790"
+            "version": "2.1.x-dev",
+            "source-reference": "6d393099b17f301cc09a1d586292ed0b84763011",
+            "commit-date": "1347780475"
         },
         {
             "package": "sensio/generator-bundle",
@@ -202,8 +172,8 @@
         {
             "package": "symfony/monolog-bundle",
             "version": "dev-master",
-            "source-reference": "b7318480e6f8bf5579d6b3cd856850302e7ba8d8",
-            "commit-date": "1347283885"
+            "source-reference": "e1acd0a0da661bdb0f5378a60226ae6e30ec55c6",
+            "commit-date": "1347983520"
         },
         {
             "package": "symfony/swiftmailer-bundle",
@@ -318,6 +288,20 @@
             "commit-date": "1345673270"
         },
         {
+            "package": "webignition/web-page-model",
+            "version": "0.4"
+        },
+        {
+            "package": "webignition/web-resource-model",
+            "version": "0.4"
+        },
+        {
+            "package": "webignition/website-rss-feed-finder",
+            "version": "dev-master",
+            "source-reference": "9cef5cc8d2bfad8dd16d050b02a964c6fa942533",
+            "commit-date": "1347980522"
+        },
+        {
             "package": "webignition/website-sitemap-finder",
             "version": "dev-master",
             "source-reference": "86333e4e44756e3691c64461cc821a2c0ccfacdc",
@@ -338,6 +322,7 @@
     "stability-flags": {
         "jms/serializer-bundle": 20,
         "webignition/website-sitemap-finder": 20,
-        "webignition/website-sitemap-url-retriever": 20
+        "webignition/website-sitemap-url-retriever": 20,
+        "webignition/website-rss-feed-finder": 20
     }
 }
