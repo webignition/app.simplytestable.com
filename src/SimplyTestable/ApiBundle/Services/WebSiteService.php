@@ -122,7 +122,7 @@ class WebSiteService extends EntityService {
         
         $urlsFromRssFeed = $this->getUrlsFromRssFeed($website);
         if (count($urlsFromRssFeed)) {
-            return $urlFromRssFeed;
+            return $urlsFromRssFeed;
         }
         
         return array();
@@ -148,9 +148,9 @@ class WebSiteService extends EntityService {
     
     private function getUrlsFromRssFeed(WebSite $website) {        
         $rssFeedFinder = new WebsiteRssFeedFinder();
-        $rssFeedFinder->setRootUrl($website->getCanonicalUrl());
+        $rssFeedFinder->setRootUrl($website->getCanonicalUrl());        
         
-        $rssFeedUrl = $rssFeedFinder->getRssFeedUrl();
+        $rssFeedUrl = $rssFeedFinder->getRssFeedUrl();        
         if (is_null($rssFeedUrl)) {
             return array();
         }
