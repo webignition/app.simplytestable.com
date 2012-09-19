@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\WebSite;
 use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\WebsiteSitemapFinder\WebsiteSitemapFinder;
 use webignition\WebsiteSitemapUrlRetriever\WebsiteSitemapUrlRetriever;
+use webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder;
 
 class WebSiteService extends EntityService {
     
@@ -114,19 +115,60 @@ class WebSiteService extends EntityService {
      * @return array
      */
     public function getUrls(WebSite $website) {
+        $urlsFromSitemap = $this->getUrlsFromSitemap($website);
+        if (count($urlsFromSitemap)) {
+            return $urlsFromSitemap;
+        }        
+        
+        $urlsFromRssFeed = $this->getUrlsFromRssFeed($website);
+        if (count($urlsFromRssFeed)) {
+            return $urlFromRssFeed;
+        }
+        
+        return array();
+    }
+    
+    private function getUrlsFromSitemap(WebSite $website) {
         $sitemapFinder = new WebsiteSitemapFinder();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
         $sitemapFinder->setHttpClient($this->getHttpClient());
         
         $sitemapUrl = $sitemapFinder->getSitemapUrl();        
         if ($sitemapUrl === false) {
-            return false;
+            return array();
         }
         
         $urlRetriever = new WebsiteSitemapUrlRetriever();
         $urlRetriever->setHttpClient($this->getHttpClient());
         $urlRetriever->setSitemapUrl($sitemapUrl);
         
-        return $urlRetriever->getUrls();
+        return $urlRetriever->getUrls();        
     }
+    
+    
+    private function getUrlsFromRssFeed(WebSite $website) {        
+        $rssFeedFinder = new WebsiteRssFeedFinder();
+        $rssFeedFinder->setRootUrl($website->getCanonicalUrl());
+        
+        $rssFeedUrl = $rssFeedFinder->getRssFeedUrl();
+        if (is_null($rssFeedUrl)) {
+            return array();
+        }
+        
+        $urls = array();
+        
+        $simplepie = new \SimplePie();
+        $simplepie->set_feed_url($rssFeedUrl);
+        $simplepie->enable_cache(false);
+        $simplepie->init();        
+        
+        $items = $simplepie->get_items();
+        foreach ($items as $item) {
+            /* @var $item \SimplePie_Item */
+            $urls[] = $item->get_permalink();
+        }
+        
+        return $urls;
+    }
+    
 }
