@@ -28,8 +28,8 @@
         {
             "package": "doctrine/migrations",
             "version": "dev-master",
-            "source-reference": "17f4b56bf0af0274cabdf3ae9b644059246d66b7",
-            "commit-date": "1347005884"
+            "source-reference": "ff84c7f403a622409d301eb6bdfda1becb11380a",
+            "commit-date": "1347994329"
         },
         {
             "package": "doctrine/orm",
@@ -130,8 +130,14 @@
         {
             "package": "sensio/generator-bundle",
             "version": "dev-master",
-            "source-reference": "v2.1.0",
-            "commit-date": "1346138171"
+            "alias-pretty-version": "2.2.x-dev",
+            "alias-version": "2.2.9999999.9999999-dev"
+        },
+        {
+            "package": "sensio/generator-bundle",
+            "version": "dev-master",
+            "source-reference": "b82772b164f07854470537d601b50c9c86387522",
+            "commit-date": "1348032154"
         },
         {
             "package": "simplepie/simplepie",
@@ -190,8 +196,8 @@
         {
             "package": "symfony/symfony",
             "version": "2.1.x-dev",
-            "source-reference": "ff1b990075be41c0b85702f2c9bde988d30f4d6b",
-            "commit-date": "1347914517"
+            "source-reference": "f1e6063c0a42065adf026811127f3db1d7a79eb5",
+            "commit-date": "1348035223"
         },
         {
             "package": "twig/extensions",
@@ -298,8 +304,8 @@
         {
             "package": "webignition/website-rss-feed-finder",
             "version": "dev-master",
-            "source-reference": "9cef5cc8d2bfad8dd16d050b02a964c6fa942533",
-            "commit-date": "1347980522"
+            "source-reference": "b962684887fcf1d357a0f55f17d193eb3acd3848",
+            "commit-date": "1348042521"
         },
         {
             "package": "webignition/website-sitemap-finder",
