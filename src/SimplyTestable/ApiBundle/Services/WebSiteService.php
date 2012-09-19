@@ -125,9 +125,20 @@ class WebSiteService extends EntityService {
             return $urlsFromRssFeed;
         }
         
+        $urlsFromAtomFeed = $this->getUrlsFromAtomFeed($website);        
+        if (count($urlsFromAtomFeed)) {
+            return $urlsFromAtomFeed;
+        }        
+        
         return array();
     }
     
+    
+    /**
+     *
+     * @param WebSite $website
+     * @return array 
+     */
     private function getUrlsFromSitemap(WebSite $website) {
         $sitemapFinder = new WebsiteSitemapFinder();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
@@ -145,30 +156,63 @@ class WebSiteService extends EntityService {
         return $urlRetriever->getUrls();        
     }
     
-    
+
+    /**
+     *
+     * @param WebSite $website
+     * @return array 
+     */    
     private function getUrlsFromRssFeed(WebSite $website) {        
-        $rssFeedFinder = new WebsiteRssFeedFinder();
-        $rssFeedFinder->setRootUrl($website->getCanonicalUrl());        
+        $feedFinder = new WebsiteRssFeedFinder();
+        $feedFinder->setRootUrl($website->getCanonicalUrl());        
         
-        $rssFeedUrl = $rssFeedFinder->getRssFeedUrl();        
-        if (is_null($rssFeedUrl)) {
+        $feedUrl = $feedFinder->getRssFeedUrl();        
+        if (is_null($feedUrl)) {
             return array();
         }
         
-        $urls = array();
+        return $this->getUrlsFromNewsFeed($feedUrl);
+    }
+
+    
+    /**
+     *
+     * @param WebSite $website
+     * @return array 
+     */
+    private function getUrlsFromAtomFeed(WebSite $website) {        
+        $feedFinder = new WebsiteRssFeedFinder();
+        $feedFinder->setRootUrl($website->getCanonicalUrl());        
         
+        $feedUrl = $feedFinder->getAtomFeedUrl();        
+        if (is_null($feedUrl)) {
+            return array();
+        }
+        
+        return $this->getUrlsFromNewsFeed($feedUrl);
+    } 
+    
+    
+    /**
+     *
+     * @param string $feedUrl
+     * @return array
+     */
+    private function getUrlsFromNewsFeed($feedUrl) {        
         $simplepie = new \SimplePie();
-        $simplepie->set_feed_url($rssFeedUrl);
+        $simplepie->set_feed_url($feedUrl);
         $simplepie->enable_cache(false);
         $simplepie->init();        
         
         $items = $simplepie->get_items();
+        
+        $urls = array();        
         foreach ($items as $item) {
             /* @var $item \SimplePie_Item */
             $urls[] = $item->get_permalink();
         }
         
-        return $urls;
+        return $urls;        
     }
     
 }
