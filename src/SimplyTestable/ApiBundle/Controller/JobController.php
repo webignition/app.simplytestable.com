@@ -154,15 +154,6 @@ class JobController extends ApiController
         return $this->sendSuccessResponse();
     }    
     
-    public function resultsAction($site_root_url, $test_id)
-    {
-        return new \Symfony\Component\HttpFoundation\Response(json_encode(array(
-            'site_root_url' => $site_root_url,
-            'test_id' => $test_id
-        )));
-    }
-    
-    
     public function tasksAction($site_root_url, $test_id) {        
         $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
