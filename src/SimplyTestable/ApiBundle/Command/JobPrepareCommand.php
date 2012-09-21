@@ -70,7 +70,7 @@ class JobPrepareCommand extends BaseCommand
         }
         
         $requestedTaskTypes = $job->getRequestedTaskTypes();
-        $newTaskState = $this->getNewTaskState();
+        $newTaskState = $this->getTaskService()->getQueuedState();
 
         $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
@@ -142,5 +142,13 @@ class JobPrepareCommand extends BaseCommand
      */        
     private function getResqueQueueService() {
         return $this->getContainer()->get('simplytestable.services.resqueQueueService');
+    } 
+    
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\TaskService
+     */    
+    private function getTaskService() {
+        return $this->getContainer()->get('simplytestable.services.taskservice');
     }    
 }
