@@ -18,7 +18,13 @@ job_list_urls:
     pattern: /job/{site_root_url}/{test_id}/urls/
     defaults: { _controller: SimplyTestableApiBundle:Job:listUrls, _format: json }    
     requirements:
-        site_root_url: ".+"        
+        site_root_url: ".+"  
+        
+job_cancel:
+    pattern: /job/{site_root_url}/{test_id}/cancel/
+    defaults: { _controller: SimplyTestableApiBundle:Job:cancel, _format: json }    
+    requirements:
+        site_root_url: ".+"            
         
 job:
     pattern: /job/{site_root_url}/{test_id}/
@@ -28,14 +34,8 @@ job:
     
 task_type_count:
   pattern: /tasks/{task_type}/{state_name}/count/
-  defaults: { _controller: SimplyTestableApiBundle:Task:taskTypeCount, _format: json } 
-
-        
-test_cancel:
-    pattern: /job/{site_root_url}/{test_id}/cancel/
-    defaults: { _controller: SimplyTestableApiBundle:Job:cancel, _format: json }    
-    requirements:
-        site_root_url: ".+"       
+  defaults: { _controller: SimplyTestableApiBundle:Task:taskTypeCount, _format: json }         
+   
         
 worker_activate:
   pattern: /worker/activate/
