@@ -28,13 +28,7 @@ job:
     pattern: /job/{site_root_url}/{test_id}/
     defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
     requirements:
-        site_root_url: ".+"
-        
-test_summary:
-    pattern: /job/{site_root_url}/{test_id}/summary/
-    defaults: { _controller: SimplyTestableApiBundle:Job:summary, _format: json }    
-    requirements:
-        site_root_url: ".+"       
+        site_root_url: ".+"      
     
 test_results:
     pattern: /job/{site_root_url}/{test_id}/results/

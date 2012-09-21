@@ -65,28 +65,6 @@ class JobController extends ApiController
             return $response;  
         }
         
-        $requestTaskIds = $this->getRequestTaskIds();
-        $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $requestTaskIds);
-        
-        return $this->sendResponse(array(
-            'job' => $job,
-            'tasks' => $tasks
-        ));
-    }
-
-    
-    public function summaryAction($site_root_url, $test_id)
-    { 
-        $this->siteRootUrl = $site_root_url;
-        $this->testId = $test_id;
-        
-        $job = $this->getJob();
-        if ($job === false) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;  
-        }
-        
         return $this->sendResponse($this->getSummary($job));
     }
     
