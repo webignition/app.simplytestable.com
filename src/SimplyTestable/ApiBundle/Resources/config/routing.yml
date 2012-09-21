@@ -2,7 +2,7 @@ test_list:
     pattern: /job/list/{limit}/
     defaults: { _controller: SimplyTestableApiBundle:Job:list, limit: 1, _format: json }    
 
-test_start:
+job_start:
     pattern: /job/{site_root_url}/start/
     defaults: { _controller: SimplyTestableApiBundle:Job:start, _format: json }
     requirements:
