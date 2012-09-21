@@ -176,7 +176,7 @@ class JobController extends ApiController
     }
     
     
-    public function taskStatusAction($site_root_url, $test_id, $task_id) {        
+    public function tasksAction($site_root_url, $test_id) {        
         $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
@@ -187,14 +187,10 @@ class JobController extends ApiController
             return $response;  
         }
         
-        $task = $this->getTaskService()->getById($task_id);       
-        if (is_null($task) || !$job->getTasks()->contains($task)) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;              
-        }
+        $taskIds = $this->getRequestTaskIds();        
+        $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $taskIds);
         
-        return $this->sendResponse($task);
+        return $this->sendResponse($tasks);
     }
     
     
@@ -373,21 +369,22 @@ class JobController extends ApiController
      *
      * @return array|null
      */
-    private function getRequestTaskIds() {
-        if (!$this->getRequest()->query->has('taskIds')) {
+    private function getRequestTaskIds($httpMethod = HTTP_METH_GET) {
+        $requestValues = ($httpMethod == HTTP_METH_POST) ? $this->getRequest()->request : $this->getRequest()->query;        
+        if (!$requestValues->has('taskIds')) {
             return null;
         }
         
         $requestTaskIds = array();
         
-        if (substr_count($this->getRequest()->query->get('taskIds'), ':')) {
-            $rangeLimits = explode(':', $this->getRequest()->query->get('taskIds'));
+        if (substr_count($requestValues->get('taskIds'), ':')) {
+            $rangeLimits = explode(':', $requestValues->get('taskIds'));
             
             for ($i = $rangeLimits[0]; $i<=$rangeLimits[1]; $i++) {
                 $requestTaskIds[] = $i;
             }
         } else {
-            $rawRequestTaskIds = explode(',', $this->getRequest()->query->get('taskIds'));
+            $rawRequestTaskIds = explode(',', $requestValues->get('taskIds'));
 
             foreach ($rawRequestTaskIds as $requestTaskId) {
                 if (ctype_digit($requestTaskId)) {
