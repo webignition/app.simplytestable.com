@@ -13,21 +13,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 class JobController extends ApiController
 {
     private $siteRootUrl = null;
-    private $testId = null;
-    
-    
-    public function __construct() {
-        $this->setInputDefinitions(array(
-            'taskCollectionStatusAction' => new InputDefinition(array(
-                new InputArgument('task_ids', InputArgument::REQUIRED, 'IDs of tasks to get status for')
-            ))
-        ));
-        
-        $this->setRequestTypes(array(
-            'taskCollectionStatusAction' => HTTP_METH_POST
-        ));
-    }      
-    
+    private $testId = null;    
     
     public function startAction($site_root_url)
     {        
