@@ -1,5 +1,5 @@
-job_list:
-    pattern: /job/list/{limit}/
+jobs_list:
+    pattern: /jobs/list/{limit}/
     defaults: { _controller: SimplyTestableApiBundle:Job:list, limit: 1, _format: json }    
 
 job_start:
@@ -7,6 +7,11 @@ job_start:
     defaults: { _controller: SimplyTestableApiBundle:Job:start, _format: json }
     requirements:
         site_root_url: ".+"
+job:
+    pattern: /job/{site_root_url}/{test_id}/
+    defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
+    requirements:
+        site_root_url: ".+"     
     
 task_status:
   pattern: /tasks/{site_root_url}/{test_id}/{task_id}/status/
@@ -24,11 +29,7 @@ task_type_count:
   pattern: /tasks/{task_type}/{state_name}/count/
   defaults: { _controller: SimplyTestableApiBundle:Task:taskTypeCount, _format: json } 
     
-job:
-    pattern: /job/{site_root_url}/{test_id}/
-    defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
-    requirements:
-        site_root_url: ".+"      
+     
     
 test_results:
     pattern: /job/{site_root_url}/{test_id}/results/
