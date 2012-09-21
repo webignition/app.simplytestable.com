@@ -165,28 +165,10 @@ class JobController extends ApiController
             return $response;  
         }
         
-        $taskIds = $this->getRequestTaskIds();        
+        $taskIds = $this->getRequestTaskIds();       
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $taskIds);
         
         return $this->sendResponse($tasks);
-    }    
-    
-    /**
-     *
-     * @param string $taskIdsString
-     * @return array
-     */
-    private function getSanitizedTaskIds($taskIdsString) {
-        $taskIds = array();
-        
-        $rawTaskIds = explode(',', $taskIdsString);
-        foreach ($rawTaskIds as $taskId) {
-            if (ctype_digit($taskId)) {
-                $taskIds[] = (int)$taskId;                
-            }
-        }
-        
-        return $taskIds;
     }
     
     
@@ -348,5 +330,5 @@ class JobController extends ApiController
         }
         
         return (count($requestTaskIds) > 0) ? $requestTaskIds : null;
-    }     
+    }  
 }
