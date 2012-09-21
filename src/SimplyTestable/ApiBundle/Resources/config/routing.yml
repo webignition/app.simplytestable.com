@@ -20,19 +20,6 @@ job:
     requirements:
         site_root_url: ".+"
         
-       
-    
-#task_status:
-#  pattern: /tasks/{site_root_url}/{test_id}/{task_id}/status/
-#  defaults: { _controller: SimplyTestableApiBundle:Job:taskStatus, _format: json } 
-#  requirements:
-#    site_root_url: ".+"   
-    
-#task_status_collection:
-#  pattern: /tasks/{site_root_url}/{test_id}/status/collection/
-#  defaults: { _controller: SimplyTestableApiBundle:Job:taskCollectionStatus, _format: json } 
-#  requirements:
-#    site_root_url: ".+"
 #    
 #task_type_count:
 #  pattern: /tasks/{task_type}/{state_name}/count/

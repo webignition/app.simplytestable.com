@@ -191,31 +191,7 @@ class JobController extends ApiController
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $taskIds);
         
         return $this->sendResponse($tasks);
-    }
-    
-    
-    public function taskCollectionStatusAction($site_root_url, $test_id) {        
-        $this->siteRootUrl = $site_root_url;
-        $this->testId = $test_id;
-        
-        $job = $this->getJob();
-        if ($job === false) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;  
-        }        
-        
-        $taskIds = $this->getSanitizedTaskIds($this->getArguments('completeAction')->get('task_ids'));
-        
-        $queryBuilder = $this->getTaskService()->getEntityRepository()->createQueryBuilder('Task');
-        $queryBuilder->select('Task');
-        $queryBuilder->where('Task.id IN ('.  implode(',', $taskIds).')');
-        $queryBuilder->andWhere('Task.job = :Job');
-        $queryBuilder->setParameter('Job', $job);
-     
-        return $this->sendResponse($queryBuilder->getQuery()->getResult());        
-    }
-    
+    }    
     
     /**
      *
