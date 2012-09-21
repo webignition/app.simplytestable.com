@@ -72,7 +72,7 @@ class Job
     
     /**
      * @var int
-     *
+     * @SerializerAnnotation\Expose 
      */
     protected $urlTotal;    
     
