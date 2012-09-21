@@ -97,6 +97,24 @@ class TaskRepository extends EntityRepository
         return (int)($result[0]['task_total']);        
     }  
     
+
+    /**
+     *
+     * @param Job $job
+     * @return integer 
+     */
+    public function getCountByJob(Job $job)
+    {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->setMaxResults(1);
+        $queryBuilder->select('count(DISTINCT Task.id) as task_total');
+        $queryBuilder->where('Task.job = :Job');
+        $queryBuilder->setParameter('Job', $job);
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        return (int)($result[0]['task_total']);        
+    }      
+    
     
     public function getCollectionByJobAndId(Job $job, $taskIds = array()) {
         $queryBuilder = $this->createQueryBuilder('Task');

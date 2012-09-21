@@ -74,7 +74,7 @@ class Job
      * @var int
      * @SerializerAnnotation\Expose 
      */
-    protected $urlTotal;    
+    protected $urlCount;    
     
     
     /**
@@ -391,19 +391,18 @@ class Job
      *
      * @return int 
      */
-    public function getUrlTotal() {
-        return $this->urlTotal;
+    public function getUrlCount() {
+        return $this->urlCount;
     }
     
     
     /**
      *
-     * @param int $urlTotal
+     * @param int $urlCount
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */    
-    public function setUrlTotal($urlTotal) {
-        $this->urlTotal = $urlTotal;
-        return $this;
-                
+    public function setUrlCount($urlCount) {
+        $this->urlCount = $urlCount;
+        return $this;                
     }
 }

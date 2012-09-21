@@ -80,7 +80,8 @@ class JobController extends ApiController
             'user' => $job->getPublicSerializedUser(),
             'website' => $job->getPublicSerializedWebsite(),
             'state' => $job->getPublicSerializedState(),
-            'url_total' => $job->getUrlTotal(),
+            'url_count' => $job->getUrlCount(),
+            'task_count' => $this->getTaskService()->getCountByJob($job),
             'task_count_by_state' => $this->getTaskCountByState($job),
             'task_types' => $job->getRequestedTaskTypes()
         );        
@@ -244,7 +245,7 @@ class JobController extends ApiController
         }        
         
         $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());        
-        $job->setUrlTotal($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
+        $job->setUrlCount($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
         return $job;      
     }   
     
