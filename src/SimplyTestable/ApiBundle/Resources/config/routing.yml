@@ -45,9 +45,9 @@ job:
 #    requirements:
 #        site_root_url: ".+"
 #        
-#worker_activate:
-#  pattern: /worker/activate/
-#  defaults: { _controller: SimplyTestableApiBundle:Worker:activate, _format: json }   
+worker_activate:
+  pattern: /worker/activate/
+  defaults: { _controller: SimplyTestableApiBundle:Worker:activate, _format: json }   
 #  
 #task_complete:
 #  pattern: /task/{worker_hostname}/{remote_task_id}/complete/
