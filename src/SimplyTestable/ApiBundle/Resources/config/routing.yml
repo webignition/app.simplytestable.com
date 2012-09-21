@@ -13,6 +13,12 @@ job_tasks:
   defaults: { _controller: SimplyTestableApiBundle:Job:tasks, _format: json } 
   requirements:
     site_root_url: ".+"   
+
+job_list_urls:
+    pattern: /job/{site_root_url}/{test_id}/urls/
+    defaults: { _controller: SimplyTestableApiBundle:Job:listUrls, _format: json }    
+    requirements:
+        site_root_url: ".+"        
         
 job:
     pattern: /job/{site_root_url}/{test_id}/
@@ -32,12 +38,8 @@ job:
 #    requirements:
 #        site_root_url: ".+"
 #        
-#test_list_urls:
-#    pattern: /job/{site_root_url}/{test_id}/urls/
-#    defaults: { _controller: SimplyTestableApiBundle:Job:listUrls, _format: json }    
-#    requirements:
-#        site_root_url: ".+"
-#        
+
+        
 worker_activate:
   pattern: /worker/activate/
   defaults: { _controller: SimplyTestableApiBundle:Worker:activate, _format: json }   
