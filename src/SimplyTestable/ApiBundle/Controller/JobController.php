@@ -10,7 +10,7 @@ use SimplyTestable\ApiBundle\Entity\State;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 
-class TestsController extends ApiController
+class JobController extends ApiController
 {
     private $siteRootUrl = null;
     private $testId = null;
@@ -45,7 +45,7 @@ class TestsController extends ApiController
             array(
                 'id' => $job->getId()
             )                
-        );
+        );        
         
         return $this->sendResponse($job);
     }    
@@ -352,7 +352,7 @@ class TestsController extends ApiController
      * @return \SimplyTestable\ApiBundle\Entity\User 
      */
     public function getUser() {
-        if (!$this->isTestEnvironment()) {
+        if (!$this->isTestEnvironment()) {            
             return parent::getUser();
         }
         
