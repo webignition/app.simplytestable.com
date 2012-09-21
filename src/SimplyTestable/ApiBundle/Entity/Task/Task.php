@@ -102,6 +102,7 @@ class Task
      * @ORM\Column(type="bigint", nullable=true)
      * @SerializerAnnotation\Expose
      * @SerializerAnnotation\SerializedName("remote_id")
+     * @SerializerAnnotation\Expose
      */
     protected $remoteId;
 
