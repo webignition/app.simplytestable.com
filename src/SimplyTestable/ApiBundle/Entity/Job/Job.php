@@ -15,6 +15,7 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  *     name="Job"
  * )
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\JobRepository")
+ * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class Job
 {    
@@ -25,6 +26,8 @@ class Job
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * 
+     * @SerializerAnnotation\Expose 
      */
     protected $id;
     
@@ -36,6 +39,7 @@ class Job
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      * 
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
+     * @SerializerAnnotation\Expose 
      */
     protected $user;
     
@@ -48,6 +52,7 @@ class Job
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
      * 
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedWebsite")
+     * @SerializerAnnotation\Expose 
      */
     protected $website;
     
@@ -60,6 +65,7 @@ class Job
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
      * 
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
+     * @SerializerAnnotation\Expose 
      */
     protected $state; 
     
@@ -76,7 +82,7 @@ class Job
      * @var \Doctrine\Common\Collections\Collection
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedTasks")
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedTasks")     
      */
     private $tasks;
     
@@ -92,6 +98,7 @@ class Job
      * )
      * 
      * @SerializerAnnotation\SerializedName("task_types")
+     * @SerializerAnnotation\Expose 
      */
     private $requestedTaskTypes;
     
@@ -101,6 +108,7 @@ class Job
      * @var \SimplyTestable\ApiBundle\Entity\TimePeriod
      * 
      * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist"})
+     * @SerializerAnnotation\Expose 
      */
     protected $timePeriod;
     

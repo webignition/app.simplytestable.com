@@ -63,15 +63,12 @@ class TestsController extends ApiController
         }
         
         $requestTaskIds = $this->getRequestTaskIds();
-        if (is_array($requestTaskIds)) {
-            foreach ($job->getTasks() as $task) {                
-                if (!in_array($task->getId(), $requestTaskIds)) {                    
-                    $job->getTasks()->removeElement($task);
-                }
-            }            
-        }
+        $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $requestTaskIds);
         
-        return $this->sendResponse($job);
+        return $this->sendResponse(array(
+            'job' => $job,
+            'tasks' => $tasks
+        ));
     }
 
     
@@ -400,13 +397,22 @@ class TestsController extends ApiController
             return null;
         }
         
-        $rawRequestTaskIds = explode(',', $this->getRequest()->query->get('taskIds'));
         $requestTaskIds = array();
         
-        foreach ($rawRequestTaskIds as $requestTaskId) {
-            if (ctype_digit($requestTaskId)) {
-                $requestTaskIds[] = (int)$requestTaskId;
+        if (substr_count($this->getRequest()->query->get('taskIds'), ':')) {
+            $rangeLimits = explode(':', $this->getRequest()->query->get('taskIds'));
+            
+            for ($i = $rangeLimits[0]; $i<=$rangeLimits[1]; $i++) {
+                $requestTaskIds[] = $i;
             }
+        } else {
+            $rawRequestTaskIds = explode(',', $this->getRequest()->query->get('taskIds'));
+
+            foreach ($rawRequestTaskIds as $requestTaskId) {
+                if (ctype_digit($requestTaskId)) {
+                    $requestTaskIds[] = (int)$requestTaskId;
+                }
+            }            
         }
         
         return (count($requestTaskIds) > 0) ? $requestTaskIds : null;
