@@ -14,7 +14,6 @@ use SimplyTestable\ApiBundle\Entity\State;
 class TaskService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Task\Task';
-    const STARTING_STATE = 'task-new';
     const CANCELLED_STATE = 'task-cancelled';
     const QUEUED_STATE = 'task-queued';
     const IN_PROGRESS_STATE = 'task-in-progress';
@@ -23,7 +22,25 @@ class TaskService extends EntityService {
     const QUEUED_FOR_ASSIGNMENT_STATE = 'task-queued-for-assignment';
     const TASK_FAILED_NO_RETRY_AVAILABLE_STATE = 'task-failed-no-retry-available';
     const TASK_FAILED_RETRY_AVAILABLE_STATE = 'task-failed-retry-available';
-    const TASK_FAILED_RETRY_LIMIT_REACHED_STATE = 'task-failed-retry-limit-reached';    
+    const TASK_FAILED_RETRY_LIMIT_REACHED_STATE = 'task-failed-retry-limit-reached';
+    
+    
+    /**
+     * Collection of all the states a task could be in
+     * 
+     * @var array
+     */
+    private $availableStateNames = array(
+        self::CANCELLED_STATE,
+        self::QUEUED_STATE,
+        self::IN_PROGRESS_STATE,
+        self::COMPLETED_STATE,
+        self::AWAITING_CANCELLATION_STATE,
+        self::QUEUED_FOR_ASSIGNMENT_STATE,
+        self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+        self::TASK_FAILED_RETRY_AVAILABLE_STATE,
+        self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE
+    );
     
     /**
      *
@@ -116,15 +133,6 @@ class TaskService extends EntityService {
      */
     public function getById($id) {
         return $this->getEntityRepository()->find($id);
-    }
-    
-    
-    /**
-     *
-     * @return \SimlpyTestable\ApiBundle\Entity\State
-     */
-    public function getStartingState() {
-        return $this->stateService->fetch(self::STARTING_STATE);
     }
     
     /**
@@ -454,8 +462,7 @@ class TaskService extends EntityService {
      */
     public function getCountByJobAndState(Job $job, State $state) {
         return $this->getEntityRepository()->getCountByJobAndState($job, $state);
-    }
-    
+    }   
     
     
     /**
@@ -466,6 +473,16 @@ class TaskService extends EntityService {
     public function getCountByJob(Job $job) {
         return $this->getEntityRepository()->getCountByJob($job);
     }
+    
+    
+    /**
+     *
+     * @return array
+     */
+    public function getAvailableStateNames() {
+        return $this->availableStateNames;
+    }
+    
     
   
 }

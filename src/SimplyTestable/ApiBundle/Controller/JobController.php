@@ -215,18 +215,32 @@ class JobController extends ApiController
      * @return array 
      */
     private function getTaskCountByState(Job $job) {
+        $availableStateNames = $this->getTaskService()->getAvailableStateNames();
         $taskCountByState = array();
-        $taskCountByState['awaiting-cancellation'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getAwaitingCancellationState());
-        $taskCountByState['cancelled'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCancelledState());
-        $taskCountByState['completed'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());
-        $taskCountByState['in-progress'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getInProgressState());
-        $taskCountByState['queued'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getQueuedState());
-        $taskCountByState['queued-for-assignment'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getQueuedForAssignmentState());
-        $taskCountByState['failed-no-retry-available'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getFailedNoRetryAvailableState());        
-        $taskCountByState['failed-retry-available'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getFailedRetryAvailableState());        
-        $taskCountByState['failed-retry-limit-reached'] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getFailedRetryLimitReachedState());        
+        
+        foreach ($availableStateNames as $stateName) {
+            $stateShortName = str_replace('task-', '', $stateName);            
+            $methodName = $this->stateNameToStateRetrievalMethodName($stateShortName);
+            $taskCountByState[$stateShortName] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->$methodName());         
+        }
         
         return $taskCountByState;
+    }
+    
+    
+    /**
+     *
+     * @param string $stateName
+     * @return string
+     */
+    private function stateNameToStateRetrievalMethodName($stateName) {
+        $methodName = $stateName;
+        
+        $methodName = str_replace('-', ' ', $methodName);
+        $methodName = ucwords($methodName);
+        $methodName = str_replace(' ', '', $methodName);
+        
+        return 'get' . $methodName . 'State';
     }
     
     
