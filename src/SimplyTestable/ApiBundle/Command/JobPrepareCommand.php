@@ -51,11 +51,9 @@ class JobPrepareCommand extends BaseCommand
             $this->httpFixturePath = $input->getArgument('http-fixture-path');
         }
         
-        $job = $this->getContainer()->get('simplytestable.services.jobservice')->getById(
-            (int)$input->getArgument('id')
-        );      
+        $job = $this->getJobService()->getById((int)$input->getArgument('id'));
         
-        if ($job->getState()->getName() != JobService::STARTING_STATE) {
+        if (!$this->getJobService()->isNew($job)) {
             return $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
         }
         
@@ -109,15 +107,6 @@ class JobPrepareCommand extends BaseCommand
         }
         
         $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
-    }
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
-     */
-    private function getNewTaskState() {
-        return $this->getContainer()->get('simplytestable.services.stateservice')->find('task-queued');
     }
     
     

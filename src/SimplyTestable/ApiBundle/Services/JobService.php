@@ -140,6 +140,16 @@ class JobService extends EntityService {
     }
     
     
+    /**
+     *
+     * @param Job $job
+     * @return boolean
+     */
+    public function isNew(Job $job) {
+        return $job->getState()->equals($this->getStartingState());
+    }
+    
+    
     
     /**
      *
