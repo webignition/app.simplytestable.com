@@ -66,6 +66,7 @@ class JobController extends ApiController
             'user' => $job->getPublicSerializedUser(),
             'website' => $job->getPublicSerializedWebsite(),
             'state' => $job->getPublicSerializedState(),
+            'time_period' => $job->getTimePeriod(),
             'url_count' => $job->getUrlCount(),
             'task_count' => $this->getTaskService()->getCountByJob($job),
             'task_count_by_state' => $this->getTaskCountByState($job),
