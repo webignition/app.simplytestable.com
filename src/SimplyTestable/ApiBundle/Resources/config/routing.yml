@@ -24,7 +24,7 @@ task_type_count:
   pattern: /tasks/{task_type}/{state_name}/count/
   defaults: { _controller: SimplyTestableApiBundle:Task:taskTypeCount, _format: json } 
     
-test_status:
+job:
     pattern: /job/{site_root_url}/{test_id}/
     defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
     requirements:

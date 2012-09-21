@@ -45,9 +45,12 @@ class JobController extends ApiController
             array(
                 'id' => $job->getId()
             )                
-        );        
+        );
         
-        return $this->sendResponse($job);
+        return $this->redirect($this->generateUrl('job', array(
+            'site_root_url' => (string)$job->getWebsite(),
+            'test_id' => $job->getId()
+        )));
     }    
     
     public function statusAction($site_root_url, $test_id)
