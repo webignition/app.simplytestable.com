@@ -129,4 +129,26 @@ class TaskRepository extends EntityRepository
         
         return $queryBuilder->getQuery()->getResult();      
     }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return array 
+     */
+    public function getIdsByJob(Job $job) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('Task.id');
+        $queryBuilder->where('Task.job = :Job');        
+        $queryBuilder->setParameter('Job', $job);
+        
+        $repostitoryResult = $queryBuilder->getQuery()->getResult();
+        
+        $taskIds = array();
+        foreach ($repostitoryResult as $taskId) {
+            $taskIds[] = $taskId['id'];
+        }
+        
+        return $taskIds;
+    }
 }

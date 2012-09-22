@@ -173,6 +173,23 @@ class JobController extends ApiController
     }
     
     
+    public function taskIdsAction($site_root_url, $test_id) {        
+        $this->siteRootUrl = $site_root_url;
+        $this->testId = $test_id;
+        
+        $job = $this->getJob();
+        if ($job === false) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;  
+        }        
+     
+        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($job);
+        
+        return $this->sendResponse($taskIds);
+    }    
+    
+    
     public function listUrlsAction($site_root_url, $test_id) {
         $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;

@@ -13,6 +13,12 @@ job_tasks:
   defaults: { _controller: SimplyTestableApiBundle:Job:tasks, _format: json } 
   requirements:
     site_root_url: ".+"   
+    
+job_task_ids:
+  pattern: /job/{site_root_url}/{test_id}/tasks/ids/
+  defaults: { _controller: SimplyTestableApiBundle:Job:taskIds, _format: json } 
+  requirements:
+    site_root_url: ".+"     
 
 job_list_urls:
     pattern: /job/{site_root_url}/{test_id}/urls/
