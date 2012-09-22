@@ -166,7 +166,7 @@ class JobController extends ApiController
             return $response;  
         }
         
-        $taskIds = $this->getRequestTaskIds();       
+        $taskIds = $this->getRequestTaskIds();        
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $taskIds);
         
         return $this->sendResponse($tasks);
@@ -337,30 +337,65 @@ class JobController extends ApiController
      *
      * @return array|null
      */
-    private function getRequestTaskIds($httpMethod = HTTP_METH_GET) {
-        $requestValues = ($httpMethod == HTTP_METH_POST) ? $this->getRequest()->request : $this->getRequest()->query;        
-        if (!$requestValues->has('taskIds')) {
-            return null;
-        }
+    private function getRequestTaskIds() {        
+        $requestTaskIds = $this->getRequestValue('taskIds');        
+        $taskIds = array();
         
-        $requestTaskIds = array();
-        
-        if (substr_count($requestValues->get('taskIds'), ':')) {
-            $rangeLimits = explode(':', $requestValues->get('taskIds'));
+        if (substr_count($requestTaskIds, ':')) {
+            $rangeLimits = explode(':', $requestTaskIds);
             
             for ($i = $rangeLimits[0]; $i<=$rangeLimits[1]; $i++) {
-                $requestTaskIds[] = $i;
+                $taskIds[] = $i;
             }
         } else {
-            $rawRequestTaskIds = explode(',', $requestValues->get('taskIds'));
+            $rawRequestTaskIds = explode(',', $requestTaskIds);
 
             foreach ($rawRequestTaskIds as $requestTaskId) {
                 if (ctype_digit($requestTaskId)) {
-                    $requestTaskIds[] = (int)$requestTaskId;
+                    $taskIds[] = (int)$requestTaskId;
                 }
             }            
         }
         
-        return (count($requestTaskIds) > 0) ? $requestTaskIds : null;
-    }  
+        return (count($taskIds) > 0) ? $taskIds : null;
+    }    
+    
+    private function getRequestValue($key, $httpMethod = null) {
+        $availableHttpMethods = array(
+            HTTP_METH_GET,
+            HTTP_METH_POST
+        );
+        
+        $defaultHttpMethod = HTTP_METH_GET;
+        $requestedHttpMethods = array();
+        
+        if (is_null($httpMethod)) {
+            $requestedHttpMethods = $availableHttpMethods;
+        } else {
+            if (in_array($httpMethod, $availableHttpMethods)) {
+                $requestedHttpMethods[] = $httpMethod;
+            } else {
+                $requestedHttpMethods[] = $defaultHttpMethod;
+            }
+        }
+        
+        foreach ($requestedHttpMethods as $requestedHttpMethod) {
+            $requestValues = $this->getRequestValues($requestedHttpMethod);
+            if ($requestValues->has($key)) {
+                return $requestValues->get($key);
+            }
+        }
+        
+        return null;       
+    }
+    
+    
+    /**
+     *
+     * @param int $httpMethod
+     * @return type 
+     */
+    private function getRequestValues($httpMethod = HTTP_METH_GET) {
+        return ($httpMethod == HTTP_METH_POST) ? $this->getRequest()->request : $this->getRequest()->query;            
+    }    
 }
