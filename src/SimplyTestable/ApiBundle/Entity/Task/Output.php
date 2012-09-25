@@ -43,6 +43,14 @@ class Output
      * @SerializerAnnotation\Expose
      */
     protected $contentType;
+    
+    /**
+     *
+     * @var int 
+     * @ORM\Column(type="integer", nullable=false)
+     * @SerializerAnnotation\Expose
+     */
+    private $errorCount;    
 
 
     /**
@@ -100,4 +108,28 @@ class Output
     {
         return $this->contentType;
     }
+    
+    
+    /**
+     * Set output
+     *
+     * @param int $errorCount
+     * @return Output
+     */
+    public function setErrorCount($errorCount)
+    {
+        $this->errorCount = $errorCount;
+    
+        return $this;
+    }
+
+    /**
+     * Get error count
+     *
+     * @return int 
+     */
+    public function getErrorCount()
+    {
+        return $this->errorCount;
+    }      
 }

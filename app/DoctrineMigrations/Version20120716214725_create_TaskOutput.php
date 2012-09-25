@@ -17,6 +17,7 @@ class Version20120716214725_create_TaskOutput extends BaseMigration
                 id INT AUTO_INCREMENT NOT NULL,
                 output LONGTEXT DEFAULT NULL,
                 contentType VARCHAR(255) DEFAULT NULL,
+                errorCount INT NOT NULL,
                 PRIMARY KEY(id))
                 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE = InnoDB"
         );
@@ -25,7 +26,8 @@ class Version20120716214725_create_TaskOutput extends BaseMigration
             "CREATE TABLE TaskOutput (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 output LONGTEXT DEFAULT NULL COLLATE NOCASE,
-                contentType VARCHAR(255) DEFAULT NULL COLLATE NOCASE)"
+                contentType VARCHAR(255) DEFAULT NULL COLLATE NOCASE,
+                errorCount INT NOT NULL)"
         ); 
         
         parent::up($schema);

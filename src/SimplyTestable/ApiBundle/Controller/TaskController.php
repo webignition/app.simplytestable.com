@@ -25,7 +25,8 @@ class TaskController extends ApiController
                 new InputArgument('end_date_time', InputArgument::REQUIRED, 'Task end date and time'),
                 new InputArgument('output', InputArgument::REQUIRED, 'Task output'),
                 new InputArgument('contentType', InputArgument::REQUIRED, 'Task output content type'),
-                new InputArgument('state', InputArgument::REQUIRED, 'Task ending state')
+                new InputArgument('state', InputArgument::REQUIRED, 'Task ending state'),
+                new InputArgument('errorCount', InputArgument::REQUIRED, 'Task error count')
             ))
         ));
         
@@ -62,6 +63,7 @@ class TaskController extends ApiController
         $output = new Output();
         $output->setOutput($rawOutput);
         $output->setContentType($contentType);
+        $output->setErrorCount($this->getArguments('completeAction')->get('errorCount'));
         
         $state = $this->getTaskEndState($this->getArguments('completeAction')->get('state'));
 
