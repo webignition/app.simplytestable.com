@@ -70,7 +70,9 @@ class JobController extends ApiController
             'url_count' => $job->getUrlCount(),
             'task_count' => $this->getTaskService()->getCountByJob($job),
             'task_count_by_state' => $this->getTaskCountByState($job),
-            'task_types' => $job->getRequestedTaskTypes()
+            'task_types' => $job->getRequestedTaskTypes(),
+            'errored_task_count' => $this->getJobService()->getErroredTaskCount($job),
+            'cancelled_task_count' => $this->getJobService()->getCancelledTaskCount($job)            
         );        
     }
     

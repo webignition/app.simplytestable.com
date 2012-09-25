@@ -151,4 +151,50 @@ class TaskRepository extends EntityRepository
         
         return $taskIds;
     }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return int
+     */
+    public function getErrorCountByJob(Job $job) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->join('Task.output', 'TaskOutput');
+        $queryBuilder->select('count(Task.id)');
+        $queryBuilder->where('Task.job = :Job');
+        $queryBuilder->andWhere('TaskOutput.errorCount > :ErrorCount');
+
+        $queryBuilder->setParameter('Job', $job);        
+        $queryBuilder->setParameter('ErrorCount', 0);  
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return (int)$result[0][1];
+    }
+    
+    
+    
+    public function getTaskCountByState(Job $job, $states) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('count(Task.id)');
+        $queryBuilder->where('Task.job = :Job');
+        
+        $statesWhere = '';
+        $stateConditions = array();
+
+        foreach ($states as $stateIndex => $state) {
+            $stateConditions[] = '(Task.state = :State'.$stateIndex.') ';
+            $queryBuilder->setParameter('State'.$stateIndex, $state);
+        }
+
+        $statesWhere .= implode('OR', $stateConditions);
+        $queryBuilder->andWhere($statesWhere);
+
+        $queryBuilder->setParameter('Job', $job);
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return (int)$result[0][1];
+    }    
 }

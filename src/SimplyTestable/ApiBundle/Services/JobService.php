@@ -399,4 +399,31 @@ class JobService extends EntityService {
         ),
         $limit);
     }
+    
+    
+    /**
+     * Get the number of tasks that have errors
+     * i.e. how many tasks have errors?
+     * 
+     * @param Job $job
+     * @return int
+     */
+    public function getErroredTaskCount(Job $job) {
+        return $this->taskService->getEntityRepository()->getErrorCountByJob($job);
+    }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return int 
+     */
+    public function getCancelledTaskCount(Job $job) {
+        $states = array(
+            $this->taskService->getCancelledState(),
+            $this->taskService->getAwaitingCancellationState()
+        );
+        
+        return $this->taskService->getEntityRepository()->getTaskCountByState($job, $states);
+    }
 }
