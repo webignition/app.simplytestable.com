@@ -409,8 +409,13 @@ class JobService extends EntityService {
      * @return int
      */
     public function getErroredTaskCount(Job $job) {
-        return $this->taskService->getEntityRepository()->getErrorCountByJob($job);
-    }
+        $excludeStates = array(
+            $this->taskService->getCancelledState(),
+            $this->taskService->getAwaitingCancellationState()
+        );        
+        
+        return $this->taskService->getEntityRepository()->getErrorCountByJob($job, $excludeStates);
+    }    
     
     
     /**
