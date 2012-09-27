@@ -308,6 +308,16 @@ class TaskService extends EntityService {
     /**
      *
      * @param Task $task
+     * @return boolean
+     */
+    public function isSkipped(Task $task) {        
+        return $task->getState()->equals($this->getSkippedState());
+    }    
+    
+    
+    /**
+     *
+     * @param Task $task
      * @return boolean 
      */
     public function isFinished(Task $task) {
@@ -325,7 +335,11 @@ class TaskService extends EntityService {
         
         if ($this->isFailedRetryLimitReached($task)) {
             return true;
-        }   
+        }  
+        
+        if ($this->isSkipped($task)) {
+            return true;
+        }
         
         return false;
     }
