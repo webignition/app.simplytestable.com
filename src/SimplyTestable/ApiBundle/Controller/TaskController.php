@@ -95,6 +95,10 @@ class TaskController extends ApiController
             return $this->getTaskService()->getFailedRetryLimitReachedState();
         }
         
+        if ($stateFromRequest == $this->getTaskService()->getSkippedState()->getName()) {
+            return $this->getTaskService()->getSkippedState();
+        }        
+        
         return $this->getTaskService()->getCompletedState();
     }
     

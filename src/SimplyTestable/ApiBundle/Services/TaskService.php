@@ -23,6 +23,7 @@ class TaskService extends EntityService {
     const TASK_FAILED_NO_RETRY_AVAILABLE_STATE = 'task-failed-no-retry-available';
     const TASK_FAILED_RETRY_AVAILABLE_STATE = 'task-failed-retry-available';
     const TASK_FAILED_RETRY_LIMIT_REACHED_STATE = 'task-failed-retry-limit-reached';
+    const TASK_SKIPPED_STATE = 'task-skipped';
     
     
     /**
@@ -39,7 +40,8 @@ class TaskService extends EntityService {
         self::QUEUED_FOR_ASSIGNMENT_STATE,
         self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
         self::TASK_FAILED_RETRY_AVAILABLE_STATE,
-        self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE
+        self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+        self::TASK_SKIPPED_STATE
     );
     
     /**
@@ -213,6 +215,15 @@ class TaskService extends EntityService {
     public function getFailedRetryLimitReachedState() {
         return $this->stateService->fetch(self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE);
     }     
+    
+
+    /**
+     *
+     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     */
+    public function getSkippedState() {
+        return $this->stateService->fetch(self::TASK_SKIPPED_STATE);
+    }      
     
     
     /**
