@@ -138,12 +138,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/DoctrineBundle.git",
-                "reference": "d3c930599723c8343472a5791b0f5909a4111a73"
+                "reference": "274c24f8ddc8924cc9cbe63b937e031a9068db5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/DoctrineBundle/zipball/d3c930599723c8343472a5791b0f5909a4111a73",
-                "reference": "d3c930599723c8343472a5791b0f5909a4111a73",
+                "url": "https://github.com/doctrine/DoctrineBundle/zipball/274c24f8ddc8924cc9cbe63b937e031a9068db5a",
+                "reference": "274c24f8ddc8924cc9cbe63b937e031a9068db5a",
                 "shasum": ""
             },
             "require": {
@@ -160,7 +160,7 @@
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
             },
-            "time": "1347289964",
+            "time": "1348752376",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -329,12 +329,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle",
-                "reference": "34f1919ceab96339a8dc6ad7c2b00274a6f499f1"
+                "reference": "1b2d06b0f9a7ef5dbd94433ad15c3ab7cc3eb492"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/zipball/34f1919ceab96339a8dc6ad7c2b00274a6f499f1",
-                "reference": "34f1919ceab96339a8dc6ad7c2b00274a6f499f1",
+                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/zipball/1b2d06b0f9a7ef5dbd94433ad15c3ab7cc3eb492",
+                "reference": "1b2d06b0f9a7ef5dbd94433ad15c3ab7cc3eb492",
                 "shasum": ""
             },
             "require": {
@@ -355,7 +355,7 @@
                 "doctrine/doctrine-bundle": "*",
                 "doctrine/mongodb-odm-bundle": "*"
             },
-            "time": "1347897534",
+            "time": "1348265094",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1093,18 +1093,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/swiftmailer/swiftmailer.git",
-                "reference": "1e5482485f30a2431f9b8eb19a091eef4b57008c"
+                "reference": "1a987b45ea8dcbbe9680499800c67fc97a2d07f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/swiftmailer/swiftmailer/zipball/1e5482485f30a2431f9b8eb19a091eef4b57008c",
-                "reference": "1e5482485f30a2431f9b8eb19a091eef4b57008c",
+                "url": "https://github.com/swiftmailer/swiftmailer/zipball/1a987b45ea8dcbbe9680499800c67fc97a2d07f6",
+                "reference": "1a987b45ea8dcbbe9680499800c67fc97a2d07f6",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1347542176",
+            "time": "1348747908",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1315,12 +1315,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "237629ad64b4b6ce2d2c6ad15a2085f128d6f11e"
+                "reference": "f62fa8a79edc94240a7fd3ef3096ddd789eced4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/zipball/237629ad64b4b6ce2d2c6ad15a2085f128d6f11e",
-                "reference": "237629ad64b4b6ce2d2c6ad15a2085f128d6f11e",
+                "url": "https://github.com/symfony/symfony/zipball/f62fa8a79edc94240a7fd3ef3096ddd789eced4f",
+                "reference": "f62fa8a79edc94240a7fd3ef3096ddd789eced4f",
                 "shasum": ""
             },
             "require": {
@@ -1369,7 +1369,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "dev-master"
             },
-            "time": "1348209286",
+            "time": "1348749927",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1439,18 +1439,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "b4d1d62b82e83c6fd3d5a6cd46a186de64275bb4"
+                "reference": "b8c917972f74da88f0e930ea32a90566739d87ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/zipball/b4d1d62b82e83c6fd3d5a6cd46a186de64275bb4",
-                "reference": "b4d1d62b82e83c6fd3d5a6cd46a186de64275bb4",
+                "url": "https://github.com/fabpot/Twig/zipball/b8c917972f74da88f0e930ea32a90566739d87ac",
+                "reference": "b8c917972f74da88f0e930ea32a90566739d87ac",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1347961095",
+            "time": "1348667791",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -2248,12 +2248,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-url-retriever.git",
-                "reference": "646ff58288095ae5a6f79a41421734a7d4a5c6cd"
+                "reference": "108cf23fb1c8e7523af0b6d100e1c6500e46e85f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-url-retriever/zipball/646ff58288095ae5a6f79a41421734a7d4a5c6cd",
-                "reference": "646ff58288095ae5a6f79a41421734a7d4a5c6cd",
+                "url": "https://github.com/webignition/website-sitemap-url-retriever/zipball/108cf23fb1c8e7523af0b6d100e1c6500e46e85f",
+                "reference": "108cf23fb1c8e7523af0b6d100e1c6500e46e85f",
                 "shasum": ""
             },
             "require": {
@@ -2263,7 +2263,7 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/url": "*"
             },
-            "time": "1348238879",
+            "time": "1348819013",
             "type": "library",
             "installation-source": "source",
             "autoload": {
