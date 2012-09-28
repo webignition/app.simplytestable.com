@@ -2248,12 +2248,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-url-retriever.git",
-                "reference": "bd913b43a921ad5295389e838e5f064ce26b69ee"
+                "reference": "d9438cab1fe18eefe208d3a3b705c6c9cb22a700"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-url-retriever/zipball/bd913b43a921ad5295389e838e5f064ce26b69ee",
-                "reference": "bd913b43a921ad5295389e838e5f064ce26b69ee",
+                "url": "https://github.com/webignition/website-sitemap-url-retriever/zipball/d9438cab1fe18eefe208d3a3b705c6c9cb22a700",
+                "reference": "d9438cab1fe18eefe208d3a3b705c6c9cb22a700",
                 "shasum": ""
             },
             "require": {
@@ -2263,7 +2263,7 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/url": "*"
             },
-            "time": "1348846941",
+            "time": "1348848537",
             "type": "library",
             "installation-source": "source",
             "autoload": {
