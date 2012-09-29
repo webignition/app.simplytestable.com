@@ -1315,12 +1315,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "0d92a245517c2cfbc0e39a0e2c8d220e928eaa04"
+                "reference": "bd845b3bbcb13972924fe3030e37fbee8dc04e47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/zipball/0d92a245517c2cfbc0e39a0e2c8d220e928eaa04",
-                "reference": "0d92a245517c2cfbc0e39a0e2c8d220e928eaa04",
+                "url": "https://github.com/symfony/symfony/zipball/bd845b3bbcb13972924fe3030e37fbee8dc04e47",
+                "reference": "bd845b3bbcb13972924fe3030e37fbee8dc04e47",
                 "shasum": ""
             },
             "require": {
@@ -1369,7 +1369,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "dev-master"
             },
-            "time": "1348842916",
+            "time": "1348854550",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1439,18 +1439,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "b8c917972f74da88f0e930ea32a90566739d87ac"
+                "reference": "73ab8ff50c53a3a6046b3a499bd0c6412afc344f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/zipball/b8c917972f74da88f0e930ea32a90566739d87ac",
-                "reference": "b8c917972f74da88f0e930ea32a90566739d87ac",
+                "url": "https://github.com/fabpot/Twig/zipball/73ab8ff50c53a3a6046b3a499bd0c6412afc344f",
+                "reference": "73ab8ff50c53a3a6046b3a499bd0c6412afc344f",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1348667791",
+            "time": "1348869347",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -2204,12 +2204,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "819af4d0a17d0b14cddaf5aabfa1714b0fb833a5"
+                "reference": "dc6961daf4396650777a2f577109ce2e350ffade"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-finder/zipball/819af4d0a17d0b14cddaf5aabfa1714b0fb833a5",
-                "reference": "819af4d0a17d0b14cddaf5aabfa1714b0fb833a5",
+                "url": "https://github.com/webignition/website-sitemap-finder/zipball/dc6961daf4396650777a2f577109ce2e350ffade",
+                "reference": "dc6961daf4396650777a2f577109ce2e350ffade",
                 "shasum": ""
             },
             "require": {
@@ -2219,7 +2219,7 @@
                 "webignition/absolute-url-deriver": ">=1.2",
                 "webignition/internet-media-type": ">=0.1,<2.0"
             },
-            "time": "1348845625",
+            "time": "1348929907",
             "type": "library",
             "installation-source": "source",
             "autoload": {
