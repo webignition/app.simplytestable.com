@@ -2204,12 +2204,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "dc6961daf4396650777a2f577109ce2e350ffade"
+                "reference": "27a145520cc07826d9ac50f63d03133c0384c30b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-finder/zipball/dc6961daf4396650777a2f577109ce2e350ffade",
-                "reference": "dc6961daf4396650777a2f577109ce2e350ffade",
+                "url": "https://github.com/webignition/website-sitemap-finder/zipball/27a145520cc07826d9ac50f63d03133c0384c30b",
+                "reference": "27a145520cc07826d9ac50f63d03133c0384c30b",
                 "shasum": ""
             },
             "require": {
@@ -2219,7 +2219,7 @@
                 "webignition/absolute-url-deriver": ">=1.2",
                 "webignition/internet-media-type": ">=0.1,<2.0"
             },
-            "time": "1348929907",
+            "time": "1348933309",
             "type": "library",
             "installation-source": "source",
             "autoload": {
