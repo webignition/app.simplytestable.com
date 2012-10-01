@@ -1143,32 +1143,32 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/AsseticBundle",
-                "reference": "64345e86761444c35679e1aed424e1ed2370f0de"
+                "reference": "5ebcf72d9b2d7028ca8c9b71b464ccc81d4795d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/AsseticBundle/zipball/64345e86761444c35679e1aed424e1ed2370f0de",
-                "reference": "64345e86761444c35679e1aed424e1ed2370f0de",
+                "url": "https://github.com/symfony/AsseticBundle/zipball/5ebcf72d9b2d7028ca8c9b71b464ccc81d4795d2",
+                "reference": "5ebcf72d9b2d7028ca8c9b71b464ccc81d4795d2",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
-                "symfony/framework-bundle": "2.1.*",
-                "kriswallsmith/assetic": "1.1.*"
+                "kriswallsmith/assetic": "1.1.*",
+                "symfony/framework-bundle": ">=2.1.0,<2.3-dev"
             },
             "require-dev": {
-                "symfony/twig-bundle": "2.1.*",
-                "symfony/console": "2.1.*",
-                "symfony/class-loader": "2.1.*",
-                "symfony/yaml": "2.1.*",
-                "symfony/form": "2.1.*",
-                "symfony/dom-crawler": "2.1.*",
-                "symfony/css-selector": "2.1.*"
+                "symfony/twig-bundle": ">=2.1.0,<2.3-dev",
+                "symfony/console": ">=2.1.0,<2.3-dev",
+                "symfony/class-loader": ">=2.1.0,<2.3-dev",
+                "symfony/yaml": ">=2.1.0,<2.3-dev",
+                "symfony/form": ">=2.1.0,<2.3-dev",
+                "symfony/dom-crawler": ">=2.1.0,<2.3-dev",
+                "symfony/css-selector": ">=2.1.0,<2.3-dev"
             },
             "suggest": {
-                "symfony/twig-bundle": "2.1.*"
+                "symfony/twig-bundle": ">=2.1.0,<2.3-dev"
             },
-            "time": "1347626244",
+            "time": "1348938560",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1315,12 +1315,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "bd845b3bbcb13972924fe3030e37fbee8dc04e47"
+                "reference": "4e3ea227360c631579a37d6071ea0bdee3dd2732"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/zipball/bd845b3bbcb13972924fe3030e37fbee8dc04e47",
-                "reference": "bd845b3bbcb13972924fe3030e37fbee8dc04e47",
+                "url": "https://github.com/symfony/symfony/zipball/4e3ea227360c631579a37d6071ea0bdee3dd2732",
+                "reference": "4e3ea227360c631579a37d6071ea0bdee3dd2732",
                 "shasum": ""
             },
             "require": {
@@ -1369,7 +1369,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "dev-master"
             },
-            "time": "1348854550",
+            "time": "1348937790",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1439,18 +1439,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "73ab8ff50c53a3a6046b3a499bd0c6412afc344f"
+                "reference": "120cde3fa54c31047edf1cd003752ca119dec9a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/zipball/73ab8ff50c53a3a6046b3a499bd0c6412afc344f",
-                "reference": "73ab8ff50c53a3a6046b3a499bd0c6412afc344f",
+                "url": "https://github.com/fabpot/Twig/zipball/120cde3fa54c31047edf1cd003752ca119dec9a8",
+                "reference": "120cde3fa54c31047edf1cd003752ca119dec9a8",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1348869347",
+            "time": "1348936415",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -2161,12 +2161,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "b962684887fcf1d357a0f55f17d193eb3acd3848"
+                "reference": "32f99712bf66f4d86346a7ab67e092ea56e8d6e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-rss-feed-finder/zipball/b962684887fcf1d357a0f55f17d193eb3acd3848",
-                "reference": "b962684887fcf1d357a0f55f17d193eb3acd3848",
+                "url": "https://github.com/webignition/website-rss-feed-finder/zipball/32f99712bf66f4d86346a7ab67e092ea56e8d6e9",
+                "reference": "32f99712bf66f4d86346a7ab67e092ea56e8d6e9",
                 "shasum": ""
             },
             "require": {
@@ -2175,7 +2175,7 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/web-page-model": ">=0.1,<2.0"
             },
-            "time": "1348042521",
+            "time": "1348938553",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2204,12 +2204,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "27a145520cc07826d9ac50f63d03133c0384c30b"
+                "reference": "7ef5929d4543b542c376bd37206398437b4613f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-finder/zipball/27a145520cc07826d9ac50f63d03133c0384c30b",
-                "reference": "27a145520cc07826d9ac50f63d03133c0384c30b",
+                "url": "https://github.com/webignition/website-sitemap-finder/zipball/7ef5929d4543b542c376bd37206398437b4613f3",
+                "reference": "7ef5929d4543b542c376bd37206398437b4613f3",
                 "shasum": ""
             },
             "require": {
@@ -2219,7 +2219,7 @@
                 "webignition/absolute-url-deriver": ">=1.2",
                 "webignition/internet-media-type": ">=0.1,<2.0"
             },
-            "time": "1348933309",
+            "time": "1348936773",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2248,12 +2248,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-url-retriever.git",
-                "reference": "d9438cab1fe18eefe208d3a3b705c6c9cb22a700"
+                "reference": "509bba3968d3e548f8a79d176bf21be3e36f001a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-url-retriever/zipball/d9438cab1fe18eefe208d3a3b705c6c9cb22a700",
-                "reference": "d9438cab1fe18eefe208d3a3b705c6c9cb22a700",
+                "url": "https://github.com/webignition/website-sitemap-url-retriever/zipball/509bba3968d3e548f8a79d176bf21be3e36f001a",
+                "reference": "509bba3968d3e548f8a79d176bf21be3e36f001a",
                 "shasum": ""
             },
             "require": {
@@ -2263,7 +2263,7 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/url": "*"
             },
-            "time": "1348848537",
+            "time": "1348936996",
             "type": "library",
             "installation-source": "source",
             "autoload": {

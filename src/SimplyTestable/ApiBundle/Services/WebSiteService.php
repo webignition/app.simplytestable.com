@@ -118,7 +118,7 @@ class WebSiteService extends EntityService {
         $urlsFromSitemap = $this->getUrlsFromSitemap($website);
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
-        }        
+        }
         
         $urlsFromRssFeed = $this->getUrlsFromRssFeed($website);
         if (count($urlsFromRssFeed)) {
@@ -165,6 +165,7 @@ class WebSiteService extends EntityService {
     private function getUrlsFromRssFeed(WebSite $website) {        
         $feedFinder = new WebsiteRssFeedFinder();
         $feedFinder->setRootUrl($website->getCanonicalUrl());        
+        $feedFinder->setHttpClient($this->getHttpClient());
         
         $feedUrl = $feedFinder->getRssFeedUrl();        
         if (is_null($feedUrl)) {
@@ -182,7 +183,8 @@ class WebSiteService extends EntityService {
      */
     private function getUrlsFromAtomFeed(WebSite $website) {        
         $feedFinder = new WebsiteRssFeedFinder();
-        $feedFinder->setRootUrl($website->getCanonicalUrl());        
+        $feedFinder->setRootUrl($website->getCanonicalUrl());
+        $feedFinder->setHttpClient($this->getHttpClient());
         
         $feedUrl = $feedFinder->getAtomFeedUrl();        
         if (is_null($feedUrl)) {
