@@ -130,7 +130,7 @@ class WebSiteService extends EntityService {
             return $urlsFromAtomFeed;
         }        
         
-        return array();
+        return false;
     }
     
     
@@ -144,7 +144,7 @@ class WebSiteService extends EntityService {
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
         $sitemapFinder->setHttpClient($this->getHttpClient());
         
-        $sitemapUrl = $sitemapFinder->getSitemapUrl();        
+        $sitemapUrl = $sitemapFinder->getSitemapUrl();                
         if ($sitemapUrl === false) {
             return array();
         }
@@ -167,7 +167,7 @@ class WebSiteService extends EntityService {
         $feedFinder->setRootUrl($website->getCanonicalUrl());        
         $feedFinder->setHttpClient($this->getHttpClient());
         
-        $feedUrl = $feedFinder->getRssFeedUrl();        
+        $feedUrl = $feedFinder->getRssFeedUrl();       
         if (is_null($feedUrl)) {
             return array();
         }
@@ -202,9 +202,9 @@ class WebSiteService extends EntityService {
      */
     private function getUrlsFromNewsFeed($feedUrl) {        
         $simplepie = new \SimplePie();
-        $simplepie->set_feed_url($feedUrl);
+        $simplepie->set_feed_url($feedUrl);        
         $simplepie->enable_cache(false);
-        $simplepie->init();        
+        @$simplepie->init();        
         
         $items = $simplepie->get_items();
         
