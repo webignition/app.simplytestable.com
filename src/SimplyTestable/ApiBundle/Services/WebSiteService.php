@@ -115,7 +115,7 @@ class WebSiteService extends EntityService {
      * @return array
      */
     public function getUrls(WebSite $website) {
-        $urlsFromSitemap = $this->getUrlsFromSitemap($website);
+        $urlsFromSitemap = $this->getUrlsFromSitemap($website);        
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
         }
@@ -192,7 +192,7 @@ class WebSiteService extends EntityService {
         }
         
         return $this->getUrlsFromNewsFeed($feedUrl);
-    } 
+    }     
     
     
     /**
@@ -211,7 +211,10 @@ class WebSiteService extends EntityService {
         $urls = array();        
         foreach ($items as $item) {
             /* @var $item \SimplePie_Item */
-            $urls[] = $item->get_permalink();
+            $url = new \webignition\NormalisedUrl\NormalisedUrl($item->get_permalink());
+            if (!in_array((string)$url, $urls)) {
+                $urls[] = (string)$url;
+            }
         }
         
         return $urls;        
