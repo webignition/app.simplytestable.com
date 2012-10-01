@@ -738,16 +738,16 @@
             "source": {
                 "type": "git",
                 "url": "http://github.com/kriswallsmith/assetic.git",
-                "reference": "a6baab9b4c4361aca51bf90ee47c1586dff3cb0c"
+                "reference": "e22c5e07e672bb0cf43127e97e9368b53abf4aa8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/kriswallsmith/assetic/zipball/a6baab9b4c4361aca51bf90ee47c1586dff3cb0c",
-                "reference": "a6baab9b4c4361aca51bf90ee47c1586dff3cb0c",
+                "url": "https://github.com/kriswallsmith/assetic/zipball/e22c5e07e672bb0cf43127e97e9368b53abf4aa8",
+                "reference": "e22c5e07e672bb0cf43127e97e9368b53abf4aa8",
                 "shasum": ""
             },
             "require": {
-                "symfony/process": "2.1.*",
+                "symfony/process": ">=2.1.0,<2.3-dev",
                 "php": ">=5.3.1"
             },
             "require-dev": {
@@ -764,7 +764,7 @@
                 "ptachoire/cssembed": "Assetic provides the integration with phpcssembed to embed data uris",
                 "leafo/scssphp-compass": "Assetic provides the integration with the SCSS compass plugin"
             },
-            "time": "1347622188",
+            "time": "1349004759",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -2161,12 +2161,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "32f99712bf66f4d86346a7ab67e092ea56e8d6e9"
+                "reference": "fe26d1a7176e51bdf18f35255ec0921a727741a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-rss-feed-finder/zipball/32f99712bf66f4d86346a7ab67e092ea56e8d6e9",
-                "reference": "32f99712bf66f4d86346a7ab67e092ea56e8d6e9",
+                "url": "https://github.com/webignition/website-rss-feed-finder/zipball/fe26d1a7176e51bdf18f35255ec0921a727741a5",
+                "reference": "fe26d1a7176e51bdf18f35255ec0921a727741a5",
                 "shasum": ""
             },
             "require": {
@@ -2175,7 +2175,7 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/web-page-model": ">=0.1,<2.0"
             },
-            "time": "1348938553",
+            "time": "1349082851",
             "type": "library",
             "installation-source": "source",
             "autoload": {
