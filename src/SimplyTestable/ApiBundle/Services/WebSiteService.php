@@ -153,6 +153,16 @@ class WebSiteService extends EntityService {
         $urlRetriever->setHttpClient($this->getHttpClient());
         $urlRetriever->setSitemapUrl($sitemapUrl);
         
+        $configuration = new \webignition\WebsiteSitemapUrlRetriever\Configuration();
+        $configuration->setSitemapTypeToUrlExtractorClassMap(array(
+            'sitemaps.org.xml' => 'webignition\WebsiteSitemapUrlRetriever\UrlExtractor\SitemapsOrgXmlUrlExtractor',
+            'sitemaps.org.txt' => 'webignition\WebsiteSitemapUrlRetriever\UrlExtractor\SitemapsOrgTxtUrlExtractor',
+            'application/atom+xml' => 'webignition\WebsiteSitemapUrlRetriever\UrlExtractor\NewsFeedUrlExtractor',
+            'application/rss+xml' => 'webignition\WebsiteSitemapUrlRetriever\UrlExtractor\NewsFeedUrlExtractor'
+        ));
+        
+        $urlRetriever->setConfiguration($configuration);        
+        
         return $urlRetriever->getUrls();        
     }
     
