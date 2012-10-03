@@ -138,12 +138,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/DoctrineBundle.git",
-                "reference": "db818ceec46d05fed4f944b957f82a4ab5197e27"
+                "reference": "e69a6fd75fa3979e35b7004e6da6e9aea3765997"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/DoctrineBundle/zipball/db818ceec46d05fed4f944b957f82a4ab5197e27",
-                "reference": "db818ceec46d05fed4f944b957f82a4ab5197e27",
+                "url": "https://github.com/doctrine/DoctrineBundle/zipball/e69a6fd75fa3979e35b7004e6da6e9aea3765997",
+                "reference": "e69a6fd75fa3979e35b7004e6da6e9aea3765997",
                 "shasum": ""
             },
             "require": {
@@ -160,7 +160,7 @@
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
             },
-            "time": "1348828243",
+            "time": "1349273376",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -259,12 +259,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/doctrine2.git",
-                "reference": "ea2b28857830720460a345c80c6e7d3f6adae93a"
+                "reference": "04262e2b73cd449cf12b55f2e2c318c8c24c9dd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/doctrine2/zipball/ea2b28857830720460a345c80c6e7d3f6adae93a",
-                "reference": "ea2b28857830720460a345c80c6e7d3f6adae93a",
+                "url": "https://github.com/doctrine/doctrine2/zipball/04262e2b73cd449cf12b55f2e2c318c8c24c9dd4",
+                "reference": "04262e2b73cd449cf12b55f2e2c318c8c24c9dd4",
                 "shasum": ""
             },
             "require": {
@@ -276,7 +276,7 @@
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
             },
-            "time": "1348121015",
+            "time": "1349261302",
             "bin": [
                 "bin/doctrine",
                 "bin/doctrine.php"
@@ -304,7 +304,8 @@
                 },
                 {
                     "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
+                    "email": "guilhermeblanco@gmail.com",
+                    "homepage": "http://www.instaclick.com"
                 },
                 {
                     "name": "Roman Borschel",
@@ -672,12 +673,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/JMSSerializerBundle.git",
-                "reference": "488092332376e8390bd5f6417322da46c0426546"
+                "reference": "0d3f43b7a99d614f98842dd37eb8543d72f41bb7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/schmittjoh/JMSSerializerBundle/zipball/488092332376e8390bd5f6417322da46c0426546",
-                "reference": "488092332376e8390bd5f6417322da46c0426546",
+                "url": "https://github.com/schmittjoh/JMSSerializerBundle/zipball/0d3f43b7a99d614f98842dd37eb8543d72f41bb7",
+                "reference": "0d3f43b7a99d614f98842dd37eb8543d72f41bb7",
                 "shasum": ""
             },
             "require": {
@@ -698,7 +699,7 @@
             "suggest": {
                 "symfony/framework-bundle": "2.*"
             },
-            "time": "1348177927",
+            "time": "1349258236",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1093,18 +1094,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/swiftmailer/swiftmailer.git",
-                "reference": "1a987b45ea8dcbbe9680499800c67fc97a2d07f6"
+                "reference": "22731e907f5ca288c9bfde6b54f3611ace0a6c39"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/swiftmailer/swiftmailer/zipball/1a987b45ea8dcbbe9680499800c67fc97a2d07f6",
-                "reference": "1a987b45ea8dcbbe9680499800c67fc97a2d07f6",
+                "url": "https://github.com/swiftmailer/swiftmailer/zipball/22731e907f5ca288c9bfde6b54f3611ace0a6c39",
+                "reference": "22731e907f5ca288c9bfde6b54f3611ace0a6c39",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1348747908",
+            "time": "1349196829",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1315,12 +1316,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "4e3ea227360c631579a37d6071ea0bdee3dd2732"
+                "reference": "b6dfa76b7dd313a6f407d0c0dd1c1942747d62d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/zipball/4e3ea227360c631579a37d6071ea0bdee3dd2732",
-                "reference": "4e3ea227360c631579a37d6071ea0bdee3dd2732",
+                "url": "https://github.com/symfony/symfony/zipball/b6dfa76b7dd313a6f407d0c0dd1c1942747d62d2",
+                "reference": "b6dfa76b7dd313a6f407d0c0dd1c1942747d62d2",
                 "shasum": ""
             },
             "require": {
@@ -1369,7 +1370,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "dev-master"
             },
-            "time": "1348937790",
+            "time": "1349274023",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1514,9 +1515,7 @@
             "authors": [
                 {
                     "name": "Jon Cram",
-                    "email": "jon@webignition.net",
-                    "homepage": null,
-                    "role": null
+                    "email": "jon@webignition.net"
                 }
             ],
             "description": "Derives an absolute URL from relative and source URLs",
@@ -1531,7 +1530,7 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "git@github.com:webignition/ContainerAwareMigration.git",
+                "url": "https://github.com/webignition/ContainerAwareMigration.git",
                 "reference": "658ae0ede07cc7f280e288b8b92cb0eeb3ded82b"
             },
             "dist": {
@@ -1559,9 +1558,7 @@
             "authors": [
                 {
                     "name": "Jon Cram",
-                    "email": "jon@webignition.net",
-                    "homepage": null,
-                    "role": null
+                    "email": "jon@webignition.net"
                 }
             ],
             "description": "A Doctrine migration that's Symfony-container aware",
@@ -1604,9 +1601,7 @@
             "authors": [
                 {
                     "name": "Jon Cram",
-                    "email": "jon@webignition.net",
-                    "homepage": null,
-                    "role": null
+                    "email": "jon@webignition.net"
                 }
             ],
             "description": "A string terminated by one or more disallowed characters",
@@ -1622,7 +1617,7 @@
             "target-dir": "Doctrine/Bundle/MigrationsBundle",
             "source": {
                 "type": "git",
-                "url": "git@github.com:webignition/DoctrineMigrationsBundle.git",
+                "url": "https://github.com/webignition/DoctrineMigrationsBundle.git",
                 "reference": "3eaffb25b31c1f232b99904ac3bceba2991762d4"
             },
             "dist": {
@@ -1650,21 +1645,15 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": null,
-                    "role": null
+                    "email": "fabien@symfony.com"
                 },
                 {
                     "name": "Symfony Community",
-                    "email": null,
-                    "homepage": "http://symfony.com/contributors",
-                    "role": null
+                    "homepage": "http://symfony.com/contributors"
                 },
                 {
                     "name": "Doctrine Project",
-                    "email": null,
-                    "homepage": "http://www.doctrine-project.org",
-                    "role": null
+                    "homepage": "http://www.doctrine-project.org"
                 }
             ],
             "description": "Symfony DoctrineMigrationsBundle",
@@ -1738,7 +1727,7 @@
                 "webignition/quoted-string": ">=0.1,<2.0",
                 "webignition/string-parser": ">=0.1, <2.0"
             },
-            "time": "2012-08-15 15:14:02",
+            "time": "2012-08-16 15:14:02",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1752,9 +1741,7 @@
             "authors": [
                 {
                     "name": "Jon Cram",
-                    "email": "jon@webignition.net",
-                    "homepage": null,
-                    "role": null
+                    "email": "jon@webignition.net"
                 }
             ],
             "description": "PHP model of an http://en.wikipedia.org/wiki/Internet_media_type",
@@ -1785,7 +1772,7 @@
                 "php": ">=5.3.0",
                 "webignition/string-parser": "0.1"
             },
-            "time": "2012-08-14 19:44:56",
+            "time": "2012-08-15 19:44:56",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -1799,9 +1786,7 @@
             "authors": [
                 {
                     "name": "Jon Cram",
-                    "email": "jon@webignition.net",
-                    "homepage": null,
-                    "role": null
+                    "email": "jon@webignition.net"
                 }
             ],
             "description": "A parser for string values that are encapsulated in double quotes (ASCII 34)",
@@ -1896,16 +1881,13 @@
             "authors": [
                 {
                     "name": "Jon Cram",
-                    "email": "jon@webignition.net",
-                    "homepage": null,
-                    "role": null
+                    "email": "jon@webignition.net"
                 }
             ],
             "description": "Models a robots.txt file",
             "homepage": "https://github.com/webignition/robots-txt-file",
             "keywords": [
-                "parser",
-                "robots.txt"
+                "parser"
             ]
         },
         {
@@ -1940,16 +1922,13 @@
             "authors": [
                 {
                     "name": "Jon Cram",
-                    "email": "jon@webignition.net",
-                    "homepage": null,
-                    "role": null
+                    "email": "jon@webignition.net"
                 }
             ],
             "description": "Parser for robots.txt files",
             "homepage": "https://github.com/webignition/robots-txt-parser",
             "keywords": [
-                "parser",
-                "robots.txt"
+                "parser"
             ]
         },
         {
@@ -1976,7 +1955,7 @@
                 "webignition/doctrine-migrations-bundle": "*",
                 "webignition/container-aware-migration": "*"
             },
-            "time": "2012-08-01 03:45:05",
+            "time": "2012-08-02 09:45:05",
             "type": "symfony-bundle",
             "installation-source": "dist",
             "autoload": {
@@ -1990,9 +1969,7 @@
             "authors": [
                 {
                     "name": "Jon Cram",
-                    "email": "jon@webignition.net",
-                    "homepage": null,
-                    "role": null
+                    "email": "jon@webignition.net"
                 }
             ],
             "description": "Symfony bundle for base Doctrine migrations common to app.simplytestable.com and worker.simplytestable.com",
@@ -2018,7 +1995,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-08-14 19:36:12",
+            "time": "2012-08-15 19:36:12",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2032,9 +2009,7 @@
             "authors": [
                 {
                     "name": "Jon Cram",
-                    "email": "jon@webignition.net",
-                    "homepage": null,
-                    "role": null
+                    "email": "jon@webignition.net"
                 }
             ],
             "description": "Abstract state-based string parser",
@@ -2046,29 +2021,43 @@
         },
         {
             "name": "webignition/url",
-            "version": "dev-master",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url",
-                "reference": "c5adb2d25bc3ced3fede8a9835dc1d2b80c793b6"
+                "reference": "1.2.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/url/zipball/c5adb2d25bc3ced3fede8a9835dc1d2b80c793b6",
-                "reference": "c5adb2d25bc3ced3fede8a9835dc1d2b80c793b6",
+                "url": "https://github.com/webignition/url/zipball/1.2.2",
+                "reference": "1.2.2",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "1345673270",
+            "time": "2012-10-01 21:30:59",
             "type": "library",
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "": "src/"
                 }
-            }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Represents a URL, a library to be used in many other places. Applies semantically-lossless normalisation for comparisons.",
+            "homepage": "https://github.com/webignition/url",
+            "keywords": [
+                "url"
+            ]
         },
         {
             "name": "webignition/web-page-model",
@@ -2089,7 +2078,7 @@
                 "webignition/web-resource-model": ">=0.1,<2.0",
                 "querypath/querypath": ">=3.0.0"
             },
-            "time": "2012-09-17 11:10:59",
+            "time": "2012-09-17 15:10:59",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2131,7 +2120,7 @@
                 "php": ">=5.3.0",
                 "webignition/internet-media-type": ">=0.1,<2.0"
             },
-            "time": "2012-08-16 11:16:06",
+            "time": "2012-08-16 15:16:06",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2204,12 +2193,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "7ef5929d4543b542c376bd37206398437b4613f3"
+                "reference": "3cf75718ad47e7157d0df5fd785e40e4fcd66f56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-finder/zipball/7ef5929d4543b542c376bd37206398437b4613f3",
-                "reference": "7ef5929d4543b542c376bd37206398437b4613f3",
+                "url": "https://github.com/webignition/website-sitemap-finder/zipball/3cf75718ad47e7157d0df5fd785e40e4fcd66f56",
+                "reference": "3cf75718ad47e7157d0df5fd785e40e4fcd66f56",
                 "shasum": ""
             },
             "require": {
@@ -2217,9 +2206,11 @@
                 "webignition/http-client": "dev-master",
                 "webignition/robots-txt-parser": "dev-master",
                 "webignition/absolute-url-deriver": ">=1.2",
-                "webignition/internet-media-type": ">=0.1,<2.0"
+                "webignition/internet-media-type": ">=0.1,<2.0",
+                "webignition/website-sitemap-identifier": "dev-master",
+                "webignition/web-resource-model": ">=0.1,<2.0"
             },
-            "time": "1348936773",
+            "time": "1349294541",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2243,17 +2234,59 @@
             ]
         },
         {
+            "name": "webignition/website-sitemap-identifier",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/website-sitemap-identifier.git",
+                "reference": "d7cd34a64ee8b082fe3e41363017ae535554b2fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/webignition/website-sitemap-identifier/zipball/d7cd34a64ee8b082fe3e41363017ae535554b2fa",
+                "reference": "d7cd34a64ee8b082fe3e41363017ae535554b2fa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "webignition/internet-media-type": ">=0.1,<2.0",
+                "webignition/url": ">=1.0,<2.0"
+            },
+            "time": "1349269030",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Identify the type of website sitemap given the content",
+            "homepage": "https://github.com/webignition/website-sitemap-identifier",
+            "keywords": [
+                "Sitemap"
+            ]
+        },
+        {
             "name": "webignition/website-sitemap-url-retriever",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-url-retriever.git",
-                "reference": "509bba3968d3e548f8a79d176bf21be3e36f001a"
+                "reference": "83602e6939b85825ee15f4230aa1711a00bc6cae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-url-retriever/zipball/509bba3968d3e548f8a79d176bf21be3e36f001a",
-                "reference": "509bba3968d3e548f8a79d176bf21be3e36f001a",
+                "url": "https://github.com/webignition/website-sitemap-url-retriever/zipball/83602e6939b85825ee15f4230aa1711a00bc6cae",
+                "reference": "83602e6939b85825ee15f4230aa1711a00bc6cae",
                 "shasum": ""
             },
             "require": {
@@ -2261,9 +2294,12 @@
                 "webignition/http-client": "dev-master",
                 "querypath/querypath": ">=3.0.0",
                 "webignition/internet-media-type": ">=0.1,<2.0",
-                "webignition/url": "*"
+                "webignition/url": "*",
+                "webignition/website-sitemap-identifier": "dev-master",
+                "webignition/web-resource-model": ">=0.1,<=1.0",
+                "simplepie/simplepie": "*"
             },
-            "time": "1348936996",
+            "time": "1349293505",
             "type": "library",
             "installation-source": "source",
             "autoload": {
