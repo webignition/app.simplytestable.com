@@ -1316,12 +1316,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "b6dfa76b7dd313a6f407d0c0dd1c1942747d62d2"
+                "reference": "2f497c99a9c84978259990531b32a7f63a998dda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/zipball/b6dfa76b7dd313a6f407d0c0dd1c1942747d62d2",
-                "reference": "b6dfa76b7dd313a6f407d0c0dd1c1942747d62d2",
+                "url": "https://github.com/symfony/symfony/zipball/2f497c99a9c84978259990531b32a7f63a998dda",
+                "reference": "2f497c99a9c84978259990531b32a7f63a998dda",
                 "shasum": ""
             },
             "require": {
@@ -1370,7 +1370,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "dev-master"
             },
-            "time": "1349274023",
+            "time": "1349343312",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -2193,12 +2193,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "f522566b40f046e1901e855398c40ab337d82557"
+                "reference": "15897bc18d57046140f676aab86d65e594e32122"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-finder/zipball/f522566b40f046e1901e855398c40ab337d82557",
-                "reference": "f522566b40f046e1901e855398c40ab337d82557",
+                "url": "https://github.com/webignition/website-sitemap-finder/zipball/15897bc18d57046140f676aab86d65e594e32122",
+                "reference": "15897bc18d57046140f676aab86d65e594e32122",
                 "shasum": ""
             },
             "require": {
@@ -2208,9 +2208,10 @@
                 "webignition/absolute-url-deriver": ">=1.2",
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/website-sitemap-identifier": "dev-master",
-                "webignition/web-resource-model": ">=0.1,<2.0"
+                "webignition/web-resource-model": ">=0.1,<2.0",
+                "webignition/url": ">=0.1,<2.0"
             },
-            "time": "1349339640",
+            "time": "1349343444",
             "type": "library",
             "installation-source": "source",
             "autoload": {
