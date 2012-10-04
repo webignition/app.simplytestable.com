@@ -2193,12 +2193,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "3cf75718ad47e7157d0df5fd785e40e4fcd66f56"
+                "reference": "f522566b40f046e1901e855398c40ab337d82557"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-finder/zipball/3cf75718ad47e7157d0df5fd785e40e4fcd66f56",
-                "reference": "3cf75718ad47e7157d0df5fd785e40e4fcd66f56",
+                "url": "https://github.com/webignition/website-sitemap-finder/zipball/f522566b40f046e1901e855398c40ab337d82557",
+                "reference": "f522566b40f046e1901e855398c40ab337d82557",
                 "shasum": ""
             },
             "require": {
@@ -2210,7 +2210,7 @@
                 "webignition/website-sitemap-identifier": "dev-master",
                 "webignition/web-resource-model": ">=0.1,<2.0"
             },
-            "time": "1349294541",
+            "time": "1349339640",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2239,12 +2239,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-identifier.git",
-                "reference": "d7cd34a64ee8b082fe3e41363017ae535554b2fa"
+                "reference": "a4d3307fa3a33dd867955be45ae06ceff53968ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-identifier/zipball/d7cd34a64ee8b082fe3e41363017ae535554b2fa",
-                "reference": "d7cd34a64ee8b082fe3e41363017ae535554b2fa",
+                "url": "https://github.com/webignition/website-sitemap-identifier/zipball/a4d3307fa3a33dd867955be45ae06ceff53968ea",
+                "reference": "a4d3307fa3a33dd867955be45ae06ceff53968ea",
                 "shasum": ""
             },
             "require": {
@@ -2252,7 +2252,7 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/url": ">=1.0,<2.0"
             },
-            "time": "1349269030",
+            "time": "1349339451",
             "type": "library",
             "installation-source": "source",
             "autoload": {
