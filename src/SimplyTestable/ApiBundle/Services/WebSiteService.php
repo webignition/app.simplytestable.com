@@ -5,8 +5,8 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\WebsiteSitemapFinder\WebsiteSitemapFinder;
-use webignition\WebsiteSitemapUrlRetriever\WebsiteSitemapUrlRetriever;
 use webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder;
+use webignition\WebResource\Sitemap\Sitemap;
 
 class WebSiteService extends EntityService {
     
@@ -143,27 +143,43 @@ class WebSiteService extends EntityService {
         $sitemapFinder = new WebsiteSitemapFinder();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
         $sitemapFinder->setHttpClient($this->getHttpClient());
+        $sitemaps = $sitemapFinder->getSitemaps();
         
-        $sitemapUrl = $sitemapFinder->getSitemapUrl();                
-        if ($sitemapUrl === false) {
+        if (count($sitemaps) === 0) {
             return array();
         }
         
-        $urlRetriever = new WebsiteSitemapUrlRetriever();
-        $urlRetriever->setHttpClient($this->getHttpClient());
-        $urlRetriever->setSitemapUrl($sitemapUrl);
+        $urls = array();
+        foreach ($sitemaps as $sitemap) {
+            /* @var $sitemap Sitemap */
+            $urls = array_merge($urls, $this->getUrlsFromSingleSitemap($sitemap));
+        }
         
-        $configuration = new \webignition\WebsiteSitemapUrlRetriever\Configuration();
-        $configuration->setSitemapTypeToUrlExtractorClassMap(array(
-            'sitemaps.org.xml' => 'webignition\WebsiteSitemapUrlRetriever\UrlExtractor\SitemapsOrgXmlUrlExtractor',
-            'sitemaps.org.txt' => 'webignition\WebsiteSitemapUrlRetriever\UrlExtractor\SitemapsOrgTxtUrlExtractor',
-            'application/atom+xml' => 'webignition\WebsiteSitemapUrlRetriever\UrlExtractor\NewsFeedUrlExtractor',
-            'application/rss+xml' => 'webignition\WebsiteSitemapUrlRetriever\UrlExtractor\NewsFeedUrlExtractor'
-        ));
+        return $urls;
+    }
+    
+    
+    /**
+     * 
+     * @param \webignition\WebResource\Sitemap\Sitemap $sitemap
+     * @return array
+     */
+    private function getUrlsFromSingleSitemap(Sitemap $sitemap) {
+        if (!$sitemap->isSitemap()) {
+            return array();
+        }
         
-        $urlRetriever->setConfiguration($configuration);        
+        if (!$sitemap->isIndex()) {
+            return $sitemap->getUrls();
+        }
         
-        return $urlRetriever->getUrls();        
+        $urls = array();
+        foreach  ($sitemap->getChildren() as $childSitemap) {
+            /* @var $childSitemap Sitemap */
+            $urls = array_merge($urls, $this->getUrlsFromSingleSitemap($childSitemap));
+        }
+        
+        return $urls;
     }
     
 

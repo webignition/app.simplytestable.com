@@ -1,5 +1,5 @@
 {
-    "hash": "b56d44ad2edaff100cb1bb473ffad74c",
+    "hash": "6d6842d203028cb865f2df5335e60bdc",
     "packages": [
         {
             "name": "doctrine/common",
@@ -75,19 +75,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal",
-                "reference": "fdc866a37959e43620e4f7ec519dc7dd8e30fc5b"
+                "reference": "219d96a1592e9e23087eb6861b4f8233d06c6463"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/dbal/zipball/fdc866a37959e43620e4f7ec519dc7dd8e30fc5b",
-                "reference": "fdc866a37959e43620e4f7ec519dc7dd8e30fc5b",
+                "url": "https://github.com/doctrine/dbal/zipball/219d96a1592e9e23087eb6861b4f8233d06c6463",
+                "reference": "219d96a1592e9e23087eb6861b4f8233d06c6463",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
                 "doctrine/common": "2.3.*"
             },
-            "time": "1348120597",
+            "time": "1349518912",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -111,7 +111,8 @@
                 },
                 {
                     "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
+                    "email": "guilhermeblanco@gmail.com",
+                    "homepage": "http://www.instaclick.com"
                 },
                 {
                     "name": "Roman Borschel",
@@ -205,12 +206,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/migrations",
-                "reference": "3dd738b2a709f4d5185c144292189c6e708ca37d"
+                "reference": "b38ddb190ec78d389b2c2de838b2a4d646ad1ce2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/migrations/zipball/3dd738b2a709f4d5185c144292189c6e708ca37d",
-                "reference": "3dd738b2a709f4d5185c144292189c6e708ca37d",
+                "url": "https://github.com/doctrine/migrations/zipball/b38ddb190ec78d389b2c2de838b2a4d646ad1ce2",
+                "reference": "b38ddb190ec78d389b2c2de838b2a4d646ad1ce2",
                 "shasum": ""
             },
             "require": {
@@ -224,7 +225,7 @@
             "suggest": {
                 "symfony/console": "to run the migration from the console"
             },
-            "time": "1348090059",
+            "time": "1349435713",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -259,12 +260,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/doctrine2.git",
-                "reference": "04262e2b73cd449cf12b55f2e2c318c8c24c9dd4"
+                "reference": "564ec1ee2a6a439312ee9105a2a076af7c992e5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/doctrine2/zipball/04262e2b73cd449cf12b55f2e2c318c8c24c9dd4",
-                "reference": "04262e2b73cd449cf12b55f2e2c318c8c24c9dd4",
+                "url": "https://github.com/doctrine/doctrine2/zipball/564ec1ee2a6a439312ee9105a2a076af7c992e5b",
+                "reference": "564ec1ee2a6a439312ee9105a2a076af7c992e5b",
                 "shasum": ""
             },
             "require": {
@@ -276,7 +277,7 @@
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
             },
-            "time": "1349261302",
+            "time": "1349472005",
             "bin": [
                 "bin/doctrine",
                 "bin/doctrine.php"
@@ -330,18 +331,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle",
-                "reference": "570a24893a65e6e90a649d55f384be810202b6f0"
+                "reference": "51b0fa8fbb637940ebc9060386d95a75fd5ac51a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/zipball/570a24893a65e6e90a649d55f384be810202b6f0",
-                "reference": "570a24893a65e6e90a649d55f384be810202b6f0",
+                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/zipball/51b0fa8fbb637940ebc9060386d95a75fd5ac51a",
+                "reference": "51b0fa8fbb637940ebc9060386d95a75fd5ac51a",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
-                "symfony/framework-bundle": "2.1.*",
-                "symfony/security-bundle": "2.1.*"
+                "symfony/framework-bundle": ">=2.1,<2.3-dev",
+                "symfony/security-bundle": ">=2.1,<2.3-dev"
             },
             "require-dev": {
                 "twig/twig": "*",
@@ -356,7 +357,7 @@
                 "doctrine/doctrine-bundle": "*",
                 "doctrine/mongodb-odm-bundle": "*"
             },
-            "time": "1348823929",
+            "time": "1349476472",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -673,12 +674,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/JMSSerializerBundle.git",
-                "reference": "0d3f43b7a99d614f98842dd37eb8543d72f41bb7"
+                "reference": "bd1288b32c0838f03f9a7c90ece80e64c4b78145"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/schmittjoh/JMSSerializerBundle/zipball/0d3f43b7a99d614f98842dd37eb8543d72f41bb7",
-                "reference": "0d3f43b7a99d614f98842dd37eb8543d72f41bb7",
+                "url": "https://github.com/schmittjoh/JMSSerializerBundle/zipball/bd1288b32c0838f03f9a7c90ece80e64c4b78145",
+                "reference": "bd1288b32c0838f03f9a7c90ece80e64c4b78145",
                 "shasum": ""
             },
             "require": {
@@ -694,12 +695,13 @@
                 "symfony/framework-bundle": ">=2.1,<2.2-dev",
                 "symfony/yaml": ">=2.1,<2.3-dev",
                 "symfony/form": ">=2.1,<2.3-dev",
-                "symfony/validator": ">=2.1,<2.3-dev"
+                "symfony/validator": ">=2.1,<2.3-dev",
+                "symfony/doctrine-bridge": ">=2.1,<2.2-dev"
             },
             "suggest": {
                 "symfony/framework-bundle": "2.*"
             },
-            "time": "1349258236",
+            "time": "1349518993",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -719,7 +721,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -946,19 +948,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensio/SensioFrameworkExtraBundle",
-                "reference": "86a68df44eb50a64042d05a3f09548d2c21d4456"
+                "reference": "53a2a5e5ba052b2ae281f3b8bd9b530947a328b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sensio/SensioFrameworkExtraBundle/zipball/86a68df44eb50a64042d05a3f09548d2c21d4456",
-                "reference": "86a68df44eb50a64042d05a3f09548d2c21d4456",
+                "url": "https://github.com/sensio/SensioFrameworkExtraBundle/zipball/53a2a5e5ba052b2ae281f3b8bd9b530947a328b4",
+                "reference": "53a2a5e5ba052b2ae281f3b8bd9b530947a328b4",
                 "shasum": ""
             },
             "require": {
                 "symfony/framework-bundle": "2.1.*",
                 "doctrine/common": ">=2.1,<2.4-dev"
             },
-            "time": "1348064274",
+            "time": "1349786071",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1316,12 +1318,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "2f497c99a9c84978259990531b32a7f63a998dda"
+                "reference": "85dd3c20a3b3905bae6ee7a18085d23eceaff724"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/zipball/2f497c99a9c84978259990531b32a7f63a998dda",
-                "reference": "2f497c99a9c84978259990531b32a7f63a998dda",
+                "url": "https://github.com/symfony/symfony/zipball/85dd3c20a3b3905bae6ee7a18085d23eceaff724",
+                "reference": "85dd3c20a3b3905bae6ee7a18085d23eceaff724",
                 "shasum": ""
             },
             "require": {
@@ -1370,7 +1372,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "dev-master"
             },
-            "time": "1349343312",
+            "time": "1349788762",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1440,18 +1442,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "120cde3fa54c31047edf1cd003752ca119dec9a8"
+                "reference": "347bc81d6ed8e2bb793236aa9917c7e83f81c2b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/zipball/120cde3fa54c31047edf1cd003752ca119dec9a8",
-                "reference": "120cde3fa54c31047edf1cd003752ca119dec9a8",
+                "url": "https://github.com/fabpot/Twig/zipball/347bc81d6ed8e2bb793236aa9917c7e83f81c2b3",
+                "reference": "347bc81d6ed8e2bb793236aa9917c7e83f81c2b3",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1348936415",
+            "time": "1349702400",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1855,19 +1857,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/robots-txt-file",
-                "reference": "7be8456bd61b98c6811683b86e84d41ef30c0f2a"
+                "reference": "e9ee53ac735cca38cd7855234194ba3aeaea6e87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/robots-txt-file/zipball/7be8456bd61b98c6811683b86e84d41ef30c0f2a",
-                "reference": "7be8456bd61b98c6811683b86e84d41ef30c0f2a",
+                "url": "https://github.com/webignition/robots-txt-file/zipball/e9ee53ac735cca38cd7855234194ba3aeaea6e87",
+                "reference": "e9ee53ac735cca38cd7855234194ba3aeaea6e87",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
                 "webignition/disallowed-character-terminated-string": ">=1.0"
             },
-            "time": "1342614568",
+            "time": "1349353979",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1896,19 +1898,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/robots-txt-parser",
-                "reference": "7c80d513033e0db934879043011e8ddf22d2c463"
+                "reference": "6eb339945ea4a8e00a9f9e4d379110219c342edf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/robots-txt-parser/zipball/7c80d513033e0db934879043011e8ddf22d2c463",
-                "reference": "7c80d513033e0db934879043011e8ddf22d2c463",
+                "url": "https://github.com/webignition/robots-txt-parser/zipball/6eb339945ea4a8e00a9f9e4d379110219c342edf",
+                "reference": "6eb339945ea4a8e00a9f9e4d379110219c342edf",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
                 "webignition/robots-txt-file": "dev-master"
             },
-            "time": "1342700692",
+            "time": "1349356374",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1976,6 +1978,50 @@
             "homepage": "https://github.com/webignition/SimplyTestableBaseMigrationsBundle",
             "keywords": [
                 "SimplyTestable Migrations"
+            ]
+        },
+        {
+            "name": "webignition/sitemap-model",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/sitemap-model.git",
+                "reference": "7d1fbb7e775843908ced710206679a2eefb5f50c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/webignition/sitemap-model/zipball/7d1fbb7e775843908ced710206679a2eefb5f50c",
+                "reference": "7d1fbb7e775843908ced710206679a2eefb5f50c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "webignition/web-resource-model": ">=0.1,<2.0",
+                "webignition/url": ">=0.1,<2.0",
+                "querypath/querypath": ">=3.0.0",
+                "simplepie/simplepie": "*"
+            },
+            "time": "1349809842",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Models a website sitemap",
+            "homepage": "https://github.com/webignition/website-sitemap-model",
+            "keywords": [
+                "Sitemap"
             ]
         },
         {
@@ -2193,25 +2239,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "15897bc18d57046140f676aab86d65e594e32122"
+                "reference": "9a53f0ab64e88bad005254904eb4fa3b73ffad93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-finder/zipball/15897bc18d57046140f676aab86d65e594e32122",
-                "reference": "15897bc18d57046140f676aab86d65e594e32122",
+                "url": "https://github.com/webignition/website-sitemap-finder/zipball/9a53f0ab64e88bad005254904eb4fa3b73ffad93",
+                "reference": "9a53f0ab64e88bad005254904eb4fa3b73ffad93",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
                 "webignition/http-client": "dev-master",
                 "webignition/robots-txt-parser": "dev-master",
-                "webignition/absolute-url-deriver": ">=1.2",
                 "webignition/internet-media-type": ">=0.1,<2.0",
-                "webignition/website-sitemap-identifier": "dev-master",
-                "webignition/web-resource-model": ">=0.1,<2.0",
-                "webignition/url": ">=0.1,<2.0"
+                "webignition/url": ">=0.1,<2.0",
+                "webignition/sitemap-model": "dev-master",
+                "webignition/website-sitemap-retriever": "dev-master"
             },
-            "time": "1349343444",
+            "time": "1349817650",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2235,72 +2280,26 @@
             ]
         },
         {
-            "name": "webignition/website-sitemap-identifier",
+            "name": "webignition/website-sitemap-retriever",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webignition/website-sitemap-identifier.git",
-                "reference": "a4d3307fa3a33dd867955be45ae06ceff53968ea"
+                "url": "https://github.com/webignition/website-sitemap-retriever.git",
+                "reference": "37d514eb978cb2b6c56090fdd651149fe9f81dfc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-identifier/zipball/a4d3307fa3a33dd867955be45ae06ceff53968ea",
-                "reference": "a4d3307fa3a33dd867955be45ae06ceff53968ea",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "webignition/internet-media-type": ">=0.1,<2.0",
-                "webignition/url": ">=1.0,<2.0"
-            },
-            "time": "1349339451",
-            "type": "library",
-            "installation-source": "source",
-            "autoload": {
-                "psr-0": {
-                    "": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jon Cram",
-                    "email": "jon@webignition.net"
-                }
-            ],
-            "description": "Identify the type of website sitemap given the content",
-            "homepage": "https://github.com/webignition/website-sitemap-identifier",
-            "keywords": [
-                "Sitemap"
-            ]
-        },
-        {
-            "name": "webignition/website-sitemap-url-retriever",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webignition/website-sitemap-url-retriever.git",
-                "reference": "83602e6939b85825ee15f4230aa1711a00bc6cae"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/webignition/website-sitemap-url-retriever/zipball/83602e6939b85825ee15f4230aa1711a00bc6cae",
-                "reference": "83602e6939b85825ee15f4230aa1711a00bc6cae",
+                "url": "https://github.com/webignition/website-sitemap-retriever/zipball/37d514eb978cb2b6c56090fdd651149fe9f81dfc",
+                "reference": "37d514eb978cb2b6c56090fdd651149fe9f81dfc",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
                 "webignition/http-client": "dev-master",
-                "querypath/querypath": ">=3.0.0",
-                "webignition/internet-media-type": ">=0.1,<2.0",
-                "webignition/url": "*",
-                "webignition/website-sitemap-identifier": "dev-master",
-                "webignition/web-resource-model": ">=0.1,<=1.0",
-                "simplepie/simplepie": "*"
+                "webignition/sitemap-model": "dev-master",
+                "webignition/internet-media-type": ">=0.1,<2.0"
             },
-            "time": "1349293505",
+            "time": "1349815117",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2317,8 +2316,8 @@
                     "email": "jon@webignition.net"
                 }
             ],
-            "description": "Get a list of URLs from the URL of a given sitemap.(xml|txt)",
-            "homepage": "https://github.com/webignition/website-sitemap-url-retriever",
+            "description": "Given a URL, retrieve a website sitemap",
+            "homepage": "https://github.com/webignition/website-sitemap-retriever",
             "keywords": [
                 "Sitemap"
             ]
@@ -2332,7 +2331,7 @@
     "stability-flags": {
         "jms/serializer-bundle": 20,
         "webignition/website-sitemap-finder": 20,
-        "webignition/website-sitemap-url-retriever": 20,
+        "webignition/website-sitemap-retriever": 20,
         "webignition/website-rss-feed-finder": 20
     }
 }
