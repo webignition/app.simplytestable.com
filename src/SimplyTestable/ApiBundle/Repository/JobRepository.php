@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\State;
 
 class JobRepository extends EntityRepository
 {
@@ -21,5 +22,40 @@ class JobRepository extends EntityRepository
         }
         
         return $query->getResult();
+    }
+    
+    
+    /**
+     *
+     * @param array $jobStates
+     * @param State $taskState
+     * @return array 
+     */
+    public function getByStateAndTaskState($jobStates, State $taskState) {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->join('Job.tasks', 'Tasks');
+        $queryBuilder->select('DISTINCT Job');
+        
+        $where = 'Tasks.state = :TaskState';
+        
+        if (is_array($jobStates)) {
+            $stateWhere = '';
+            $stateCount = count($jobStates);
+            
+            foreach ($jobStates as $stateIndex => $jobState) {
+                $stateWhere .= 'Job.state = :JobState' . $stateIndex;
+                if ($stateIndex < $stateCount - 1) {
+                    $stateWhere .= ' OR ';
+                }
+                $queryBuilder->setParameter('JobState'.$stateIndex, $jobState);
+            }
+            
+            $where .= ' AND ('.$stateWhere.')';
+        }
+        
+        $queryBuilder->where($where);
+
+        $queryBuilder->setParameter('TaskState', $taskState);                
+        return $queryBuilder->getQuery()->getResult();
     }
 }

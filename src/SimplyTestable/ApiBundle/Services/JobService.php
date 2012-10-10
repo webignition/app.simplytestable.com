@@ -373,30 +373,30 @@ class JobService extends EntityService {
      * @return array
      */
     public function getJobsWithQueuedTasks() {
-        $queuedTasks = $this->taskService->getEntityRepository()->findBy(array(
-            'state' => $this->taskService->getQueuedState()
-        ));
+        $states = array(
+            $this->getInProgressState(),
+            $this->getPreparingState(),
+            $this->getQueuedState()
+        );
         
-        $jobs = array();
-        $jobIds = array();
-        
-        foreach ($queuedTasks as $task) {
-            if (!in_array($task->getJob()->getId(), $jobIds)) {
-                $jobs[] = $task->getJob();
-                $jobIds[] = $task->getJob()->getId();
-            }
-        }
+        $jobs = $this->getEntityRepository()->getByStateAndTaskState($states, $this->taskService->getQueuedState());
         
         return $jobs;
     }
     
-    public function getOldestQueuedTasks(Job $job, $limit = 1) {
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param int $limit
+     * @return array
+     */
+    public function getQueuedTasks(Job $job, $limit = 1) {
         return $this->taskService->getEntityRepository()->findBy(array(
             'job' => $job,
             'state' => $this->taskService->getQueuedState()
-        ), array(
-            'id' => 'asc'
         ),
+        array(),
         $limit);
     }
     

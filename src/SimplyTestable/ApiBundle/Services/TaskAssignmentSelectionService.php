@@ -35,7 +35,7 @@ class TaskAssignmentSelectionService {
     
     
     /**
-     * Get the oldest queued tasks from each job that has queued tasks
+     * Get a limited collection of queued tasks from each job that has queued tasks
      * 
      * @return array
      */
@@ -43,11 +43,8 @@ class TaskAssignmentSelectionService {
         $jobs = $this->jobService->getJobsWithQueuedTasks();
         
         $tasks = array();
-        foreach ($jobs as $job) {            
-            $tasksForJob = $this->jobService->getOldestQueuedTasks($job, $limitPerJob);
-            foreach ($tasksForJob as $task) {
-                $tasks[] = $task;
-            }            
+        foreach ($jobs as $job) {
+            $tasks = array_merge($tasks, $this->jobService->getQueuedTasks($job, $limitPerJob));          
         }
         
         return $tasks;
