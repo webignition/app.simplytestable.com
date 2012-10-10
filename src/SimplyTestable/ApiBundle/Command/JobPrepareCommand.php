@@ -12,6 +12,8 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 
+use webignition\NormalisedUrl\NormalisedUrl;
+
 class JobPrepareCommand extends BaseCommand
 {
     /**
@@ -25,6 +27,13 @@ class JobPrepareCommand extends BaseCommand
      * @var string
      */
     private $httpFixturePath;
+    
+    
+    /**
+     *
+     * @var array
+     */
+    private $processedUrls = array();
     
     protected function configure()
     {
@@ -77,16 +86,21 @@ class JobPrepareCommand extends BaseCommand
         $jobCount = 0;
         
         foreach ($urls as $url) {                
-            foreach ($requestedTaskTypes as $taskType) {
-                $jobCount++;
+            $comparatorUrl = new NormalisedUrl($url);
+            if (!$this->isProcessedUrl($comparatorUrl)) {
+                foreach ($requestedTaskTypes as $taskType) {
+                    $jobCount++;
+
+                    $task = new Task();
+                    $task->setJob($job);
+                    $task->setType($taskType);
+                    $task->setUrl($url);
+                    $task->setState($newTaskState);
+
+                    $entityManager->persist($task);                             
+                }
                 
-                $task = new Task();
-                $task->setJob($job);
-                $task->setType($taskType);
-                $task->setUrl($url);
-                $task->setState($newTaskState);
-                
-                $entityManager->persist($task);                             
+                $this->processedUrls[] = (string)$comparatorUrl;
             }
         }
         
@@ -107,6 +121,16 @@ class JobPrepareCommand extends BaseCommand
         }
         
         $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
+    }
+    
+    
+    /**
+     * 
+     * @param \webignition\NormalisedUrl\NormalisedUrl $url
+     * @return boolean
+     */
+    private function isProcessedUrl(NormalisedUrl $url) {
+        return in_array((string)$url, $this->processedUrls);
     }
     
     
