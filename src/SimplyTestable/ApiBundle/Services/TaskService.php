@@ -508,6 +508,13 @@ class TaskService extends EntityService {
         return $this->availableStateNames;
     }
     
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasQueuedTasks() {        
+        return $this->getEntityRepository()->getCountByState($this->getQueuedState()) > 0;
+    }
     
   
 }
