@@ -66,7 +66,11 @@ class JobPrepareCommand extends BaseCommand
             return $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
         }
         
-        $job->setNextState();        
+        $job->setNextState();  
+        
+        $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+        $entityManager->persist($job);
+        $entityManager->flush();         
         
         $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
         
@@ -80,8 +84,6 @@ class JobPrepareCommand extends BaseCommand
         
         $requestedTaskTypes = $job->getRequestedTaskTypes();
         $newTaskState = $this->getTaskService()->getQueuedState();
-
-        $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
         $jobCount = 0;
         
