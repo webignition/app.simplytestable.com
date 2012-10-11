@@ -2,28 +2,26 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command;
 
-use SimplyTestable\ApiBundle\Tests\BaseTestCase;
+use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
-class JobPrepareCommandTest extends BaseTestCase {    
-    
-    const TESTS_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TestsController';
-    
-    
-    /**
-     *
-     * @var SimplyTestable\ApiBundle\Controller\TestsController
-     */
-    private $testsController = null;
+class JobPrepareCommandTest extends BaseSimplyTestableTestCase {    
 
     public function testPrepareNewJob() {        
         $this->setupDatabase();
         
-        $job = $this->createJob('http://example.com');        
-        $response = json_decode($job->getContent());
-        $job_id = $response->id;
+        $canonicalUrl = 'http://example.com/';
         
-        $this->assertEquals(1, $job_id);
+        $expectedTaskUrls = array(
+            'http://example.com/',
+            'http://example.com/articles/',
+            'http://example.com/articles/i-make-the-internet/'
+        );        
+        
+        $jobCreateResponse = $this->createJob($canonicalUrl);        
+        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
+        
+        $this->assertEquals(1, $job_id);        
         
         $this->runConsole('simplytestable:job:prepare', array(
             $job_id =>  true,
@@ -32,8 +30,24 @@ class JobPrepareCommandTest extends BaseTestCase {
         
         $this->getJobService()->getEntityRepository()->clear();
         
-        $job = $this->fetchJob('http://example.com', $job_id);
+        $job = $this->fetchJob($canonicalUrl, $job_id);
         $response = json_decode($job->getContent());
+        
+        $this->assertEquals('queued', $response->state);
+        $this->assertNotNull($response->time_period);
+        $this->assertNotNull($response->time_period->start_date_time);
+        
+        $taskTypeCount = count($response->task_types);
+        
+        $this->assertEquals(count($expectedTaskUrls), $response->url_count);
+        $this->assertEquals(count($expectedTaskUrls) * $taskTypeCount, $response->task_count);
+        $this->assertEquals(count($expectedTaskUrls), $response->task_count_by_state->queued);
+        
+        return;
+        
+        var_dump($response);
+        exit();
+       
         
         $expectedUrls = array(
             'http://example.com/',
@@ -52,47 +66,10 @@ class JobPrepareCommandTest extends BaseTestCase {
     }
     
     
-    /**
-     *
-     * @param string $canonicalUrl
-     * @return Job
-     */
-    private function createJob($canonicalUrl) {
-        return $this->getTestsController('startAction')->startAction($canonicalUrl);
-    }
+
     
     
-    /**
-     *
-     * @param string $canonicalUrl
-     * @param int $id
-     * @return Job
-     */
-    private function fetchJob($canonicalUrl, $id) {        
-        return $this->getTestsController('statusAction')->statusAction($canonicalUrl, $id);    
-    }
-    
-    
-    /**
-     *
-     * @param string $methodName
-     * @return SimplyTestable\ApiBundle\Controller\TestsController
-     */
-    private function getTestsController($methodName) {
-        if (is_null($this->testsController)) {
-            $this->testsController = $this->createController(self::TESTS_CONTROLLER_NAME, $methodName);
-        }        
-        
-        return $this->testsController;
-    }
-    
-    
-    /**
-     *
-     * @return SimplyTestable\ApiBundle\Services\JobService
-     */
-    private function getJobService() {
-        return $this->container->get('simplytestable.services.jobservice');
-    }
+
+
 
 }
