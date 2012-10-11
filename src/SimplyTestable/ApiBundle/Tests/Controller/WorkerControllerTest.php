@@ -65,15 +65,6 @@ class WorkerControllerTest extends BaseControllerJsonTestCase {
         } 
         
         $this->fail('WorkerController::activateAction() didn\'t throw a 400 HttpException for a missing hostname');  
-    }    
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WorkerService
-     */
-    private function getWorkerService() {
-        return $this->container->get('simplytestable.services.workerservice');
     }
     
     /**

@@ -131,7 +131,7 @@ class WorkerService extends EntityService {
      * @return int
      */
     public function count() {
-        $queryBuilder = $this->createQueryBuilder('Worker');
+        $queryBuilder = $this->getEntityRepository()->createQueryBuilder('Worker');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(DISTINCT Worker.id) as worker_total');
         

@@ -3,7 +3,6 @@
 namespace SimplyTestable\ApiBundle\Tests\Command;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
 
 class JobPrepareCommandTest extends BaseSimplyTestableTestCase {    
 
@@ -44,25 +43,6 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(count($expectedTaskUrls), $response->task_count_by_state->queued);
         
         return;
-        
-        var_dump($response);
-        exit();
-       
-        
-        $expectedUrls = array(
-            'http://example.com/',
-            'http://example.com/articles/',
-            'http://example.com/articles/i-make-the-internet/'
-        );
-        
-        $this->assertEquals('queued', $response->state);
-        $this->assertEquals(3, count($response->tasks));
-        
-        foreach ($response->tasks as $taskIndex => $task) {
-            $this->assertEquals($taskIndex + 1, $task->id);
-            $this->assertEquals('queued', $task->state);
-            $this->assertEquals($expectedUrls[$taskIndex], $task->url);
-        }
     }
     
     

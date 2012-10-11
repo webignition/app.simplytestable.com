@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests;
 
+use SimplyTestable\ApiBundle\Entity\Worker;
+
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     const JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\JobController';    
@@ -46,8 +48,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function createJob($canonicalUrl) {
         return $this->getJobController('startAction')->startAction($canonicalUrl);
-    }    
-    
+    } 
+        
 
     /**
      *
@@ -66,6 +68,30 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getJobService() {
         return $this->container->get('simplytestable.services.jobservice');
-    }    
+    } 
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\WorkerService
+     */
+    protected function getWorkerService() {
+        return $this->container->get('simplytestable.services.workerservice');
+    }     
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Entity\Worker
+     */
+    protected function createWorker() {
+        $hostname = md5(time()) . '.worker.simplytestable.com';
+        
+        $worker = new Worker();
+        $worker->setHostname($hostname);
+        
+        $this->getWorkerService()->persistAndFlush($worker);
+        return $worker;
+    }
 
 }
