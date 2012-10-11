@@ -33,7 +33,9 @@ EOF
             }            
         }
         
-        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks(4);
+        $taskAssignmentLimitPerJob = $this->getWorkerService()->count() * 2;
+        
+        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks($taskAssignmentLimitPerJob);
         
         $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: tasks found ['.count($tasks).']');
         
@@ -85,7 +87,7 @@ EOF
     private function getResqueQueueService() {
         return $this->getContainer()->get('simplytestable.services.resqueQueueService');
     }     
-    
+
 
     /**
      *
@@ -93,5 +95,14 @@ EOF
      */        
     private function getTaskService() {
         return $this->getContainer()->get('simplytestable.services.taskservice');
+    }
+    
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\WorkerService
+     */        
+    private function getWorkerService() {
+        return $this->getContainer()->get('simplytestable.services.workerservice');
     }      
 }

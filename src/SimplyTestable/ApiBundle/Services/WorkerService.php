@@ -123,5 +123,19 @@ class WorkerService extends EntityService {
         $this->getEntityManager()->persist($worker);
         $this->getEntityManager()->flush();
         return $worker;
-    }    
+    }  
+    
+    
+    /**
+     * 
+     * @return int
+     */
+    public function count() {
+        $queryBuilder = $this->createQueryBuilder('Worker');
+        $queryBuilder->setMaxResults(1);
+        $queryBuilder->select('count(DISTINCT Worker.id) as worker_total');
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        return (int)($result[0]['worker_total']);  
+    }
 }
