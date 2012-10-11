@@ -43,11 +43,15 @@ class TaskAssignmentSelectionService {
         $jobs = $this->jobService->getJobsWithQueuedTasks();
         
         $taskInProgressState = $this->taskService->getInProgressState();
+        $taskQueuedForAssignmentState = $this->taskService->getQueuedForAssignmentState();
+
         
         $tasks = array();
         foreach ($jobs as $job) {
             $inProgressTaskCount = $this->taskService->getCountByJobAndState($job, $taskInProgressState);
-            $limitForThisJob = $limitPerJob - $inProgressTaskCount;
+            $queuedForAssignmentTaskCount = $this->taskService->getCountByJobAndState($job, $taskQueuedForAssignmentState);
+            
+            $limitForThisJob = $limitPerJob - $inProgressTaskCount - $queuedForAssignmentTaskCount;                   
             
             if ($limitForThisJob > 0) {
                 $tasks = array_merge($tasks, $this->jobService->getQueuedTasks($job, $limitForThisJob));
