@@ -109,7 +109,8 @@ services:
     class:  SimplyTestable\ApiBundle\Services\TaskAssignmentSelectionService
     arguments:             
         jobService: "@simplytestable.services.jobservice"        
-        taskService: "@simplytestable.services.taskservice"        
+        taskService: "@simplytestable.services.taskservice" 
+        logger: "@logger"
         
   simplytestable.services.tasktypeservice:
     class:  SimplyTestable\ApiBundle\Services\TaskTypeService
