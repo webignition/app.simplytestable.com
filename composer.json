@@ -21,7 +21,7 @@
         "friendsofsymfony/user-bundle": "*",      
         "glit/resque": "*",
         "webignition/url": "*",
-        "jms/serializer-bundle": "dev-master",
+        "jms/serializer-bundle": "0.9",
         "webignition/website-sitemap-finder":"dev-master",
         "webignition/website-sitemap-retriever":"dev-master",
         "doctrine/migrations": "*",
