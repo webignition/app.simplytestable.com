@@ -64,7 +64,7 @@ EOF
                     'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
                     'task-assign-collection',
                     array(
-                        'ids' => $taskIds
+                        'ids' => implode(',', $taskIds)
                     )
                 );            
 
