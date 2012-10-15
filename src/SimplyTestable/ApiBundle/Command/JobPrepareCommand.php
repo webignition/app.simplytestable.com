@@ -74,7 +74,7 @@ class JobPrepareCommand extends BaseCommand
         
         $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
         
-        if ($urls === false) {
+        if ($urls === false || count($urls) == 0) {
             $job->setState($this->getJobService()->getNoSitemapState());
             $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
             $entityManager->persist($job);
