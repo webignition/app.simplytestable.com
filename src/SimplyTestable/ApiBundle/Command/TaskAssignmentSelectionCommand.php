@@ -62,7 +62,7 @@ EOF
             
                 $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
                     'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
-                    'task-assign',
+                    'task-assign-collection',
                     array(
                         'ids' => $taskIds
                     )
