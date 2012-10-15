@@ -41,21 +41,32 @@ EOF
         
         if (count($tasks)) {
             $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();            
-
+            $taskIds = array();
+            
             foreach ($tasks as $task) {
                 $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: selected task id ['.$task->getId().']');
 
                 $task->setState($this->getTaskService()->getQueuedForAssignmentState());
-                $entityManager->persist($task);            
+                $entityManager->persist($task);
+                
+                $taskIds[] = $task->getId();
 
+//                $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
+//                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+//                    'task-assign',
+//                    array(
+//                        'id' => $task->getId()
+//                    )
+//                );             
+            }
+            
                 $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
-                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
                     'task-assign',
                     array(
-                        'id' => $task->getId()
+                        'ids' => $taskIds
                     )
-                );             
-            }
+                );            
 
             $entityManager->flush();            
         }
