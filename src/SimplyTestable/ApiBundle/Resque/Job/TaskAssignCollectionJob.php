@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Resque\Job;
 
 use SimplyTestable\ApiBundle\Exception\TaskAssignException;
 
-class TaskAssignJob extends CommandLineJob {    
+class TaskAssignCollectionJob extends CommandLineJob {    
     
     const QUEUE_NAME = 'task-assign';
     const COMMAND = 'php app/console simplytestable:task:assigncollection';
