@@ -362,7 +362,6 @@ class TaskService extends EntityService {
      * @param Task $task
      * @param Worker $worker
      * @param int $remoteId
-     * @return Task 
      */
     public function setStarted(Task $task, Worker $worker, $remoteId) {
         $timePeriod = new TimePeriod();
@@ -372,8 +371,6 @@ class TaskService extends EntityService {
         $task->setState($this->getInProgressState());
         $task->setTimePeriod($timePeriod);
         $task->setWorker($worker);        
-        
-        return $this->persistAndFlush($task);
     }
     
     

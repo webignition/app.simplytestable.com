@@ -132,7 +132,17 @@ class TaskRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult();
         return (int)($result[0]['task_total']);        
     }      
-    
+
+    public function getCollectionById($taskIds = array()) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('Task');
+        
+        if (count($taskIds)) {
+            $queryBuilder->where('Task.id IN ('.implode(',', $taskIds).')');
+        }        
+        
+        return $queryBuilder->getQuery()->getResult();      
+    }    
     
     public function getCollectionByJobAndId(Job $job, $taskIds = array()) {
         $queryBuilder = $this->createQueryBuilder('Task');

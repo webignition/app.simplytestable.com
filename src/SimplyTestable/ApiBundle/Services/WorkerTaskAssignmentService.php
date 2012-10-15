@@ -67,6 +67,46 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
     }
     
     
+    public function assignCollection($tasks) {
+        $this->logger->info("WorkerTaskAssignmentService::assignCollection: Initialising");
+        
+        foreach ($tasks as $index => $task) {
+            /* @var $task Task */
+            if (!$this->taskService->isQueued($task) && !$this->taskService->isQueuedForAssignment($task)) {
+                unset($tasks[$index]);
+            }
+        }
+        
+        $workerSelection = $this->getWorkerSelection();
+        
+        $this->logger->info("WorkerTaskAssignmentService::assignCollection: [".count($workerSelection)."] workers selected");
+        
+        if (count($workerSelection) == 0) {
+            $this->logger->info("WorkerTaskAssignmentService::assignCollection: Cannot assign, no workers.");
+            return true;
+        }   
+        
+        foreach ($workerSelection as $workerIndex => $worker) {            
+            $response = $this->assignCollectionToWorker($tasks, $worker);
+            
+            if ($response === true) {
+                foreach ($tasks as $task) {
+                    /* @var $task Task */
+                    $this->taskService->setStarted(
+                        $task,
+                        $worker,
+                        $task->getRemoteId()
+                    );                    
+                    
+                    $this->getEntityManager()->persist($task);
+                }
+                
+                $this->update($worker, $task);
+                $this->getEntityManager()->flush();
+            }        
+        } 
+    }
+    
     
     /**
      *
@@ -139,6 +179,63 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         } catch (CurlException $curlException) {
             $this->logger->info("WorkerTaskAssignmentService::assignToWorker: " . $requestUrl . ": " . $curlException->getMessage());
         }         
+    }
+    
+    
+    /**
+     *
+     * @param array $task
+     * @param Worker $worker
+     * @return int|boolean
+     */
+    private function assignCollectionToWorker($tasks, Worker $worker) {
+        $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: Trying worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");                    
+        
+        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection');
+
+        $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);
+        
+        $requestData = array();
+        foreach ($tasks as $task) {
+            /* @var $task Task */
+            $requestData[] = array(
+                'url' => $task->getUrl(),
+                'type' => (string)$task->getType()
+            );
+        }
+        
+        $httpRequest->setPostFields(array(
+            'tasks' => $requestData            
+        ));     
+
+        try {            
+            $response = $this->httpClient->getResponse($httpRequest);
+            $responseObject = json_decode($response->getBody());
+            
+            foreach ($tasks as $task) {
+                $this->setTaskRemoteIdFromRemoteCollection($task, $responseObject);
+            }            
+
+            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
+            
+            return ($response->getResponseCode() === 200) ? true : false;
+        } catch (CurlException $curlException) {
+            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: " . $requestUrl . ": " . $curlException->getMessage());
+        }         
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @param type $remoteCollection
+     */
+    private function setTaskRemoteIdFromRemoteCollection(Task $task, $remoteCollection) {
+        foreach ($remoteCollection as $taskObject) {
+            if ($task->getUrl() == $taskObject->url && (string)$task->getType() == $taskObject->type) {
+                $task->setRemoteId($taskObject->id);
+            }
+        }
     }
     
     
