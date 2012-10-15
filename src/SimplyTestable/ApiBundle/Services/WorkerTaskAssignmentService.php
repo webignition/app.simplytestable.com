@@ -103,6 +103,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                 
                 $this->update($worker, $task);
                 $this->getEntityManager()->flush();
+                return;
             }        
         } 
     }
