@@ -79,6 +79,7 @@ EOF
         
         if ($this->getTaskService()->hasQueuedTasks()) {
             if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
+                sleep(10);
                 $this->getResqueQueueService()->add(
                     'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
                     'task-assignment-selection'
