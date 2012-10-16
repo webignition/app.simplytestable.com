@@ -89,12 +89,16 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         
         $groupedTasks = $this->getGroupedTasks($tasks, count($workerSelection));
         
-        foreach ($groupedTasks as $taskGroup) {
+        $this->logger->info("WorkerTaskAssignmentService::assignCollection: Group count [".count($workerSelection)."]");
+        
+        foreach ($groupedTasks as $groupIndex => $taskGroup) {
+            $this->logger->info("WorkerTaskAssignmentService::assignCollection: Processing group [".$groupIndex."] [".count($taskGroup)."]");
+            
             $groupIsAssigned = false;
             
             foreach ($workerSelection as $workerIndex => $worker) {
                 if (!$groupIsAssigned) {
-                    $response = $this->assignCollectionToWorker($tasks, $worker);
+                    $response = $this->assignCollectionToWorker($taskGroup, $worker);
 
                     if ($response === true) {
                         $groupIsAssigned = true;
