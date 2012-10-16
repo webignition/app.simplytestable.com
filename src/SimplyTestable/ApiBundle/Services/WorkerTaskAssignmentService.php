@@ -99,7 +99,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                     if ($response === true) {
                         $groupIsAssigned = true;
 
-                        foreach ($tasks as $task) {
+                        foreach ($taskGroup as $task) {
                             /* @var $task Task */
                             $this->taskService->setStarted(
                                 $task,
