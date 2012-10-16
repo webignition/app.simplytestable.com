@@ -33,13 +33,19 @@ EOF
             }            
         }
         
-        $taskAssignmentLimitPerJob = $this->getWorkerService()->count() * 2;
+        $queuedTaskCount = $this->getTaskService()->getQueuedCount();        
+        $perJobUpperLimit = $this->getPerJobTaskAssingmentUpperLimit();
+        $totalLowerLimit = $this->getTaskAssignmentLowerLimit();
         
-        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks($taskAssignmentLimitPerJob);
+        if ($queuedTaskCount === 0) {
+            return true;
+        }
+        
+        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks($perJobUpperLimit);        
         
         $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: tasks found ['.count($tasks).']');
         
-        if (count($tasks)) {
+        if (count($tasks) && count($tasks) >= $totalLowerLimit) {
             $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();            
             $taskIds = array();
             
@@ -79,6 +85,27 @@ EOF
                 );             
             }              
         }      
+    }
+    
+    /**
+     * 
+     * @return int
+     */
+    private function getPerJobTaskAssingmentUpperLimit() {
+        return $this->getWorkerService()->count() * 2; 
+    }
+    
+    
+    /**
+     * Get the minimum number of tasks to assign in one batch
+     * 
+     * @return int
+     */
+    private function getTaskAssignmentLowerLimit() {        
+        return min(array(
+            $this->getTaskService()->getQueuedCount(),
+            $this->getPerJobTaskAssingmentUpperLimit()
+        ));
     }
     
     
