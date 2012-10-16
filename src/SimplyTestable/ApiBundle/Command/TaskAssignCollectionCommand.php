@@ -38,16 +38,22 @@ EOF
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
         
         $this->getWorkerTaskAssignmentService()->assignCollection($tasks);
-       
-        if ($tasks[0]->getJob()->getState()->getName() == 'job-queued') {
-            $job = $tasks[0]->getJob();
+        
+        foreach ($tasks as $task) {
+            /* @var $task Task */
+            $job = $task->getJob();
             
-            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
-            $job->setNextState();
+            if ($job->getJob()->getState()->getName() == 'job-queued') {
+                $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+                $job->setNextState();
+
+                $entityManager->persist($job);          
+            }            
             
-            $entityManager->persist($job);
-            $entityManager->flush();               
+            $entityManager->flush();
         }
+       
+
     }
     
     
