@@ -52,7 +52,15 @@ EOF
        
         $entityManager->flush();
     }
+
     
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobService
+     */
+    private function getJobService() {
+        return $this->getContainer()->get('simplytestable.services.jobservice');
+    }      
     
     /**
      *
