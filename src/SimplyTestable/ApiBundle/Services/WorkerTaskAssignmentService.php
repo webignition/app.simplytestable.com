@@ -78,34 +78,74 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         }
         
         $workerSelection = $this->getWorkerSelection();
+        //$workerCount = count($workerSelection);
         
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: [".count($workerSelection)."] workers selected");
         
         if (count($workerSelection) == 0) {
             $this->logger->info("WorkerTaskAssignmentService::assignCollection: Cannot assign, no workers.");
             return true;
-        }   
+        }
         
-        foreach ($workerSelection as $workerIndex => $worker) {            
-            $response = $this->assignCollectionToWorker($tasks, $worker);
+        $groupedTasks = $this->getGroupedTasks($tasks, count($workerSelection));
+        
+        foreach ($groupedTasks as $taskGroup) {
+            $groupIsAssigned = false;
             
-            if ($response === true) {
-                foreach ($tasks as $task) {
-                    /* @var $task Task */
-                    $this->taskService->setStarted(
-                        $task,
-                        $worker,
-                        $task->getRemoteId()
-                    );                    
-                    
-                    $this->getEntityManager()->persist($task);
-                }
-                
-                $this->update($worker, $task);
-                $this->getEntityManager()->flush();
-                return;
-            }        
-        } 
+            foreach ($workerSelection as $workerIndex => $worker) {
+                if (!$groupIsAssigned) {
+                    $response = $this->assignCollectionToWorker($tasks, $worker);
+
+                    if ($response === true) {
+                        $groupIsAssigned = true;
+
+                        foreach ($tasks as $task) {
+                            /* @var $task Task */
+                            $this->taskService->setStarted(
+                                $task,
+                                $worker,
+                                $task->getRemoteId()
+                            );                    
+
+                            $this->getEntityManager()->persist($task);
+                        }
+
+                        $this->update($worker, $task);
+                        $this->getEntityManager()->flush();
+                    }                      
+                }      
+            }
+            
+            $workerSelection = $this->getWorkerSelection();
+        }
+     }
+    
+    
+    /**
+     * 
+     * @param array $tasks
+     * @param int $groupCount
+     * @return array
+     */
+    private function getGroupedTasks($tasks, $groupCount) {
+        $groupedTasks = array();
+        $groupIndex = 0;
+        $maximumGroupIndex = $groupCount - 1;
+        
+        foreach ($tasks as $task) {
+            if (!isset($groupedTasks[$groupIndex])) {
+                $groupedTasks[$groupIndex] = array();
+            }
+            
+            $groupedTasks[$groupIndex][] = $task;
+            
+            $groupIndex++;
+            if ($groupIndex > $maximumGroupIndex) {
+                $groupIndex = 0;
+            }
+        }
+        
+        return $groupedTasks;
     }
     
     
