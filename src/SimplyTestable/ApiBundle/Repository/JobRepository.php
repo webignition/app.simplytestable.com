@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\WebSite;
 
 class JobRepository extends EntityRepository
 {
@@ -57,5 +58,43 @@ class JobRepository extends EntityRepository
 
         $queryBuilder->setParameter('TaskState', $taskState);                
         return $queryBuilder->getQuery()->getResult();
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
+     * @param array $jobStates
+     * @return int
+     */
+    public function getNewestIdByWebsiteAndState(WebSite $website, $jobStates) {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.id');
+        
+        $where = 'Job.website = :Website';
+        
+        if (is_array($jobStates)) {
+            $stateWhere = '';
+            $stateCount = count($jobStates);
+            
+            foreach ($jobStates as $stateIndex => $jobState) {
+                $stateWhere .= 'Job.state = :JobState' . $stateIndex;
+                if ($stateIndex < $stateCount - 1) {
+                    $stateWhere .= ' OR ';
+                }
+                $queryBuilder->setParameter('JobState'.$stateIndex, $jobState);
+            }
+            
+            $where .= ' AND ('.$stateWhere.')';
+        }
+        
+        $queryBuilder->where($where);
+        $queryBuilder->setMaxResults(1);
+        $queryBuilder->orderBy('Job.id', 'desc');
+
+        $queryBuilder->setParameter('Website', $website);                
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return (count($result)) ? (int)$result[0]['id'] : null;
     }
 }

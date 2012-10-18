@@ -18,24 +18,33 @@ class JobController extends ApiController
     public function startAction($site_root_url)
     {        
         $this->siteRootUrl = $site_root_url;
-
-        $job = $this->getJobService()->create(
-            $this->getUser(),
+        
+        $existingJobId = $this->getJobService()->getEntityRepository()->getNewestIdByWebsiteAndState(
             $this->getWebsite(),
-            $this->getTaskTypes()
+            $this->getJobService()->getIncompleteStates()
         );
         
-        $this->get('simplytestable.services.resqueQueueService')->add(
-            'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
-            'job-prepare',
-            array(
-                'id' => $job->getId()
-            )                
-        );
+        if (is_null($existingJobId)) {
+            $job = $this->getJobService()->create(
+                $this->getUser(),
+                $this->getWebsite(),
+                $this->getTaskTypes()
+            );
+            
+            $this->get('simplytestable.services.resqueQueueService')->add(
+                'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
+                'job-prepare',
+                array(
+                    'id' => $job->getId()
+                )                
+            );
+            
+            $existingJobId = $job->getId();
+        }
         
         return $this->redirect($this->generateUrl('job', array(
-            'site_root_url' => (string)$job->getWebsite(),
-            'test_id' => $job->getId()
+            'site_root_url' => $site_root_url,
+            'test_id' => $existingJobId
         )));
     }    
     

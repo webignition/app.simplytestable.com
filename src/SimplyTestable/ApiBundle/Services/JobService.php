@@ -21,6 +21,13 @@ class JobService extends EntityService {
     const QUEUED_STATE = 'job-queued';
     const NO_SITEMAP_STATE = 'job-no-sitemap';
     
+    private $incompleteStateNames = array(
+        self::STARTING_STATE,
+        self::IN_PROGRESS_STATE,
+        self::PREPARING_STATE,
+        self::QUEUED_STATE
+    );
+    
     /**
      *
      * @var \SimplyTestable\ApiBundle\Services\StateService
@@ -444,5 +451,21 @@ class JobService extends EntityService {
         );
         
         return $this->taskService->getEntityRepository()->getTaskCountByState($job, $states);
-    }    
+    }
+    
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    public function getIncompleteStates() {
+        $incompleteStates = array();
+        
+        foreach ($this->incompleteStateNames as $stateName) {
+            $incompleteStates[] = $this->stateService->fetch($stateName);
+        }
+        
+        return $incompleteStates;      
+    }
 }
