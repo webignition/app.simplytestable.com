@@ -114,7 +114,35 @@ class WebSiteService extends EntityService {
      * @param WebSite $website
      * @return array
      */
-    public function getUrls(WebSite $website) {
+    public function getUrls(WebSite $website) {        
+        return $this->filterUrlsToWebsiteHost($website, $this->collectUrls($website));
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
+     * @param array $urls
+     * @return array
+     */
+    private function filterUrlsToWebsiteHost(WebSite $website, $urls) {
+        $websiteUrl = new \webignition\Url\Url($website->getCanonicalUrl());        
+        $filteredUrls = array();
+        
+        foreach ($urls as $url) {
+            $urlObject = new \webignition\Url\Url($url);
+            if ($urlObject->getHost()->isEquivalentTo($websiteUrl->getHost(), array(
+                'www'
+            ))) {
+                $filteredUrls[] = $url;
+            }
+        }
+        
+        return $filteredUrls;
+    }
+    
+    
+    private function collectUrls(WebSite $website) {
         $urlsFromSitemap = $this->getUrlsFromSitemap($website);        
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
@@ -130,7 +158,7 @@ class WebSiteService extends EntityService {
             return $urlsFromAtomFeed;
         }        
         
-        return false;
+        return array();        
     }
     
     
