@@ -40,11 +40,13 @@ class JobController extends ApiController
             );
             
             $existingJobId = $job->getId();
+        } else {
+            $job = $this->getJobService()->getById($existingJobId);
         }
         
         return $this->redirect($this->generateUrl('job', array(
-            'site_root_url' => $site_root_url,
-            'test_id' => $existingJobId
+            'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
+            'test_id' => $job->getId()
         )));
     }    
     
