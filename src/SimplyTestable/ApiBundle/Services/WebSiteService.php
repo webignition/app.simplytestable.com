@@ -143,7 +143,7 @@ class WebSiteService extends EntityService {
     
     
     private function collectUrls(WebSite $website) {
-        $urlsFromSitemap = $this->getUrlsFromSitemap($website);        
+        $urlsFromSitemap = $this->getUrlsFromSitemap($website);
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
         }
@@ -168,10 +168,14 @@ class WebSiteService extends EntityService {
      * @return array 
      */
     private function getUrlsFromSitemap(WebSite $website) {
+        $this->getHttpClient()->setUserAgent('SimplyTestable Sitemap Finder');
+        
         $sitemapFinder = new WebsiteSitemapFinder();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
         $sitemapFinder->setHttpClient($this->getHttpClient());
         $sitemaps = $sitemapFinder->getSitemaps();
+        
+        $this->getHttpClient()->clearUserAgent();
         
         if (count($sitemaps) === 0) {
             return array();

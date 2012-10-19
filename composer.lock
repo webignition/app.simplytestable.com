@@ -1681,12 +1681,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/http-client",
-                "reference": "c99807e0e74559c9ddf77e526ae1f28a7301baf6"
+                "reference": "1.2.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/http-client/zipball/c99807e0e74559c9ddf77e526ae1f28a7301baf6",
-                "reference": "c99807e0e74559c9ddf77e526ae1f28a7301baf6",
+                "url": "https://github.com/webignition/http-client/zipball/1.2.1",
+                "reference": "1.2.1",
                 "shasum": ""
             },
             "require": {
@@ -1695,7 +1695,7 @@
                 "webignition/absolute-url-deriver": ">=1.1",
                 "webignition/url": ">1.0"
             },
-            "time": "1348147907",
+            "time": "1350636361",
             "type": "library",
             "installation-source": "source",
             "autoload": {
