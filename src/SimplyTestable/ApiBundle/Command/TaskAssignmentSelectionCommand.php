@@ -103,6 +103,8 @@ EOF
      * @return int
      */
     private function getTaskAssignmentLowerLimit() {        
+        return 1;
+        
         return min(array(
             $this->getTaskService()->getQueuedCount(),
             $this->getPerJobTaskAssingmentUpperLimit()
