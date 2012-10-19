@@ -168,7 +168,7 @@ class WebSiteService extends EntityService {
      * @return array 
      */
     private function getUrlsFromSitemap(WebSite $website) {
-        $this->getHttpClient()->setUserAgent('SimplyTestable Sitemap Finder');
+        $this->getHttpClient()->setUserAgent('SimplyTestable Sitemap URL Retriever/0.1 (http://simplytestable.com/)');
         
         $sitemapFinder = new WebsiteSitemapFinder();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
