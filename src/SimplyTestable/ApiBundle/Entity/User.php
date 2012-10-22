@@ -19,7 +19,7 @@ class User extends BaseUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
+    
     public function __construct()
     {
         parent::__construct();
@@ -34,5 +34,13 @@ class User extends BaseUser
      */
     public function equals(User $user) {
         return $this->getEmailCanonical() == $user->getEmailCanonical();
+    }
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasActivationToken() {
+        return !is_null($this->getConfirmationToken());
     }
 }

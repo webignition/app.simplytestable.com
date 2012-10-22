@@ -35,6 +35,7 @@ services:
         emailCanonicalizer: "@fos_user.util.email_canonicalizer"
         objectManager: "@doctrine.orm.entity_manager"
         class: %fos_user.model.user.class%
+        tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator
         
   simplytestable.services.workerservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerService
