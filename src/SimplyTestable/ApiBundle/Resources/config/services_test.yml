@@ -2,6 +2,3 @@ services:
   simplytestable.services.httpClient:
     class:  webignition\Http\Mock\Client\Client
     public: false
-    
-  simplytestable.services.requestservice:
-    class:   SimplyTestable\ApiBundle\Services\TestRequestService  

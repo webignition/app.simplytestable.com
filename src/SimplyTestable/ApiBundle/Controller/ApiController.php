@@ -58,17 +58,7 @@ abstract class ApiController extends Controller
         $response->setStatusCode($statusCode);
         
         return $response;
-    }
-    
-    
-    /**
-     *
-     * @return Request
-     */
-    public function getRequest() {
-        return $this->getRequestService()->getRequest();
-    }
-    
+    }    
     
     /**
      *

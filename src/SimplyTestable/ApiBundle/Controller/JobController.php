@@ -410,6 +410,6 @@ class JobController extends ApiController
      * @return type 
      */
     private function getRequestValues($httpMethod = HTTP_METH_GET) {
-        return ($httpMethod == HTTP_METH_POST) ? $this->getRequest()->request : $this->getRequest()->query;            
+        return ($httpMethod == HTTP_METH_POST) ? $this->container->get('request')->request : $this->container->get('request')->query;
     }    
 }
