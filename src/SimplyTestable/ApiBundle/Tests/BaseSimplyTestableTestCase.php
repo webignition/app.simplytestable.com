@@ -7,12 +7,13 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     const JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\JobController';    
+    const USER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserController';    
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Controller\JobController
+     * @var array
      */
-    private $jobController = null;
+    private $controllers = array();
     
     
     /**
@@ -21,11 +22,31 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @return \SimplyTestable\ApiBundle\Controller\JobController
      */
     protected function getJobController($methodName) {
-        if (is_null($this->jobController)) {
-            $this->jobController = $this->createController(self::JOB_CONTROLLER_NAME, $methodName);
-        }        
+        return $this->getController(self::JOB_CONTROLLER_NAME, $methodName);
+    }
+    
+    /**
+     *
+     * @param string $methodName
+     * @return \SimplyTestable\ApiBundle\Controller\UserController
+     */
+    protected function getUserController($methodName, $postData) {
+        return $this->getController(self::USER_CONTROLLER_NAME, $methodName, $postData);
+    }    
+    
+    
+    /**
+     * 
+     * @param string $controllerName
+     * @param string $methodName
+     * @return Symfony\Bundle\FrameworkBundle\Controller\Controller
+     */
+    private function getController($controllerName, $methodName, array $postData = array(), array $queryData = array()) {
+        if (!isset($this->controllers[$controllerName])) {
+            $this->controllers[$controllerName] = $this->createController($controllerName, $methodName, $postData, $queryData);
+        }
         
-        return $this->jobController;
+        return $this->controllers[$controllerName];
     }
     
     
