@@ -41,6 +41,18 @@ class UserController extends ApiController
         
         return new \Symfony\Component\HttpFoundation\Response();
     }
+    
+    
+    public function activateAction($token) {
+        $user = $this->getUserService()->findUserByConfirmationToken($token);
+        if (is_null($user)) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
+        }
+        
+        $this->getUserManipulator()->activate($user->getUsername());
+        
+        return new \Symfony\Component\HttpFoundation\Response();
+    }
 
     
     /**
