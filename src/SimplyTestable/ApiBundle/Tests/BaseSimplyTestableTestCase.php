@@ -9,12 +9,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\JobController';    
     const USER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserController';    
     
-    /**
-     *
-     * @var array
-     */
-    private $controllers = array();
-    
     
     /**
      *
@@ -26,12 +20,14 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     }
     
     /**
-     *
+     * 
      * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
      * @return \SimplyTestable\ApiBundle\Controller\UserController
      */
-    protected function getUserController($methodName, $postData) {
-        return $this->getController(self::USER_CONTROLLER_NAME, $methodName, $postData);
+    protected function getUserController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::USER_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }    
     
     
@@ -41,12 +37,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $methodName
      * @return Symfony\Bundle\FrameworkBundle\Controller\Controller
      */
-    private function getController($controllerName, $methodName, array $postData = array(), array $queryData = array()) {
-        if (!isset($this->controllers[$controllerName])) {
-            $this->controllers[$controllerName] = $this->createController($controllerName, $methodName, $postData, $queryData);
-        }
-        
-        return $this->controllers[$controllerName];
+    private function getController($controllerName, $methodName, array $postData = array(), array $queryData = array()) {        
+        return $this->createController($controllerName, $methodName, $postData, $queryData);
     }
     
     
@@ -70,6 +62,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function createJob($canonicalUrl) {
         return $this->getJobController('startAction')->startAction($canonicalUrl);
     } 
+    
+    
+    /**
+     * 
+     * @param string $email
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    protected function createUser($email) {        
+        return $this->getUserController('createAction', array(
+            'email' => $email           
+        ))->createAction();  
+    }
         
 
     /**
@@ -98,6 +102,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getWorkerService() {
         return $this->container->get('simplytestable.services.workerservice');
+    }     
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\UserService
+     */
+    protected function getUserService() {
+        return $this->container->get('simplytestable.services.userservice');
     }     
     
     
