@@ -12,8 +12,7 @@ class UserController extends ApiController
     public function __construct() {
         $this->setInputDefinitions(array(
             'createAction' => new InputDefinition(array(
-                new InputArgument('email', InputArgument::REQUIRED, 'User email address'),
-                new InputArgument('password', InputArgument::REQUIRED, 'User password')
+                new InputArgument('email', InputArgument::REQUIRED, 'User email address')
             ))
         ));
         
@@ -23,19 +22,22 @@ class UserController extends ApiController
     }
     
     
-    public function getAction() {
+    public function getAction($email_canonical) {
+        
     }
     
-    public function createAction()
+    public function createAction()            
     {        
         $email = $this->getArguments('createAction')->get('email');
-        $password  = $this->getArguments('createAction')->get('password');
+        $password = md5($email . microtime(true) . $this->container->getParameter('secret'));
         
-        $user = $this->getUserService()->create($email, $password);
-        
-        if (!$user->hasActivationToken()) {            
-            $user->setConfirmationToken($this->getTokenGenerator()->generateToken());
+        if ($this->getUserService()->exists($email)) {
+            return $this->redirect($this->generateUrl('user', array(
+                'email_canonical' => $email
+            ), true));
         }
+        
+        $this->getUserService()->create($email, $password);
         
         return new \Symfony\Component\HttpFoundation\Response();
     }

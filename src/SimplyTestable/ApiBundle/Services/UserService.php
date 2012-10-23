@@ -56,17 +56,17 @@ class UserService extends UserManager {
      */
     public function create($email, $password) {
         if ($this->exists($email)) {
-            $user = $this->findUserByEmail($email);
-        } else {
-            $user = $this->createUser();
-            $user->setEmail($this->canonicalizeEmail($email));
-            $user->setEmailCanonical($this->canonicalizeEmail($email));
-            $user->setUsername($this->canonicalizeUsername($email));
-            $user->setPlainPassword($password);
-            $user->setConfirmationToken($this->getTokenGenerator()->generateToken());            
-            
-            $this->updateUser($user);
-        }    
+            return false;
+        }        
+        
+        $user = $this->createUser();
+        $user->setEmail($this->canonicalizeEmail($email));
+        $user->setEmailCanonical($this->canonicalizeEmail($email));
+        $user->setUsername($this->canonicalizeUsername($email));
+        $user->setPlainPassword($password);
+        $user->setConfirmationToken($this->getTokenGenerator()->generateToken());            
+
+        $this->updateUser($user);
         
         return $user;
 
