@@ -13,14 +13,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 abstract class ApiController extends Controller
 {      
-    
-    /**
-     *
-     * @var RequestService
-     */
-    private $requestService;
-    
-    
+   
     /**
      *
      * @var ParameterBag 
@@ -70,20 +63,6 @@ abstract class ApiController extends Controller
     
     /**
      *
-     * @return RequestService
-     */
-    protected function getRequestService() {
-        if (is_null($this->requestService)) {
-            $this->requestService = $this->container->get('simplytestable.services.requestservice');
-            $this->requestService->setRequest($this->get('request'));
-        }
-        
-        return $this->requestService;
-    }
-    
-    
-    /**
-     *
      * @return Request
      */
     public function getRequest() {
@@ -107,13 +86,13 @@ abstract class ApiController extends Controller
      * @return ParameterBag
      */
     public function getArguments($methodName) {        
-        if (is_null($this->arguments)) {            
-            if ($this->getRequestType($methodName) === HTTP_METH_POST) {
-                $this->arguments = $this->getRequestService()->getRequest()->request;
+        if (is_null($this->arguments)) {                                    
+            if ($this->getRequestType($methodName) === HTTP_METH_POST) {                
+                $this->arguments = $this->get('request')->request;
             } else {
-                $this->arguments = $this->getRequestService()->getRequest()->query;
+                $this->arguments = $this->get('request')->query;
             }
-        }
+        }        
         
         return $this->arguments;
     }
