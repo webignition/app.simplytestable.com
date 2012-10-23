@@ -70,24 +70,24 @@ abstract class BaseTestCase extends WebTestCase {
         //$this->runConsole("doctrine:database:create");        
         //$this->runConsole("doctrine:migrations:migrate", array("--no-interaction" => true));        
         //exec('php app/console doctrine:migrations:migrate --no-interaction');
-    }    
-
+    } 
+    
     /**
+     * 
      * Builds a Controller object and the request to satisfy it. Attaches the request
      * to the object and to the container.
      * 
-     * 'kernel_controller' events are fired.
-     *
-     * @param string The full path to the Controller class.
-     * @param string $controllerMethod Name of the method that will be called on the controller
-     * @param array An array of parameters to pass into the request.
-     * @return \Symfony\Bundle\FrameworkBundle\Controller\Controller The built Controller object.
+     * @param string $controllerClass The full path to the controller class
+     * @param string $controllerMethod Name of the controller method to be called
+     * @param array $postData Array of post values
+     * @param array $queryData Array of query string values
+     * @return \Symfony\Bundle\FrameworkBundle\Controller\Controller
      */
-    protected function createController($controllerClass, $controllerMethod, array $parameters = array(), array $query = array()) {
+    protected function createController($controllerClass, $controllerMethod, array $postData = array(), array $queryData = array()) {
         $request = $this->createWebRequest();
         $request->attributes->set('_controller', $controllerClass.'::'.$controllerMethod);
-        $request->request->add($parameters);
-        $request->query->add($query);
+        $request->request->add($postData);
+        $request->query->add($queryData);
         $this->container->set('request', $request);
               
         $controllerCallable = $this->getControllerCallable($request);        
