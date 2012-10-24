@@ -66,3 +66,7 @@ user_create:
 user_activate:
   pattern: /user/activate/{token}
   defaults: { _controller: SimplyTestableApiBundle:UserCreation:activate, _format: json }
+  
+user_reset_password_get_token:
+  pattern: /user/{email_canonical}/reset-password/token
+  defaults: { _controller: SimplyTestableApiBundle:UserPasswordReset:getToken, _format: json }  

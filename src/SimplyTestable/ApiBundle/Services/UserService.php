@@ -6,6 +6,7 @@ use FOS\UserBundle\Doctrine\UserManager;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use SimplyTestable\ApiBundle\Entity\User;
 
 class UserService extends UserManager {
     
@@ -85,6 +86,21 @@ class UserService extends UserManager {
     
     /**
      * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return string
+     */
+    public function getConfirmationToken(User $user) {
+        if (!$user->hasConfirmationToken()) {
+            $user->setConfirmationToken($this->getTokenGenerator()->generateToken());
+        }
+        
+        $this->updateUser($user);
+        return $user->getConfirmationToken();
+    }
+    
+    
+    /**
+     * 
      * @return \FOS\UserBundle\Util\TokenGenerator
      */
     private function getTokenGenerator() {
@@ -93,5 +109,5 @@ class UserService extends UserManager {
         }
         
         return $this->tokenGenerator;
-    }
+    }    
 }

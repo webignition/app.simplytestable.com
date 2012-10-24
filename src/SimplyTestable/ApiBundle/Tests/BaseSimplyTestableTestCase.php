@@ -7,7 +7,8 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     const JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\JobController';    
-    const USER_CREATION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserCreationController';    
+    const USER_CREATION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserCreationController';
+    const USER_PASSWORD_RESET_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserPasswordResetController';
     
     
     /**
@@ -29,6 +30,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function getUserCreationController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::USER_CREATION_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }    
+    
+    
+    /**
+     * 
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\UserPasswordResetController
+     */
+    protected function getUserPasswordResetController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::USER_PASSWORD_RESET_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }        
     
     
     /**
@@ -74,6 +87,21 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
             'email' => $email           
         ))->createAction();  
     }
+    
+
+    /**
+     * 
+     * @param string $email
+     * @return \SimplyTestable\ApiBundle\Entity\User
+     */
+    protected function createAndActivateUser($email) {        
+        $this->createUser($email);
+        
+        $user = $this->getUserService()->findUserByEmail($email);            
+        $this->getUserCreationController('activateAction')->activateAction($user->getConfirmationToken());
+        
+        return $user;          
+    }   
         
 
     /**

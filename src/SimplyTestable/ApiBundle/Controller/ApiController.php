@@ -51,8 +51,8 @@ abstract class ApiController extends Controller
      * @param int statusCode
      * @return \Symfony\Component\HttpFoundation\Response 
      */
-    protected function sendResponse($object, $statusCode = 200) {        
-        $output = $this->getSerializer()->serialize($object, 'json');   
+    protected function sendResponse($object = null, $statusCode = 200) {
+        $output = (is_null($object)) ? '' : $this->getSerializer()->serialize($object, 'json');   
         
         $response = new Response($output); 
         $response->setStatusCode($statusCode);
@@ -153,5 +153,13 @@ abstract class ApiController extends Controller
      */
     protected function getSerializer() {
         return $this->container->get('serializer');
+    }
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Entity\User
+     */
+    public function getUser() {
+        return parent::getUser();
     }
 }

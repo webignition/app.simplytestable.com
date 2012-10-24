@@ -40,7 +40,7 @@ class User extends BaseUser
      * 
      * @return boolean
      */
-    public function hasActivationToken() {
+    public function hasConfirmationToken() {
         return !is_null($this->getConfirmationToken());
     }
 }

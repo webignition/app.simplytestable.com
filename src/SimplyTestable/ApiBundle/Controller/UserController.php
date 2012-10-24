@@ -2,8 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-abstract class UserController extends ApiController
+class UserController extends ApiController
 {       
+    public function getAction() {
+        return $this->sendResponse();
+    }
+    
+    
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\UserService 
