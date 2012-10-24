@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     const JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\JobController';    
-    const USER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserController';    
+    const USER_CREATION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserCreationController';    
     
     
     /**
@@ -24,10 +24,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $methodName
      * @param array $postData
      * @param array $queryData
-     * @return \SimplyTestable\ApiBundle\Controller\UserController
+     * @return \SimplyTestable\ApiBundle\Controller\UserCreationController
      */
-    protected function getUserController($methodName, $postData = array(), $queryData = array()) {
-        return $this->getController(self::USER_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    protected function getUserCreationController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::USER_CREATION_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }    
     
     
@@ -70,7 +70,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     protected function createUser($email) {        
-        return $this->getUserController('createAction', array(
+        return $this->getUserCreationController('createAction', array(
             'email' => $email           
         ))->createAction();  
     }

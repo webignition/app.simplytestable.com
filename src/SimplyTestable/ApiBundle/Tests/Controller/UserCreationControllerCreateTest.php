@@ -2,14 +2,14 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
-class UserControllerCreateTest extends BaseControllerJsonTestCase {
+class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     
 
     public function testCreateActionWithEmailPresent() {
         $this->setupDatabase();
         $email = 'user1@example.com';
         
-        $controller = $this->getUserController('createAction', array(
+        $controller = $this->getUserCreationController('createAction', array(
             'email' => $email           
         ));
         
@@ -22,7 +22,7 @@ class UserControllerCreateTest extends BaseControllerJsonTestCase {
         $this->setupDatabase();
         
         try {
-            $controller = $this->getUserController('createAction', array());
+            $controller = $this->getUserCreationController('createAction', array());
             $controller->createAction();
             $this->fail('Attempt to create user with no email address did not generate HTTP 400');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {

@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
-class UserControllerActivateTest extends BaseControllerJsonTestCase {
+class UserCreationControllerActivateTest extends BaseControllerJsonTestCase {
        
 
     public function testActivateActionWithCorrectToken() {
@@ -16,7 +16,7 @@ class UserControllerActivateTest extends BaseControllerJsonTestCase {
         $this->assertNotNull($user);
         $this->assertInstanceOf('SimplyTestable\ApiBundle\Entity\User', $user);
         
-        $controller = $this->getUserController('activateAction');        
+        $controller = $this->getUserCreationController('activateAction');        
         $response = $controller->activateAction($user->getConfirmationToken());
         
         $this->assertEquals(200, $response->getStatusCode());        
@@ -35,7 +35,7 @@ class UserControllerActivateTest extends BaseControllerJsonTestCase {
         $this->assertInstanceOf('SimplyTestable\ApiBundle\Entity\User', $user);        
         
         try {
-            $controller = $this->getUserController('activateAction');        
+            $controller = $this->getUserCreationController('activateAction');        
             $response = $controller->activateAction('invalid token');
             $this->fail('Attempt to activate with incorrect token did not generate HTTP 400');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {

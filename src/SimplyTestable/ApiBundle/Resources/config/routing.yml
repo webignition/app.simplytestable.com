@@ -61,8 +61,8 @@ user:
   
 user_create:
   pattern: /user/create/
-  defaults: { _controller: SimplyTestableApiBundle:User:create, _format: json }       
+  defaults: { _controller: SimplyTestableApiBundle:UserCreation:create, _format: json }       
   
 user_activate:
   pattern: /user/activate/{token}
-  defaults: { _controller: SimplyTestableApiBundle:User:activate, _format: json }         
+  defaults: { _controller: SimplyTestableApiBundle:UserCreation:activate, _format: json }
