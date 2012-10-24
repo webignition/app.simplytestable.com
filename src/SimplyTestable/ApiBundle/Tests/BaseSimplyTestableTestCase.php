@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests;
 
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Entity\User;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
@@ -101,7 +102,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->getUserCreationController('activateAction')->activateAction($user->getConfirmationToken());
         
         return $user;          
-    }   
+    } 
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return string
+     */
+    protected function getPasswordResetToken(User $user) {//        
+        $this->getUserPasswordResetController('getTokenAction')->getTokenAction($user->getEmail());      
+        return $this->getUserService()->getConfirmationToken($user);        
+    }
         
 
     /**
