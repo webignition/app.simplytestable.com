@@ -11,3 +11,5 @@ parameters:
     mailer_password: null
     locale: en
     secret: SetThis!
+    admin_user_email: test.ci.admin@example.com
+    admin_user_password: password1
