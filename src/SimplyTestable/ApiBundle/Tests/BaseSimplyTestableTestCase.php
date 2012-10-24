@@ -80,6 +80,17 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     /**
      * 
+     * @param string $canonicalUrl
+     * @param int $jobId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function getJobStatus($canonicalUrl, $jobId) {        
+        return $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);     
+    }
+    
+    
+    /**
+     * 
      * @param string $email
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */

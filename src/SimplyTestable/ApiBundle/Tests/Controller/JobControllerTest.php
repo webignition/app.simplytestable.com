@@ -3,37 +3,15 @@
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class JobControllerTest extends BaseControllerJsonTestCase {
-
-    public function testStartAction() {           
-        $this->setupDatabase();
-        
-        $jobController = $this->getJobController('startAction');        
-        
-        $canonicalUrls = array(
-            'http://one.example.com',
-            'http://two.example.com',
-            'http://three.example.com'
-        );
-        
-        foreach ($canonicalUrls as $urlIndex => $canonicalUrl) {
-            $response = $jobController->startAction($canonicalUrl);
-
-            $this->assertEquals(302, $response->getStatusCode());        
-            $this->assertEquals($urlIndex + 1, $this->getJobIdFromUrl($response->getTargetUrl()));            
-        }       
-        
-        return;
-    }
-    
+   
     public function testStatusAction() {        
         $this->setupDatabase();
         
         $canonicalUrl = 'http://example.com/';
         
-        $jobController = $this->getJobController('statusAction');        
-        $jobController->startAction($canonicalUrl);
+        $this->createJob($canonicalUrl);
         
-        $response = $jobController->statusAction($canonicalUrl, 1);
+        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, 1);
         $responseJsonObject = json_decode($response->getContent());
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -52,7 +30,7 @@ class JobControllerTest extends BaseControllerJsonTestCase {
         $this->assertEquals(0, $responseJsonObject->errored_task_count);
         $this->assertEquals(0, $responseJsonObject->cancelled_task_count);
         $this->assertEquals(0, $responseJsonObject->skipped_task_count);
-    } 
+    }
     
     public function testListAction() {
         $this->setupDatabase();
