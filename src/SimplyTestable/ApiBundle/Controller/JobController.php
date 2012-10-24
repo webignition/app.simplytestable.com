@@ -19,9 +19,10 @@ class JobController extends ApiController
     {        
         $this->siteRootUrl = $site_root_url;
         
-        $existingJobId = $this->getJobService()->getEntityRepository()->getNewestIdByWebsiteAndState(
+        $existingJobId = $this->getJobService()->getEntityRepository()->getNewestIdByWebsiteAndStateAndUser(
             $this->getWebsite(),
-            $this->getJobService()->getIncompleteStates()
+            $this->getJobService()->getIncompleteStates(),
+            $this->getUser()
         );
         
         if (is_null($existingJobId)) {
