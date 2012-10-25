@@ -15,10 +15,11 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     /**
      *
      * @param string $methodName
+     * @param array $postData
      * @return \SimplyTestable\ApiBundle\Controller\JobController
      */
-    protected function getJobController($methodName) {
-        return $this->getController(self::JOB_CONTROLLER_NAME, $methodName);
+    protected function getJobController($methodName, $postData = array()) {
+        return $this->getController(self::JOB_CONTROLLER_NAME, $methodName, $postData);
     }
     
     /**
@@ -71,10 +72,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     /**
      *
      * @param string $canonicalUrl
+     * @param string $userEmail
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    protected function createJob($canonicalUrl) {
-        return $this->getJobController('startAction')->startAction($canonicalUrl);
+    protected function createJob($canonicalUrl, $userEmail = null) {
+        $postData = (is_null($userEmail)) ? array() : array(
+            'user' => $userEmail
+        );
+        
+        return $this->getJobController('startAction', $postData)->startAction($canonicalUrl);
     } 
     
     

@@ -312,11 +312,15 @@ class JobController extends ApiController
      * @return \SimplyTestable\ApiBundle\Entity\User 
      */
     public function getUser() {
-        if (!$this->isTestEnvironment()) {            
+        if (!$this->isTestEnvironment()) {                        
             return parent::getUser();
         }
         
-        return $this->get('simplytestable.services.userservice')->getPublicUser();
+        if  (is_null($this->getRequestValue('user'))) {
+            return $this->get('simplytestable.services.userservice')->getPublicUser();
+        }
+        
+        return $this->get('simplytestable.services.userservice')->findUserByEmail($this->getRequestValue('user'));
     }
     
     /**
