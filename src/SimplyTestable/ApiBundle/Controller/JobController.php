@@ -100,7 +100,7 @@ class JobController extends ApiController
             )
         ));
         
-        $jobs = $this->getJobService()->getEntityRepository()->findAllOrderedByIdDesc($limit);
+        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserOrderedByIdDesc($this->getUser(), $limit);
         $jobSummaries = array();
         
         foreach ($jobs as $job) {

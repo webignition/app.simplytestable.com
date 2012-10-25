@@ -15,15 +15,19 @@ class JobRepository extends EntityRepository
      * @param $limit int
      * @return array
      */
-    public function findAllOrderedByIdDesc($limit = null)
-    {  
-        $query = $this->getEntityManager()->createQuery('SELECT j FROM SimplyTestableApiBundle:Job\Job j ORDER BY j.id DESC');
+    public function findAllByUserOrderedByIdDesc(User $user, $limit = null)
+    {        
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job');
         
-        if (!is_null($limit)) {
-            $query->setMaxResults($limit);
-        }
+        $where = 'Job.user = :User';
         
-        return $query->getResult();
+        $queryBuilder->where($where);
+        $queryBuilder->setMaxResults($limit);
+        $queryBuilder->orderBy('Job.id', 'DESC');
+
+        $queryBuilder->setParameter('User', $user);
+        return $queryBuilder->getQuery()->getResult();         
     }
     
     
