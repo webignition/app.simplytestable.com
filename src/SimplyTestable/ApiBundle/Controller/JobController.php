@@ -227,42 +227,22 @@ class JobController extends ApiController
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
     private function getJob() {      
-        /* @var $job \SimplyTestable\ApiBundle\Entity\Job\Job */        
-        $job = $this->getJobService()->getEntityRepository()->findOneBy(array(
-            'id' => $this->testId,
-            //'user' => $this->getUser(),
-            'website' => $this->getWebsite()
-        ));
+        $job = $this->getJobService()->getEntityRepository()->findByIdAndWebsiteAndUsers(
+            $this->testId,
+            $this->getWebsite(),
+            array(
+                $this->getUser(),
+                $this->getUserService()->getPublicUser()
+            )
+        );
 
         if (is_null($job)) {
             return false;           
         }
-        
-        if (!$this->userHasAccessToJob($this->getUser(), $job)) {
-            return false;
-        }
-        
+     
         $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());        
         $job->setUrlCount($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
         return $job;      
-    } 
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Controller\User $user
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return boolean
-     */
-    private function userHasAccessToJob(User $user, Job $job) {
-//        var_dump($job->getUser()->getUsername(), $this->getUserService()->isPublicUser($job->getUser()), $job->getUser()->equals($user));
-//        exit();
-        
-        if ($this->getUserService()->isPublicUser($job->getUser())) {
-            return true;
-        }
-        
-        return $job->getUser()->equals($user);
     }
     
     
