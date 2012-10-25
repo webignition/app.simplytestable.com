@@ -51,6 +51,16 @@ class UserService extends UserManager {
     
     /**
      * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return boolean
+     */
+    public function isPublicUser(User $user) {
+        return $user->equals($this->getPublicUser());
+    }
+    
+    
+    /**
+     * 
      * @param string $email
      * @param string $password
      * @return \SimplyTestable\ApiBundle\Entity\User

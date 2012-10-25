@@ -87,11 +87,27 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     /**
      * 
      * @param string $canonicalUrl
+     * @param string $userEmail
+     * @return int
+     */
+    protected function createJobAndGetId($canonicalUrl, $userEmail = null) {
+        $response = $this->createJob($canonicalUrl, $userEmail);
+        return $this->getJobIdFromUrl($response->getTargetUrl());
+    }
+    
+    
+    /**
+     * 
+     * @param string $canonicalUrl
      * @param int $jobId
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function getJobStatus($canonicalUrl, $jobId) {        
-        return $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);     
+    protected function getJobStatus($canonicalUrl, $jobId, $userEmail = null) {        
+        $postData = (is_null($userEmail)) ? array() : array(
+            'user' => $userEmail
+        );        
+        
+        return $this->getJobController('statusAction', $postData)->statusAction($canonicalUrl, $jobId);     
     }
     
     

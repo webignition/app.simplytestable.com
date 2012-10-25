@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
 use Symfony\Component\Console\Input\InputArgument;
@@ -225,21 +226,44 @@ class JobController extends ApiController
      *
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
-    private function getJob() {        
+    private function getJob() {      
+        /* @var $job \SimplyTestable\ApiBundle\Entity\Job\Job */        
         $job = $this->getJobService()->getEntityRepository()->findOneBy(array(
             'id' => $this->testId,
-            'user' => $this->getUser(),
+            //'user' => $this->getUser(),
             'website' => $this->getWebsite()
         ));
 
         if (is_null($job)) {
             return false;           
-        }        
+        }
+        
+        if (!$this->userHasAccessToJob($this->getUser(), $job)) {
+            return false;
+        }
         
         $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());        
         $job->setUrlCount($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
         return $job;      
-    }   
+    } 
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Controller\User $user
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return boolean
+     */
+    private function userHasAccessToJob(User $user, Job $job) {
+//        var_dump($job->getUser()->getUsername(), $this->getUserService()->isPublicUser($job->getUser()), $job->getUser()->equals($user));
+//        exit();
+        
+        if ($this->getUserService()->isPublicUser($job->getUser())) {
+            return true;
+        }
+        
+        return $job->getUser()->equals($user);
+    }
     
     
     /**
@@ -350,6 +374,15 @@ class JobController extends ApiController
     private function getTaskService() {
         return $this->get('simplytestable.services.taskservice');
     }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\UserService 
+     */
+    private function getUserService() {
+        return $this->get('simplytestable.services.userservice');
+    }    
     
     
     /**
