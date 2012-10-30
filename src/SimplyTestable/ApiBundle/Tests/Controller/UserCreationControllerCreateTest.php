@@ -29,6 +29,35 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
             $this->assertEquals(400, $exception->getStatusCode());            
         }
     }   
+    
+    public function testCreateWithEmailOfExistingNotEnabledUser() {
+        $this->setupDatabase(); 
+        $email = 'user1@example.com';
+        $this->createAndFindUser($email);
+        
+        $controller = $this->getUserCreationController('createAction', array(
+            'email' => $email           
+        ));
+        
+        $response = $controller->createAction();
+        
+        $this->assertEquals(200, $response->getStatusCode());          
+    }  
+    
+    
+    public function testCreateWithEmailOfExistingEnabledUser() {
+        $this->setupDatabase();     
+        $email = 'user1@example.com';
+        $this->createAndActivateUser($email);
+        
+        $controller = $this->getUserCreationController('createAction', array(
+            'email' => $email           
+        ));
+        
+        $response = $controller->createAction();
+        
+        $this->assertEquals(302, $response->getStatusCode());          
+    }    
 }
 
 

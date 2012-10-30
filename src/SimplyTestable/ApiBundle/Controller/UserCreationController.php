@@ -26,9 +26,13 @@ class UserCreationController extends UserController
         $password = md5($email . microtime(true) . $this->container->getParameter('secret'));
         
         if ($this->getUserService()->exists($email)) {
-            return $this->redirect($this->generateUrl('user', array(
-                'email_canonical' => $email
-            ), true));
+            $user = $this->getUserService()->findUserByEmail($email);
+            
+            if ($user->isEnabled()) {
+                return $this->redirect($this->generateUrl('user', array(
+                    'email_canonical' => $email
+                ), true));                
+            }           
         }
         
         $this->getUserService()->create($email, $password);
