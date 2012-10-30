@@ -21,23 +21,6 @@ class UserPasswordResetController extends UserController
         ));        
     }    
     
-    public function getTokenAction($email_canonical)            
-    {        
-        $user = $this->getUserService()->findUserByEmail($email_canonical);
-        if (is_null($user)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
-        }
-        
-        if (!$user->isEnabled()) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(403);
-        }
-        
-        $token = $this->getUserService()->getConfirmationToken($user);
-        
-        return $this->sendResponse($token);
-    }
-    
-    
     public function resetPasswordAction($token) {  
         $user = $this->getUserService()->findUserByConfirmationToken($token);        
         if (is_null($user)) {

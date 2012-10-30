@@ -24,5 +24,18 @@ class UserController extends ApiController
      */
     protected function getUserManipulator() {        
         return $this->get('fos_user.util.user_manipulator');
-    }  
+    } 
+    
+    
+    public function getTokenAction($email_canonical)            
+    {        
+        $user = $this->getUserService()->findUserByEmail($email_canonical);
+        if (is_null($user)) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        $token = $this->getUserService()->getConfirmationToken($user);
+        
+        return $this->sendResponse($token);
+    }    
 }
