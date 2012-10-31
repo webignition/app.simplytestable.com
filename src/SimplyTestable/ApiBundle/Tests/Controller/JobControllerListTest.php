@@ -53,8 +53,8 @@ class JobControllerListTest extends BaseControllerJsonTestCase {
     public function testListActionForDifferentUsers() {
         $this->setupDatabase();
         
-        $user1 = $this->createAndActivateUser('user1@example.com');
-        $user2 = $this->createAndActivateUser('user2@example.com');
+        $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
         
         $canonicalUrls = array(
             array(

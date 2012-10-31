@@ -46,8 +46,8 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
         $email1 = 'user1@example.com';
         $email2 = 'user2@example.com';
         
-        $this->createAndActivateUser($email1);
-        $this->createAndActivateUser($email2);
+        $this->createAndActivateUser($email1, 'password1');
+        $this->createAndActivateUser($email2, 'password1');
         
         $user1 = $this->getUserService()->findUserByEmail($email1);
         $user2 = $this->getUserService()->findUserByEmail($email2);

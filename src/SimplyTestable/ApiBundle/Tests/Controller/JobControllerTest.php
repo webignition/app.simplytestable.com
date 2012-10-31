@@ -38,8 +38,8 @@ class JobControllerTest extends BaseControllerJsonTestCase {
         $canonicalUrl2 = 'http://two.example.com/';
         $canonicalUrl3 = 'http://three.example.com/';
         
-        $user1 = $this->createAndActivateUser('user1@example.com');
-        $user2 = $this->createAndActivateUser('user2@example.com');
+        $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
                 
         $jobId1 = $this->createJobAndGetId($canonicalUrl1, $user1->getEmail());
         $jobId2 = $this->createJobAndGetId($canonicalUrl2, $user2->getEmail());

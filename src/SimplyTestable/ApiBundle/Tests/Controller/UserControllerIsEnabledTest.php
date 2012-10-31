@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
-class UserControllerExistsTest extends BaseControllerJsonTestCase {
+class UserControllerIsEnabledTest extends BaseControllerJsonTestCase {
     
 
     public function testExistsWithNotEnabledUser() {
@@ -21,9 +21,9 @@ class UserControllerExistsTest extends BaseControllerJsonTestCase {
     
     public function testExistsWithEnabledUser() {
         $this->setupDatabase();
-        $email = 'user1@example.com';        
+        $email = 'user1@example.com';
         $password = 'password1';
-                
+        
         $user = $this->createAndActivateUser($email, $password);
         
         $controller = $this->getUserController('existsAction');
@@ -36,7 +36,7 @@ class UserControllerExistsTest extends BaseControllerJsonTestCase {
     public function testExistsWithNonExistentUser() {
         $this->setupDatabase();
         $email = 'user1@example.com';
-                
+        
         try {
             $controller = $this->getUserController('existsAction');
             $response = $controller->existsAction($email);

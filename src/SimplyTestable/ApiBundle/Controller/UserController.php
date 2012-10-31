@@ -45,6 +45,26 @@ class UserController extends ApiController
         return $this->sendResponse($token);
     }   
     
+
+    /**
+     * 
+     * @param string $email_canonical
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function isEnabledAction($email_canonical) {
+        $user = $this->getUserService()->findUserByEmail($email_canonical);
+        
+        if (is_null($user)) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        if ($user->isEnabled() === false) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        return new \Symfony\Component\HttpFoundation\Response('', 200);
+    }    
+    
     
     /**
      * 

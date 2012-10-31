@@ -11,7 +11,8 @@ class UserCreationController extends UserController
     public function __construct() {
         $this->setInputDefinitions(array(
             'createAction' => new InputDefinition(array(
-                new InputArgument('email', InputArgument::REQUIRED, 'User email address')
+                new InputArgument('email', InputArgument::REQUIRED, 'User email address'),
+                new InputArgument('password', InputArgument::REQUIRED, 'User password')
             ))
         ));
         
@@ -23,7 +24,7 @@ class UserCreationController extends UserController
     public function createAction()            
     {        
         $email = $this->getArguments('createAction')->get('email');
-        $password = md5($email . microtime(true) . $this->container->getParameter('secret'));
+        $password = $this->getArguments('createAction')->get('password');        
         
         if ($this->getUserService()->exists($email)) {
             $user = $this->getUserService()->findUserByEmail($email);

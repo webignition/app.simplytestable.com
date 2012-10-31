@@ -7,8 +7,9 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     public function testPerformResetWithValidToken() {
         $this->setupDatabase();
         $email = 'user1@example.com';
+        $password = 'password1';
         
-        $user = $this->createAndActivateUser($email);        
+        $user = $this->createAndActivateUser($email, $password);        
         $token = $this->getPasswordResetToken($user);
         
         $controller = $this->getUserPasswordResetController('resetPasswordAction', array(

@@ -8,8 +8,9 @@ class UserCreationControllerActivateTest extends BaseControllerJsonTestCase {
     public function testActivateActionWithCorrectToken() {
         $this->setupDatabase();
         $email = 'user1@example.com';
+        $password = 'password1';        
         
-        $this->createUser($email);
+        $this->createUser($email, $password);
         
         $user = $this->getUserService()->findUserByEmail($email);
         
@@ -26,8 +27,9 @@ class UserCreationControllerActivateTest extends BaseControllerJsonTestCase {
     public function testActivateActionWithIncorrectToken() {
         $this->setupDatabase();
         $email = 'user1@example.com';
+        $password = 'password1';
         
-        $this->createUser($email);
+        $this->createUser($email, $password);
         
         $user = $this->getUserService()->findUserByEmail($email);
         

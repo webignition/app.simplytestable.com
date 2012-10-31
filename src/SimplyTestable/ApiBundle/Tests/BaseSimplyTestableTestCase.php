@@ -129,9 +129,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $email
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    protected function createUser($email) {        
+    protected function createUser($email, $password) {        
         return $this->getUserCreationController('createAction', array(
-            'email' => $email           
+            'email' => $email,
+            'password' => $password
         ))->createAction();  
     }
     
@@ -141,8 +142,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $email
      * @return \SimplyTestable\ApiBundle\Entity\User
      */
-    protected function createAndFindUser($email) {        
-        $this->createUser($email);
+    protected function createAndFindUser($email, $password) {        
+        $this->createUser($email, $password);
         
         return $this->getUserService()->findUserByEmail($email);      
     }     
@@ -153,8 +154,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $email
      * @return \SimplyTestable\ApiBundle\Entity\User
      */
-    protected function createAndActivateUser($email) {        
-        $this->createUser($email);
+    protected function createAndActivateUser($email, $password) {        
+        $this->createUser($email, $password);
         
         $user = $this->getUserService()->findUserByEmail($email);            
         $this->getUserCreationController('activateAction')->activateAction($user->getConfirmationToken());

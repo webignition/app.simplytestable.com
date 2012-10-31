@@ -8,8 +8,9 @@ class UserControllerGetTokenTest extends BaseControllerJsonTestCase {
     public function testGetTokenWithNotEnabledUser() {
         $this->setupDatabase();
         $email = 'user1@example.com';
+        $password = 'password1';
         
-        $user = $this->createAndFindUser($email);
+        $user = $this->createAndFindUser($email, $password);
         
         $controller = $this->getUserController('getTokenAction');
         $response = $controller->getTokenAction($user->getEmail());
@@ -37,8 +38,9 @@ class UserControllerGetTokenTest extends BaseControllerJsonTestCase {
     public function testGetTokenWithEnabledUser() {
         $this->setupDatabase();
         $email = 'user1@example.com';
+        $password = 'password1';
         
-        $user = $this->createAndActivateUser($email);
+        $user = $this->createAndActivateUser($email, $password);
         
         $controller = $this->getUserController('getTokenAction');
         $response = $controller->getTokenAction($user->getEmail());
