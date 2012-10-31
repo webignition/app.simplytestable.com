@@ -27,6 +27,12 @@ class UserController extends ApiController
     } 
     
     
+    /**
+     * 
+     * @param string $email_canonical
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
     public function getTokenAction($email_canonical)            
     {        
         $user = $this->getUserService()->findUserByEmail($email_canonical);
@@ -37,5 +43,21 @@ class UserController extends ApiController
         $token = $this->getUserService()->getConfirmationToken($user);
         
         return $this->sendResponse($token);
-    }    
+    }   
+    
+    
+    /**
+     * 
+     * @param string $email_canonical
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function existsAction($email_canonical) {
+        $user = $this->getUserService()->findUserByEmail($email_canonical);
+        
+        if (is_null($user)) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        return new \Symfony\Component\HttpFoundation\Response('', 200);
+    }
 }

@@ -74,3 +74,7 @@ user_get_token:
 user_reset_password:
   pattern: /user/reset-password/{token}/
   defaults: { _controller: SimplyTestableApiBundle:UserPasswordReset:resetPassword, _format: json }
+  
+user_exists:
+  pattern: /user/{email_canonical}/exists/
+  defaults: { _controller: SimplyTestableApiBundle:User:exists, _format: json }     

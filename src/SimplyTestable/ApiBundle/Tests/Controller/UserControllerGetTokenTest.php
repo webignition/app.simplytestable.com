@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
-class UserGetTokenTest extends BaseControllerJsonTestCase {
+class UserControllerGetTokenTest extends BaseControllerJsonTestCase {
     
 
     public function testGetTokenWithNotEnabledUser() {
