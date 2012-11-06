@@ -54,14 +54,14 @@ task_complete:
 status:
   pattern: /
   defaults: { _controller: SimplyTestableApiBundle:Status:index, _format: json }     
-
-user:
-  pattern: /user/{email_canonical}
-  defaults: { _controller: SimplyTestableApiBundle:User:get, _format: json }         
   
 user_create:
   pattern: /user/create/
-  defaults: { _controller: SimplyTestableApiBundle:UserCreation:create, _format: json }       
+  defaults: { _controller: SimplyTestableApiBundle:UserCreation:create, _format: json }   
+
+user:
+  pattern: /user/{email_canonical}/
+  defaults: { _controller: SimplyTestableApiBundle:User:get, _format: json }             
   
 user_activate:
   pattern: /user/activate/{token}/

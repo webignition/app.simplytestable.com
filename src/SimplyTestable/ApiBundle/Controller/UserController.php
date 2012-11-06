@@ -2,10 +2,19 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\User;
+
 class UserController extends ApiController
 {       
-    public function getAction() {
-        return $this->sendResponse();
+    public function getAction() {        
+        return $this->sendResponse($this->getUserSummary($this->getUser()));
+    }
+    
+    
+    private function getUserSummary(User $user) {
+        return array(
+            'email' => $user->getEmailCanonical()           
+        );
     }
     
     
