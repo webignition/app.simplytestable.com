@@ -27,8 +27,8 @@ class UserPasswordResetController extends UserController
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
         }
         
-        if (!$user->isEnabled()) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(403);
+        if (!$user->isEnabled()) {            
+            $this->getUserManipulator()->activate($user->getUsername());
         }
 
         $user->setPlainPassword($this->getArguments('resetPasswordAction')->get('password'));

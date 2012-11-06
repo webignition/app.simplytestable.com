@@ -36,6 +36,22 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
             $this->assertEquals(404, $exception->getStatusCode());            
         }         
     }     
+    
+    public function testPerformResetWithInactiveUser() {
+        $this->setupDatabase();
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);        
+        $token = $this->getPasswordResetToken($user);
+        
+        $controller = $this->getUserPasswordResetController('resetPasswordAction', array(
+            'password' => 'newpassword'
+        ));
+        
+        $response = $controller->resetPasswordAction($token);
+        $this->assertEquals(200, $response->getStatusCode());         
+    }
 }
 
 
