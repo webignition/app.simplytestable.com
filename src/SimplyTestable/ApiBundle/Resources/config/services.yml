@@ -1,4 +1,7 @@
 services:
+  simplytestable.session.handler:
+    class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
+  
   simplytestable.services.httpClient:
     class:  webignition\Http\Client\Client
 
