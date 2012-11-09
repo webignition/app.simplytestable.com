@@ -15,7 +15,8 @@ class Version20120906125907_add_CSS_validation_TaskType extends EntityModificati
     private $taskTypes = array(
         'CSS validation' => array(
             'description' => 'Validates the CSS related to a given web document URL',
-            'class' => 'verification'
+            'class' => 'verification',
+            'selectable' => true
         )
     );
     
@@ -28,6 +29,10 @@ class Version20120906125907_add_CSS_validation_TaskType extends EntityModificati
             $taskType->setClass($class);
             $taskType->setDescription($properties['description']);
             $taskType->setName($name);
+            
+            if ($properties['selectable'] === true) {
+                $taskType->setSelectable(true);
+            }
             
             $this->getEntityManager()->persist($taskType);
             $this->getEntityManager()->flush();            
