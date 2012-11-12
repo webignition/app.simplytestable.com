@@ -28,4 +28,4 @@ doctrine:
     connections:
       default:
         driver: pdo_sqlite
-        path: /media/ramdisk/sqlite/test.db
+        path: /run/shm/app.simplytestable.com.db

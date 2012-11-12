@@ -21,3 +21,10 @@ monolog:
             type:  stream
             path:  %kernel.logs_dir%/%kernel.environment%.log
             level: debug
+            
+doctrine:
+  dbal:
+    connections:
+      default:
+        driver: pdo_sqlite
+        path: /run/shm/app.simplytestable.com.db            
