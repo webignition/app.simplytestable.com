@@ -2076,22 +2076,23 @@
         },
         {
             "name": "webignition/url",
-            "version": "1.4.1",
+            "version": "1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url",
-                "reference": "1.4.1"
+                "reference": "1.5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/url/zipball/1.4.1",
-                "reference": "1.4.1",
+                "url": "https://github.com/webignition/url/archive/1.5.zip",
+                "reference": "1.5",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.3.0",
+                "ext-intl": "*"
             },
-            "time": "2012-10-19 04:50:16",
+            "time": "2012-11-12 14:01:08",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
