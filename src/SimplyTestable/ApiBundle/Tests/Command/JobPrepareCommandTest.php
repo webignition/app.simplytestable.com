@@ -40,7 +40,7 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
         
         $this->assertEquals(count($expectedTaskUrls), $response->url_count);
         $this->assertEquals(count($expectedTaskUrls) * $taskTypeCount, $response->task_count);
-        $this->assertEquals(count($expectedTaskUrls), $response->task_count_by_state->queued);
+        $this->assertEquals(count($expectedTaskUrls) * $taskTypeCount, $response->task_count_by_state->queued);
         
         return;
     }
