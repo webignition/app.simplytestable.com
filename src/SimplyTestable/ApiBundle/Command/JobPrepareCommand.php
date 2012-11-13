@@ -98,6 +98,16 @@ class JobPrepareCommand extends BaseCommand
                     $task->setType($taskType);
                     $task->setUrl($url);
                     $task->setState($newTaskState);
+                    
+                    if ($taskType->getName() == 'CSS validation') {
+                        $task->setParameters(json_encode(array(
+                            'ref-domains-to-ignore' => array(
+                                'cdnjs.cloudflare.com',
+                                'ajax.googleapis.com',
+                                'netdna.bootstrapcdn.com'
+                            )
+                        )));
+                    }
 
                     $entityManager->persist($task);                             
                 }
