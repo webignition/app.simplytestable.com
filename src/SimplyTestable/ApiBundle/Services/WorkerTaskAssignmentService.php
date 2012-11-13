@@ -209,10 +209,17 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/');
 
         $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);
-        $httpRequest->setPostFields(array(
+        
+        $postFields = array(
             'url' => $task->getUrl(),
-            'type' => (string)$task->getType()
-        ));
+            'type' => (string)$task->getType()            
+        );
+        
+        if ($task->hasParameters()) {
+            $postFields['parameters'] = $task->getParameters();
+        }
+        
+        $httpRequest->setPostFields($postFields);
 
         try {            
             $response = $this->httpClient->getResponse($httpRequest);
@@ -243,10 +250,16 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         $requestData = array();
         foreach ($tasks as $task) {
             /* @var $task Task */
-            $requestData[] = array(
+            $postFields = array(
                 'url' => $task->getUrl(),
-                'type' => (string)$task->getType()
+                'type' => (string)$task->getType()            
             );
+        
+            if ($task->hasParameters()) {
+                $postFields['parameters'] = $task->getParameters();
+            }          
+            
+            $requestData[] = $postFields;
         }
         
         $httpRequest->setPostFields(array(
