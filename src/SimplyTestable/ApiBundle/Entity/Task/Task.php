@@ -122,7 +122,7 @@ class Task
      * @var string
      * @ORM\Column(type="text", nullable=true)
      */
-    protected $properties;
+    protected $parameters;
     
     
     /**
@@ -382,25 +382,33 @@ class Task
     }
     
     /**
-     * Set properties
+     * Set parameters
      *
-     * @param string $properties
+     * @param string $parameters
      * @return Task
      */
-    public function setProperties($properties)
+    public function setProperties($parameters)
     {
-        $this->properties = $properties;
+        $this->parameters = $parameters;
     
         return $this;
     }
 
     /**
-     * Get properties
+     * Get parameters
      *
      * @return string
      */
     public function getProperties()
     {
-        return $this->properties;
-    }     
+        return $this->parameters;
+    }  
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasParameters() {
+        return $this->getParameters() != '';
+    }
 }
