@@ -46,7 +46,7 @@ class JobPrepareCommand extends BaseCommand
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {
+    {        
         /* @var $job Job */
         /* @var $taskType TaskType */
         /* @var $task Task */
@@ -85,7 +85,9 @@ class JobPrepareCommand extends BaseCommand
         $requestedTaskTypes = $job->getRequestedTaskTypes();
         $newTaskState = $this->getTaskService()->getQueuedState();
 
-        $jobCount = 0;
+        $jobCount = 0; 
+        
+        $cssValidatorRefDomainsToIgnore = is_null($this->getContainer()->getParameter('css-validator-ref-domains-to-ignore')) ? array() : $this->getContainer()->getParameter('css-validator-ref-domains-to-ignore');
         
         foreach ($urls as $url) {                
             $comparatorUrl = new NormalisedUrl($url);
@@ -101,11 +103,7 @@ class JobPrepareCommand extends BaseCommand
                     
                     if ($taskType->getName() == 'CSS validation') {
                         $task->setParameters(json_encode(array(
-                            'ref-domains-to-ignore' => array(
-                                'cdnjs.cloudflare.com',
-                                'ajax.googleapis.com',
-                                'netdna.bootstrapcdn.com'
-                            )
+                            'ref-domains-to-ignore' => $cssValidatorRefDomainsToIgnore
                         )));
                     }
 

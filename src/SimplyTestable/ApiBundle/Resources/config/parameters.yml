@@ -8,4 +8,9 @@ parameters:
     "job-mark-completed": "SimplyTestable\ApiBundle\Resque\Job\JobMarkCompletedJob"
     "task-assign": "SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob"       
     "task-cancel": "SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob"
-  resque_pid: "simplytestable_apibundle"    
+  resque_pid: "simplytestable_apibundle"
+  css-validator-ref-domains-to-ignore:
+   - cdnjs.cloudflare.com
+   - ajax.googleapis.com
+   - netdna.bootstrapcdn.com
+   - ajax.aspnetcdn.com
