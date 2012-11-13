@@ -114,7 +114,15 @@ class Task
      * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Output", cascade={"persist"})
      * @SerializerAnnotation\Expose
      */
-    protected $output;            
+    protected $output; 
+    
+    
+    /**
+     *
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $properties;
     
     
     /**
@@ -372,4 +380,27 @@ class Task
     {
         return !is_null($this->getWorker());
     }
+    
+    /**
+     * Set properties
+     *
+     * @param string $properties
+     * @return Task
+     */
+    public function setProperties($properties)
+    {
+        $this->properties = $properties;
+    
+        return $this;
+    }
+
+    /**
+     * Get properties
+     *
+     * @return string
+     */
+    public function getProperties()
+    {
+        return $this->properties;
+    }     
 }
