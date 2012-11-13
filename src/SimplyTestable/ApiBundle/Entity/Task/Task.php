@@ -387,7 +387,7 @@ class Task
      * @param string $parameters
      * @return Task
      */
-    public function setProperties($parameters)
+    public function setParameters($parameters)
     {
         $this->parameters = $parameters;
     
@@ -399,7 +399,7 @@ class Task
      *
      * @return string
      */
-    public function getProperties()
+    public function getParameters()
     {
         return $this->parameters;
     }  
