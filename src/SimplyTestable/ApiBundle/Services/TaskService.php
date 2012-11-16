@@ -346,6 +346,19 @@ class TaskService extends EntityService {
     
     
     /**
+     * 
+     * @return array
+     */
+    public function getIncompleteStates() {
+        return array(
+            $this->getInProgressState(),
+            $this->getQueuedState(),
+            $this->getQueuedForAssignmentState()            
+        );
+    }
+    
+    
+    /**
      *
      * @param Task $task
      * @return Task
