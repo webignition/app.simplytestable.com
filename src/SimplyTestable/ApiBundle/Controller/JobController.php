@@ -20,11 +20,20 @@ class JobController extends ApiController
     {        
         $this->siteRootUrl = $site_root_url;
         
-        $existingJobId = $this->getJobService()->getEntityRepository()->getNewestIdByWebsiteAndStateAndUser(
+        $existingJobs = $this->getJobService()->getEntityRepository()->getAllByWebsiteAndStateAndUser(
             $this->getWebsite(),
             $this->getJobService()->getIncompleteStates(),
             $this->getUser()
         );
+
+        $existingJobId = null;
+        
+        $requestedTaskTypes = $this->getTaskTypes();        
+        foreach ($existingJobs as $existingJob) {
+            if ($this->jobMatchesRequestedTaskTypes($existingJob, $requestedTaskTypes)) {
+                $existingJobId = $existingJob->getId();
+            }
+        }
         
         if (is_null($existingJobId)) {            
             $job = $this->getJobService()->create(
@@ -50,7 +59,33 @@ class JobController extends ApiController
             'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             'test_id' => $job->getId()
         )));
-    }    
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param array $requestedTaskTypes
+     * @return boolean
+     */
+    private function jobMatchesRequestedTaskTypes(Job $job, $requestedTaskTypes) {            
+        $jobTaskTypes = $job->getRequestedTaskTypes();
+        
+        foreach ($requestedTaskTypes as $requestedTaskType) {
+            if (!$jobTaskTypes->contains($requestedTaskType)) {
+                return false;
+            }
+        }
+           
+        $jobTaskTypeArray = $jobTaskTypes->toArray();
+        foreach ($jobTaskTypeArray as $jobTaskType) {
+            if (!in_array($jobTaskType, $requestedTaskTypes)) {
+                return false;
+            }
+        }
+
+        return true;     
+    }
     
     public function statusAction($site_root_url, $test_id)
     {         
@@ -287,7 +322,7 @@ class JobController extends ApiController
      * @return array
      */
     private function getTaskTypes() {        
-        $requestTaskTypes = $this->getRequestTaskTypes();        
+        $requestTaskTypes = $this->getRequestTaskTypes();                
         return (count($requestTaskTypes) === 0) ? $this->getAllSelectableTaskTypes() : $requestTaskTypes;
     }
     

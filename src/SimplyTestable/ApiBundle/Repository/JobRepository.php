@@ -142,5 +142,44 @@ class JobRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult();
         
         return (count($result)) ? (int)$result[0]['id'] : null;
-    }
+    } 
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
+     * @param array $jobStates
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return int
+     */
+    public function getAllByWebsiteAndStateAndUser(WebSite $website, $jobStates, User $user) {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job');
+        
+        $where = 'Job.website = :Website and Job.user = :User';
+        
+        if (is_array($jobStates)) {
+            $stateWhere = '';
+            $stateCount = count($jobStates);
+            
+            foreach ($jobStates as $stateIndex => $jobState) {
+                $stateWhere .= 'Job.state = :JobState' . $stateIndex;
+                if ($stateIndex < $stateCount - 1) {
+                    $stateWhere .= ' OR ';
+                }
+                $queryBuilder->setParameter('JobState'.$stateIndex, $jobState);
+            }
+            
+            $where .= ' AND ('.$stateWhere.')';
+        }
+        
+        $queryBuilder->where($where);
+        $queryBuilder->orderBy('Job.id', 'desc');
+
+        $queryBuilder->setParameter('Website', $website);
+        $queryBuilder->setParameter('User', $user);
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return (count($result)) ? $result : null;
+    }     
 }
