@@ -164,6 +164,15 @@ class Type
     
     
     /**
+     * 
+     * @return boolean
+     */
+    public function isSelectable() {
+        return $this->getSelectable() === true;
+    }
+    
+    
+    /**
      *
      * @param Type $taskType
      * @return boolean
