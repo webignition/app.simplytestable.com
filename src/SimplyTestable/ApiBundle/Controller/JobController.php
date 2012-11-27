@@ -26,7 +26,7 @@ class JobController extends ApiController
             $this->getUser()
         );
         
-        if (is_null($existingJobId)) {
+        if (is_null($existingJobId)) {            
             $job = $this->getJobService()->create(
                 $this->getUser(),
                 $this->getWebsite(),
@@ -286,8 +286,36 @@ class JobController extends ApiController
      *
      * @return array
      */
-    private function getTaskTypes() {
-        return $this->getAllSelectableTaskTypes();
+    private function getTaskTypes() {        
+        $requestTaskTypes = $this->getRequestTaskTypes();        
+        return (count($requestTaskTypes) === 0) ? $this->getAllSelectableTaskTypes() : $requestTaskTypes;
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    private function getRequestTaskTypes() {                
+        $requestTaskTypes = array();
+        
+        $requestedTaskTypes = $this->getRequestValue('test-types');
+        
+        if (!is_array($requestedTaskTypes)) {
+            return $requestTaskTypes;
+        }
+        
+        foreach ($requestedTaskTypes as $taskTypeName) {            
+            if ($this->getTaskTypeService()->exists($taskTypeName)) {
+                $taskType = $this->getTaskTypeService()->getByName($taskTypeName);                
+                
+                if ($taskType->isSelectable()) {
+                    $requestTaskTypes[] = $taskType;
+                }
+            }
+        }
+        
+        return $requestTaskTypes;
     }
     
     
@@ -354,6 +382,16 @@ class JobController extends ApiController
     private function getTaskService() {
         return $this->get('simplytestable.services.taskservice');
     }
+    
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskTypeService 
+     */
+    private function getTaskTypeService() {
+        return $this->get('simplytestable.services.tasktypeservice');
+    }    
     
     
     /**
