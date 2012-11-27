@@ -169,15 +169,14 @@ class JobController extends ApiController
                     'id' => $job->getId()
                 )                
             );
-        }  
+        }
         
-        $tasksToDeAssign = array();
-
-
-        foreach ($job->getTasks() as $task) {
+        $tasksToDeAssign = array();        
+        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($job);     
+        foreach ($taskIds as $taskId) {
             $tasksToDeAssign[] = array(
-                'id' => $task->getId()
-            );
+                'id' => $taskId
+            );            
         }      
         
         $this->get('simplytestable.services.resqueQueueService')->removeCollection(
@@ -187,18 +186,18 @@ class JobController extends ApiController
         );
 
         $tasksAwaitingCancellation = $this->getTaskService()->getAwaitingCancellationByJob($job);
-        $taskIds = array();
-        
+        $taskIdsToCancel = array();
+
         foreach($tasksAwaitingCancellation as $task) {
-            $taskIds[] = $task->getId();
+            $taskIdsToCancel[] = $task->getId();
         }
         
-        if (count($taskIds) > 0) {
+        if (count($taskIdsToCancel) > 0) {
             $this->get('simplytestable.services.resqueQueueService')->add(
                 'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
                 'task-cancel',
                 array(
-                    'ids' => implode(',', $taskIds)
+                    'ids' => implode(',', $taskIdsToCancel)
                 )              
             );               
         }    
