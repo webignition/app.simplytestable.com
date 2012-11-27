@@ -28,11 +28,13 @@ class JobController extends ApiController
 
         $existingJobId = null;
         
-        $requestedTaskTypes = $this->getTaskTypes();        
-        foreach ($existingJobs as $existingJob) {
-            if ($this->jobMatchesRequestedTaskTypes($existingJob, $requestedTaskTypes)) {
-                $existingJobId = $existingJob->getId();
-            }
+        if (count($existingJobs)) {
+            $requestedTaskTypes = $this->getTaskTypes();        
+            foreach ($existingJobs as $existingJob) {
+                if ($this->jobMatchesRequestedTaskTypes($existingJob, $requestedTaskTypes)) {
+                    $existingJobId = $existingJob->getId();
+                }
+            }            
         }
         
         if (is_null($existingJobId)) {            
