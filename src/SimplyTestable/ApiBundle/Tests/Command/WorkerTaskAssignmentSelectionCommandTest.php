@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class WorkerTaskAssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {    
 
     public function testSelectTasksForAssignment() {        
-        $taskTypeCount = 2;
+        $taskTypeCount = $this->getTaskTypeService()->getSelectableCount();
         
         $this->setupDatabase();
         

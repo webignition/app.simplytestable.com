@@ -214,6 +214,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     
     /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskTypeService
+     */
+    protected function getTaskTypeService() {
+        return $this->container->get('simplytestable.services.tasktypeservice');
+    }     
+    
+    
+    /**
      * 
      * @return \SimplyTestable\ApiBundle\Entity\Worker
      */
