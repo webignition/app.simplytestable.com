@@ -7,9 +7,9 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class WorkerTaskAssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {    
 
     public function testSelectTasksForAssignment() {        
-        $taskTypeCount = $this->getTaskTypeService()->getSelectableCount();
-        
         $this->setupDatabase();
+        
+        $taskTypeCount = $this->getTaskTypeService()->getSelectableCount();        
         
         $canonicalUrl = 'http://example.com/';   
         
