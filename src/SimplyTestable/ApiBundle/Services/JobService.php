@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 
 class JobService extends EntityService {
     
@@ -165,32 +166,32 @@ class JobService extends EntityService {
      * @param array $taskTypes
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
-    public function create(User $user, WebSite $website, array $taskTypes) {
+    public function create(User $user, WebSite $website, array $taskTypes, array $taskTypeOptionsArray) {
         $job = new Job();
         $job->setUser($user);
         $job->setWebsite($website);
         
         foreach ($taskTypes as $taskType) {
-            if ($taskType instanceof TaskType) {
+            if ($taskType instanceof TaskType) {                
                 $job->addRequestedTaskType($taskType);
-            }
-        }
-        
-        $statesToCheckFor = array(
-            'job-in-progress',
-            'job-queued',
-            'job-new'
-        );
-        
-        foreach($statesToCheckFor as $stateToCheckFor) {
-            $job->setState($this->stateService->fetch($stateToCheckFor));
-            if ($this->has($job)) {                
-                $this->cancel($this->fetch($job));
+                
+                if (isset($taskTypeOptionsArray[$taskType->getName()])) {
+                    $taskTypeOptions = new TaskTypeOptions();
+                    $taskTypeOptions->setJob($job);
+                    $taskTypeOptions->setTaskType($taskType);
+                    $taskTypeOptions->setOptions($taskTypeOptionsArray[$taskType->getName()]);                
+
+                    $this->getEntityManager()->persist($taskTypeOptions);                    
+                }
             }
         }
         
         $job->setState($this->getStartingState());
-        return $this->persistAndFlush($job);
+        $this->getEntityManager()->persist($job);
+        
+        $this->getEntityManager()->flush();
+
+        return $job;
     }
     
     

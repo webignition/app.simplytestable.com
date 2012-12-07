@@ -17,7 +17,7 @@ class JobController extends ApiController
     private $testId = null;    
     
     public function startAction($site_root_url)
-    {        
+    {                
         $this->siteRootUrl = $site_root_url;
         
         $existingJobs = $this->getJobService()->getEntityRepository()->getAllByWebsiteAndStateAndUser(
@@ -41,7 +41,8 @@ class JobController extends ApiController
             $job = $this->getJobService()->create(
                 $this->getUser(),
                 $this->getWebsite(),
-                $this->getTaskTypes()
+                $this->getTaskTypes(),
+                $this->getTaskTypeOptions()
             );
             
             $this->get('simplytestable.services.resqueQueueService')->add(
@@ -123,8 +124,26 @@ class JobController extends ApiController
             'task_types' => $job->getRequestedTaskTypes(),
             'errored_task_count' => $this->getJobService()->getErroredTaskCount($job),
             'cancelled_task_count' => $this->getJobService()->getCancelledTaskCount($job),
-            'skipped_task_count' => $this->getJobService()->getSkippedTaskCount($job)
+            'skipped_task_count' => $this->getJobService()->getSkippedTaskCount($job),
+            'task_type_options' => $this->getJobTaskTypeOptions($job)
         );        
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return array
+     */
+    private function getJobTaskTypeOptions(Job $job) {
+        $jobTaskTypeOptions = array();
+        
+        foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
+            /* @var $taskTypeOptions \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions */            
+            $jobTaskTypeOptions[$taskTypeOptions->getTaskType()->getName()] = $taskTypeOptions->getOptions();
+        }
+        
+        return $jobTaskTypeOptions;
     }
     
     
@@ -325,6 +344,15 @@ class JobController extends ApiController
     private function getTaskTypes() {        
         $requestTaskTypes = $this->getRequestTaskTypes();                
         return (count($requestTaskTypes) === 0) ? $this->getAllSelectableTaskTypes() : $requestTaskTypes;
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    private function getTaskTypeOptions() {
+        return (is_array($this->getRequestValue('test-type-options'))) ? $this->getRequestValue('test-type-options') : array();
     }
     
     
