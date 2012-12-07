@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
@@ -93,6 +94,8 @@ class JobPrepareCommand extends BaseCommand
             $comparatorUrl = new NormalisedUrl($url);
             if (!$this->isProcessedUrl($comparatorUrl)) {
                 foreach ($requestedTaskTypes as $taskType) {
+                    $taskTypeOptions = $this->getTaskTypeOptions($job, $taskType);
+                    
                     $jobCount++;
 
                     $task = new Task();
@@ -101,10 +104,33 @@ class JobPrepareCommand extends BaseCommand
                     $task->setUrl($url);
                     $task->setState($newTaskState);
                     
-                    if ($taskType->getName() == 'CSS validation') {
-                        $task->setParameters(json_encode(array(
-                            'ref-domains-to-ignore' => $cssValidatorRefDomainsToIgnore
-                        )));
+                    if ($taskTypeOptions->getOptionCount()) {
+                        $options = $taskTypeOptions->getOptions();                       
+                        
+                        $rawRomainsToIgnore = array();
+                        
+                        if ($taskTypeOptions->hasOption('ignore-common-cdns')) {
+                            $rawRomainsToIgnore = $cssValidatorRefDomainsToIgnore;
+                        }
+                        
+                        if ($taskTypeOptions->hasOption('domains-to-ignore')) {
+                            $rawRomainsToIgnore = array_merge($rawRomainsToIgnore, $options['domains-to-ignore']);
+                            unset($options['domains-to-ignore']);
+                        }
+                        
+                        $domainsToIgnore = array();
+                        foreach ($rawRomainsToIgnore as $domain) {
+                            $domain = trim($domain);
+                            if ($domain != '') {
+                                $domainsToIgnore[] = $domain;
+                            }
+                        }
+                        
+                        if (count($domainsToIgnore)) {
+                            $options['ref-domains-to-ignore'] = $domainsToIgnore;
+                        }                      
+                        
+                        $task->setParameters(json_encode($options));
                     }
 
                     $entityManager->persist($task);                             
@@ -131,6 +157,24 @@ class JobPrepareCommand extends BaseCommand
         }
         
         $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType
+     * @return \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions
+     */
+    private function getTaskTypeOptions(Job $job, TaskType $taskType) {
+        foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
+            /* @var $taskTypeOptions TaskTypeOptions */
+            if ($taskTypeOptions->getTaskType()->equals($taskType)) {
+                return $taskTypeOptions;
+            }
+        }
+        
+        return new TaskTypeOptions();
     }
     
     

@@ -142,4 +142,34 @@ class TaskTypeOptions
     {
         return $this->taskType;
     }
+    
+    
+    /**
+     * 
+     * @return int
+     */
+    public function getOptionCount() {
+        return count($this->getOptions());
+    }
+    
+    
+    /**
+     * 
+     * @param string $optionName
+     * @return mixed
+     */
+    public function getOption($optionName) {
+        $options = $this->getOptions();
+        return (isset($options[$optionName])) ? $options[$optionName] : null;
+    }
+    
+    
+    /**
+     * 
+     * @param string $optionName
+     * @return boolean
+     */
+    public function hasOption($optionName) {
+        return !is_null($this->getOption($optionName));
+    }
 }
