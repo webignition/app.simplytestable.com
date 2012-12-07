@@ -105,6 +105,16 @@ class Job
     
     /**
      *
+     * @var \Doctrine\Common\Collections\Collection
+     * 
+     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions", mappedBy="job")
+     * 
+     */    
+    private $taskTypeOptions;  
+    
+    
+    /**
+     *
      * @var \SimplyTestable\ApiBundle\Entity\TimePeriod
      * 
      * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist"})
@@ -404,5 +414,38 @@ class Job
     public function setUrlCount($urlCount) {
         $this->urlCount = $urlCount;
         return $this;                
+    }
+
+    /**
+     * Add taskTypeOptions
+     *
+     * @param SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
+     * @return Job
+     */
+    public function addTaskTypeOption(\SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions)
+    {
+        $this->taskTypeOptions[] = $taskTypeOptions;
+    
+        return $this;
+    }
+
+    /**
+     * Remove taskTypeOptions
+     *
+     * @param SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
+     */
+    public function removeTaskTypeOption(\SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions)
+    {
+        $this->taskTypeOptions->removeElement($taskTypeOptions);
+    }
+
+    /**
+     * Get taskTypeOptions
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getTaskTypeOptions()
+    {
+        return $this->taskTypeOptions;
     }
 }
