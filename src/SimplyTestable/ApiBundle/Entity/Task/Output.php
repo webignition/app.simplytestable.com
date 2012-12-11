@@ -57,6 +57,7 @@ class Output
      *
      * @var int 
      * @ORM\Column(type="integer", nullable=false)
+     * @SerializerAnnotation\Expose
      */    
     private $warningCount = 0;    
 
