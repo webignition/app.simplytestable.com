@@ -166,7 +166,7 @@ class JobService extends EntityService {
      * @param array $taskTypes
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
-    public function create(User $user, WebSite $website, array $taskTypes, array $taskTypeOptionsArray) {
+    public function create(User $user, WebSite $website, array $taskTypes, array $taskTypeOptionsArray) {        
         $job = new Job();
         $job->setUser($user);
         $job->setWebsite($website);
@@ -174,12 +174,13 @@ class JobService extends EntityService {
         foreach ($taskTypes as $taskType) {
             if ($taskType instanceof TaskType) {                
                 $job->addRequestedTaskType($taskType);
+                $comparatorTaskTypeName = strtolower($taskType->getName());                
                 
-                if (isset($taskTypeOptionsArray[$taskType->getName()])) {
+                if (isset($taskTypeOptionsArray[$comparatorTaskTypeName])) {
                     $taskTypeOptions = new TaskTypeOptions();
                     $taskTypeOptions->setJob($job);
                     $taskTypeOptions->setTaskType($taskType);
-                    $taskTypeOptions->setOptions($taskTypeOptionsArray[$taskType->getName()]);                
+                    $taskTypeOptions->setOptions($taskTypeOptionsArray[$comparatorTaskTypeName]);                
 
                     $this->getEntityManager()->persist($taskTypeOptions);                    
                 }
