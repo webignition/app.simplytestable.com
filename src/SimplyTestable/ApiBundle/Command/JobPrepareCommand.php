@@ -109,11 +109,11 @@ class JobPrepareCommand extends BaseCommand
                         
                         $rawRomainsToIgnore = array();
                         
-                        if ($taskTypeOptions->hasOption('ignore-common-cdns')) {
+                        if ($taskTypeOptions->getOption('ignore-common-cdns') == '1') {
                             $rawRomainsToIgnore = $cssValidatorRefDomainsToIgnore;
                         }
                         
-                        if ($taskTypeOptions->hasOption('domains-to-ignore')) {
+                        if ($taskTypeOptions->getOption('domains-to-ignore') == '1') {
                             $rawRomainsToIgnore = array_merge($rawRomainsToIgnore, $options['domains-to-ignore']);
                             unset($options['domains-to-ignore']);
                         }
