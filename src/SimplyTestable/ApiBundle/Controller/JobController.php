@@ -352,9 +352,15 @@ class JobController extends ApiController
      * @return array
      */
     private function getTaskTypeOptions() {
-        return (is_array($this->getRequestValue('test-type-options'))) ? $this->getRequestValue('test-type-options') : array();
+        $testTypeOptions = (is_array($this->getRequestValue('test-type-options'))) ? $this->getRequestValue('test-type-options') : array();
+        
+        foreach ($testTypeOptions as $taskTypeName => $options) {
+            unset($testTypeOptions[$taskTypeName]);
+            $testTypeOptions[strtolower($taskTypeName)] = $options;
+        }
+        
+        return $testTypeOptions;
     }
-    
     
     /**
      * 
