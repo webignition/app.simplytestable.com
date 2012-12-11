@@ -50,13 +50,13 @@ class Output
      * @ORM\Column(type="integer", nullable=false)
      * @SerializerAnnotation\Expose
      */
-    private $errorCount;   
+    private $errorCount = 0;   
     
     
     /**
      *
      * @var int 
-     * @ORM\Column(type="integer", nullable=false, options={"default" = 0})
+     * @ORM\Column(type="integer", nullable=false)
      */    
     private $warningCount = 0;    
 
