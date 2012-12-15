@@ -142,21 +142,21 @@ class WebSiteService extends EntityService {
     }
     
     
-    private function collectUrls(WebSite $website) {
+    private function collectUrls(WebSite $website) {        
         $urlsFromSitemap = $this->getUrlsFromSitemap($website);
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
-        }
+        }       
         
         $urlsFromRssFeed = $this->getUrlsFromRssFeed($website);
         if (count($urlsFromRssFeed)) {
             return $urlsFromRssFeed;
-        }
+        }       
         
         $urlsFromAtomFeed = $this->getUrlsFromAtomFeed($website);        
         if (count($urlsFromAtomFeed)) {
             return $urlsFromAtomFeed;
-        }        
+        }           
         
         return array();        
     }
@@ -220,17 +220,27 @@ class WebSiteService extends EntityService {
      * @param WebSite $website
      * @return array 
      */    
-    private function getUrlsFromRssFeed(WebSite $website) {        
+    private function getUrlsFromRssFeed(WebSite $website) { 
+        $this->getHttpClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
+        
         $feedFinder = new WebsiteRssFeedFinder();
-        $feedFinder->setRootUrl($website->getCanonicalUrl());        
+        $feedFinder->setRootUrl($website->getCanonicalUrl());               
         $feedFinder->setHttpClient($this->getHttpClient());
-        
-        $feedUrl = $feedFinder->getRssFeedUrl();       
-        if (is_null($feedUrl)) {
+
+        try {
+            $feedUrl = $feedFinder->getRssFeedUrl();       
+            if (is_null($feedUrl)) {
+                return array();
+            }
+
+            $this->getHttpClient()->clearUserAgent();
+            return $this->getUrlsFromNewsFeed($feedUrl);
+        } catch (\webignition\Http\Client\CurlException $curlException) {            
+            $this->getHttpClient()->clearUserAgent();
             return array();
-        }
+        }            
         
-        return $this->getUrlsFromNewsFeed($feedUrl);
+        return array();
     }
 
     
@@ -244,13 +254,21 @@ class WebSiteService extends EntityService {
         $feedFinder->setRootUrl($website->getCanonicalUrl());
         $feedFinder->setHttpClient($this->getHttpClient());
         
-        $feedUrl = $feedFinder->getAtomFeedUrl();        
-        if (is_null($feedUrl)) {
+        try {
+            $feedUrl = $feedFinder->getAtomFeedUrl();       
+            if (is_null($feedUrl)) {
+                return array();
+            }
+
+            $this->getHttpClient()->clearUserAgent();
+            return $this->getUrlsFromNewsFeed($feedUrl);
+        } catch (\webignition\Http\Client\CurlException $curlException) {            
+            $this->getHttpClient()->clearUserAgent();
             return array();
-        }
+        }            
         
-        return $this->getUrlsFromNewsFeed($feedUrl);
-    }     
+        return array();
+    }
     
     
     /**
