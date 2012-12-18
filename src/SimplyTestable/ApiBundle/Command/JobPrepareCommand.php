@@ -155,7 +155,9 @@ class JobPrepareCommand extends BaseCommand
         $rawDomainsToIgnore = array();
         
         if ($taskTypeOptions->getOption('ignore-common-cdns') == '1') {
-            $rawDomainsToIgnore = array_merge($rawDomainsToIgnore, $predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()]);
+            if (isset($predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()])) {
+                $rawDomainsToIgnore = array_merge($rawDomainsToIgnore, $predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()]);
+            }
         }
         
         if ($taskTypeOptions->getOption('domains-to-ignore') == '1') {
