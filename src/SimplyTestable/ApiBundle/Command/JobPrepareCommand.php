@@ -154,13 +154,13 @@ class JobPrepareCommand extends BaseCommand
     private function getDomainsToIgnore(TaskTypeOptions $taskTypeOptions, $predefinedDomainsToIgnore) {
         $rawDomainsToIgnore = array();
         
-        if ($taskTypeOptions->getOption('ignore-common-cdns') == '1') {
+        if ($this->shouldIgnoreCommonCdns($taskTypeOptions)) {
             if (isset($predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()])) {
                 $rawDomainsToIgnore = array_merge($rawDomainsToIgnore, $predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()]);
             }
         }
         
-        if ($taskTypeOptions->getOption('domains-to-ignore') == '1') {
+        if ($this->hasDomainsToIgnore($taskTypeOptions)) {
             $specifiedDomainsToIgnore = $taskTypeOptions->getOption('domains-to-ignore');
             if (is_array($specifiedDomainsToIgnore)) {
                 $rawDomainsToIgnore = array_merge($rawDomainsToIgnore, $specifiedDomainsToIgnore);
@@ -186,6 +186,16 @@ class JobPrepareCommand extends BaseCommand
      */
     private function shouldIgnoreCommonCdns(TaskTypeOptions $taskTypeOptions) {
         return $taskTypeOptions->getOption('ignore-common-cdns') == '1';
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
+     * @return boolean
+     */
+    private function hasDomainsToIgnore(TaskTypeOptions $taskTypeOptions) {
+        return $taskTypeOptions->getOption('domains-to-ignore') == '1';
     }
     
     
