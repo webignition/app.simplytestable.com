@@ -14,4 +14,10 @@ parameters:
    - ajax.googleapis.com
    - netdna.bootstrapcdn.com
    - ajax.aspnetcdn.com
-   - static.nrelate.com   
+   - static.nrelate.com
+  js-static-analysis-domains-to-ignore:
+   - cdnjs.cloudflare.com
+   - ajax.googleapis.com
+   - netdna.bootstrapcdn.com
+   - ajax.aspnetcdn.com
+   - static.nrelate.com      
