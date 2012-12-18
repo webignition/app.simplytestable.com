@@ -86,9 +86,12 @@ class JobPrepareCommand extends BaseCommand
         $requestedTaskTypes = $job->getRequestedTaskTypes();
         $newTaskState = $this->getTaskService()->getQueuedState();
 
-        $jobCount = 0; 
+        $jobCount = 0;
         
-        $cssValidatorRefDomainsToIgnore = is_null($this->getContainer()->getParameter('css-validator-ref-domains-to-ignore')) ? array() : $this->getContainer()->getParameter('css-validator-ref-domains-to-ignore');
+        $predefinedDomainsToIgnore = array(
+            'CSS validation' => is_null($this->getContainer()->getParameter('css-validator-ref-domains-to-ignore')) ? array() : $this->getContainer()->getParameter('css-validator-ref-domains-to-ignore'),
+            'JS static analysis' => is_null($this->getContainer()->getParameter('js-static-analysis-domains-to-ignore')) ? array() : $this->getContainer()->getParameter('js-static-analysis-domains-to-ignore')
+        );
         
         foreach ($urls as $url) {                
             $comparatorUrl = new NormalisedUrl($url);
@@ -105,30 +108,12 @@ class JobPrepareCommand extends BaseCommand
                     $task->setState($newTaskState);
                     
                     if ($taskTypeOptions->getOptionCount()) {
-                        $options = $taskTypeOptions->getOptions();                       
+                        $options = $taskTypeOptions->getOptions();                        
                         
-                        $rawRomainsToIgnore = array();
-                        
-                        if ($taskTypeOptions->getOption('ignore-common-cdns') == '1') {
-                            $rawRomainsToIgnore = $cssValidatorRefDomainsToIgnore;
-                        }
-                        
-                        if ($taskTypeOptions->getOption('domains-to-ignore') == '1') {
-                            $rawRomainsToIgnore = array_merge($rawRomainsToIgnore, $options['domains-to-ignore']);
-                            unset($options['domains-to-ignore']);
-                        }
-                        
-                        $domainsToIgnore = array();
-                        foreach ($rawRomainsToIgnore as $domain) {
-                            $domain = trim($domain);
-                            if ($domain != '') {
-                                $domainsToIgnore[] = $domain;
-                            }
-                        }
-                        
+                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $predefinedDomainsToIgnore);                        
                         if (count($domainsToIgnore)) {
-                            $options['ref-domains-to-ignore'] = $domainsToIgnore;
-                        }                      
+                            $options['domains-to-ignore'] = $domainsToIgnore;
+                        }
                         
                         $task->setParameters(json_encode($options));
                     }
@@ -158,6 +143,51 @@ class JobPrepareCommand extends BaseCommand
         
         $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
     }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
+     * @param array $predefinedDomainsToIgnore
+     * @return array
+     */
+    private function getDomainsToIgnore(TaskTypeOptions $taskTypeOptions, $predefinedDomainsToIgnore) {
+        $rawDomainsToIgnore = array();
+        
+        if ($taskTypeOptions->getOption('ignore-common-cdns') == '1') {
+            $rawDomainsToIgnore = array_merge($rawDomainsToIgnore, $predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()]);
+        }
+        
+        if ($taskTypeOptions->getOption('domains-to-ignore') == '1') {
+            $specifiedDomainsToIgnore = $taskTypeOptions->getOption('domains-to-ignore');
+            if (is_array($specifiedDomainsToIgnore)) {
+                $rawDomainsToIgnore = array_merge($rawDomainsToIgnore, $specifiedDomainsToIgnore);
+            }
+        }
+        
+        $domainsToIgnore = array();
+        foreach ($rawDomainsToIgnore as $domainToIgnore) {
+            $domainToIgnore = trim(strtolower($domainToIgnore));
+            if (!in_array($domainToIgnore, $domainsToIgnore)) {
+                $domainsToIgnore[] = $domainToIgnore;
+            }
+        }
+        
+        return $domainsToIgnore;
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
+     * @return boolean
+     */
+    private function shouldIgnoreCommonCdns(TaskTypeOptions $taskTypeOptions) {
+        return $taskTypeOptions->getOption('ignore-common-cdns') == '1';
+    }
+    
+    
+    
     
     
     /**
@@ -229,4 +259,12 @@ class JobPrepareCommand extends BaseCommand
     private function getTaskService() {
         return $this->getContainer()->get('simplytestable.services.taskservice');
     }    
+    
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\TaskTypeService
+     */    
+    private function getTaskTypeService() {
+        return $this->getContainer()->get('simplytestable.services.tasktypeservice');
+    }     
 }
