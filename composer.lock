@@ -18,7 +18,7 @@
             "require": {
                 "php": ">=5.3.2"
             },
-            "time": "1348120518",
+            "time": "2012-09-20 05:55:18",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -87,7 +87,7 @@
                 "php": ">=5.3.2",
                 "doctrine/common": "2.3.*"
             },
-            "time": "1349518912",
+            "time": "2012-10-06 10:21:52",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -161,7 +161,7 @@
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
             },
-            "time": "1349890948",
+            "time": "2012-10-10 17:42:28",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -225,7 +225,7 @@
             "suggest": {
                 "symfony/console": "to run the migration from the console"
             },
-            "time": "1349435713",
+            "time": "2012-10-05 11:15:13",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -277,7 +277,7 @@
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
             },
-            "time": "1349472005",
+            "time": "2012-10-05 21:20:05",
             "bin": [
                 "bin/doctrine",
                 "bin/doctrine.php"
@@ -357,7 +357,7 @@
                 "doctrine/doctrine-bundle": "*",
                 "doctrine/mongodb-odm-bundle": "*"
             },
-            "time": "1349988603",
+            "time": "2012-10-11 20:50:03",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -408,7 +408,7 @@
                 "reference": "d677b0558d27e0c0405c3a54ce73b39db50b136f",
                 "shasum": ""
             },
-            "time": "1341416027",
+            "time": "2012-07-04 15:33:47",
             "type": "symfony-bundle",
             "installation-source": "source",
             "autoload": {
@@ -552,7 +552,7 @@
                 "doctrine/doctrine-bundle": "*",
                 "doctrine/orm": "*"
             },
-            "time": "1348217792",
+            "time": "2012-09-21 08:56:32",
             "type": "symfony-bundle",
             "installation-source": "source",
             "autoload": {
@@ -658,7 +658,7 @@
                 "symfony/form": "*",
                 "symfony/validator": "*"
             },
-            "time": "1346947943",
+            "time": "2012-09-06 16:12:23",
             "type": "symfony-bundle",
             "installation-source": "source",
             "autoload": {
@@ -760,7 +760,7 @@
                 "ptachoire/cssembed": "Assetic provides the integration with phpcssembed to embed data uris",
                 "leafo/scssphp-compass": "Assetic provides the integration with the SCSS compass plugin"
             },
-            "time": "1349004759",
+            "time": "2012-09-30 11:32:39",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -819,7 +819,7 @@
                 "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
                 "ext-mongo": "Allow sending log messages to a MongoDB server"
             },
-            "time": "1347983448",
+            "time": "2012-09-18 15:50:48",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -867,7 +867,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "1347937314",
+            "time": "2012-09-18 03:01:54",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -906,7 +906,7 @@
             "require": {
                 "symfony/framework-bundle": "2.1.*"
             },
-            "time": "1347340208",
+            "time": "2012-09-11 05:10:08",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -953,7 +953,7 @@
                 "symfony/framework-bundle": "2.1.*",
                 "doctrine/common": ">=2.1,<2.4-dev"
             },
-            "time": "1349786071",
+            "time": "2012-10-09 12:34:31",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1027,7 +1027,7 @@
                 }
             ],
             "description": "This bundle generates code for you",
-            "time": "1348030981"
+            "time": "2012-09-19 05:03:01"
         },
         {
             "name": "simplepie/simplepie",
@@ -1046,7 +1046,7 @@
             "require": {
                 "php": ">=5.2.0"
             },
-            "time": "1349969620",
+            "time": "2012-10-11 15:33:40",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1100,7 +1100,7 @@
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1349196829",
+            "time": "2012-10-02 16:53:49",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1164,7 +1164,7 @@
             "suggest": {
                 "symfony/twig-bundle": ">=2.1.0,<2.3-dev"
             },
-            "time": "1349897943",
+            "time": "2012-10-10 19:39:03",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1221,7 +1221,7 @@
                 "symfony/yaml": ">=2.1.0,<2.3-dev",
                 "symfony/config": ">=2.1.0,<2.3-dev"
             },
-            "time": "1348137624",
+            "time": "2012-09-20 10:40:24",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1276,7 +1276,7 @@
                 "symfony/config": ">=2.1.0,<2.3-dev",
                 "symfony/yaml": ">=2.1.0,<2.3-dev"
             },
-            "time": "1348137776",
+            "time": "2012-09-20 10:42:56",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1365,7 +1365,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "dev-master"
             },
-            "time": "1349963062",
+            "time": "2012-10-11 13:44:22",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1415,7 +1415,7 @@
             "require": {
                 "twig/twig": "1.*"
             },
-            "time": "1349889206",
+            "time": "2012-10-10 17:13:26",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1462,7 +1462,7 @@
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1349702400",
+            "time": "2012-10-08 13:20:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1512,7 +1512,7 @@
                 "php": ">=5.3.0",
                 "webignition/url": ">=1.1"
             },
-            "time": "1343344065",
+            "time": "2012-07-26 23:07:45",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1555,7 +1555,7 @@
                 "symfony/symfony": ">=2.0",
                 "doctrine/migrations": "*"
             },
-            "time": "1342268854",
+            "time": "2012-07-14 12:27:34",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1598,7 +1598,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "1342614766",
+            "time": "2012-07-18 12:32:46",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1642,7 +1642,7 @@
                 "symfony/symfony": ">=2.0",
                 "doctrine/migrations": "*"
             },
-            "time": "1342272594",
+            "time": "2012-07-14 13:29:54",
             "type": "symfony-bundle",
             "installation-source": "source",
             "autoload": {
@@ -1695,7 +1695,7 @@
                 "webignition/absolute-url-deriver": ">=1.1",
                 "webignition/url": ">1.0"
             },
-            "time": "1350636361",
+            "time": "2012-10-19 08:46:01",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1826,7 +1826,7 @@
                 "symfony/framework-bundle": "2.1.*",
                 "glit/resque": "dev-master"
             },
-            "time": "1347050600",
+            "time": "2012-09-07 20:43:20",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1878,7 +1878,7 @@
                 "php": ">=5.3.0",
                 "webignition/disallowed-character-terminated-string": ">=1.0"
             },
-            "time": "1349353979",
+            "time": "2012-10-04 12:32:59",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -1919,7 +1919,7 @@
                 "php": ">=5.3.0",
                 "webignition/robots-txt-file": "dev-master"
             },
-            "time": "1349356374",
+            "time": "2012-10-04 13:12:54",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2010,7 +2010,7 @@
                 "querypath/querypath": ">=3.0.0",
                 "simplepie/simplepie": "*"
             },
-            "time": "1349809842",
+            "time": "2012-10-09 19:10:42",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2076,23 +2076,23 @@
         },
         {
             "name": "webignition/url",
-            "version": "1.5",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url",
-                "reference": "1.5"
+                "reference": "1.6.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/url/archive/1.5.zip",
-                "reference": "1.5",
+                "url": "https://github.com/webignition/url/archive/1.6.1.zip",
+                "reference": "1.6.1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
                 "ext-intl": "*"
             },
-            "time": "2012-11-12 14:01:08",
+            "time": "2012-12-20 13:59:27",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2100,6 +2100,7 @@
                     "": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2220,7 +2221,7 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/web-page-model": ">=0.1,<2.0"
             },
-            "time": "1349082851",
+            "time": "2012-10-01 09:14:11",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2266,7 +2267,7 @@
                 "webignition/sitemap-model": "dev-master",
                 "webignition/website-sitemap-retriever": "dev-master"
             },
-            "time": "1351243202",
+            "time": "2012-10-26 09:20:02",
             "type": "library",
             "installation-source": "source",
             "autoload": {
@@ -2309,7 +2310,7 @@
                 "webignition/sitemap-model": "dev-master",
                 "webignition/internet-media-type": ">=0.1,<2.0"
             },
-            "time": "1351241996",
+            "time": "2012-10-26 08:59:56",
             "type": "library",
             "installation-source": "source",
             "autoload": {
