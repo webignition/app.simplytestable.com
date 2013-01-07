@@ -3,16 +3,17 @@ php:
   - 5.3
   - 5.4
   
-before_script:  
-  # Installing phing
-  #- git clone https://github.com/phingofficial/phing.git build/phing
-  
+before_script:    
   # Installing pecl_http module
   - printf "\n\n\n\n" | pecl -q install pecl_http
   - echo "extension=http.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`  
   
   # Install composer for dependency management
   - wget http://getcomposer.org/composer.phar 
+  
+  # Set the GitHub OAuth token to make use of the 6000 per hour rate limit
+  - "mkdir -p ~/.composer"
+  - cp .travis.composer.config.json ~/.composer/config.json    
   
   # Build!
   #- mysql -e "create database myapp_test;"
