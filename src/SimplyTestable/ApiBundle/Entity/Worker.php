@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * @ORM\Entity
@@ -34,13 +35,61 @@ class Worker
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="worker")
      */
     protected $tasks;
+    
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Entity\State
+     * 
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
+     * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=true)
+     * 
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
+     * @SerializerAnnotation\Expose 
+     */
+    protected $state; 
+    
+    
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+    }    
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedState() {
+        return str_replace('job-', '', (string)$this->getState());
+    } 
+    
+    
+    /**
+     * Set state
+     *
+     * @param use SimplyTestable\ApiBundle\Entity\State $state
+     * @return Job
+     */
+    public function setState(State $state)
+    {
+        $this->state = $state;
+        return $this;
     }
+
+    /**
+     * Get state
+     *
+     * @return use SimplyTestable\ApiBundle\Entity\State 
+     */
+    public function getState()
+    {
+        return $this->state;
+    }    
+
     
     /**
      * Get id
