@@ -102,6 +102,13 @@ class WorkerActivationRequestService extends EntityService {
             
             $activationRequest->setNextState();
             $this->persistAndFlush($activationRequest);
+            
+            $worker = $activationRequest->getWorker();
+            
+            $worker->setState($this->stateService->fetch('worker-active'));
+            
+            $this->getEntityManager()->persist($worker);
+            $this->getEntityManager()->flush();
 
             return true;           
             
