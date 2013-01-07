@@ -20,7 +20,13 @@ class WorkerService extends EntityService {
      *
      * @var \webignition\Http\Client\Client
      */
-    private $httpClient;    
+    private $httpClient; 
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\StateService
+     */
+    private $stateService;
     
     /**
      *
@@ -31,13 +37,15 @@ class WorkerService extends EntityService {
     public function __construct(
             EntityManager $entityManager,
             WorkerActivationRequestService $workerActivationRequestService,
-            \webignition\Http\Client\Client $httpClient
+            \webignition\Http\Client\Client $httpClient,
+            \SimplyTestable\ApiBundle\Services\StateService $stateService
     ) {
         parent::__construct($entityManager);
         
         $this->workerActivationRequestService = $workerActivationRequestService;
         $this->httpClient = $httpClient;
         $this->httpClient->redirectHandler()->enable();
+        $this->stateService = $stateService;
     }    
     
     /**
@@ -137,5 +145,15 @@ class WorkerService extends EntityService {
         
         $result = $queryBuilder->getQuery()->getResult();
         return (int)($result[0]['worker_total']);  
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Worker $worker
+     * @return boolean
+     */
+    public function isActive(Worker $worker) {
+        return $worker->getState()->equals($this->stateService->fetch('worker-active'));
     }
 }

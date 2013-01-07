@@ -46,6 +46,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         workeractivationRequestService: "@simplytestable.services.workeractivationrequestservice"
         httpClient: "@simplytestable.services.httpClient"
+        stateService: "@simplytestable.services.stateservice"
     
   simplytestable.controller.action_listener:
     class: SimplyTestable\ApiBundle\EventListener\BeforeListener    

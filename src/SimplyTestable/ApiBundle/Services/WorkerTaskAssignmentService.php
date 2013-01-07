@@ -316,7 +316,9 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         
         foreach ($workerTaskAssignments as $workerTaskAssignment) {
             /* @var $workerTaskAssignment WorkerTaskAssignment */
-            $selectedWorkers[] = $workerTaskAssignment->getWorker();
+            if ($this->workerService->isActive($workerTaskAssignment->getWorker())) {
+                $selectedWorkers[] = $workerTaskAssignment->getWorker();
+            }            
         }
         
         return $selectedWorkers;
