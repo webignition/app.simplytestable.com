@@ -143,12 +143,12 @@ class WebSiteService extends EntityService {
     
     
     private function collectUrls(WebSite $website) {        
-        $urlsFromSitemap = $this->getUrlsFromSitemap($website);
+        $urlsFromSitemap = $this->getUrlsFromSitemap($website);        
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
         }       
         
-        $urlsFromRssFeed = $this->getUrlsFromRssFeed($website);
+        $urlsFromRssFeed = $this->getUrlsFromRssFeed($website);        
         if (count($urlsFromRssFeed)) {
             return $urlsFromRssFeed;
         }       
@@ -228,13 +228,19 @@ class WebSiteService extends EntityService {
         $feedFinder->setHttpClient($this->getHttpClient());
 
         try {
-            $feedUrl = $feedFinder->getRssFeedUrl();       
-            if (is_null($feedUrl)) {
+            $feedUrls = $feedFinder->getRssFeedUrls();       
+            if (is_null($feedUrls)) {
                 return array();
             }
 
             $this->getHttpClient()->clearUserAgent();
-            return $this->getUrlsFromNewsFeed($feedUrl);
+            $urlsFromFeed = array();
+            
+            foreach ($feedUrls as $feedUrl) {
+                $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
+            }
+            
+            return $urlsFromFeed;
         } catch (\webignition\Http\Client\CurlException $curlException) {            
             $this->getHttpClient()->clearUserAgent();
             return array();
@@ -255,13 +261,19 @@ class WebSiteService extends EntityService {
         $feedFinder->setHttpClient($this->getHttpClient());
         
         try {
-            $feedUrl = $feedFinder->getAtomFeedUrl();       
-            if (is_null($feedUrl)) {
+            $feedUrls = $feedFinder->getAtomFeedUrls();       
+            if (is_null($feedUrls)) {
                 return array();
             }
 
             $this->getHttpClient()->clearUserAgent();
-            return $this->getUrlsFromNewsFeed($feedUrl);
+            $urlsFromFeed = array();
+            
+            foreach ($feedUrls as $feedUrl) {
+                $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
+            }
+            
+            return $urlsFromFeed;
         } catch (\webignition\Http\Client\CurlException $curlException) {            
             $this->getHttpClient()->clearUserAgent();
             return array();
@@ -285,7 +297,7 @@ class WebSiteService extends EntityService {
         $items = $simplepie->get_items();
         
         $urls = array();        
-        foreach ($items as $item) {
+        foreach ($items as $item) {            
             /* @var $item \SimplePie_Item */
             $url = new \webignition\NormalisedUrl\NormalisedUrl($item->get_permalink());
             if (!in_array((string)$url, $urls)) {

@@ -25,7 +25,6 @@
                     "dev-master": "2.3.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Doctrine\\Common": "lib/"
@@ -94,7 +93,6 @@
                     "dev-master": "2.3.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Doctrine\\DBAL": "lib/"
@@ -168,7 +166,6 @@
                     "dev-master": "1.0.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Doctrine\\Bundle\\DoctrineBundle": ""
@@ -227,7 +224,6 @@
             },
             "time": "2012-10-05 11:15:13",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Doctrine\\DBAL\\Migrations": "lib"
@@ -288,7 +284,6 @@
                     "dev-master": "2.3.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Doctrine\\ORM": "lib/"
@@ -364,7 +359,6 @@
                     "dev-master": "2.0.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "FOS\\UserBundle": ""
@@ -410,7 +404,6 @@
             },
             "time": "2012-07-04 15:33:47",
             "type": "symfony-bundle",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Resque": "lib"
@@ -453,7 +446,6 @@
             },
             "time": "2012-01-02 20:50:26",
             "type": "symfony-bundle",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "JMS\\AopBundle": ""
@@ -495,7 +487,6 @@
             },
             "time": "2012-01-02 20:40:52",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "CG\\": "src/"
@@ -554,7 +545,6 @@
             },
             "time": "2012-09-21 08:56:32",
             "type": "symfony-bundle",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "JMS\\DiExtraBundle": ""
@@ -597,7 +587,6 @@
             },
             "time": "2012-01-02 21:32:49",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Metadata\\": "src/"
@@ -660,7 +649,6 @@
             },
             "time": "2012-09-06 16:12:23",
             "type": "symfony-bundle",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "JMS\\SecurityExtraBundle": ""
@@ -701,7 +689,6 @@
                     "dev-master": "0.9.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "JMS\\SerializerBundle": ""
@@ -767,7 +754,6 @@
                     "dev-master": "1.1-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Assetic": "src/"
@@ -826,7 +812,6 @@
                     "dev-master": "1.3.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Monolog": "src/"
@@ -856,25 +841,25 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/technosophos/querypath.git",
-                "reference": "0341dc09427928115022b3553b7117ddcbc0ec08"
+                "reference": "3.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/technosophos/querypath/zipball/0341dc09427928115022b3553b7117ddcbc0ec08",
-                "reference": "0341dc09427928115022b3553b7117ddcbc0ec08",
+                "url": "https://github.com/technosophos/querypath/archive/3.0.0.zip",
+                "reference": "3.0.0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-09-18 03:01:54",
+            "time": "2012-12-11 14:38:11",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "QueryPath": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -913,7 +898,6 @@
                     "dev-master": "2.1.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Sensio\\Bundle\\DistributionBundle": ""
@@ -960,7 +944,6 @@
                     "dev-master": "2.1.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Sensio\\Bundle\\FrameworkExtraBundle": ""
@@ -1011,7 +994,6 @@
                     "dev-master": "2.1.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Sensio\\Bundle\\GeneratorBundle": ""
@@ -1048,7 +1030,6 @@
             },
             "time": "2012-10-11 15:33:40",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "SimplePie": "library"
@@ -1107,7 +1088,6 @@
                     "dev-master": "4.2-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "files": [
                     "lib/swift_required.php"
@@ -1171,7 +1151,6 @@
                     "dev-master": "2.1.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Symfony\\Bundle\\AsseticBundle": ""
@@ -1228,7 +1207,6 @@
                     "dev-master": "2.1.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Symfony\\Bundle\\MonologBundle": ""
@@ -1283,7 +1261,6 @@
                     "dev-master": "2.1-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Symfony\\Bundle\\SwiftmailerBundle": ""
@@ -1372,7 +1349,6 @@
                     "dev-master": "2.1-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Symfony": "src/",
@@ -1422,7 +1398,6 @@
                     "dev-master": "1.0.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Twig_Extensions_": "lib/"
@@ -1469,7 +1444,6 @@
                     "dev-master": "1.10-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Twig_": "lib/"
@@ -1514,7 +1488,6 @@
             },
             "time": "2012-07-26 23:07:45",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -1557,7 +1530,6 @@
             },
             "time": "2012-07-14 12:27:34",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "webignition\\ContainerAwareMigration": "lib"
@@ -1600,7 +1572,6 @@
             },
             "time": "2012-07-18 12:32:46",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -1644,7 +1615,6 @@
             },
             "time": "2012-07-14 13:29:54",
             "type": "symfony-bundle",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Doctrine\\Bundle\\MigrationsBundle": ""
@@ -1681,12 +1651,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/http-client",
-                "reference": "1.2.1"
+                "reference": "1.2.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/http-client/zipball/1.2.1",
-                "reference": "1.2.1",
+                "url": "https://github.com/webignition/http-client/archive/1.2.3.zip",
+                "reference": "1.2.3",
                 "shasum": ""
             },
             "require": {
@@ -1695,14 +1665,14 @@
                 "webignition/absolute-url-deriver": ">=1.1",
                 "webignition/url": ">1.0"
             },
-            "time": "2012-10-19 08:46:01",
+            "time": "2012-10-30 12:15:58",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1740,7 +1710,6 @@
             },
             "time": "2012-08-16 15:14:02",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -1785,7 +1754,6 @@
             },
             "time": "2012-08-15 19:44:56",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -1833,7 +1801,6 @@
                     "dev-master": "1.0.x-dev"
                 }
             },
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Glit\\ResqueBundle": ""
@@ -1880,7 +1847,6 @@
             },
             "time": "2012-10-04 12:32:59",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -1921,7 +1887,6 @@
             },
             "time": "2012-10-04 13:12:54",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -1968,7 +1933,6 @@
             },
             "time": "2012-08-02 09:45:05",
             "type": "symfony-bundle",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "SimplyTestable\\BaseMigrationsBundle": ""
@@ -2012,7 +1976,6 @@
             },
             "time": "2012-10-09 19:10:42",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -2052,7 +2015,6 @@
             },
             "time": "2012-08-15 19:36:12",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -2094,7 +2056,6 @@
             },
             "time": "2012-12-20 13:59:27",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -2118,16 +2079,16 @@
         },
         {
             "name": "webignition/web-page-model",
-            "version": "0.4",
+            "version": "0.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-model.git",
-                "reference": "0.4"
+                "reference": "0.4.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/web-page-model/zipball/0.4",
-                "reference": "0.4",
+                "url": "https://github.com/webignition/web-page-model/archive/0.4.2.zip",
+                "reference": "0.4.2",
                 "shasum": ""
             },
             "require": {
@@ -2135,14 +2096,14 @@
                 "webignition/web-resource-model": ">=0.1,<2.0",
                 "querypath/querypath": ">=3.0.0"
             },
-            "time": "2012-09-17 15:10:59",
+            "time": "2012-12-03 12:46:24",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2179,7 +2140,6 @@
             },
             "time": "2012-08-16 15:16:06",
             "type": "library",
-            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -2207,12 +2167,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "fe26d1a7176e51bdf18f35255ec0921a727741a5"
+                "reference": "719b4a843d8626e0e8cb0612fcde0d6bb0d607b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-rss-feed-finder/zipball/fe26d1a7176e51bdf18f35255ec0921a727741a5",
-                "reference": "fe26d1a7176e51bdf18f35255ec0921a727741a5",
+                "url": "https://github.com/webignition/website-rss-feed-finder/archive/719b4a843d8626e0e8cb0612fcde0d6bb0d607b5.zip",
+                "reference": "719b4a843d8626e0e8cb0612fcde0d6bb0d607b5",
                 "shasum": ""
             },
             "require": {
@@ -2221,14 +2181,14 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/web-page-model": ">=0.1,<2.0"
             },
-            "time": "2012-10-01 09:14:11",
+            "time": "2013-01-10 17:45:06",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2269,7 +2229,6 @@
             },
             "time": "2012-10-26 09:20:02",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "": "src/"
@@ -2312,7 +2271,6 @@
             },
             "time": "2012-10-26 08:59:56",
             "type": "library",
-            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "": "src/"
