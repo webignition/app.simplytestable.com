@@ -5,6 +5,7 @@ parameters:
     database_name: myapp_test
     database_user: root
     database_password: null
+    mailer_auth_mode: login
     mailer_transport: smtp
     mailer_host: localhost
     mailer_user: null
