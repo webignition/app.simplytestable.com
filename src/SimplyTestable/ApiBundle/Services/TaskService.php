@@ -428,13 +428,20 @@ class TaskService extends EntityService {
      * @param int $remoteId
      * @return Task
      */
-    public function getByWorkerAndRemoteId(Worker $worker, $remoteId) {
-        return $this->getEntityRepository()->findOneBy(array(
+    public function getByWorkerAndRemoteId(Worker $worker, $remoteId) {        
+        $tasks = $this->getEntityRepository()->findBy(array(
             'worker' => $worker,
             'remoteId' => $remoteId
-        ));
+        ), array(
+            'id' => 'DESC'
+        ), 1);
+        
+        if (count($tasks) === 0) {
+            return null;
+        }
+        
+        return $tasks[0];
     }
-    
     
     /**
      *
