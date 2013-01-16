@@ -36,10 +36,10 @@ class WorkerController extends ApiController
             $activationRequest = $this->getWorkerRequestActivationService()->fetch($worker);
             
             if ($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState())) {
+                $activationRequest->setState($this->getWorkerRequestActivationService()->getStartingState());
                 return $this->sendSuccessResponse();
-            }
+            }            
             
-            $activationRequest->setState($this->getWorkerRequestActivationService()->getStartingState());
         } else {
             $activationRequest = $this->getWorkerRequestActivationService()->create(
                 $worker,
