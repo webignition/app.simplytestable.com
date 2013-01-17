@@ -111,7 +111,7 @@ class Task
      *
      * @var \SimplyTestable\ApiBundle\Entity\Task\Output
      * 
-     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Output", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Output", cascade={"persist"})
      * @SerializerAnnotation\Expose
      */
     protected $output; 
@@ -410,5 +410,6 @@ class Task
      */
     public function hasParameters() {
         return $this->getParameters() != '';
-    }
+    }   
+   
 }

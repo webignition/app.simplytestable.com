@@ -9,9 +9,14 @@ use webignition\InternetMediaType\InternetMediaType;
  * 
  * @ORM\Entity
  * @ORM\Table(
- *     name="TaskOutput"
+ *     name="TaskOutput",
+ *     indexes={
+ *         @ORM\Index(name="hash_idx", columns={"hash"})
+ *     }
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TaskOutputRepository")
+ * 
+ * @SerializerAnnotation\ExclusionPolicy("all") 
  * 
  */
 class Output
@@ -59,7 +64,15 @@ class Output
      * @ORM\Column(type="integer", nullable=false)
      * @SerializerAnnotation\Expose
      */    
-    private $warningCount = 0;    
+    private $warningCount = 0;  
+    
+    
+    /**
+     *
+     * @var string
+     * @ORM\Column(type="string", nullable=true, length=32)
+     */
+    protected $hash;    
 
 
     /**
@@ -163,5 +176,41 @@ class Output
     public function getWarningCount()
     {
         return $this->warningCount;
-    }    
+    }  
+    
+    /**
+     * Set hash
+     *
+     * @param string $hash
+     * @return Task
+     */
+    public function setHash($hash)
+    {
+        $this->hash = $hash;
+    
+        return $this;
+    }
+
+    /**
+     * Get hash
+     *
+     * @return string
+     */
+    public function getHash()
+    {
+        return $this->hash;
+    } 
+    
+    
+    /**
+     * 
+     * @return Task
+     */
+    public function generateHash() {        
+        return $this->setHash(md5('body:'.$this->getOutput().'
+        content-type:'.$this->getContentType().'
+        error-count:'.$this->getErrorCount().'
+        warning-count:'.$this->getWarningCount()));
+    }
+    
 }

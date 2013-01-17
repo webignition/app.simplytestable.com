@@ -67,8 +67,7 @@ class Version20120716214726_create_Task extends BaseMigration
             "CREATE INDEX IDX_F24C741B6B20BA36 ON Task (worker_id)",
             "CREATE INDEX IDX_F24C741B7D6EFC3 ON Task (tasktype_id)",
             "CREATE UNIQUE INDEX UNIQ_F24C741BE43FFED1 ON Task (timePeriod_id)",
-            "CREATE INDEX remoteId_idx ON Task (remoteId)",
-            "CREATE UNIQUE INDEX UNIQ_F24C741BDE097880 ON Task (output_id)"
+            "CREATE INDEX remoteId_idx ON Task (remoteId)"
         ); 
         
         parent::up($schema);
