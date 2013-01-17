@@ -11,7 +11,7 @@ abstract class EntityService {
      *
      * @var \Doctrine\ORM\EntityManager 
      */
-    private $entityManager;
+    protected $entityManager;
     
     
     /**
