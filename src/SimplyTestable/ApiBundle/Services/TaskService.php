@@ -57,6 +57,11 @@ class TaskService extends EntityService {
      */
     private $resqueQueueService;
     
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Repository\TaskOutputRepository
+     */
+    private $taskOutputRepository;
     
     /**
      *
@@ -410,7 +415,14 @@ class TaskService extends EntityService {
     public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state) {
         if (!$this->isInProgress($task)) {
             return $task;
-        }        
+        }
+        
+        $output->generateHash();        
+        $existingOutput = $this->getTaskOutputEntityRepository()->findOutputByhash($output->getHash());
+        
+        if (!is_null($existingOutput)) {
+            $output = $existingOutput;
+        }
 
         $task->getTimePeriod()->setEndDateTime($endDateTime);
         $task->setOutput($output);
@@ -419,6 +431,19 @@ class TaskService extends EntityService {
         $task->clearRemoteId();
 
         return $this->persistAndFlush($task);
+    }
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Repository\TaskOutputRepository
+     */
+    private function getTaskOutputEntityRepository() {
+        if (is_null($this->taskOutputRepository)) {
+            $this->taskOutputRepository = $this->entityManager->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
+        }
+        
+        return $this->taskOutputRepository;
     }
     
     
