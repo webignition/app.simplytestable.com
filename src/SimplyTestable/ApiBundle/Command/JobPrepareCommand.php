@@ -71,9 +71,16 @@ class JobPrepareCommand extends BaseCommand
         
         $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
         $entityManager->persist($job);
-        $entityManager->flush();         
+        $entityManager->flush(); 
         
-        $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
+        if ($this->isRootUrl($job->getWebsite()->getCanonicalUrl())) {
+            $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
+            if (count($urls) === 0) {
+                $urls = array($job->getWebsite()->getCanonicalUrl());
+            }
+        } else {
+            $urls = array($job->getWebsite()->getCanonicalUrl());
+        }
         
         if ($urls === false || count($urls) == 0) {
             $job->setState($this->getJobService()->getNoSitemapState());
@@ -142,6 +149,19 @@ class JobPrepareCommand extends BaseCommand
         }
         
         $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
+    }
+    
+    
+    /**
+     * 
+     * @param string $url
+     * @return boolean
+     */
+    private function isRootUrl($url) {
+        $normalisedUrl = new NormalisedUrl($url);
+        $normalisedRootUrl = new NormalisedUrl((string)$normalisedUrl->getRoot());
+        
+        return ((string)$normalisedUrl == (string)$normalisedRootUrl);
     }
     
     
