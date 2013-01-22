@@ -8,9 +8,20 @@ use SimplyTestable\ApiBundle\Entity\User;
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     const JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\JobController';    
+    const JOB_START_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\JobStartController';    
     const USER_CREATION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserCreationController';
     const USER_PASSWORD_RESET_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserPasswordResetController';
     const USER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserController';
+
+    /**
+     *
+     * @param string $methodName
+     * @param array $postData
+     * @return \SimplyTestable\ApiBundle\Controller\JobStartController
+     */
+    protected function getJobStartController($methodName, $postData = array()) {
+        return $this->getController(self::JOB_START_CONTROLLER_NAME, $methodName, $postData);
+    }    
     
     
     /**
@@ -93,7 +104,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
             'user' => $userEmail
         );
         
-        return $this->getJobController('startAction', $postData)->startAction($canonicalUrl);
+        return $this->getJobStartController('startAction', $postData)->startAction($canonicalUrl);
     } 
     
     

@@ -7,7 +7,7 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
     public function testStartAction() {           
         $this->setupDatabase();
         
-        $jobController = $this->getJobController('startAction');        
+        $jobController = $this->getJobStartController('startAction');        
         
         $canonicalUrls = array(
             'http://one.example.com',

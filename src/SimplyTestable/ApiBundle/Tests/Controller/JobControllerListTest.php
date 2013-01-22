@@ -8,6 +8,7 @@ class JobControllerListTest extends BaseControllerJsonTestCase {
         $this->setupDatabase();
         
         $jobController = $this->getJobController('listAction');        
+        $jobStartController = $this->getJobStartController('startAction');
         
         $canonicalUrls = array(
             'http://one.example.com/',
@@ -18,7 +19,7 @@ class JobControllerListTest extends BaseControllerJsonTestCase {
         );
         
         foreach ($canonicalUrls as $canonicalUrl) {
-            $jobController->startAction($canonicalUrl);            
+            $jobStartController->startAction($canonicalUrl);            
         }       
         
         // Test with no limit set (should default to a limit of 1)
@@ -97,7 +98,7 @@ class JobControllerListTest extends BaseControllerJsonTestCase {
             }
             
             foreach ($canonicalUrlSet as $canonicalUrl) {
-                $this->getJobController('startAction', $postData)->startAction($canonicalUrl);
+                $this->getJobStartController('startAction', $postData)->startAction($canonicalUrl);
             }
         }        
 
