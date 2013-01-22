@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
@@ -86,6 +87,20 @@ class Job
      */
     private $tasks;
     
+
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Entity\Job\Type
+     * 
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Type")
+     * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=true)
+     * 
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedType")
+     * @SerializerAnnotation\Expose 
+     */
+    protected $type;     
+    
+    
     
     /**
      *
@@ -154,6 +169,16 @@ class Job
     public function getPublicSerializedState() {
         return str_replace('job-', '', (string)$this->getState());
     }
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedType() {
+        return (string)$this->getType();
+    }
+        
     
 
     /**
@@ -449,4 +474,26 @@ class Job
     {
         return $this->taskTypeOptions;
     }
+    
+    /**
+     * Set type
+     *
+     * @param use SimplyTestable\ApiBundle\Entity\Job\Type $type
+     * @return Job
+     */
+    public function setType(JobType $type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return use SimplyTestable\ApiBundle\Entity\Job\Type
+     */
+    public function getType()
+    {
+        return $this->type;
+    }    
 }
