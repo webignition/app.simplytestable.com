@@ -22,6 +22,7 @@ class JobControllerTest extends BaseControllerJsonTestCase {
         $this->assertEquals('new', $responseJsonObject->state);
         $this->assertEquals(0, $responseJsonObject->url_count);
         $this->assertEquals(0, $responseJsonObject->task_count);
+        $this->assertEquals('Full site', $responseJsonObject->type);
         
         foreach ($responseJsonObject->task_count_by_state as $stateName => $taskCount) {
             $this->assertEquals(0, $taskCount);
