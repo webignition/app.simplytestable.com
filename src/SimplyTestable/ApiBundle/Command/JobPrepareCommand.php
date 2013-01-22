@@ -75,10 +75,7 @@ class JobPrepareCommand extends BaseCommand
         if ($job->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {
             $urls = array($job->getWebsite()->getCanonicalUrl());
         } else {
-            $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
-            if (count($urls) === 0) {
-                $urls = array($job->getWebsite()->getCanonicalUrl());
-            }            
+            $urls = $this->getWebsiteService()->getUrls($job->getWebsite());         
         }
         
         if ($urls === false || count($urls) == 0) {
