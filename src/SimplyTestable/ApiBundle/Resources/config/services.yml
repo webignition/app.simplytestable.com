@@ -118,3 +118,8 @@ services:
     class:  SimplyTestable\ApiBundle\Services\TaskTypeService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"      
+        
+  simplytestable.services.jobtypeservice:
+    class:  SimplyTestable\ApiBundle\Services\JobTypeService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"              
