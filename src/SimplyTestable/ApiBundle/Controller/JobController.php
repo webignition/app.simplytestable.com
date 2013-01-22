@@ -14,81 +14,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 class JobController extends ApiController
 {
     private $siteRootUrl = null;
-    private $testId = null;    
-    
-    public function startAction($site_root_url)
-    {                
-        $this->siteRootUrl = $site_root_url;
-        
-        $existingJobs = $this->getJobService()->getEntityRepository()->getAllByWebsiteAndStateAndUser(
-            $this->getWebsite(),
-            $this->getJobService()->getIncompleteStates(),
-            $this->getUser()
-        );
-
-        $existingJobId = null;
-        
-        if (count($existingJobs)) {
-            $requestedTaskTypes = $this->getTaskTypes();        
-            foreach ($existingJobs as $existingJob) {
-                if ($this->jobMatchesRequestedTaskTypes($existingJob, $requestedTaskTypes)) {
-                    $existingJobId = $existingJob->getId();
-                }
-            }            
-        }
-        
-        if (is_null($existingJobId)) {            
-            $job = $this->getJobService()->create(
-                $this->getUser(),
-                $this->getWebsite(),
-                $this->getTaskTypes(),
-                $this->getTaskTypeOptions()
-            );
-            
-            $this->get('simplytestable.services.resqueQueueService')->add(
-                'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
-                'job-prepare',
-                array(
-                    'id' => $job->getId()
-                )                
-            );
-            
-            $existingJobId = $job->getId();
-        } else {
-            $job = $this->getJobService()->getById($existingJobId);
-        }
-        
-        return $this->redirect($this->generateUrl('job', array(
-            'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
-            'test_id' => $job->getId()
-        )));
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @param array $requestedTaskTypes
-     * @return boolean
-     */
-    private function jobMatchesRequestedTaskTypes(Job $job, $requestedTaskTypes) {            
-        $jobTaskTypes = $job->getRequestedTaskTypes();
-        
-        foreach ($requestedTaskTypes as $requestedTaskType) {
-            if (!$jobTaskTypes->contains($requestedTaskType)) {
-                return false;
-            }
-        }
-           
-        $jobTaskTypeArray = $jobTaskTypes->toArray();
-        foreach ($jobTaskTypeArray as $jobTaskType) {
-            if (!in_array($jobTaskType, $requestedTaskTypes)) {
-                return false;
-            }
-        }
-
-        return true;     
-    }
+    private $testId = null;
     
     public function statusAction($site_root_url, $test_id)
     {         
@@ -125,7 +51,8 @@ class JobController extends ApiController
             'errored_task_count' => $this->getJobService()->getErroredTaskCount($job),
             'cancelled_task_count' => $this->getJobService()->getCancelledTaskCount($job),
             'skipped_task_count' => $this->getJobService()->getSkippedTaskCount($job),
-            'task_type_options' => $this->getJobTaskTypeOptions($job)
+            'task_type_options' => $this->getJobTaskTypeOptions($job),
+            'type' => $job->getPublicSerializedType()
         );        
     }
     
@@ -336,17 +263,6 @@ class JobController extends ApiController
     }
     
     
-    
-    /**
-     *
-     * @return array
-     */
-    private function getTaskTypes() {        
-        $requestTaskTypes = $this->getRequestTaskTypes();                
-        return (count($requestTaskTypes) === 0) ? $this->getAllSelectableTaskTypes() : $requestTaskTypes;
-    }
-    
-    
     /**
      * 
      * @return array
@@ -360,43 +276,6 @@ class JobController extends ApiController
         }
         
         return $testTypeOptions;
-    }
-    
-    /**
-     * 
-     * @return array
-     */
-    private function getRequestTaskTypes() {                
-        $requestTaskTypes = array();
-        
-        $requestedTaskTypes = $this->getRequestValue('test-types');
-        
-        if (!is_array($requestedTaskTypes)) {
-            return $requestTaskTypes;
-        }
-        
-        foreach ($requestedTaskTypes as $taskTypeName) {            
-            if ($this->getTaskTypeService()->exists($taskTypeName)) {
-                $taskType = $this->getTaskTypeService()->getByName($taskTypeName);                
-                
-                if ($taskType->isSelectable()) {
-                    $requestTaskTypes[] = $taskType;
-                }
-            }
-        }
-        
-        return $requestTaskTypes;
-    }
-    
-    
-    /**
-     *
-     * @return array
-     */
-    private function getAllSelectableTaskTypes() {
-        return $this->getDoctrine()->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->findBy(array(
-            'selectable' => true
-        ));
     }
     
     
@@ -451,17 +330,7 @@ class JobController extends ApiController
      */
     private function getTaskService() {
         return $this->get('simplytestable.services.taskservice');
-    }
-    
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\TaskTypeService 
-     */
-    private function getTaskTypeService() {
-        return $this->get('simplytestable.services.tasktypeservice');
-    }    
+    } 
     
     
     /**
@@ -500,42 +369,5 @@ class JobController extends ApiController
         return (count($taskIds) > 0) ? $taskIds : null;
     }    
     
-    private function getRequestValue($key, $httpMethod = null) {
-        $availableHttpMethods = array(
-            HTTP_METH_GET,
-            HTTP_METH_POST
-        );
-        
-        $defaultHttpMethod = HTTP_METH_GET;
-        $requestedHttpMethods = array();
-        
-        if (is_null($httpMethod)) {
-            $requestedHttpMethods = $availableHttpMethods;
-        } else {
-            if (in_array($httpMethod, $availableHttpMethods)) {
-                $requestedHttpMethods[] = $httpMethod;
-            } else {
-                $requestedHttpMethods[] = $defaultHttpMethod;
-            }
-        }
-        
-        foreach ($requestedHttpMethods as $requestedHttpMethod) {
-            $requestValues = $this->getRequestValues($requestedHttpMethod);
-            if ($requestValues->has($key)) {
-                return $requestValues->get($key);
-            }
-        }
-        
-        return null;       
-    }
     
-    
-    /**
-     *
-     * @param int $httpMethod
-     * @return type 
-     */
-    private function getRequestValues($httpMethod = HTTP_METH_GET) {
-        return ($httpMethod == HTTP_METH_POST) ? $this->container->get('request')->request : $this->container->get('request')->query;
-    }    
 }

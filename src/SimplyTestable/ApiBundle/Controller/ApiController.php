@@ -162,4 +162,44 @@ abstract class ApiController extends Controller
     public function getUser() {
         return parent::getUser();
     }
+    
+    
+    protected function getRequestValue($key, $httpMethod = null) {
+        $availableHttpMethods = array(
+            HTTP_METH_GET,
+            HTTP_METH_POST
+        );
+        
+        $defaultHttpMethod = HTTP_METH_GET;
+        $requestedHttpMethods = array();
+        
+        if (is_null($httpMethod)) {
+            $requestedHttpMethods = $availableHttpMethods;
+        } else {
+            if (in_array($httpMethod, $availableHttpMethods)) {
+                $requestedHttpMethods[] = $httpMethod;
+            } else {
+                $requestedHttpMethods[] = $defaultHttpMethod;
+            }
+        }
+        
+        foreach ($requestedHttpMethods as $requestedHttpMethod) {
+            $requestValues = $this->getRequestValues($requestedHttpMethod);
+            if ($requestValues->has($key)) {
+                return $requestValues->get($key);
+            }
+        }
+        
+        return null;       
+    }
+    
+    
+    /**
+     *
+     * @param int $httpMethod
+     * @return type 
+     */
+    protected function getRequestValues($httpMethod = HTTP_METH_GET) {
+        return ($httpMethod == HTTP_METH_POST) ? $this->container->get('request')->request : $this->container->get('request')->query;
+    }    
 }

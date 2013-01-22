@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -150,13 +151,14 @@ class JobRepository extends EntityRepository
      * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
      * @param array $jobStates
      * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $type
      * @return int
      */
-    public function getAllByWebsiteAndStateAndUser(WebSite $website, $jobStates, User $user) {
+    public function getAllByWebsiteAndStateAndUserAndType(WebSite $website, $jobStates, User $user, JobType $type) {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('Job');
         
-        $where = 'Job.website = :Website and Job.user = :User';
+        $where = 'Job.website = :Website and Job.user = :User and Job.type = :Type';
         
         if (is_array($jobStates)) {
             $stateWhere = '';
@@ -178,6 +180,7 @@ class JobRepository extends EntityRepository
 
         $queryBuilder->setParameter('Website', $website);
         $queryBuilder->setParameter('User', $user);
+        $queryBuilder->setParameter('Type', $type);
         $result = $queryBuilder->getQuery()->getResult();
         
         return (count($result)) ? $result : null;

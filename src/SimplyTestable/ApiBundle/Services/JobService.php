@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -158,18 +159,20 @@ class JobService extends EntityService {
     }
     
     
-    
     /**
-     *
-     * @param User $user
-     * @param WebSite $website
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
      * @param array $taskTypes
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
+     * @param array $taskTypeOptionsArray
+     * @param \SimplyTestable\ApiBundle\Services\JobType $type
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
      */
-    public function create(User $user, WebSite $website, array $taskTypes, array $taskTypeOptionsArray) {        
+    public function create(User $user, WebSite $website, array $taskTypes, array $taskTypeOptionsArray, JobType $type) {        
         $job = new Job();
         $job->setUser($user);
         $job->setWebsite($website);
+        $job->setType($type);
         
         foreach ($taskTypes as $taskType) {
             if ($taskType instanceof TaskType) {                

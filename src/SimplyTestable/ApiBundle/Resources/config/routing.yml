@@ -4,7 +4,7 @@ jobs_list:
 
 job_start:
     pattern: /job/{site_root_url}/start/
-    defaults: { _controller: SimplyTestableApiBundle:Job:start, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:JobStart:start, _format: json }
     requirements:
         site_root_url: ".+"
         
