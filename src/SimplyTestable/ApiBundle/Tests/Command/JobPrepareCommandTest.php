@@ -55,7 +55,7 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
             'http://example.com/'
         );        
         
-        $jobCreateResponse = $this->createJob($canonicalUrl, null, 'full site');        
+        $jobCreateResponse = $this->createJob($canonicalUrl, null, 'single url');        
         $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
         
         $this->assertEquals(1, $job_id);        
@@ -71,7 +71,7 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
         $response = json_decode($job->getContent());
         
         $this->assertEquals('queued', $response->state);
-        $this->assertEquals('Full site', $response->type);
+        $this->assertEquals('Single URL', $response->type);
         $this->assertNotNull($response->time_period);
         $this->assertNotNull($response->time_period->start_date_time);
         
