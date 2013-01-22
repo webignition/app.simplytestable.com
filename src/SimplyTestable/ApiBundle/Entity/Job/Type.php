@@ -103,4 +103,14 @@ class Type
     public function __toString() {
         return $this->getName();
     }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $type
+     * @return boolean
+     */
+    public function equals(Type $type) {
+        return strtolower($this->getName()) == strtolower($type->getName());
+    }
 }

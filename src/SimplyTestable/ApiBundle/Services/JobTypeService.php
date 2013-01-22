@@ -8,6 +8,8 @@ class JobTypeService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Job\Type';   
     const DEFAULT_TYPE_ID = 1;
+    const FULL_SITE_NAME = 'full site';
+    const SINGLE_URL_NAME = 'single url';
     
     /**
      *
@@ -47,5 +49,23 @@ class JobTypeService extends EntityService {
     public function has($name) {
         return !is_null($this->getByName($name));
     }
-
+    
+    
+    /**
+     * 
+     * @return Type
+     */
+    public function getFullSiteType() {
+        return $this->getByName(self::FULL_SITE_NAME);
+    }
+    
+    
+    /**
+     * 
+     * @return Type
+     */
+    public function getSingleUrlType() {
+        return $this->getByName(self::SINGLE_URL_NAME);
+    }    
+    
 }

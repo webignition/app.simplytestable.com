@@ -97,12 +97,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      *
      * @param string $canonicalUrl
      * @param string $userEmail
+     * @param string $type
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    protected function createJob($canonicalUrl, $userEmail = null) {
-        $postData = (is_null($userEmail)) ? array() : array(
-            'user' => $userEmail
-        );
+    protected function createJob($canonicalUrl, $userEmail = null, $type = null) {
+        $postData = array();
+        if (!is_null($userEmail)) {
+            $postData['user'] = $userEmail;
+        }
+        
+        if (!is_null($type)) {
+            $postData['type'] = $type;
+        }
         
         return $this->getJobStartController('startAction', $postData)->startAction($canonicalUrl);
     } 

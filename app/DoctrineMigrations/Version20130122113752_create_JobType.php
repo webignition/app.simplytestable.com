@@ -25,7 +25,7 @@ class Version20130122113752_create_JobType extends BaseMigration
         $this->statements['sqlite'] = array(
             "CREATE TABLE JobType (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                name VARCHAR(255) NOT NULL,
+                name VARCHAR(255) NOT NULL COLLATE NOCASE,
                 description LONGTEXT NOT NULL)",
             "CREATE UNIQUE INDEX UNIQ_6AEF4BE05E237E06 ON JobType (name)",
         ); 

@@ -62,24 +62,23 @@ class JobPrepareCommand extends BaseCommand
         }
         
         $job = $this->getJobService()->getById((int)$input->getArgument('id'));
-        
+
         if (!$this->getJobService()->isNew($job)) {
             return $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
-        }
+        }      
         
-        $job->setNextState();  
-        
+        $job->setState($this->getJobService()->getPreparingState());         
         $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
         $entityManager->persist($job);
-        $entityManager->flush(); 
+        $entityManager->flush();        
         
-        if ($this->isRootUrl($job->getWebsite()->getCanonicalUrl())) {
+        if ($job->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {
+            $urls = array($job->getWebsite()->getCanonicalUrl());
+        } else {
             $urls = $this->getWebsiteService()->getUrls($job->getWebsite());
             if (count($urls) === 0) {
                 $urls = array($job->getWebsite()->getCanonicalUrl());
-            }
-        } else {
-            $urls = array($job->getWebsite()->getCanonicalUrl());
+            }            
         }
         
         if ($urls === false || count($urls) == 0) {
@@ -132,7 +131,7 @@ class JobPrepareCommand extends BaseCommand
             }
         }
         
-        $job->setNextState();
+        $job->setState($this->getJobService()->getQueuedState());
         
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());
@@ -149,19 +148,6 @@ class JobPrepareCommand extends BaseCommand
         }
         
         $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
-    }
-    
-    
-    /**
-     * 
-     * @param string $url
-     * @return boolean
-     */
-    private function isRootUrl($url) {
-        $normalisedUrl = new NormalisedUrl($url);
-        $normalisedRootUrl = new NormalisedUrl((string)$normalisedUrl->getRoot());
-        
-        return ((string)$normalisedUrl == (string)$normalisedRootUrl);
     }
     
     
@@ -269,7 +255,7 @@ class JobPrepareCommand extends BaseCommand
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\JobService
+     * @return \SimplyTestable\ApiBundle\Services\JobService
      */    
     private function getJobService() {
         return $this->getContainer()->get('simplytestable.services.jobservice');
@@ -294,9 +280,9 @@ class JobPrepareCommand extends BaseCommand
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\TaskTypeService
+     * @return \SimplyTestable\ApiBundle\Services\JobTypeService
      */    
-    private function getTaskTypeService() {
-        return $this->getContainer()->get('simplytestable.services.tasktypeservice');
-    }     
+    private function getJobTypeService() {
+        return $this->getContainer()->get('simplytestable.services.jobtypeservice');
+    }    
 }
