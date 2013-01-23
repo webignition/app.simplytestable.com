@@ -230,4 +230,25 @@ class TaskRepository extends EntityRepository
         
         return (int)$result[0][1];
     }    
+    
+    
+    public function findUsedTaskOutputIds() {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->join('Task.output', 'TaskOutput');
+        $queryBuilder->select('DISTINCT TaskOutput.id as TaskOutputId');        
+       
+        $result = $queryBuilder->getQuery()->getResult(); 
+        
+        if (count($result) === 0) {
+            return array();
+        }
+        
+        $ids = array();
+        
+        foreach ($result as $taskOutputIdResult) {
+            $ids[] = $taskOutputIdResult['TaskOutputId'];
+        }
+        
+        return $ids;      
+    }    
 }

@@ -1,0 +1,123 @@
+<?php
+namespace SimplyTestable\ApiBundle\Command;
+
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
+use SimplyTestable\ApiBundle\Entity\Task\Task;
+
+class MigrateRemoveUnusedOutputCommand extends BaseCommand
+{
+    
+    /**
+     *
+     * @var \Doctrine\ORM\EntityManager
+     */
+    private $entityManager;
+    
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Repository\TaskRepository
+     */
+    private $taskRepository;
+    
+    /**
+     *
+     * @var \Doctrine\ORM\EntityRepository
+     */
+    private $taskOutputRepository;
+    
+    protected function configure()
+    {
+        $this
+            ->setName('simplytestable:migrate:remove-unused-output')
+            ->setDescription('Remove output not linked to any task')
+            ->addOption('limit')
+            ->addOption('dry-run')             
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {        
+        $output->writeln('Finding unused output ...');
+        
+        $usedTaskOutputIds = $this->getTaskRepository()->findUsedTaskOutputIds();
+        $unusedTaskOutputIds = $this->getTaskOutputRepository()->findIdsNotIn($usedTaskOutputIds);
+        
+        if (count($unusedTaskOutputIds) === 0) {
+            $output->writeln('No unused task outputs found. Done.');
+            return true;
+        }   
+        
+        $output->writeln('['.count($unusedTaskOutputIds).'] outputs found');
+        $processedTaskOutputCount = 0;
+        
+        foreach ($unusedTaskOutputIds as $unusedTaskOutputId) {
+            $taskOutputToRemove = $this->getTaskOutputRepository()->find($unusedTaskOutputId);
+            
+            $processedTaskOutputCount++;
+            $output->writeln('Removing output ['.$unusedTaskOutputId.'] ('.(count($unusedTaskOutputIds) - $processedTaskOutputCount).' remaining)');
+            
+            if (!$this->isDryRun($input)) {
+                $this->getEntityManager()->remove($taskOutputToRemove);
+                $this->getEntityManager()->flush();
+            }
+        }
+        
+        return true;
+    }
+    
+    
+    
+    /**
+     * 
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @return int
+     */
+    private function isDryRun(InputInterface $input) {
+        return $input->getOption('dry-run');
+    }
+    
+    
+    /**
+     * 
+     * @return \Doctrine\ORM\EntityManager
+     */
+    private function getEntityManager() {
+        if (is_null($this->entityManager)) {
+            $this->entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+        }
+        
+        return  $this->entityManager;
+    }
+    
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Repository\TaskRepository
+     */
+    private function getTaskRepository() {
+        if (is_null($this->taskRepository)) {
+            $this->taskRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task');
+        }
+        
+        return $this->taskRepository;
+    }
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Repository\TaskOutputRepository
+     */
+    private function getTaskOutputRepository() {
+        if (is_null($this->taskOutputRepository)) {
+            $this->taskOutputRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
+        }
+        
+        return $this->taskOutputRepository;
+    }
+}
