@@ -61,6 +61,9 @@ class MigrateCanonicaliseTaskOutputCommand extends BaseCommand
             $updatedHashCount++;
             $output->writeln('['.(count($outputIds) - 1) . '] duplicates found for '.$duplicateHash.' ('.(count($duplicateHashes) - $updatedHashCount).' remaining)');
             
+            $duplicateHashCount = count($outputIds) - 1;
+            $processedDuplicateHashCount = 0;
+            
             if (count($outputIds) > 1) {                
                 $sourceId = $outputIds[0];
                 $sourceOutput = $this->getTaskOutputRepository()->find($sourceId);
@@ -68,22 +71,31 @@ class MigrateCanonicaliseTaskOutputCommand extends BaseCommand
                 $updatedTaskCount = 0;
                 
                 foreach ($duplicatesToRemove as $taskOutputId) {                    
+                    $processedDuplicateHashCount++;
+                    
                     $taskOutput = $this->getTaskOutputRepository()->find($taskOutputId);
                     
-                    $task = $this->getTaskRepository()->findOneBy(array(
+                    $tasksToUpdate = $this->getTaskRepository()->findBy(array(
                         'output' => $taskOutput
                     ));
                     
-                    if ($task) {
-                        $output->writeln('Updating output for task ['.$task->getId().']');
-                        $updatedTaskCount++;
+                    $duplicateHashTaskCount = count($tasksToUpdate);
+                    $processedDuplicateHashTaskCount = 0;
+                    
+                    if (count($tasksToUpdate)) {
+                        foreach ($tasksToUpdate as $task) {
+                            $updatedTaskCount++;
+                            $processedDuplicateHashTaskCount++;
+                            
+                            $output->writeln('Updating output for task ['.$task->getId().'] ('.($duplicateHashCount - $processedDuplicateHashCount).' batches remaining, '.($duplicateHashTaskCount - $processedDuplicateHashTaskCount).' tasks remaining in batch)');
 
-                        if (!$this->isDryRun($input)) {
-                            $task->setOutput($sourceOutput);
-                            $this->getEntityManager()->persist($task);
-                            $this->getEntityManager()->flush($task);                        
-                        }                        
-                    }                   
+                            if (!$this->isDryRun($input)) {
+                                $task->setOutput($sourceOutput);
+                                $this->getEntityManager()->persist($task);
+                                $this->getEntityManager()->flush($task);                        
+                            }                             
+                        }
+                    }                  
                 }
                 
                 if ($updatedTaskCount === 0) {

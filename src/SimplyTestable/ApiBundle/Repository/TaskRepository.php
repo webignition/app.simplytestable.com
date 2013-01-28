@@ -251,4 +251,28 @@ class TaskRepository extends EntityRepository
         
         return $ids;      
     }    
+    
+    
+    public function getTaskOutputByType(TaskType $type) {        
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->join('Task.output', 'TaskOutput');
+        $queryBuilder->select('DISTINCT TaskOutput.id as TaskOutputId');        
+        $queryBuilder->where('Task.type = :Type');
+        $queryBuilder->setParameter('Type', $type);
+        $queryBuilder->orderBy('TaskOutputId','ASC');
+        
+        $result = $queryBuilder->getQuery()->getResult(); 
+
+        if (count($result) === 0) {
+            return array();
+        }
+        
+        $ids = array();
+        
+        foreach ($result as $taskOutputIdResult) {
+            $ids[] = $taskOutputIdResult['TaskOutputId'];
+        }
+        
+        return $ids;        
+    }    
 }
