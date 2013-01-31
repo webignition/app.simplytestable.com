@@ -24,7 +24,7 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
         
         $this->runConsole('simplytestable:job:prepare', array(
             $job_id =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+            $this->getCommonFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
         ));
         
         $this->getJobService()->getEntityRepository()->clear();
