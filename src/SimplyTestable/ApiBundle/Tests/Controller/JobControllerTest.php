@@ -87,7 +87,24 @@ class JobControllerTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $status9Response->getStatusCode());
         $this->assertEquals('public', $status9ResponseObject->user);
         $this->assertEquals($canonicalUrl3, $status9ResponseObject->website);         
-    }    
+    } 
+    
+    
+    public function testTaskIdsAction() {
+        $this->setupDatabase();
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $job = $this->prepareJob($canonicalUrl, $job_id);
+        
+        $response = $this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id);
+        $taskIds = json_decode($response->getContent());
+        $expectedTaskIdCount = $job->url_count * count($job->task_types);
+        
+        $this->assertEquals($expectedTaskIdCount, count($taskIds));
+        $this->assertEquals(array(1,2,3,4,5,6,7,8,9), $taskIds);      
+    }
     
 }
 
