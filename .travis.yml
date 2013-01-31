@@ -29,3 +29,6 @@ before_script:
   
 script:
   - phpunit -c app
+  
+after_failure:
+  - cat /home/travis/build/webignition/worker.simplytestable.com/app/logs/test.log | grep "response fixture path"  
