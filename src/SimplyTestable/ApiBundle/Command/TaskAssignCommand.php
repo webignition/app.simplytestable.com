@@ -25,7 +25,7 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {         
+    {        
         if ($input->hasArgument('http-fixture-path')) {
             $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
             
@@ -34,19 +34,25 @@ EOF
             }            
         }
         
-        $task = $this->getTaskService()->getById((int)$input->getArgument('id'));
-       
-        if ($this->getWorkerTaskAssignmentService()->assign($task) === false) {
-            throw new \LogicException('Task assignment to worker failed, check log for details');
+        $task = $this->getTaskService()->getById((int)$input->getArgument('id'));               
+        if (is_null($task)) {
+            return 4;
         }
         
-        if ($task->getJob()->getState()->getName() == 'job-queued') {
-            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
-            $task->getJob()->setNextState();
-            
-            $entityManager->persist($task->getJob());
-            $entityManager->flush();               
+        $result = $this->getWorkerTaskAssignmentService()->assign($task);
+
+        // 0,1,2,3
+        if ($result === 0) {
+            if ($task->getJob()->getState()->getName() == 'job-queued') {
+                $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+                $task->getJob()->setNextState();                
+                
+                $entityManager->persist($task->getJob());
+                $entityManager->flush();               
+            }            
         }
+        
+        return $result;
     }
     
     
@@ -61,7 +67,7 @@ EOF
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
+     * @return \SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
      */    
     private function getWorkerTaskAssignmentService() {
         return $this->getContainer()->get('simplytestable.services.workertaskassignmentservice');

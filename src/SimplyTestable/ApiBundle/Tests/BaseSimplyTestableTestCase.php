@@ -123,8 +123,25 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function createJobAndGetId($canonicalUrl, $userEmail = null) {
         $response = $this->createJob($canonicalUrl, $userEmail);
         return $this->getJobIdFromUrl($response->getTargetUrl());
-    }
+    } 
     
+    
+    /**
+     * 
+     * @param string $canonicalUrl
+     * @param int $job_id
+     * @return \stdClass
+     */
+    protected function prepareJob($canonicalUrl, $job_id) {
+        $this->runConsole('simplytestable:job:prepare', array(
+            $job_id =>  true,
+            $this->getCommonFixturesDataPath() . '/HttpResponses' => true
+        ));        
+    
+        return json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());
+    }
+
+
     
     /**
      * 
@@ -227,7 +244,16 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getUserService() {
         return $this->container->get('simplytestable.services.userservice');
-    }     
+    }
+    
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskService
+     */
+    protected function getTaskService() {
+        return $this->container->get('simplytestable.services.taskservice');
+    }      
     
     
     /**
@@ -241,10 +267,13 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     /**
      * 
+     * @param string hostnanme
      * @return \SimplyTestable\ApiBundle\Entity\Worker
      */
-    protected function createWorker() {
-        $hostname = md5(time()) . '.worker.simplytestable.com';
+    protected function createWorker($hostname = null) {
+        if (is_null($hostname)) {
+            $hostname = md5(time()) . '.worker.simplytestable.com';
+        }        
         
         $worker = new Worker();
         $worker->setHostname($hostname);
@@ -252,5 +281,4 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->getWorkerService()->persistAndFlush($worker);
         return $worker;
     }
-
 }

@@ -28,28 +28,33 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * Returns a WorkerTaskAssignment object on success or false on failure.
      * 
      * @param Task $task
-     * @return WorkerTaskAssignent|boolean
+     * @return int
+     * 
+     * return codes:
+     * 0: ok
+     * 1: not ready to be assigned (in wrong state)
+     * 2: cannot assign, no workers
+     * 3: could not assign to any workers
      */
-    public function assign(Task $task) {
+    public function assign(Task $task) {        
         $this->logger->info("WorkerTaskAssignmentService::assign: Initialising");
         $this->logger->info("WorkerTaskAssignmentService::assign: Processing task [".$task->getId()."] [".$task->getType()."] [".$task->getUrl()."]");
         
-        if (!$this->taskService->isQueued($task) && !$this->taskService->isQueuedForAssignment($task)) {
-            $this->logger->info("WorkerTaskAssignmentService::assign: Task is not queued, nothing to do.");
-            return true;
-        }
+        if (!$this->canTaskBeAssigned($task)) {
+            $this->logger->err("WorkerTaskAssignmentService::assign: Task [".$task->getId()."] is not queued, nothing to do.");
+            return 1;
+        }              
         
-        $workerSelection = $this->getWorkerSelection();
-        
-        $this->logger->info("WorkerTaskAssignmentService::assign: [".count($workerSelection)."] workers selected");
+        $workerSelection = $this->getWorkerSelection();        
+        $this->logger->info("WorkerTaskAssignmentService::assign: [".count($workerSelection)."] workers selected");                        
         
         if (count($workerSelection) == 0) {
-            $this->logger->info("WorkerTaskAssignmentService::assign: Cannot assign, no workers.");
-            return true;
-        }
+            $this->logger->err("WorkerTaskAssignmentService::assign: Cannot assign, no workers.");
+            return 2;
+        }              
         
         foreach ($workerSelection as $workerIndex => $worker) {            
-            $remoteTaskId = $this->assignToWorker($task, $worker);
+            $remoteTaskId = $this->assignToWorker($task, $worker);        
             if (is_int($remoteTaskId)) {
                 $this->taskService->setStarted(
                     $task,
@@ -59,11 +64,22 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                 
                 $this->logger->info("WorkerTaskAssignmentService::assign: Succeeded with worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");                    
                 
-                return $this->update($worker, $task);  
+                $this->update($worker, $task);  
+                return 0;
             }         
         }
-        
-        return false;        
+
+        return 3;        
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @return boolean
+     */
+    private function canTaskBeAssigned(Task $task) {        
+        return $this->taskService->isQueued($task) || $this->taskService->isQueuedForAssignment($task);       
     }
     
     
@@ -169,8 +185,9 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         
         $workerTaskAssignment->setTask($task);
         $workerTaskAssignment->setDateTime(new \DateTime());
-        
-        return $this->persistAndFlush($workerTaskAssignment);
+
+        $this->persistAndFlush($workerTaskAssignment);        
+        return $workerTaskAssignment;
     }
     
     
@@ -221,7 +238,16 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         
         $httpRequest->setPostFields($postFields);
 
-        try {            
+        try {
+            if ($this->httpClient instanceof \webignition\Http\Mock\Client\Client) {
+                $this->logger->info("WorkerTaskAssignmentService::assignToWorker: response fixture path: " . $this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest));
+                if (file_exists($this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest))) {
+                    $this->logger->info("WorkerTaskAssignmentService::assignToWorker: response fixture path: found");
+                } else {
+                    $this->logger->info("WorkerTaskAssignmentService::assignToWorker: response fixture path: not found");
+                }
+            }              
+            
             $response = $this->httpClient->getResponse($httpRequest);
             $responseObject = json_decode($response->getBody());
 
@@ -304,6 +330,8 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * @return array  
      */
     private function getWorkerSelection() {
+        //$workers = $this->get
+        
         $workerTaskAssignments = $this->getEntityRepository()->findAllOrderedByDateTime();
         if (count($workerTaskAssignments) === 0) {
             return $this->workerService->getEntityRepository()->findAll();
