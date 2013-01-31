@@ -36,9 +36,7 @@ class WorkerActivateVerifyCommand extends ContainerAwareCommand
         $worker = $this->getWorkerService()->getById($id);
         $activationRequest = $this->getWorkerActivationRequestService()->fetch($worker);
         
-        if ($this->getWorkerActivationRequestService()->verify($activationRequest) === false) {
-            throw new \LogicException('Worker activation verification failed, check log for details');
-        }
+        return $this->getWorkerActivationRequestService()->verify($activationRequest);
     }
     
     
@@ -53,7 +51,7 @@ class WorkerActivateVerifyCommand extends ContainerAwareCommand
 
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
+     * @return \SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
      */    
     private function getWorkerActivationRequestService() {
         return $this->getContainer()->get('simplytestable.services.workeractivationrequestservice');

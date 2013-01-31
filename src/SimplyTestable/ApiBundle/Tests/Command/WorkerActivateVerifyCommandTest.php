@@ -52,8 +52,32 @@ class WorkerActivateVerifyCommandTest extends BaseTestCase {
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
         )); 
         
-        $this->assertEquals(1, $response);
-    }    
+        $this->assertEquals(400, $response);
+    }
+    
+    
+    public function testActivateVerifyWhenWorkerIsInMaintenanceReadyOnlyMode() {
+        $this->setupDatabase();
+        
+        $workerHostname = 'test.worker.simplytestable.com';
+        $activationRequestToken = 'token';
+        
+        $worker = $this->getWorkerService()->get($workerHostname);
+        $this->assertEquals(1, $worker->getId());
+        $this->assertEquals($workerHostname, $worker->getHostname());
+        
+        $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
+        
+        $this->assertTrue($activationRequest->getWorker()->equals($worker));
+        $this->assertTrue($activationRequest->getState()->equals($this->getWorkerActivationRequestService()->getStartingState()));
+        
+        $response = $this->runConsole('simplytestable:worker:activate:verify', array(
+            $worker->getId() =>  true,
+            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+        ));
+        
+        $this->assertEquals(503, $response);        
+    }
     
     
     /**
