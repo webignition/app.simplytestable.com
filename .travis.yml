@@ -3,16 +3,9 @@ php:
   - 5.3
   - 5.4
   
-before_script:    
-  # Let's examine what extensions are compiled into the php binary
-  #- php -m
-  
-  # Let's find where the php.ini lives
-  #- php --ini
-  
+before_script:      
   # Installing pecl_http module
-  - printf "\n\n\n\n" | pecl -q install pecl_http
-  #- echo "extension=http.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`  
+  - printf "\n\n\n\n" | pecl -q install pecl_http  
   
   # Install composer for dependency management
   - wget http://getcomposer.org/composer.phar 
