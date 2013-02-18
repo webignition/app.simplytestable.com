@@ -83,6 +83,16 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
     }
     
     
+    /**
+     * 
+     * @param type $tasks
+     * @return int
+     * 
+     * return codes:
+     * 0: ok
+     * 1: cannot assign, no workers
+     * 2: could not assign to any workers
+     */
     public function assignCollection($tasks) {
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: Initialising");
         
@@ -94,25 +104,24 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         }
         
         $workerSelection = $this->getWorkerSelection();
-        //$workerCount = count($workerSelection);
         
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: [".count($workerSelection)."] workers selected");
         
         if (count($workerSelection) == 0) {
             $this->logger->info("WorkerTaskAssignmentService::assignCollection: Cannot assign, no workers.");
-            return true;
+            return 1;
         }
         
-        $groupedTasks = $this->getGroupedTasks($tasks, count($workerSelection));
+        $groupedTasks = $this->getGroupedTasks($tasks, count($workerSelection));      
         
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: Group count [".count($workerSelection)."]");
         
-        foreach ($groupedTasks as $groupIndex => $taskGroup) {
+        foreach ($groupedTasks as $groupIndex => $taskGroup) {            
             $this->logger->info("WorkerTaskAssignmentService::assignCollection: Processing group [".$groupIndex."] [".count($taskGroup)."]");
             
             $groupIsAssigned = false;
             
-            foreach ($workerSelection as $workerIndex => $worker) {
+            foreach ($workerSelection as $workerIndex => $worker) {                
                 if (!$groupIsAssigned) {
                     $response = $this->assignCollectionToWorker($taskGroup, $worker);
 
@@ -136,8 +145,14 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                 }      
             }
             
+            if (!$groupIsAssigned) {
+                return 2;
+            }
+            
             $workerSelection = $this->getWorkerSelection();
-        }
+        }       
+        
+        return 0;          
      }
     
     
@@ -266,12 +281,12 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * @param Worker $worker
      * @return int|boolean
      */
-    private function assignCollectionToWorker($tasks, Worker $worker) {
+    private function assignCollectionToWorker($tasks, Worker $worker) {        
         $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: Trying worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");                    
         
-        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection');
+        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection');        
 
-        $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);
+        $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);        
         
         $requestData = array();
         foreach ($tasks as $task) {
@@ -290,22 +305,37 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         
         $httpRequest->setPostFields(array(
             'tasks' => $requestData            
-        ));     
-
+        ));
+        
+        if ($this->httpClient instanceof \webignition\Http\Mock\Client\Client) {
+            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: response fixture path: " . $this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest));
+            if (file_exists($this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest))) {
+                $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: response fixture path: found");
+            } else {
+                $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: response fixture path: not found");
+            }
+        }        
+        
         try {            
-            $response = $this->httpClient->getResponse($httpRequest);
-            $responseObject = json_decode($response->getBody());
+            $response = $this->httpClient->getResponse($httpRequest);            
             
+            if ($response->getResponseCode() !== 200) {
+                return false;
+            }
+            
+            $responseObject = json_decode($response->getBody());            
             foreach ($tasks as $task) {
                 $this->setTaskRemoteIdFromRemoteCollection($task, $responseObject);
             }            
 
-            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
+            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());     
             
-            return ($response->getResponseCode() === 200) ? true : false;
-        } catch (CurlException $curlException) {
+            return true;
+        } catch (CurlException $curlException) {            
             $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: " . $requestUrl . ": " . $curlException->getMessage());
-        }         
+        }
+        
+        return false;
     }
     
     

@@ -25,7 +25,7 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {         
+    {        
         if ($input->hasArgument('http-fixture-path')) {
             $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
             
@@ -34,23 +34,32 @@ EOF
             }            
         }
         
-        $taskIds = explode(',', $input->getArgument('ids'));
+        $taskIds = explode(',', $input->getArgument('ids'));        
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
         
-        $this->getWorkerTaskAssignmentService()->assignCollection($tasks);
+        $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks);
         
-        $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
-        foreach ($tasks as $task) {
-            /* @var $task Task */
-            $job = $task->getJob();
-            
+        if ($response === 0) {
+            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+
+            $job = $tasks[0]->getJob();
             if ($job->getState()->getName() == 'job-queued') {                
                 $job->setState($this->getJobService()->getInProgressState());
                 $entityManager->persist($job);          
             }       
+
+            $entityManager->flush();            
+        } else {
+            $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
+                'task-assign-collection',
+                array(
+                    'ids' => implode(',', $taskIds)
+                )
+            );             
         }
-       
-        $entityManager->flush();
+        
+        return $response;
     }
 
     

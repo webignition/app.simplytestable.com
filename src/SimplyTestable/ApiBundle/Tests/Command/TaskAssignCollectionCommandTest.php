@@ -4,33 +4,38 @@ namespace SimplyTestable\ApiBundle\Tests\Command;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class TaskAssignCommandTest extends BaseSimplyTestableTestCase {    
+class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {    
 
     public function testAssignValidTaskReturnsStatusCode0() {        
         $this->setupDatabase();
         
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $workerHostname = 'hydrogen.worker.simplytestable.com';
+        
+        $this->createWorker($workerHostname);
         
         $canonicalUrl = 'http://example.com/';       
         $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
         
         $this->prepareJob($canonicalUrl, $job_id);
 
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
 
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true,
+        $result = $this->runConsole('simplytestable:task:assigncollection', array(
+            implode($taskIds, ',') =>  true,
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
         ));
-        
-        $job = json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());
         
         $this->assertEquals(0, $result);
-        $this->assertEquals('in-progress', $job->state);
+        
+        $tasks = json_decode($this->getJobController('tasksAction')->tasksAction($canonicalUrl, $job_id)->getContent());
+        
+        foreach ($tasks as $task) {
+            $this->assertEquals($workerHostname, $task->worker);
+            $this->assertEquals('in-progress', $task->state);
+        }
     }
     
-    
-    public function testAssignTaskInWrongStateReturnsStatusCode1() {
+    public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
         $this->setupDatabase();
         
         $canonicalUrl = 'http://example.com/';       
@@ -38,105 +43,60 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
         
         $this->prepareJob($canonicalUrl, $job_id);
 
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
-        $task->setState($this->getTaskService()->getCompletedState());
-        $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
 
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true,
+        $result = $this->runConsole('simplytestable:task:assigncollection', array(
+            implode($taskIds, ',') =>  true,
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
         ));
         
-        $this->assertEquals(1, $result);        
-    }
-    
-    public function testAssignTaskWhenNoWorkersReturnsStatusCode2() {
-        $this->setupDatabase();
+        $this->assertEquals(1, $result);    
         
-        $canonicalUrl = 'http://example.com/';       
-        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
-        
-        $this->prepareJob($canonicalUrl, $job_id);
-
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
-
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
-        
-        $this->assertEquals(2, $result);     
-    }    
-    
-    
-    public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode3() {
-        $this->setupDatabase();
-        
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
-        $this->createWorker('http://lithium.worker.simplytestable.com');
-        $this->createWorker('http://helium.worker.simplytestable.com');
-        
-        $canonicalUrl = 'http://example.com/';       
-        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
-        
-        $this->prepareJob($canonicalUrl, $job_id);
-
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
-
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
-        
-        $this->assertEquals(3, $result);     
-    }     
-    
-    
-    public function testAssignInvalidTaskReturnsStatusCode4() {
-        $this->setupDatabase();
-        
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            1 =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
-        
-        $this->assertEquals($result, 4);    
-    }
-    
-    
-    public function testAssignTaskWhenNoWorkersAreAvailableRequeuesResqueJob() {
-        $this->setupDatabase();
-        $this->clearRedis();
-        
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
-        $this->createWorker('http://lithium.worker.simplytestable.com');
-        $this->createWorker('http://helium.worker.simplytestable.com');
-        
-        $canonicalUrl = 'http://example.com/';       
-        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
-        
-        $this->prepareJob($canonicalUrl, $job_id);
-
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
-
-        $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));        
-     
         $containsResult = $this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
-            'task-assign',
+            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
+            'task-assign-collection',
             array(
-                'id' => $taskIds[0]
+                'ids' => implode(',', $taskIds)
             )
         );
         
-        $this->assertTrue($containsResult);
-    }     
+        $this->assertTrue($containsResult);        
+    }
+    
+    
+    
+    public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2() {
+        $this->setupDatabase();
+        
+        $this->createWorker('hydrogen.worker.simplytestable.com');
+        $this->createWorker('lithium.worker.simplytestable.com');
+        $this->createWorker('helium.worker.simplytestable.com');        
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
+
+        $result = $this->runConsole('simplytestable:task:assigncollection', array(
+            implode($taskIds, ',') =>  true,
+            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+        ));
+        
+        $this->assertEquals(2, $result);
+        
+        $containsResult = $this->getResqueQueueService()->contains(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
+            'task-assign-collection',
+            array(
+                'ids' => implode(',', $taskIds)
+            )
+        );
+        
+        $this->assertTrue($containsResult);        
+    } 
+     
     
     
 

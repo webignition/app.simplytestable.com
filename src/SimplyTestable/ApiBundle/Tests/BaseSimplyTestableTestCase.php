@@ -275,6 +275,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     
     /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\StateService
+     */        
+    protected function getStateService() {
+        return $this->container->get('simplytestable.services.stateservice');
+    }        
+    
+    
+    /**
      * 
      * @param string hostnanme
      * @return \SimplyTestable\ApiBundle\Entity\Worker
@@ -286,6 +295,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         
         $worker = new Worker();
         $worker->setHostname($hostname);
+        $worker->setState($this->getStateService()->fetch('worker-active'));
         
         $this->getWorkerService()->persistAndFlush($worker);
         return $worker;
