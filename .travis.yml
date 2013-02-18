@@ -4,6 +4,9 @@ php:
   - 5.4
   
 before_script:    
+  # Let's examine what extensions are compiled into the php binary
+  - php -m
+  
   # Installing pecl_http module
   - printf "\n\n\n\n" | pecl -q install pecl_http
   - echo "extension=http.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`  
