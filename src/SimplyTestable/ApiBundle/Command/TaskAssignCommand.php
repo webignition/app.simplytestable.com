@@ -52,6 +52,17 @@ EOF
             }            
         }
         
+        // If could not be assgined to any workers
+        if ($result === 3) {
+            $this->getResqueQueueService()->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+                'task-assign',
+                array(
+                    'id' => $task->getId()
+                )
+            );           
+        }
+        
         return $result;
     }
     
@@ -71,5 +82,14 @@ EOF
      */    
     private function getWorkerTaskAssignmentService() {
         return $this->getContainer()->get('simplytestable.services.workertaskassignmentservice');
+    }    
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\ResqueQueueService
+     */    
+    private function getResqueQueueService() {
+        return $this->getContainer()->get('simplytestable.services.resquequeueservice');
     }
 }
