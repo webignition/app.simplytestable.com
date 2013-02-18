@@ -105,6 +105,17 @@ class ResqueQueueService {
     }
     
     
+    /**
+     * 
+     * @param string $job_name
+     * @param string $queue_name
+     * @param array $args
+     * @return boolean
+     */
+    public function contains($job_name, $queue_name, $args = null) {
+        return !is_null($this->findRedisValue($job_name, $queue_name, $args));
+    }
+    
     
     /**
      *
