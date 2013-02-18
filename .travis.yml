@@ -5,7 +5,10 @@ php:
   
 before_script:    
   # Let's examine what extensions are compiled into the php binary
-  - php -m
+  #- php -m
+  
+  # Let's find where the php.ini lives
+  - php --ini
   
   # Installing pecl_http module
   - printf "\n\n\n\n" | pecl -q install pecl_http
