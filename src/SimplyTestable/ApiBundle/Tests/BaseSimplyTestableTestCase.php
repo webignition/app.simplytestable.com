@@ -262,6 +262,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getTaskTypeService() {
         return $this->container->get('simplytestable.services.tasktypeservice');
+    } 
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\ResqueQueueService
+     */        
+    protected function getResqueQueueService() {
+        return $this->container->get('simplytestable.services.resqueQueueService');
     }     
     
     

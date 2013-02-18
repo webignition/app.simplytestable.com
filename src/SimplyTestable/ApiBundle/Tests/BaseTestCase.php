@@ -72,6 +72,11 @@ abstract class BaseTestCase extends WebTestCase {
         //exec('php app/console doctrine:migrations:migrate --no-interaction');
     } 
     
+    
+    protected function clearRedis() {
+        exec('redis-cli -r 1 flushall');
+    }
+    
     /**
      * 
      * Builds a Controller object and the request to satisfy it. Attaches the request
