@@ -61,11 +61,11 @@
             "description": "Common Library for Doctrine projects",
             "homepage": "http://www.doctrine-project.org",
             "keywords": [
-                "collections",
-                "spl",
-                "eventmanager",
                 "annotations",
-                "persistence"
+                "collections",
+                "eventmanager",
+                "persistence",
+                "spl"
             ]
         },
         {
@@ -83,8 +83,8 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
-                "doctrine/common": "2.3.*"
+                "doctrine/common": "2.3.*",
+                "php": ">=5.3.2"
             },
             "time": "2012-10-06 10:21:52",
             "type": "library",
@@ -125,8 +125,8 @@
             "homepage": "http://www.doctrine-project.org",
             "keywords": [
                 "database",
-                "persistence",
                 "dbal",
+                "persistence",
                 "queryobject"
             ]
         },
@@ -146,15 +146,15 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
                 "doctrine/dbal": ">=2.2,<2.4-dev",
-                "symfony/framework-bundle": ">=2.1,<2.3-dev",
-                "symfony/doctrine-bridge": ">=2.1,<2.3-dev"
+                "php": ">=5.3.2",
+                "symfony/doctrine-bridge": ">=2.1,<2.3-dev",
+                "symfony/framework-bundle": ">=2.1,<2.3-dev"
             },
             "require-dev": {
                 "doctrine/orm": ">=2.2,<2.4-dev",
-                "symfony/yaml": ">=2.1,<2.3-dev",
-                "symfony/validator": ">=2.1,<2.3-dev"
+                "symfony/validator": ">=2.1,<2.3-dev",
+                "symfony/yaml": ">=2.1,<2.3-dev"
             },
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
@@ -192,9 +192,9 @@
             "homepage": "http://www.doctrine-project.org",
             "keywords": [
                 "database",
+                "dbal",
                 "orm",
-                "persistence",
-                "dbal"
+                "persistence"
             ]
         },
         {
@@ -212,8 +212,8 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
-                "doctrine/dbal": ">=2.0,<2.5.x-dev"
+                "doctrine/dbal": ">=2.0,<2.5.x-dev",
+                "php": ">=5.3.2"
             },
             "require-dev": {
                 "symfony/console": "2.*",
@@ -265,10 +265,10 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
+                "doctrine/dbal": "2.3.*",
                 "ext-pdo": "*",
-                "symfony/console": "2.*",
-                "doctrine/dbal": "2.3.*"
+                "php": ">=5.3.2",
+                "symfony/console": "2.*"
             },
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
@@ -340,12 +340,12 @@
                 "symfony/security-bundle": ">=2.1,<2.3-dev"
             },
             "require-dev": {
-                "twig/twig": "*",
                 "doctrine/doctrine-bundle": "*",
                 "swiftmailer/swiftmailer": "*",
-                "willdurand/propel-typehintable-behavior": "dev-master",
                 "symfony/validator": "2.1.*",
-                "symfony/yaml": "2.1.*"
+                "symfony/yaml": "2.1.*",
+                "twig/twig": "*",
+                "willdurand/propel-typehintable-behavior": "dev-master"
             },
             "suggest": {
                 "doctrine/couchdb-odm-bundle": "*",
@@ -441,8 +441,8 @@
                 "shasum": ""
             },
             "require": {
-                "symfony/framework-bundle": "2.*",
-                "jms/cg": "1.0.0"
+                "jms/cg": "1.0.0",
+                "symfony/framework-bundle": "2.*"
             },
             "time": "2012-01-02 20:50:26",
             "type": "symfony-bundle",
@@ -524,24 +524,24 @@
                 "shasum": ""
             },
             "require": {
-                "symfony/framework-bundle": "2.1.*",
                 "jms/aop-bundle": "1.0.*",
                 "jms/metadata": "1.1.*",
-                "symfony/process": "2.1.*",
-                "symfony/finder": "2.1.*"
+                "symfony/finder": "2.1.*",
+                "symfony/framework-bundle": "2.1.*",
+                "symfony/process": "2.1.*"
             },
             "require-dev": {
+                "doctrine/doctrine-bundle": "*",
+                "doctrine/orm": "*",
                 "jms/security-extra-bundle": "1.*",
-                "symfony/validator": "*",
-                "symfony/form": "*",
-                "symfony/class-loader": "*",
-                "symfony/yaml": "*",
+                "sensio/framework-extra-bundle": "*",
                 "symfony/browser-kit": "*",
+                "symfony/class-loader": "*",
+                "symfony/form": "*",
                 "symfony/security-bundle": "*",
                 "symfony/twig-bundle": "*",
-                "sensio/framework-extra-bundle": "*",
-                "doctrine/doctrine-bundle": "*",
-                "doctrine/orm": "*"
+                "symfony/validator": "*",
+                "symfony/yaml": "*"
             },
             "time": "2012-09-21 08:56:32",
             "type": "symfony-bundle",
@@ -564,8 +564,8 @@
             "description": "Allows to configure dependency injection using annotations",
             "homepage": "http://jmsyst.com/bundles/JMSDiExtraBundle",
             "keywords": [
-                "dependency injection",
-                "annotations"
+                "annotations",
+                "dependency injection"
             ]
         },
         {
@@ -606,9 +606,9 @@
             "description": "Class/method/property metadata management in PHP",
             "keywords": [
                 "annotations",
-                "yaml",
+                "metadata",
                 "xml",
-                "metadata"
+                "yaml"
             ]
         },
         {
@@ -627,25 +627,25 @@
                 "shasum": ""
             },
             "require": {
-                "symfony/framework-bundle": "2.1.*",
-                "symfony/security-bundle": "*",
-                "jms/metadata": "1.1.*",
                 "jms/aop-bundle": "1.0.*",
-                "jms/di-extra-bundle": "1.1.*"
+                "jms/di-extra-bundle": "1.1.*",
+                "jms/metadata": "1.1.*",
+                "symfony/framework-bundle": "2.1.*",
+                "symfony/security-bundle": "*"
             },
             "require-dev": {
-                "sensio/framework-extra-bundle": "*",
-                "symfony/class-loader": "*",
-                "symfony/yaml": "*",
-                "symfony/browser-kit": "*",
-                "symfony/finder": "*",
-                "symfony/css-selector": "*",
-                "symfony/process": "*",
                 "doctrine/doctrine-bundle": "*",
-                "symfony/twig-bundle": "*",
                 "doctrine/orm": "*",
+                "sensio/framework-extra-bundle": "*",
+                "symfony/browser-kit": "*",
+                "symfony/class-loader": "*",
+                "symfony/css-selector": "*",
+                "symfony/finder": "*",
                 "symfony/form": "*",
-                "symfony/validator": "*"
+                "symfony/process": "*",
+                "symfony/twig-bundle": "*",
+                "symfony/validator": "*",
+                "symfony/yaml": "*"
             },
             "time": "2012-09-06 16:12:23",
             "type": "symfony-bundle",
@@ -671,16 +671,16 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
-                "jms/metadata": ">=1.1.0,<1.3-dev"
+                "jms/metadata": ">=1.1.0,<1.3-dev",
+                "php": ">=5.3.2"
             },
             "require-dev": {
-                "symfony/framework-bundle": ">=2.0,<2.2-dev",
-                "symfony/yaml": ">=2.0,<2.2-dev",
+                "doctrine/orm": ">=2.1,<2.4-dev",
                 "symfony/form": ">=2.0,<2.2-dev",
+                "symfony/framework-bundle": ">=2.0,<2.2-dev",
                 "symfony/validator": ">=2.0,<2.2-dev",
-                "twig/twig": ">=1.8,<2.0-dev",
-                "doctrine/orm": ">=2.1,<2.4-dev"
+                "symfony/yaml": ">=2.0,<2.2-dev",
+                "twig/twig": ">=1.8,<2.0-dev"
             },
             "time": "2012-09-20 14:23:52",
             "type": "symfony-bundle",
@@ -708,11 +708,11 @@
             "description": "Allows you to easily serialize, and deserialize object graphs of any complexity",
             "homepage": "http://jmsyst.com/bundles/JMSSerializerBundle",
             "keywords": [
-                "json",
-                "xml",
-                "serialization",
                 "deserialization",
-                "jaxb"
+                "jaxb",
+                "json",
+                "serialization",
+                "xml"
             ]
         },
         {
@@ -730,22 +730,22 @@
                 "shasum": ""
             },
             "require": {
-                "symfony/process": ">=2.1.0,<2.3-dev",
-                "php": ">=5.3.1"
+                "php": ">=5.3.1",
+                "symfony/process": ">=2.1.0,<2.3-dev"
             },
             "require-dev": {
-                "twig/twig": ">=1.6.0,<2.0",
                 "leafo/lessphp": "*",
                 "leafo/scssphp": "*",
+                "leafo/scssphp-compass": "*",
                 "ptachoire/cssembed": "*",
-                "leafo/scssphp-compass": "*"
+                "twig/twig": ">=1.6.0,<2.0"
             },
             "suggest": {
-                "twig/twig": "Assetic provides the integration with the Twig templating engine",
                 "leafo/lessphp": "Assetic provides the integration with the lessphp LESS compiler",
                 "leafo/scssphp": "Assetic provides the integration with the scssphp SCSS compiler",
+                "leafo/scssphp-compass": "Assetic provides the integration with the SCSS compass plugin",
                 "ptachoire/cssembed": "Assetic provides the integration with phpcssembed to embed data uris",
-                "leafo/scssphp-compass": "Assetic provides the integration with the SCSS compass plugin"
+                "twig/twig": "Assetic provides the integration with the Twig templating engine"
             },
             "time": "2012-09-30 11:32:39",
             "type": "library",
@@ -801,9 +801,9 @@
                 "mlehner/gelf-php": "1.0.*"
             },
             "suggest": {
-                "mlehner/gelf-php": "Allow sending log messages to a GrayLog2 server",
                 "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
-                "ext-mongo": "Allow sending log messages to a MongoDB server"
+                "ext-mongo": "Allow sending log messages to a MongoDB server",
+                "mlehner/gelf-php": "Allow sending log messages to a GrayLog2 server"
             },
             "time": "2012-09-18 15:50:48",
             "type": "library",
@@ -866,10 +866,10 @@
             "description": "HTML/XML querying (CSS 4 or XPath) and processing (like jQuery)",
             "homepage": "https://github.com/technosophos/querypath",
             "keywords": [
-                "xml",
-                "jquery",
                 "css",
                 "html",
+                "jquery",
+                "xml",
                 "xslt"
             ]
         },
@@ -914,8 +914,8 @@
             ],
             "description": "The base bundle for the Symfony Distributions",
             "keywords": [
-                "distribution",
-                "configuration"
+                "configuration",
+                "distribution"
             ]
         },
         {
@@ -934,8 +934,8 @@
                 "shasum": ""
             },
             "require": {
-                "symfony/framework-bundle": "2.1.*",
-                "doctrine/common": ">=2.1,<2.4-dev"
+                "doctrine/common": ">=2.1,<2.4-dev",
+                "symfony/framework-bundle": "2.1.*"
             },
             "time": "2012-10-09 12:34:31",
             "type": "symfony-bundle",
@@ -980,12 +980,12 @@
                 "shasum": ""
             },
             "require": {
-                "symfony/framework-bundle": "2.1.*",
-                "symfony/console": "2.1.*"
+                "symfony/console": "2.1.*",
+                "symfony/framework-bundle": "2.1.*"
             },
             "require-dev": {
-                "symfony/doctrine-bridge": "2.1.*",
                 "doctrine/orm": ">=2.1,<2.4-dev",
+                "symfony/doctrine-bridge": "2.1.*",
                 "twig/twig": ">=1.8,<2.0-dev"
             },
             "type": "symfony-bundle",
@@ -1060,8 +1060,8 @@
             "homepage": "http://simplepie.org/",
             "keywords": [
                 "atom",
-                "rss",
-                "feeds"
+                "feeds",
+                "rss"
             ]
         },
         {
@@ -1128,18 +1128,18 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
                 "kriswallsmith/assetic": "1.1.*",
+                "php": ">=5.3.0",
                 "symfony/framework-bundle": ">=2.1.0,<2.3-dev"
             },
             "require-dev": {
-                "symfony/twig-bundle": ">=2.1.0,<2.3-dev",
-                "symfony/console": ">=2.1.0,<2.3-dev",
                 "symfony/class-loader": ">=2.1.0,<2.3-dev",
-                "symfony/yaml": ">=2.1.0,<2.3-dev",
-                "symfony/form": ">=2.1.0,<2.3-dev",
+                "symfony/console": ">=2.1.0,<2.3-dev",
+                "symfony/css-selector": ">=2.1.0,<2.3-dev",
                 "symfony/dom-crawler": ">=2.1.0,<2.3-dev",
-                "symfony/css-selector": ">=2.1.0,<2.3-dev"
+                "symfony/form": ">=2.1.0,<2.3-dev",
+                "symfony/twig-bundle": ">=2.1.0,<2.3-dev",
+                "symfony/yaml": ">=2.1.0,<2.3-dev"
             },
             "suggest": {
                 "symfony/twig-bundle": ">=2.1.0,<2.3-dev"
@@ -1190,15 +1190,15 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2",
                 "monolog/monolog": "1.*",
-                "symfony/monolog-bridge": ">=2.1.0,<2.3-dev",
+                "php": ">=5.3.2",
+                "symfony/config": ">=2.1.0,<2.3-dev",
                 "symfony/dependency-injection": ">=2.1.0,<2.3-dev",
-                "symfony/config": ">=2.1.0,<2.3-dev"
+                "symfony/monolog-bridge": ">=2.1.0,<2.3-dev"
             },
             "require-dev": {
-                "symfony/yaml": ">=2.1.0,<2.3-dev",
-                "symfony/config": ">=2.1.0,<2.3-dev"
+                "symfony/config": ">=2.1.0,<2.3-dev",
+                "symfony/yaml": ">=2.1.0,<2.3-dev"
             },
             "time": "2012-09-20 10:40:24",
             "type": "symfony-bundle",
@@ -1249,9 +1249,9 @@
                 "symfony/swiftmailer-bridge": ">=2.1.0,<2.3-dev"
             },
             "require-dev": {
+                "symfony/config": ">=2.1.0,<2.3-dev",
                 "symfony/dependency-injection": ">=2.1.0,<2.3-dev",
                 "symfony/http-kernel": ">=2.1.0,<2.3-dev",
-                "symfony/config": ">=2.1.0,<2.3-dev",
                 "symfony/yaml": ">=2.1.0,<2.3-dev"
             },
             "time": "2012-09-20 10:42:56",
@@ -1297,50 +1297,50 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.3",
                 "doctrine/common": ">2.2,<2.4-dev",
+                "php": ">=5.3.3",
                 "twig/twig": ">=1.9.1,<2.0-dev"
             },
             "replace": {
-                "symfony/doctrine-bridge": "self.version",
-                "symfony/monolog-bridge": "self.version",
-                "symfony/propel1-bridge": "self.version",
-                "symfony/swiftmailer-bridge": "self.version",
-                "symfony/twig-bridge": "self.version",
-                "symfony/framework-bundle": "self.version",
-                "symfony/security-bundle": "self.version",
-                "symfony/twig-bundle": "self.version",
-                "symfony/web-profiler-bundle": "self.version",
                 "symfony/browser-kit": "self.version",
                 "symfony/class-loader": "self.version",
                 "symfony/config": "self.version",
                 "symfony/console": "self.version",
                 "symfony/css-selector": "self.version",
                 "symfony/dependency-injection": "self.version",
+                "symfony/doctrine-bridge": "self.version",
                 "symfony/dom-crawler": "self.version",
                 "symfony/event-dispatcher": "self.version",
                 "symfony/filesystem": "self.version",
                 "symfony/finder": "self.version",
                 "symfony/form": "self.version",
+                "symfony/framework-bundle": "self.version",
                 "symfony/http-foundation": "self.version",
                 "symfony/http-kernel": "self.version",
                 "symfony/locale": "self.version",
+                "symfony/monolog-bridge": "self.version",
                 "symfony/options-resolver": "self.version",
                 "symfony/process": "self.version",
+                "symfony/propel1-bridge": "self.version",
                 "symfony/routing": "self.version",
                 "symfony/security": "self.version",
+                "symfony/security-bundle": "self.version",
                 "symfony/serializer": "self.version",
+                "symfony/swiftmailer-bridge": "self.version",
                 "symfony/templating": "self.version",
                 "symfony/translation": "self.version",
+                "symfony/twig-bridge": "self.version",
+                "symfony/twig-bundle": "self.version",
                 "symfony/validator": "self.version",
+                "symfony/web-profiler-bundle": "self.version",
                 "symfony/yaml": "self.version"
             },
             "require-dev": {
+                "doctrine/data-fixtures": "1.0.*",
                 "doctrine/dbal": ">=2.2,<2.4-dev",
                 "doctrine/orm": ">=2.2.3,<2.4-dev",
-                "doctrine/data-fixtures": "1.0.*",
-                "propel/propel1": "dev-master",
-                "monolog/monolog": "dev-master"
+                "monolog/monolog": "dev-master",
+                "propel/propel1": "dev-master"
             },
             "time": "2012-10-11 13:44:22",
             "type": "library",
@@ -1505,8 +1505,8 @@
             "description": "Derives an absolute URL from relative and source URLs",
             "homepage": "https://github.com/webignition/absolute-url-deriver",
             "keywords": [
-                "url",
-                "absolute"
+                "absolute",
+                "url"
             ]
         },
         {
@@ -1524,9 +1524,9 @@
                 "shasum": ""
             },
             "require": {
+                "doctrine/migrations": "*",
                 "php": ">=5.3.2",
-                "symfony/symfony": ">=2.0",
-                "doctrine/migrations": "*"
+                "symfony/symfony": ">=2.0"
             },
             "time": "2012-07-14 12:27:34",
             "type": "library",
@@ -1548,9 +1548,9 @@
             "homepage": "https://github.com/webignition/ContainerAwareMigration",
             "keywords": [
                 "database",
+                "doctrine",
                 "migrations",
-                "symfony",
-                "doctrine"
+                "symfony"
             ]
         },
         {
@@ -1609,9 +1609,9 @@
                 "shasum": ""
             },
             "require": {
+                "doctrine/migrations": "*",
                 "php": ">=5.3.2",
-                "symfony/symfony": ">=2.0",
-                "doctrine/migrations": "*"
+                "symfony/symfony": ">=2.0"
             },
             "time": "2012-07-14 13:29:54",
             "type": "symfony-bundle",
@@ -1650,22 +1650,22 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webignition/http-client",
-                "reference": "1.2.3"
+                "url": "https://github.com/webignition/http-client.git",
+                "reference": "1.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/http-client/archive/1.2.3.zip",
-                "reference": "1.2.3",
+                "url": "https://api.github.com/repos/webignition/http-client/zipball/1.3",
+                "reference": "1.3",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
                 "ext-http": "*",
+                "php": ">=5.3.0",
                 "webignition/absolute-url-deriver": ">=1.1",
                 "webignition/url": ">1.0"
             },
-            "time": "2012-10-30 12:15:58",
+            "time": "2013-02-18 15:05:56",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1685,8 +1685,8 @@
             "description": "HTTP Client with additional reliability over regular HTTP request sending to compensate for timeouts and redirects",
             "homepage": "https://github.com/webignition/http-client",
             "keywords": [
-                "http",
-                "client"
+                "client",
+                "http"
             ]
         },
         {
@@ -1727,11 +1727,11 @@
             "description": "PHP model of an http://en.wikipedia.org/wiki/Internet_media_type",
             "homepage": "https://github.com/webignition/internet-media-type",
             "keywords": [
+                "content type",
+                "content-type",
                 "internet media type",
                 "media type",
-                "media-type",
-                "content type",
-                "content-type"
+                "media-type"
             ]
         },
         {
@@ -1791,8 +1791,8 @@
                 "shasum": ""
             },
             "require": {
-                "symfony/framework-bundle": "2.1.*",
-                "glit/resque": "dev-master"
+                "glit/resque": "dev-master",
+                "symfony/framework-bundle": "2.1.*"
             },
             "time": "2012-09-07 20:43:20",
             "type": "symfony-bundle",
@@ -1923,13 +1923,13 @@
                 "shasum": ""
             },
             "require": {
+                "doctrine/doctrine-bundle": "dev-master",
+                "doctrine/migrations": "*",
+                "doctrine/orm": "2.3.*",
                 "php": ">=5.3.2",
                 "symfony/symfony": ">=2.1.0",
-                "doctrine/orm": "2.3.*",
-                "doctrine/migrations": "*",
-                "doctrine/doctrine-bundle": "dev-master",
-                "webignition/doctrine-migrations-bundle": "*",
-                "webignition/container-aware-migration": "*"
+                "webignition/container-aware-migration": "*",
+                "webignition/doctrine-migrations-bundle": "*"
             },
             "time": "2012-08-02 09:45:05",
             "type": "symfony-bundle",
@@ -1969,10 +1969,10 @@
             },
             "require": {
                 "php": ">=5.3.0",
-                "webignition/web-resource-model": ">=0.1,<2.0",
-                "webignition/url": ">=0.1,<2.0",
                 "querypath/querypath": ">=3.0.0",
-                "simplepie/simplepie": "*"
+                "simplepie/simplepie": "*",
+                "webignition/url": ">=0.1,<2.0",
+                "webignition/web-resource-model": ">=0.1,<2.0"
             },
             "time": "2012-10-09 19:10:42",
             "type": "library",
@@ -2051,8 +2051,8 @@
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "ext-intl": "*"
+                "ext-intl": "*",
+                "php": ">=5.3.0"
             },
             "time": "2012-12-20 13:59:27",
             "type": "library",
@@ -2093,8 +2093,8 @@
             },
             "require": {
                 "php": ">=5.3.0",
-                "webignition/web-resource-model": ">=0.1,<2.0",
-                "querypath/querypath": ">=3.0.0"
+                "querypath/querypath": ">=3.0.0",
+                "webignition/web-resource-model": ">=0.1,<2.0"
             },
             "time": "2012-12-03 12:46:24",
             "type": "library",
@@ -2157,8 +2157,8 @@
             "description": "Model of a web-based resource",
             "homepage": "https://github.com/webignition/web-resource-model",
             "keywords": [
-                "web",
-                "modem"
+                "modem",
+                "web"
             ]
         },
         {
@@ -2221,10 +2221,10 @@
             "require": {
                 "php": ">=5.3.0",
                 "webignition/http-client": "dev-master",
-                "webignition/robots-txt-parser": "dev-master",
                 "webignition/internet-media-type": ">=0.1,<2.0",
-                "webignition/url": ">=0.1,<2.0",
+                "webignition/robots-txt-parser": "dev-master",
                 "webignition/sitemap-model": "dev-master",
+                "webignition/url": ">=0.1,<2.0",
                 "webignition/website-sitemap-retriever": "dev-master"
             },
             "time": "2012-10-26 09:20:02",
@@ -2266,8 +2266,8 @@
             "require": {
                 "php": ">=5.3.0",
                 "webignition/http-client": "dev-master",
-                "webignition/sitemap-model": "dev-master",
-                "webignition/internet-media-type": ">=0.1,<2.0"
+                "webignition/internet-media-type": ">=0.1,<2.0",
+                "webignition/sitemap-model": "dev-master"
             },
             "time": "2012-10-26 08:59:56",
             "type": "library",
