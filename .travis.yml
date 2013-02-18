@@ -8,11 +8,11 @@ before_script:
   #- php -m
   
   # Let's find where the php.ini lives
-  - php --ini
+  #- php --ini
   
   # Installing pecl_http module
   - printf "\n\n\n\n" | pecl -q install pecl_http
-  - echo "extension=http.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`  
+  #- echo "extension=http.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s|.*:\s*||"`  
   
   # Install composer for dependency management
   - wget http://getcomposer.org/composer.phar 
