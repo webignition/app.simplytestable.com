@@ -33,6 +33,8 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
     public function testAssignTaskInWrongStateReturnsStatusCode1() {
         $this->setupDatabase();
         
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');        
+        
         $canonicalUrl = 'http://example.com/';       
         $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
         
@@ -50,7 +52,7 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
         ));
         
-        $this->assertEquals(1, $result);        
+        $this->assertEquals(1, $result);   
     }
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode2() {
@@ -68,7 +70,17 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
         ));
         
-        $this->assertEquals(2, $result);     
+        $this->assertEquals(2, $result);
+        
+        $containsResult = $this->getResqueQueueService()->contains(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+            'task-assign',
+            array(
+                'id' => $taskIds[0]
+            )
+        );
+        
+        $this->assertTrue($containsResult);          
     }    
     
     
@@ -91,7 +103,17 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
         ));
         
-        $this->assertEquals(3, $result);     
+        $this->assertEquals(3, $result);
+
+        $containsResult = $this->getResqueQueueService()->contains(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+            'task-assign',
+            array(
+                'id' => $taskIds[0]
+            )
+        );
+        
+        $this->assertTrue($containsResult);         
     }     
     
     
@@ -105,41 +127,5 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
         
         $this->assertEquals($result, 4);    
     }
-    
-    
-    public function testAssignTaskWhenNoWorkersAreAvailableRequeuesResqueJob() {
-        $this->setupDatabase();
-        $this->clearRedis();
-        
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
-        $this->createWorker('http://lithium.worker.simplytestable.com');
-        $this->createWorker('http://helium.worker.simplytestable.com');
-        
-        $canonicalUrl = 'http://example.com/';       
-        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
-        
-        $this->prepareJob($canonicalUrl, $job_id);
-
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
-
-        $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));        
-     
-        $containsResult = $this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
-            'task-assign',
-            array(
-                'id' => $taskIds[0]
-            )
-        );
-        
-        $this->assertTrue($containsResult);
-    }     
-    
-    
-
-
 
 }

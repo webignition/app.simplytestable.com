@@ -13,6 +13,9 @@ use SimplyTestable\ApiBundle\Entity\TimePeriod;
 class WorkerTaskAssignmentService extends WorkerTaskService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WorkerTaskAssignment';    
+    const ASSIGN_COLLECTION_OK_STATUS_CODE = 0;
+    const ASSIGN_COLLECTION_NO_WORKERS_STATUS_CODE = 1;
+    const ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE = 2;
     
     /**
      *
@@ -28,6 +31,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * Returns a WorkerTaskAssignment object on success or false on failure.
      * 
      * @param Task $task
+     * @param array $workers
      * @return int
      * 
      * return codes:
@@ -36,24 +40,21 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * 2: cannot assign, no workers
      * 3: could not assign to any workers
      */
-    public function assign(Task $task) {        
+    public function assign(Task $task, $workers) {        
         $this->logger->info("WorkerTaskAssignmentService::assign: Initialising");
         $this->logger->info("WorkerTaskAssignmentService::assign: Processing task [".$task->getId()."] [".$task->getType()."] [".$task->getUrl()."]");
         
         if (!$this->canTaskBeAssigned($task)) {
             $this->logger->err("WorkerTaskAssignmentService::assign: Task [".$task->getId()."] is not queued, nothing to do.");
             return 1;
-        }              
+        }                    
         
-        $workerSelection = $this->getWorkerSelection();        
-        $this->logger->info("WorkerTaskAssignmentService::assign: [".count($workerSelection)."] workers selected");                        
-        
-        if (count($workerSelection) == 0) {
-            $this->logger->err("WorkerTaskAssignmentService::assign: Cannot assign, no workers.");
+        if (count($workers) == 0) {
+            $this->logger->err("WorkerTaskAssignmentService::assign: Cannot assign, no active workers.");
             return 2;
-        }              
+        }             
         
-        foreach ($workerSelection as $workerIndex => $worker) {            
+        foreach ($workers as $worker) {            
             $remoteTaskId = $this->assignToWorker($task, $worker);        
             if (is_int($remoteTaskId)) {
                 $this->taskService->setStarted(
@@ -64,7 +65,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                 
                 $this->logger->info("WorkerTaskAssignmentService::assign: Succeeded with worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");                    
                 
-                $this->update($worker, $task);  
+                //$this->update($worker, $task);  
                 return 0;
             }         
         }
@@ -85,7 +86,8 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
     
     /**
      * 
-     * @param type $tasks
+     * @param array $tasks
+     * @param array $workers
      * @return int
      * 
      * return codes:
@@ -93,95 +95,58 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * 1: cannot assign, no workers
      * 2: could not assign to any workers
      */
-    public function assignCollection($tasks) {
-        $this->logger->info("WorkerTaskAssignmentService::assignCollection: Initialising");
+    public function assignCollection($tasks, $workers) {        
+        $this->logger->info("WorkerTaskAssignmentService::assignCollection: Initialising");        
+        $this->logger->info("WorkerTaskAssignmentService::assignCollection: [".count($workers)."] workers selected");
         
+        if (count($workers) == 0) {
+            $this->logger->err("WorkerTaskAssignmentService::assignCollection: Cannot assign, no active workers.");
+            return self::ASSIGN_COLLECTION_NO_WORKERS_STATUS_CODE;
+        }    
+        
+        $this->logger->info("WorkerTaskAssignmentService::assignCollection: Task collection count [".count($tasks)."]");
+
+        shuffle($workers);
+        foreach ($workers as $worker) {
+            $response = $this->assignCollectionToWorker($tasks, $worker);
+
+            if ($response === true) {
+                foreach ($tasks as $task) {
+                    $this->taskService->setStarted(
+                        $task,
+                        $worker,
+                        $task->getRemoteId()
+                    );                    
+
+                    $this->getEntityManager()->persist($task);
+                }
+
+                //$this->update($worker, $task);
+                $this->getEntityManager()->flush();
+
+                return self::ASSIGN_COLLECTION_OK_STATUS_CODE;
+            }     
+        }
+        
+        return self::ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE;          
+     }
+     
+     
+     /**
+      * 
+      * @param array $tasks
+      * @return array
+      */
+     private function getQueuedTasksFromTaskCollection($tasks) {
         foreach ($tasks as $index => $task) {
             /* @var $task Task */
             if (!$this->taskService->isQueued($task) && !$this->taskService->isQueuedForAssignment($task)) {
                 unset($tasks[$index]);
             }
-        }
+        } 
         
-        $workerSelection = $this->getWorkerSelection();
-        
-        $this->logger->info("WorkerTaskAssignmentService::assignCollection: [".count($workerSelection)."] workers selected");
-        
-        if (count($workerSelection) == 0) {
-            $this->logger->info("WorkerTaskAssignmentService::assignCollection: Cannot assign, no workers.");
-            return 1;
-        }
-        
-        $groupedTasks = $this->getGroupedTasks($tasks, count($workerSelection));      
-        
-        $this->logger->info("WorkerTaskAssignmentService::assignCollection: Group count [".count($workerSelection)."]");
-        
-        foreach ($groupedTasks as $groupIndex => $taskGroup) {            
-            $this->logger->info("WorkerTaskAssignmentService::assignCollection: Processing group [".$groupIndex."] [".count($taskGroup)."]");
-            
-            $groupIsAssigned = false;
-            
-            foreach ($workerSelection as $workerIndex => $worker) {                
-                if (!$groupIsAssigned) {
-                    $response = $this->assignCollectionToWorker($taskGroup, $worker);
-
-                    if ($response === true) {
-                        $groupIsAssigned = true;
-
-                        foreach ($taskGroup as $task) {
-                            /* @var $task Task */
-                            $this->taskService->setStarted(
-                                $task,
-                                $worker,
-                                $task->getRemoteId()
-                            );                    
-
-                            $this->getEntityManager()->persist($task);
-                        }
-
-                        $this->update($worker, $task);
-                        $this->getEntityManager()->flush();
-                    }                      
-                }      
-            }
-            
-            if (!$groupIsAssigned) {
-                return 2;
-            }
-            
-            $workerSelection = $this->getWorkerSelection();
-        }       
-        
-        return 0;          
+        return $tasks;
      }
-    
-    
-    /**
-     * 
-     * @param array $tasks
-     * @param int $groupCount
-     * @return array
-     */
-    private function getGroupedTasks($tasks, $groupCount) {
-        $groupedTasks = array();
-        $groupIndex = 0;
-        $maximumGroupIndex = $groupCount - 1;
-        
-        foreach ($tasks as $task) {
-            if (!isset($groupedTasks[$groupIndex])) {
-                $groupedTasks[$groupIndex] = array();
-            }
-            
-            $groupedTasks[$groupIndex][] = $task;
-            
-            $groupIndex++;
-            if ($groupIndex > $maximumGroupIndex) {
-                $groupIndex = 0;
-            }
-        }
-        
-        return $groupedTasks;
-    }
     
     
     /**
@@ -190,20 +155,20 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * @param Task $task
      * @return WorkerTaskAssignment
      */
-    private function update(Worker $worker, Task $task) {
-        if ($this->has($worker)) {
-            $workerTaskAssignment = $this->fetch($worker);
-        } else {
-            $workerTaskAssignment = new WorkerTaskAssignment();
-            $workerTaskAssignment->setWorker($worker);
-        }
-        
-        $workerTaskAssignment->setTask($task);
-        $workerTaskAssignment->setDateTime(new \DateTime());
-
-        $this->persistAndFlush($workerTaskAssignment);        
-        return $workerTaskAssignment;
-    }
+//    private function update(Worker $worker, Task $task) {
+//        if ($this->has($worker)) {
+//            $workerTaskAssignment = $this->fetch($worker);
+//        } else {
+//            $workerTaskAssignment = new WorkerTaskAssignment();
+//            $workerTaskAssignment->setWorker($worker);
+//        }
+//        
+//        $workerTaskAssignment->setTask($task);
+//        $workerTaskAssignment->setDateTime(new \DateTime());
+//
+//        $this->persistAndFlush($workerTaskAssignment);        
+//        return $workerTaskAssignment;
+//    }
     
     
     /**
@@ -353,34 +318,25 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
     }
     
     
-    /**
-     * Get a collection of workers to which a task could be assigned, in order
-     * of preference
-     * 
-     * @return array  
-     */
-    private function getWorkerSelection() {
-        //$workers = $this->get
-        
-        $workerTaskAssignments = $this->getEntityRepository()->findAllOrderedByDateTime();
-        if (count($workerTaskAssignments) === 0) {
-            return $this->workerService->getEntityRepository()->findAll();
-        }
-        
-        $selectedWorkers = $this->getWorkersNeverAssignedTasks();
-        if (count($selectedWorkers) > 0) {
-            return $selectedWorkers;
-        }
-        
-        foreach ($workerTaskAssignments as $workerTaskAssignment) {
-            /* @var $workerTaskAssignment WorkerTaskAssignment */
-            if ($this->workerService->isActive($workerTaskAssignment->getWorker())) {
-                $selectedWorkers[] = $workerTaskAssignment->getWorker();
-            }            
-        }
-        
-        return $selectedWorkers;
-    } 
+//    /**
+//     * Get a collection of workers to which a task could be assigned in no 
+//     * particular order
+//     * 
+//     * @return array  
+//     */
+//    private function getWorkerSelection() {
+//        $workers = $this->workerService->getEntityRepository()->findAll();
+//        $selectedWorkers = array();        
+//        
+//        foreach ($workers as $worker) {
+//            /* @var $workerTaskAssignment WorkerTaskAssignment */
+//            if ($this->workerService->isActive($worker)) {
+//                $selectedWorkers[] = $worker;
+//            }            
+//        }
+//        
+//        return $selectedWorkers;
+//    } 
     
     
     private function getWorkersNeverAssignedTasks() {

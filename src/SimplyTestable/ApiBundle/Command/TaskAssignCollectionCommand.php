@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 
 class TaskAssignCollectionCommand extends ContainerAwareCommand
 {
@@ -37,8 +38,25 @@ EOF
         $taskIds = explode(',', $input->getArgument('ids'));        
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
         
-        $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks);
+        if (count($taskIds) === 0) {
+            return 0;
+        }
         
+        $workers = $this->getWorkerService()->getActiveCollection();                
+        if (count($workers) === 0) {
+            $this->getLogger()->err("TaskAssignCollectionCommand::execute: Cannot assign, no workers.");                       
+            $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
+                'task-assign-collection',
+                array(
+                    'ids' => implode(',', $taskIds)
+                )
+            );
+            
+            return 1;
+        }        
+        
+        $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);        
         if ($response === 0) {
             $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
@@ -62,6 +80,14 @@ EOF
         return $response;
     }
 
+
+    /**
+     *
+     * @return Logger
+     */
+    private function getLogger() {
+        return $this->getContainer()->get('logger');
+    }      
     
     /**
      *
@@ -78,6 +104,15 @@ EOF
     private function getTaskService() {
         return $this->getContainer()->get('simplytestable.services.taskservice');
     }  
+
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\WorkerService
+     */    
+    private function getWorkerService() {
+        return $this->getContainer()->get('simplytestable.services.workerservice');
+    }    
     
     
     /**
@@ -86,5 +121,5 @@ EOF
      */    
     private function getWorkerTaskAssignmentService() {
         return $this->getContainer()->get('simplytestable.services.workertaskassignmentservice');
-    }
+    }    
 }

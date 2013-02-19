@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Command;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {    
+class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
 
     public function testAssignValidTaskReturnsStatusCode0() {        
         $this->setupDatabase();
@@ -37,6 +37,7 @@ class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
         $this->setupDatabase();
+        $this->clearRedis();
         
         $canonicalUrl = 'http://example.com/';       
         $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());

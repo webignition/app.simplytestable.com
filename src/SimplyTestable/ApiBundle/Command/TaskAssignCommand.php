@@ -39,7 +39,21 @@ EOF
             return 4;
         }
         
-        $result = $this->getWorkerTaskAssignmentService()->assign($task);
+        $workers = $this->getWorkerService()->getActiveCollection();
+        if (count($workers) === 0) {
+            $this->getLogger()->err("TaskAssignCommand::execute: Cannot assign, no workers.");                       
+            $this->getResqueQueueService()->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+                'task-assign',
+                array(
+                    'id' => $task->getId()
+                )
+            ); 
+            
+            return 2;
+        }         
+        
+        $result = $this->getWorkerTaskAssignmentService()->assign($task, $workers);
 
         // 0,1,2,3
         if ($result === 0) {
@@ -69,11 +83,28 @@ EOF
     
     /**
      *
+     * @return Logger
+     */
+    private function getLogger() {
+        return $this->getContainer()->get('logger');
+    }      
+    
+    
+    /**
+     *
      * @return SimplyTestable\ApiBundle\Services\TaskService
      */
     private function getTaskService() {
         return $this->getContainer()->get('simplytestable.services.taskservice');
     }  
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\WorkerService
+     */    
+    private function getWorkerService() {
+        return $this->getContainer()->get('simplytestable.services.workerservice');
+    }    
     
     
     /**
