@@ -8,8 +8,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 
-class TaskCancelCommand extends ContainerAwareCommand
+class TaskCancelCommand extends BaseCommand
 {
+    const RETURN_CODE_OK = 0;
+    const RETURN_CODE_TASK_DOES_NOT_EXIST = -1;
+    const RETURN_CODE_FAILED_DUE_TO_WRONG_STATE = -2;
     
     protected function configure()
     {
@@ -35,10 +38,29 @@ EOF
         }
         
         $task = $this->getTaskService()->getById((int)$input->getArgument('id'));
-       
-        if ($this->getWorkerTaskCancellationService()->cancel($task) === false) {
-            throw new \LogicException('Task cancellation failed, check log for details');
+        if (is_null($task)) {
+            $output->writeln('Unable to cancel, task '.$input->getArgument('id').' does not exist');
+            return self::RETURN_CODE_TASK_DOES_NOT_EXIST;
         }
+        
+        $cancellationResult = $this->getWorkerTaskCancellationService()->cancel($task);
+        
+        if ($cancellationResult === 200) {
+            return self::RETURN_CODE_OK;
+        }
+        
+        if ($cancellationResult === -1) {
+            $output->writeln('Cancellation request failed, task is in wrong state (currently:'.$task->getState().')');
+            return self::RETURN_CODE_FAILED_DUE_TO_WRONG_STATE;            
+        }        
+        
+        if ($this->isHttpStatusCode($cancellationResult)) {
+            $output->writeln('Cancellation request failed, HTTP response '.$cancellationResult);
+        } else {
+            $output->writeln('Cancellation request failed, CURL error '.$cancellationResult);
+        }
+        
+        return $cancellationResult;
     }
     
     
@@ -53,7 +75,7 @@ EOF
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
+     * @return \SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
      */    
     private function getWorkerTaskCancellationService() {
         return $this->getContainer()->get('simplytestable.services.workertaskcancellationservice');

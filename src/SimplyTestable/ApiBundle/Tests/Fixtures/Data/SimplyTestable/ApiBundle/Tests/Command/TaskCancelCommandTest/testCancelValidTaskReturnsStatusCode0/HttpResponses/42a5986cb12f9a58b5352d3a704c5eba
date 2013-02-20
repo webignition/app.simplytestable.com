@@ -1,0 +1,14 @@
+HTTP/1.1 200 OK
+Date: Tue, 19 Feb 2013 16:58:28 GMT
+Server: Apache/2.2.22 (Ubuntu)
+X-Powered-By: PHP/5.4.6-1ubuntu1.1
+Set-Cookie: PHPSESSID=qpsenamdflaps354f6jbu2nu50; path=/
+Cache-Control: no-cache
+X-Debug-Token: 5123af348c8e1
+Transfer-Encoding: chunked
+Content-Type: application/json
+
+68
+{"id":1,"url":"http:\/\/webignition.net\/","state":"cancelled","type":"HTML validation","parameters":""}
+0
+

@@ -19,4 +19,14 @@ abstract class BaseCommand extends ContainerAwareCommand {
         return $this->getContainer()->get('logger');
     }
     
+    
+    /**
+     * 
+     * @param int $number
+     * @return boolean
+     */
+    protected function isHttpStatusCode($number) {
+        return strlen($number) == 3;
+    }      
+    
 }

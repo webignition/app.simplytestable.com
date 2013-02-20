@@ -247,7 +247,33 @@ class TaskService extends EntityService {
      */
     public function isAwaitingCancellation(Task $task) {
         return $task->getState()->equals($this->getAwaitingCancellationState());
-    }            
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @return boolean
+     */
+    public function isCancellable(Task $task) {
+        if ($this->isAwaitingCancellation($task)) {
+            return true;
+        }
+        
+        if ($this->isInProgress($task)) {
+            return true;
+        }
+        
+        if ($this->isQueued($task)) {
+            return true;
+        }
+        
+        if ($this->isQueuedForAssignment($task)) {
+            return true;
+        }
+        
+        return false;
+    }
     
     
     /**
