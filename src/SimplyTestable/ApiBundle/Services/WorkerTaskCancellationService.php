@@ -70,7 +70,7 @@ class WorkerTaskCancellationService extends WorkerTaskService {
     }  
     
     
-    public function cancelCollection($tasks) {
+    public function cancelCollection($tasks) {        
         $remoteTaskIds = array();
         foreach ($tasks as $task) {
             /* @var Task $task */
@@ -88,21 +88,19 @@ class WorkerTaskCancellationService extends WorkerTaskService {
         $httpRequest->setPostFields(array(
             'ids' => $remoteTaskIdsString
         ));
+        
+        foreach ($tasks as $task) {
+            $this->taskService->cancel($task);
+        }         
 
         try {            
             $response = $this->httpClient->getResponse($httpRequest);
-            $responseObject = json_decode($response->getBody());
-
             $this->logger->info("WorkerTaskCancellationService::cancelCollection " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
-            
-            foreach ($tasks as $task) {
-                $this->taskService->cancel($task);
-            }
-            
-            return ($response->getResponseCode() === 200) ? $responseObject->id : false;
         } catch (CurlException $curlException) {
             $this->logger->info("WorkerTaskCancellationService::cancelCollection: " . $requestUrl . ": " . $curlException->getMessage());
-        }        
+        } catch (\Exception $e) {
+            var_dump(get_class($e), $e->getCode(), $e->getMessage());
+        }      
         
         return true;        
     }

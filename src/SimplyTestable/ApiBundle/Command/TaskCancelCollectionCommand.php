@@ -40,15 +40,14 @@ EOF
         
         $taskIdsByWorker = array();        
         foreach ($taskIds as $taskId) {
-            $this->getContainer()->get('logger')->info('TaskCancelCollectionCommand::execute: taskId ['.$taskId.']');
             $task = $this->getTaskService()->getById($taskId);
             
             if ($task->hasWorker()) {
-                if (!isset($tasksByWorker[$task->getWorker()->getHostname()])) {
-                    $tasksByWorker[$task->getWorker()->getHostname()] = array();
+                if (!isset($taskIdsByWorker[$task->getWorker()->getHostname()])) {
+                    $taskIdsByWorker[$task->getWorker()->getHostname()] = array();
                 }
 
-                $tasksByWorker[$task->getWorker()->getHostname()][] = $task;                
+                $taskIdsByWorker[$task->getWorker()->getHostname()][] = $task;                
             } else {
                 $this->getTaskService()->cancel($task);
             }
