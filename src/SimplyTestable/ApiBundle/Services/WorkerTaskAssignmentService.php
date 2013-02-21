@@ -63,6 +63,8 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                     $remoteTaskId
                 );
                 
+                $this->taskService->persistAndFlush($task);
+                
                 $this->logger->info("WorkerTaskAssignmentService::assign: Succeeded with worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");                    
                 
                 //$this->update($worker, $task);  
