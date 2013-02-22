@@ -41,7 +41,7 @@ EOF
             return true;
         }
         
-        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks($perJobUpperLimit);        
+        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks(1);        
         
         $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: tasks found ['.count($tasks).']');
         
@@ -79,7 +79,7 @@ EOF
         
         if ($this->getTaskService()->hasQueuedTasks()) {
             if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                sleep(10);
+                //sleep(10);
                 $this->getResqueQueueService()->add(
                     'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
                     'task-assignment-selection'
