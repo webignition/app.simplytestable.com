@@ -48,6 +48,10 @@ class TaskAssignmentSelectionService {
      * @return array
      */
     public function selectTasks($limitPerJob = 1) {
+        if ($limitPerJob === 0) {
+            return array();
+        }
+        
         $this->logger->info('TaskAssignmentSelectionService:selectTasks:start');
         
         $jobs = $this->jobService->getJobsWithQueuedTasks();

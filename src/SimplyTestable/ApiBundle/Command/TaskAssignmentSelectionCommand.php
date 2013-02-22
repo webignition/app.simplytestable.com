@@ -41,7 +41,7 @@ EOF
             return true;
         }
         
-        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks(1);        
+        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks($perJobUpperLimit);        
         
         $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: tasks found ['.count($tasks).']');
         
@@ -93,7 +93,7 @@ EOF
      * @return int
      */
     private function getPerJobTaskAssingmentUpperLimit() {
-        return $this->getWorkerService()->count() * 2; 
+        return $this->getWorkerService()->count() === 0 ? 0 : 1;
     }
     
     
