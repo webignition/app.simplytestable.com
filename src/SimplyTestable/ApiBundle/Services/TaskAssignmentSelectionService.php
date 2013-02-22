@@ -47,8 +47,8 @@ class TaskAssignmentSelectionService {
      * 
      * @return array
      */
-    public function selectTasks($limitPerJob = 1) {
-        if ($limitPerJob === 0) {
+    public function selectTasks($workerCount = 0) {
+        if ($workerCount === 0) {
             return array();
         }
         
@@ -67,14 +67,14 @@ class TaskAssignmentSelectionService {
             $inProgressTaskCount = $this->taskService->getCountByJobAndState($job, $taskInProgressState);
             $queuedForAssignmentTaskCount = $this->taskService->getCountByJobAndState($job, $taskQueuedForAssignmentState);
             
-            $limitForThisJob = $limitPerJob - $inProgressTaskCount - $queuedForAssignmentTaskCount;                   
+            $limitForThisJob = $workerCount - $inProgressTaskCount - $queuedForAssignmentTaskCount;                   
             
             $this->logger->info('TaskAssignmentSelectionService:selectTasks:inProgressTaskCount: [job'.$jobIndex.'] ['.$inProgressTaskCount.']');
             $this->logger->info('TaskAssignmentSelectionService:selectTasks:queuedForAssignmentTaskCount: [job'.$jobIndex.'] ['.$queuedForAssignmentTaskCount.']');
             $this->logger->info('TaskAssignmentSelectionService:selectTasks:limitForThisJob: [job'.$jobIndex.'] ['.$limitForThisJob.']');
             
             if ($limitForThisJob > 0) {
-                $tasks = array_merge($tasks, $this->jobService->getQueuedTasks($job, $limitForThisJob));
+                $tasks = array_merge($tasks, $this->jobService->getQueuedTasks($job, 2));
             }         
         }
         

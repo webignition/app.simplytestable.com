@@ -41,8 +41,8 @@ class WorkerTaskAssignmentSelectionCommandTest extends BaseSimplyTestableTestCas
         $jobObject = json_decode($jobResponse->getContent());
         
         $this->assertEquals(200, $jobResponse->getStatusCode());
-        $this->assertEquals((3 * $taskTypeCount) - 1, $jobObject->task_count_by_state->{'queued'});
-        $this->assertEquals(1, $jobObject->task_count_by_state->{'queued-for-assignment'});
+        $this->assertEquals((3 * $taskTypeCount) - 2, $jobObject->task_count_by_state->{'queued'});
+        $this->assertEquals(2, $jobObject->task_count_by_state->{'queued-for-assignment'});
     }
     
     
