@@ -93,7 +93,7 @@ EOF
      * @return int
      */
     private function getPerJobTaskAssingmentUpperLimit() {
-        return $this->getWorkerService()->count() === 0 ? 0 : 1;
+        return $this->getWorkerService()->count();
     }
     
     
