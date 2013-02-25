@@ -6,7 +6,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 class TaskAssignmentSelectionCommand extends ContainerAwareCommand
 {
@@ -32,54 +31,44 @@ EOF
                 $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
             }            
         }
-        
-        $queuedTaskCount = $this->getTaskService()->getQueuedCount();        
-        $perJobUpperLimit = $this->getPerJobTaskAssingmentUpperLimit();
-        $totalLowerLimit = $this->getTaskAssignmentLowerLimit();
-        
-        if ($queuedTaskCount === 0) {
+      
+        if ($this->getTaskService()->getQueuedCount() === 0) {
             return true;
         }
         
-        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks($this->getWorkerService()->count());        
+        $workerCount = $this->getWorkerService()->count();
+        
+        $tasks = $this->getTaskAssignmentSelectionService()->selectTasks($workerCount);
+        $taskGroups = $this->getTaskGroups($tasks, $workerCount);
         
         $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: tasks found ['.count($tasks).']');
         
-        if (count($tasks) && count($tasks) >= $totalLowerLimit) {
+        foreach ($taskGroups as $taskGroup) {
             $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();            
             $taskIds = array();
             
-            foreach ($tasks as $task) {
+            foreach ($taskGroup as $task) {
                 $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: selected task id ['.$task->getId().']');
 
                 $task->setState($this->getTaskService()->getQueuedForAssignmentState());
                 $entityManager->persist($task);
                 
-                $taskIds[] = $task->getId();
-
-//                $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
-//                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
-//                    'task-assign',
-//                    array(
-//                        'id' => $task->getId()
-//                    )
-//                );             
+                $taskIds[] = $task->getId();             
             }
             
-                $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
-                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
-                    'task-assign-collection',
-                    array(
-                        'ids' => implode(',', $taskIds)
-                    )
-                );            
+            $this->getResqueQueueService()->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
+                'task-assign-collection',
+                array(
+                    'ids' => implode(',', $taskIds)
+                )
+            );            
 
             $entityManager->flush();            
         }
         
         if ($this->getTaskService()->hasQueuedTasks()) {
-            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                //sleep(10);
+            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {                
                 $this->getResqueQueueService()->add(
                     'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
                     'task-assignment-selection'
@@ -87,29 +76,7 @@ EOF
             }              
         }      
     }
-    
-    /**
-     * 
-     * @return int
-     */
-    private function getPerJobTaskAssingmentUpperLimit() {
-        return $this->getWorkerService()->count() * 2;
-    }
-    
-    
-    /**
-     * Get the minimum number of tasks to assign in one batch
-     * 
-     * @return int
-     */
-    private function getTaskAssignmentLowerLimit() {        
-        return 1;
-        
-        return min(array(
-            $this->getTaskService()->getQueuedCount(),
-            $this->getPerJobTaskAssingmentUpperLimit()
-        ));
-    }
+
     
     
     /**
@@ -145,5 +112,33 @@ EOF
      */        
     private function getWorkerService() {
         return $this->getContainer()->get('simplytestable.services.workerservice');
-    }      
+    } 
+    
+    
+    /**
+     * 
+     * @param array $tasks
+     * @param int $groupCount
+     * @return array
+     */
+    private function getTaskGroups($tasks, $groupCount) {
+        $groupedTasks = array();
+        $groupIndex = 0;
+        $maximumGroupIndex = $groupCount - 1;
+        
+        foreach ($tasks as $task) {
+            if (!isset($groupedTasks[$groupIndex])) {
+                $groupedTasks[$groupIndex] = array();
+            }
+            
+            $groupedTasks[$groupIndex][] = $task;
+            
+            $groupIndex++;
+            if ($groupIndex > $maximumGroupIndex) {
+                $groupIndex = 0;
+            }
+        }
+        
+        return $groupedTasks;
+    }    
 }

@@ -217,7 +217,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function fetchJob($canonicalUrl, $id) {        
         return $this->getJobController('statusAction')->statusAction($canonicalUrl, $id);    
-    }    
+    } 
+    
+    
+    /**
+     * 
+     * @param string $canonicalUrl
+     * @param int $job_id
+     * @return array
+     */
+    protected function getTaskIds($canonicalUrl, $job_id) {
+        return json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
+    }
     
     
     /**
@@ -299,5 +310,22 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         
         $this->getWorkerService()->persistAndFlush($worker);
         return $worker;
+    }
+    
+    
+    /**
+     * Create and return a collection of workers
+     * 
+     * @param int $requestedWorkerCount
+     * @return array
+     */
+    protected function createWorkers($requestedWorkerCount) {
+        $workers = array();
+        
+        for ($workerIndex = 0; $workerIndex <= $requestedWorkerCount; $workerIndex++) {
+            $workers[] = $this->createWorker('worker'.$workerIndex.'.worker.simplytestable.com');
+        } 
+        
+        return $workers;
     }
 }
