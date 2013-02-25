@@ -67,18 +67,18 @@ class TaskAssignmentSelectionService {
             $inProgressTaskCount = $this->taskService->getCountByJobAndState($job, $taskInProgressState);
             $queuedForAssignmentTaskCount = $this->taskService->getCountByJobAndState($job, $taskQueuedForAssignmentState);
             
-            $limitForThisJob = $workerCount - $inProgressTaskCount - $queuedForAssignmentTaskCount;                   
+            $limitForThisJob = ($workerCount * 2) - $inProgressTaskCount - $queuedForAssignmentTaskCount;                   
             
             $this->logger->info('TaskAssignmentSelectionService:selectTasks:inProgressTaskCount: [job'.$jobIndex.'] ['.$inProgressTaskCount.']');
             $this->logger->info('TaskAssignmentSelectionService:selectTasks:queuedForAssignmentTaskCount: [job'.$jobIndex.'] ['.$queuedForAssignmentTaskCount.']');
             $this->logger->info('TaskAssignmentSelectionService:selectTasks:limitForThisJob: [job'.$jobIndex.'] ['.$limitForThisJob.']');
             
-            if ($limitForThisJob > 0) {
-                $tasks = array_merge($tasks, $this->jobService->getQueuedTasks($job, 2));
+            if ($limitForThisJob >= 0) {
+                $tasks = array_merge($tasks, $this->jobService->getQueuedTasks($job, $workerCount));
             }         
         }
         
         return $tasks;
-    }   
+    }
     
 }
