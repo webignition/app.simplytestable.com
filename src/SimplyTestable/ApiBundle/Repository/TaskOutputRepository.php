@@ -5,6 +5,37 @@ use Doctrine\ORM\EntityRepository;
 
 class TaskOutputRepository extends EntityRepository
 {
+    public function findUnusedIds($limit) {
+        $queryBuilder = $this->createQueryBuilder('TaskOutput');
+        $queryBuilder->select('TaskOutput.id');        
+        
+        $queryBuilder->leftJoin('SimplyTestable\ApiBundle\Entity\Task\Task', 'Task', 'WITH', 'TaskOutput.id = Task.output');
+        $queryBuilder->where('Task.output IS NULL');
+        $queryBuilder->orderBy('TaskOutput.id', 'ASC');
+        
+        if (is_int($limit) && $limit > 0) {
+            $queryBuilder->setMaxResults($limit);
+        }
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        $ids = array();
+        
+        foreach ($result as $idResult) {
+            $ids[] = $idResult['id'];
+        }
+        
+        return $ids; 
+        
+/**
+ * 
+SELECT DISTINCT TaskOutput.id
+FROM  `TaskOutput` 
+LEFT JOIN Task ON Task.output_id = TaskOutput.id
+WHERE Task.output_id IS NULL
+ */        
+    }    
+    
     
     public function findOutputByhash($hash) {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');

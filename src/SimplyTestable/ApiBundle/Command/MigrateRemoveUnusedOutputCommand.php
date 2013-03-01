@@ -10,6 +10,8 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 class MigrateRemoveUnusedOutputCommand extends BaseCommand
 {
+    const DEFAULT_FLUSH_THRESHOLD = 100;
+    
     
     /**
      *
@@ -36,24 +38,27 @@ class MigrateRemoveUnusedOutputCommand extends BaseCommand
             ->setName('simplytestable:migrate:remove-unused-output')
             ->setDescription('Remove output not linked to any task')
             ->addOption('limit')
+            ->addOption('flush-threshold')
             ->addOption('dry-run')             
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {        
+    {
         $output->writeln('Finding unused output ...');
         
-        $usedTaskOutputIds = $this->getTaskRepository()->findUsedTaskOutputIds();
-        $unusedTaskOutputIds = $this->getTaskOutputRepository()->findIdsNotIn($usedTaskOutputIds);
+        $unusedTaskOutputIds = $this->getTaskOutputRepository()->findUnusedIds($this->getLimit($input));
         
         if (count($unusedTaskOutputIds) === 0) {
             $output->writeln('No unused task outputs found. Done.');
             return true;
-        }   
+        }
         
         $output->writeln('['.count($unusedTaskOutputIds).'] outputs found');
         $processedTaskOutputCount = 0;
+        
+        $flushThreshold = $this->getFlushTreshold($input);
+        $persistCount = 0;
         
         foreach ($unusedTaskOutputIds as $unusedTaskOutputId) {
             $taskOutputToRemove = $this->getTaskOutputRepository()->find($unusedTaskOutputId);
@@ -61,15 +66,69 @@ class MigrateRemoveUnusedOutputCommand extends BaseCommand
             $processedTaskOutputCount++;
             $output->writeln('Removing output ['.$unusedTaskOutputId.'] ('.(count($unusedTaskOutputIds) - $processedTaskOutputCount).' remaining)');
             
-            if (!$this->isDryRun($input)) {
-                $this->getEntityManager()->remove($taskOutputToRemove);
-                $this->getEntityManager()->flush();
+            $this->getEntityManager()->remove($taskOutputToRemove);
+            $persistCount++; 
+            
+            if ($persistCount == $flushThreshold) {
+                $output->writeln('***** Flushing *****');
+                $persistCount = 0;
+                
+                if (!$this->isDryRun($input)) {
+                    $this->getEntityManager()->flush();                    
+                } 
             }
         }
+        
+            if ($persistCount > 0) {
+                $output->writeln('***** Flushing *****');                
+                if (!$this->isDryRun($input)) {
+                    $this->getEntityManager()->flush();                    
+                } 
+            }        
         
         return true;
     }
     
+    
+    
+    /**
+     * 
+     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @return int
+     */
+    private function getLimit(InputInterface $input) {
+        if ($input->getOption('limit') === false) {
+            return 0;
+        }
+        
+        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT);
+        
+        return ($limit <= 0) ? 0 : $limit;
+    } 
+    
+/**
+     * 
+     * @param InputInterface $input
+     * @return int
+     */
+    private function getFlushTreshold($input) {
+        return $this->getIntegerOptionWithDefault($input, 'flush-threshold', self::DEFAULT_FLUSH_THRESHOLD);
+    }
+    
+    
+    /**
+     * 
+     * @param InputInterface $input
+     * @return int
+     */
+    private function getIntegerOptionWithDefault($input, $optionName, $defaultValue) {
+        $value = $input->getOption($optionName);
+        if ($value <= 0) {
+            return $defaultValue;
+        }
+        
+        return (int)$value;
+    }    
     
     
     /**
