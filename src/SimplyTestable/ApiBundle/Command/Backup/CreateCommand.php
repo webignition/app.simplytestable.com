@@ -3,14 +3,12 @@ namespace SimplyTestable\ApiBundle\Command\Backup;
 
 use PDO;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
-
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CreateCommand extends BaseCommand
+class CreateCommand extends BackupCommand
 {
     const RETURN_CODE_FAILED_TO_CREATE_BACKUP_PATH = 1;
     const RETURN_CODE_FAILED_TO_CREATE_CONFIG_BACKUP_PATH = 2;
@@ -21,9 +19,6 @@ class CreateCommand extends BaseCommand
     const LEVEL_ESSENTIAL = 'essential';
     const LEVEL_MINIMAL = 'minimal';    
     const DEFAULT_LEVEL = self::LEVEL_ESSENTIAL;
-    const DEFAULT_PATH = '~/backup';
-    const CONFIG_RELATIVE_PATH = '/config';
-    const DATA_RELATIVE_PATH = '/data';
     
     const RECORD_PAGE_SIZE = 10000;
     
@@ -34,15 +29,8 @@ class CreateCommand extends BaseCommand
     
     private $levelHierarchy = array(
         self::LEVEL_MINIMAL => self::LEVEL_ESSENTIAL
-    );
+    );   
     
-    private $path = null;
-    private $pathDate = null;
-    
-    private $applicationConfigurationFiles = array(
-        'app/config/parameters.yml',
-        'src/SimplyTestable/ApiBundle/Resources/config/parameters.yml'
-    );    
     
     private $databaseTableNames = array(
         self::LEVEL_ESSENTIAL => array(
@@ -61,21 +49,12 @@ class CreateCommand extends BaseCommand
         'TaskOutput' => array('output')
     );
     
-    private $tableFields = array();
+
     private $tableRecordCounts = array();
-    
-    /**
-     *
-     * @var InputInterface
-     */
-    private $input;
+
     
     
-    /**
-     *
-     * @var \PDO
-     */
-    private $databaseHandle = null;
+
     
     protected function configure()
     {
@@ -125,10 +104,12 @@ EOF
         $output->writeln('Using path: <info>'.$this->getPathOption().'</info>');
         $output->writeln('');
         $output->write('Creating backup directory at '.$this->getBasePath().' ... </info>');
-        
-        if (!$this->makeBasePath()) {
-            $output->writeln('<error>Failed to create backup path at '.$this->getBasePath().'</error>');
-            return self::RETURN_CODE_FAILED_TO_CREATE_BACKUP_PATH;
+
+        if (!$this->isDryRun()) {
+            if (!$this->makeBasePath()) {           
+                $output->writeln('<error>Failed to create backup path at '.$this->getBasePath().'</error>');
+                return self::RETURN_CODE_FAILED_TO_CREATE_BACKUP_PATH;
+            }            
         }
         
         $output->writeln('<info>ok</info>');
@@ -136,30 +117,39 @@ EOF
         
         $output->write('Backing up application configuration to '.$this->getConfigPath());
         
-        if (!$this->makeConfigPath()) {
-            $output->writeln(' ... <error>Failed to create config backup path at '.$this->getConfigPath().'</error>');
-            return self::RETURN_CODE_FAILED_TO_CREATE_CONFIG_BACKUP_PATH;
-        }        
+        if (!$this->isDryRun()) {        
+            if (!$this->makeConfigPath()) {
+                $output->writeln(' ... <error>Failed to create config backup path at '.$this->getConfigPath().'</error>');
+                return self::RETURN_CODE_FAILED_TO_CREATE_CONFIG_BACKUP_PATH;
+            }             
+        }       
         
         $output->writeln('');
         
         foreach ($this->applicationConfigurationFiles as $filePath) {
             $output->write($filePath . ' ... ');
             
-            if (!$this->copyFileToPath('./' . $filePath, $this->getConfigPath() . '/' . $filePath)) {
-                $output->writeln('<error>failed</error>');
-                return self::RETURN_CODE_FAILED_TO_COPY_APPLICATION_CONFIGURATION;               
+            if (!$this->isDryRun()) {
+                if (!$this->copyFileToPath('./' . $filePath, $this->getConfigPath() . '/' . $filePath)) {
+                    $output->writeln('<error>failed</error>');
+                    return self::RETURN_CODE_FAILED_TO_COPY_APPLICATION_CONFIGURATION;               
+                }                
             }
+            
+
             
             $output->writeln('<info>ok</info>');
         }
-        $output->writeln('');
+        
+        $output->writeln('');     
         
         $output->write('Backing up data to '.$this->getDataPath());
         
-        if (!$this->makeDataPath()) {
-            $output->writeln(' ... <error>Failed to create data backup path at '.$this->getDataPath().'</error>');
-            return self::RETURN_CODE_FAILED_TO_CREATE_DATA_BACKUP_PATH;
+        if (!$this->isDryRun()) {
+            if (!$this->makeDataPath()) {
+                $output->writeln(' ... <error>Failed to create data backup path at '.$this->getDataPath().'</error>');
+                return self::RETURN_CODE_FAILED_TO_CREATE_DATA_BACKUP_PATH;
+            }            
         }
         
         $output->writeln('');
@@ -186,12 +176,16 @@ EOF
                 $tableDumpPath = $this->getDataPath() . '/' . ($this->getTableDumpFilePrefix($sqlFileIndex, $totalPageCount)) . '_' . $tableName . '_page_'.$pageIndex.'.sql';
                 $output->write('Storing '.$tableName.' records '.$offset.' to '.(($pageIndex + 1) * self::RECORD_PAGE_SIZE).' in ' . $tableDumpPath.' ... ');
                 
-                if (file_put_contents($tableDumpPath, $this->getDatabaseTableDump($tableName, $offset)) > 0) {
-                    $output->writeln('<info>ok</info>');
+                if ($this->isDryRun()) {
+                    $output->writeln('<info>ok</info>');                   
                 } else {
-                    $output->writeln('<error>failed</error>');
-                    return self::RETURN_CODE_FAILED_TO_CREATE_DATA_BACKUP_PATH;                
-                }
+                    if (file_put_contents($tableDumpPath, $this->getDatabaseTableDump($tableName, $offset)) > 0) {
+                        $output->writeln('<info>ok</info>');
+                    } else {
+                        $output->writeln('<error>failed</error>');
+                        return self::RETURN_CODE_FAILED_TO_CREATE_DATA_BACKUP_PATH;                
+                    }                     
+                }               
                 
                 $sqlFileIndex++;
             }
@@ -204,7 +198,11 @@ EOF
         $compressOutput = array();
         $compressReturnValue = null;
         
-        exec($command, $compressOutput, $compressReturnValue);
+        if ($this->isDryRun()) {
+            $compressReturnValue = 0;
+        } else {
+            exec($command, $compressOutput, $compressReturnValue);
+        }        
         
         if ($compressReturnValue === 0) {
             $output->writeln('<info>ok</info>');
@@ -214,7 +212,10 @@ EOF
         }
         
         $output->writeln('Tidying up ... removing temporary backup directory ... <info>ok</info> ');
-        $this->deleteDirectory($this->getBasePath());
+        
+        if (!$this->isDryRun()) {
+            $this->deleteDirectory($this->getBasePath());            
+        }
         
         $output->writeln('');
         
@@ -314,16 +315,9 @@ EOF
         
         return copy($source, $destination);
         
-    }
+    }   
     
-    
-    /**
-     * 
-     * @return int
-     */
-    private function isDryRun() {
-        return $this->input->getOption('dry-run') == 'true';
-    }
+
     
     /**
      * 
@@ -346,65 +340,13 @@ EOF
     private function hasValidLevelOption() {
         return !is_null($this->getLevelOption());
     }
-    
-    
-    /**
-     * 
-     * @return string
-     */
-    private function getPathOption() {
-        $path = strtolower($this->input->getOption('path'));
-        return ($path == '') ? self::DEFAULT_PATH : $path;      
-    }
-    
-    
-    /**
-     * 
-     * @return string
-     */
-    private function getBasePath() {
-        if (is_null($this->path)) {
-            $this->path = $this->getPathOption() . '/' . $this->getPathDate();
-        }
-        
-        return $this->path;
-    }
-    
-    
-    /**
-     * 
-     * @return string
-     */
-    private function getPathDate() {
-        if (is_null($this->pathDate)) {
-            $this->pathDate = date('Y-m-d-H-i-s');
-        }
-        
-        return $this->pathDate;        
-    }
+
     
     
     private function getArchivePath() {
         return $this->getBasePath() . '.tar.gz';
-    }
-    
-    
-    /**
-     * 
-     * @return string
-     */
-    private function getConfigPath() {
-        return $this->getBasePath() . self::CONFIG_RELATIVE_PATH;
-    }
-    
-    
-    /**
-     * 
-     * @return string
-     */
-    private function getDataPath() {
-        return $this->getBasePath() . self::DATA_RELATIVE_PATH;
-    }
+    }   
+
     
     
     /**
@@ -469,28 +411,12 @@ EOF
     }
     
     
-    private function getDsn() {
-        return 'mysql:dbname='.$this->getContainer()->getParameter('database_name').';host=127.0.0.1';
-    }
-    
-    
-    private function getDatabaseHandle() {
-        if (is_null($this->databaseHandle)) {            
-            try {
-                $this->databaseHandle = new PDO(
-                        $this->getDsn(),
-                        $this->getContainer()->getParameter('database_user'),
-                        $this->getContainer()->getParameter('database_password')
-                );
-                
-                $this->databaseHandle->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);                
-            } catch (\PDOException $e) {
-                echo 'Connection failed: ' . $e->getMessage();
-                return false;
-            }
-        }
-
-        return $this->databaseHandle;
+    /**
+     * 
+     * @return string
+     */
+    protected function deriveRestorePoint() {
+        return date('Y-m-d-H-i-s');      
     }
     
     
@@ -509,29 +435,6 @@ EOF
         }
         
         return $this->tableRecordCounts[$tableName];      
-    }
-    
-    
-    /**
-     * 
-     * @param string $tableName
-     * @return array
-     */
-    private function getTableFields($tableName) {
-        if (!isset($this->tableFields[$tableName])) {
-            $statement = $this->getDatabaseHandle()->prepare('DESCRIBE '.$tableName);        
-            $statement->execute(); 
-
-            $fields = array();
-
-            while (($row = $statement->fetch(PDO::FETCH_ASSOC))) {
-                $fields[] = $row['Field'];
-            }     
-            
-            $this->tableFields[$tableName] = $fields;
-        }        
-        
-        return $this->tableFields[$tableName];  
     }
     
     
