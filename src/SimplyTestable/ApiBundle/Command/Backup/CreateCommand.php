@@ -49,11 +49,13 @@ class CreateCommand extends BackupCommand
         'TaskOutput' => array('output')
     );
     
+    
+    private $databasePrimaryKeyExclusions = array(
+        'fos_user' => array(1,2)
+    );
+    
 
     private $tableRecordCounts = array();
-
-    
-    
 
     
     protected function configure()
@@ -471,7 +473,7 @@ EOF
     
     
     private function getFieldsToSelect($tableName) {
-        $exclusions = $this->getExclusions($tableName);
+        $exclusions = $this->getTableFieldExclusions($tableName);
         if (count($exclusions) === 0) {
             return '*';
         }
@@ -500,13 +502,22 @@ EOF
         $recordsResult = $this->getDatabaseHandle()->prepare('SELECT '.$this->getFieldsToSelect($tableName).' FROM ' . $tableName.' ORDER BY id ASC LIMIT '.$offset.', ' . self::RECORD_PAGE_SIZE);     
         $recordsResult->execute();
         
-        $exclusions = $this->getExclusions($tableName);
-        $hasExclusions = count($exclusions) > 0;
+        $fieldExclusions = $this->getTableFieldExclusions($tableName);
+        $hasFieldExclusions = count($fieldExclusions) > 0;
+        
+        $primaryKeyExclusions = $this->getTablePrimaryKeyExclusions($tableName);
+        $hasPrimaryKeyExclusions = count($primaryKeyExclusions) > 0;
         
         while ($row = $recordsResult->fetch(PDO::FETCH_ASSOC)) {
             $values = array_values($row);
             
-            if ($hasExclusions) {
+            if ($hasPrimaryKeyExclusions) {
+                if (in_array($values[0], $primaryKeyExclusions)) {
+                    continue;
+                }               
+            }
+            
+            if ($hasFieldExclusions) {
                 $exclusionIndices = $this->getExclusionIndices($tableName);
                 
                 foreach ($exclusionIndices as $fieldName => $index) {
@@ -540,13 +551,18 @@ EOF
     }
     
 
-    private function getExclusions($tableName) {
+    private function getTableFieldExclusions($tableName) {
         return (isset($this->databaseFieldExclusions[$tableName])) ? $this->databaseFieldExclusions[$tableName] : array();
     }
     
     
+    private function getTablePrimaryKeyExclusions($tableName) {
+        return (isset($this->databasePrimaryKeyExclusions[$tableName])) ? $this->databasePrimaryKeyExclusions[$tableName] : array();        
+    }
+    
+    
     private function getExclusionIndices($tableName) {
-        $fieldsToExclude = $this->getExclusions($tableName);
+        $fieldsToExclude = $this->getTableFieldExclusions($tableName);
         
         if (count($fieldsToExclude) === 0) {
             return $fieldsToExclude;
