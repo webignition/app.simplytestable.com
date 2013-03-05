@@ -40,6 +40,8 @@ class CreateCommand extends BackupCommand
             'WebSite', 
             'TimePeriod',
             'Job',
+            'JobTaskTypeOptions',
+            'JobTaskTypes',
             'Worker', 
             'TaskOutput',
             'Task',            
@@ -53,10 +55,12 @@ class CreateCommand extends BackupCommand
     
     private $databasePrimaryKeyExclusions = array(
         'fos_user' => array(1,2)
-    );
-    
+    );        
 
     private $tableRecordCounts = array();
+    
+    
+    private $tablePrimaryKeyFields = array();
 
     
     protected function configure()
@@ -83,6 +87,8 @@ minimal:
   Backs up a minimal amount of data, covering:
   - all essential assets
   - all Job entities
+  - all JobTaskTypeOption entities
+  - all JobTaskType entities
   - all Task entities
   - all TaskOutput entities, minus the output field contents
   - all Worker entities
@@ -442,16 +448,50 @@ EOF
      * @param string $tableName
      * @return int
      */
-    private function getTableRecordCount($tableName) {
+    private function getTableRecordCount($tableName) {        
         if (!isset($this->tableRecordCounts[$tableName])) {
-            $statement = $this->getDatabaseHandle()->prepare('SELECT COUNT(id) AS idCount FROM '.$tableName);        
+            $primaryKeyFields = $this->getTablePrimaryKeyFields($tableName);
+            
+            if (count($primaryKeyFields) === 1) {
+                $statement = $this->getDatabaseHandle()->prepare('SELECT COUNT('.$primaryKeyFields[0].') AS KeyCount FROM '.$tableName);        
+            } else {               
+                $statement = $this->getDatabaseHandle()->prepare('SELECT COUNT(CONCAT('.implode(",':',", $primaryKeyFields).')) AS KeyCount FROM '.$tableName);
+            }            
+            
             $statement->execute();      
 
             $row = $statement->fetch(PDO::FETCH_ASSOC);
-            $this->tableRecordCounts[$tableName] = (int)$row['idCount'];             
+            $this->tableRecordCounts[$tableName] = (int)$row['KeyCount'];             
         }
         
         return $this->tableRecordCounts[$tableName];      
+    }
+    
+    
+    /**
+     * 
+     * @param string $tableName
+     * @return string
+     */
+    private function getTablePrimaryKeyFields($tableName) {
+        if (!isset($this->tablePrimaryKeyFields[$tableName])) {
+            $statement = $this->getDatabaseHandle()->prepare('DESCRIBE '.$tableName);        
+            $statement->execute(); 
+
+            $fields = array();
+
+            while (($row = $statement->fetch(PDO::FETCH_ASSOC))) {
+                if ($row['Key'] == 'PRI') {
+                    $fields[] = $row['Field'];
+                }
+            }
+            
+            
+            
+            $this->tablePrimaryKeyFields[$tableName] = $fields;
+        }        
+        
+        return $this->tablePrimaryKeyFields[$tableName];         
     }
     
     
@@ -514,7 +554,17 @@ EOF
         
         $insertValues = array();
         
-        $recordsResult = $this->getDatabaseHandle()->prepare('SELECT '.$this->getFieldsToSelect($tableName).' FROM ' . $tableName.' ORDER BY id ASC LIMIT '.$offset.', ' . $this->getPageSize());     
+        $primaryKeyFields = $this->getTablePrimaryKeyFields($tableName);
+        
+        $query = 'SELECT '.$this->getFieldsToSelect($tableName).' FROM ' . $tableName.' ';
+        
+        if (count($primaryKeyFields) === 1) {
+            $query .= 'ORDER BY '.$primaryKeyFields[0].' ASC ';
+        }
+        
+        $query .= 'LIMIT '.$offset.', ' . $this->getPageSize();
+        
+        $recordsResult = $this->getDatabaseHandle()->prepare($query);     
         $recordsResult->execute();
         
         $fieldExclusions = $this->getTableFieldExclusions($tableName);
