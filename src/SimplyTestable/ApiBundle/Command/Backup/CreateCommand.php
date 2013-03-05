@@ -86,6 +86,7 @@ minimal:
   - all TaskOutput entities, minus the output field contents
   - all Worker entities
   - all WebSite entities
+  - all TimePeriod entities
 EOF
         );     
     }
@@ -179,10 +180,12 @@ EOF
                 $tableDumpPath = $this->getDataPath() . '/' . ($this->getTableDumpFilePrefix($sqlFileIndex, $totalPageCount)) . '_' . $tableName . '_page_'.$pageIndex.'.sql';
                 $output->write('Storing '.$tableName.' records '.$offset.' to '.(($pageIndex + 1) * self::RECORD_PAGE_SIZE).' in ' . $tableDumpPath.' ... ');
                 
+                $dump = $this->getDatabaseTableDump($tableName, $offset);
+                
                 if ($this->isDryRun()) {
                     $output->writeln('<info>ok</info>');                   
                 } else {
-                    if (file_put_contents($tableDumpPath, $this->getDatabaseTableDump($tableName, $offset)) > 0) {
+                    if (file_put_contents($tableDumpPath, $dump) > 0) {
                         $output->writeln('<info>ok</info>');
                     } else {
                         $output->writeln('<error>failed</error>');
@@ -496,7 +499,7 @@ EOF
             return true;
         }
         
-        $insertQuery = 'INSERT INTO '.$tableName.' VALUES ';
+        $insertQuery = 'INSERT INTO '.$tableName.' VALUES '."\n";
         
         $insertValues = array();
         
@@ -536,9 +539,13 @@ EOF
             }
             
             foreach ($values as $key => $value) {               
-                $value = addslashes($value);
-                $value = preg_replace("/\n/", "\\n", $value);
-                $value = '"'.$value.'"';
+                if (is_null($value)) {
+                    $value = 'NULL';
+                } else {
+                    $value = addslashes($value);
+                    $value = preg_replace("/\n/", "\\n", $value);                
+                    $value = '"'.$value.'"';                    
+                }
                 
                 $values[$key] = $value;
             }
@@ -546,7 +553,7 @@ EOF
             $insertValues[] = '(' .implode(',', $values) . ')';
         }
         
-        $insertQuery .= implode(',', $insertValues);
+        $insertQuery .= implode(','."\n", $insertValues);    
         
         return $insertQuery;        
     }
