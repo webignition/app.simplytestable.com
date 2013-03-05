@@ -20,7 +20,7 @@ class CreateCommand extends BackupCommand
     const LEVEL_MINIMAL = 'minimal';    
     const DEFAULT_LEVEL = self::LEVEL_ESSENTIAL;
     
-    const RECORD_PAGE_SIZE = 10000;
+    const DEFAULT_PAGE_SIZE = 10000;
     
     private $levels = array(
         self::LEVEL_ESSENTIAL,
@@ -67,6 +67,7 @@ class CreateCommand extends BackupCommand
             ->addOption('level', null, InputOption::VALUE_OPTIONAL, 'Choose the backup level: essential, minimal')
             ->addOption('dry-run', null, InputOption::VALUE_OPTIONAL, 'Run through the process without writing any data')
             ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'Backup storage path')
+            ->addOption('page-size', null, InputOption::VALUE_OPTIONAL, '')
             ->setHelp(<<<EOF
 Create an application-level backup.
     
@@ -170,7 +171,7 @@ EOF
             $tableRecordCount = $this->getTableRecordCount($tableName);
             
             $output->writeln($tableRecordCount. ' records to back up');
-            $output->writeln('Using ' . $this->getRecordPageCount($tableName). ' pages of ' . self::RECORD_PAGE_SIZE. ' records');
+            $output->writeln('Using ' . $this->getRecordPageCount($tableName). ' pages of ' . $this->getPageSize(). ' records');
             
             $offsets = $this->getRecordPageOffsets($tableName);
             
@@ -178,7 +179,7 @@ EOF
                 $this->getTableDumpFilePrefix($sqlFileIndex, $totalPageCount);
                 
                 $tableDumpPath = $this->getDataPath() . '/' . ($this->getTableDumpFilePrefix($sqlFileIndex, $totalPageCount)) . '_' . $tableName . '_page_'.$pageIndex.'.sql';
-                $output->write('Storing '.$tableName.' records '.$offset.' to '.(($pageIndex + 1) * self::RECORD_PAGE_SIZE).' in ' . $tableDumpPath.' ... ');
+                $output->write('Storing '.$tableName.' records '.$offset.' to '.(($pageIndex + 1) * $this->getPageSize()).' in ' . $tableDumpPath.' ... ');
                 
                 $dump = $this->getDatabaseTableDump($tableName, $offset);
                 
@@ -248,7 +249,7 @@ EOF
      */
     private function getRecordPageCount($tableName) {
         $recordCount = $this->getTableRecordCount($tableName);        
-        return (int)ceil($recordCount / self::RECORD_PAGE_SIZE);        
+        return (int)ceil($recordCount / $this->getPageSize());        
     }
     
     
@@ -263,7 +264,7 @@ EOF
         $pageCount = $this->getRecordPageCount($tableName);
         
         for ($pageIndex = 0; $pageIndex < $pageCount; $pageIndex++) {            
-            $constraints[] = self::RECORD_PAGE_SIZE * $pageIndex;
+            $constraints[] = $this->getPageSize() * $pageIndex;
         }
         
         return $constraints;
@@ -336,6 +337,16 @@ EOF
         }
         
         return in_array($level, $this->levels) ? $level : null;
+    }
+    
+    
+    /**
+     * 
+     * @return int
+     */
+    private function getPageSize() {
+        $pageSize = (int)$this->input->getOption('page-size');        
+        return ($pageSize <= 0) ? self::DEFAULT_PAGE_SIZE : $pageSize;
     }
     
     
@@ -503,7 +514,7 @@ EOF
         
         $insertValues = array();
         
-        $recordsResult = $this->getDatabaseHandle()->prepare('SELECT '.$this->getFieldsToSelect($tableName).' FROM ' . $tableName.' ORDER BY id ASC LIMIT '.$offset.', ' . self::RECORD_PAGE_SIZE);     
+        $recordsResult = $this->getDatabaseHandle()->prepare('SELECT '.$this->getFieldsToSelect($tableName).' FROM ' . $tableName.' ORDER BY id ASC LIMIT '.$offset.', ' . $this->getPageSize());     
         $recordsResult->execute();
         
         $fieldExclusions = $this->getTableFieldExclusions($tableName);
