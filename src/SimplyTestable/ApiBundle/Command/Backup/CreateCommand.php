@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Command\Backup;
 
 use PDO;
-use PDOException;
 
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 
@@ -17,6 +16,7 @@ class CreateCommand extends BaseCommand
     const RETURN_CODE_FAILED_TO_CREATE_CONFIG_BACKUP_PATH = 2;
     const RETURN_CODE_FAILED_TO_COPY_APPLICATION_CONFIGURATION = 3;
     const RETURN_CODE_FAILED_TO_CREATE_DATA_BACKUP_PATH = 4;
+    const RETURN_CODE_FAILED_TO_COMPRESS_BACKUP = 5;
     
     const LEVEL_ESSENTIAL = 'essential';
     const LEVEL_MINIMAL = 'minimal';    
@@ -25,7 +25,7 @@ class CreateCommand extends BaseCommand
     const CONFIG_RELATIVE_PATH = '/config';
     const DATA_RELATIVE_PATH = '/data';
     
-    const RECORD_PAGE_SIZE = 100;
+    const RECORD_PAGE_SIZE = 10000;
     
     private $levels = array(
         self::LEVEL_ESSENTIAL,
@@ -37,6 +37,7 @@ class CreateCommand extends BaseCommand
     );
     
     private $path = null;
+    private $pathDate = null;
     
     private $applicationConfigurationFiles = array(
         'app/config/parameters.yml',
@@ -57,8 +58,11 @@ class CreateCommand extends BaseCommand
     );
     
     private $databaseFieldExclusions = array(
-        'TaskOutput' => 'output'
+        'TaskOutput' => array('output')
     );
+    
+    private $tableFields = array();
+    private $tableRecordCounts = array();
     
     /**
      *
@@ -105,13 +109,7 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {     
-//        $this->dumpDatabaseTable('fos_user');
-//        exit();
-        
-//        var_dump($this->getContainer()->getParameter('database_name'));
-//        exit();
-        
+    {
         $this->input = $input;
         
         if (!$this->hasValidLevelOption()) {
@@ -198,6 +196,26 @@ EOF
                 $sqlFileIndex++;
             }
         }
+        $output->writeln('');
+        
+        $output->write('Compressing backup files ...');
+        
+        $command = 'tar -cvzf '.$this->getArchivePath().' ' . $this->getBasePath().' ';
+        $compressOutput = array();
+        $compressReturnValue = null;
+        
+        exec($command, $compressOutput, $compressReturnValue);
+        
+        if ($compressReturnValue === 0) {
+            $output->writeln('<info>ok</info>');
+        } else {
+            $output->writeln('<error>failed</error>');
+            return self::RETURN_CODE_FAILED_TO_COMPRESS_BACKUP;                
+        }
+        
+        $output->writeln('Tidying up ... removing temporary backup directory ... <info>ok</info> ');
+        $this->deleteDirectory($this->getBasePath());
+        
         $output->writeln('');
         
         return 0;
@@ -346,10 +364,28 @@ EOF
      */
     private function getBasePath() {
         if (is_null($this->path)) {
-            $this->path = $this->getPathOption() . '/' . date('Y-m-d-H-i-s');
+            $this->path = $this->getPathOption() . '/' . $this->getPathDate();
         }
         
         return $this->path;
+    }
+    
+    
+    /**
+     * 
+     * @return string
+     */
+    private function getPathDate() {
+        if (is_null($this->pathDate)) {
+            $this->pathDate = date('Y-m-d-H-i-s');
+        }
+        
+        return $this->pathDate;        
+    }
+    
+    
+    private function getArchivePath() {
+        return $this->getBasePath() . '.tar.gz';
     }
     
     
@@ -412,6 +448,27 @@ EOF
     }
     
     
+    private function deleteDirectory($path) {
+        if (!is_dir($path)) {
+            return false;
+        }
+
+        $objects = scandir($path);
+        foreach ($objects as $object) {
+            if ($object != "." && $object != "..") {                
+                if (filetype($path . "/" . $object) == "dir") {
+                    $this->deleteDirectory($path . "/" . $object);
+                } else {
+                    unlink($path . "/" . $object);
+                }                    
+            }
+        }
+
+        rmdir($path);        
+        return true;
+    }
+    
+    
     private function getDsn() {
         return 'mysql:dbname='.$this->getContainer()->getParameter('database_name').';host=127.0.0.1';
     }
@@ -443,11 +500,38 @@ EOF
      * @return int
      */
     private function getTableRecordCount($tableName) {
-        $statement = $this->getDatabaseHandle()->prepare('SELECT COUNT(id) AS idCount FROM '.$tableName);        
-        $statement->execute();      
+        if (!isset($this->tableRecordCounts[$tableName])) {
+            $statement = $this->getDatabaseHandle()->prepare('SELECT COUNT(id) AS idCount FROM '.$tableName);        
+            $statement->execute();      
+
+            $row = $statement->fetch(PDO::FETCH_ASSOC);
+            $this->tableRecordCounts[$tableName] = (int)$row['idCount'];             
+        }
         
-        $row = $statement->fetch(PDO::FETCH_ASSOC);
-        return (int)$row['idCount'];       
+        return $this->tableRecordCounts[$tableName];      
+    }
+    
+    
+    /**
+     * 
+     * @param string $tableName
+     * @return array
+     */
+    private function getTableFields($tableName) {
+        if (!isset($this->tableFields[$tableName])) {
+            $statement = $this->getDatabaseHandle()->prepare('DESCRIBE '.$tableName);        
+            $statement->execute(); 
+
+            $fields = array();
+
+            while (($row = $statement->fetch(PDO::FETCH_ASSOC))) {
+                $fields[] = $row['Field'];
+            }     
+            
+            $this->tableFields[$tableName] = $fields;
+        }        
+        
+        return $this->tableFields[$tableName];  
     }
     
     
@@ -483,6 +567,23 @@ EOF
     }
     
     
+    private function getFieldsToSelect($tableName) {
+        $exclusions = $this->getExclusions($tableName);
+        if (count($exclusions) === 0) {
+            return '*';
+        }
+        
+        $fields = $this->getTableFields($tableName);        
+        $fieldsToSelect = array();
+        foreach ($fields as $field) {
+            if (!in_array($field, $exclusions)) {
+                $fieldsToSelect[] = $field;
+            }
+        }
+        
+        return implode(',', $fieldsToSelect);       
+    }
+    
     private function getDatabaseTableDump($tableName, $offset = 0) {        
         $recordCount = $this->getTableRecordCount($tableName);
         if ($recordCount === 0) {
@@ -493,13 +594,33 @@ EOF
         
         $insertValues = array();
         
-        $recordsResult = $this->getDatabaseHandle()->prepare('SELECT * FROM ' . $tableName.' LIMIT '.$offset.', ' . self::RECORD_PAGE_SIZE);
+        $recordsResult = $this->getDatabaseHandle()->prepare('SELECT '.$this->getFieldsToSelect($tableName).' FROM ' . $tableName.' ORDER BY id ASC LIMIT '.$offset.', ' . self::RECORD_PAGE_SIZE);     
         $recordsResult->execute();
+        
+        $exclusions = $this->getExclusions($tableName);
+        $hasExclusions = count($exclusions) > 0;
         
         while ($row = $recordsResult->fetch(PDO::FETCH_ASSOC)) {
             $values = array_values($row);
             
-            foreach ($values as $key => $value) {
+            if ($hasExclusions) {
+                $exclusionIndices = $this->getExclusionIndices($tableName);
+                
+                foreach ($exclusionIndices as $fieldName => $index) {
+                    if ($index === 0) {
+                        $values = array_merge(array(''), $values);
+                    } elseif ($index === count($values)) {
+                        $values[] = '';
+                    } else {
+                        $preValues = array_slice($values, $index - 1, $index);
+                        $postValues = array_slice($values, $index);
+                        
+                        $values = array_merge($preValues, array(''), $postValues);
+                    }
+                }
+            }
+            
+            foreach ($values as $key => $value) {               
                 $value = addslashes($value);
                 $value = preg_replace("/\n/", "\\n", $value);
                 $value = '"'.$value.'"';
@@ -513,6 +634,31 @@ EOF
         $insertQuery .= implode(',', $insertValues);
         
         return $insertQuery;        
+    }
+    
+
+    private function getExclusions($tableName) {
+        return (isset($this->databaseFieldExclusions[$tableName])) ? $this->databaseFieldExclusions[$tableName] : array();
+    }
+    
+    
+    private function getExclusionIndices($tableName) {
+        $fieldsToExclude = $this->getExclusions($tableName);
+        
+        if (count($fieldsToExclude) === 0) {
+            return $fieldsToExclude;
+        }   
+        
+        $exclusions = array();
+        $fields = $this->getTableFields($tableName);
+        
+        foreach ($fields as $fieldIndex => $field) {
+            if (in_array($field, $fieldsToExclude)) {
+                $exclusions[$field] = $fieldIndex;
+            }
+        }
+        
+        return $exclusions;
     }
     
 }
