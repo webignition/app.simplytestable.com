@@ -37,7 +37,8 @@ class CreateCommand extends BackupCommand
             'fos_user',
         ),
         self::LEVEL_MINIMAL => array(
-            'WebSite',            
+            'WebSite', 
+            'TimePeriod',
             'Job',
             'Worker', 
             'TaskOutput',
