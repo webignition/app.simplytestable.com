@@ -50,13 +50,11 @@ class CreateCommand extends BackupCommand
     );
     
     private $databaseFieldExclusions = array(
-        'TaskOutput' => array('output')
-    );
-    
-    
-    private $databasePrimaryKeyExclusions = array(
-        'fos_user' => array(1,2)
-    );        
+        'TaskOutput' => array(
+            'output',
+            'hash'
+         )
+    );     
 
     private $tableRecordCounts = array();
     
@@ -591,38 +589,24 @@ EOF
         $query .= 'LIMIT '.$offset.', ' . $this->getTablePageSize($tableName);
         
         $recordsResult = $this->getDatabaseHandle()->prepare($query);     
-        $recordsResult->execute();
-        
-        $fieldExclusions = $this->getTableFieldExclusions($tableName);
-        $hasFieldExclusions = count($fieldExclusions) > 0;
-        
-        $primaryKeyExclusions = $this->getTablePrimaryKeyExclusions($tableName);
-        $hasPrimaryKeyExclusions = count($primaryKeyExclusions) > 0;
+        $recordsResult->execute();        
         
         while ($row = $recordsResult->fetch(PDO::FETCH_ASSOC)) {
             $values = array_values($row);
             
-            if ($hasPrimaryKeyExclusions) {
-                if (in_array($values[0], $primaryKeyExclusions)) {
-                    continue;
-                }               
+            if ($tableName == 'TaskOutput') {
+                $values = array(
+                    $values[0],
+                    '',
+                    $values[1],
+                    $values[2],
+                    $values[3],
+                    ''
+                );
             }
             
-            if ($hasFieldExclusions) {
-                $exclusionIndices = $this->getExclusionIndices($tableName);
-                
-                foreach ($exclusionIndices as $fieldName => $index) {
-                    if ($index === 0) {
-                        $values = array_merge(array(''), $values);
-                    } elseif ($index === count($values)) {
-                        $values[] = '';
-                    } else {
-                        $preValues = array_slice($values, $index - 1, $index);
-                        $postValues = array_slice($values, $index);
-                        
-                        $values = array_merge($preValues, array(''), $postValues);
-                    }
-                }
+            if ($tableName == 'fos_user' && ($values[0] == '1' || $values[0] == '2')) {
+                continue;
             }
             
             foreach ($values as $key => $value) {               
@@ -651,28 +635,6 @@ EOF
     }
     
     
-    private function getTablePrimaryKeyExclusions($tableName) {
-        return (isset($this->databasePrimaryKeyExclusions[$tableName])) ? $this->databasePrimaryKeyExclusions[$tableName] : array();        
-    }
-    
-    
-    private function getExclusionIndices($tableName) {
-        $fieldsToExclude = $this->getTableFieldExclusions($tableName);
-        
-        if (count($fieldsToExclude) === 0) {
-            return $fieldsToExclude;
-        }   
-        
-        $exclusions = array();
-        $fields = $this->getTableFields($tableName);
-        
-        foreach ($fields as $fieldIndex => $field) {
-            if (in_array($field, $fieldsToExclude)) {
-                $exclusions[$field] = $fieldIndex;
-            }
-        }
-        
-        return $exclusions;
-    }
+
     
 }
