@@ -251,14 +251,17 @@ EOF
                     } catch (\PDOException $pdoException) {
                         $output->writeln('<error>F</error>');
                         $output->writeln('<error>Failed to restore from ' . $sqlDataFilePath . '</error>');
-                        //$output->writeln($query);
+                        $output->writeln('<error>'.$pdoException->getMessage().'</error>');
+                        
+                        if (substr_count($pdoException->getMessage(), 'max_allowed_packet') || substr_count($pdoException->getMessage(), 'MySQL server has gone away')) {
+                            $output->writeln('<comment>The failed data file is '.strlen($query).' bytes, try setting the MySQL server \'max_allowed_packet\' large enough to accommodate this</comment>');
+                        }
+                        
                         return self::RETURN_CODE_FAILED_TO_RESTORE_FROM_SQL_DATA_FILE;
                     }
                 }
             }
-            
-//            $output->writeln('');
-//            $output->writeln('');
+
             $output->writeln(' <info>ok</info>');
         }
         
@@ -447,7 +450,7 @@ EOF
             
             $commaSeparatedValues = substr($insertBlock, 1, $insertBlockLength - 2);
             
-            $csvContent = str_getcsv($commaSeparatedValues);
+            $csvContent = str_getcsv($commaSeparatedValues, ',', "'");
             
             if (count($csvContent) != $tableFieldCount) {
                 return false;
