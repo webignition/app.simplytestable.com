@@ -20,7 +20,8 @@ class CreateCommand extends BackupCommand
     const LEVEL_MINIMAL = 'minimal';    
     const DEFAULT_LEVEL = self::LEVEL_ESSENTIAL;
     
-    const DEFAULT_PAGE_SIZE = 10000;
+    const DEFAULT_PAGE_SIZE = 100000;
+    const DEFAULT_TASK_OUTPUT_PAGE_SIZE = 5000;
     
     private $levels = array(
         self::LEVEL_ESSENTIAL,
@@ -377,7 +378,7 @@ EOF
      */
     private function getTaskOutputPageSize() {
         $pageSize = (int)$this->input->getOption('task-output-page-size');        
-        return ($pageSize <= 0) ? self::DEFAULT_PAGE_SIZE : $pageSize;        
+        return ($pageSize <= 0) ? self::DEFAULT_TASK_OUTPUT_PAGE_SIZE : $pageSize;        
     }
     
     
