@@ -51,16 +51,20 @@ class CreateCommand extends BackupCommand
     
     private $databaseFieldExclusions = array(
         'TaskOutput' => array(
-            'output',
-            'hash'
+            'public' => array(
+                'output',
+                'contentType',
+                'hash'                
+            ),
+            'private' => array(
+                'hash'
+            )
          )
     );     
 
-    private $tableRecordCounts = array();
-    
-    
-    private $tablePrimaryKeyFields = array();
-
+    private $tableRecordCounts = array();    
+    private $tablePrimaryKeyFields = array();    
+    private $nonPublicTaskOutputIds = array(); 
     
     protected function configure()
     {
@@ -147,8 +151,6 @@ EOF
                 }                
             }
             
-
-            
             $output->writeln('<info>ok</info>');
         }
         
@@ -187,7 +189,11 @@ EOF
                 $tableDumpPath = $this->getDataPath() . '/' . ($this->getTableDumpFilePrefix($sqlFileIndex, $totalPageCount)) . '_' . $tableName . '_page_'.$pageIndex.'.sql';
                 $output->write('Storing '.$tableName.' records '.$offset.' to '.(($pageIndex + 1) * $this->getTablePageSize($tableName)).' in ' . $tableDumpPath.' ... ');
                 
-                $dump = $this->getDatabaseTableDump($tableName, $offset);
+                if ($tableName == 'TaskOutput') {
+                    $dump = $this->getDatabaseTaskOutputTableDump($offset);
+                } else {
+                    $dump = $this->getDatabaseTableDump($tableName, $offset);
+                }
                 
                 if ($this->isDryRun()) {
                     $output->writeln('<info>ok</info>');                   
@@ -215,7 +221,7 @@ EOF
             $compressReturnValue = 0;
         } else {
             exec($command, $compressOutput, $compressReturnValue);
-        }        
+        }      
         
         if ($compressReturnValue === 0) {
             $output->writeln('<info>ok</info>');
@@ -551,13 +557,13 @@ EOF
     }
     
     
-    private function getFieldsToSelect($tableName) {
-        $exclusions = $this->getTableFieldExclusions($tableName);
+    private function getFieldsToSelect($tableName, $subset = null) {
+        $exclusions = $this->getTableFieldExclusions($tableName, $subset);
         if (count($exclusions) === 0) {
             return '*';
         }
         
-        $fields = $this->getTableFields($tableName);        
+        $fields = $this->getTableFields($tableName);                
         $fieldsToSelect = array();
         foreach ($fields as $field) {
             if (!in_array($field, $exclusions)) {
@@ -568,10 +574,35 @@ EOF
         return implode(',', $fieldsToSelect);       
     }
     
+    /**
+     * 
+     * @return array
+     */
+    private function getNonPublicTaskOutputIds() {        
+        if (count($this->nonPublicTaskOutputIds) === 0) {
+            $query = 'SELECT DISTINCT TaskOutput.id '
+                   . 'FROM TaskOutput '
+                   . 'LEFT JOIN Task ON Task.output_id = TaskOutput.id '
+                   . 'LEFT JOIN Job ON Job.id = Task.job_id '
+                   . 'WHERE Job.user_id > 2';
+
+            $statement = $this->getDatabaseHandle()->prepare($query);     
+            $statement->execute();         
+
+            $rawResultData = $statement->fetchAll(PDO::FETCH_NUM);
+
+            foreach ($rawResultData as $resultItem) {
+                $this->nonPublicTaskOutputIds[] = (int)$resultItem[0];
+            }
+        }
+        
+        return $this->nonPublicTaskOutputIds;
+    }    
+    
     private function getDatabaseTableDump($tableName, $offset = 0) {        
         $recordCount = $this->getTableRecordCount($tableName);
         if ($recordCount === 0) {
-            return true;
+            return '# no records';
         }
         
         $insertQuery = 'INSERT INTO '.$tableName.' VALUES '."\n";
@@ -593,17 +624,6 @@ EOF
         
         while ($row = $recordsResult->fetch(PDO::FETCH_ASSOC)) {
             $values = array_values($row);
-            
-            if ($tableName == 'TaskOutput') {
-                $values = array(
-                    $values[0],
-                    '',
-                    $values[1],
-                    $values[2],
-                    $values[3],
-                    ''
-                );
-            }
             
             if ($tableName == 'fos_user' && ($values[0] == '1' || $values[0] == '2')) {
                 continue;
@@ -629,12 +649,144 @@ EOF
         return $insertQuery;        
     }
     
-
-    private function getTableFieldExclusions($tableName) {
-        return (isset($this->databaseFieldExclusions[$tableName])) ? $this->databaseFieldExclusions[$tableName] : array();
+    
+    private function getDatabaseTaskOutputTableDump($offset = 0) {        
+        $tableName = 'TaskOutput';
+        
+        $recordCount = $this->getTableRecordCount($tableName);
+        if ($recordCount === 0) {
+            return '# no records';
+        }
+        
+        $ids = $this->getTaskOutputPublicAndPrivateIdsForPage($offset);        
+        $data = array();
+        
+        // public
+        if (count($ids['public'])) {            
+            $query = 'SELECT '.$this->getFieldsToSelect($tableName, 'public').' '
+                   . 'FROM ' . $tableName.' '
+                   . 'WHERE id IN ('.  implode(',', $ids['public']).') '
+                   . 'ORDER BY id ASC ';           
+            
+            $recordsResult = $this->getDatabaseHandle()->prepare($query);     
+            $recordsResult->execute(); 
+            
+            while ($row = $recordsResult->fetch(PDO::FETCH_NUM)) {
+                $data[(int)$row[0]] = array(
+                    $row[0],
+                    '',
+                    '',
+                    $row[1],
+                    $row[2],
+                    ''
+                );
+            }
+        }        
+        
+        // private
+        if (count($ids['private'])) {
+            $query = 'SELECT '.$this->getFieldsToSelect($tableName, 'private').' '
+                   . 'FROM ' . $tableName.' '
+                   . 'WHERE id IN ('.  implode(',', $ids['private']).') '
+                   . 'ORDER BY id ASC ';
+            
+            $recordsResult = $this->getDatabaseHandle()->prepare($query);     
+            $recordsResult->execute();
+            
+            while ($row = $recordsResult->fetch(PDO::FETCH_NUM)) {                
+                $data[(int)$row[0]] = array(
+                    $row[0],
+                    $row[1],
+                    $row[2],
+                    $row[3],
+                    $row[4],
+                    ''
+                );
+            }
+        }
+        
+        sort($data);
+        
+        $insertQuery = 'INSERT INTO '.$tableName.' VALUES '."\n";        
+        $insertValues = array();
+        
+        foreach ($data as $row) {            
+            foreach ($row as $key => $value) {               
+                if (is_null($value)) {
+                    $value = 'NULL';
+                } else {
+                    $value = addslashes($value);
+                    $value = preg_replace("/\n/", "\\n", $value);                
+                    $value = "'".$value."'";                    
+                }
+                
+                $row[$key] = $value;
+            }
+            
+            $insertValues[] = '(' .implode(',', $row) . ')';
+        }     
+        
+        $insertQuery .= implode(','."\n", $insertValues);         
+        
+        return $insertQuery;       
     }
     
     
+    /**
+     * 
+     * @param string $tableName
+     * @param int $offset
+     * @return array
+     */
+    private function getTableIds($tableName, $offset) {        
+        $query = 'SELECT id FROM ' . $tableName.' ORDER BY id ASC LIMIT '.$offset.', ' . $this->getTablePageSize($tableName);        
+        $recordsResult = $this->getDatabaseHandle()->prepare($query);     
+        $recordsResult->execute(); 
+        
+        $rawResultData = $recordsResult->fetchAll(PDO::FETCH_NUM);
+        
+        $ids = array();
+        
+        foreach ($rawResultData as $resultItem) {
+            $ids[] = (int)$resultItem[0];
+        }
+        
+        return $ids;        
+    }
+    
+    
+    private function getTaskOutputPublicAndPrivateIdsForPage($offset) {
+        $ids = $this->getTableIds('TaskOutput', $offset);
+        $nonPublicTaskOutputIds = $this->getNonPublicTaskOutputIds();
+        
+        $taskOutputIds = array(
+            'public' => array(),
+            'private' => array(),
+        );
+        
+        foreach ($ids as $id) {
+            if (in_array($id, $nonPublicTaskOutputIds)) {
+                $taskOutputIds['private'][] = $id;
+            } else {
+                $taskOutputIds['public'][] = $id;
+            }
+        }
+        
+        return $taskOutputIds;
+    }
+    
+
+    private function getTableFieldExclusions($tableName, $subset = null) {
+        if (!isset($this->databaseFieldExclusions[$tableName])) {
+            return array();
+        }
+        
+        if (is_null($subset)) {
+            return $this->databaseFieldExclusions[$tableName];
+        }
+        
+        return $this->databaseFieldExclusions[$tableName][$subset];
+    }   
 
     
 }
