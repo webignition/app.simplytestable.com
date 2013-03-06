@@ -72,6 +72,7 @@ class CreateCommand extends BackupCommand
             ->addOption('dry-run', null, InputOption::VALUE_OPTIONAL, 'Run through the process without writing any data')
             ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'Backup storage path')
             ->addOption('page-size', null, InputOption::VALUE_OPTIONAL, '')
+            ->addOption('task-output-page-size', null, InputOption::VALUE_OPTIONAL, '')                
             ->setHelp(<<<EOF
 Create an application-level backup.
     
@@ -177,7 +178,7 @@ EOF
             $tableRecordCount = $this->getTableRecordCount($tableName);
             
             $output->writeln($tableRecordCount. ' records to back up');
-            $output->writeln('Using ' . $this->getRecordPageCount($tableName). ' pages of ' . $this->getPageSize(). ' records');
+            $output->writeln('Using ' . $this->getRecordPageCount($tableName). ' pages of ' . $this->getTablePageSize($tableName). ' records');
             
             $offsets = $this->getRecordPageOffsets($tableName);
             
@@ -185,7 +186,7 @@ EOF
                 $this->getTableDumpFilePrefix($sqlFileIndex, $totalPageCount);
                 
                 $tableDumpPath = $this->getDataPath() . '/' . ($this->getTableDumpFilePrefix($sqlFileIndex, $totalPageCount)) . '_' . $tableName . '_page_'.$pageIndex.'.sql';
-                $output->write('Storing '.$tableName.' records '.$offset.' to '.(($pageIndex + 1) * $this->getPageSize()).' in ' . $tableDumpPath.' ... ');
+                $output->write('Storing '.$tableName.' records '.$offset.' to '.(($pageIndex + 1) * $this->getTablePageSize($tableName)).' in ' . $tableDumpPath.' ... ');
                 
                 $dump = $this->getDatabaseTableDump($tableName, $offset);
                 
@@ -255,7 +256,7 @@ EOF
      */
     private function getRecordPageCount($tableName) {
         $recordCount = $this->getTableRecordCount($tableName);        
-        return (int)ceil($recordCount / $this->getPageSize());        
+        return (int)ceil($recordCount / $this->getTablePageSize($tableName));        
     }
     
     
@@ -270,7 +271,7 @@ EOF
         $pageCount = $this->getRecordPageCount($tableName);
         
         for ($pageIndex = 0; $pageIndex < $pageCount; $pageIndex++) {            
-            $constraints[] = $this->getPageSize() * $pageIndex;
+            $constraints[] = $this->getTablePageSize($tableName) * $pageIndex;
         }
         
         return $constraints;
@@ -348,11 +349,35 @@ EOF
     
     /**
      * 
+     * @param string $tableName
+     * @return int
+     */
+    private function getTablePageSize($tableName) {
+        if ($tableName == 'TaskOutput') {
+            return $this->getTaskOutputPageSize();
+        }
+        
+        return $this->getPageSize();
+    }
+    
+    
+    /**
+     * 
      * @return int
      */
     private function getPageSize() {
         $pageSize = (int)$this->input->getOption('page-size');        
         return ($pageSize <= 0) ? self::DEFAULT_PAGE_SIZE : $pageSize;
+    }
+    
+    
+    /**
+     * 
+     * @return int
+     */
+    private function getTaskOutputPageSize() {
+        $pageSize = (int)$this->input->getOption('task-output-page-size');        
+        return ($pageSize <= 0) ? self::DEFAULT_PAGE_SIZE : $pageSize;        
     }
     
     
@@ -562,7 +587,7 @@ EOF
             $query .= 'ORDER BY '.$primaryKeyFields[0].' ASC ';
         }
         
-        $query .= 'LIMIT '.$offset.', ' . $this->getPageSize();
+        $query .= 'LIMIT '.$offset.', ' . $this->getTablePageSize($tableName);
         
         $recordsResult = $this->getDatabaseHandle()->prepare($query);     
         $recordsResult->execute();
