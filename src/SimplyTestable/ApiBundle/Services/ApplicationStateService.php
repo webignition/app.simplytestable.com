@@ -27,15 +27,29 @@ class ApplicationStateService {
     
     /**
      * 
+     * @param string $state
+     * @return boolean
+     */
+    public function setState($state) {
+        if (!$this->isAllowedState($state)) {
+            return false;
+        }
+        
+        return file_put_contents($this->stateResourcePath, $state) > 0;
+    }
+    
+    
+    /**
+     * 
      * @return string
      */
-    public function getState() {
+    public function getState() {       
         if (is_null($this->state)) {
             if (file_exists($this->stateResourcePath)) {
                 $this->state = trim(file_get_contents($this->stateResourcePath));
             }
             
-            if (!in_array($this->state, $this->allowedStates)) {
+            if (!$this->isAllowedState($this->state)) {
                 $this->state = self::DEFAULT_STATE;
             }
         }
@@ -50,6 +64,16 @@ class ApplicationStateService {
      */
     public function setStateResourcePath($stateResourcePath) {
         $this->stateResourcePath = $stateResourcePath;
+    }
+    
+    
+    /**
+     * 
+     * @param string $state
+     * @return boolean
+     */
+    private function isAllowedState($state) {
+        return in_array($state, $this->allowedStates);
     }
     
     

@@ -125,6 +125,4 @@ services:
         entityManager: "@doctrine.orm.entity_manager"              
         
   simplytestable.services.applicationStateService:
-    class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
-    arguments:
-        stateResourcePath: "SimplyTestableApiBundle/Resources/config/state"
+    class:  SimplyTestable\ApiBundle\Services\ApplicationStateService      

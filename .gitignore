@@ -8,6 +8,6 @@ composer.phar
 #composer.lock
 app/config/parameters.yml
 /bin
-src/SimplyTestable/ApiBundle/Resources/config/state
+src/SimplyTestable/ApiBundle/Resources/config/state-*
 # IDE meta
 /nbproject
