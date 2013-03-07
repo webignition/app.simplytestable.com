@@ -35,6 +35,13 @@ abstract class ApiController extends Controller
     
     
     /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\ApplicationStateServic
+     */
+    private $applicationStateService;
+    
+    
+    /**
      * Set collection of InputDefinition objects
      * key is controller method name
      * value is InputDefinition
@@ -201,5 +208,28 @@ abstract class ApiController extends Controller
      */
     protected function getRequestValues($httpMethod = HTTP_METH_GET) {
         return ($httpMethod == HTTP_METH_POST) ? $this->container->get('request')->request : $this->container->get('request')->query;
-    }    
+    }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\ApplicationStateService
+     */
+    protected function getApplicationStateService() {
+        if (is_null($this->applicationStateService)) {
+            $this->applicationStateService = $this->get('simplytestable.services.applicationStateService');
+            $this->applicationStateService->setStateResourcePath($this->getStateResourcePath());
+        }
+        
+        return $this->applicationStateService;
+    }
+    
+
+    /**
+     * 
+     * @return string
+     */
+    private function getStateResourcePath() {
+        return $this->container->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config') . '/state';
+    }
 }

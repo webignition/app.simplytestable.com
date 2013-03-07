@@ -123,3 +123,8 @@ services:
     class:  SimplyTestable\ApiBundle\Services\JobTypeService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"              
+        
+  simplytestable.services.applicationStateService:
+    class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
+    arguments:
+        stateResourcePath: "SimplyTestableApiBundle/Resources/config/state"
