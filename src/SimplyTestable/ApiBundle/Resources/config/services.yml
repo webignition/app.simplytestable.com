@@ -125,4 +125,9 @@ services:
         entityManager: "@doctrine.orm.entity_manager"              
         
   simplytestable.services.applicationStateService:
-    class:  SimplyTestable\ApiBundle\Services\ApplicationStateService      
+    class:  SimplyTestable\ApiBundle\Services\ApplicationStateService  
+    
+  simplytestable.services.commandService:
+    class:   SimplyTestable\ApiBundle\Services\CommandService
+    arguments:
+      container: "@service_container"     

@@ -1,5 +1,5 @@
 {
-    "hash": "2220a01fa1437c92c16fa3beb831585b",
+    "hash": "5d54414d760d9b1e5e4fc4c569b42f1a",
     "packages": [
         {
             "name": "doctrine/common",
@@ -18,7 +18,6 @@
             "require": {
                 "php": ">=5.3.2"
             },
-            "time": "2012-09-20 05:55:18",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -66,7 +65,8 @@
                 "eventmanager",
                 "persistence",
                 "spl"
-            ]
+            ],
+            "time": "2012-09-20 05:55:18"
         },
         {
             "name": "doctrine/dbal",
@@ -86,7 +86,6 @@
                 "doctrine/common": "2.3.*",
                 "php": ">=5.3.2"
             },
-            "time": "2012-10-06 10:21:52",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -128,7 +127,8 @@
                 "dbal",
                 "persistence",
                 "queryobject"
-            ]
+            ],
+            "time": "2012-10-06 10:21:52"
         },
         {
             "name": "doctrine/doctrine-bundle",
@@ -159,7 +159,6 @@
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
             },
-            "time": "2012-10-10 17:42:28",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -195,7 +194,8 @@
                 "dbal",
                 "orm",
                 "persistence"
-            ]
+            ],
+            "time": "2012-10-10 17:42:28"
         },
         {
             "name": "doctrine/migrations",
@@ -222,7 +222,6 @@
             "suggest": {
                 "symfony/console": "to run the migration from the console"
             },
-            "time": "2012-10-05 11:15:13",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -248,7 +247,8 @@
             "keywords": [
                 "database",
                 "migrations"
-            ]
+            ],
+            "time": "2012-10-05 11:15:13"
         },
         {
             "name": "doctrine/orm",
@@ -273,7 +273,6 @@
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
             },
-            "time": "2012-10-05 21:20:05",
             "bin": [
                 "bin/doctrine",
                 "bin/doctrine.php"
@@ -317,7 +316,8 @@
             "keywords": [
                 "database",
                 "orm"
-            ]
+            ],
+            "time": "2012-10-05 21:20:05"
         },
         {
             "name": "friendsofsymfony/user-bundle",
@@ -352,7 +352,6 @@
                 "doctrine/doctrine-bundle": "*",
                 "doctrine/mongodb-odm-bundle": "*"
             },
-            "time": "2012-10-11 20:50:03",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -386,7 +385,8 @@
             "homepage": "http://friendsofsymfony.github.com",
             "keywords": [
                 "User management"
-            ]
+            ],
+            "time": "2012-10-11 20:50:03"
         },
         {
             "name": "glit/resque",
@@ -402,7 +402,6 @@
                 "reference": "d677b0558d27e0c0405c3a54ce73b39db50b136f",
                 "shasum": ""
             },
-            "time": "2012-07-04 15:33:47",
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
@@ -423,7 +422,8 @@
             "description": "PHP port of the ruby resque library. And some enhancement to delegate instanciation of job (usefull to work with the Symfony2 DIC for exemple). ",
             "keywords": [
                 "resque"
-            ]
+            ],
+            "time": "2012-07-04 15:33:47"
         },
         {
             "name": "jms/aop-bundle",
@@ -444,7 +444,6 @@
                 "jms/cg": "1.0.0",
                 "symfony/framework-bundle": "2.*"
             },
-            "time": "2012-01-02 20:50:26",
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
@@ -466,7 +465,8 @@
             "keywords": [
                 "annotations",
                 "aop"
-            ]
+            ],
+            "time": "2012-01-02 20:50:26"
         },
         {
             "name": "jms/cg",
@@ -485,7 +485,6 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-01-02 20:40:52",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -506,7 +505,8 @@
             "description": "Toolset for generating PHP code",
             "keywords": [
                 "code generation"
-            ]
+            ],
+            "time": "2012-01-02 20:40:52"
         },
         {
             "name": "jms/di-extra-bundle",
@@ -543,7 +543,6 @@
                 "symfony/validator": "*",
                 "symfony/yaml": "*"
             },
-            "time": "2012-09-21 08:56:32",
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
@@ -566,7 +565,8 @@
             "keywords": [
                 "annotations",
                 "dependency injection"
-            ]
+            ],
+            "time": "2012-09-21 08:56:32"
         },
         {
             "name": "jms/metadata",
@@ -585,7 +585,6 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-01-02 21:32:49",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -609,7 +608,8 @@
                 "metadata",
                 "xml",
                 "yaml"
-            ]
+            ],
+            "time": "2012-01-02 21:32:49"
         },
         {
             "name": "jms/security-extra-bundle",
@@ -647,13 +647,13 @@
                 "symfony/validator": "*",
                 "symfony/yaml": "*"
             },
-            "time": "2012-09-06 16:12:23",
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
                     "JMS\\SecurityExtraBundle": ""
                 }
-            }
+            },
+            "time": "2012-09-06 16:12:23"
         },
         {
             "name": "jms/serializer-bundle",
@@ -682,7 +682,6 @@
                 "symfony/yaml": ">=2.0,<2.2-dev",
                 "twig/twig": ">=1.8,<2.0-dev"
             },
-            "time": "2012-09-20 14:23:52",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -713,7 +712,8 @@
                 "json",
                 "serialization",
                 "xml"
-            ]
+            ],
+            "time": "2012-09-20 14:23:52"
         },
         {
             "name": "kriswallsmith/assetic",
@@ -747,7 +747,6 @@
                 "ptachoire/cssembed": "Assetic provides the integration with phpcssembed to embed data uris",
                 "twig/twig": "Assetic provides the integration with the Twig templating engine"
             },
-            "time": "2012-09-30 11:32:39",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -778,7 +777,8 @@
                 "assets",
                 "compression",
                 "minification"
-            ]
+            ],
+            "time": "2012-09-30 11:32:39"
         },
         {
             "name": "monolog/monolog",
@@ -805,7 +805,6 @@
                 "ext-mongo": "Allow sending log messages to a MongoDB server",
                 "mlehner/gelf-php": "Allow sending log messages to a GrayLog2 server"
             },
-            "time": "2012-09-18 15:50:48",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -833,7 +832,8 @@
             "keywords": [
                 "log",
                 "logging"
-            ]
+            ],
+            "time": "2012-09-18 15:50:48"
         },
         {
             "name": "querypath/QueryPath",
@@ -852,7 +852,6 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-12-11 14:38:11",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -871,7 +870,8 @@
                 "jquery",
                 "xml",
                 "xslt"
-            ]
+            ],
+            "time": "2012-12-11 14:38:11"
         },
         {
             "name": "sensio/distribution-bundle",
@@ -891,7 +891,6 @@
             "require": {
                 "symfony/framework-bundle": "2.1.*"
             },
-            "time": "2012-09-11 05:10:08",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -916,7 +915,8 @@
             "keywords": [
                 "configuration",
                 "distribution"
-            ]
+            ],
+            "time": "2012-09-11 05:10:08"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -937,7 +937,6 @@
                 "doctrine/common": ">=2.1,<2.4-dev",
                 "symfony/framework-bundle": "2.1.*"
             },
-            "time": "2012-10-09 12:34:31",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -962,7 +961,8 @@
             "keywords": [
                 "annotations",
                 "controllers"
-            ]
+            ],
+            "time": "2012-10-09 12:34:31"
         },
         {
             "name": "sensio/generator-bundle",
@@ -1028,7 +1028,6 @@
             "require": {
                 "php": ">=5.2.0"
             },
-            "time": "2012-10-11 15:33:40",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1062,7 +1061,8 @@
                 "atom",
                 "feeds",
                 "rss"
-            ]
+            ],
+            "time": "2012-10-11 15:33:40"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -1081,7 +1081,6 @@
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "2012-10-02 16:53:49",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1110,7 +1109,8 @@
             "keywords": [
                 "mail",
                 "mailer"
-            ]
+            ],
+            "time": "2012-10-02 16:53:49"
         },
         {
             "name": "symfony/assetic-bundle",
@@ -1144,7 +1144,6 @@
             "suggest": {
                 "symfony/twig-bundle": ">=2.1.0,<2.3-dev"
             },
-            "time": "2012-10-10 19:39:03",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1172,7 +1171,8 @@
                 "assets",
                 "compression",
                 "minification"
-            ]
+            ],
+            "time": "2012-10-10 19:39:03"
         },
         {
             "name": "symfony/monolog-bundle",
@@ -1200,7 +1200,6 @@
                 "symfony/config": ">=2.1.0,<2.3-dev",
                 "symfony/yaml": ">=2.1.0,<2.3-dev"
             },
-            "time": "2012-09-20 10:40:24",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1226,7 +1225,8 @@
                 }
             ],
             "description": "Symfony MonologBundle",
-            "homepage": "http://symfony.com"
+            "homepage": "http://symfony.com",
+            "time": "2012-09-20 10:40:24"
         },
         {
             "name": "symfony/swiftmailer-bundle",
@@ -1254,7 +1254,6 @@
                 "symfony/http-kernel": ">=2.1.0,<2.3-dev",
                 "symfony/yaml": ">=2.1.0,<2.3-dev"
             },
-            "time": "2012-09-20 10:42:56",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1280,7 +1279,8 @@
                 }
             ],
             "description": "Symfony SwiftmailerBundle",
-            "homepage": "http://symfony.com"
+            "homepage": "http://symfony.com",
+            "time": "2012-09-20 10:42:56"
         },
         {
             "name": "symfony/symfony",
@@ -1342,7 +1342,6 @@
                 "monolog/monolog": "dev-master",
                 "propel/propel1": "dev-master"
             },
-            "time": "2012-10-11 13:44:22",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1372,7 +1371,8 @@
             "homepage": "http://symfony.com",
             "keywords": [
                 "framework"
-            ]
+            ],
+            "time": "2012-10-11 13:44:22"
         },
         {
             "name": "twig/extensions",
@@ -1391,7 +1391,6 @@
             "require": {
                 "twig/twig": "1.*"
             },
-            "time": "2012-10-10 17:13:26",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1418,7 +1417,8 @@
                 "debug",
                 "i18n",
                 "text"
-            ]
+            ],
+            "time": "2012-10-10 17:13:26"
         },
         {
             "name": "twig/twig",
@@ -1437,7 +1437,6 @@
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "2012-10-08 13:20:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1466,7 +1465,8 @@
             "homepage": "http://twig.sensiolabs.org",
             "keywords": [
                 "templating"
-            ]
+            ],
+            "time": "2012-10-08 13:20:00"
         },
         {
             "name": "webignition/absolute-url-deriver",
@@ -1486,7 +1486,6 @@
                 "php": ">=5.3.0",
                 "webignition/url": ">=1.1"
             },
-            "time": "2012-07-26 23:07:45",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1507,7 +1506,8 @@
             "keywords": [
                 "absolute",
                 "url"
-            ]
+            ],
+            "time": "2012-07-26 23:07:45"
         },
         {
             "name": "webignition/container-aware-migration",
@@ -1528,7 +1528,6 @@
                 "php": ">=5.3.2",
                 "symfony/symfony": ">=2.0"
             },
-            "time": "2012-07-14 12:27:34",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1551,7 +1550,8 @@
                 "doctrine",
                 "migrations",
                 "symfony"
-            ]
+            ],
+            "time": "2012-07-14 12:27:34"
         },
         {
             "name": "webignition/disallowed-character-terminated-string",
@@ -1570,7 +1570,6 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-07-18 12:32:46",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1591,7 +1590,8 @@
             "keywords": [
                 "string",
                 "terminated"
-            ]
+            ],
+            "time": "2012-07-18 12:32:46"
         },
         {
             "name": "webignition/doctrine-migrations-bundle",
@@ -1613,7 +1613,6 @@
                 "php": ">=5.3.2",
                 "symfony/symfony": ">=2.0"
             },
-            "time": "2012-07-14 13:29:54",
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
@@ -1643,7 +1642,8 @@
                 "dbal",
                 "migrations",
                 "schema"
-            ]
+            ],
+            "time": "2012-07-14 13:29:54"
         },
         {
             "name": "webignition/http-client",
@@ -1665,7 +1665,6 @@
                 "webignition/absolute-url-deriver": ">=1.1",
                 "webignition/url": ">1.0"
             },
-            "time": "2013-02-18 15:05:56",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1687,7 +1686,8 @@
             "keywords": [
                 "client",
                 "http"
-            ]
+            ],
+            "time": "2013-02-18 15:05:56"
         },
         {
             "name": "webignition/internet-media-type",
@@ -1708,7 +1708,6 @@
                 "webignition/quoted-string": ">=0.1,<2.0",
                 "webignition/string-parser": ">=0.1, <2.0"
             },
-            "time": "2012-08-16 15:14:02",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1732,7 +1731,8 @@
                 "internet media type",
                 "media type",
                 "media-type"
-            ]
+            ],
+            "time": "2012-08-16 15:14:02"
         },
         {
             "name": "webignition/quoted-string",
@@ -1752,7 +1752,6 @@
                 "php": ">=5.3.0",
                 "webignition/string-parser": "0.1"
             },
-            "time": "2012-08-15 19:44:56",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1773,7 +1772,8 @@
             "keywords": [
                 "parser",
                 "quoted-string"
-            ]
+            ],
+            "time": "2012-08-15 19:44:56"
         },
         {
             "name": "webignition/resque-bundle",
@@ -1794,7 +1794,6 @@
                 "glit/resque": "dev-master",
                 "symfony/framework-bundle": "2.1.*"
             },
-            "time": "2012-09-07 20:43:20",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1825,7 +1824,8 @@
             ],
             "support": {
                 "source": "https://github.com/webignition/ResqueBundle/tree/master"
-            }
+            },
+            "time": "2012-09-07 20:43:20"
         },
         {
             "name": "webignition/robots-txt-file",
@@ -1845,7 +1845,6 @@
                 "php": ">=5.3.0",
                 "webignition/disallowed-character-terminated-string": ">=1.0"
             },
-            "time": "2012-10-04 12:32:59",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1865,7 +1864,8 @@
             "homepage": "https://github.com/webignition/robots-txt-file",
             "keywords": [
                 "parser"
-            ]
+            ],
+            "time": "2012-10-04 12:32:59"
         },
         {
             "name": "webignition/robots-txt-parser",
@@ -1885,7 +1885,6 @@
                 "php": ">=5.3.0",
                 "webignition/robots-txt-file": "dev-master"
             },
-            "time": "2012-10-04 13:12:54",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1905,7 +1904,8 @@
             "homepage": "https://github.com/webignition/robots-txt-parser",
             "keywords": [
                 "parser"
-            ]
+            ],
+            "time": "2012-10-04 13:12:54"
         },
         {
             "name": "webignition/simplytestable-base-migrations-bundle",
@@ -1931,7 +1931,6 @@
                 "webignition/container-aware-migration": "*",
                 "webignition/doctrine-migrations-bundle": "*"
             },
-            "time": "2012-08-02 09:45:05",
             "type": "symfony-bundle",
             "autoload": {
                 "psr-0": {
@@ -1951,7 +1950,8 @@
             "homepage": "https://github.com/webignition/SimplyTestableBaseMigrationsBundle",
             "keywords": [
                 "SimplyTestable Migrations"
-            ]
+            ],
+            "time": "2012-08-02 09:45:05"
         },
         {
             "name": "webignition/sitemap-model",
@@ -1974,7 +1974,6 @@
                 "webignition/url": ">=0.1,<2.0",
                 "webignition/web-resource-model": ">=0.1,<2.0"
             },
-            "time": "2012-10-09 19:10:42",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -1994,7 +1993,8 @@
             "homepage": "https://github.com/webignition/website-sitemap-model",
             "keywords": [
                 "Sitemap"
-            ]
+            ],
+            "time": "2012-10-09 19:10:42"
         },
         {
             "name": "webignition/string-parser",
@@ -2013,7 +2013,6 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-08-15 19:36:12",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2034,7 +2033,8 @@
             "keywords": [
                 "parser",
                 "string"
-            ]
+            ],
+            "time": "2012-08-15 19:36:12"
         },
         {
             "name": "webignition/url",
@@ -2054,7 +2054,6 @@
                 "ext-intl": "*",
                 "php": ">=5.3.0"
             },
-            "time": "2012-12-20 13:59:27",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2075,7 +2074,8 @@
             "homepage": "https://github.com/webignition/url",
             "keywords": [
                 "url"
-            ]
+            ],
+            "time": "2012-12-20 13:59:27"
         },
         {
             "name": "webignition/web-page-model",
@@ -2096,7 +2096,6 @@
                 "querypath/querypath": ">=3.0.0",
                 "webignition/web-resource-model": ">=0.1,<2.0"
             },
-            "time": "2012-12-03 12:46:24",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2118,7 +2117,8 @@
             "keywords": [
                 "model",
                 "webpage"
-            ]
+            ],
+            "time": "2012-12-03 12:46:24"
         },
         {
             "name": "webignition/web-resource-model",
@@ -2138,7 +2138,6 @@
                 "php": ">=5.3.0",
                 "webignition/internet-media-type": ">=0.1,<2.0"
             },
-            "time": "2012-08-16 15:16:06",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2159,7 +2158,8 @@
             "keywords": [
                 "modem",
                 "web"
-            ]
+            ],
+            "time": "2012-08-16 15:16:06"
         },
         {
             "name": "webignition/website-rss-feed-finder",
@@ -2181,7 +2181,6 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/web-page-model": ">=0.1,<2.0"
             },
-            "time": "2013-01-10 17:45:06",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2202,7 +2201,8 @@
             "homepage": "https://github.com/webignition/website-rss-feed-finder",
             "keywords": [
                 "rss"
-            ]
+            ],
+            "time": "2013-01-10 17:45:06"
         },
         {
             "name": "webignition/website-sitemap-finder",
@@ -2227,7 +2227,6 @@
                 "webignition/url": ">=0.1,<2.0",
                 "webignition/website-sitemap-retriever": "dev-master"
             },
-            "time": "2012-10-26 09:20:02",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2247,7 +2246,8 @@
             "homepage": "https://github.com/webignition/website-sitemap-finder",
             "keywords": [
                 "Sitemap"
-            ]
+            ],
+            "time": "2012-10-26 09:20:02"
         },
         {
             "name": "webignition/website-sitemap-retriever",
@@ -2269,7 +2269,6 @@
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/sitemap-model": "dev-master"
             },
-            "time": "2012-10-26 08:59:56",
             "type": "library",
             "autoload": {
                 "psr-0": {
@@ -2289,10 +2288,65 @@
             "homepage": "https://github.com/webignition/website-sitemap-retriever",
             "keywords": [
                 "Sitemap"
-            ]
+            ],
+            "time": "2012-10-26 08:59:56"
+        },
+        {
+            "name": "winzou/console-bundle",
+            "version": "1.0.0",
+            "target-dir": "CoreSphere/ConsoleBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/winzou/ConsoleBundle.git",
+                "reference": "1.0.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/winzou/ConsoleBundle/zipball/1.0.0",
+                "reference": "1.0.0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3",
+                "symfony/console": ">=2.1.0,<3.0",
+                "symfony/framework-bundle": ">=2.1.0,<3.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-0": {
+                    "CoreSphere\\ConsoleBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Laszlo Korte",
+                    "email": "coresphere@laszlokorte.de"
+                },
+                {
+                    "name": "Marmus Ullman",
+                    "email": "mail@markus-ullmann.de"
+                },
+                {
+                    "name": "Alexandre winzou Bacco",
+                    "homepage": "http://www.tutoriel-symfony2.fr/"
+                }
+            ],
+            "description": "This bundle allows you accessing the symfony2 console via your browser",
+            "keywords": [
+                "console",
+                "javascript",
+                "symfony"
+            ],
+            "time": "2013-02-21 19:48:51"
         }
     ],
-    "packages-dev": null,
+    "packages-dev": [
+
+    ],
     "aliases": [
 
     ],
@@ -2301,5 +2355,11 @@
         "webignition/website-sitemap-finder": 20,
         "webignition/website-sitemap-retriever": 20,
         "webignition/website-rss-feed-finder": 20
-    }
+    },
+    "platform": {
+        "php": ">=5.3.3"
+    },
+    "platform-dev": [
+
+    ]
 }

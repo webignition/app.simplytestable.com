@@ -31,7 +31,8 @@
         "webignition/resque-bundle":"*",
         "webignition/internet-media-type":">=0.1,<2.0",
         "simplepie/simplepie":"*",
-        "webignition/website-rss-feed-finder":"dev-master"
+        "webignition/website-rss-feed-finder":"dev-master",
+        "winzou/console-bundle":"1.0.0"
     },
     "scripts": {
         "post-install-cmd": [
