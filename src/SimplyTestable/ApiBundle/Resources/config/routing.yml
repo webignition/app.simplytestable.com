@@ -82,3 +82,11 @@ user_exists:
 user_is_enabled:
   pattern: /user/{email_canonical}/enabled/
   defaults: { _controller: SimplyTestableApiBundle:User:isEnabled, _format: json }      
+  
+disable_readonly:
+    pattern: /maintenance/disable-read-only/
+    defaults: { _controller: SimplyTestableApiBundle:Maintenance:disableReadOnly, _format: json }            
+        
+enable_readonly:
+    pattern: /maintenance/enable-read-only/
+    defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableReadOnly, _format: json }   
