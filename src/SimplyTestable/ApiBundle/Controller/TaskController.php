@@ -37,7 +37,11 @@ class TaskController extends ApiController
     }    
     
     public function completeAction($worker_hostname, $remote_task_id)
-    {           
+    {   
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }          
+        
         $this->workerHostname = $worker_hostname;        
         
         $task = $this->getTaskService()->getByWorkerAndRemoteId($this->getWorker(), $remote_task_id);
