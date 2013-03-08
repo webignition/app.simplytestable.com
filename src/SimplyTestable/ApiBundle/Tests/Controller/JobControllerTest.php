@@ -106,6 +106,34 @@ class JobControllerTest extends BaseControllerJsonTestCase {
         $this->assertEquals(array(1,2,3,4,5,6,7,8,9), $taskIds);      
     }
     
+    
+    public function testCancelAction() {
+        $this->resetSystemState();
+        
+        $canonicalUrl = 'http://example.com';        
+        $jobId = $this->createJobAndGetId($canonicalUrl);
+        
+        $preCancelStatus = json_decode($this->getJobStatus($canonicalUrl, $jobId)->getContent())->state;
+        $this->assertEquals('new', $preCancelStatus);
+        
+        $cancelResponse = $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
+        $this->assertEquals(200, $cancelResponse->getStatusCode());
+        
+        $postCancelStatus = json_decode($this->getJobStatus($canonicalUrl, $jobId)->getContent())->state;
+        $this->assertEquals('cancelled', $postCancelStatus);        
+    }
+    
+    
+    public function testCancelActionInMaintenanceReadOnlyModeReturns503() {        
+        $this->resetSystemState();        
+        
+        $canonicalUrl = 'http://example.com';
+        $jobId = $this->createJobAndGetId($canonicalUrl);        
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));   
+        $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId)->getStatusCode());        
+    }
+    
 }
 
 

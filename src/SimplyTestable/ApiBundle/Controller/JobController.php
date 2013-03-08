@@ -94,7 +94,11 @@ class JobController extends ApiController
     }    
     
     public function cancelAction($site_root_url, $test_id)
-    { 
+    {
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }        
+        
         $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
