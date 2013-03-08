@@ -123,9 +123,23 @@ abstract class BackupCommand extends BaseCommand
      * 
      * @return string
      */
-    protected function getPathOption() {
+    protected function getPathOption() {        
         $path = strtolower($this->input->getOption('path'));
-        return ($path == '') ? self::DEFAULT_PATH : $path;      
+        if ($path == '') {
+            $path = self::DEFAULT_PATH;
+        }
+        
+        if (substr_count($path, '~')) {
+            if (isset($_ENV['HOME'])) {
+                $path = str_replace('~', $_ENV['HOME'], $path);
+            }
+            
+            if (isset($_SERVER['HOME'])) {
+                $path = str_replace('~', $_SERVER['HOME'], $path);
+            }
+        }
+        
+        return realpath($path);
     }    
     
     
