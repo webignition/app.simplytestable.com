@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
 
     public function testAssignValidTaskReturnsStatusCode0() {        
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $workerHostname = 'hydrogen.worker.simplytestable.com';
         

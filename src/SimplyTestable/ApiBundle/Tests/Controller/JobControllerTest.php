@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 class JobControllerTest extends BaseControllerJsonTestCase {
    
     public function testStatusAction() {        
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $canonicalUrl = 'http://example.com/';
         

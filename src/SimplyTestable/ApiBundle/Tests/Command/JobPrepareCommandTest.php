@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class JobPrepareCommandTest extends BaseSimplyTestableTestCase {    
 
     public function testPrepareNewJob() {        
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $canonicalUrl = 'http://example.com/';
         

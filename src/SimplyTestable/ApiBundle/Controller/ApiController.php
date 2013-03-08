@@ -155,6 +155,15 @@ abstract class ApiController extends Controller
     
     
     /**
+     * 
+     * @return Response
+     */
+    public function sendServiceUnavailableResponse() {
+        return $this->sendResponse(null, 503);
+    }     
+    
+    
+    /**
      *
      * @return \JMS\SerializerBundle\Serializer\Serializer
      */
@@ -230,6 +239,6 @@ abstract class ApiController extends Controller
      * @return string
      */
     private function getStateResourcePath() {
-        return $this->container->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config') . '/state';
+        return $this->container->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config') . '/state-' . $this->get('kernel')->getEnvironment();
     }
 }

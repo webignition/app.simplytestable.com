@@ -64,7 +64,7 @@ class ApplicationStateService {
      * @return string
      */
     public function getState() {       
-        if (is_null($this->state)) {
+        if (is_null($this->state)) {            
             if (file_exists($this->stateResourcePath)) {
                 $this->state = trim(file_get_contents($this->stateResourcePath));
             }

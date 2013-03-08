@@ -17,7 +17,11 @@ class JobStartController extends ApiController
     private $siteRootUrl = null;   
     
     public function startAction($site_root_url)
-    {
+    {        
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+        
         $this->siteRootUrl = $site_root_url;
         $requestedJobType = $this->getRequestJobType();
         

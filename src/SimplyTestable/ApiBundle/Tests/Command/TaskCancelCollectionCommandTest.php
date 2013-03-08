@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class TaskCancelCollectionCommandTest extends BaseSimplyTestableTestCase {    
 
     public function testCancelCollectionWithOneWorkerReturnsStatusCode0() {        
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $worker = $this->createWorker('hydrogen.worker.simplytestable.com');
         

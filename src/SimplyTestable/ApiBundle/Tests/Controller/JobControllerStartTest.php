@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 class JobControllerStartTest extends BaseControllerJsonTestCase {
 
     public function testStartAction() {           
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $jobController = $this->getJobStartController('startAction');        
         
@@ -27,7 +27,7 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
     
     
     public function testStartForExistingJob() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $canonicalUrl = 'http://example.com/';
         
         $response1 = $this->createJob($canonicalUrl);
@@ -41,7 +41,7 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
     
     
     public function testStartForExistingJobForDifferentUsers() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $canonicalUrl = 'http://example.com/';        
         $email1 = 'user1@example.com';
         $email2 = 'user2@example.com';
@@ -60,6 +60,15 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
         $this->assertEquals('/job/http://example.com//2/', $response2->getTargetUrl());
         $this->assertEquals('/job/http://example.com//1/', $response3->getTargetUrl());        
     }
+    
+    
+    public function testStartActionInMaintenanceReadOnlyModeReturns503() {           
+        $this->resetSystemState();        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
+   
+        $jobController = $this->getJobStartController('startAction');        
+        $this->assertEquals(503, $jobController->startAction('http://example.com')->getStatusCode());
+    }    
     
 }
 
