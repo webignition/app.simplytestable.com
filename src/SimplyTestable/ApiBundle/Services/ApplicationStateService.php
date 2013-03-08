@@ -56,7 +56,7 @@ class ApplicationStateService {
         }
         
         if (file_put_contents($this->stateResourcePath, $state) > 0) {
-            $this->state = null;
+            $this->state = $state;
             return true;
         }
         
