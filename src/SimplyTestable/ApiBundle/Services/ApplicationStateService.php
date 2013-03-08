@@ -4,11 +4,13 @@ namespace SimplyTestable\ApiBundle\Services;
 
 class ApplicationStateService {
     
-    const DEFAULT_STATE = 'active';
+    const STATE_ACTIVE = 'active';
+    const STATE_MAINTENANCE_READ_ONLY = 'maintenance-read-only';
+    const DEFAULT_STATE = self::STATE_ACTIVE;
     
     private $allowedStates = array(
-        'active',
-        'maintenance-read-only'
+        self::STATE_ACTIVE,
+        self::STATE_MAINTENANCE_READ_ONLY
     );
     
     /**
@@ -23,6 +25,24 @@ class ApplicationStateService {
      * @var string
      */
     private $state;
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function isInActiveState() {
+        return $this->getState() == self::STATE_ACTIVE;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function isInMaintenanceReadOnlyState() {
+        return $this->getState() == self::STATE_MAINTENANCE_READ_ONLY;
+    }
     
     
     /**

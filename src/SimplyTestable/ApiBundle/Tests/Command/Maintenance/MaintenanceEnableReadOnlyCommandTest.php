@@ -11,6 +11,8 @@ class MaintenanceEnableReadOnlyCommandTest extends BaseSimplyTestableTestCase {
     public function testEnableReadOnly() {    
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
         $this->assertEquals('maintenance-read-only', $this->getApplicationStateService()->getState());
+        $this->assertFalse($this->getApplicationStateService()->isInActiveState());
+        $this->assertTrue($this->getApplicationStateService()->isInMaintenanceReadOnlyState());
     }
     
     
