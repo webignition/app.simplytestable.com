@@ -55,7 +55,12 @@ class ApplicationStateService {
             return false;
         }
         
-        return file_put_contents($this->stateResourcePath, $state) > 0;
+        if (file_put_contents($this->stateResourcePath, $state) > 0) {
+            $this->state = null;
+            return true;
+        }
+        
+        return false;
     }
     
     
@@ -64,7 +69,7 @@ class ApplicationStateService {
      * @return string
      */
     public function getState() {       
-        if (is_null($this->state)) {            
+        if (is_null($this->state)) { 
             if (file_exists($this->stateResourcePath)) {
                 $this->state = trim(file_get_contents($this->stateResourcePath));
             }
