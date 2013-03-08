@@ -30,7 +30,11 @@ class WorkerController extends ApiController
     
     
     public function activateAction()
-    {      
+    {        
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }          
+        
         $worker = $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname'));
         if ($this->getWorkerRequestActivationService()->has($worker)) {
             $activationRequest = $this->getWorkerRequestActivationService()->fetch($worker);

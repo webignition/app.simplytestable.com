@@ -12,6 +12,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const USER_CREATION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserCreationController';
     const USER_PASSWORD_RESET_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserPasswordResetController';
     const USER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserController';
+    const WORKER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\WorkerController';
 
     /**
      *
@@ -67,7 +68,19 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getUserController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::USER_CONTROLLER_NAME, $methodName, $postData, $queryData);
-    }      
+    }    
+    
+    
+    /**
+     * 
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\WorkerController
+     */
+    protected function getWorkerController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::WORKER_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }     
     
     
     /**
