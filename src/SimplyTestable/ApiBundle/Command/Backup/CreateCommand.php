@@ -75,7 +75,8 @@ class CreateCommand extends BackupCommand
             ->addOption('dry-run', null, InputOption::VALUE_OPTIONAL, 'Run through the process without writing any data')
             ->addOption('path', null, InputOption::VALUE_OPTIONAL, 'Backup storage path')
             ->addOption('page-size', null, InputOption::VALUE_OPTIONAL, '')
-            ->addOption('task-output-page-size', null, InputOption::VALUE_OPTIONAL, '')                
+            ->addOption('task-output-page-size', null, InputOption::VALUE_OPTIONAL, '')
+            ->addOption('info-only')
             ->setHelp(<<<EOF
 Create an application-level backup.
     
@@ -118,6 +119,11 @@ EOF
         $output->writeln('Using level: <info>'.$this->getLevelOption().'</info>');
         $output->writeln('Using path: <info>'.$this->getPathOption().'</info>');
         $output->writeln('');
+        
+        if ($this->getInfoOnlyOption()) { 
+            return 0;
+        }        
+        
         $output->write('Creating backup directory at '.$this->getBasePath().' ... </info>');
 
         if (!$this->isDryRun()) {
@@ -336,7 +342,15 @@ EOF
         
     }   
     
-
+    /**
+     * 
+     * @return string
+     */
+    private function getInfoOnlyOption() {
+        $option = strtolower($this->input->getOption('info-only'));
+        return ($option == '') ? false : true;
+    }
+    
     
     /**
      * 
