@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class TaskAssignCommandTest extends BaseSimplyTestableTestCase {    
 
     public function testAssignValidTaskReturnsStatusCode0() {        
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
@@ -31,7 +31,7 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testAssignTaskInWrongStateReturnsStatusCode1() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $this->createWorker('http://hydrogen.worker.simplytestable.com');        
         
@@ -56,7 +56,7 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
     }
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode2() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $canonicalUrl = 'http://example.com/';       
         $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
@@ -85,7 +85,7 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode3() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $this->createWorker('http://hydrogen.worker.simplytestable.com');
         $this->createWorker('http://lithium.worker.simplytestable.com');
@@ -118,7 +118,7 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testAssignInvalidTaskReturnsStatusCode4() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $result = $this->runConsole('simplytestable:task:assign', array(
             1 =>  true,

@@ -9,8 +9,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 
-class TaskAssignCollectionCommand extends ContainerAwareCommand
+class TaskAssignCollectionCommand extends BaseCommand
 {
+    const RETURN_CODE_OK = 0;
+    const RETURN_CODE_FAILED_NO_WORKERS = 1;
+    const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = -1;
     
     protected function configure()
     {
@@ -26,7 +29,11 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {        
+    {   
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
+        }           
+        
         if ($input->hasArgument('http-fixture-path')) {
             $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
             
@@ -39,7 +46,7 @@ EOF
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
         
         if (count($taskIds) === 0) {
-            return 0;
+            return self::RETURN_CODE_OK;
         }
         
         $workers = $this->getWorkerService()->getActiveCollection();                
@@ -53,7 +60,7 @@ EOF
                 )
             );
             
-            return 1;
+            return self::RETURN_CODE_FAILED_NO_WORKERS;
         }        
         
         $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);        
@@ -78,16 +85,7 @@ EOF
         }
         
         return $response;
-    }
-
-
-    /**
-     *
-     * @return Logger
-     */
-    private function getLogger() {
-        return $this->getContainer()->get('logger');
-    }      
+    }    
     
     /**
      *

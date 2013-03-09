@@ -36,7 +36,7 @@ class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     }
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $this->clearRedis();
         
         $canonicalUrl = 'http://example.com/';       
@@ -65,9 +65,8 @@ class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     }
     
     
-    
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $this->createWorker('hydrogen.worker.simplytestable.com');
         $this->createWorker('lithium.worker.simplytestable.com');
@@ -99,8 +98,24 @@ class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     } 
      
     
-    
+    public function testAssignTaskInMaintenanceReadOnlyModeReturnsStatusCodeMinus1() {
+        $this->resetSystemState();
+        
+        $this->createWorker('hydrogen.worker.simplytestable.com');        
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
 
-
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
+        
+        $this->assertEquals(-1, $this->runConsole('simplytestable:task:assigncollection', array(
+            implode($taskIds, ',') =>  true,
+            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+        )));      
+    }
 
 }
