@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Command;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class TaskAssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {    
-    const WORKER_TASK_ASSIGNMENT_FACTOR = 2;    
+    const WORKER_TASK_ASSIGNMENT_FACTOR = 2;   
 
     public function testSelectTasksForAssignmentWithNoWorkers() {
         $this->runForNWorkers(0);
@@ -49,7 +49,40 @@ class TaskAssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
     
     public function testSelectTasksForAssignmentWithTenWorkers() {
         $this->runForNWorkers(10);
-    }     
+    }
+    
+    
+    public function testSelectTasksInMaintenanceReadOnlyModeReturnsStatusCode1() {        
+        $this->resetSystemState();     
+        
+        $canonicalUrl = 'http://example.com/';   
+        
+        $jobCreateResponse = $this->createJob($canonicalUrl);        
+        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
+        
+        $this->assertEquals(1, $job_id);        
+        
+        $this->prepareJob($canonicalUrl, $job_id);        
+        
+        $preSelectionJobResponse = $this->fetchJob($canonicalUrl, $job_id);
+        $taskCount = json_decode($preSelectionJobResponse->getContent())->task_count;
+        
+        $this->createWorkers(1);   
+        
+        $workerCount = $this->getWorkerService()->count();
+        $expectedSelectedTaskCount = $workerCount * self::WORKER_TASK_ASSIGNMENT_FACTOR;
+        if ($expectedSelectedTaskCount > $taskCount) {
+            $expectedSelectedTaskCount = $taskCount;
+        }
+        
+        $expectedQueuedTaskCount =  $taskCount - $expectedSelectedTaskCount;       
+        if ($expectedQueuedTaskCount < 0) {
+            $expectedQueuedTaskCount = 0;
+        }
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
+        $this->assertEquals(1, $this->runConsole('simplytestable:task:assign:select'));      
+    }
     
     
     private function runForNWorkers($requestedWorkerCount) {        

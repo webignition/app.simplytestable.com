@@ -7,8 +7,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class TaskAssignmentSelectionCommand extends ContainerAwareCommand
+class TaskAssignmentSelectionCommand extends BaseCommand
 {
+    const RETURN_CODE_OK = 0;
+    const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
+    
     
     protected function configure()
     {
@@ -23,7 +26,11 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {         
+    {   
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
+        }          
+        
         if ($input->hasArgument('http-fixture-path')) {
             $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
             
@@ -33,7 +40,7 @@ EOF
         }
       
         if ($this->getTaskService()->getQueuedCount() === 0) {
-            return true;
+            return self::RETURN_CODE_OK;
         }
         
         $workerCount = $this->getWorkerService()->count();
