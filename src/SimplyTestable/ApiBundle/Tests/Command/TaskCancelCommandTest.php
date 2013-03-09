@@ -117,5 +117,29 @@ class TaskCancelCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(503, $result);
         $this->assertEquals('task-cancelled', $task->getState()->getName());
     }
+    
+    public function testCancelInReadOnlyModeReturnsStatusCodeMinus3() {
+        $this->resetSystemState();
+        
+        $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
+        
+        $task = $this->getTaskService()->getById($taskIds[0]);
+        $task->setWorker($worker);
+        $this->getTaskService()->getEntityManager()->persist($task);
+        $this->getTaskService()->getEntityManager()->flush();
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
+        $this->assertEquals(-3, $this->runConsole('simplytestable:task:cancel', array(
+            $taskIds[0] =>  true,
+            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+        )));
+    }    
 
 }

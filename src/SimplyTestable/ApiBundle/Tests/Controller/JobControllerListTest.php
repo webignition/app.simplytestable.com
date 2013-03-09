@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 class JobControllerListTest extends BaseControllerJsonTestCase {
     
     public function testListAction() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $jobController = $this->getJobController('listAction');        
         $jobStartController = $this->getJobStartController('startAction');

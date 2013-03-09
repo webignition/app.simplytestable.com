@@ -13,6 +13,7 @@ class TaskCancelCommand extends BaseCommand
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_TASK_DOES_NOT_EXIST = -1;
     const RETURN_CODE_FAILED_DUE_TO_WRONG_STATE = -2;
+    const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = -3;
     
     protected function configure()
     {
@@ -28,7 +29,11 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {         
+    {     
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
+        }          
+        
         if ($input->hasArgument('http-fixture-path')) {
             $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
             
