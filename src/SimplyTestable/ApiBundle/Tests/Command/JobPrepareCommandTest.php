@@ -5,6 +5,39 @@ namespace SimplyTestable\ApiBundle\Tests\Command;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class JobPrepareCommandTest extends BaseSimplyTestableTestCase {    
+    
+    public function testPrepareInWrongStateReturnsStatusCode1() {
+        $this->resetSystemState();
+        
+        $canonicalUrl = 'http://example.com';        
+        $jobId = $this->createJobAndGetId($canonicalUrl);
+        
+        $this->assertEquals(1, $jobId);
+        
+        $cancelResponse = $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
+        $this->assertEquals(200, $cancelResponse->getStatusCode());
+        
+        $postCancelStatus = json_decode($this->getJobStatus($canonicalUrl, $jobId)->getContent())->state;
+        $this->assertEquals('cancelled', $postCancelStatus);         
+        
+        $this->assertEquals(1, $this->runConsole('simplytestable:job:prepare', array(
+            $jobId =>  true
+        )));       
+    }
+    
+    
+    public function testPrepareInMaintenanceReadOnlyModeReturnsStatusCode2() {
+        $this->resetSystemState();  
+        
+        $jobCreateResponse = $this->createJob('http://example.com/');        
+        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
+        
+        $this->assertEquals(1, $job_id);        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
+        $this->assertEquals(2, $this->runConsole('simplytestable:job:prepare', array(
+            $job_id =>  true
+        )));
+    }    
 
     public function testPrepareNewJob() {        
         $this->resetSystemState();
@@ -20,12 +53,12 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
         $jobCreateResponse = $this->createJob($canonicalUrl);        
         $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
         
-        $this->assertEquals(1, $job_id);        
+        $this->assertEquals(1, $job_id);
         
-        $this->runConsole('simplytestable:job:prepare', array(
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
             $job_id =>  true,
             $this->getCommonFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
+        )));
         
         $this->getJobService()->getEntityRepository()->clear();
         
@@ -60,10 +93,10 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
         
         $this->assertEquals(1, $job_id);        
         
-        $this->runConsole('simplytestable:job:prepare', array(
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
             $job_id =>  true,
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
+        )));
         
         $this->getJobService()->getEntityRepository()->clear();
         
@@ -83,9 +116,5 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
         
         return;
     }
-    
-    
-
-
 
 }

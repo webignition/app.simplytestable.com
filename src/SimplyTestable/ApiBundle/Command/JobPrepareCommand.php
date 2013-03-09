@@ -17,6 +17,9 @@ use webignition\NormalisedUrl\NormalisedUrl;
 
 class JobPrepareCommand extends BaseCommand
 {
+    const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
+    const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
+    
     /**
      *
      * @var SimplyTestable\ApiBundle\Services\WebSiteService
@@ -54,6 +57,10 @@ class JobPrepareCommand extends BaseCommand
         /* @var $websiteService \SimplyTestable\ApiBundle\Services\WebsiteService */
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
+        }           
+        
         $this->getLogger()->info("simplytestable:job:prepare running for job [".$input->getArgument('id')."]");
         
         if ($input->hasArgument('http-fixture-path') && $input->getArgument('http-fixture-path') != '') {
@@ -64,8 +71,9 @@ class JobPrepareCommand extends BaseCommand
         $job = $this->getJobService()->getById((int)$input->getArgument('id'));
 
         if (!$this->getJobService()->isNew($job)) {
-            return $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
-        }      
+            $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
+            return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
+        }
         
         $job->setState($this->getJobService()->getPreparingState());         
         $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
