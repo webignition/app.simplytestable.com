@@ -9,7 +9,7 @@ use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 class WorkerActivateVerifyCommandTest extends BaseTestCase {
 
     public function testSuccessfulActivateVerifyWorker() {        
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $workerHostname = 'test.worker.simplytestable.com';
         $activationRequestToken = 'token';
@@ -33,7 +33,7 @@ class WorkerActivateVerifyCommandTest extends BaseTestCase {
     
     
     public function testFailedActivateVerifyWorker() {        
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $workerHostname = 'test.worker.simplytestable.com';
         $activationRequestToken = 'invalid-token';
@@ -57,7 +57,7 @@ class WorkerActivateVerifyCommandTest extends BaseTestCase {
     
     
     public function testActivateVerifyWhenWorkerIsInMaintenanceReadyOnlyMode() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $workerHostname = 'test.worker.simplytestable.com';
         $activationRequestToken = 'token';
@@ -78,6 +78,28 @@ class WorkerActivateVerifyCommandTest extends BaseTestCase {
         
         $this->assertEquals(503, $response);        
     }
+    
+    
+    public function testActivateVerifyInIsInMaintenanceReadyOnlyModeReturnsCode1() {
+        $this->resetSystemState();
+        
+        $workerHostname = 'test.worker.simplytestable.com';
+        $activationRequestToken = 'token';
+        
+        $worker = $this->getWorkerService()->get($workerHostname);
+        $this->assertEquals(1, $worker->getId());
+        $this->assertEquals($workerHostname, $worker->getHostname());
+        
+        $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
+        
+        $this->assertTrue($activationRequest->getWorker()->equals($worker));
+        $this->assertTrue($activationRequest->getState()->equals($this->getWorkerActivationRequestService()->getStartingState()));
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
+        $this->assertEquals(1, $this->runConsole('simplytestable:worker:activate:verify', array(
+            $worker->getId() => true
+        )));        
+    }    
     
     
     /**

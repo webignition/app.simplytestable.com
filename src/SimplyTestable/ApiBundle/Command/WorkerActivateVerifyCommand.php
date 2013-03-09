@@ -9,8 +9,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 
-class WorkerActivateVerifyCommand extends ContainerAwareCommand
+class WorkerActivateVerifyCommand extends BaseCommand
 {
+    const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
     
     protected function configure()
     {
@@ -24,6 +25,10 @@ class WorkerActivateVerifyCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {         
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
+        }          
+        
         if ($input->hasArgument('http-fixture-path')) {
             $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
             
