@@ -52,6 +52,20 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
         $response = $controller->resetPasswordAction($token);
         $this->assertEquals(200, $response->getStatusCode());         
     }
+    
+    public function testPerformResetInMaintenanceReadOnlyModeReturns503() {
+        $this->resetSystemState();
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndActivateUser($email, $password);        
+        $token = $this->getPasswordResetToken($user);
+        
+        $controller = $this->getUserPasswordResetController('resetPasswordAction', array(
+            'password' => 'newpassword'
+        ));
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only')); 
+        $this->assertEquals(503, $controller->resetPasswordAction($token)->getStatusCode());           
+    }      
 }
-
-
