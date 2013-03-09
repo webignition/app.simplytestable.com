@@ -6,7 +6,7 @@ class UserControllerExistsTest extends BaseControllerJsonTestCase {
     
 
     public function testExistsWithNotEnabledUser() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $email = 'user1@example.com';
         $password = 'password1';
         
@@ -20,7 +20,7 @@ class UserControllerExistsTest extends BaseControllerJsonTestCase {
     
     
     public function testExistsWithEnabledUser() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $email = 'user1@example.com';        
         $password = 'password1';
                 
@@ -34,7 +34,7 @@ class UserControllerExistsTest extends BaseControllerJsonTestCase {
     
     
     public function testExistsWithNonExistentUser() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $email = 'user1@example.com';
                 
         try {

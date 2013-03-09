@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     
     public function testPerformResetWithValidToken() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $email = 'user1@example.com';
         $password = 'password1';
         
@@ -22,7 +22,7 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     
     
     public function testPerformResetWithInvalidToken() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $token = 'invalid token';
         
         $controller = $this->getUserPasswordResetController('resetPasswordAction', array(
@@ -38,7 +38,7 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     }     
     
     public function testPerformResetWithInactiveUser() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $email = 'user1@example.com';
         $password = 'password1';
         

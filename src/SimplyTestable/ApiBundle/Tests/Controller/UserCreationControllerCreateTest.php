@@ -6,7 +6,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     
 
     public function testCreateActionWithEmailPresent() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         $email = 'user1@example.com';
         $password = 'password';
         
@@ -21,7 +21,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     }
 
     public function testCreateActionWithoutCredentials() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         try {
             $controller = $this->getUserCreationController('createAction', array());
@@ -33,7 +33,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     }     
     
     public function testCreateActionWithoutEmail() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         try {
             $controller = $this->getUserCreationController('createAction', array(
@@ -48,7 +48,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     
     
     public function testCreateActionWithoutPassword() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         try {
             $controller = $this->getUserCreationController('createAction', array(
@@ -62,7 +62,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     }     
     
     public function testCreateWithEmailOfExistingNotEnabledUser() {
-        $this->setupDatabase(); 
+        $this->resetSystemState(); 
         $email = 'user1@example.com';
         $password = 'password1';
         $this->createAndFindUser($email, $password);
@@ -79,7 +79,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     
     
     public function testCreateWithEmailOfExistingEnabledUser() {
-        $this->setupDatabase();     
+        $this->resetSystemState();     
         $email = 'user1@example.com';
         $password = 'password1';        
         $this->createAndActivateUser($email, $password);
@@ -92,7 +92,22 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
         $response = $controller->createAction();
         
         $this->assertEquals(302, $response->getStatusCode());          
-    }    
+    }  
+    
+    
+    public function testCompleteActionInMaintenanceReadOnlyModeReturns503() {
+        $this->resetSystemState();
+        $email = 'user1@example.com';
+        $password = 'password';
+        
+        $controller = $this->getUserCreationController('createAction', array(
+            'email' => $email,
+            'password' => $password
+        ));
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
+        $this->assertEquals(503, $controller->createAction()->getStatusCode());            
+    }
 }
 
 
