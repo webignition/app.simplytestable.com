@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class TaskCancelCommandTest extends BaseSimplyTestableTestCase {    
 
     public function testCancelValidTaskReturnsStatusCode0() {        
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
@@ -45,7 +45,7 @@ class TaskCancelCommandTest extends BaseSimplyTestableTestCase {
   
     
     public function testCancelTaskThatDoesNotExistReturnsStatusCodeMinus1() {      
-        $this->setupDatabase();
+        $this->resetSystemState();
         $this->assertEquals(-1, $this->runConsole('simplytestable:task:cancel', array(
             1 =>  true
         )));
@@ -53,7 +53,7 @@ class TaskCancelCommandTest extends BaseSimplyTestableTestCase {
                
     
     public function testCancelTaskInWrongStateReturnsStatusCodeMinus2() {      
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
@@ -93,7 +93,7 @@ class TaskCancelCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testCancelTaskWhenWorkerIsInReadOnlyModeReturnsStatusCode503() {
-        $this->setupDatabase();
+        $this->resetSystemState();
         
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
