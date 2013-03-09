@@ -128,4 +128,24 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals($result, 4);    
     }
 
+
+    public function testAssignInMaintenanceReadOnlyModeReturnsStatusCode5() {        
+        $this->resetSystemState();
+        
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));         
+        $this->assertEquals(5, $this->runConsole('simplytestable:task:assign', array(
+            $taskIds[0] =>  true,
+            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+        )));
+    }    
+    
 }

@@ -8,8 +8,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 
-class TaskAssignCommand extends ContainerAwareCommand
+class TaskAssignCommand extends BaseCommand
 {
+    const RETURN_CODE_OK = 0;
+    const RETURN_CODE_FAILED_NO_WORKERS = 2;
+    const RETURN_CODE_FAILED_TASK_INVALID = 4;    
+    const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 5;    
     
     protected function configure()
     {
@@ -25,7 +29,11 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {        
+    {     
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
+        }           
+        
         if ($input->hasArgument('http-fixture-path')) {
             $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
             
@@ -36,7 +44,7 @@ EOF
         
         $task = $this->getTaskService()->getById((int)$input->getArgument('id'));               
         if (is_null($task)) {
-            return 4;
+            return self::RETURN_CODE_FAILED_TASK_INVALID;
         }
         
         $workers = $this->getWorkerService()->getActiveCollection();
@@ -50,7 +58,7 @@ EOF
                 )
             ); 
             
-            return 2;
+            return self::RETURN_CODE_FAILED_NO_WORKERS;
         }         
         
         $result = $this->getWorkerTaskAssignmentService()->assign($task, $workers);
@@ -63,7 +71,9 @@ EOF
                 
                 $entityManager->persist($task->getJob());
                 $entityManager->flush();               
-            }            
+            }
+            
+            return self::RETURN_CODE_OK;
         }
         
         // If could not be assgined to any workers
@@ -78,16 +88,7 @@ EOF
         }
         
         return $result;
-    }
-    
-    
-    /**
-     *
-     * @return Logger
-     */
-    private function getLogger() {
-        return $this->getContainer()->get('logger');
-    }      
+    }   
     
     
     /**

@@ -53,7 +53,7 @@ class TaskAssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
     
     
     private function runForNWorkers($requestedWorkerCount) {        
-        $this->setupDatabase();     
+        $this->resetSystemState();     
         
         $canonicalUrl = 'http://example.com/';   
         
