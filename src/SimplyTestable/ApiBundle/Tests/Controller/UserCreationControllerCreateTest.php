@@ -95,7 +95,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     }  
     
     
-    public function testCompleteActionInMaintenanceReadOnlyModeReturns503() {
+    public function testCreateInMaintenanceReadOnlyModeReturns503() {
         $this->resetSystemState();
         $email = 'user1@example.com';
         $password = 'password';
