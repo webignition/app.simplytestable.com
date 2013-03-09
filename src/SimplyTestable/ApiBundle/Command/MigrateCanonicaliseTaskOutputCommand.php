@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 class MigrateCanonicaliseTaskOutputCommand extends BaseCommand
 {
+    const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;     
     
     /**
      *
@@ -41,7 +42,12 @@ class MigrateCanonicaliseTaskOutputCommand extends BaseCommand
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {        
+    {    
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
+            return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
+        }         
+        
         $output->writeln('Finding duplicate output ...');
         
         $duplicateHashes = $this->getTaskOutputRepository()->findDuplicateHashes($this->getLimit($input));       

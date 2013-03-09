@@ -10,6 +10,7 @@ use SimplyTestable\WebClientBundle\Entity\Task\Output as TaskOutput;
 
 class MigrateNormaliseJsLintOutputCommand extends BaseCommand
 {
+    const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;      
     
     /**
      *
@@ -42,6 +43,11 @@ class MigrateNormaliseJsLintOutputCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
+            return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
+        }         
+        
         $output->writeln('Finding jslint output ...');        
         // "statusLine":"\/tmp\/d64dc5dca841a048946621b935e540a3:13060:1358494120.1354"
         
