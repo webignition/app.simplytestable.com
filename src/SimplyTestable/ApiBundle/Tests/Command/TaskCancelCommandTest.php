@@ -5,10 +5,12 @@ namespace SimplyTestable\ApiBundle\Tests\Command;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class TaskCancelCommandTest extends BaseSimplyTestableTestCase {    
+    
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }     
 
-    public function testCancelValidTaskReturnsStatusCode0() {        
-        $this->resetSystemState();
-        
+    public function testCancelValidTaskReturnsStatusCode0() {
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
         $canonicalUrl = 'http://example.com/';       
@@ -45,15 +47,15 @@ class TaskCancelCommandTest extends BaseSimplyTestableTestCase {
   
     
     public function testCancelTaskThatDoesNotExistReturnsStatusCodeMinus1() {      
-        $this->resetSystemState();
+        //$this->resetSystemState();
         $this->assertEquals(-1, $this->runConsole('simplytestable:task:cancel', array(
-            1 =>  true
+            -1 =>  true
         )));
     }
                
     
     public function testCancelTaskInWrongStateReturnsStatusCodeMinus2() {      
-        $this->resetSystemState();
+        //$this->resetSystemState();
         
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
@@ -92,9 +94,7 @@ class TaskCancelCommandTest extends BaseSimplyTestableTestCase {
     }
     
     
-    public function testCancelTaskWhenWorkerIsInReadOnlyModeReturnsStatusCode503() {
-        $this->resetSystemState();
-        
+    public function testCancelTaskWhenWorkerIsInReadOnlyModeReturnsStatusCode503() {        
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
         $canonicalUrl = 'http://example.com/';       
@@ -105,6 +105,7 @@ class TaskCancelCommandTest extends BaseSimplyTestableTestCase {
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
         
         $task = $this->getTaskService()->getById($taskIds[0]);
+        $task->setState($this->getTaskService()->getQueuedState());
         $task->setWorker($worker);
         $this->getTaskService()->getEntityManager()->persist($task);
         $this->getTaskService()->getEntityManager()->flush();
