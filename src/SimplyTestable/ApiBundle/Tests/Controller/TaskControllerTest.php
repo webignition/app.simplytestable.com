@@ -3,9 +3,13 @@
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class TaskControllerTest extends BaseControllerJsonTestCase {
+    
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }       
    
     public function testCompleteAction() {        
-        $this->resetSystemState();
+        $this->removeAllJobs();
         
         $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
@@ -40,7 +44,7 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
     
     
     public function testCompleteActionInMaintenanceReadOnlyModeReturns503() {        
-        $this->resetSystemState();
+        $this->removeAllJobs();
         
         $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
