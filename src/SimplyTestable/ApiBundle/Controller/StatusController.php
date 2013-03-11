@@ -20,7 +20,7 @@ class StatusController extends ApiController
     public function indexAction()
     {      
         $responseData = array(
-            'status' => 'active',
+            'status' => $this->getApplicationStateService()->getState(),
             'workers' => $this->getWorkerService()->getEntityRepository()->findAll()
         );
         
