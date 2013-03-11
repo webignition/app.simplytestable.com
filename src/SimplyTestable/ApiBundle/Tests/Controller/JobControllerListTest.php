@@ -4,9 +4,11 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class JobControllerListTest extends BaseControllerJsonTestCase {
     
-    public function testListAction() {
-        $this->resetSystemState();
-        
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }    
+    
+    public function testListAction() {        
         $jobController = $this->getJobController('listAction');        
         $jobStartController = $this->getJobStartController('startAction');
         
@@ -51,9 +53,7 @@ class JobControllerListTest extends BaseControllerJsonTestCase {
     }  
     
     
-    public function testListActionForDifferentUsers() {
-        $this->setupDatabase();
-        
+    public function testListActionForDifferentUsers() {        
         $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
         $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
         
