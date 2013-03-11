@@ -4,9 +4,12 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class UserCreationControllerActivateTest extends BaseControllerJsonTestCase {
        
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }    
 
     public function testActivateActionWithCorrectToken() {
-        $this->resetSystemState();
+        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';        
         
@@ -25,7 +28,7 @@ class UserCreationControllerActivateTest extends BaseControllerJsonTestCase {
     
     
     public function testActivateActionWithIncorrectToken() {
-        $this->resetSystemState();
+        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';
         
