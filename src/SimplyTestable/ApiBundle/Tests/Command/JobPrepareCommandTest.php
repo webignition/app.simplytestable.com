@@ -6,13 +6,16 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class JobPrepareCommandTest extends BaseSimplyTestableTestCase {    
     
-    public function testPrepareInWrongStateReturnsStatusCode1() {
-        $this->resetSystemState();
-        
+    public static function setUpBeforeClass() {
+        self::setupDatabase();
+    }
+    
+    public function testPrepareInWrongStateReturnsStatusCode1() {        
         $canonicalUrl = 'http://example.com';        
         $jobId = $this->createJobAndGetId($canonicalUrl);
-        
-        $this->assertEquals(1, $jobId);
+
+        $this->assertInternalType('integer', $jobId);
+        $this->assertGreaterThan(0, $jobId);
         
         $cancelResponse = $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
         $this->assertEquals(200, $cancelResponse->getStatusCode());
@@ -34,8 +37,6 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
     }    
 
     public function testPrepareNewJob() {        
-        $this->resetSystemState();
-        
         $canonicalUrl = 'http://example.com/';
         
         $expectedTaskUrls = array(
@@ -47,7 +48,8 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
         $jobCreateResponse = $this->createJob($canonicalUrl);        
         $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
         
-        $this->assertEquals(1, $job_id);
+        $this->assertInternalType('integer', $job_id);
+        $this->assertGreaterThan(0, $job_id);
         
         $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
             $job_id =>  true,
@@ -73,9 +75,7 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
     }
     
     
-    public function testSingleUrlJob() {        
-        $this->setupDatabase();
-        
+    public function testSingleUrlJob() {
         $canonicalUrl = 'http://example.com/';
         
         $expectedTaskUrls = array(
@@ -85,7 +85,8 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
         $jobCreateResponse = $this->createJob($canonicalUrl, null, 'single url');        
         $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
         
-        $this->assertEquals(1, $job_id);        
+        $this->assertInternalType('integer', $job_id);
+        $this->assertGreaterThan(0, $job_id);       
         
         $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
             $job_id =>  true,
