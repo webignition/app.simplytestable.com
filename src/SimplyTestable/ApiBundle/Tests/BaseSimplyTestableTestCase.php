@@ -356,6 +356,13 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->getJobService()->getEntityManager()->flush();
     }
     
+    protected function removeAllUsers() {        
+        $users = $this->getUserService()->findUsers();
+        foreach ($users as $user) {
+            $this->getUserService()->deleteUser($user);
+        }
+    }    
+    
     
     /**
      * Create and return a collection of workers
