@@ -3,20 +3,24 @@
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class JobControllerTest extends BaseControllerJsonTestCase {
+    
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }      
    
-    public function testStatusAction() {        
-        $this->resetSystemState();
+    public function testStatusAction() {
+        $this->removeAllJobs();
         
         $canonicalUrl = 'http://example.com/';
         
-        $this->createJob($canonicalUrl);
+        $jobId = $this->createJobAndGetId($canonicalUrl);
         
-        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, 1);
+        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);
         $responseJsonObject = json_decode($response->getContent());
 
         $this->assertEquals(200, $response->getStatusCode());
         
-        $this->assertEquals(1, $responseJsonObject->id);
+        $this->assertEquals($jobId, $responseJsonObject->id);
         $this->assertEquals('public', $responseJsonObject->user);
         $this->assertEquals($canonicalUrl, $responseJsonObject->website);        
         $this->assertEquals('new', $responseJsonObject->state);
@@ -34,7 +38,8 @@ class JobControllerTest extends BaseControllerJsonTestCase {
     }
     
     public function testStatusActionForDifferentUsers() {
-        $this->setupDatabase();
+        $this->removeAllJobs();
+
         $canonicalUrl1 = 'http://one.example.com/';
         $canonicalUrl2 = 'http://two.example.com/';
         $canonicalUrl3 = 'http://three.example.com/';
@@ -91,7 +96,7 @@ class JobControllerTest extends BaseControllerJsonTestCase {
     
     
     public function testTaskIdsAction() {
-        $this->setupDatabase();
+        $this->removeAllJobs();
         
         $canonicalUrl = 'http://example.com/';       
         $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
@@ -103,12 +108,16 @@ class JobControllerTest extends BaseControllerJsonTestCase {
         $expectedTaskIdCount = $job->url_count * count($job->task_types);
         
         $this->assertEquals($expectedTaskIdCount, count($taskIds));
-        $this->assertEquals(array(1,2,3,4,5,6,7,8,9), $taskIds);      
+        
+        foreach ($taskIds as $taskId) {
+            $this->assertInternalType('integer', $taskId);
+            $this->assertGreaterThan(0, $taskId);
+        }    
     }
     
     
     public function testCancelAction() {
-        $this->resetSystemState();
+        $this->removeAllJobs();
         
         $canonicalUrl = 'http://example.com';        
         $jobId = $this->createJobAndGetId($canonicalUrl);
@@ -124,12 +133,9 @@ class JobControllerTest extends BaseControllerJsonTestCase {
     }
     
     
-    public function testCancelActionInMaintenanceReadOnlyModeReturns503() {        
-        $canonicalUrl = 'http://example.com';
-        $jobId = $this->createJobAndGetId($canonicalUrl);        
-        
+    public function testCancelActionInMaintenanceReadOnlyModeReturns503() {
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));   
-        $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId)->getStatusCode());        
+        $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction('http://example.com', 1)->getStatusCode());        
     }
     
 }
