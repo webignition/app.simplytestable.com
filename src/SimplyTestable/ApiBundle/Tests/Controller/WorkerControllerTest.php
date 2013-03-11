@@ -3,9 +3,13 @@
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class WorkerControllerTest extends BaseControllerJsonTestCase {
+    
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }     
 
     public function testActivateAction() {
-        $this->resetSystemState();      
+        $this->removeAllWorkers();     
       
         $this->assertEquals(200, $this->getWorkerController('activateAction', array(
             'hostname' => 'test.worker.simplytestable.com',
@@ -14,7 +18,7 @@ class WorkerControllerTest extends BaseControllerJsonTestCase {
     }
     
     public function testActivateActionWithMissingHostname() {
-        $this->resetSystemState();      
+        $this->removeAllWorkers();   
         
         try {
             $this->getWorkerController('activateAction', array(
@@ -28,7 +32,7 @@ class WorkerControllerTest extends BaseControllerJsonTestCase {
     }
     
     public function testActivateActionWithMissingToken() {
-        $this->resetSystemState();      
+        $this->removeAllWorkers();    
         
         try {
             $this->getWorkerController('activateAction', array(
