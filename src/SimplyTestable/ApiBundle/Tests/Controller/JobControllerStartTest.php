@@ -3,10 +3,12 @@
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class JobControllerStartTest extends BaseControllerJsonTestCase {
+    
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }       
 
-    public function testStartAction() {           
-        $this->resetSystemState();
-        
+    public function testStartAction() {
         $jobController = $this->getJobStartController('startAction');        
         
         $canonicalUrls = array(
@@ -17,9 +19,11 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
         
         foreach ($canonicalUrls as $urlIndex => $canonicalUrl) {
             $response = $jobController->startAction($canonicalUrl);
+            $jobId = $this->getJobIdFromUrl($response->getTargetUrl());
 
             $this->assertEquals(302, $response->getStatusCode());        
-            $this->assertEquals($urlIndex + 1, $this->getJobIdFromUrl($response->getTargetUrl()));            
+            $this->assertInternalType('integer', $jobId);
+            $this->assertGreaterThan(0, $jobId);
         }       
         
         return;
@@ -27,21 +31,18 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
     
     
     public function testStartForExistingJob() {
-        $this->resetSystemState();
         $canonicalUrl = 'http://example.com/';
         
         $response1 = $this->createJob($canonicalUrl);
         $response2 = $this->createJob($canonicalUrl);
         $response3 = $this->createJob($canonicalUrl);
         
-        $this->assertEquals('/job/http://example.com//1/', $response1->getTargetUrl());
-        $this->assertEquals('/job/http://example.com//1/', $response2->getTargetUrl());
-        $this->assertEquals('/job/http://example.com//1/', $response3->getTargetUrl());
+        $this->assertTrue($response1->getTargetUrl() === $response2->getTargetUrl());
+        $this->assertTrue($response2->getTargetUrl() === $response3->getTargetUrl());        
     }
     
     
     public function testStartForExistingJobForDifferentUsers() {
-        $this->resetSystemState();
         $canonicalUrl = 'http://example.com/';        
         $email1 = 'user1@example.com';
         $email2 = 'user2@example.com';
@@ -56,9 +57,8 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
         $response2 = $this->createJob($canonicalUrl, $user2->getEmail());
         $response3 = $this->createJob($canonicalUrl, $user1->getEmail());        
         
-        $this->assertEquals('/job/http://example.com//1/', $response1->getTargetUrl());
-        $this->assertEquals('/job/http://example.com//2/', $response2->getTargetUrl());
-        $this->assertEquals('/job/http://example.com//1/', $response3->getTargetUrl());        
+        $this->assertTrue($response1->getTargetUrl() === $response3->getTargetUrl());
+        $this->assertFalse($response1->getTargetUrl() === $response2->getTargetUrl());     
     }
     
     
