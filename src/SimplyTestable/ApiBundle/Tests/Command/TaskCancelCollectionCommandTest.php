@@ -5,10 +5,12 @@ namespace SimplyTestable\ApiBundle\Tests\Command;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class TaskCancelCollectionCommandTest extends BaseSimplyTestableTestCase {    
+    
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }    
 
     public function testCancelCollectionWithOneWorkerReturnsStatusCode0() {        
-        $this->resetSystemState();
-        
         $worker = $this->createWorker('hydrogen.worker.simplytestable.com');
         
         $canonicalUrl = 'http://example.com/';       
@@ -21,6 +23,7 @@ class TaskCancelCollectionCommandTest extends BaseSimplyTestableTestCase {
         
         foreach ($taskIds as $taskId) {            
             $task = $this->getTaskService()->getById($taskId); 
+            $task->setState($this->getTaskService()->getQueuedState());
             $tasks[] = $task;
             $task->setWorker($worker);
             $this->getTaskService()->getEntityManager()->persist($task);                        
