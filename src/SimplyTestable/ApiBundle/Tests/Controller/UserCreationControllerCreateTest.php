@@ -4,9 +4,13 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }        
+    
 
     public function testCreateActionWithEmailPresent() {
-        $this->resetSystemState();
+        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password';
         
@@ -21,7 +25,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     }
 
     public function testCreateActionWithoutCredentials() {
-        $this->resetSystemState();
+        $this->removeAllUsers();
         
         try {
             $controller = $this->getUserCreationController('createAction', array());
@@ -33,7 +37,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     }     
     
     public function testCreateActionWithoutEmail() {
-        $this->resetSystemState();
+        $this->removeAllUsers();
         
         try {
             $controller = $this->getUserCreationController('createAction', array(
@@ -48,7 +52,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     
     
     public function testCreateActionWithoutPassword() {
-        $this->resetSystemState();
+        $this->removeAllUsers();
         
         try {
             $controller = $this->getUserCreationController('createAction', array(
@@ -62,7 +66,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     }     
     
     public function testCreateWithEmailOfExistingNotEnabledUser() {
-        $this->resetSystemState(); 
+        $this->removeAllUsers(); 
         $email = 'user1@example.com';
         $password = 'password1';
         $this->createAndFindUser($email, $password);
@@ -79,7 +83,7 @@ class UserCreationControllerCreateTest extends BaseControllerJsonTestCase {
     
     
     public function testCreateWithEmailOfExistingEnabledUser() {
-        $this->resetSystemState();     
+        $this->removeAllUsers();     
         $email = 'user1@example.com';
         $password = 'password1';        
         $this->createAndActivateUser($email, $password);
