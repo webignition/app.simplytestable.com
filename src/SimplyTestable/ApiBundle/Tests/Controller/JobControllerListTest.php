@@ -4,9 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class JobControllerListTest extends BaseControllerJsonTestCase {
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }    
+    public function setUp() {
+        parent::setUp();
+        self::setupDatabase();
+    }
     
     public function testListAction() {        
         $jobController = $this->getJobController('listAction');        
