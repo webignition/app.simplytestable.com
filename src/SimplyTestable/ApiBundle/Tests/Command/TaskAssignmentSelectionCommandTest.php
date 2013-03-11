@@ -6,6 +6,10 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class TaskAssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {    
     const WORKER_TASK_ASSIGNMENT_FACTOR = 2;   
+    
+    public static function setUpBeforeClass() {
+        self::setupDatabase();
+    }    
 
     public function testSelectTasksForAssignmentWithNoWorkers() {
         $this->runForNWorkers(0);
@@ -58,15 +62,18 @@ class TaskAssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
     }
     
     
-    private function runForNWorkers($requestedWorkerCount) {        
-        $this->resetSystemState();     
+    private function runForNWorkers($requestedWorkerCount) {
+        $this->removeAllWorkers();
+        $this->removeAllJobs();
+        $this->clearRedis();
         
         $canonicalUrl = 'http://example.com/';   
         
         $jobCreateResponse = $this->createJob($canonicalUrl);        
         $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
         
-        $this->assertEquals(1, $job_id);        
+        $this->assertInternalType('integer', $job_id);
+        $this->assertGreaterThan(0, $job_id);        
         
         $this->prepareJob($canonicalUrl, $job_id);        
         

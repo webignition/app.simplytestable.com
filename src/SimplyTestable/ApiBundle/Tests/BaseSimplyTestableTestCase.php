@@ -347,6 +347,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->getWorkerService()->getEntityManager()->flush();
     }
     
+    protected function removeAllJobs() {
+        $jobs = $this->getJobService()->getEntityRepository()->findAll();
+        foreach ($jobs as $job) {
+            $this->getJobService()->getEntityManager()->remove($job);
+        }
+        
+        $this->getJobService()->getEntityManager()->flush();
+    }
+    
     
     /**
      * Create and return a collection of workers
