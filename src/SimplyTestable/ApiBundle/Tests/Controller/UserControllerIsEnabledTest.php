@@ -4,9 +4,13 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class UserControllerIsEnabledTest extends BaseControllerJsonTestCase {
     
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();
+    }      
+    
 
     public function testExistsWithNotEnabledUser() {
-        $this->setupDatabase();
+        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';
         
@@ -20,7 +24,7 @@ class UserControllerIsEnabledTest extends BaseControllerJsonTestCase {
     
     
     public function testExistsWithEnabledUser() {
-        $this->setupDatabase();
+        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';
         
@@ -34,7 +38,7 @@ class UserControllerIsEnabledTest extends BaseControllerJsonTestCase {
     
     
     public function testExistsWithNonExistentUser() {
-        $this->setupDatabase();
+        $this->removeAllUsers();
         $email = 'user1@example.com';
         
         try {
