@@ -317,7 +317,16 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */        
     protected function getStateService() {
         return $this->container->get('simplytestable.services.stateservice');
-    }        
+    }  
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
+     */        
+    protected function getWorkerActivationRequestService() {
+        return $this->container->get('simplytestable.services.workeractivationrequestservice');
+    }       
     
     
     /**
@@ -339,6 +348,9 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     
     protected function removeAllWorkers() {
+        $this->removeAllWorkerActivationRequests();
+        $this->removeAllTasks();
+        
         $workers = $this->getWorkerService()->getEntityRepository()->findAll();
         foreach ($workers as $worker) {
             $this->getWorkerService()->getEntityManager()->remove($worker);
@@ -348,6 +360,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     }
     
     protected function removeAllJobs() {
+        $this->removeAllTasks();
+        
         $jobs = $this->getJobService()->getEntityRepository()->findAll();
         foreach ($jobs as $job) {
             $this->getJobService()->getEntityManager()->remove($job);
@@ -356,12 +370,32 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->getJobService()->getEntityManager()->flush();
     }
     
-    protected function removeAllUsers() {        
+    protected function removeAllUsers() {
+        $this->removeAllJobs();
+        
         $users = $this->getUserService()->findUsers();
         foreach ($users as $user) {
             $this->getUserService()->deleteUser($user);
         }
-    }    
+    }
+    
+    protected function removeAllTasks() {
+        $tasks = $this->getTaskService()->getEntityRepository()->findAll();
+        foreach ($tasks as $task) {
+            $this->getTaskService()->getEntityManager()->remove($task);
+        }
+        
+        $this->getTaskService()->getEntityManager()->flush();        
+    }
+    
+    protected function removeAllWorkerActivationRequests() {
+        $requests = $this->getWorkerActivationRequestService()->getEntityRepository()->findAll();
+        foreach ($requests as $request) {
+            $this->getWorkerActivationRequestService()->getEntityManager()->remove($request);
+        }
+        
+        $this->getWorkerActivationRequestService()->getEntityManager()->flush();        
+    }
     
     
     /**

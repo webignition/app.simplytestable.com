@@ -61,9 +61,8 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode2() {
         $this->removeAllWorkers();
+        $this->removeAllJobs();
         $this->clearRedis();
-        //$this->setupDatabase();
-        //$this->resetSystemState();
         
         $canonicalUrl = 'http://example.com/';       
         $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
@@ -93,6 +92,7 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode3() {
         $this->removeAllWorkers();
+        $this->removeAllJobs();
         $this->clearRedis();     
         
         $this->createWorker('http://hydrogen.worker.simplytestable.com');
@@ -130,7 +130,7 @@ class TaskAssignCommandTest extends BaseSimplyTestableTestCase {
     }     
     
     
-    public function testAssignInvalidTaskReturnsStatusCode4() {        
+    public function testAssignInvalidTaskReturnsStatusCode4() {
         $result = $this->runConsole('simplytestable:task:assign', array(
             -1 =>  true,
             $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true

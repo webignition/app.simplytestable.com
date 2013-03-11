@@ -176,6 +176,11 @@ abstract class BaseTestCase extends WebTestCase {
      */
     protected function getCommonFixturesDataPath() {
         return __DIR__ . self::FIXTURES_DATA_RELATIVE_PATH . '/Common';
-    }     
+    } 
+    
+    public function tearDown() {
+        $this->container->get('doctrine')->getConnection()->close();
+        parent::tearDown();
+    }
 
 }

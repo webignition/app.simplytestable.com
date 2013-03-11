@@ -104,14 +104,5 @@ class WorkerActivateVerifyCommandTest extends \SimplyTestable\ApiBundle\Tests\Ba
     private function createActivationRequest(Worker $worker, $token) {
         return $this->getWorkerActivationRequestService()->create($worker, $token);
     }
-    
-    
-    /**
-     *
-     * @return SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
-     */
-    private function getWorkerActivationRequestService() {
-        return $this->container->get('simplytestable.services.workeractivationrequestservice');
-    }
 
 }

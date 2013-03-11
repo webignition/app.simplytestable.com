@@ -39,6 +39,7 @@ class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
         $this->removeAllWorkers();
+        $this->removeAllJobs();
         $this->clearRedis();
         
         $canonicalUrl = 'http://example.com/';       
