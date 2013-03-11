@@ -26,16 +26,10 @@ class JobPrepareCommandTest extends BaseSimplyTestableTestCase {
     }
     
     
-    public function testPrepareInMaintenanceReadOnlyModeReturnsStatusCode2() {
-        $this->resetSystemState();  
-        
-        $jobCreateResponse = $this->createJob('http://example.com/');        
-        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
-        
-        $this->assertEquals(1, $job_id);        
+    public function testPrepareInMaintenanceReadOnlyModeReturnsStatusCode2() {     
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
         $this->assertEquals(2, $this->runConsole('simplytestable:job:prepare', array(
-            $job_id =>  true
+            1 =>  true
         )));
     }    
 

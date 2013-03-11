@@ -71,6 +71,11 @@ abstract class BaseTestCase extends WebTestCase {
     }
     
     
+    protected function setDefaultSystemState() {
+        $this->runConsole('simplytestable:maintenance:disable-read-only');
+    }
+    
+    
     protected function setupDatabase() {
         exec('php app/console doctrine:database:drop -e test --force && php app/console doctrine:database:create -e test && php app/console doctrine:migrations:migrate -e test --no-interaction');
         //$this->runConsole("doctrine:database:drop", array("--force" => true));

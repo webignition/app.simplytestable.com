@@ -125,8 +125,6 @@ class JobControllerTest extends BaseControllerJsonTestCase {
     
     
     public function testCancelActionInMaintenanceReadOnlyModeReturns503() {        
-        $this->resetSystemState();        
-        
         $canonicalUrl = 'http://example.com';
         $jobId = $this->createJobAndGetId($canonicalUrl);        
         

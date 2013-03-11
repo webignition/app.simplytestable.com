@@ -46,21 +46,8 @@ class UserCreationControllerActivateTest extends BaseControllerJsonTestCase {
     } 
     
     public function testActivateInMaintenanceReadOnlyModeReturns503() {
-        $this->resetSystemState();
-        $email = 'user1@example.com';
-        $password = 'password1';        
-        
-        $this->createUser($email, $password);
-        
-        $user = $this->getUserService()->findUserByEmail($email);
-        
-        $this->assertNotNull($user);
-        $this->assertInstanceOf('SimplyTestable\ApiBundle\Entity\User', $user);
-        
-        $controller = $this->getUserCreationController('activateAction');        
-        
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));                 
-        $this->assertEquals(503, $controller->activateAction($user->getConfirmationToken())->getStatusCode());           
+        $this->assertEquals(503, $this->getUserCreationController('activateAction')->activateAction('')->getStatusCode());           
     }    
     
 }

@@ -62,12 +62,9 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
     }
     
     
-    public function testStartActionInMaintenanceReadOnlyModeReturns503() {           
-        $this->resetSystemState();        
+    public function testStartActionInMaintenanceReadOnlyModeReturns503() {            
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
-   
-        $jobController = $this->getJobStartController('startAction');        
-        $this->assertEquals(503, $jobController->startAction('http://example.com')->getStatusCode());
+        $this->assertEquals(503, $this->getJobStartController('startAction')->startAction('http://example.com')->getStatusCode());
     }    
     
 }
