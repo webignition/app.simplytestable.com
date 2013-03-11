@@ -5,10 +5,12 @@ namespace SimplyTestable\ApiBundle\Tests\Command;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
-
-    public function testAssignValidTaskReturnsStatusCode0() {
+    
+    public static function setUpBeforeClass() {
         self::setupDatabase();
-        
+    }    
+
+    public function testAssignValidTaskReturnsStatusCode0() {        
         $workerHostname = 'hydrogen.worker.simplytestable.com';
         
         $this->createWorker($workerHostname);
@@ -36,7 +38,7 @@ class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     }
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
-        self::setupDatabase();
+        $this->removeAllWorkers();
         $this->clearRedis();
         
         $canonicalUrl = 'http://example.com/';       
@@ -66,7 +68,6 @@ class TaskAssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2() {        
-        self::setupDatabase();
         $this->clearRedis();
         
         $this->createWorker('hydrogen.worker.simplytestable.com');

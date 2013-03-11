@@ -328,14 +328,23 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function createWorker($hostname = null) {
         if (is_null($hostname)) {
             $hostname = md5(time()) . '.worker.simplytestable.com';
-        }        
+        }   
         
-        $worker = new Worker();
-        $worker->setHostname($hostname);
+        $worker = $this->getWorkerService()->get($hostname);
         $worker->setState($this->getStateService()->fetch('worker-active'));
         
         $this->getWorkerService()->persistAndFlush($worker);
         return $worker;
+    }
+    
+    
+    protected function removeAllWorkers() {
+        $workers = $this->getWorkerService()->getEntityRepository()->findAll();
+        foreach ($workers as $worker) {
+            $this->getWorkerService()->getEntityManager()->remove($worker);
+        }
+        
+        $this->getWorkerService()->getEntityManager()->flush();
     }
     
     
