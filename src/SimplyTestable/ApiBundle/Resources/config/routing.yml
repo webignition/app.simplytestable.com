@@ -8,6 +8,12 @@ job_start:
     requirements:
         site_root_url: ".+"
         
+job_latest:        
+  pattern: /job/{site_root_url}/latest/
+  defaults: { _controller: SimplyTestableApiBundle:Job:latest, _format: json } 
+  requirements:
+    site_root_url: ".+"   
+        
 job_tasks:
   pattern: /job/{site_root_url}/{test_id}/tasks/
   defaults: { _controller: SimplyTestableApiBundle:Job:tasks, _format: json } 

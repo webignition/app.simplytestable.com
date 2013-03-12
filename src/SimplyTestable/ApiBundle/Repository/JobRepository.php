@@ -31,6 +31,43 @@ class JobRepository extends EntityRepository
         return $queryBuilder->getQuery()->getResult();         
     }
     
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
+     * @param array $users
+     * @return Job
+     */
+    public function findLatestByWebsiteAndUsers(WebSite $website, $users = array()) {                
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job');
+        
+        $where = 'Job.website = :Website';
+        
+        if (is_array($users)) {
+            $userWhere = '';
+            $userCount = count($users);
+            
+            foreach ($users as $userIndex => $user) {
+                $userWhere .= 'Job.user = :User' . $userIndex;
+                if ($userIndex < $userCount - 1) {
+                    $userWhere .= ' OR ';
+                }
+                $queryBuilder->setParameter('User'.$userIndex, $user);
+            }
+            
+            $where .= ' AND ('.$userWhere.')';
+        }
+        
+        $queryBuilder->where($where);
+        $queryBuilder->setMaxResults(1);
+        $queryBuilder->orderBy('Job.id', 'DESC');
+
+        $queryBuilder->setParameter('Website', $website);
+        $result = $queryBuilder->getQuery()->getResult(); 
+        
+        return (count($result) > 0) ? $result[0] : null;
+    }    
+    
     
     /**
      * 

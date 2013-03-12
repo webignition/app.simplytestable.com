@@ -474,4 +474,12 @@ class JobService extends EntityService {
         
         return $incompleteStates;      
     }
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Repository\JobRepository
+     */
+    public function getEntityRepository() {
+        return parent::getEntityRepository();
+    }    
 }

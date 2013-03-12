@@ -16,6 +16,42 @@ class JobController extends ApiController
     private $siteRootUrl = null;
     private $testId = null;
     
+    
+    public function latestAction($site_root_url) {
+        $this->siteRootUrl = $site_root_url;
+        
+        $latestJob = null;
+        
+        if (!$this->getUserService()->isPublicUser($this->getUser())) {
+            $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+                $this->getWebsite(),
+                array(
+                    $this->getUser()
+                )
+            );            
+        }
+        
+        if (is_null($latestJob)) {
+            $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+                $this->getWebsite(),
+                array(   
+                    $this->getUserService()->getPublicUser()
+                )
+            );            
+        }
+        
+        if (is_null($latestJob)) {
+            $response = new Response();
+            $response->setStatusCode(404);
+            return $response;              
+        }
+        
+        return $this->redirect($this->generateUrl('job', array(
+            'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
+            'test_id' => $latestJob->getId()
+        ), true));
+    }
+    
     public function statusAction($site_root_url, $test_id)
     {         
         $this->siteRootUrl = $site_root_url;
