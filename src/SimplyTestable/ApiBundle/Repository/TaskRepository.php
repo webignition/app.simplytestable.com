@@ -118,6 +118,29 @@ class TaskRepository extends EntityRepository
     
     /**
      *
+     * @param State $state
+     * @return integer 
+     */
+    public function getIdsByState(State $state)
+    {
+        $queryBuilder = $this->createQueryBuilder('Task');   
+        $queryBuilder->select('Task.id');
+        $queryBuilder->where('Task.state = :State');
+        $queryBuilder->setParameter('State', $state);
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        $taskIds = array();
+        foreach ($result as $taskId) {
+            $taskIds[] = $taskId['id'];
+        }
+        
+        return $taskIds;      
+    }    
+    
+    
+    /**
+     *
      * @param Job $job
      * @return integer 
      */

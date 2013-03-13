@@ -593,5 +593,14 @@ class TaskService extends EntityService {
         return $this->getEntityRepository()->getCountByState($this->getQueuedState());
     }
     
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Repository\TaskRepository
+     */
+    public function getEntityRepository() {
+        return parent::getEntityRepository();
+    }    
+    
   
 }
