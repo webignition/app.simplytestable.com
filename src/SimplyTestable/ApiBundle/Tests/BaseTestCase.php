@@ -82,7 +82,7 @@ abstract class BaseTestCase extends WebTestCase {
     }
     
     
-    protected static function setupDatabaseIfNotExists() {
+    protected static function setupDatabaseIfNotExists() {        
         if (self::areDatabaseMigrationsNeeded()) {
             self::setupDatabase();
         }
@@ -90,7 +90,7 @@ abstract class BaseTestCase extends WebTestCase {
     
     private static function areDatabaseMigrationsNeeded() {
         $migrationStatusOutputLines = array();
-        exec('php app/console doctrine:migrations:status', $migrationStatusOutputLines);
+        exec('php app/console doctrine:migrations:status -e test', $migrationStatusOutputLines);
         
         foreach ($migrationStatusOutputLines as $migrationStatusOutputLine) {
             if (substr_count($migrationStatusOutputLine, '>> New Migrations:')) {
