@@ -49,9 +49,7 @@ EOF
         }        
         
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);                
-        $workers = $this->getWorkerService()->getActiveCollection();                
-        
-        $this->getLogger()->err("TaskAssignSelectedCommand::execute: workerCount [".count($workers)."]");
+        $workers = $this->getWorkerService()->getActiveCollection();
         
         if (count($workers) === 0) {
             $this->getLogger()->err("TaskAssignSelectedCommand::execute: Cannot assign, no workers.");
