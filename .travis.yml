@@ -7,7 +7,7 @@ php:
 before_script:      
   # Installing pecl_http module
   #- printf "\n\n\n\n" | pecl -q install pecl_http  
-  - wget wget http://pecl.php.net/get/pecl_http-1.7.5.tgz
+  - wget http://pecl.php.net/get/pecl_http-1.7.5.tgz
   - tar -zxf pecl_http-1.7.5.tgz
   - sh -c "cd pecl_http-1.7.5 && phpize && ./configure && make && sudo make install"
   #- echo "memcache.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s/.*:\s*//"`
