@@ -11,6 +11,9 @@ use SimplyTestable\ApiBundle\Entity\User;
 class JobRepository extends EntityRepository
 {
     
+    
+    
+    
     /**
      * 
      * @param $limit int
@@ -141,6 +144,29 @@ class JobRepository extends EntityRepository
         $queryBuilder->setParameter('TaskState', $taskState);                
         return $queryBuilder->getQuery()->getResult();
     }
+    
+    
+    /**
+     *
+     * @param State $state
+     * @return array 
+     */
+    public function getIdsByState(State $state) {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.id');     
+        $queryBuilder->where('Job.state = :State');
+
+        $queryBuilder->setParameter('State', $state);                
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        $taskIds = array();
+        foreach ($result as $taskId) {
+            $taskIds[] = $taskId['id'];
+        }
+        
+        return $taskIds;
+    }    
     
     
     /**
