@@ -37,8 +37,10 @@ class EnqueuePrepareAllCommand extends BaseCommand
         }
         
         $jobIds = $this->getJobService()->getEntityRepository()->getIdsByState($this->getJobService()->getStartingState());
+        $output->writeln(count($jobIds).' new jobs to prepare');
         
         foreach ($jobIds as $jobId) {
+            $output->writeln('Enqueuing prepare for job '.$jobId);
             $this->getResqueQueueService()->add(
                 'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
                 'job-prepare',
