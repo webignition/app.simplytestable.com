@@ -44,9 +44,12 @@ EOF
         }   
         
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByState($this->getTaskService()->getQueuedForAssignmentState());
+        $output->writeln(count($taskIds).' tasks queued for assignment');
         if (count($taskIds) === 0) {
             return self::RETURN_CODE_OK;
         }        
+        
+        $output->writeln('Attempting to assign tasks '.  implode(',', $taskIds));
         
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);                
         $workers = $this->getWorkerService()->getActiveCollection();
@@ -58,6 +61,7 @@ EOF
         
         $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);        
         if ($response === 0) {
+            $output->writeln('ok');
             $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
 
             $job = $tasks[0]->getJob();
@@ -67,6 +71,8 @@ EOF
             }       
 
             $entityManager->flush();            
+        } else {
+            $output->writeln('Failed to assign task collection, response '.$response);
         }
         
         return $response;
