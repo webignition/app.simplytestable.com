@@ -34,10 +34,12 @@ EOF
         }         
         
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByState($this->getTaskService()->getAwaitingCancellationState());        
+        $output->writeln(count($taskIds).' tasks to enqueue for cancellation');
         if (count($taskIds) === 0) {
             return self::RETURN_CODE_OK;
         } 
         
+        $output->writeln('Enqueuing for cancellation tasks '.  implode(',', $taskIds));        
         $this->getResqueQueueService()->add(
             'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
             'task-cancel',
