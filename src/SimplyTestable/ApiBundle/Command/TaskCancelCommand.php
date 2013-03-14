@@ -42,6 +42,7 @@ EOF
             }            
         }
         
+        /* @var $task Task*/
         $task = $this->getTaskService()->getById((int)$input->getArgument('id'));
         if (is_null($task)) {
             $output->writeln('Unable to cancel, task '.$input->getArgument('id').' does not exist');
@@ -57,7 +58,11 @@ EOF
         if ($cancellationResult === -1) {
             $output->writeln('Cancellation request failed, task is in wrong state (currently:'.$task->getState().')');
             return self::RETURN_CODE_FAILED_DUE_TO_WRONG_STATE;            
-        }        
+        }
+        
+        $task->setState($this->getTaskService()->getAwaitingCancellationState());
+        $this->getTaskService()->getEntityManager()->persist($task);
+        $this->getTaskService()->getEntityManager()->flush();
         
         if ($this->isHttpStatusCode($cancellationResult)) {
             $output->writeln('Cancellation request failed, HTTP response '.$cancellationResult);
@@ -71,7 +76,7 @@ EOF
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\TaskService
+     * @return \SimplyTestable\ApiBundle\Services\TaskService
      */
     private function getTaskService() {
         return $this->getContainer()->get('simplytestable.services.taskservice');

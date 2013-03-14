@@ -116,7 +116,7 @@ class TaskCancelCommandTest extends BaseSimplyTestableTestCase {
         ));
 
         $this->assertEquals(503, $result);
-        $this->assertEquals('task-cancelled', $task->getState()->getName());
+        $this->assertEquals('task-awaiting-cancellation', $task->getState()->getName());
     }
     
     public function testCancelInReadOnlyModeReturnsStatusCodeMinus3() {
