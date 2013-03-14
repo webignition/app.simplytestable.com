@@ -16,6 +16,29 @@ class MaintenanceController extends ApiController
         return $this->executeCommand('SimplyTestable\ApiBundle\Command\Maintenance\MaintenanceDisableReadOnlyCommand');      
     }
     
+    public function leaveReadOnlyAction() {
+        $commands = array(
+            'SimplyTestable\ApiBundle\Command\Maintenance\MaintenanceDisableReadOnlyCommand',
+            'SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand',
+            'SimplyTestable\ApiBundle\Command\Task\AssignSelectedCommand',
+            'SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand'
+        );
+        
+        $responseLines = array();
+        
+        foreach ($commands as $command) {
+            $response = $this->executeCommand($command);
+            $rawResponseLines =  json_decode($response->getContent());
+            foreach ($rawResponseLines as $rawResponseLine) {
+                if (trim($rawResponseLine) != '') {
+                    $responseLines[] = trim($rawResponseLine);
+                }
+            }
+        }
+        
+        return $this->sendResponse($responseLines);     
+    }    
+    
     private function executeCommand($commandClass, $inputArray = array()) {      
         $output = new \CoreSphere\ConsoleBundle\Output\StringOutput();
         $commandResponse =  $this->getCommandService()->execute(

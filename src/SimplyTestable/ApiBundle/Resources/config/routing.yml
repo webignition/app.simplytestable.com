@@ -96,3 +96,7 @@ disable_readonly:
 enable_readonly:
     pattern: /maintenance/enable-read-only/
     defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableReadOnly, _format: json }   
+    
+leave_readonly:
+    pattern: /maintenance/leave-read-only/
+    defaults: { _controller: SimplyTestableApiBundle:Maintenance:leaveReadOnly, _format: json }       
