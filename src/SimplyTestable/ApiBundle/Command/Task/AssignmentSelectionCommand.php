@@ -44,6 +44,7 @@ EOF
         
         $output->writeln($queuedTaskCount.' total tasks queued for processing');
         if ($queuedTaskCount === 0) {
+            $output->writeln('Stopping');
             return self::RETURN_CODE_OK;
         }
         
@@ -52,8 +53,12 @@ EOF
         
         $tasks = $this->getTaskAssignmentSelectionService()->selectTasks($workerCount);
         $selectedTaskCount = count($tasks);
-        $output->writeln($selectedTaskCount.' tasks selected');
+        
+        $output->writeln($selectedTaskCount.' tasks selected');   
         if ($selectedTaskCount === 0) {
+            $output->writeln('Enqueuing resque job');
+            $this->enqueueTaskAssignmentSelectionJob();
+            $output->writeln('Stopping');
             return self::RETURN_CODE_OK;
         }
         
@@ -93,15 +98,22 @@ EOF
         
         if ($this->getTaskService()->hasQueuedTasks()) {
             $output->writeln('Enqueuing resque job');
-            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {                
-                $this->getResqueQueueService()->add(
-                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-                    'task-assignment-selection'
-                );             
-            }              
+            $this->enqueueTaskAssignmentSelectionJob();
         } else {
-            $output->writeln('No queued tasks; stopping');
+            $output->writeln('No queued tasks');
         }
+        
+        $output->writeln('Stopping');
+    }
+    
+    
+private function enqueueTaskAssignmentSelectionJob() {            
+        if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {                
+            $this->getResqueQueueService()->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                'task-assignment-selection'
+            );             
+        }          
     }
 
     
