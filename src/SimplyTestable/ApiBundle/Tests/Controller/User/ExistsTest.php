@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
-class UserControllerExistsTest extends BaseControllerJsonTestCase {
+use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+
+class ExistsTest extends BaseControllerJsonTestCase {
     
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();
