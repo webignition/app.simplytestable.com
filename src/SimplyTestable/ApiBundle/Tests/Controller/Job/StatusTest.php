@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class Test extends BaseControllerJsonTestCase {
+class StatusTest extends BaseControllerJsonTestCase {
     
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();        
@@ -94,111 +94,6 @@ class Test extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $status9Response->getStatusCode());
         $this->assertEquals('public', $status9ResponseObject->user);
         $this->assertEquals($canonicalUrl3, $status9ResponseObject->website);         
-    } 
-    
-    
-    public function testTaskIdsAction() {
-        $this->removeAllJobs();
-        
-        $canonicalUrl = 'http://example.com/';       
-        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
-        
-        $job = $this->prepareJob($canonicalUrl, $job_id);
-        
-        $response = $this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id);
-        $taskIds = json_decode($response->getContent());
-        $expectedTaskIdCount = $job->url_count * count($job->task_types);
-        
-        $this->assertEquals($expectedTaskIdCount, count($taskIds));
-        
-        foreach ($taskIds as $taskId) {
-            $this->assertInternalType('integer', $taskId);
-            $this->assertGreaterThan(0, $taskId);
-        }    
-    }
-    
-    
-    public function testCancelAction() {
-        $this->removeAllJobs();
-        
-        $canonicalUrl = 'http://example.com';        
-        $jobId = $this->createJobAndGetId($canonicalUrl);
-        
-        $preCancelStatus = json_decode($this->getJobStatus($canonicalUrl, $jobId)->getContent())->state;
-        $this->assertEquals('new', $preCancelStatus);
-        
-        $cancelResponse = $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
-        $this->assertEquals(200, $cancelResponse->getStatusCode());
-        
-        $postCancelStatus = json_decode($this->getJobStatus($canonicalUrl, $jobId)->getContent())->state;
-        $this->assertEquals('cancelled', $postCancelStatus);        
-    }
-    
-    
-    public function testCancelActionInMaintenanceReadOnlyModeReturns503() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));   
-        $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction('http://example.com', 1)->getStatusCode());        
-    }
-    
-    
-    public function testCancelActionInMaintenanceBackupReadOnlyModeReturns503() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-backup-read-only'));   
-        $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction('http://example.com', 1)->getStatusCode());        
-    }    
-    
-    public function testLatestActionForPublicUser() {
-        $this->removeAllJobs();
-        
-        $canonicalUrl = 'http://example.com';        
-        $jobId = $this->createJobAndGetId($canonicalUrl);        
-        
-        $response = $this->getJobController('latestAction')->latestAction($canonicalUrl);
-        
-        $this->assertEquals(302, $response->getStatusCode());        
-        $this->assertEquals($jobId, $this->getJobIdFromUrl($response->getTargetUrl()));
-    }
-    
-    
-    public function testLatestActionForDifferentUsers() {
-        $this->removeAllJobs();
-
-        $canonicalUrl1 = 'http://one.example.com/';
-        $canonicalUrl2 = 'http://two.example.com/';  
-        
-        $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
-                
-        $jobId1 = $this->createJobAndGetId($canonicalUrl1, $user1->getEmail());
-        $jobId2 = $this->createJobAndGetId($canonicalUrl2, $user2->getEmail());
-        $jobId3 = $this->createJobAndGetId($canonicalUrl1);
-        
-        $response1 = $this->getJobController('latestAction', array(
-            'user' => $user1->getEmail()
-        ))->latestAction($canonicalUrl1);
-        
-        $response2 = $this->getJobController('latestAction', array(
-            'user' => $user2->getEmail()
-        ))->latestAction($canonicalUrl2);
-        
-        $response3 = $this->getJobController('latestAction')->latestAction($canonicalUrl1);        
-        
-        $this->assertEquals(302, $response1->getStatusCode()); 
-        $this->assertEquals(302, $response2->getStatusCode()); 
-        $this->assertEquals(302, $response3->getStatusCode()); 
-        
-        $this->assertEquals($jobId1, $this->getJobIdFromUrl($response1->getTargetUrl()));
-        $this->assertEquals($jobId2, $this->getJobIdFromUrl($response2->getTargetUrl()));
-        $this->assertEquals($jobId3, $this->getJobIdFromUrl($response3->getTargetUrl()));       
-    }
-    
-    
-    public function testLatestActionReturns404ForNoLatestJob() {
-        $this->removeAllJobs();
-        
-        $canonicalUrl = 'http://example.com';            
-        
-        $response = $this->getJobController('latestAction')->latestAction($canonicalUrl);        
-        $this->assertEquals(404, $response->getStatusCode());          
     }
     
 }
