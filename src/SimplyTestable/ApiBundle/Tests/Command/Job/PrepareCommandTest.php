@@ -1,10 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command;
+namespace SimplyTestable\ApiBundle\Tests\Command\Job;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class JobPrepareCommandTest extends BaseSimplyTestableTestCase {    
+class PrepareCommandTest extends BaseSimplyTestableTestCase {    
     
     public static function setUpBeforeClass() {
         self::setupDatabase();

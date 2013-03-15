@@ -1,10 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class TaskCancelCollectionCommandTest extends BaseSimplyTestableTestCase {    
+class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {    
     
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();

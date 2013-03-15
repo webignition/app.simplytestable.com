@@ -1,10 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class TaskAssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {    
+class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {    
     const WORKER_TASK_ASSIGNMENT_FACTOR = 2;   
     
     public static function setUpBeforeClass() {

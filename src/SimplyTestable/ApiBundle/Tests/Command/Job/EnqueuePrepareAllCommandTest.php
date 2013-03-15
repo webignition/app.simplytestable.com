@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command;
+namespace SimplyTestable\ApiBundle\Tests\Command\Job;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
