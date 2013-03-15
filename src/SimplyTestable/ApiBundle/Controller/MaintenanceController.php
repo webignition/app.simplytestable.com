@@ -26,7 +26,8 @@ class MaintenanceController extends ApiController
             'SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand',
             'SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand',
             'SimplyTestable\ApiBundle\Command\Task\AssignSelectedCommand',
-            'SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand'
+            'SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand',
+            'SimplyTestable\ApiBundle\Command\Task\AssignmentSelectionCommand'
         );
         
         $responseLines = array();

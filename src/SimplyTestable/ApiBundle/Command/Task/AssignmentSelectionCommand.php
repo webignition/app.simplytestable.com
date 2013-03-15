@@ -1,13 +1,14 @@
 <?php
-namespace SimplyTestable\ApiBundle\Command;
+namespace SimplyTestable\ApiBundle\Command\Task;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use SimplyTestable\ApiBundle\Command\BaseCommand;
+
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class TaskAssignmentSelectionCommand extends BaseCommand
+class AssignmentSelectionCommand extends BaseCommand
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
@@ -25,7 +26,7 @@ EOF
         );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output)
     {   
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
@@ -38,19 +39,33 @@ EOF
                 $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
             }            
         }
-      
-        if ($this->getTaskService()->getQueuedCount() === 0) {
+        
+        $queuedTaskCount = $this->getTaskService()->getQueuedCount();
+        
+        $output->writeln($queuedTaskCount.' total tasks queued for processing');
+        if ($queuedTaskCount === 0) {
             return self::RETURN_CODE_OK;
         }
         
         $workerCount = $this->getWorkerService()->count();
+        $output->writeln($workerCount.' workers in the processing pool');
         
         $tasks = $this->getTaskAssignmentSelectionService()->selectTasks($workerCount);
+        $selectedTaskCount = count($tasks);
+        $output->writeln($selectedTaskCount.' tasks selected');
+        if ($selectedTaskCount === 0) {
+            return self::RETURN_CODE_OK;
+        }
+        
         $taskGroups = $this->getTaskGroups($tasks, $workerCount);
+        
+        $output->writeln(count($taskGroups).' task groups');
         
         $this->getContainer()->get('logger')->info('TaskAssignmentSelectionCommand:execute: tasks found ['.count($tasks).']');
         
-        foreach ($taskGroups as $taskGroup) {
+        foreach ($taskGroups as $taskGroupIndex => $taskGroup) {
+            $output->writeln('Processing task group '.($taskGroupIndex + 1));
+            
             $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();            
             $taskIds = array();
             
@@ -62,6 +77,8 @@ EOF
                 
                 $taskIds[] = $task->getId();             
             }
+            
+            $output->writeln('Enqueuing for assignment tasks: '.  implode(',', $taskIds));            
             
             $this->getResqueQueueService()->add(
                 'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
@@ -75,13 +92,16 @@ EOF
         }
         
         if ($this->getTaskService()->hasQueuedTasks()) {
+            $output->writeln('Enqueuing resque job');
             if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {                
                 $this->getResqueQueueService()->add(
                     'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
                     'task-assignment-selection'
                 );             
             }              
-        }      
+        } else {
+            $output->writeln('No queued tasks; stopping');
+        }
     }
 
     
