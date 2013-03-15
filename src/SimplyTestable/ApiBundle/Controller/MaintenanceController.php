@@ -9,16 +9,16 @@ class MaintenanceController extends ApiController
     
     public function enableReadOnlyAction()
     {        
-        return $this->executeCommand('SimplyTestable\ApiBundle\Command\Maintenance\MaintenanceEnableReadOnlyCommand');
+        return $this->executeCommand('SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand');
     }    
     
     public function disableReadOnlyAction() {
-        return $this->executeCommand('SimplyTestable\ApiBundle\Command\Maintenance\MaintenanceDisableReadOnlyCommand');      
+        return $this->executeCommand('SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand');      
     }
     
     public function leaveReadOnlyAction() {
         $commands = array(
-            'SimplyTestable\ApiBundle\Command\Maintenance\MaintenanceDisableReadOnlyCommand',
+            'SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand',
             'SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand',
             'SimplyTestable\ApiBundle\Command\Task\AssignSelectedCommand',
             'SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand'

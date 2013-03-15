@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class MaintenanceDisableReadOnlyCommand extends MaintenanceCommand
+class DisableReadOnlyCommand extends Command
 {  
 
     protected function configure()

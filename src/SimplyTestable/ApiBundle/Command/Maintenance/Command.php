@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-abstract class MaintenanceCommand extends BaseCommand
+abstract class Command extends BaseCommand
 { 
     const STATE_ACTIVE = 'active';
     const STATE_MAINTENANCE_READ_ONLY = 'maintenance-read-only';
