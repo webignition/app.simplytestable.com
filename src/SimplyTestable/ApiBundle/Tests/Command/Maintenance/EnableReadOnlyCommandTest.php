@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Maintenance;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class MaintenanceEnableReadOnlyCommandTest extends BaseSimplyTestableTestCase {        
+class EnableReadOnlyCommandTest extends BaseSimplyTestableTestCase {        
     
     const STATE_FILE_RELATIVE_PATH = '/state-test';
     
