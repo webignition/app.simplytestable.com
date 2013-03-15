@@ -41,3 +41,4 @@ after_failure:
 notifications:
   irc:
     - "irc.freenode.org#simplytestable"
+    
