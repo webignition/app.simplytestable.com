@@ -387,9 +387,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     }
     
     
-    protected function createPublicUserIfMissing() {
-        $user = $this->getUserService()->exists('public@simplytestable.com');
-        if (!$user instanceof User) {
+    protected function createPublicUserIfMissing() {        
+        if (!$this->getUserService()->exists('public@simplytestable.com')) {
             $user = new User();
             $user->setEmail('public@simplytestable.com');
             $user->setPlainPassword('public');
