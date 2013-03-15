@@ -37,3 +37,7 @@ script:
   
 after_failure:
   - cat /home/travis/build/webignition/worker.simplytestable.com/app/logs/test.log | grep "response fixture path"  
+  
+notifications:
+  irc:
+    - "irc.freenode.org#simplytestable"
