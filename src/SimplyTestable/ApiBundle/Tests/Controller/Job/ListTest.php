@@ -1,8 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
 
-class JobControllerListTest extends BaseControllerJsonTestCase {
+use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+
+class ListTest extends BaseControllerJsonTestCase {
     
     public function setUp() {
         parent::setUp();

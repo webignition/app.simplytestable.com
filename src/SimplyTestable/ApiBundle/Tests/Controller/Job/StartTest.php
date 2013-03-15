@@ -1,8 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
 
-class JobControllerStartTest extends BaseControllerJsonTestCase {
+use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+
+class StartTest extends BaseControllerJsonTestCase {
     
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();
