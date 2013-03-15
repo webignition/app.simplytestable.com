@@ -22,13 +22,7 @@ EOF
     }    
     
     public function execute(InputInterface $input, OutputInterface $output)
-    {                
-        if ($this->getApplicationStateService()->setState(self::STATE_ACTIVE)) {
-            $output->writeln('Set application state to "'.self::STATE_ACTIVE.'"');
-            return 0;
-        }
-        
-        $output->writeln('Failed to set application state to "'.self::STATE_ACTIVE.'"');
-        return 1;
+    {     
+        return parent::setState($output, self::STATE_ACTIVE);
     }  
 }

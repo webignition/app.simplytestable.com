@@ -6,11 +6,13 @@ class ApplicationStateService {
     
     const STATE_ACTIVE = 'active';
     const STATE_MAINTENANCE_READ_ONLY = 'maintenance-read-only';
+    const STATE_MAINTENANCE_BACKUP_READ_ONLY = 'maintenance-backup-read-only';
     const DEFAULT_STATE = self::STATE_ACTIVE;
     
     private $allowedStates = array(
         self::STATE_ACTIVE,
-        self::STATE_MAINTENANCE_READ_ONLY
+        self::STATE_MAINTENANCE_READ_ONLY,
+        self::STATE_MAINTENANCE_BACKUP_READ_ONLY
     );
     
     /**
@@ -43,6 +45,15 @@ class ApplicationStateService {
     public function isInMaintenanceReadOnlyState() {
         return $this->getState() == self::STATE_MAINTENANCE_READ_ONLY;
     }
+    
+
+    /**
+     * 
+     * @return boolean
+     */
+    public function isInMaintenanceBackupReadOnlyState() {
+        return $this->getState() == self::STATE_MAINTENANCE_BACKUP_READ_ONLY;
+    }    
     
     
     /**
