@@ -100,3 +100,7 @@ enable_readonly:
 leave_readonly:
     pattern: /maintenance/leave-read-only/
     defaults: { _controller: SimplyTestableApiBundle:Maintenance:leaveReadOnly, _format: json }       
+    
+enable_backup_readonly:
+    pattern: /maintenance/enable-backup-read-only/
+    defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableBackupReadOnly, _format: json }     

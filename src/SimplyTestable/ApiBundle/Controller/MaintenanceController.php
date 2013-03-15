@@ -6,6 +6,11 @@ use SimplyTestable\ApiBundle\Services\CommandService;
 
 class MaintenanceController extends ApiController
 {   
+    public function enableBackupReadOnlyAction()
+    {        
+        return $this->executeCommand('SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand');
+    }      
+    
     
     public function enableReadOnlyAction()
     {        
