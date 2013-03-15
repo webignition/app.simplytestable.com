@@ -22,6 +22,10 @@ class JobStartController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
         
+        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }        
+        
         $this->siteRootUrl = $site_root_url;
         $requestedJobType = $this->getRequestJobType();
         

@@ -133,7 +133,11 @@ class JobController extends ApiController
     {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
-        }        
+        }   
+        
+        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
         
         $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;

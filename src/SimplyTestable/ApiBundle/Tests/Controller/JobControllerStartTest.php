@@ -9,6 +9,7 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
     }       
 
     public function testStartAction() {
+        $this->createPublicUserIfMissing();
         $jobController = $this->getJobStartController('startAction');        
         
         $canonicalUrls = array(
@@ -64,6 +65,12 @@ class JobControllerStartTest extends BaseControllerJsonTestCase {
     
     public function testStartActionInMaintenanceReadOnlyModeReturns503() {            
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
+        $this->assertEquals(503, $this->getJobStartController('startAction')->startAction('http://example.com')->getStatusCode());
+    }    
+    
+    
+    public function testStartActionInMaintenanceBackupReadOnlyModeReturns503() {            
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-backup-read-only'));
         $this->assertEquals(503, $this->getJobStartController('startAction')->startAction('http://example.com')->getStatusCode());
     }    
     

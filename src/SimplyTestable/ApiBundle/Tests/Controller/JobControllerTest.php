@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 class JobControllerTest extends BaseControllerJsonTestCase {
     
     public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
+        self::setupDatabaseIfNotExists();        
     }      
    
     public function testStatusAction() {
@@ -137,6 +137,12 @@ class JobControllerTest extends BaseControllerJsonTestCase {
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));   
         $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction('http://example.com', 1)->getStatusCode());        
     }
+    
+    
+    public function testCancelActionInMaintenanceBackupReadOnlyModeReturns503() {
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-backup-read-only'));   
+        $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction('http://example.com', 1)->getStatusCode());        
+    }    
     
     public function testLatestActionForPublicUser() {
         $this->removeAllJobs();
