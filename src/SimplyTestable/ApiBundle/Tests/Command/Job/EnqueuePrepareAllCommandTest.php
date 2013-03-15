@@ -12,6 +12,7 @@ class EnqueuePrepareAllCommandTest extends BaseSimplyTestableTestCase {
     
     public function testJobsAreEnqueued() {
         $this->removeAllJobs();
+        $this->createPublicUserIfMissing();
         $this->clearRedis();
       
         $canonicalUrls = array(

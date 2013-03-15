@@ -386,6 +386,23 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         }
     }
     
+    
+    protected function createPublicUserIfMissing() {
+        $user = $this->getUserService()->exists('public@simplytestable.com');
+        if (!$user instanceof User) {
+            $user = new User();
+            $user->setEmail('public@simplytestable.com');
+            $user->setPlainPassword('public');
+            $user->setUsername('public');        
+
+            $userManager = $this->container->get('fos_user.user_manager');        
+            $userManager->updateUser($user);
+
+            $manipulator = $this->container->get('fos_user.util.user_manipulator');
+            $manipulator->activate($user->getUsername());      
+        }
+    }
+    
     protected function removeAllTasks() {
         $tasks = $this->getTaskService()->getEntityRepository()->findAll();
         foreach ($tasks as $task) {
