@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class DisableReadOnlyCommandTest extends BaseSimplyTestableTestCase {        
     
-    const STATE_FILE_RELATIVE_PATH = '/state-test';
+    const STATE_FILE_RELATIVE_PATH = '/test';
     
     public function testEnableReadOnly() {    
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:disable-read-only'));
@@ -33,7 +33,7 @@ class DisableReadOnlyCommandTest extends BaseSimplyTestableTestCase {
      * @return string
      */
     private function getStateResourcePath() {
-        return $this->container->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config') . self::STATE_FILE_RELATIVE_PATH;
+        return $this->container->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config/state') . self::STATE_FILE_RELATIVE_PATH;
     }
 
 }

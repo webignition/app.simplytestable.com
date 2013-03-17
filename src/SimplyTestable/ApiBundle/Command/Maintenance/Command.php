@@ -32,28 +32,5 @@ abstract class Command extends BaseCommand
         
         $output->writeln('Failed to set application state to "'.$state.'"');
         return 1;
-    }    
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\ApplicationStateService
-     */
-    protected function getApplicationStateService() {         
-        if (is_null($this->applicationStateService)) {
-            $this->applicationStateService = $this->getContainer()->get('simplytestable.services.applicationStateService');
-            $this->applicationStateService->setStateResourcePath($this->getStateResourcePath());
-        }
-        
-        return $this->applicationStateService;
     }
-    
-
-    /**
-     * 
-     * @return string
-     */
-    private function getStateResourcePath() {
-        return $this->getContainer()->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config') . '/state-' . $this->getContainer()->get('kernel')->getEnvironment();
-    }    
 }

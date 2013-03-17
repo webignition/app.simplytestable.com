@@ -56,7 +56,7 @@ abstract class BaseCommand extends ContainerAwareCommand {
      * @return string
      */
     private function getStateResourcePath() {
-        return $this->getContainer()->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config') . '/state-' . $this->getContainer()->get('kernel')->getEnvironment();
+        return $this->getContainer()->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config/state/') . $this->getContainer()->get('kernel')->getEnvironment();
     }    
     
 }
