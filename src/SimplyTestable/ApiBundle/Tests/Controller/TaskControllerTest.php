@@ -60,7 +60,7 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
         $this->assertEquals(503, $response->getStatusCode());       
     }
     
-    public function testCompleteActionForNonExistentTaskReturns404() {
+    public function testCompleteActionForNonExistentTaskReturns410() {
         $this->removeAllTasks();
         $this->createPublicUserIfMissing();
         
@@ -73,7 +73,7 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
             'warningCount' => 0
         ))->completeAction('http://hydrogen.worker.simplytestable.com', 1);
         
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals(410, $response->getStatusCode());
     }    
     
 }
