@@ -47,7 +47,7 @@ class TaskController extends ApiController
         $task = $this->getTaskService()->getByWorkerAndRemoteId($this->getWorker(), $remote_task_id);
         
         if (is_null($task)) {
-            return $this->sendFailureResponse();
+            return $this->sendNotFoundResponse();
         }
         
         if ($this->getTaskService()->isAwaitingCancellation($task)) {
