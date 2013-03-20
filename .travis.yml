@@ -9,7 +9,7 @@ before_script:
   #- printf "\n\n\n\n" | pecl -q install pecl_http  
   - wget http://pecl.php.net/get/pecl_http-1.7.5.tgz
   - tar -zxf pecl_http-1.7.5.tgz
-  - sh -c "cd pecl_http-1.7.5 && phpize && ./configure && make --quiet && sudo make --quiet install"
+  - sh -c "cd pecl_http-1.7.5 && phpize && ./configure --quiet && make --quiet && sudo make --quiet install"
   #- echo "memcache.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s/.*:\s*//"`
   - echo "extension=http.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s/.*:\s*//"`  
   
