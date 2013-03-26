@@ -166,6 +166,24 @@ class JobRepository extends EntityRepository
         }
         
         return $taskIds;
+    }
+    
+    
+    /**
+     *
+     * @param State $state
+     * @return int 
+     */
+    public function getCountByState(State $state) {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('COUNT(Job.id)');     
+        $queryBuilder->where('Job.state = :State');
+
+        $queryBuilder->setParameter('State', $state);                
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return (int)$result[0][1];
     }    
     
     

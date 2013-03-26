@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use SimplyTestable\ApiBundle\Services\WorkerService;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerRequestActivationService;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -28,13 +29,14 @@ class StatusController extends ApiController
                 'hostname' => $worker->getHostname(),
                 'state' => $worker->getPublicSerializedState()
             );
-        }
+        }                
         
         $responseData = array(
             'state' => $this->getApplicationStateService()->getState(),
             'workers' => $workerSummary,
             'version' => $this->getLatestGitHash(),
-            'task_throughput_per_minute' => $this->getTaskService()->getEntityRepository()->getThroughputSince(new \DateTime('-1 minute'))
+            'task_throughput_per_minute' => $this->getTaskService()->getEntityRepository()->getThroughputSince(new \DateTime('-1 minute')),
+            'in_progress_job_count' => $this->getJobService()->getEntityRepository()->getCountByState($this->getJobService()->getInProgressState())
         );
         
         return $this->sendResponse($responseData);        
@@ -61,7 +63,13 @@ class StatusController extends ApiController
         return $this->container->get('simplytestable.services.taskService');
     }    
     
-    
+    /**
+     *
+     * @return JobService
+     */
+    private function getJobService() {
+        return $this->container->get('simplytestable.services.jobService');
+    }        
 
 
 }
