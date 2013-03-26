@@ -283,5 +283,23 @@ class TaskRepository extends EntityRepository
         }
         
         return $ids;        
-    }    
+    } 
+    
+    
+    /**
+     * 
+     * @param \DateTime $sinceDatetime
+     * @return int
+     */
+    public function getThroughputSince(\DateTime $sinceDatetime) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->join('Task.timePeriod', 'TimePeriod');
+        $queryBuilder->select('COUNT(Task.id)');        
+        $queryBuilder->where('TimePeriod.endDateTime > :SinceDateTime');
+        $queryBuilder->setParameter('SinceDateTime', $sinceDatetime);
+        
+        $result = $queryBuilder->getQuery()->getResult(); 
+        
+        return (int)$result[0][1];       
+    }
 }
