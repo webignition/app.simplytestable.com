@@ -7,6 +7,13 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 /**
  * 
  * @ORM\Entity
+ * @ORM\Table(
+ *     name="TimePeriod",
+ *     indexes={
+ *         @ORM\Index(name="start_idx", columns={"startDateTime"}),
+ *         @ORM\Index(name="end_idx", columns={"endDateTime"}),
+ *     }
+ * )
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class TimePeriod
