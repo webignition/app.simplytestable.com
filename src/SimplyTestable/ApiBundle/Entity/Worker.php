@@ -64,7 +64,7 @@ class Worker
      * @return string
      */
     public function getPublicSerializedState() {
-        return str_replace('job-', '', (string)$this->getState());
+        return str_replace('worker-', '', (string)$this->getState());
     } 
     
     
