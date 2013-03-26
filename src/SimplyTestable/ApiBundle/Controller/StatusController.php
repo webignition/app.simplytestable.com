@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use SimplyTestable\ApiBundle\Services\WorkerService;
+use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerRequestActivationService;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,7 +19,7 @@ class StatusController extends ApiController
     
     
     public function indexAction()
-    {     
+    {        
         $workers = $this->getWorkerService()->getEntityRepository()->findAll();
         
         $workerSummary = array();
@@ -32,7 +33,8 @@ class StatusController extends ApiController
         $responseData = array(
             'state' => $this->getApplicationStateService()->getState(),
             'workers' => $workerSummary,
-            'version' => $this->getLatestGitHash()
+            'version' => $this->getLatestGitHash(),
+            'task_throughput_per_minute' => $this->getTaskService()->getEntityRepository()->getThroughputSince(new \DateTime('-1 minute'))
         );
         
         return $this->sendResponse($responseData);        
@@ -50,6 +52,14 @@ class StatusController extends ApiController
     private function getWorkerService() {
         return $this->container->get('simplytestable.services.workerservice');
     }
+    
+    /**
+     *
+     * @return TaskService
+     */
+    private function getTaskService() {
+        return $this->container->get('simplytestable.services.taskService');
+    }    
     
     
 
