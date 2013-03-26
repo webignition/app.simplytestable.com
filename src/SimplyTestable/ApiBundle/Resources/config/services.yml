@@ -77,7 +77,6 @@ services:
   simplytestable.services.workertaskservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
     arguments: 
-        entityManager: "@doctrine.orm.entity_manager"
         logger: "@logger"
         workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
@@ -88,7 +87,6 @@ services:
   simplytestable.services.workertaskassignmentservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
     arguments: 
-        entityManager: "@doctrine.orm.entity_manager"
         logger: "@logger"
         workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
@@ -99,7 +97,6 @@ services:
   simplytestable.services.workertaskcancellationservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
     arguments: 
-        entityManager: "@doctrine.orm.entity_manager"
         logger: "@logger"
         workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"

@@ -3,32 +3,21 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Worker;
-use SimplyTestable\ApiBundle\Entity\WorkerTaskAssignment;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 
 
-class WorkerTaskAssignmentService extends WorkerTaskService {
-    
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WorkerTaskAssignment';    
+class WorkerTaskAssignmentService extends WorkerTaskService {    
+  
     const ASSIGN_COLLECTION_OK_STATUS_CODE = 0;
     const ASSIGN_COLLECTION_NO_WORKERS_STATUS_CODE = 1;
     const ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE = 2;
     
-    /**
-     *
-     * @return string
-     */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
-    }
-    
     
     /**
      * Assign a task to a to-be-chosen worker.
-     * Returns a WorkerTaskAssignment object on success or false on failure.
      * 
      * @param Task $task
      * @param array $workers
@@ -65,9 +54,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                 
                 $this->taskService->persistAndFlush($task);
                 
-                $this->logger->info("WorkerTaskAssignmentService::assign: Succeeded with worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");                    
-                
-                //$this->update($worker, $task);  
+                $this->logger->info("WorkerTaskAssignmentService::assign: Succeeded with worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");
                 return 0;
             }         
         }
@@ -118,82 +105,19 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                         $task,
                         $worker,
                         $task->getRemoteId()
-                    );                    
+                    );
 
-                    $this->getEntityManager()->persist($task);
+                    $this->taskService->getEntityManager()->persist($task);
                 }
 
-                //$this->update($worker, $task);
-                $this->getEntityManager()->flush();
+                $this->taskService->getEntityManager()->flush();
 
                 return self::ASSIGN_COLLECTION_OK_STATUS_CODE;
             }     
         }
         
         return self::ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE;          
-     }
-     
-     
-     /**
-      * 
-      * @param array $tasks
-      * @return array
-      */
-     private function getQueuedTasksFromTaskCollection($tasks) {
-        foreach ($tasks as $index => $task) {
-            /* @var $task Task */
-            if (!$this->taskService->isQueued($task) && !$this->taskService->isQueuedForAssignment($task)) {
-                unset($tasks[$index]);
-            }
-        } 
-        
-        return $tasks;
-     }
-    
-    
-    /**
-     *
-     * @param Worker $worker
-     * @param Task $task
-     * @return WorkerTaskAssignment
-     */
-//    private function update(Worker $worker, Task $task) {
-//        if ($this->has($worker)) {
-//            $workerTaskAssignment = $this->fetch($worker);
-//        } else {
-//            $workerTaskAssignment = new WorkerTaskAssignment();
-//            $workerTaskAssignment->setWorker($worker);
-//        }
-//        
-//        $workerTaskAssignment->setTask($task);
-//        $workerTaskAssignment->setDateTime(new \DateTime());
-//
-//        $this->persistAndFlush($workerTaskAssignment);        
-//        return $workerTaskAssignment;
-//    }
-    
-    
-    /**
-     *
-     * @param Worker $worker
-     * @return boolean
-     */
-    private function has(Worker $worker) {
-        return !is_null($this->fetch($worker));
-    }
-    
-    
-    /**
-     *
-     * @param Worker $worker
-     * @return WorkerTaskAssignment
-     */
-    private function fetch(Worker $worker) {
-        return $this->getEntityRepository()->findOneBy(array(
-            'worker' => $worker
-        ));        
-    }
-    
+     }    
     
     
     /**
@@ -317,85 +241,5 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                 $task->setRemoteId($taskObject->id);
             }
         }
-    }
-    
-    
-//    /**
-//     * Get a collection of workers to which a task could be assigned in no 
-//     * particular order
-//     * 
-//     * @return array  
-//     */
-//    private function getWorkerSelection() {
-//        $workers = $this->workerService->getEntityRepository()->findAll();
-//        $selectedWorkers = array();        
-//        
-//        foreach ($workers as $worker) {
-//            /* @var $workerTaskAssignment WorkerTaskAssignment */
-//            if ($this->workerService->isActive($worker)) {
-//                $selectedWorkers[] = $worker;
-//            }            
-//        }
-//        
-//        return $selectedWorkers;
-//    } 
-    
-    
-    private function getWorkersNeverAssignedTasks() {
-        $workerTaskAssignments = $this->getEntityRepository()->findAllOrderedByDateTime();
-        if (count($workerTaskAssignments) === 0) {
-            return $this->workerService->getEntityRepository()->findAll();
-        }
-        
-        $selectedWorkers = array();        
-        $allWorkers = $this->workerService->getEntityRepository()->findAll();
-        
-        foreach ($allWorkers as $worker) {
-            /* @var $worker Worker */
-            if (!$this->hasWorkerEverBeenAssignedATask($worker)) {
-                $selectedWorkers[] = $worker;
-            }
-        }
-        
-        return $selectedWorkers;        
-    }
-    
-    
-    /**
-     *
-     * @param Worker $worker
-     * @return boolean 
-     */
-    private function hasWorkerEverBeenAssignedATask(Worker $worker) {
-        $workerTaskAssignments = $this->getEntityRepository()->findAllOrderedByDateTime();
-        foreach ($workerTaskAssignments as $workerTaskAssignment) {
-            /* @var $workerTaskAssignment WorkerTaskAssignment */
-            if ($workerTaskAssignment->getWorker()->equals($worker)) {
-                return true;
-            }
-        }        
-        
-        return false;
-    }
-
-    
-    /**
-     *
-     * @param WorkerTaskAssignment $workerTaskAssignment
-     * @return WorkerTaskAssignment
-     */
-    public function persistAndFlush(WorkerTaskAssignment $workerTaskAssignment) {
-        $this->getEntityManager()->persist($workerTaskAssignment);
-        $this->getEntityManager()->flush();
-        return $workerTaskAssignment;
-    }
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\WorkerTaskAssignmentRepository
-     */
-    public function getEntityRepository() {
-        return parent::getEntityRepository();
     }
 }

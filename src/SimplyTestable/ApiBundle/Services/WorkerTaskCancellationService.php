@@ -12,16 +12,6 @@ use webignition\Http\Client\CurlException;
 
 class WorkerTaskCancellationService extends WorkerTaskService {
     
-    const ENTITY_NAME = '';    
-    
-    /**
-     *
-     * @return string
-     */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
-    }
-    
     
     /**
      * 
