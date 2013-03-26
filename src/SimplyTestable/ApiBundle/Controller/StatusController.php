@@ -18,14 +18,29 @@ class StatusController extends ApiController
     
     
     public function indexAction()
-    {      
+    {     
+        $workers = $this->getWorkerService()->getEntityRepository()->findAll();
+        
+        $workerSummary = array();
+        foreach ($workers as $worker) {
+            $workerSummary[] = array(
+                'hostname' => $worker->getHostname(),
+                'state' => $worker->getPublicSerializedState()
+            );
+        }
+        
         $responseData = array(
-            'status' => $this->getApplicationStateService()->getState(),
-            'workers' => $this->getWorkerService()->getEntityRepository()->findAll()
+            'state' => $this->getApplicationStateService()->getState(),
+            'workers' => $workerSummary,
+            'version' => $this->getLatestGitHash()
         );
         
-        return $this->sendResponse($responseData);
+        return $this->sendResponse($responseData);        
     }
+    
+    private function getLatestGitHash() {
+        return trim(shell_exec("git log | head -1 | awk {'print $2;'}"));
+    }    
     
     
     /**
