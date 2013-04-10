@@ -4,15 +4,7 @@ php:
   - 5.4
   - 5.5
   
-before_script:      
-  # Installing pecl_http module
-  #- printf "\n\n\n\n" | pecl -q install pecl_http  
-  - wget http://pecl.php.net/get/pecl_http-1.7.5.tgz
-  - tar -zxf pecl_http-1.7.5.tgz
-  - sh -c "cd pecl_http-1.7.5 && phpize && ./configure --quiet && make --quiet && sudo make --quiet install"
-  #- echo "memcache.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s/.*:\s*//"`
-  - echo "extension=http.so" >> `php --ini | grep "Loaded Configuration" | sed -e "s/.*:\s*//"`  
-  
+before_script:        
   # Install composer for dependency management
   - wget http://getcomposer.org/composer.phar 
   
@@ -34,9 +26,6 @@ before_script:
   
 script:
   - phpunit -c app
-  
-after_failure:
-  - cat /home/travis/build/webignition/worker.simplytestable.com/app/logs/test.log | grep "response fixture path"  
   
 notifications:
   irc:
