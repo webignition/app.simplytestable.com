@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "ce292b85ccb2825d064a7dd2e12a1aa6",
+    "hash": "db63bbf84db1ae8799ed01deb22f7edc",
     "packages": [
         {
             "name": "doctrine/common",
@@ -1793,7 +1793,7 @@
         },
         {
             "name": "webignition/http-client",
-            "version": "dev-master",
+            "version": "1.3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/http-client.git",
@@ -2225,16 +2225,16 @@
         },
         {
             "name": "webignition/web-page-model",
-            "version": "0.4.2",
+            "version": "0.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-model.git",
-                "reference": "0.4.2"
+                "reference": "0.5.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/web-page-model/archive/0.4.2.zip",
-                "reference": "0.4.2",
+                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/0.5.3",
+                "reference": "0.5.3",
                 "shasum": ""
             },
             "require": {
@@ -2264,7 +2264,7 @@
                 "model",
                 "webpage"
             ],
-            "time": "2012-12-03 12:46:24"
+            "time": "2013-03-21 15:34:22"
         },
         {
             "name": "webignition/web-resource-model",
@@ -2313,18 +2313,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "719b4a843d8626e0e8cb0612fcde0d6bb0d607b5"
+                "reference": "c2bc107bd6d1e3aaf55c5ebcd223770bde272a2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/website-rss-feed-finder/archive/719b4a843d8626e0e8cb0612fcde0d6bb0d607b5.zip",
-                "reference": "719b4a843d8626e0e8cb0612fcde0d6bb0d607b5",
+                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/c2bc107bd6d1e3aaf55c5ebcd223770bde272a2a",
+                "reference": "c2bc107bd6d1e3aaf55c5ebcd223770bde272a2a",
                 "shasum": ""
             },
             "require": {
+                "guzzle/guzzle": "3.3.1",
                 "php": ">=5.3.0",
-                "webignition/http-client": "dev-master",
                 "webignition/internet-media-type": ">=0.1,<2.0",
+                "webignition/url": ">=1.7.2,<2.0",
                 "webignition/web-page-model": ">=0.1,<2.0"
             },
             "type": "library",
@@ -2348,7 +2349,7 @@
             "keywords": [
                 "rss"
             ],
-            "time": "2013-01-10 17:45:06"
+            "time": "2013-04-10 11:42:27"
         },
         {
             "name": "webignition/website-sitemap-finder",
