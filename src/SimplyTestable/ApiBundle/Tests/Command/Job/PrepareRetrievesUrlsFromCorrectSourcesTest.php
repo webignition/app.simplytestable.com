@@ -74,6 +74,15 @@ class PrepareRetrievesUrlsFromCorrectSourcesTest extends BaseSimplyTestableTestC
         );
     }    
     
+
+    public function testHasRobotsTxtNoSitemapGetsNoRssNoAtomGetsNoUrls() {
+        $this->prepareJobAndPostAssertions(
+            'http://example.com/',
+            0,
+            'no-sitemap',
+            array()
+        );
+    }       
     
     private function prepareJobAndPostAssertions($canonicalUrl, $expectedUrlCount, $expectedJobEndState, $expectedTaskSetUrls) {
         $expectedTaskCount = self::EXPECTED_TASK_TYPE_COUNT * $expectedUrlCount;        
