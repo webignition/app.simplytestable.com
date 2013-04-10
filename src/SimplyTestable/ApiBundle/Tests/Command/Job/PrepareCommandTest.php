@@ -6,7 +6,8 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class PrepareCommandTest extends BaseSimplyTestableTestCase {    
     
-    public static function setUpBeforeClass() {
+    public function setUp() {
+        parent::setUp();
         self::setupDatabase();
     }
     
@@ -129,6 +130,34 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals($taskTypeCount, $response->task_count_by_state->queued);
         
         return;
+    }
+    
+    
+    public function testNoRobotsTxtNoSitemapXmlNoRssNoAtomGetsNoUrls() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $canonicalUrl = 'http://example.com/';        
+        
+        $jobCreateResponse = $this->createJob($canonicalUrl);        
+        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
+        
+        $this->assertInternalType('integer', $job_id);
+        $this->assertGreaterThan(0, $job_id);
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job_id =>  true
+        )));
+        
+        $this->getJobService()->getEntityRepository()->clear();
+        
+        $jobObject = $this->fetchJob($canonicalUrl, $job_id);
+        $response = json_decode($jobObject->getContent());
+        
+        $this->assertEquals('no-sitemap', $response->state);
+        
+        $this->assertEquals(3, count($response->task_types));
+        $this->assertEquals(0, $response->url_count);
+        $this->assertEquals(0, $response->task_count);        
     }
 
 }

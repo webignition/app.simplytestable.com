@@ -219,33 +219,27 @@ class WebSiteService extends EntityService {
      * @param WebSite $website
      * @return array 
      */    
-    private function getUrlsFromRssFeed(WebSite $website) { 
-        $this->getHttpClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
+    private function getUrlsFromRssFeed(WebSite $website) {
+        $this->getHttpClientService()->get()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
         
         $feedFinder = new WebsiteRssFeedFinder();
         $feedFinder->setRootUrl($website->getCanonicalUrl());               
-        $feedFinder->setHttpClient($this->getHttpClient());
+        $feedFinder->setHttpClient($this->httpClientService->get());
 
-        try {
-            $feedUrls = $feedFinder->getRssFeedUrls();       
-            if (is_null($feedUrls)) {
-                return array();
-            }
 
-            $this->getHttpClient()->clearUserAgent();
-            $urlsFromFeed = array();
-            
-            foreach ($feedUrls as $feedUrl) {
-                $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
-            }
-            
-            return $urlsFromFeed;
-        } catch (\webignition\Http\Client\CurlException $curlException) {            
-            $this->getHttpClient()->clearUserAgent();
+        $feedUrls = $feedFinder->getRssFeedUrls();       
+        if (is_null($feedUrls)) {
             return array();
-        }            
-        
-        return array();
+        }
+
+        $this->getHttpClient()->clearUserAgent();
+        $urlsFromFeed = array();
+
+        foreach ($feedUrls as $feedUrl) {
+            $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
+        }
+
+        return is_null($urlsFromFeed) ? array() : $urlsFromFeed;
     }
 
     
@@ -255,30 +249,25 @@ class WebSiteService extends EntityService {
      * @return array 
      */
     private function getUrlsFromAtomFeed(WebSite $website) {        
+        $this->getHttpClientService()->get()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
+        
         $feedFinder = new WebsiteRssFeedFinder();
         $feedFinder->setRootUrl($website->getCanonicalUrl());
-        $feedFinder->setHttpClient($this->getHttpClient());
-        
-        try {
-            $feedUrls = $feedFinder->getAtomFeedUrls();       
-            if (is_null($feedUrls)) {
-                return array();
-            }
+        $feedFinder->setHttpClient($this->httpClientService->get());        
 
-            $this->getHttpClient()->clearUserAgent();
-            $urlsFromFeed = array();
-            
-            foreach ($feedUrls as $feedUrl) {
-                $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
-            }
-            
-            return $urlsFromFeed;
-        } catch (\webignition\Http\Client\CurlException $curlException) {            
-            $this->getHttpClient()->clearUserAgent();
+        $feedUrls = $feedFinder->getAtomFeedUrls();       
+        if (is_null($feedUrls)) {
             return array();
-        }            
-        
-        return array();
+        }
+
+        $this->getHttpClient()->clearUserAgent();
+        $urlsFromFeed = array();
+
+        foreach ($feedUrls as $feedUrl) {
+            $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
+        }
+            
+        return is_null($urlsFromFeed) ? array() : $urlsFromFeed;
     }
     
     
