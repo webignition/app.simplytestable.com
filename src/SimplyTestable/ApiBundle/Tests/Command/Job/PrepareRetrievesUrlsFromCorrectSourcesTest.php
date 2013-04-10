@@ -82,7 +82,18 @@ class PrepareRetrievesUrlsFromCorrectSourcesTest extends BaseSimplyTestableTestC
             'no-sitemap',
             array()
         );
-    }       
+    } 
+    
+    public function testHasRobotsTxtNoSitemapGetsNoRssHasAtomGetsAtomUrls() {
+        $this->prepareJobAndPostAssertions(
+            'http://example.com/',
+            1,
+            'queued',
+            array(
+                'http://example.com/2003/12/13/atom03'
+            )
+        );
+    }     
     
     private function prepareJobAndPostAssertions($canonicalUrl, $expectedUrlCount, $expectedJobEndState, $expectedTaskSetUrls) {
         $expectedTaskCount = self::EXPECTED_TASK_TYPE_COUNT * $expectedUrlCount;        
