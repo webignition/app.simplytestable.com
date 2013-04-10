@@ -292,9 +292,14 @@ class WebSiteService extends EntityService {
      * @param string $feedUrl
      * @return array
      */
-    private function getUrlsFromNewsFeed($feedUrl) {                
+    private function getUrlsFromNewsFeed($feedUrl) {
         $request = $this->getHttpClientService()->getRequest($feedUrl);
-        $response = $request->send();
+        
+        try {
+            $response = $request->send();
+        } catch (\Guzzle\Http\Exception\RequestException $requestException) {
+            return array();
+        }
       
         $simplepie = new \SimplePie();
         $simplepie->set_raw_data($response->getBody(true));

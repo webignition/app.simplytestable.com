@@ -1,0 +1,14 @@
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=UTF-8
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Example</title>    
+    <link rel="alternate" type="application/rss+xml" title="Title Example" href="http://example.com/rss.xml" />
+  </head>
+  <body>
+    <!-- page content -->
+  </body>
+</html>
