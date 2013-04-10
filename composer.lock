@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "db63bbf84db1ae8799ed01deb22f7edc",
+    "hash": "ce292b85ccb2825d064a7dd2e12a1aa6",
     "packages": [
         {
             "name": "doctrine/common",
@@ -1790,50 +1790,6 @@
                 "schema"
             ],
             "time": "2012-07-14 13:29:54"
-        },
-        {
-            "name": "webignition/http-client",
-            "version": "1.3.2.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webignition/http-client.git",
-                "reference": "1.3.2.1"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webignition/http-client/zipball/1.3.2.1",
-                "reference": "1.3.2.1",
-                "shasum": ""
-            },
-            "require": {
-                "ext-http": "*",
-                "php": ">=5.3.0",
-                "webignition/absolute-url-deriver": ">=1.1",
-                "webignition/url": ">1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jon Cram",
-                    "email": "jon@webignition.net"
-                }
-            ],
-            "description": "HTTP Client with additional reliability over regular HTTP request sending to compensate for timeouts and redirects",
-            "homepage": "https://github.com/webignition/http-client",
-            "keywords": [
-                "client",
-                "http"
-            ],
-            "time": "2013-03-31 12:12:36"
         },
         {
             "name": "webignition/internet-media-type",
