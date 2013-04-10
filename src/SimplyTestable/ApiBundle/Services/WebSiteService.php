@@ -237,7 +237,6 @@ class WebSiteService extends EntityService {
             return array();
         }
 
-        $this->getHttpClient()->clearUserAgent();
         $urlsFromFeed = array();
 
         foreach ($feedUrls as $feedUrl) {
