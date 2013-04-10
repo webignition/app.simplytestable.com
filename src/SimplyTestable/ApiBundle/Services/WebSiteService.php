@@ -18,6 +18,13 @@ class WebSiteService extends EntityService {
      */
     private $httpClientService;
     
+    
+    /**
+     *
+     * @var \webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder
+     */
+    private $websiteRssFeedFinder;
+    
     /**
      *
      * @param EntityManager $entityManager
@@ -126,7 +133,7 @@ class WebSiteService extends EntityService {
      * @param array $urls
      * @return array
      */
-    private function filterUrlsToWebsiteHost(WebSite $website, $urls) {
+    private function filterUrlsToWebsiteHost(WebSite $website, $urls) {        
         $websiteUrl = new \webignition\Url\Url($website->getCanonicalUrl());        
         $filteredUrls = array();
         
@@ -143,7 +150,9 @@ class WebSiteService extends EntityService {
     }
     
     
-    private function collectUrls(WebSite $website) {        
+    private function collectUrls(WebSite $website) {   
+        $this->websiteRssFeedFinder = null;
+        
         $urlsFromSitemap = $this->getUrlsFromSitemap($website);                
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
@@ -152,9 +161,9 @@ class WebSiteService extends EntityService {
         $urlsFromRssFeed = $this->getUrlsFromRssFeed($website);        
         if (count($urlsFromRssFeed)) {
             return $urlsFromRssFeed;
-        }       
+        }
         
-        $urlsFromAtomFeed = $this->getUrlsFromAtomFeed($website);        
+        $urlsFromAtomFeed = $this->getUrlsFromAtomFeed($website);                
         if (count($urlsFromAtomFeed)) {
             return $urlsFromAtomFeed;
         }           
@@ -220,12 +229,8 @@ class WebSiteService extends EntityService {
      * @return array 
      */    
     private function getUrlsFromRssFeed(WebSite $website) {
-        $this->getHttpClientService()->get()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
-        
-        $feedFinder = new WebsiteRssFeedFinder();
-        $feedFinder->setRootUrl($website->getCanonicalUrl());               
-        $feedFinder->setHttpClient($this->httpClientService->get());
-
+        $feedFinder = $this->getWebsiteRssFeedFinder($website);
+        $feedFinder->getHttpClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
 
         $feedUrls = $feedFinder->getRssFeedUrls();       
         if (is_null($feedUrls)) {
@@ -241,6 +246,17 @@ class WebSiteService extends EntityService {
 
         return is_null($urlsFromFeed) ? array() : $urlsFromFeed;
     }
+    
+    
+    private function getWebsiteRssFeedFinder(WebSite $website) {
+        if (is_null($this->websiteRssFeedFinder)) {
+            $this->websiteRssFeedFinder = new WebsiteRssFeedFinder();
+            $this->websiteRssFeedFinder->setRootUrl($website->getCanonicalUrl());
+            $this->websiteRssFeedFinder->setHttpClient($this->httpClientService->get());
+        }
+        
+        return $this->websiteRssFeedFinder;
+    }
 
     
     /**
@@ -248,23 +264,24 @@ class WebSiteService extends EntityService {
      * @param WebSite $website
      * @return array 
      */
-    private function getUrlsFromAtomFeed(WebSite $website) {        
-        $this->getHttpClientService()->get()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
-        
-        $feedFinder = new WebsiteRssFeedFinder();
-        $feedFinder->setRootUrl($website->getCanonicalUrl());
-        $feedFinder->setHttpClient($this->httpClientService->get());        
+    private function getUrlsFromAtomFeed(WebSite $website) {
+        $feedFinder = $this->getWebsiteRssFeedFinder($website);
+        $feedFinder->getHttpClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');      
 
-        $feedUrls = $feedFinder->getAtomFeedUrls();       
+        $feedUrls = $feedFinder->getAtomFeedUrls();                
         if (is_null($feedUrls)) {
             return array();
         }
 
-        $this->getHttpClient()->clearUserAgent();
         $urlsFromFeed = array();
-
-        foreach ($feedUrls as $feedUrl) {
-            $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
+        
+        try {
+            foreach ($feedUrls as $feedUrl) {
+                $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
+            }            
+        } catch (\Exception $e) {
+            var_dump($e);
+            exit();
         }
             
         return is_null($urlsFromFeed) ? array() : $urlsFromFeed;
@@ -276,13 +293,15 @@ class WebSiteService extends EntityService {
      * @param string $feedUrl
      * @return array
      */
-    private function getUrlsFromNewsFeed($feedUrl) {        
+    private function getUrlsFromNewsFeed($feedUrl) {                
+        $request = $this->getHttpClientService()->getRequest($feedUrl);
+        $response = $request->send();
+      
         $simplepie = new \SimplePie();
-        $simplepie->set_feed_url($feedUrl);        
-        $simplepie->enable_cache(false);
-        @$simplepie->init();        
+        $simplepie->set_raw_data($response->getBody(true));
+        @$simplepie->init();
         
-        $items = $simplepie->get_items();
+        $items = $simplepie->get_items();      
         
         $urls = array();        
         foreach ($items as $item) {            
