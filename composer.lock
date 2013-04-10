@@ -2313,12 +2313,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "c2bc107bd6d1e3aaf55c5ebcd223770bde272a2a"
+                "reference": "f1864b3cb7cacc8e85f09dbacf516318a032c2a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/c2bc107bd6d1e3aaf55c5ebcd223770bde272a2a",
-                "reference": "c2bc107bd6d1e3aaf55c5ebcd223770bde272a2a",
+                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/f1864b3cb7cacc8e85f09dbacf516318a032c2a6",
+                "reference": "f1864b3cb7cacc8e85f09dbacf516318a032c2a6",
                 "shasum": ""
             },
             "require": {
@@ -2349,7 +2349,7 @@
             "keywords": [
                 "rss"
             ],
-            "time": "2013-04-10 11:42:27"
+            "time": "2013-04-10 13:49:38"
         },
         {
             "name": "webignition/website-sitemap-finder",
