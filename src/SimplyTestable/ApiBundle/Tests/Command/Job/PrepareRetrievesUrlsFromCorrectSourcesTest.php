@@ -117,7 +117,37 @@ class PrepareRetrievesUrlsFromCorrectSourcesTest extends BaseSimplyTestableTestC
                 'http://www.example.com/?id=how'
             )
         );
+    }  
+    
+    
+    public function testHasRobotsTxtHasSitemapTxtGetsSitemapTxtUrls() {
+        $this->prepareJobAndPostAssertions(
+            'http://example.com/',
+            3,
+            'queued',
+            array(
+                'http://www.example.com/text/one/',
+                'http://www.example.com/text/two/',
+                'http://www.example.com/text/three/'
+            )
+        );
     }    
+    
+    public function testHasRobotsTxtHasSitemapXmlHasSitemapTxtGetsSitemapXmlAndSitemapTxtUrls() {
+        $this->prepareJobAndPostAssertions(
+            'http://example.com/',
+            6,
+            'queued',
+            array(
+                'http://www.example.com/?id=who',
+                'http://www.example.com/?id=what',
+                'http://www.example.com/?id=how',             
+                'http://www.example.com/text/one/',
+                'http://www.example.com/text/two/',
+                'http://www.example.com/text/three/'
+            )
+        );
+    }      
     
     private function prepareJobAndPostAssertions($canonicalUrl, $expectedUrlCount, $expectedJobEndState, $expectedTaskSetUrls) {
         $expectedTaskCount = self::EXPECTED_TASK_TYPE_COUNT * $expectedUrlCount;        
