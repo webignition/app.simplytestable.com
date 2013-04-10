@@ -93,7 +93,31 @@ class PrepareRetrievesUrlsFromCorrectSourcesTest extends BaseSimplyTestableTestC
                 'http://example.com/2003/12/13/atom03'
             )
         );
-    }     
+    }    
+    
+    public function testHasRobotsTxtNoSitemapGetsHasRssNoAtomGetsRssUrls() {
+        $this->prepareJobAndPostAssertions(
+            'http://example.com/',
+            1,
+            'queued',
+            array(
+                'http://example.com/url/'
+            )
+        ); 
+    }    
+    
+    public function testHasRobotsTxtHasSitemapXmlGetsSitemapXmlUrls() {
+        $this->prepareJobAndPostAssertions(
+            'http://example.com/',
+            3,
+            'queued',
+            array(
+                'http://www.example.com/?id=who',
+                'http://www.example.com/?id=what',
+                'http://www.example.com/?id=how'
+            )
+        );
+    }    
     
     private function prepareJobAndPostAssertions($canonicalUrl, $expectedUrlCount, $expectedJobEndState, $expectedTaskSetUrls) {
         $expectedTaskCount = self::EXPECTED_TASK_TYPE_COUNT * $expectedUrlCount;        
