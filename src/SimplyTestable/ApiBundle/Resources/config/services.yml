@@ -45,7 +45,7 @@ services:
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
         workeractivationRequestService: "@simplytestable.services.workeractivationrequestservice"
-        httpClient: "@simplytestable.services.httpClient"
+        httpClientService: "@simplytestable.services.httpClientService"
         stateService: "@simplytestable.services.stateservice"
     
   simplytestable.controller.action_listener:
@@ -61,7 +61,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         logger: "@logger"
         stateService: "@simplytestable.services.stateservice"
-        httpClient: "@simplytestable.services.httpClient"
+        httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
         
   simplytestable.services.urlService:
@@ -80,7 +80,7 @@ services:
         logger: "@logger"
         workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
-        httpClient: "@simplytestable.services.httpClient"
+        httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"      
         taskService: "@simplytestable.services.taskservice"      
       
@@ -90,7 +90,7 @@ services:
         logger: "@logger"
         workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
-        httpClient: "@simplytestable.services.httpClient"
+        httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"      
         taskService: "@simplytestable.services.taskservice"
         
@@ -100,7 +100,7 @@ services:
         logger: "@logger"
         workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
-        httpClient: "@simplytestable.services.httpClient"
+        httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"      
         taskService: "@simplytestable.services.taskservice"
         

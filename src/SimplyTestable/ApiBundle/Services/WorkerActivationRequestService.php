@@ -27,9 +27,9 @@ class WorkerActivationRequestService extends EntityService {
     
     /**
      *
-     * @var \webignition\Http\Client\Client
+     * @var \SimplyTestable\ApiBundle\Services\HttpClientService
      */
-    private $httpClient;  
+    private $httpClientService;
     
     /**
      *
@@ -42,21 +42,21 @@ class WorkerActivationRequestService extends EntityService {
      * @param EntityManager $entityManager
      * @param Logger $logger
      * @param \SimplyTestable\ApiBundle\Services\StateService $stateService 
-     * @param \webignition\Http\Client\Client $httpClient 
+     * @param \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService 
      * @param \SimplyTestable\ApiBundle\Services\UrlService $urlService
      */
     public function __construct(
             EntityManager $entityManager,
             Logger $logger,
             \SimplyTestable\ApiBundle\Services\StateService $stateService,
-            \webignition\Http\Client\Client $httpClient,
+            \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService,
             \SimplyTestable\ApiBundle\Services\UrlService $urlService)            
     {
         parent::__construct($entityManager);        
         
         $this->logger = $logger;
         $this->stateService = $stateService;
-        $this->httpClient = $httpClient;
+        $this->httpClientService = $httpClientService; 
         $this->urlService = $urlService;
     }  
     

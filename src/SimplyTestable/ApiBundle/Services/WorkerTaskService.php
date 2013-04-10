@@ -31,9 +31,9 @@ abstract class WorkerTaskService {
     
     /**
      *
-     * @var \webignition\Http\Client\Client
+     * @var \SimplyTestable\ApiBundle\Services\HttpClientService
      */
-    protected $httpClient;  
+    private $httpClientService;
     
     /**
      *
@@ -53,7 +53,7 @@ abstract class WorkerTaskService {
      * @param Logger $logger
      * @param \SimplyTestable\ApiBundle\Services\WorkerService $workerService 
      * @param \SimplyTestable\ApiBundle\Services\StateService $stateService 
-     * @param \webignition\Http\Client\Client $httpClient 
+     * @param \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService
      * @param \SimplyTestable\ApiBundle\Services\UrlService $urlService
      * @param \SimplyTestable\ApiBundle\Services\TaskService $taskService
      */
@@ -61,14 +61,14 @@ abstract class WorkerTaskService {
             Logger $logger,
             \SimplyTestable\ApiBundle\Services\WorkerService $workerService,
             \SimplyTestable\ApiBundle\Services\StateService $stateService,
-            \webignition\Http\Client\Client $httpClient,
+            \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService,
             \SimplyTestable\ApiBundle\Services\UrlService $urlService,
             \SimplyTestable\ApiBundle\Services\TaskService $taskService)            
     {        
         $this->logger = $logger;
         $this->workerService = $workerService;
         $this->stateService = $stateService;
-        $this->httpClient = $httpClient;
+        $this->httpClientService = $httpClientService; 
         $this->urlService = $urlService;
         $this->taskService = $taskService;
     }
