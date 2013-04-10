@@ -17,7 +17,7 @@ class UserPasswordResetController extends UserController
         ));
         
         $this->setRequestTypes(array(
-            'resetPasswordAction' => HTTP_METH_POST
+            'resetPasswordAction' => \Guzzle\Http\Message\Request::POST
         ));        
     }    
     

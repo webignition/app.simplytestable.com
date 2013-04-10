@@ -82,7 +82,7 @@ class WorkerActivationRequestService extends EntityService {
         
         $verifyUrl = $this->urlService->prepare('http://' . $activationRequest->getWorker()->getHostname() . '/verify/');        
         
-        $httpRequest = new \HttpRequest($verifyUrl, HTTP_METH_POST);
+        $httpRequest = new \HttpRequest($verifyUrl, \Guzzle\Http\Message\Request::POST);
         $httpRequest->setPostFields(array(
             'hostname' => $activationRequest->getWorker()->getHostname(),
             'token' => $activationRequest->getToken()

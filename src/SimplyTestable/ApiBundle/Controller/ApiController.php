@@ -84,7 +84,7 @@ abstract class ApiController extends Controller
      */
     public function getArguments($methodName) {        
         if (is_null($this->arguments)) {                                    
-            if ($this->getRequestType($methodName) === HTTP_METH_POST) {                
+            if ($this->getRequestType($methodName) === \Guzzle\Http\Message\Request::GET) {                
                 $this->arguments = $this->get('request')->request;
             } else {
                 $this->arguments = $this->get('request')->query;
@@ -115,11 +115,11 @@ abstract class ApiController extends Controller
      */
     private function getRequestType($methodName) {
         if (!is_array($this->requestTypes)) {
-            return HTTP_METH_GET;
+            return \Guzzle\Http\Message\Request::GET;
         }
         
         if (!isset($this->requestTypes[$methodName])) {
-            return HTTP_METH_GET;
+            return \Guzzle\Http\Message\Request::GET;
         }
         
         return $this->requestTypes[$methodName];
@@ -199,11 +199,11 @@ abstract class ApiController extends Controller
     
     protected function getRequestValue($key, $httpMethod = null) {
         $availableHttpMethods = array(
-            HTTP_METH_GET,
-            HTTP_METH_POST
+            \Guzzle\Http\Message\Request::GET,
+            \Guzzle\Http\Message\Request::POST
         );
         
-        $defaultHttpMethod = HTTP_METH_GET;
+        $defaultHttpMethod = \Guzzle\Http\Message\Request::GET;
         $requestedHttpMethods = array();
         
         if (is_null($httpMethod)) {
@@ -232,8 +232,8 @@ abstract class ApiController extends Controller
      * @param int $httpMethod
      * @return type 
      */
-    protected function getRequestValues($httpMethod = HTTP_METH_GET) {
-        return ($httpMethod == HTTP_METH_POST) ? $this->container->get('request')->request : $this->container->get('request')->query;
+    protected function getRequestValues($httpMethod = \Guzzle\Http\Message\Request::GET) {
+        return ($httpMethod == \Guzzle\Http\Message\Request::POST) ? $this->container->get('request')->request : $this->container->get('request')->query;
     }
     
     

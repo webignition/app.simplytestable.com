@@ -17,7 +17,7 @@ class UserCreationController extends UserController
         ));
         
         $this->setRequestTypes(array(
-            'createAction' => HTTP_METH_POST
+            'createAction' => \Guzzle\Http\Message\Request::POST
         ));        
     }
     

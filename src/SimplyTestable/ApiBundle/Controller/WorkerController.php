@@ -24,7 +24,7 @@ class WorkerController extends ApiController
         ));
         
         $this->setRequestTypes(array(
-            'activateAction' => HTTP_METH_POST
+            'activateAction' => \Guzzle\Http\Message\Request::POST
         ));
     }
     

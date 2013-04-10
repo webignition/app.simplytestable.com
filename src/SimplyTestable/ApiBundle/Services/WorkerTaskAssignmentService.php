@@ -131,7 +131,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         
         $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/');
 
-        $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);
+        $httpRequest = new \HttpRequest($requestUrl, \Guzzle\Http\Message\Request::POST);
         
         $postFields = array(
             'url' => $task->getUrl(),
@@ -177,7 +177,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         
         $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection');        
 
-        $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);        
+        $httpRequest = new \HttpRequest($requestUrl, \Guzzle\Http\Message\Request::POST);        
         
         $requestData = array();
         foreach ($tasks as $task) {

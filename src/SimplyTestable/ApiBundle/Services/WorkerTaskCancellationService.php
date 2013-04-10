@@ -29,7 +29,7 @@ class WorkerTaskCancellationService extends WorkerTaskService {
         
         $requestUrl = $this->urlService->prepare('http://' . $task->getWorker()->getHostname() . '/task/cancel/');
 
-        $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);
+        $httpRequest = new \HttpRequest($requestUrl, \Guzzle\Http\Message\Request::POST);
         $httpRequest->setPostFields(array(
             'id' => $task->getRemoteId()
         ));
@@ -74,7 +74,7 @@ class WorkerTaskCancellationService extends WorkerTaskService {
         
         $requestUrl = $this->urlService->prepare('http://' . $tasks[0]->getWorker()->getHostname() . '/task/cancel/collection/');
 
-        $httpRequest = new \HttpRequest($requestUrl, HTTP_METH_POST);
+        $httpRequest = new \HttpRequest($requestUrl, \Guzzle\Http\Message\Request::POST);
         $httpRequest->setPostFields(array(
             'ids' => $remoteTaskIdsString
         ));

@@ -32,7 +32,7 @@ class TaskController extends ApiController
         ));
         
         $this->setRequestTypes(array(
-            'completeAction' => HTTP_METH_POST
+            'completeAction' => \Guzzle\Http\Message\Request::POST
         ));
     }    
     
