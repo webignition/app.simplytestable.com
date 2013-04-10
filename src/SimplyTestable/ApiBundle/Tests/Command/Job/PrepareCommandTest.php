@@ -6,6 +6,8 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class PrepareCommandTest extends BaseSimplyTestableTestCase {    
     
+    const EXPECTED_TASK_TYPE_COUNT = 3;
+    
     public function setUp() {
         parent::setUp();
         self::setupDatabase();
@@ -131,100 +133,5 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         
         return;
     }
-    
-    
-    public function testNoRobotsTxtNoSitemapXmlNoRssNoAtomGetsNoUrls() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $canonicalUrl = 'http://example.com/';        
-        
-        $jobCreateResponse = $this->createJob($canonicalUrl);        
-        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
-        
-        $this->assertInternalType('integer', $job_id);
-        $this->assertGreaterThan(0, $job_id);
-        
-        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
-            $job_id =>  true
-        )));
-        
-        $this->getJobService()->getEntityRepository()->clear();
-        
-        $jobObject = $this->fetchJob($canonicalUrl, $job_id);
-        $response = json_decode($jobObject->getContent());
-        
-        $this->assertEquals('no-sitemap', $response->state);
-        
-        $this->assertEquals(3, count($response->task_types));
-        $this->assertEquals(0, $response->url_count);
-        $this->assertEquals(0, $response->task_count);        
-    }
-    
-    
-    public function testNoRobotsTxtNoSitemapXmlNoRssHasAtomGetsAtomUrls() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $canonicalUrl = 'http://example.com/';        
-        
-        $jobCreateResponse = $this->createJob($canonicalUrl);        
-        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
-        
-        $this->assertInternalType('integer', $job_id);
-        $this->assertGreaterThan(0, $job_id);
-        
-        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
-            $job_id =>  true
-        )));
-        
-        $this->getJobService()->getEntityRepository()->clear();
-        
-        $jobObject = $this->fetchJob($canonicalUrl, $job_id);
-        $response = json_decode($jobObject->getContent());
-        
-        $this->assertEquals('queued', $response->state);
-        
-        $this->assertEquals(3, count($response->task_types));
-        $this->assertEquals(1, $response->url_count);
-        $this->assertEquals(3, $response->task_count);  
-        
-        $job = $this->getJobService()->getById($job_id);
-        $tasks = $job->getTasks();
-        
-        $this->assertEquals(count($response->task_types), $tasks->count());
-        $this->assertEquals('http://example.com/2003/12/13/atom03', $tasks->first()->getUrl());
-    } 
-    
-    public function testNoRobotsTxtNoSitemapXmlHasRssNoAtomGetsRssUrls() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $canonicalUrl = 'http://example.com/';        
-        
-        $jobCreateResponse = $this->createJob($canonicalUrl);        
-        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
-        
-        $this->assertInternalType('integer', $job_id);
-        $this->assertGreaterThan(0, $job_id);
-        
-        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
-            $job_id =>  true
-        )));
-        
-        $this->getJobService()->getEntityRepository()->clear();
-        
-        $jobObject = $this->fetchJob($canonicalUrl, $job_id);
-        $response = json_decode($jobObject->getContent());
-        
-        $this->assertEquals('queued', $response->state);
-        
-        $this->assertEquals(3, count($response->task_types));
-        $this->assertEquals(1, $response->url_count);
-        $this->assertEquals(3, $response->task_count);        
-        
-        $job = $this->getJobService()->getById($job_id);
-        $tasks = $job->getTasks();
-        
-        $this->assertEquals(count($response->task_types), $tasks->count());
-        $this->assertEquals('http://example.com/url/', $tasks->first()->getUrl());
-    }     
 
 }
