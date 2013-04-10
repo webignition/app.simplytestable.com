@@ -32,7 +32,8 @@
         "webignition/internet-media-type":">=0.1,<2.0",
         "simplepie/simplepie":"*",
         "webignition/website-rss-feed-finder":"dev-master",
-        "winzou/console-bundle":"1.0.0"
+        "winzou/console-bundle":"1.0.0",
+        "guzzle/guzzle":"3.3.1"
     },
     "scripts": {
         "post-install-cmd": [
