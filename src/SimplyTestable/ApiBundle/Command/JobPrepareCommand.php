@@ -24,14 +24,7 @@ class JobPrepareCommand extends BaseCommand
      *
      * @var SimplyTestable\ApiBundle\Services\WebSiteService
      */
-    private $websiteService;
-    
-    /**
-     *
-     * @var string
-     */
-    private $httpFixturePath;
-    
+    private $websiteService;    
     
     /**
      *
@@ -45,7 +38,6 @@ class JobPrepareCommand extends BaseCommand
             ->setName('simplytestable:job:prepare')
             ->setDescription('Prepare a set of tasks for a given job')
             ->addArgument('id', InputArgument::REQUIRED, 'id of job to prepare')
-            ->addArgument('http-fixture-path', InputArgument::OPTIONAL, 'path to HTTP fixture data when testing')
         ;
     }
 
@@ -63,11 +55,6 @@ class JobPrepareCommand extends BaseCommand
         
         $this->getLogger()->info("simplytestable:job:prepare running for job [".$input->getArgument('id')."]");
         
-        if ($input->hasArgument('http-fixture-path') && $input->getArgument('http-fixture-path') != '') {
-            $this->getLogger()->debug("simplytestable:job:prepare: using fixure path [".$input->getArgument('http-fixture-path')."]");
-            $this->httpFixturePath = $input->getArgument('http-fixture-path');
-        }
-        
         $job = $this->getJobService()->getById((int)$input->getArgument('id'));
 
         if (!$this->getJobService()->isNew($job)) {
@@ -78,12 +65,17 @@ class JobPrepareCommand extends BaseCommand
         $job->setState($this->getJobService()->getPreparingState());         
         $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
         $entityManager->persist($job);
-        $entityManager->flush();        
+        $entityManager->flush();
         
-        if ($job->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {
+        if ($job->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {            
             $urls = array($job->getWebsite()->getCanonicalUrl());
-        } else {
-            $urls = $this->getWebsiteService()->getUrls($job->getWebsite());         
+        } else { 
+            try {
+                $urls = $this->getWebsiteService()->getUrls($job->getWebsite());         
+            } catch (\Exception $e) {
+                var_dump($e);
+                exit();
+            }
         }
         
         if ($urls === false || count($urls) == 0) {
@@ -243,15 +235,11 @@ class JobPrepareCommand extends BaseCommand
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\WebSiteService
+     * @return \SimplyTestable\ApiBundle\Services\WebSiteService
      */
     private function getWebsiteService() {
         if (is_null($this->websiteService)) {
             $this->websiteService = $this->getContainer()->get('simplytestable.services.websiteservice');
-            
-            if (!is_null($this->httpFixturePath)) {
-                $this->websiteService->getHttpClient()->getStoredResponseList()->setFixturesPath($this->httpFixturePath);
-            }
         }
         
         return $this->websiteService;

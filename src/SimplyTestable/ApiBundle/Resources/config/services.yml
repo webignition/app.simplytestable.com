@@ -2,14 +2,14 @@ services:
   simplytestable.session.handler:
     class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
   
-  simplytestable.services.httpClient:
-    class:  webignition\Http\Client\Client
+  simplytestable.services.httpClientService:
+    class:  SimplyTestable\ApiBundle\Services\HttpClientService
 
   simplytestable.services.websiteservice:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
-        httpClient: "@simplytestable.services.httpClient"
+        httpClientService: "@simplytestable.services.httpClientService"
         
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService

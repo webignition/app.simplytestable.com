@@ -14,28 +14,29 @@ class WebSiteService extends EntityService {
     
     /**
      *
-     * @var \webignition\Http\Client\Client
+     * @var \SimplyTestable\ApiBundle\Services\HttpClientService
      */
-    private $httpClient;
+    private $httpClientService;
     
     /**
      *
      * @param EntityManager $entityManager
-     * @param \webignition\Http\Client\Client $httpClient 
+     * @param \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService
      */
-    public function __construct(EntityManager $entityManager, \webignition\Http\Client\Client $httpClient) {
+    public function __construct(
+            EntityManager $entityManager,
+            \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService) {
         parent::__construct($entityManager);
-        $this->httpClient = $httpClient;
-        $this->httpClient->redirectHandler()->enable();
+        $this->httpClientService = $httpClientService; 
     }
     
 
     /**
-     *
-     * @return \webignition\Http\Client\Client
+     * 
+     * @return \SimplyTestable\ApiBundle\Services\HttpClientService
      */
-    public function getHttpClient() {
-        return $this->httpClient;
+    public function getHttpClientService() {        
+        return $this->httpClientService;
     }    
     
     
@@ -114,7 +115,7 @@ class WebSiteService extends EntityService {
      * @param WebSite $website
      * @return array
      */
-    public function getUrls(WebSite $website) {        
+    public function getUrls(WebSite $website) {
         return $this->filterUrlsToWebsiteHost($website, $this->collectUrls($website));
     }
     
@@ -143,7 +144,7 @@ class WebSiteService extends EntityService {
     
     
     private function collectUrls(WebSite $website) {        
-        $urlsFromSitemap = $this->getUrlsFromSitemap($website);        
+        $urlsFromSitemap = $this->getUrlsFromSitemap($website);                
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
         }       
@@ -168,14 +169,12 @@ class WebSiteService extends EntityService {
      * @return array 
      */
     private function getUrlsFromSitemap(WebSite $website) {
-        $this->getHttpClient()->setUserAgent('SimplyTestable Sitemap URL Retriever/0.1 (http://simplytestable.com/)');
+        $this->getHttpClientService()->get()->setUserAgent('SimplyTestable Sitemap URL Retriever/0.1 (http://simplytestable.com/)');
         
         $sitemapFinder = new WebsiteSitemapFinder();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
-        $sitemapFinder->setHttpClient($this->getHttpClient());
+        $sitemapFinder->setHttpClient($this->httpClientService->get());
         $sitemaps = $sitemapFinder->getSitemaps();
-        
-        $this->getHttpClient()->clearUserAgent();
         
         if (count($sitemaps) === 0) {
             return array();

@@ -333,7 +333,16 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */        
     protected function getWorkerActivationRequestService() {
         return $this->container->get('simplytestable.services.workeractivationrequestservice');
-    }       
+    }    
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\HttpClientService
+     */
+    protected function getHttpClientService() {
+        return $this->container->get('simplytestable.services.httpclientservice');
+    }         
     
     
     /**

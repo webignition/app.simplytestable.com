@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpFoundation\Request;
+use Guzzle\Http\Client as HttpClient;
 
 abstract class BaseTestCase extends WebTestCase {
     
@@ -31,7 +32,7 @@ abstract class BaseTestCase extends WebTestCase {
      * @var Symfony\Bundle\FrameworkBundle\Console\Application
      */
     private $application;
-    
+       
 
     public function setUp() {        
         $this->client = static::createClient();
@@ -182,5 +183,39 @@ abstract class BaseTestCase extends WebTestCase {
         $this->container->get('doctrine')->getConnection()->close();
         parent::tearDown();
     }
+    
+    
+    protected function setHttpFixtures($fixtures) {
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        
+        foreach ($fixtures as $fixture) {
+            $plugin->addResponse($fixture);
+        }         
+            
+        $this->getHttpClientService()->get()->addSubscriber($plugin);  
+    }
+    
+    
+    protected function getHttpFixtures($path) {
+        $fixtures = array();        
+        $fixturesDirectory = new \DirectoryIterator($path);
+        
+        $fixturePathnames = array();
+        
+        foreach ($fixturesDirectory as $directoryItem) {
+            if ($directoryItem->isFile()) { 
+                $fixturePathnames[] = $directoryItem->getPathname();
+            }
+        }
+        
+        sort($fixturePathnames);
+        
+        foreach ($fixturePathnames as $fixturePathname) {
+                $fixtures[] = \Guzzle\Http\Message\Response::fromMessage(file_get_contents($fixturePathname));            
+        }
+        
+        return $fixtures;
+    }
+    
 
 }

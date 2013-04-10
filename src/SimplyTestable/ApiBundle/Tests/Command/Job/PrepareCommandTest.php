@@ -36,7 +36,9 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         )));
     }    
 
-    public function testPrepareNewJob() {        
+    public function testPrepareNewJob() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         $canonicalUrl = 'http://example.com/';
         
         $expectedTaskUrls = array(
@@ -52,14 +54,13 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertGreaterThan(0, $job_id);
         
         $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
-            $job_id =>  true,
-            $this->getCommonFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+            $job_id =>  true
         )));
         
         $this->getJobService()->getEntityRepository()->clear();
         
-        $job = $this->fetchJob($canonicalUrl, $job_id);
-        $response = json_decode($job->getContent());
+        $jobObject = $this->fetchJob($canonicalUrl, $job_id);
+        $response = json_decode($jobObject->getContent());
         
         $this->assertEquals('queued', $response->state);
         $this->assertNotNull($response->time_period);
@@ -71,11 +72,30 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(count($expectedTaskUrls) * $taskTypeCount, $response->task_count);
         $this->assertEquals(count($expectedTaskUrls) * $taskTypeCount, $response->task_count_by_state->queued);
         
+        $job = $this->getJobService()->getById($job_id);        
+        $discoveredTaskUrls = array();
+        
+        foreach ($job->getTasks() as $task) {
+            if (!in_array($task->getUrl(), $discoveredTaskUrls)) {
+                $discoveredTaskUrls[] = $task->getUrl();
+            } 
+        } 
+        
+        foreach ($discoveredTaskUrls as $taskUrl) {
+            $this->assertTrue(in_array($taskUrl, $expectedTaskUrls));
+        }
+        
+        foreach ($expectedTaskUrls as $taskUrl) {
+            $this->assertTrue(in_array($taskUrl, $discoveredTaskUrls));
+        }        
+        
         return;
     }
     
     
     public function testSingleUrlJob() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         $canonicalUrl = 'http://example.com/';
         
         $expectedTaskUrls = array(
@@ -89,8 +109,7 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertGreaterThan(0, $job_id);       
         
         $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
-            $job_id =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+            $job_id =>  true
         )));
         
         $this->getJobService()->getEntityRepository()->clear();
