@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
