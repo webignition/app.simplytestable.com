@@ -21,7 +21,6 @@ class TaskAssignCollectionCommand extends BaseCommand
             ->setName('simplytestable:task:assigncollection')
             ->setDescription('Assign a collection of tasks to workers')
             ->addArgument('ids', InputArgument::REQUIRED, 'ids of tasks to assign')
-            ->addArgument('http-fixture-path', InputArgument::OPTIONAL, 'path to HTTP fixture data when testing')
             ->setHelp(<<<EOF
 Assign a collection of tasks to workers
 EOF
@@ -29,28 +28,20 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {   
+    {        
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
-        }           
-        
-        if ($input->hasArgument('http-fixture-path')) {
-            $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
-            
-            if ($httpClient instanceof \webignition\Http\Mock\Client\Client) {
-                $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
-            }            
         }
         
-        $taskIds = explode(',', $input->getArgument('ids'));        
+        $taskIds = explode(',', $input->getArgument('ids'));              
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
         
         if (count($taskIds) === 0) {
             return self::RETURN_CODE_OK;
         }
         
-        $workers = $this->getWorkerService()->getActiveCollection();                
-        if (count($workers) === 0) {
+        $workers = $this->getWorkerService()->getActiveCollection();        
+        if (count($workers) === 0) {            
             $this->getLogger()->err("TaskAssignCollectionCommand::execute: Cannot assign, no workers.");                       
             $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
                 'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
@@ -61,7 +52,7 @@ EOF
             );
             
             return self::RETURN_CODE_FAILED_NO_WORKERS;
-        }        
+        }
         
         $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);        
         if ($response === 0) {

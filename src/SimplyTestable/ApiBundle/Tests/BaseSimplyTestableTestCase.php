@@ -167,8 +167,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function prepareJob($canonicalUrl, $job_id) {
         $this->runConsole('simplytestable:job:prepare', array(
-            $job_id =>  true,
-            $this->getCommonFixturesDataPath() . '/HttpResponses' => true
+            $job_id =>  true
         ));        
     
         return json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());

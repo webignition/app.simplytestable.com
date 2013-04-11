@@ -33,7 +33,7 @@ abstract class WorkerTaskService {
      *
      * @var \SimplyTestable\ApiBundle\Services\HttpClientService
      */
-    private $httpClientService;
+    protected $httpClientService;
     
     /**
      *

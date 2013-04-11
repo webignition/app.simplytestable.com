@@ -96,10 +96,8 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: Task collection count [".count($tasks)."]");
 
         shuffle($workers);
-        foreach ($workers as $worker) {
-            $response = $this->assignCollectionToWorker($tasks, $worker);
-
-            if ($response === true) {
+        foreach ($workers as $worker) {            
+            if ($this->assignCollectionToWorker($tasks, $worker)) {
                 foreach ($tasks as $task) {
                     $this->taskService->setStarted(
                         $task,
@@ -173,11 +171,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * @return int|boolean
      */
     private function assignCollectionToWorker($tasks, Worker $worker) {        
-        $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: Trying worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");                    
-        
-        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection');        
-
-        $httpRequest = new \HttpRequest($requestUrl, \Guzzle\Http\Message\Request::POST);        
+        $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: Trying worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");     
         
         $requestData = array();
         foreach ($tasks as $task) {
@@ -194,39 +188,32 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
             $requestData[] = $postFields;
         }
         
-        $httpRequest->setPostFields(array(
+        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection');        
+        
+        $httpRequest = $this->httpClientService->postRequest($requestUrl, null, array(
             'tasks' => $requestData            
-        ));
+        ));      
         
-        if ($this->httpClient instanceof \webignition\Http\Mock\Client\Client) {
-            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: response fixture path: " . $this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest));
-            if (file_exists($this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest))) {
-                $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: response fixture path: found");
-            } else {
-                $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: response fixture path: not found");
-            }
-        }        
-        
-        try {            
-            $response = $this->httpClient->getResponse($httpRequest);            
-            
-            if ($response->getResponseCode() !== 200) {
-                return false;
-            }
-            
-            $responseObject = json_decode($response->getBody());            
-            foreach ($tasks as $task) {
-                $this->setTaskRemoteIdFromRemoteCollection($task, $responseObject);
-            }            
-
-            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());     
-            
-            return true;
-        } catch (CurlException $curlException) {            
-            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: " . $requestUrl . ": " . $curlException->getMessage());
+        try {
+            $response = $httpRequest->send();
+        } catch (\Guzzle\Http\Exception\CurlException $curlException) {
+            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: " . $requestUrl . ": " . $curlException->getErrorNo().' '.$curlException->getError());
+            return false;
+        } catch (\Guzzle\Http\Exception\BadResponseException $badResponseException) {
+            $response = $badResponseException->getResponse();
         }
         
-        return false;
+        $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker " . $requestUrl . ": " . $response->getStatusCode()." ".$response->getReasonPhrase());     
+        if (!$response->isSuccessful()) {
+            return false;
+        }
+        
+        $responseObject = json_decode($response->getBody());            
+        foreach ($tasks as $task) {
+            $this->setTaskRemoteIdFromRemoteCollection($task, $responseObject);
+        }
+
+        return true;
     }
     
     

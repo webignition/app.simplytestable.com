@@ -11,23 +11,22 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     }    
 
     public function testAssignValidTaskReturnsStatusCode0() {        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         $workerHostname = 'hydrogen.worker.simplytestable.com';
         
-        $this->createWorker($workerHostname);
+        $this->createWorker($workerHostname);        
         
         $canonicalUrl = 'http://example.com/';       
         $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
         
         $this->prepareJob($canonicalUrl, $job_id);
 
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
-
-        $result = $this->runConsole('simplytestable:task:assigncollection', array(
-            implode($taskIds, ',') =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
         
-        $this->assertEquals(0, $result);
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:assigncollection', array(
+            implode($taskIds, ',') =>  true
+        )));
         
         $tasks = json_decode($this->getJobController('tasksAction')->tasksAction($canonicalUrl, $job_id)->getContent());
         
@@ -38,6 +37,8 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     }
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         $this->removeAllWorkers();
         $this->removeAllJobs();
         $this->clearRedis();
@@ -48,14 +49,12 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
         $this->prepareJob($canonicalUrl, $job_id);
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
-
         $result = $this->runConsole('simplytestable:task:assigncollection', array(
-            implode($taskIds, ',') =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
+            implode($taskIds, ',') =>  true
+        ));       
         
         $this->assertEquals(1, $result);    
-        
+  
         $containsResult = $this->getResqueQueueService()->contains(
             'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
             'task-assign-collection',
@@ -69,6 +68,10 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2() {        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
+        $this->removeAllWorkers();
+        $this->removeAllJobs();
+        $this->clearRedis();        
         $this->clearRedis();
         
         $this->createWorker('hydrogen.worker.simplytestable.com');
@@ -83,8 +86,7 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
 
         $result = $this->runConsole('simplytestable:task:assigncollection', array(
-            implode($taskIds, ',') =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+            implode($taskIds, ',') =>  true
         ));
         
         $this->assertEquals(2, $result);
@@ -105,8 +107,7 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
         
         $this->assertEquals(-1, $this->runConsole('simplytestable:task:assigncollection', array(
-            implode(array(1,2,3), ',') =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+            implode(array(1,2,3), ',') =>  true
         )));      
     }
 
