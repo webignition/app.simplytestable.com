@@ -127,10 +127,6 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
     private function assignToWorker(Task $task, Worker $worker) {
         $this->logger->info("WorkerTaskAssignmentService::assignToWorker: Trying worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");                    
         
-        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/');
-
-        $httpRequest = new \HttpRequest($requestUrl, \Guzzle\Http\Message\Request::POST);
-        
         $postFields = array(
             'url' => $task->getUrl(),
             'type' => (string)$task->getType()            
@@ -140,27 +136,24 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
             $postFields['parameters'] = $task->getParameters();
         }
         
-        $httpRequest->setPostFields($postFields);
-
+        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/');               
+        $httpRequest = $this->httpClientService->postRequest($requestUrl, null, $postFields);        
+        
         try {
-            if ($this->httpClient instanceof \webignition\Http\Mock\Client\Client) {
-                $this->logger->info("WorkerTaskAssignmentService::assignToWorker: response fixture path: " . $this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest));
-                if (file_exists($this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest))) {
-                    $this->logger->info("WorkerTaskAssignmentService::assignToWorker: response fixture path: found");
-                } else {
-                    $this->logger->info("WorkerTaskAssignmentService::assignToWorker: response fixture path: not found");
-                }
-            }              
-            
-            $response = $this->httpClient->getResponse($httpRequest);
-            $responseObject = json_decode($response->getBody());
-
-            $this->logger->info("WorkerTaskAssignmentService::assignToWorker " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
-            
-            return ($response->getResponseCode() === 200) ? $responseObject->id : false;
-        } catch (CurlException $curlException) {
-            $this->logger->info("WorkerTaskAssignmentService::assignToWorker: " . $requestUrl . ": " . $curlException->getMessage());
-        }         
+            $response = $httpRequest->send();
+        } catch (\Guzzle\Http\Exception\CurlException $curlException) {
+            $this->logger->info("WorkerTaskAssignmentService::assignToWorker: " . $requestUrl . ": " . $curlException->getErrorNo().' '.$curlException->getError());
+            return false;
+        } catch (\Guzzle\Http\Exception\BadResponseException $badResponseException) {
+            $response = $badResponseException->getResponse();
+        }
+        
+        $this->logger->info("WorkerTaskAssignmentService::assignToWorker " . $requestUrl . ": " . $response->getStatusCode()." ".$response->getReasonPhrase());     
+        if (!$response->isSuccessful()) {
+            return false;
+        }
+        
+        return json_decode($response->getBody())->id;       
     }
     
     

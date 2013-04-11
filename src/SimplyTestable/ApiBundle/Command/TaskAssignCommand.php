@@ -21,7 +21,6 @@ class TaskAssignCommand extends BaseCommand
             ->setName('simplytestable:task:assign')
             ->setDescription('Assign a task to a worker')
             ->addArgument('id', InputArgument::REQUIRED, 'id of task to assign')
-            ->addArgument('http-fixture-path', InputArgument::OPTIONAL, 'path to HTTP fixture data when testing')
             ->setHelp(<<<EOF
 Assign a task to a worker
 EOF
@@ -32,14 +31,6 @@ EOF
     {     
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
-        }           
-        
-        if ($input->hasArgument('http-fixture-path')) {
-            $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
-            
-            if ($httpClient instanceof \webignition\Http\Mock\Client\Client) {
-                $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
-            }            
         }
         
         $task = $this->getTaskService()->getById((int)$input->getArgument('id'));               

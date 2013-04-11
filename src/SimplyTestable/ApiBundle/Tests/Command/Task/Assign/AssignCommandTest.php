@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
@@ -8,12 +8,11 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
     
     public static function setUpBeforeClass() {
         self::setupDatabase();
-    }        
+    }
     
 
     public function testAssignValidTaskReturnsStatusCode0() {        
-        //$this->setupDatabaseIf();
-        //$this->resetSystemState();
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
         $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
@@ -24,20 +23,19 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
 
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
+            $taskIds[0] =>  true
+        )));
         
         $job = json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());
-        
-        $this->assertEquals(0, $result);
         $this->assertEquals('in-progress', $job->state);
     }
     
     
     public function testAssignTaskInWrongStateReturnsStatusCode1() {        
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
         $canonicalUrl = 'http://example.com/';       
         $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
@@ -50,16 +48,15 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
         $task->setState($this->getTaskService()->getCompletedState());
         $this->getTaskService()->getEntityManager()->persist($task);
         $this->getTaskService()->getEntityManager()->flush();
-
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
         
-        $this->assertEquals(1, $result);   
+        $this->assertEquals(1, $this->runConsole('simplytestable:task:assign', array(
+            $task->getId() =>  true
+        )));   
     }
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode2() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         $this->removeAllWorkers();
         $this->removeAllJobs();
         $this->clearRedis();
@@ -70,27 +67,24 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
         $this->prepareJob($canonicalUrl, $job_id);
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
-
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
         
-        $this->assertEquals(2, $result);
+        $this->assertEquals(2, $this->runConsole('simplytestable:task:assign', array(
+            $taskIds[0] =>  true
+        )));
         
-        $containsResult = $this->getResqueQueueService()->contains(
+        $this->assertTrue($this->getResqueQueueService()->contains(
             'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
             'task-assign',
             array(
                 'id' => $taskIds[0]
             )
-        );
-        
-        $this->assertTrue($containsResult);          
+        ));          
     }    
     
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode3() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         $this->removeAllWorkers();
         $this->removeAllJobs();
         $this->clearRedis();     
@@ -110,30 +104,24 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
         $task->setState($this->getTaskService()->getQueuedState());
         $this->getTaskService()->getEntityManager()->persist($task);
         $this->getTaskService()->getEntityManager()->flush();
-
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
         
-        $this->assertEquals(3, $result);
-
-        $containsResult = $this->getResqueQueueService()->contains(
+        $this->assertEquals(3, $this->runConsole('simplytestable:task:assign', array(
+            $taskIds[0] =>  true
+        )));
+        
+        $this->assertTrue($this->getResqueQueueService()->contains(
             'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
             'task-assign',
             array(
                 'id' => $taskIds[0]
             )
-        );
-        
-        $this->assertTrue($containsResult);         
+        ));         
     }     
     
     
     public function testAssignInvalidTaskReturnsStatusCode4() {
         $result = $this->runConsole('simplytestable:task:assign', array(
-            -1 =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+            -1 =>  true
         ));
         
         $this->assertEquals($result, 4);    
