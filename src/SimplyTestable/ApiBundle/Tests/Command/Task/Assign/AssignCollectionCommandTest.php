@@ -71,7 +71,6 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
         $this->removeAllWorkers();
         $this->removeAllJobs();
-        $this->clearRedis();        
         $this->clearRedis();
         
         $this->createWorker('hydrogen.worker.simplytestable.com');
@@ -110,5 +109,71 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
             implode(array(1,2,3), ',') =>  true
         )));      
     }
+    
+    
+    public function testAssignSingleWorkerWhichRaisesHttpClientErrorReturnsStatusCode2() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
+        $this->removeAllWorkers();
+        $this->removeAllJobs();
+        $this->clearRedis();
+        
+        $this->createWorker('hydrogen.worker.simplytestable.com');     
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
+
+        $result = $this->runConsole('simplytestable:task:assigncollection', array(
+            implode($taskIds, ',') =>  true
+        ));
+        
+        $this->assertEquals(2, $result);
+        
+        $containsResult = $this->getResqueQueueService()->contains(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
+            'task-assign-collection',
+            array(
+                'ids' => implode(',', $taskIds)
+            )
+        );
+        
+        $this->assertTrue($containsResult);         
+    }
+    
+    
+    public function testAssignSingleWorkerWhichRaisesHttpServerErrorReturnsStatusCode2() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
+        $this->removeAllWorkers();
+        $this->removeAllJobs();
+        $this->clearRedis();
+        
+        $this->createWorker('hydrogen.worker.simplytestable.com');     
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
+
+        $result = $this->runConsole('simplytestable:task:assigncollection', array(
+            implode($taskIds, ',') =>  true
+        ));
+        
+        $this->assertEquals(2, $result);
+        
+        $containsResult = $this->getResqueQueueService()->contains(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
+            'task-assign-collection',
+            array(
+                'ids' => implode(',', $taskIds)
+            )
+        );
+        
+        $this->assertTrue($containsResult);         
+    }    
 
 }
