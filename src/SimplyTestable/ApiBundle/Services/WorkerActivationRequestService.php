@@ -80,56 +80,49 @@ class WorkerActivationRequestService extends EntityService {
     public function verify(WorkerActivationRequest $activationRequest) {
         $this->logger->info("WorkerActivationRequestService::verify: Initialising");
         
-        $verifyUrl = $this->urlService->prepare('http://' . $activationRequest->getWorker()->getHostname() . '/verify/');        
+        $requestUrl = $this->urlService->prepare('http://' . $activationRequest->getWorker()->getHostname() . '/verify/');        
         
-        $httpRequest = new \HttpRequest($verifyUrl, \Guzzle\Http\Message\Request::POST);
-        $httpRequest->setPostFields(array(
+        $httpRequest = $this->httpClientService->postRequest($requestUrl, null, array(
             'hostname' => $activationRequest->getWorker()->getHostname(),
             'token' => $activationRequest->getToken()
         ));
-        
-        $this->logger->info("WorkerActivationRequestService::verify: Requesting verification with " . $verifyUrl);
-        
-        try { 
-            if ($this->httpClient instanceof \webignition\Http\Mock\Client\Client) {
-                $this->logger->info("WorkerActivationRequestService::verify: response fixture path: " . $this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest));
-                if (file_exists($this->httpClient->getStoredResponseList()->getRequestFixturePath($httpRequest))) {
-                    $this->logger->info("WorkerActivationRequestService::verify: response fixture path: found");
-                } else {
-                    $this->logger->info("WorkerActivationRequestService::verify: response fixture path: not found");
-                }
-            }             
-            
-            $response = $this->httpClient->getResponse($httpRequest);
-            
-            $this->logger->info("WorkerActivationRequestService::verify: " . $verifyUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
 
-            if ($response->getResponseCode() !== 200) {                
-                if ($response->getResponseCode() === 503) {
-                    $this->logger->info("WorkerActivationRequestService::verify: Worker at ".$activationRequest->getWorker()->getHostname()." is in read-only mode");
-                }
-                
-                $this->logger->err("WorkerActivationRequestService::verify: Activation request failed");
-                
-                return $response->getResponseCode();
-            }
-            
-            $activationRequest->setNextState();
-            $this->persistAndFlush($activationRequest);
-            
-            $worker = $activationRequest->getWorker();
-            
-            $worker->setState($this->stateService->fetch('worker-active'));
-            
-            $this->getEntityManager()->persist($worker);
-            $this->getEntityManager()->flush();
-
-            return 0;           
-            
-        } catch (CurlException $curlException) {
-            $this->logger->info("WorkerActivationRequestService::verify: " . $verifyUrl . ": " . $curlException->getMessage());            
+        $this->logger->info("WorkerActivationRequestService::verify: Requesting verification with " . $requestUrl);
+        
+        try {
+            $response = $httpRequest->send();
+        } catch (\Guzzle\Http\Exception\CurlException $curlException) {
+            $this->logger->info("WorkerActivationRequestService::verify" . $requestUrl . ": " . $curlException->getErrorNo().' '.$curlException->getError());
             return false;
-        }    
+        } catch (\Guzzle\Http\Exception\BadResponseException $badResponseException) {            
+            $response = $badResponseException->getResponse();            
+            $this->logger->info("WorkerActivationRequestService::verify " . $requestUrl . ": " . $badResponseException->getResponse()->getStatusCode().' '.$badResponseException->getResponse()->getReasonPhrase());
+        } 
+
+        $this->logger->info("WorkerActivationRequestService::verify: " . $requestUrl . ": " . $response->getStatusCode()." ".$response->getReasonPhrase());
+
+        if ($response->getStatusCode() !== 200) {                
+            if ($response->getStatusCode() === 503) {
+                $this->logger->info("WorkerActivationRequestService::verify: Worker at ".$activationRequest->getWorker()->getHostname()." is in read-only mode");
+            }
+
+            $this->logger->err("WorkerActivationRequestService::verify: Activation request failed");
+
+            return $response->getStatusCode();
+        }
+
+        $activationRequest->setNextState();
+        $this->persistAndFlush($activationRequest);
+
+        $worker = $activationRequest->getWorker();
+
+        $worker->setState($this->stateService->fetch('worker-active'));
+
+        $this->getEntityManager()->persist($worker);
+        $this->getEntityManager()->flush();
+
+        return 0;           
+  
     }
     
     

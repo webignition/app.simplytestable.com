@@ -19,7 +19,6 @@ class WorkerActivateVerifyCommand extends BaseCommand
             ->setName('simplytestable:worker:activate:verify')
             ->setDescription('Verify the activation request of a worker')
             ->addArgument('id', InputArgument::REQUIRED, 'id of worker to verify')
-            ->addArgument('http-fixture-path', InputArgument::OPTIONAL, 'path to HTTP fixture data when testing')
         ;
     }
 
@@ -27,14 +26,6 @@ class WorkerActivateVerifyCommand extends BaseCommand
     {         
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
-        }          
-        
-        if ($input->hasArgument('http-fixture-path')) {
-            $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
-            
-            if ($httpClient instanceof \webignition\Http\Mock\Client\Client) {
-                $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
-            }            
         }
         
         $id = (int)$input->getArgument('id');

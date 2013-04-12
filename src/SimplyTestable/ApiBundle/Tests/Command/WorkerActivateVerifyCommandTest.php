@@ -12,8 +12,8 @@ class WorkerActivateVerifyCommandTest extends \SimplyTestable\ApiBundle\Tests\Ba
         self::setupDatabaseIfNotExists();
     }         
 
-    public function testSuccessfulActivateVerifyWorker() {        
-        $this->removeAllWorkers();
+    public function testSuccessfulActivateVerifyWorker() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
         $workerHostname = 'test.worker.simplytestable.com';
         $activationRequestToken = 'token';
@@ -29,17 +29,14 @@ class WorkerActivateVerifyCommandTest extends \SimplyTestable\ApiBundle\Tests\Ba
         $this->assertTrue($activationRequest->getWorker()->equals($worker));
         $this->assertTrue($activationRequest->getState()->equals($this->getWorkerActivationRequestService()->getStartingState()));
         
-        $response = $this->runConsole('simplytestable:worker:activate:verify', array(
-            $worker->getId() =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
-        
-        $this->assertEquals(0, $response);
+        $this->assertEquals(0, $this->runConsole('simplytestable:worker:activate:verify', array(
+            $worker->getId() =>  true
+        )));
     }
     
     
     public function testFailedActivateVerifyWorker() {        
-        $this->removeAllWorkers();
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
         $workerHostname = 'test.worker.simplytestable.com';
         $activationRequestToken = 'invalid-token';
@@ -54,17 +51,14 @@ class WorkerActivateVerifyCommandTest extends \SimplyTestable\ApiBundle\Tests\Ba
         $this->assertTrue($activationRequest->getWorker()->equals($worker));
         $this->assertTrue($activationRequest->getState()->equals($this->getWorkerActivationRequestService()->getStartingState()));
         
-        $response = $this->runConsole('simplytestable:worker:activate:verify', array(
-            $worker->getId() =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        )); 
-        
-        $this->assertEquals(400, $response);
+        $this->assertEquals(400, $this->runConsole('simplytestable:worker:activate:verify', array(
+            $worker->getId() =>  true
+        )));
     }
     
     
-    public function testActivateVerifyWhenWorkerIsInMaintenanceReadyOnlyMode() {
-        $this->removeAllWorkers();
+    public function testActivateVerifyWhenWorkerIsInMaintenanceReadyOnlyMode() {        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
         $workerHostname = 'test.worker.simplytestable.com';
         $activationRequestToken = 'token';
@@ -79,12 +73,10 @@ class WorkerActivateVerifyCommandTest extends \SimplyTestable\ApiBundle\Tests\Ba
         $this->assertTrue($activationRequest->getWorker()->equals($worker));
         $this->assertTrue($activationRequest->getState()->equals($this->getWorkerActivationRequestService()->getStartingState()));
         
-        $response = $this->runConsole('simplytestable:worker:activate:verify', array(
-            $worker->getId() =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
-        
-        $this->assertEquals(503, $response);        
+        $this->assertEquals(503, $this->runConsole('simplytestable:worker:activate:verify', array(
+            $worker->getId() =>  true
+
+        )));        
     }    
     
     public function testActivateVerifyInIsInMaintenanceReadyOnlyModeReturnsCode1() {
