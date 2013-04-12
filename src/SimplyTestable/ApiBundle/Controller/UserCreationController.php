@@ -22,7 +22,7 @@ class UserCreationController extends UserController
     }
     
     public function createAction()            
-    {   
+    {        
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }          

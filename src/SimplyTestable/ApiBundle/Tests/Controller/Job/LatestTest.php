@@ -10,9 +10,7 @@ class LatestTest extends BaseControllerJsonTestCase {
         self::setupDatabaseIfNotExists();        
     }
     
-    public function testLatestActionForPublicUser() {
-        $this->removeAllJobs();
-        
+    public function testLatestActionForPublicUser() {        
         $canonicalUrl = 'http://example.com';        
         $jobId = $this->createJobAndGetId($canonicalUrl);        
         
@@ -24,8 +22,6 @@ class LatestTest extends BaseControllerJsonTestCase {
     
     
     public function testLatestActionForDifferentUsers() {
-        $this->removeAllJobs();
-
         $canonicalUrl1 = 'http://one.example.com/';
         $canonicalUrl2 = 'http://two.example.com/';  
         
@@ -56,9 +52,7 @@ class LatestTest extends BaseControllerJsonTestCase {
     }
     
     
-    public function testLatestActionReturns404ForNoLatestJob() {
-        $this->removeAllJobs();
-        
+    public function testLatestActionReturns404ForNoLatestJob() {        
         $canonicalUrl = 'http://example.com';            
         
         $response = $this->getJobController('latestAction')->latestAction($canonicalUrl);        

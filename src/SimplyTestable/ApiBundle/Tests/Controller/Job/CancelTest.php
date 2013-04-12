@@ -10,9 +10,7 @@ class CancelTest extends BaseControllerJsonTestCase {
         self::setupDatabaseIfNotExists();        
     }    
     
-    public function testCancelAction() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
+    public function testCancelAction() {        
         $canonicalUrl = 'http://example.com';        
         $jobId = $this->createJobAndGetId($canonicalUrl);
         

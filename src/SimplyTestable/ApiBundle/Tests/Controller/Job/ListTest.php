@@ -6,9 +6,9 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class ListTest extends BaseControllerJsonTestCase {
     
-    public function setUp() {
-        parent::setUp();
+    public function setUp() {        
         self::setupDatabase();
+        parent::setUp();        
     }
     
     public function testListAction() {        

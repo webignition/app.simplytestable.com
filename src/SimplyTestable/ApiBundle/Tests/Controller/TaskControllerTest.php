@@ -8,10 +8,8 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
         self::setupDatabaseIfNotExists();
     }       
    
-    public function testCompleteAction() {        
-        $this->removeAllJobs();
-        $this->removeAllTasks();
-        $this->createPublicUserIfMissing();
+    public function testCompleteAction() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
         $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
@@ -21,15 +19,12 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
         $this->prepareJob($canonicalUrl, $job_id);
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
-
-        $result = $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
         
-        $job = json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
+            $taskIds[0] =>  true
+        )));
         
-        $this->assertEquals(0, $result);
+        $job = json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());        
         $this->assertEquals('in-progress', $job->state);
         
         $response = $this->getTaskController('completeAction', array(
@@ -55,14 +50,13 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeAction('http://hydrogen.worker.simplytestable.com', 1);
+        ))->completeAction('hydrogen.worker.simplytestable.com', 1);
         
         $this->assertEquals(503, $response->getStatusCode());       
     }
     
-    public function testCompleteActionForNonExistentTaskReturns410() {
-        $this->removeAllTasks();
-        $this->createPublicUserIfMissing();
+    public function testCompleteActionForNonExistentTaskReturns410() { 
+        $this->createWorker('hydrogen.worker.simplytestable.com');
         
         $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
@@ -71,7 +65,7 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeAction('http://hydrogen.worker.simplytestable.com', 1);
+        ))->completeAction('hydrogen.worker.simplytestable.com', 1);
         
         $this->assertEquals(410, $response->getStatusCode());
     }    
