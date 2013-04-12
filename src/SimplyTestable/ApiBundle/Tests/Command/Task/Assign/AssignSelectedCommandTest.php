@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
@@ -12,6 +12,8 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testAssignValidTaskReturnsStatusCode0() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         self::setupDatabase();
         
         $canonicalUrl = 'http://example.com/';           
@@ -34,9 +36,7 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(200, $preAssignJobResponse->getStatusCode());
         $this->assertEquals(1, $preAssignJobObject->task_count_by_state->{'queued-for-assignment'});
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign-selected', array(
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true            
-        )));
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign-selected'));
         
         $postAssignJobResponse = $this->fetchJob($canonicalUrl, $job_id);        
         $postAssignJobObject = json_decode($postAssignJobResponse->getContent()); 
@@ -47,6 +47,8 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
 
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         $this->removeAllWorkers();
         $this->removeAllJobs();
         $this->clearRedis();
@@ -60,13 +62,13 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
         $this->getTaskService()->getEntityManager()->persist($task);
         $this->getTaskService()->getEntityManager()->flush();
         
-        $this->assertEquals(1, $this->runConsole('simplytestable:task:assign-selected', array(
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true            
-        )));       
+        $this->assertEquals(1, $this->runConsole('simplytestable:task:assign-selected'));       
     }
 
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2() {        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         self::setupDatabase();
         
         $canonicalUrl = 'http://example.com/';           
@@ -83,9 +85,7 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
         $this->getTaskService()->getEntityManager()->persist($task);
         $this->getTaskService()->getEntityManager()->flush();
         
-        $this->assertEquals(2, $this->runConsole('simplytestable:task:assign-selected', array(
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true            
-        )));
+        $this->assertEquals(2, $this->runConsole('simplytestable:task:assign-selected'));
        
     } 
      

@@ -22,7 +22,6 @@ class AssignSelectedCommand extends BaseCommand
         $this
             ->setName('simplytestable:task:assign-selected')
             ->setDescription('Assign to workers tasks selected for assignment')
-            ->addArgument('http-fixture-path', InputArgument::OPTIONAL, 'path to HTTP fixture data when testing')
             ->setHelp(<<<EOF
 Assign to workers all tasks selected for assignment
 EOF
@@ -30,17 +29,9 @@ EOF
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
-    {   
+    {        
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
-        }
-        
-        if ($input->hasArgument('http-fixture-path')) {
-            $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
-            
-            if ($httpClient instanceof \webignition\Http\Mock\Client\Client) {
-                $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
-            }            
         }   
         
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByState($this->getTaskService()->getQueuedForAssignmentState());
@@ -57,9 +48,9 @@ EOF
         if (count($workers) === 0) {
             $this->getLogger()->err("TaskAssignSelectedCommand::execute: Cannot assign, no workers.");
             return self::RETURN_CODE_FAILED_NO_WORKERS;
-        }        
+        }  
         
-        $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);        
+        $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);
         if ($response === 0) {
             $output->writeln('ok');
             $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
