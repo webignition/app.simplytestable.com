@@ -1,16 +1,18 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task\Cancel;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {    
     
     public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
+        self::setupDatabase();
     }    
 
     public function testCancelCollectionWithOneWorkerReturnsStatusCode0() {        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
         $worker = $this->createWorker('hydrogen.worker.simplytestable.com');
         
         $canonicalUrl = 'http://example.com/';       
@@ -31,12 +33,10 @@ class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {
         
         $this->getTaskService()->getEntityManager()->flush();
         
-        $result = $this->runConsole('simplytestable:task:cancelcollection', array(
-            implode(',', $taskIds) =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:cancelcollection', array(
+            implode(',', $taskIds) =>  true
+        )));
         
-        $this->assertEquals(0, $result);
         foreach ($tasks as $task) {
             $this->assertEquals('task-cancelled', $task->getState()->getName());
         }

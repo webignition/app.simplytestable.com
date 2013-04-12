@@ -17,8 +17,7 @@ class TaskCancelCollectionCommand extends BaseCommand
         $this
             ->setName('simplytestable:task:cancelcollection')
             ->setDescription('Cancel a collection of tasks')
-            ->addArgument('ids', InputArgument::REQUIRED, 'comma-separated list of ids of tasks to cancel')
-            ->addArgument('http-fixture-path', InputArgument::OPTIONAL, 'path to HTTP fixture data when testing')
+            ->addArgument('ids', InputArgument::REQUIRED, 'comma-separated list of ids of tasks to cancel') 
             ->setHelp(<<<EOF
 Cancel a collection of tasks
 EOF
@@ -29,14 +28,6 @@ EOF
     {    
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
-        }         
-        
-        if ($input->hasArgument('http-fixture-path')) {
-            $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
-            
-            if ($httpClient instanceof \webignition\Http\Mock\Client\Client) {
-                $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
-            }            
         }
         
         $this->getContainer()->get('logger')->info('TaskCancelCollectionCommand::execute: raw ids ['.$input->getArgument('ids').']');

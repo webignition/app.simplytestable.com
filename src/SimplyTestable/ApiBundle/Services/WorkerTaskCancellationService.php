@@ -72,25 +72,25 @@ class WorkerTaskCancellationService extends WorkerTaskService {
         $this->logger->info("WorkerTaskCancellationService::cancelCollection: Initialising");
         $this->logger->info("WorkerTaskCancellationService::cancelCollection: Processing remote IDs [".$remoteTaskIdsString."]");        
         
-        $requestUrl = $this->urlService->prepare('http://' . $tasks[0]->getWorker()->getHostname() . '/task/cancel/collection/');
-
-        $httpRequest = new \HttpRequest($requestUrl, \Guzzle\Http\Message\Request::POST);
-        $httpRequest->setPostFields(array(
-            'ids' => $remoteTaskIdsString
+        $requestUrl = $this->urlService->prepare('http://' . $tasks[0]->getWorker()->getHostname() . '/task/cancel/collection/');               
+        
+        $httpRequest = $this->httpClientService->postRequest($requestUrl, null, array(
+            'ids' => $remoteTaskIdsString         
         ));
         
         foreach ($tasks as $task) {
             $this->taskService->cancel($task);
-        }         
-
-        try {            
-            $response = $this->httpClient->getResponse($httpRequest);
-            $this->logger->info("WorkerTaskCancellationService::cancelCollection " . $requestUrl . ": " . $response->getResponseCode()." ".$response->getResponseStatus());
-        } catch (CurlException $curlException) {
-            $this->logger->info("WorkerTaskCancellationService::cancelCollection: " . $requestUrl . ": " . $curlException->getMessage());
-        } catch (\Exception $e) {
-            var_dump(get_class($e), $e->getCode(), $e->getMessage());
-        }      
+        }
+        
+        try {
+            $response = $httpRequest->send();
+        } catch (\Guzzle\Http\Exception\CurlException $curlException) {
+            $this->logger->info("WorkerTaskCancellationService::cancelCollection::CurlException " . $requestUrl . ": " . $curlException->getErrorNo().' '.$curlException->getError());
+            return false;
+        } catch (\Guzzle\Http\Exception\BadResponseException $badResponseException) {            
+            $this->logger->info("WorkerTaskCancellationService::cancelCollection::BadResponseException " . $requestUrl . ": " . $badResponseException->getResponse()->getStatusCode().' '.$badResponseException->getResponse()->getReasonPhrase());
+            return false;
+        }
         
         return true;        
     }
