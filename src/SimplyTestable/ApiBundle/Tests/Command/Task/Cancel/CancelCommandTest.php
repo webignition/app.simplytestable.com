@@ -13,10 +13,6 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
     public function testCancelValidTaskReturnsStatusCode0() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
-        $this->removeAllJobs();
-        $this->removeAllTasks();
-        $this->removeAllWorkers();        
-        
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
         $canonicalUrl = 'http://example.com/';       
@@ -58,10 +54,6 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
     public function testCancelTaskInWrongStateReturnsStatusCodeMinus2() {      
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
-        $this->removeAllJobs();
-        $this->removeAllTasks();
-        $this->removeAllWorkers();        
-        
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
         $canonicalUrl = 'http://example.com/';       
@@ -98,9 +90,6 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
     
     public function testCancelTaskWhenWorkerIsInReadOnlyModeReturnsStatusCode503() {        
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->removeAllJobs();
-        $this->removeAllTasks();
-        $this->removeAllWorkers();
         
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         

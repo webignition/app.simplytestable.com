@@ -10,7 +10,6 @@ abstract class PrepareJobAndPostAssertionsTest extends BaseSimplyTestableTestCas
     
     public function setUp() {
         parent::setUp();
-        self::setupDatabase();
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath($this->getName()). '/HttpResponses'));
     }   
     

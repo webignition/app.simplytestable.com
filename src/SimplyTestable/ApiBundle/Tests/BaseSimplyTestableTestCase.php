@@ -14,6 +14,16 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const USER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserController';
     const WORKER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\WorkerController';
     const TASK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TaskController';
+    
+    public function setUp() {
+        parent::setUp();
+        $this->removeAllJobs();
+        $this->removeAllTasks();
+        $this->removeAllWorkers();
+        $this->removeAllUsers();
+        $this->createPublicUserIfMissing();
+        $this->clearRedis();
+    }
 
     /**
      *

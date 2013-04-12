@@ -10,11 +10,7 @@ class EnqueuePrepareAllCommandTest extends BaseSimplyTestableTestCase {
         self::setupDatabaseIfNotExists();
     }
     
-    public function testJobsAreEnqueued() {
-        $this->removeAllJobs();
-        $this->createPublicUserIfMissing();
-        $this->clearRedis();
-      
+    public function testJobsAreEnqueued() {      
         $canonicalUrls = array(
             'http://one.example.com/',
             'http://two.example.com/'

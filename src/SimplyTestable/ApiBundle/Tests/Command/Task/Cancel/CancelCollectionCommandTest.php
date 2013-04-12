@@ -11,10 +11,7 @@ class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {
     }    
 
     public function testCancelCollectionWithOneWorkerReturnsStatusCode0() {        
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->removeAllJobs();
-        $this->removeAllTasks();
-        $this->removeAllWorkers();        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));      
         
         $worker = $this->createWorker('hydrogen.worker.simplytestable.com');
         

@@ -8,15 +8,7 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();
-    } 
-    
-    public function setUp() {
-        parent::setUp();
-        $this->removeAllJobs();
-        $this->removeAllTasks();
-        $this->removeAllWorkers();         
-    }
-    
+    }    
 
     public function testAssignValidTaskReturnsStatusCode0() {        
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));       

@@ -8,11 +8,6 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
     
     const EXPECTED_TASK_TYPE_COUNT = 3;
     
-    public function setUp() {
-        parent::setUp();
-        self::setupDatabase();
-    }
-    
     public function testPrepareInWrongStateReturnsStatusCode1() {        
         $canonicalUrl = 'http://example.com';        
         $jobId = $this->createJobAndGetId($canonicalUrl);
