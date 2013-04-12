@@ -7,11 +7,14 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {    
     
     public static function setUpBeforeClass() {
-        self::setupDatabase();
+        self::setupDatabaseIfNotExists();
     }    
 
     public function testCancelCollectionWithOneWorkerReturnsStatusCode0() {        
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->removeAllJobs();
+        $this->removeAllTasks();
+        $this->removeAllWorkers();        
         
         $worker = $this->createWorker('hydrogen.worker.simplytestable.com');
         

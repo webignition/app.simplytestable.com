@@ -21,7 +21,6 @@ class TaskCancelCommand extends BaseCommand
             ->setName('simplytestable:task:cancel')
             ->setDescription('Cancel a task')
             ->addArgument('id', InputArgument::REQUIRED, 'id of task to cancel')
-            ->addArgument('http-fixture-path', InputArgument::OPTIONAL, 'path to HTTP fixture data when testing')
             ->setHelp(<<<EOF
 Cancel a task
 EOF
@@ -32,14 +31,6 @@ EOF
     {     
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
-        }          
-        
-        if ($input->hasArgument('http-fixture-path')) {
-            $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
-            
-            if ($httpClient instanceof \webignition\Http\Mock\Client\Client) {
-                $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
-            }            
         }
         
         /* @var $task Task*/

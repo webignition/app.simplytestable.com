@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task\Cancel;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
@@ -11,6 +11,12 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
     }     
 
     public function testCancelValidTaskReturnsStatusCode0() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $this->removeAllJobs();
+        $this->removeAllTasks();
+        $this->removeAllWorkers();        
+        
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
         $canonicalUrl = 'http://example.com/';       
@@ -20,8 +26,7 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
         
-        $task = $this->getTaskService()->getById($taskIds[0]);        
-        
+        $task = $this->getTaskService()->getById($taskIds[0]);                
         $cancellableStates = array(
             $this->getTaskService()->getAwaitingCancellationState(),
             $this->getTaskService()->getInProgressState(),
@@ -34,20 +39,16 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
             $task->setState($state);
             $this->getTaskService()->getEntityManager()->persist($task);
             $this->getTaskService()->getEntityManager()->flush();
-            
-            $result = $this->runConsole('simplytestable:task:cancel', array(
-                $taskIds[0] =>  true,
-                $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-            ));
 
-            $this->assertEquals(0, $result);
+            $this->assertEquals(0, $this->runConsole('simplytestable:task:cancel', array(
+                $taskIds[0] =>  true
+            )));
             $this->assertEquals('task-cancelled', $task->getState()->getName());            
         }
     }
   
     
-    public function testCancelTaskThatDoesNotExistReturnsStatusCodeMinus1() {      
-        //$this->resetSystemState();
+    public function testCancelTaskThatDoesNotExistReturnsStatusCodeMinus1() {
         $this->assertEquals(-1, $this->runConsole('simplytestable:task:cancel', array(
             -1 =>  true
         )));
@@ -55,7 +56,11 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
                
     
     public function testCancelTaskInWrongStateReturnsStatusCodeMinus2() {      
-        //$this->resetSystemState();
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $this->removeAllJobs();
+        $this->removeAllTasks();
+        $this->removeAllWorkers();        
         
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
@@ -82,19 +87,21 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
             $task->setState($state);
             $this->getTaskService()->getEntityManager()->persist($task);
             $this->getTaskService()->getEntityManager()->flush();
-            
-            $result = $this->runConsole('simplytestable:task:cancel', array(
-                $taskIds[0] =>  true,
-                $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-            ));
 
-            $this->assertEquals(-2, $result);
+            $this->assertEquals(-2, $this->runConsole('simplytestable:task:cancel', array(
+                $taskIds[0] =>  true
+            )));
             $this->assertEquals($task->getState()->getName(), $task->getState()->getName());            
         } 
     }
     
     
     public function testCancelTaskWhenWorkerIsInReadOnlyModeReturnsStatusCode503() {        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->removeAllJobs();
+        $this->removeAllTasks();
+        $this->removeAllWorkers();
+        
         $worker = $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
         $canonicalUrl = 'http://example.com/';       
@@ -109,21 +116,17 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
         $task->setWorker($worker);
         $this->getTaskService()->getEntityManager()->persist($task);
         $this->getTaskService()->getEntityManager()->flush();
-            
-        $result = $this->runConsole('simplytestable:task:cancel', array(
-            $taskIds[0] =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
-        ));
 
-        $this->assertEquals(503, $result);
+        $this->assertEquals(503, $this->runConsole('simplytestable:task:cancel', array(
+            $taskIds[0] =>  true
+        )));
         $this->assertEquals('task-awaiting-cancellation', $task->getState()->getName());
     }
     
     public function testCancelInReadOnlyModeReturnsStatusCodeMinus3() {
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
         $this->assertEquals(-3, $this->runConsole('simplytestable:task:cancel', array(
-            1 =>  true,
-            $this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses' => true
+            1 =>  true
         )));
     }    
 
