@@ -12,7 +12,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends BaseSimplyTe
     
     
     public function testCancellationJobsAreEnqueued() {
-        $this->removeAllJobs();
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
         $canonicalUrl = 'http://example.com/';
         $jobId = $this->createAndPrepareJob($canonicalUrl);
