@@ -11,8 +11,7 @@ class CancelTest extends BaseControllerJsonTestCase {
     }    
     
     public function testCancelAction() {
-        $this->createPublicUserIfMissing();
-        $this->removeAllJobs();
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
         $canonicalUrl = 'http://example.com';        
         $jobId = $this->createJobAndGetId($canonicalUrl);
