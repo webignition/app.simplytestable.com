@@ -8,50 +8,65 @@ class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
     const WORKER_TASK_ASSIGNMENT_FACTOR = 2;   
     
     public static function setUpBeforeClass() {
-        self::setupDatabase();
+        self::setupDatabaseIfNotExists();
     }    
+    
+    public function setUp() {
+        parent::setUp();        
+    }
 
     public function testSelectTasksForAssignmentWithNoWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(0);
     }     
     
     public function testSelectTasksForAssignmentWithOneWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(1);
     }    
     
     public function testSelectTasksForAssignmentWithTwoWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(2);
     }
     
     public function testSelectTasksForAssignmentWithThreeWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(3);
     }
     
     public function testSelectTasksForAssignmentWithFourWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(4);
     }
     
     public function testSelectTasksForAssignmentWithFiveWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(5);
     }    
 
     public function testSelectTasksForAssignmentWithSixWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(6);
     } 
     
     public function testSelectTasksForAssignmentWithSevenWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(7);
     } 
     
     public function testSelectTasksForAssignmentWithEightWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(8);
     } 
     
     public function testSelectTasksForAssignmentWithNineWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(9);
     } 
     
     public function testSelectTasksForAssignmentWithTenWorkers() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(10);
     }
     
@@ -63,9 +78,9 @@ class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
     
     
     private function runForNWorkers($requestedWorkerCount) {
-        $this->removeAllWorkers();
-        $this->removeAllJobs();
-        $this->clearRedis();
+//        $this->removeAllWorkers();
+//        $this->removeAllJobs();
+//        $this->clearRedis();      
         
         $canonicalUrl = 'http://example.com/';   
         
@@ -82,7 +97,7 @@ class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
         
         $this->createWorkers($requestedWorkerCount);   
         
-        $workerCount = $this->getWorkerService()->count();
+        $workerCount = $this->getWorkerService()->count();        
         $expectedSelectedTaskCount = $workerCount * self::WORKER_TASK_ASSIGNMENT_FACTOR;
         if ($expectedSelectedTaskCount > $taskCount) {
             $expectedSelectedTaskCount = $taskCount;
@@ -93,7 +108,7 @@ class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
             $expectedQueuedTaskCount = 0;
         }
         
-        $this->runConsole('simplytestable:task:assign:select');
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign:select'));
         
         $jobResponse = $this->fetchJob($canonicalUrl, $job_id);        
         $jobObject = json_decode($jobResponse->getContent());
@@ -106,15 +121,13 @@ class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
         $taskIdGroups = $this->getTaskIdGroups($taskIds, $workerCount, $expectedSelectedTaskCount);
 
         foreach ($taskIdGroups as $taskIdGroup) {
-            $containsResult = $this->getResqueQueueService()->contains(
+            $this->assertTrue($this->getResqueQueueService()->contains(
                 'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
                 'task-assign-collection',
                 array(
                     'ids' => implode(',', $taskIdGroup)
                 )
-            );
-
-            $this->assertTrue($containsResult);            
+            ));            
         }
     }    
     

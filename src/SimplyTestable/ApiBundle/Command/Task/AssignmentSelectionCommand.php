@@ -19,7 +19,6 @@ class AssignmentSelectionCommand extends BaseCommand
         $this
             ->setName('simplytestable:task:assign:select')
             ->setDescription('Select the oldtest queued tasks from each job with queued tasks and queue them for assignment to workers')
-            ->addArgument('http-fixture-path', InputArgument::OPTIONAL, 'path to HTTP fixture data when testing')
             ->setHelp(<<<EOF
 Select the oldtest queued tasks from each job with queued tasks and queue them for assignment to workers
 EOF
@@ -30,14 +29,6 @@ EOF
     {   
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
-        }          
-        
-        if ($input->hasArgument('http-fixture-path')) {
-            $httpClient = $this->getContainer()->get('simplytestable.services.httpClient');
-            
-            if ($httpClient instanceof \webignition\Http\Mock\Client\Client) {
-                $httpClient->getStoredResponseList()->setFixturesPath($input->getArgument('http-fixture-path'));
-            }            
         }
         
         $queuedTaskCount = $this->getTaskService()->getQueuedCount();

@@ -448,7 +448,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function createWorkers($requestedWorkerCount) {
         $workers = array();
         
-        for ($workerIndex = 0; $workerIndex <= $requestedWorkerCount; $workerIndex++) {
+        for ($workerIndex = 0; $workerIndex < $requestedWorkerCount; $workerIndex++) {
             $workers[] = $this->createWorker('worker'.$workerIndex.'.worker.simplytestable.com');
         } 
         
