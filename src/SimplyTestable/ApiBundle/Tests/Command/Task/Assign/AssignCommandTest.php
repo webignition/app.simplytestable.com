@@ -7,8 +7,15 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class AssignCommandTest extends BaseSimplyTestableTestCase {
     
     public static function setUpBeforeClass() {
-        self::setupDatabase();
+        self::setupDatabaseIfNotExists();
     }
+    
+    public function setUp() {
+        parent::setUp();
+        $this->removeAllJobs();
+        $this->removeAllTasks();
+        $this->removeAllWorkers();         
+    }    
     
 
     public function testAssignValidTaskReturnsStatusCode0() {        
@@ -56,9 +63,6 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode2() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $this->removeAllWorkers();
-        $this->removeAllJobs();
         $this->clearRedis();
         
         $canonicalUrl = 'http://example.com/';       
@@ -84,9 +88,6 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode3() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $this->removeAllWorkers();
-        $this->removeAllJobs();
         $this->clearRedis();     
         
         $this->createWorker('http://hydrogen.worker.simplytestable.com');

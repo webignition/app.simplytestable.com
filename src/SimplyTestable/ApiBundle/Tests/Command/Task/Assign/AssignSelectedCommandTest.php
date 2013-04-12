@@ -10,11 +10,16 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
         self::setupDatabaseIfNotExists();
     } 
     
+    public function setUp() {
+        parent::setUp();
+        $this->removeAllJobs();
+        $this->removeAllTasks();
+        $this->removeAllWorkers();         
+    }    
+    
     
     public function testAssignValidTaskReturnsStatusCode0() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        self::setupDatabase();
         
         $canonicalUrl = 'http://example.com/';           
         $job_id = $this->createAndPrepareJob($canonicalUrl);
@@ -48,9 +53,6 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $this->removeAllWorkers();
-        $this->removeAllJobs();
         $this->clearRedis();
         
         $canonicalUrl = 'http://example.com/';        
@@ -68,8 +70,6 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2() {        
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        self::setupDatabase();
         
         $canonicalUrl = 'http://example.com/';           
         $job_id = $this->createAndPrepareJob($canonicalUrl);

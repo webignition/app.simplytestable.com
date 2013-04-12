@@ -7,11 +7,19 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     public static function setUpBeforeClass() {
-        self::setupDatabase();
-    }    
+        self::setupDatabaseIfNotExists();
+    } 
+    
+    public function setUp() {
+        parent::setUp();
+        $this->removeAllJobs();
+        $this->removeAllTasks();
+        $this->removeAllWorkers();         
+    }
+    
 
     public function testAssignValidTaskReturnsStatusCode0() {        
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));       
         
         $workerHostname = 'hydrogen.worker.simplytestable.com';
         
@@ -39,10 +47,6 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
-        $this->removeAllWorkers();
-        $this->removeAllJobs();
-        $this->clearRedis();
-        
         $canonicalUrl = 'http://example.com/';       
         $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
         
@@ -69,9 +73,6 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2() {        
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
-        $this->removeAllWorkers();
-        $this->removeAllJobs();
-        $this->clearRedis();
         
         $this->createWorker('hydrogen.worker.simplytestable.com');
         $this->createWorker('lithium.worker.simplytestable.com');
@@ -112,10 +113,7 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testAssignSingleWorkerWhichRaisesHttpClientErrorReturnsStatusCode2() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
-        $this->removeAllWorkers();
-        $this->removeAllJobs();
-        $this->clearRedis();
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
         $this->createWorker('hydrogen.worker.simplytestable.com');     
         
@@ -146,9 +144,6 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     public function testAssignSingleWorkerWhichRaisesHttpServerErrorReturnsStatusCode2() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
-        $this->removeAllWorkers();
-        $this->removeAllJobs();
-        $this->clearRedis();
         
         $this->createWorker('hydrogen.worker.simplytestable.com');     
         
