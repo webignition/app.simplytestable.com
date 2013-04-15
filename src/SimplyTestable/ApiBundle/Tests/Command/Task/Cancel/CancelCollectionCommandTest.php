@@ -48,6 +48,72 @@ class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(1, $this->runConsole('simplytestable:task:cancelcollection', array(
             implode(',', array(1,2,3)) =>  true
         )));
-    }    
+    } 
+    
+    
+    public function testCancelRaisesHttpClientErrorWithOnlyOneWorker() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));      
+        
+        $worker = $this->createWorker('hydrogen.worker.simplytestable.com');
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
+        $tasks = array();
+        
+        foreach ($taskIds as $taskId) {            
+            $task = $this->getTaskService()->getById($taskId); 
+            $task->setState($this->getTaskService()->getQueuedState());
+            $tasks[] = $task;
+            $task->setWorker($worker);
+            $this->getTaskService()->getEntityManager()->persist($task);                        
+        }
+        
+        $this->getTaskService()->getEntityManager()->flush();
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:cancelcollection', array(
+            implode(',', $taskIds) =>  true
+        )));
+        
+        foreach ($tasks as $task) {
+            $this->assertEquals('task-cancelled', $task->getState()->getName());
+        }        
+    } 
+    
+    
+    public function testCancelRaisesHttpServerErrorWithOnlyOneWorker() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));      
+        
+        $worker = $this->createWorker('hydrogen.worker.simplytestable.com');
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
+        $tasks = array();
+        
+        foreach ($taskIds as $taskId) {            
+            $task = $this->getTaskService()->getById($taskId); 
+            $task->setState($this->getTaskService()->getQueuedState());
+            $tasks[] = $task;
+            $task->setWorker($worker);
+            $this->getTaskService()->getEntityManager()->persist($task);                        
+        }
+        
+        $this->getTaskService()->getEntityManager()->flush();
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:cancelcollection', array(
+            implode(',', $taskIds) =>  true
+        )));
+        
+        foreach ($tasks as $task) {
+            $this->assertEquals('task-cancelled', $task->getState()->getName());
+        }        
+    }   
 
 }
