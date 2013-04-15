@@ -190,16 +190,18 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         try {
             $response = $httpRequest->send();
         } catch (\Guzzle\Http\Exception\CurlException $curlException) {
-            $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker: " . $requestUrl . ": " . $curlException->getErrorNo().' '.$curlException->getError());
+            $this->logger->err("WorkerTaskAssignmentService::assignCollectionToWorker: " . $requestUrl . ": " . $curlException->getErrorNo().' '.$curlException->getError());
             return false;
         } catch (\Guzzle\Http\Exception\BadResponseException $badResponseException) {
             $response = $badResponseException->getResponse();
+        }        
+        
+        if (!$response->isSuccessful()) {
+            $this->logger->err("WorkerTaskAssignmentService::assignCollectionToWorker " . $requestUrl . ": " . $response->getStatusCode()." ".$response->getReasonPhrase());     
+            return false;
         }
         
         $this->logger->info("WorkerTaskAssignmentService::assignCollectionToWorker " . $requestUrl . ": " . $response->getStatusCode()." ".$response->getReasonPhrase());     
-        if (!$response->isSuccessful()) {
-            return false;
-        }
         
         $responseObject = json_decode($response->getBody());            
         foreach ($tasks as $task) {
