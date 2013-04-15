@@ -181,7 +181,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
             $requestData[] = $postFields;
         }
         
-        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection');        
+        $requestUrl = $this->urlService->prepare('http://' . $worker->getHostname() . '/task/create/collection/');        
         
         $httpRequest = $this->httpClientService->postRequest($requestUrl, null, array(
             'tasks' => $requestData            
