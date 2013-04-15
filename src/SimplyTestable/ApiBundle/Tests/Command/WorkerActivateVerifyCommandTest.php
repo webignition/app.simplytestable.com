@@ -87,6 +87,52 @@ class WorkerActivateVerifyCommandTest extends \SimplyTestable\ApiBundle\Tests\Ba
     }    
     
     
+    public function testActivateVerifyRaisesHttpClientError() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $workerHostname = 'test.worker.simplytestable.com';
+        $activationRequestToken = 'token';
+        
+        $worker = $this->createWorker($workerHostname);
+        
+        $this->assertInternalType('integer', $worker->getId());
+        $this->assertGreaterThan(0, $worker->getId());
+        $this->assertEquals($workerHostname, $worker->getHostname());
+        
+        $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
+        
+        $this->assertTrue($activationRequest->getWorker()->equals($worker));
+        $this->assertTrue($activationRequest->getState()->equals($this->getWorkerActivationRequestService()->getStartingState()));
+        
+        $this->assertEquals(404, $this->runConsole('simplytestable:worker:activate:verify', array(
+            $worker->getId() =>  true
+        )));      
+    } 
+    
+    
+    public function testActivateVerifyRaisesHttpServerError() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $workerHostname = 'test.worker.simplytestable.com';
+        $activationRequestToken = 'token';
+        
+        $worker = $this->createWorker($workerHostname);
+        
+        $this->assertInternalType('integer', $worker->getId());
+        $this->assertGreaterThan(0, $worker->getId());
+        $this->assertEquals($workerHostname, $worker->getHostname());
+        
+        $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
+        
+        $this->assertTrue($activationRequest->getWorker()->equals($worker));
+        $this->assertTrue($activationRequest->getState()->equals($this->getWorkerActivationRequestService()->getStartingState()));
+        
+        $this->assertEquals(500, $this->runConsole('simplytestable:worker:activate:verify', array(
+            $worker->getId() =>  true
+        )));       
+    } 
+    
+    
     /**
      *
      * @param Worker $worker
