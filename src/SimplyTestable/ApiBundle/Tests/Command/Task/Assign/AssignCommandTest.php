@@ -124,6 +124,66 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(5, $this->runConsole('simplytestable:task:assign', array(
             1 =>  true
         )));
-    }    
+    } 
+    
+    public function testAssignRaisesHttpClientErrorWithOnlyOneWorker() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+        
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
+        $task = $this->getTaskService()->getById($taskIds[0]);
+        
+        $task->setState($this->getTaskService()->getQueuedState());
+        $this->getTaskService()->getEntityManager()->persist($task);
+        $this->getTaskService()->getEntityManager()->flush();
+        
+        $this->assertEquals(3, $this->runConsole('simplytestable:task:assign', array(
+            $taskIds[0] =>  true
+        )));
+        
+        $this->assertTrue($this->getResqueQueueService()->contains(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+            'task-assign',
+            array(
+                'id' => $taskIds[0]
+            )
+        ));         
+    } 
+    
+    public function testAssignRaisesHttpServerErrorWithOnlyOneWorker() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+        
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
+        $task = $this->getTaskService()->getById($taskIds[0]);
+        
+        $task->setState($this->getTaskService()->getQueuedState());
+        $this->getTaskService()->getEntityManager()->persist($task);
+        $this->getTaskService()->getEntityManager()->flush();
+        
+        $this->assertEquals(3, $this->runConsole('simplytestable:task:assign', array(
+            $taskIds[0] =>  true
+        )));
+        
+        $this->assertTrue($this->getResqueQueueService()->contains(
+            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
+            'task-assign',
+            array(
+                'id' => $taskIds[0]
+            )
+        ));         
+    }      
     
 }
