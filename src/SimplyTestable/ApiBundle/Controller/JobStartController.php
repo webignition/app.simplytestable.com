@@ -20,11 +20,11 @@ class JobStartController extends ApiController
     {        
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
-        }
+        }        
         
         if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
-        }        
+        }    
         
         $this->siteRootUrl = $site_root_url;
         $requestedJobType = $this->getRequestJobType();
@@ -129,12 +129,12 @@ class JobStartController extends ApiController
      * 
      * @return array
      */
-    private function getTaskTypeOptions() {
+    private function getTaskTypeOptions() {        
         $testTypeOptions = (is_array($this->getRequestValue('test-type-options'))) ? $this->getRequestValue('test-type-options') : array();
         
         foreach ($testTypeOptions as $taskTypeName => $options) {
             unset($testTypeOptions[$taskTypeName]);
-            $testTypeOptions[strtolower($taskTypeName)] = $options;
+            $testTypeOptions[urldecode(strtolower($taskTypeName))] = $options;
         }
         
         return $testTypeOptions;
