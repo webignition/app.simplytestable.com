@@ -96,7 +96,7 @@ class JobPrepareCommand extends BaseCommand
             'JS static analysis' => is_null($this->getContainer()->getParameter('js-static-analysis-domains-to-ignore')) ? array() : $this->getContainer()->getParameter('js-static-analysis-domains-to-ignore')
         );
         
-        foreach ($urls as $url) {                
+        foreach ($urls as $url) {            
             $comparatorUrl = new NormalisedUrl($url);
             if (!$this->isProcessedUrl($comparatorUrl)) {
                 foreach ($requestedTaskTypes as $taskType) {
@@ -113,7 +113,7 @@ class JobPrepareCommand extends BaseCommand
                     if ($taskTypeOptions->getOptionCount()) {
                         $options = $taskTypeOptions->getOptions();                        
                         
-                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $predefinedDomainsToIgnore);                        
+                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $predefinedDomainsToIgnore);                                               
                         if (count($domainsToIgnore)) {
                             $options['domains-to-ignore'] = $domainsToIgnore;
                         }
@@ -198,7 +198,7 @@ class JobPrepareCommand extends BaseCommand
      * @return boolean
      */
     private function hasDomainsToIgnore(TaskTypeOptions $taskTypeOptions) {
-        return $taskTypeOptions->getOption('domains-to-ignore') == '1';
+        return is_array($taskTypeOptions->getOption('domains-to-ignore'));
     }
     
     
