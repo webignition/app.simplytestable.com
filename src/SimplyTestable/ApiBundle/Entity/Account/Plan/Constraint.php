@@ -47,6 +47,17 @@ class Constraint
      * @ORM\Column(type="boolean")
      */    
     private $isAvailable = true;
+    
+
+    /**
+     *
+     * @var SimplyTestable\ApiBundle\Entity\Account\Plan\Plan
+     * 
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Plan", inversedBy="constraints")
+     * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=false)     
+     */  
+    private $plan;
+    
 
     /**
      * Get id
