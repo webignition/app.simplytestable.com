@@ -54,7 +54,7 @@ class Constraint
      * @var SimplyTestable\ApiBundle\Entity\Account\Plan\Plan
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Plan", inversedBy="constraints")
-     * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=false)     
+     * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=true)     
      */  
     private $plan;
     
@@ -136,5 +136,28 @@ class Constraint
     public function getIsAvailable()
     {
         return $this->isAvailable;
+    }
+
+    /**
+     * Set plan
+     *
+     * @param SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
+     * @return Constraint
+     */
+    public function setPlan(\SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan = null)
+    {
+        $this->plan = $plan;
+    
+        return $this;
+    }
+
+    /**
+     * Get plan
+     *
+     * @return SimplyTestable\ApiBundle\Entity\Account\Plan\Plan 
+     */
+    public function getPlan()
+    {
+        return $this->plan;
     }
 }
