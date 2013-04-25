@@ -36,7 +36,7 @@ class Constraint
      * 
      * @var integer
      * 
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="integer", nullable=true, name="limit_threshold")
      */  
     private $limit = null; 
     

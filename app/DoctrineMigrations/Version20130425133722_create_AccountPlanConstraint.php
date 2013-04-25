@@ -16,7 +16,7 @@ class Version20130425133722_create_AccountPlanConstraint extends BaseMigration
             "CREATE TABLE AccountPlanConstraint (
                 id INT AUTO_INCREMENT NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                `limit` INT DEFAULT NULL,
+                limit_threshold INT DEFAULT NULL,
                 isAvailable TINYINT(1) NOT NULL,
                 UNIQUE INDEX UNIQ_E18FF0B75E237E06 (name),
                 PRIMARY KEY(id))
@@ -27,7 +27,7 @@ class Version20130425133722_create_AccountPlanConstraint extends BaseMigration
             "CREATE TABLE AccountPlanConstraint (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                `limit` INT DEFAULT NULL,
+                limit_threshold INT DEFAULT NULL,
                 isAvailable TINYINT(1) NOT NULL)",
             "CREATE UNIQUE INDEX UNIQ_E18FF0B75E237E06 ON AccountPlanConstraint (name)"
         ); 
