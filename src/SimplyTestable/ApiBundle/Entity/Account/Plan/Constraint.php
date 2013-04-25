@@ -1,5 +1,5 @@
 <?php
-namespace SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
+namespace SimplyTestable\ApiBundle\Entity\Account\Plan;
 
 use Doctrine\ORM\Mapping as ORM;
 
