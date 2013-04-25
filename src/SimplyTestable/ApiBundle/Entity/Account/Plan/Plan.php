@@ -36,7 +36,7 @@ class Plan
      *
      * @var \Doctrine\Common\Collections\Collection
      * 
-     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint", mappedBy="plan")   
+     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint", mappedBy="plan", cascade={"persist", "remove"})   
      */ 
     private $constraints;
     

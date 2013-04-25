@@ -22,15 +22,29 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeAllWorkers();
         $this->removeAllUsers();
         $this->removeTestAccountPlanContraints();
+        $this->removeTestAccountPlans();
         $this->createPublicUserIfMissing();
         $this->clearRedis();
     }
     
     
-    protected function removeTestAccountPlanContraints() {        
-        $testPlainConstraintNames = array('foo', 'bar');
+    protected function removeTestAccountPlans() {        
+        $testPlanNames = array('foo-plan', 'bar-plan');
         
-        foreach ($testPlainConstraintNames as $constraintName) {
+        foreach ($testPlanNames as $constraintName) {
+            $plans = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan')->findByName($constraintName);
+            if (is_array($plans) && count($plans) > 0) {
+                $this->getEntityManager()->remove($plans[0]);
+                $this->getEntityManager()->flush();
+            }
+        }
+    }    
+    
+    
+    protected function removeTestAccountPlanContraints() {        
+        $testPlanConstraintNames = array('foo', 'bar');
+        
+        foreach ($testPlanConstraintNames as $constraintName) {
             $constraints = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint')->findByName($constraintName);
             if (is_array($constraints) && count($constraints) > 0) {
                 $this->getEntityManager()->remove($constraints[0]);
