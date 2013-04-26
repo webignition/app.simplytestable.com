@@ -41,7 +41,7 @@ class UserAccountPlan
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Plan")
      * @ORM\JoinColumn(name="accountplan_id", referencedColumnName="id", nullable=false)
      */    
-    private $accountPlan;
+    private $plan;
 
     /**
      * Get id
@@ -77,25 +77,25 @@ class UserAccountPlan
     }
 
     /**
-     * Set accountPlan
+     * Set plan
      *
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $accountPlan
      * @return UserAccountPlan
      */
-    public function setAccountPlan(\SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $accountPlan)
+    public function setPlan(\SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan)
     {
-        $this->accountPlan = $accountPlan;
+        $this->plan = $plan;
     
         return $this;
     }
 
     /**
-     * Get accountPlan
+     * Get plan
      *
      * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan 
      */
-    public function getAccountPlan()
+    public function getPlan()
     {
-        return $this->accountPlan;
+        return $this->plan;
     }
 }

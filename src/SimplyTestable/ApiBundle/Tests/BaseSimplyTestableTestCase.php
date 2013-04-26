@@ -492,4 +492,25 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         
         return $workers;
     }
+    
+    
+    
+    /**
+     * 
+     * @param string $name
+     * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan
+     */
+    protected function createAccountPlan($name = null) {
+        if (is_null($name)) {
+            $name = 'foo-plan';
+        }
+        
+        $plan = new \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+        $plan->setName($name); 
+        
+        $this->getEntityManager()->persist($plan);
+        $this->getEntityManager()->flush();         
+        
+        return $plan;
+    }
 }
