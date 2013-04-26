@@ -19,6 +19,29 @@ class PlanTest extends BaseSimplyTestableTestCase {
     }
     
     
+    public function testDefaultVisibilityIsFalse() {
+        $plan = new Plan();
+        $plan->setName('foo-plan');
+      
+        $this->getEntityManager()->persist($plan);
+        $this->getEntityManager()->flush();
+        
+        $this->assertFalse($plan->getIsVisible());
+    }
+    
+    
+    public function testMakeVisible() {
+        $plan = new Plan();
+        $plan->setName('foo-plan');
+        $plan->setIsVisible(true);
+      
+        $this->getEntityManager()->persist($plan);
+        $this->getEntityManager()->flush();
+        
+        $this->assertTrue($plan->getIsVisible());
+    }    
+    
+    
     public function testNameUniqueness() {
         $plan1 = new Plan();
         $plan1->setName('bar-plan');
