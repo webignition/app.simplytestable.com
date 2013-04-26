@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command;
+namespace SimplyTestable\ApiBundle\Tests\Entity\Account\Plan;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
