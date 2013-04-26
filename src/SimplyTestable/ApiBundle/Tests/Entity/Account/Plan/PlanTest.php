@@ -127,6 +127,31 @@ class PlanTest extends BaseSimplyTestableTestCase {
         $this->assertFalse($plan->getConstraints()->contains($constraint1));
         $this->assertTrue($plan->getConstraints()->contains($constraint2));
         
-    }    
+    } 
+    
+    
+    public function testPersistAndRetrievePlanWithConstraints() {
+        $plan = new Plan();
+        $plan->setName('foo-plan');
+        
+        $constraint1 = new Constraint();
+        $constraint1->setName('foo');        
+        $plan->addConstraint($constraint1);
+        
+        $constraint2 = new Constraint();
+        $constraint2->setName('bar');        
+        $plan->addConstraint($constraint2);              
+
+        $this->getEntityManager()->persist($plan);
+        $this->getEntityManager()->flush(); 
+        
+        $this->getEntityManager()->clear();
+        
+        $planEntityRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan');
+        $retrievedPlan = $planEntityRepository->find($plan->getId());
+        
+        $this->assertEquals(2, $retrievedPlan->getConstraints()->count());
+
+    }
 
 }

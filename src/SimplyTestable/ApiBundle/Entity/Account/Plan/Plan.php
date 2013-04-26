@@ -38,7 +38,7 @@ class Plan
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint", mappedBy="plan", cascade={"persist", "remove"})   
      */ 
-    private $constraints;
+    private $constraints;  
     
     
     /**
@@ -123,6 +123,7 @@ class Plan
     public function addConstraint(\SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraint)
     {
         $this->constraints[] = $constraint;
+        $constraint->setPlan($this);
     
         return $this;
     }
