@@ -20,9 +20,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeAllJobs();
         $this->removeAllTasks();
         $this->removeAllWorkers();
-        $this->removeAllUsers();
         $this->removeTestAccountPlanContraints();
         $this->removeTestAccountPlans();
+        $this->removeAllUserAccountPlans();
+        $this->removeAllUsers();        
         $this->createPublicUserIfMissing();
         $this->clearRedis();
     }
@@ -441,6 +442,17 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
             $this->getUserService()->deleteUser($user);
         }
     }
+    
+    
+    protected function removeAllUserAccountPlans() {
+        $userAccountPlans = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserAccountPlan')->findAll();
+        if (is_array($userAccountPlans) && count($userAccountPlans) > 0) {
+            foreach ($userAccountPlans as $userAccountPlan) {
+                $this->getEntityManager()->remove($userAccountPlan);
+                $this->getEntityManager()->flush();                
+            }
+        }
+    }    
     
     
     protected function createPublicUserIfMissing() {        
