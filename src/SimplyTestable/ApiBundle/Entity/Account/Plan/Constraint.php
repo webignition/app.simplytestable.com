@@ -54,9 +54,9 @@ class Constraint
      * @var SimplyTestable\ApiBundle\Entity\Account\Plan\Plan
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Plan", inversedBy="constraints")
-     * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=true)     
+     * @ORM\JoinColumn(name="plan_id", referencedColumnName="id", nullable=true)     
      */  
-    private $plan;
+    private $plan; 
     
 
     /**
