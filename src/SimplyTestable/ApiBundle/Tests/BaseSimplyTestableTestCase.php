@@ -20,9 +20,9 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeAllJobs();
         $this->removeAllTasks();
         $this->removeAllWorkers();
-        $this->removeTestAccountPlanContraints();
-        $this->removeTestAccountPlans();
         $this->removeAllUserAccountPlans();
+        $this->removeTestAccountPlanContraints();
+        $this->removeTestAccountPlans();        
         $this->removeAllUsers();        
         $this->createPublicUserIfMissing();
         $this->clearRedis();

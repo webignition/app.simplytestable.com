@@ -54,7 +54,7 @@ class Constraint
      * @var SimplyTestable\ApiBundle\Entity\Account\Plan\Plan
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Plan", inversedBy="constraints")
-     * @ORM\JoinColumn(name="plan_id", referencedColumnName="id", nullable=true)     
+     * @ORM\JoinColumn(name="plan_id", referencedColumnName="id", nullable=false)     
      */  
     private $plan; 
     
@@ -144,7 +144,7 @@ class Constraint
      * @param SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
      * @return Constraint
      */
-    public function setPlan(\SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan = null)
+    public function setPlan(\SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan)
     {
         $this->plan = $plan;
     

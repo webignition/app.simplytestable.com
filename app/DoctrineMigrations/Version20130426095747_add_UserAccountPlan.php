@@ -30,7 +30,7 @@ class Version20130426095747_add_UserAccountPlan extends BaseMigration
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 user_id INT NOT NULL,
                 accountplan_id INT NOT NULL,
-                FOREIGN KEY(user_id) REFERENCES User (id),
+                FOREIGN KEY(user_id) REFERENCES fos_user (id),
                 FOREIGN KEY(accountplan_id) REFERENCES AccountPlan (id))",
             "CREATE INDEX IDX_BA8D333AA76ED395 ON UserAccountPlan (user_id)",
             "CREATE INDEX IDX_BA8D333A369E2B6B ON UserAccountPlan (accountplan_id)",           

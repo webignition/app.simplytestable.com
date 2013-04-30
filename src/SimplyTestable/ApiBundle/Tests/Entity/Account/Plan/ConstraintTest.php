@@ -8,8 +8,11 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 class ConstraintTest extends BaseSimplyTestableTestCase {
 
     public function testPersist() {
+        $plan = $this->createAccountPlan();
+        
         $constraint = new Constraint();
         $constraint->setName('foo');
+        $constraint->setPlan($plan);
         
         $this->getEntityManager()->persist($constraint);
         $this->getEntityManager()->flush();
@@ -19,14 +22,18 @@ class ConstraintTest extends BaseSimplyTestableTestCase {
     
     
     public function testNameUniqueness() {
+        $plan = $this->createAccountPlan();
+        
         $constraint1 = new Constraint();
         $constraint1->setName('bar');
+        $constraint1->setPlan($plan);
         
         $this->getEntityManager()->persist($constraint1);
         $this->getEntityManager()->flush();        
         
         $constraint2 = new Constraint();
         $constraint2->setName('bar');
+        $constraint2->setPlan($plan);
         
         $this->getEntityManager()->persist($constraint2);
         
