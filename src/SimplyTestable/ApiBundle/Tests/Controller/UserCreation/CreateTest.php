@@ -104,6 +104,36 @@ class CreateTest extends BaseControllerJsonTestCase {
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
         $this->assertEquals(503, $controller->createAction()->getStatusCode());            
     }
+    
+    public function testWithEmailAndPasswordCreatesUser() {        
+        $email = 'user1@example.com';
+        $password = 'password1';        
+        
+        $this->assertNull($this->getUserService()->findUserByEmail($email));
+        
+        $controller = $this->getUserCreationController('createAction', array(
+            'email' => $email,
+            'password' => $password
+        ));
+        
+        $response = $controller->createAction();
+        
+        $this->assertEquals(200, $response->getStatusCode()); 
+        
+        $user = $this->getUserService()->findUserByEmail($email);
+        $this->assertInstanceOf('SimplyTestable\ApiBundle\Entity\User', $user);
+    }    
+    
+    
+    public function testSuccessfulCreationAddsUserToBasicPlan() {        
+        $email = 'user1@example.com';
+        $password = 'password1';        
+        
+        $this->createAndActivateUser($email, $password);
+
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->findUserByEmail($email));
+        $this->assertEquals('basic', $userAccountPlan->getPlan()->getName());
+    }
 }
 
 

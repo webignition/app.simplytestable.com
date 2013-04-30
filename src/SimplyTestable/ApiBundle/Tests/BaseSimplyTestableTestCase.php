@@ -23,11 +23,16 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeAllUserAccountPlans();
         $this->removeTestAccountPlanContraints();
         $this->removeTestAccountPlans();        
+        $this->rebuildDefaultUserState();
+        $this->clearRedis();
+    }
+    
+    
+    protected function rebuildDefaultUserState() {
         $this->removeAllUsers();        
         $this->createPublicUserIfMissing();
         $this->createAdminUserIfMissing();
-        $this->createPublicUserAccountPlan();
-        $this->clearRedis();
+        $this->createPublicUserAccountPlan();        
     }
     
     
@@ -464,7 +469,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->getJobService()->getEntityManager()->flush();
     }
     
-    private function removeAllUsers() {
+    protected function removeAllUsers() {
         $this->removeAllJobs();
         
         $users = $this->getUserService()->findUsers();

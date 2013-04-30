@@ -4,9 +4,11 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
+use SimplyTestable\ApiBundle\Entity\User;
 
 class UserCreationController extends UserController
 {
+    const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
     
     public function __construct() {
         $this->setInputDefinitions(array(
@@ -40,7 +42,12 @@ class UserCreationController extends UserController
             }           
         }
         
-        $this->getUserService()->create($email, $password);
+        $user = $this->getUserService()->create($email, $password);
+        
+        if ($user instanceof User) {
+            $plan = $this->getAccountPlanService()->find(self::DEFAULT_ACCOUNT_PLAN_NAME);        
+            $this->getUserAccountPlanService()->create($user, $plan);            
+        }
         
         return new \Symfony\Component\HttpFoundation\Response();
     }
@@ -60,5 +67,23 @@ class UserCreationController extends UserController
         
         return new \Symfony\Component\HttpFoundation\Response();
     } 
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\AccountPlanService 
+     */
+    private function getAccountPlanService() {
+        return $this->get('simplytestable.services.accountplanservice');
+    }       
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService 
+     */
+    private function getUserAccountPlanService() {
+        return $this->get('simplytestable.services.useraccountplanservice');
+    }    
 
 }
