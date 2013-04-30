@@ -9,7 +9,6 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     }     
     
     public function testPerformResetWithValidToken() {
-        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';
         
@@ -26,7 +25,6 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     
     
     public function testPerformResetWithInvalidToken() {
-        $this->removeAllUsers();
         $token = 'invalid token';
         
         $controller = $this->getUserPasswordResetController('resetPasswordAction', array(
@@ -42,7 +40,6 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     }     
     
     public function testPerformResetWithInactiveUser() {
-        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';
         

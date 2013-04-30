@@ -11,8 +11,6 @@ class GetTokenTest extends BaseControllerJsonTestCase {
     }    
 
     public function testGetTokenWithNotEnabledUser() {
-        $this->removeAllUsers();
-
         $email = 'user1@example.com';
         $password = 'password1';
         
@@ -28,8 +26,6 @@ class GetTokenTest extends BaseControllerJsonTestCase {
     }
         
     public function testGetTokenWithNonExistentUser() {
-        $this->removeAllUsers();
-
         $email = 'user1@example.com';
         
         try {
@@ -43,8 +39,6 @@ class GetTokenTest extends BaseControllerJsonTestCase {
     
     
     public function testGetTokenWithEnabledUser() {
-        $this->removeAllUsers();
-
         $email = 'user1@example.com';
         $password = 'password1';
         

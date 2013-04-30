@@ -12,7 +12,6 @@ class IsEnabledTest extends BaseControllerJsonTestCase {
     
 
     public function testExistsWithNotEnabledUser() {
-        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';
         
@@ -26,7 +25,6 @@ class IsEnabledTest extends BaseControllerJsonTestCase {
     
     
     public function testExistsWithEnabledUser() {
-        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';
         
@@ -40,7 +38,6 @@ class IsEnabledTest extends BaseControllerJsonTestCase {
     
     
     public function testExistsWithNonExistentUser() {
-        $this->removeAllUsers();
         $email = 'user1@example.com';
         
         try {

@@ -11,7 +11,6 @@ class ActivateTest extends BaseControllerJsonTestCase {
     }    
 
     public function testActivateActionWithCorrectToken() {
-        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';        
         
@@ -30,7 +29,6 @@ class ActivateTest extends BaseControllerJsonTestCase {
     
     
     public function testActivateActionWithIncorrectToken() {
-        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password1';
         

@@ -12,7 +12,6 @@ class CreateTest extends BaseControllerJsonTestCase {
     
 
     public function testCreateActionWithEmailPresent() {
-        $this->removeAllUsers();
         $email = 'user1@example.com';
         $password = 'password';
         
@@ -26,9 +25,7 @@ class CreateTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());       
     }
 
-    public function testCreateActionWithoutCredentials() {
-        $this->removeAllUsers();
-        
+    public function testCreateActionWithoutCredentials() {        
         try {
             $controller = $this->getUserCreationController('createAction', array());
             $controller->createAction();
@@ -38,9 +35,7 @@ class CreateTest extends BaseControllerJsonTestCase {
         }
     }     
     
-    public function testCreateActionWithoutEmail() {
-        $this->removeAllUsers();
-        
+    public function testCreateActionWithoutEmail() {        
         try {
             $controller = $this->getUserCreationController('createAction', array(
                 'password' => 'password'
@@ -53,9 +48,7 @@ class CreateTest extends BaseControllerJsonTestCase {
     }   
     
     
-    public function testCreateActionWithoutPassword() {
-        $this->removeAllUsers();
-        
+    public function testCreateActionWithoutPassword() {        
         try {
             $controller = $this->getUserCreationController('createAction', array(
                 'email' => 'email'
@@ -68,7 +61,6 @@ class CreateTest extends BaseControllerJsonTestCase {
     }     
     
     public function testCreateWithEmailOfExistingNotEnabledUser() {
-        $this->removeAllUsers(); 
         $email = 'user1@example.com';
         $password = 'password1';
         $this->createAndFindUser($email, $password);
@@ -85,7 +77,6 @@ class CreateTest extends BaseControllerJsonTestCase {
     
     
     public function testCreateWithEmailOfExistingEnabledUser() {
-        $this->removeAllUsers();     
         $email = 'user1@example.com';
         $password = 'password1';        
         $this->createAndActivateUser($email, $password);
