@@ -25,7 +25,17 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeTestAccountPlans();        
         $this->removeAllUsers();        
         $this->createPublicUserIfMissing();
+        $this->createAdminUserIfMissing();
+        $this->createPublicUserAccountPlan();
         $this->clearRedis();
+    }
+    
+    
+    public function createPublicUserAccountPlan() {
+        $user = $this->getUserService()->getPublicUser();
+        $plan = $this->getAccountPlanService()->find('public');
+        
+        $this->getUserAccountPlanService()->create($user, $plan);          
     }
     
     
@@ -328,6 +338,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function getWorkerService() {
         return $this->container->get('simplytestable.services.workerservice');
     }     
+
     
     
     /**
@@ -336,6 +347,25 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getUserService() {
         return $this->container->get('simplytestable.services.userservice');
+    }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\AccountPlanService
+     */
+    protected function getAccountPlanService() {
+        return $this->container->get('simplytestable.services.accountplanservice');
+    }    
+    
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
+     */
+    protected function getUserAccountPlanService() {
+        return $this->container->get('simplytestable.services.useraccountplanservice');
     }
     
 
@@ -434,7 +464,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->getJobService()->getEntityManager()->flush();
     }
     
-    protected function removeAllUsers() {
+    private function removeAllUsers() {
         $this->removeAllJobs();
         
         $users = $this->getUserService()->findUsers();
@@ -469,6 +499,24 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
             $manipulator->activate($user->getUsername());      
         }
     }
+    
+    
+    protected function createAdminUserIfMissing() {        
+        if (!$this->getUserService()->exists('admin@simplytestable.com')) {
+            $user = new User();
+            $user->setEmail($this->container->getParameter('admin_user_email'));
+            $user->setPlainPassword($this->container->getParameter('admin_user_password'));
+            $user->setUsername('admin'); 
+            $user->addRole('role_admin');
+
+            $userManager = $this->container->get('fos_user.user_manager');        
+            $userManager->updateUser($user);
+
+            $manipulator = $this->container->get('fos_user.util.user_manipulator');
+            $manipulator->activate($user->getUsername());      
+        }
+    }    
+      
     
     protected function removeAllTasks() {
         $tasks = $this->getTaskService()->getEntityRepository()->findAll();

@@ -1,177 +1,88 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task;
+namespace SimplyTestable\ApiBundle\Tests\Command\User;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {    
-    const WORKER_TASK_ASSIGNMENT_FACTOR = 2;   
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
+class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCase {
+
+    public function testAssignInMaintenanceReadOnlyModeReturnsStatusCode1() {
+        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));         
+        $this->assertEquals(1, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
     }    
     
-    public function setUp() {
-        parent::setUp();        
-    }
-
-    public function testSelectTasksForAssignmentWithNoWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(0);
-    }     
-    
-    public function testSelectTasksForAssignmentWithOneWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(1);
+    public function testPublicUserIsNotAssignedBasicPlan() {
+        $this->assertEquals(0, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->getPublicUser());
+        $this->assertEquals('public', $userAccountPlan->getPlan()->getName());
     }    
     
-    public function testSelectTasksForAssignmentWithTwoWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(2);
+    public function testAdminUserIsNotAssignedBasicPlan() {
+        $this->assertEquals(0, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
+        $this->assertNull($this->getUserAccountPlanService()->getForUser($this->getUserService()->getAdminUser()));
     }
     
-    public function testSelectTasksForAssignmentWithThreeWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(3);
+    
+    public function testRegularUsersWithoutPlansAreAssignedTheBasicPlanWhenNoUsersHavePlans() {
+        $userEmailAddresses = array(
+            'user1@example.com',
+            'user2@example.com',
+            'user3@example.com'
+        );
+        
+        $users = array();
+        
+        foreach ($userEmailAddresses as $userEmailAddress) {
+            $this->createUser($userEmailAddress, 'password');
+            $users[] = $this->getUserService()->findUserByEmail($userEmailAddress);
+        }
+        
+        foreach ($users as $user) {
+            $this->assertNull($this->getUserAccountPlanService()->getForUser($user));        
+        }
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
+        
+        foreach ($users as $user) {            
+            $this->assertEquals('basic', $this->getUserAccountPlanService()->getForUser($user)->getPlan()->getName());
+        }      
     }
     
-    public function testSelectTasksForAssignmentWithFourWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(4);
-    }
     
-    public function testSelectTasksForAssignmentWithFiveWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(5);
+    public function testRegularUsersWithoutPlansAreAssignedTheBasicPlanWhenSomeUsersHavePlans() {
+        $this->createUser('user1@example.com', 'password');
+        $user1 = $this->getUserService()->findUserByEmail('user1@example.com');
+        
+        $fooPlan = $this->createAccountPlan('foo-plan');
+        
+        $this->getUserAccountPlanService()->create($user1, $fooPlan);
+        
+        
+        $userEmailAddresses = array(
+            'user2@example.com',
+            'user3@example.com'
+        );
+        
+        $users = array();
+        
+        foreach ($userEmailAddresses as $userEmailAddress) {
+            $this->createUser($userEmailAddress, 'password');
+            $users[] = $this->getUserService()->findUserByEmail($userEmailAddress);
+        }
+        
+        foreach ($users as $user) {
+            $this->assertNull($this->getUserAccountPlanService()->getForUser($user));        
+        }
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
+        
+        foreach ($users as $user) {            
+            $this->assertEquals('basic', $this->getUserAccountPlanService()->getForUser($user)->getPlan()->getName());
+        }      
+        
+        $this->assertEquals('foo-plan', $this->getUserAccountPlanService()->getForUser($user1)->getPlan()->getName());
     }    
-
-    public function testSelectTasksForAssignmentWithSixWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(6);
-    } 
-    
-    public function testSelectTasksForAssignmentWithSevenWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(7);
-    } 
-    
-    public function testSelectTasksForAssignmentWithEightWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(8);
-    } 
-    
-    public function testSelectTasksForAssignmentWithNineWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(9);
-    } 
-    
-    public function testSelectTasksForAssignmentWithTenWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->runForNWorkers(10);
-    }
-    
-    
-    public function testSelectTasksInMaintenanceReadOnlyModeReturnsStatusCode1() {        
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
-        $this->assertEquals(1, $this->runConsole('simplytestable:task:assign:select'));      
-    }
-    
-    
-    private function runForNWorkers($requestedWorkerCount) {
-//        $this->removeAllWorkers();
-//        $this->removeAllJobs();
-//        $this->clearRedis();      
-        
-        $canonicalUrl = 'http://example.com/';   
-        
-        $jobCreateResponse = $this->createJob($canonicalUrl);        
-        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
-        
-        $this->assertInternalType('integer', $job_id);
-        $this->assertGreaterThan(0, $job_id);        
-        
-        $this->prepareJob($canonicalUrl, $job_id);        
-        
-        $preSelectionJobResponse = $this->fetchJob($canonicalUrl, $job_id);
-        $taskCount = json_decode($preSelectionJobResponse->getContent())->task_count;
-        
-        $this->createWorkers($requestedWorkerCount);   
-        
-        $workerCount = $this->getWorkerService()->count();        
-        $expectedSelectedTaskCount = $workerCount * self::WORKER_TASK_ASSIGNMENT_FACTOR;
-        if ($expectedSelectedTaskCount > $taskCount) {
-            $expectedSelectedTaskCount = $taskCount;
-        }
-        
-        $expectedQueuedTaskCount =  $taskCount - $expectedSelectedTaskCount;       
-        if ($expectedQueuedTaskCount < 0) {
-            $expectedQueuedTaskCount = 0;
-        }
-        
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign:select'));
-        
-        $jobResponse = $this->fetchJob($canonicalUrl, $job_id);        
-        $jobObject = json_decode($jobResponse->getContent());
-        
-        $this->assertEquals(200, $jobResponse->getStatusCode());
-        $this->assertEquals($expectedQueuedTaskCount, $jobObject->task_count_by_state->{'queued'});
-        $this->assertEquals($expectedSelectedTaskCount, $jobObject->task_count_by_state->{'queued-for-assignment'});
-        
-        $taskIds = $this->getTaskIds($canonicalUrl, $job_id);
-        $taskIdGroups = $this->getTaskIdGroups($taskIds, $workerCount, $expectedSelectedTaskCount);
-
-        foreach ($taskIdGroups as $taskIdGroup) {
-            $this->assertTrue($this->getResqueQueueService()->contains(
-                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
-                'task-assign-collection',
-                array(
-                    'ids' => implode(',', $taskIdGroup)
-                )
-            ));            
-        }
-    }    
-    
-    
-    
-    /**
-     * 
-     * @param array $tasks
-     * @param int $groupCount
-     * @param int $limit
-     * @return array
-     */
-    private function getTaskIdGroups($taskIds, $groupCount, $limit = null) {
-        $taskIdGroups = array();
-        $groupIndex = 0;
-        $maximumGroupIndex = $groupCount - 1;
-        $selectedCount = 0;
-        
-        if (is_null($limit)) {
-            $limit = count($taskIds);
-        }
-        
-        foreach ($taskIds as $taskId) {
-            $selectedCount++;
-            
-            if ($selectedCount <= $limit) {                
-                if (!isset($taskIdGroups[$groupIndex])) {
-                    $taskIdGroups[$groupIndex] = array();
-                }
-
-                $taskIdGroups[$groupIndex][] = $taskId;
-
-                $groupIndex++;
-                if ($groupIndex > $maximumGroupIndex) {
-                    $groupIndex = 0;
-                }
-            }
-        }
-        
-        return $taskIdGroups;
-    }     
-    
-    
-
 
 
 }
