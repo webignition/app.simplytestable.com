@@ -128,3 +128,13 @@ services:
     class:   SimplyTestable\ApiBundle\Services\CommandService
     arguments:
       container: "@service_container"     
+      
+  simplytestable.services.accountPlanService:
+    class:   SimplyTestable\ApiBundle\Services\AccountPlanService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"   
+        
+  simplytestable.services.userAccountPlanService:
+    class:   SimplyTestable\ApiBundle\Services\UserAccountPlanService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"          
