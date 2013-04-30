@@ -25,6 +25,12 @@ class UserService extends UserManager {
     private $tokenGenerator;
     
     /**
+     *
+     * @var \Doctrine\ORM\EntityRepository
+     */
+    private $entityRepository;    
+    
+    /**
      * Constructor.
      *
      * @param EncoderFactoryInterface $encoderFactory
@@ -46,6 +52,15 @@ class UserService extends UserManager {
      */
     public function getPublicUser() {
         return $this->findUserByEmail(self::PUBLIC_USER_EMAIL_ADDRESS);
+    }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\User
+     */    
+    public function getAdminUser() {
+        return $this->findUserByUsername('admin');  
     }
     
     
@@ -119,5 +134,18 @@ class UserService extends UserManager {
         }
         
         return $this->tokenGenerator;
-    }    
+    } 
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Repository\UserRepository
+     */
+    public function getEntityRepository() {
+        if (is_null($this->entityRepository)) {            
+            $this->entityRepository = $this->objectManager->getRepository('SimplyTestable\ApiBundle\Entity\User');
+        }
+        
+        return $this->entityRepository;
+    } 
 }

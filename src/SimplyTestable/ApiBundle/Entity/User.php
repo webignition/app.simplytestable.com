@@ -8,6 +8,7 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 /**
  * @ORM\Entity
  * @ORM\Table(name="fos_user")
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\UserRepository")
  * 
  * @SerializerAnnotation\ExclusionPolicy("all")
  */

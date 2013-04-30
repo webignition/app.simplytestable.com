@@ -137,4 +137,5 @@ services:
   simplytestable.services.userAccountPlanService:
     class:   SimplyTestable\ApiBundle\Services\UserAccountPlanService
     arguments: 
-        entityManager: "@doctrine.orm.entity_manager"          
+        entityManager: "@doctrine.orm.entity_manager" 
+        userService: "@simplytestable.services.userservice" 

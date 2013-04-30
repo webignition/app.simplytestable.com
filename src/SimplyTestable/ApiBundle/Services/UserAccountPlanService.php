@@ -6,11 +6,28 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use SimplyTestable\ApiBundle\Services\UserService;
 
 
 class UserAccountPlanService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\UserAccountPlan';
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\UserService 
+     */
+    private $userService;
+    
+    /**
+     *
+     * @param \Doctrine\ORM\EntityManager $entityManager
+     * @param \SimplyTestable\ApiBundle\Services\UserService $userService 
+     */
+    public function __construct(EntityManager $entityManager, UserService $userService) {
+        $this->entityManager = $entityManager;      
+        $this->userService = $userService;
+    }     
     
     /**
      *
@@ -35,6 +52,22 @@ class UserAccountPlanService extends EntityService {
         return $this->persistAndFlush($userAccountPlan);
     }
     
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return UserAccountPlan
+     */
+    public function getForUser(User $user) {
+        return $this->getEntityRepository()->findOneByUser($user);
+    }
+    
+    
+    public function getAll() {
+        return $this->getEntityRepository()->findAll();
+    }
+    
+    
     /**
      *
      * @param UserAccountPlan $userAccountPlan
@@ -44,5 +77,19 @@ class UserAccountPlanService extends EntityService {
         $this->getEntityManager()->persist($userAccountPlan);
         $this->getEntityManager()->flush();
         return $userAccountPlan;
-    }       
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    public function findUsersWithNoPlan() {
+        return $this->userService->getEntityRepository()->findAllNotWithIds(array_merge(
+           $this->getEntityRepository()->findUserIdsWithPlan(),
+           array($this->userService->getAdminUser()->getId())
+        ));
+    }     
+    
+
 }
