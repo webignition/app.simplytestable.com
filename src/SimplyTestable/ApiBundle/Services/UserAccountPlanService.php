@@ -56,10 +56,38 @@ class UserAccountPlanService extends EntityService {
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
+     * @return UserAccountPlan|false
+     */
+    public function modify(User $user, AccountPlan $newPlan) {
+        $existingUserAccountPlan = $this->getForUser($user);
+        if (is_null($existingUserAccountPlan)) {
+            return false;
+        }
+        
+        $this->getEntityManager()->remove($existingUserAccountPlan);
+        
+        return $this->create($user, $newPlan);
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @return UserAccountPlan
      */
     public function getForUser(User $user) {
         return $this->getEntityRepository()->findOneByUser($user);
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return boolean
+     */
+    public function hasForUser(User $user) {
+        return !is_null($this->getForUser($user));
     }
     
     

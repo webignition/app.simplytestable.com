@@ -24,7 +24,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCas
     }
     
     
-    public function testRegularUsersWithoutPlansAreAssignedTheBasicPlanWhenNoUsersHavePlans() {
+    public function testRegularUsersWithoutPlansAreAssignedTheBasicPlanWhenNoUsersHavePlans() {        
         $userEmailAddresses = array(
             'user1@example.com',
             'user2@example.com',
@@ -35,10 +35,16 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCas
         
         foreach ($userEmailAddresses as $userEmailAddress) {
             $this->createUser($userEmailAddress, 'password');
-            $users[] = $this->getUserService()->findUserByEmail($userEmailAddress);
+            $user = $this->getUserService()->findUserByEmail($userEmailAddress);
+            
+            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);            
+            $this->getEntityManager()->remove($userAccountPlan);
+            $this->getEntityManager()->flush();
+            
+            $users[] = $user;
         }
         
-        foreach ($users as $user) {
+        foreach ($users as $user) {      
             $this->assertNull($this->getUserAccountPlanService()->getForUser($user));        
         }
         
@@ -56,8 +62,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCas
         
         $fooPlan = $this->createAccountPlan('foo-plan');
         
-        $this->getUserAccountPlanService()->create($user1, $fooPlan);
-        
+        $this->getUserAccountPlanService()->modify($user1, $fooPlan);        
         
         $userEmailAddresses = array(
             'user2@example.com',
@@ -68,7 +73,13 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCas
         
         foreach ($userEmailAddresses as $userEmailAddress) {
             $this->createUser($userEmailAddress, 'password');
-            $users[] = $this->getUserService()->findUserByEmail($userEmailAddress);
+            $user = $this->getUserService()->findUserByEmail($userEmailAddress);
+            
+            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);            
+            $this->getEntityManager()->remove($userAccountPlan);
+            $this->getEntityManager()->flush();
+            
+            $users[] = $user;
         }
         
         foreach ($users as $user) {
