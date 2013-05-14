@@ -15,10 +15,26 @@ class UserController extends AbstractUserController
         return array(
             'email' => $user->getEmailCanonical()           
         );
-    } 
+    }
     
     
-
+    /**
+     * 
+     * @param string $email_canonical
+     * @return \Symfony\Component\HttpFoundation\Response
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function getTokenAction($email_canonical)            
+    {        
+        $user = $this->getUserService()->findUserByEmail($email_canonical);
+        if (is_null($user)) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        $token = $this->getUserService()->getConfirmationToken($user);
+        
+        return $this->sendResponse($token);
+    }     
     
 
     /**
