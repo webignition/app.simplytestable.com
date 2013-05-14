@@ -96,6 +96,45 @@ class UserEmailChangeController extends AbstractUserController
     }
     
     
+    public function confirmAction($email_canonical, $token) {
+        $email_canonical = $this->getUserEmailChangeRequestService()->canonicalizeEmail($email_canonical);        
+        
+        $user = $this->getUser();
+        
+        if (is_null($user)) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        if ($user->getEmailCanonical() !== $email_canonical) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        $emailChangeRequest = $this->getUserEmailChangeRequestService()->findByUser($user);        
+        if (is_null($emailChangeRequest)) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        if ($token !== $emailChangeRequest->getToken()) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
+        }
+        
+        if ($this->getUserService()->exists($emailChangeRequest->getNewEmail())) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
+        }
+        
+        $user->setEmail($emailChangeRequest->getNewEmail());
+        $user->setEmailCanonical($emailChangeRequest->getNewEmail());
+        $user->setUsername($emailChangeRequest->getNewEmail());
+        $user->setUsernameCanonical($emailChangeRequest->getNewEmail());
+        
+        $this->getUserService()->updateUser($user);
+        
+        $this->getUserEmailChangeRequestService()->removeForUser($user);
+        
+        return $this->sendResponse();          
+    }
+    
+    
     
     /**
      * 
