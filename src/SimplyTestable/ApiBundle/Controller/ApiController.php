@@ -42,6 +42,15 @@ abstract class ApiController extends Controller
     
     
     /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\UserService 
+     */
+    protected function getUserService() {
+        return $this->get('simplytestable.services.userservice');
+    }       
+    
+    
+    /**
      * Set collection of InputDefinition objects
      * key is controller method name
      * value is InputDefinition
@@ -193,6 +202,10 @@ abstract class ApiController extends Controller
      * @return \SimplyTestable\ApiBundle\Entity\User
      */
     public function getUser() {
+        if (!is_null($this->getUserService()->getUser())) {
+            return $this->getUserService()->getUser();
+        }
+        
         return parent::getUser();
     }
     

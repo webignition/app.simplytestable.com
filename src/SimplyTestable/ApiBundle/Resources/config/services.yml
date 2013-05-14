@@ -139,3 +139,10 @@ services:
     arguments: 
         entityManager: "@doctrine.orm.entity_manager" 
         userService: "@simplytestable.services.userservice" 
+        
+  simplytestable.services.useremailchangerequestservice:
+    class:  SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+        emailCanonicalizer: "@fos_user.util.email_canonicalizer"
+        tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator        

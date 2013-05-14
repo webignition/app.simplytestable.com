@@ -53,7 +53,7 @@ class JobController extends ApiController
     }
     
     public function statusAction($site_root_url, $test_id)
-    {         
+    {
         $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
@@ -375,16 +375,7 @@ class JobController extends ApiController
     private function getTaskService() {
         return $this->get('simplytestable.services.taskservice');
     } 
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserService 
-     */
-    private function getUserService() {
-        return $this->get('simplytestable.services.userservice');
-    }    
-    
+
     
     /**
      *

@@ -147,5 +147,13 @@ class UserService extends UserManager {
         }
         
         return $this->entityRepository;
-    } 
+    }
+    
+    
+    /**
+     * 
+     * @return User
+     */
+    public function getUser() {
+    }    
 }

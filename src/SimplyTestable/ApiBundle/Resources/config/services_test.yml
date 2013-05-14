@@ -2,3 +2,13 @@ services:
   simplytestable.services.httpClient:
     class:  webignition\Http\Mock\Client\Client
     public: false
+    
+  simplytestable.services.userservice:
+    class:  SimplyTestable\ApiBundle\Services\TestUserService
+    arguments:
+        encoderFactory: "@security.encoder_factory"
+        usernameCanonicalizer: "@fos_user.util.username_canonicalizer"
+        emailCanonicalizer: "@fos_user.util.email_canonicalizer"
+        objectManager: "@doctrine.orm.entity_manager"
+        class: %fos_user.model.user.class%
+        tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator    

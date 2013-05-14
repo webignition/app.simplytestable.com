@@ -6,7 +6,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class UserCreationController extends UserController
+class UserCreationController extends AbstractUserController
 {
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
     

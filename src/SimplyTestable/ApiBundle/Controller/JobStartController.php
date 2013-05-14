@@ -229,16 +229,7 @@ class JobStartController extends ApiController
      */
     private function getTaskTypeService() {
         return $this->get('simplytestable.services.tasktypeservice');
-    }    
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserService 
-     */
-    private function getUserService() {
-        return $this->get('simplytestable.services.userservice');
-    }  
+    }
     
     
     /**

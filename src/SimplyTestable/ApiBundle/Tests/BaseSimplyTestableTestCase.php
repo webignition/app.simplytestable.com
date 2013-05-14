@@ -11,6 +11,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const JOB_START_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\JobStartController';    
     const USER_CREATION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserCreationController';
     const USER_PASSWORD_RESET_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserPasswordResetController';
+    const USER_EMAIL_CHANGE_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserEmailChangeController';
     const USER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserController';
     const WORKER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\WorkerController';
     const TASK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TaskController';
@@ -22,10 +23,12 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeAllWorkers();
         $this->removeAllUserAccountPlans();
         $this->removeTestAccountPlanContraints();
-        $this->removeTestAccountPlans();        
+        $this->removeTestAccountPlans();
+        $this->removeAllUserEmailChangeRequests();
         $this->rebuildDefaultUserState();
         $this->clearRedis();
-    }
+    }   
+
     
     
     protected function rebuildDefaultUserState() {
@@ -131,6 +134,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param array $queryData
      * @return \SimplyTestable\ApiBundle\Controller\UserController
      */
+    protected function getUserEmailChangeController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::USER_EMAIL_CHANGE_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }     
+    
+    
+    /**
+     * 
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\UserController
+     */
     protected function getUserController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::USER_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }    
@@ -168,7 +183,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     private function getController($controllerName, $methodName, array $postData = array(), array $queryData = array()) {        
         return $this->createController($controllerName, $methodName, $postData, $queryData);
-    }
+    }  
     
     
     /**
@@ -480,13 +495,23 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     
     protected function removeAllUserAccountPlans() {
-        $userAccountPlans = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserAccountPlan')->findAll();
-        if (is_array($userAccountPlans) && count($userAccountPlans) > 0) {
-            foreach ($userAccountPlans as $userAccountPlan) {
-                $this->getEntityManager()->remove($userAccountPlan);
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserAccountPlan');
+    }
+    
+    
+    protected function removeAllUserEmailChangeRequests() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest');      
+    }
+    
+    
+    private function removeAllForEntity($entityName) {
+        $entities = $this->getEntityManager()->getRepository($entityName)->findAll();
+        if (is_array($entities) && count($entities) > 0) {
+            foreach ($entities as $entity) {
+                $this->getEntityManager()->remove($entity);
                 $this->getEntityManager()->flush();                
             }
-        }
+        }        
     }    
     
     

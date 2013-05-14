@@ -88,6 +88,22 @@ user_exists:
 user_is_enabled:
   pattern: /user/{email_canonical}/enabled/
   defaults: { _controller: SimplyTestableApiBundle:User:isEnabled, _format: json }      
+
+user_email_change_request_create:
+  pattern: /user/{email_canonical}/email-change-request/{new_email}/create/
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:create, _format: json }   
+  
+user_email_change_request_get:
+  pattern: /user/{email_canonical}/email-change-request/
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:get, _format: json }     
+  
+user_email_change_request_confirm:
+  pattern: /user/{email_canonical}/email-change-request/{token}
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:confirm, _format: json }     
+  
+user_email_change_request_cancel:
+  pattern: /user/{email_canonical}/email-change-request/cancel/
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:cancel, _format: json }    
   
 disable_readonly:
     pattern: /maintenance/disable-read-only/
@@ -103,4 +119,4 @@ leave_readonly:
     
 enable_backup_readonly:
     pattern: /maintenance/enable-backup-read-only/
-    defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableBackupReadOnly, _format: json }     
+    defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableBackupReadOnly, _format: json }
