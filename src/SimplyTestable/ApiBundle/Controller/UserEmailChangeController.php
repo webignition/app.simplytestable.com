@@ -77,6 +77,25 @@ class UserEmailChangeController extends AbstractUserController
     }
     
     
+    public function cancelAction($email_canonical) {
+        $email_canonical = $this->getUserEmailChangeRequestService()->canonicalizeEmail($email_canonical);        
+        
+        $user = $this->getUser();
+        
+        if (is_null($user)) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        if ($user->getEmailCanonical() !== $email_canonical) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+        
+        $this->getUserEmailChangeRequestService()->removeForUser($user);
+        
+        return $this->sendResponse();        
+    }
+    
+    
     
     /**
      * 

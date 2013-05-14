@@ -113,6 +113,21 @@ class UserEmailChangeRequestService extends EntityService {
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return boolean
+     */
+    public function removeForUser(User $user) {
+        if ($this->hasForUser($user)) {
+            $this->getEntityManager()->remove($this->findByUser($user));
+            $this->getEntityManager()->flush();
+        }
+
+        return true;
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @param string $new_email
      * @return UserEmailChangeRequest
      */

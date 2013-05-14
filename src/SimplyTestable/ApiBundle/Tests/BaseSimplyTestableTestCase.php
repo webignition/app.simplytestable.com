@@ -132,7 +132,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $methodName
      * @param array $postData
      * @param array $queryData
-     * @return \SimplyTestable\ApiBundle\Controller\UserController
+     * @return \SimplyTestable\ApiBundle\Controller\UserEmailChangeController
      */
     protected function getUserEmailChangeController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::USER_EMAIL_CHANGE_CONTROLLER_NAME, $methodName, $postData, $queryData);
@@ -432,7 +432,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function getWorkerActivationRequestService() {
         return $this->container->get('simplytestable.services.workeractivationrequestservice');
     }    
+
     
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService
+     */
+    protected function getUserEmailChangeRequestService() {
+        return $this->container->get('simplytestable.services.useremailchangerequestservice');
+    }      
     
     /**
      *
