@@ -51,4 +51,18 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase {
         $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
     }
     
+    
+    public function testWhenNoEmailChangeRequestExists() { 
+        $email = 'user1@example.com';
+        $password = 'password1';
+
+        $user = $this->createAndActivateUser($email, $password);            
+        $this->getUserService()->setUser($user);
+        
+        $response = $this->getUserEmailChangeController('cancelAction')->cancelAction($user->getEmail());
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
+    }    
+    
 }
