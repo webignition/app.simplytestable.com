@@ -92,6 +92,7 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase {
             $this->fail('Attempt to confirm when email already taken did not generate HTTP 409');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertEquals(409, $exception->getStatusCode());            
+            $this->assertInstanceOf('\SimplyTestable\ApiBundle\Entity\User', $this->getUserService()->findUserByEmail('user1-new@example.com'));       
         }       
     }
     

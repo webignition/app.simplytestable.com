@@ -123,6 +123,7 @@ class UserEmailChangeController extends AbstractUserController
         }
         
         if ($this->getUserService()->exists($emailChangeRequest->getNewEmail())) {
+            $this->getUserEmailChangeRequestService()->removeForUser($user);
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
         }
         
