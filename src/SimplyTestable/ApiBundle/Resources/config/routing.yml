@@ -98,7 +98,7 @@ user_email_change_request_get:
   defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:get, _format: json }     
   
 user_email_change_request_confirm:
-  pattern: /user/{email_canonical}/email-change-request/{token}
+  pattern: /user/{email_canonical}/email-change-request/{token}/
   defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:confirm, _format: json }     
   
 user_email_change_request_cancel:
