@@ -108,7 +108,22 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase {
         }        
     }
     
-    public function testWhereUserAlreadyHasEmailChangeRequest() {
+    
+    public function testWhereUserAlreadyHasEmailChangeRequestForSameChange() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+
+        $user = $this->createAndActivateUser($email, $password);            
+        $this->getUserService()->setUser($user);
+
+        $controller = $this->getUserEmailChangeController('createAction');
+
+        $this->assertEquals(200, $controller->createAction($user->getEmail(), 'user1-new@example.com')->getStatusCode());
+        $this->assertEquals(200, $controller->createAction($user->getEmail(), 'user1-new@example.com')->getStatusCode());   
+    }    
+    
+    
+    public function testWhereUserAlreadyHasEmailChangeRequestForDifferentChange() {
         try {
             $email = 'user1@example.com';
             $password = 'password1';
@@ -117,14 +132,14 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase {
             $this->getUserService()->setUser($user);
             
             $controller = $this->getUserEmailChangeController('createAction');
-            $controller->createAction($user->getEmail(), 'user1-new@example.com');
-            $controller->createAction($user->getEmail(), 'user1-new@example.com');
+            $controller->createAction($user->getEmail(), 'user1-new1@example.com');
+            $controller->createAction($user->getEmail(), 'user1-new2@example.com');
 
             $this->fail('Attempt to create with email of existing change request did not generate HTTP 409');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertEquals(409, $exception->getStatusCode());            
         }        
-    }    
+    }     
     
     
     public function testForDifferentUser() {

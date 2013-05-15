@@ -41,6 +41,10 @@ class UserEmailChangeController extends AbstractUserController
         }
         
         if ($this->getUserEmailChangeRequestService()->hasForUser($user)) {
+            if ($this->getUserEmailChangeRequestService()->findByUser($user)->getNewEmail() === $new_email) {
+                return $this->sendResponse();
+            }
+    
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
         }
         
