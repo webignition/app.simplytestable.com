@@ -55,7 +55,6 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase {
         
         $responseObject = json_decode($response->getContent());
         
-        $this->assertEquals($email, $responseObject->user);
         $this->assertEquals($newEmail, $responseObject->new_email);
         $this->assertNotNull($responseObject->token);
     }

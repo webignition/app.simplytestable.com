@@ -6,6 +6,8 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * @ORM\Entity
+ * 
+ * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class UserEmailChangeRequest
 {
@@ -25,9 +27,6 @@ class UserEmailChangeRequest
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
-     * 
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
-     * @SerializerAnnotation\Expose 
      */
     protected $user;
     
@@ -37,6 +36,7 @@ class UserEmailChangeRequest
      * @var string 
      * 
      * @ORM\Column(type="string", unique=true)
+     * @SerializerAnnotation\Expose 
      */    
     protected $newEmail;
     
@@ -46,6 +46,7 @@ class UserEmailChangeRequest
      * @var string 
      * 
      * @ORM\Column(type="string", unique=true)
+     * @SerializerAnnotation\Expose 
      */    
     protected $token;
     
