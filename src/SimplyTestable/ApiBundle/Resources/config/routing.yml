@@ -97,13 +97,13 @@ user_email_change_request_get:
   pattern: /user/{email_canonical}/email-change-request/
   defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:get, _format: json }     
   
-user_email_change_request_confirm:
-  pattern: /user/{email_canonical}/email-change-request/{token}/
-  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:confirm, _format: json }     
-  
 user_email_change_request_cancel:
   pattern: /user/{email_canonical}/email-change-request/cancel/
-  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:cancel, _format: json }    
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:cancel, _format: json }   
+  
+user_email_change_request_confirm:
+  pattern: /user/{email_canonical}/email-change-request/{token}/
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:confirm, _format: json }   
   
 disable_readonly:
     pattern: /maintenance/disable-read-only/
