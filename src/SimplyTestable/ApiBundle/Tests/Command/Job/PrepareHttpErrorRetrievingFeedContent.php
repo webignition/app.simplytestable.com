@@ -8,7 +8,7 @@ class PrepareHttpErrorRetrievingFeedContent extends PrepareJobAndPostAssertionsT
         $this->prepareJobAndPostAssertions(
             'http://example.com/',
             0,
-            'no-sitemap',
+            'failed-no-sitemap',
             array()
         );        
     }   
@@ -18,7 +18,7 @@ class PrepareHttpErrorRetrievingFeedContent extends PrepareJobAndPostAssertionsT
         $this->prepareJobAndPostAssertions(
             'http://example.com/',
             0,
-            'no-sitemap',
+            'failed-no-sitemap',
             array()
         );  
     }    
@@ -28,7 +28,7 @@ class PrepareHttpErrorRetrievingFeedContent extends PrepareJobAndPostAssertionsT
         $this->prepareJobAndPostAssertions(
             'http://example.com/',
             0,
-            'no-sitemap',
+            'failed-no-sitemap',
             array()
         );        
     }    
@@ -38,7 +38,7 @@ class PrepareHttpErrorRetrievingFeedContent extends PrepareJobAndPostAssertionsT
         $this->prepareJobAndPostAssertions(
             'http://example.com/',
             0,
-            'no-sitemap',
+            'failed-no-sitemap',
             array()
         );  
     }

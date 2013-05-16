@@ -8,7 +8,7 @@ class PrepareRetrievesUrlsFromCorrectSourcesTest extends PrepareJobAndPostAssert
         $this->prepareJobAndPostAssertions(
             'http://example.com/',
             0,
-            'no-sitemap',
+            'failed-no-sitemap',
             array()
         );        
     }    
@@ -69,7 +69,7 @@ class PrepareRetrievesUrlsFromCorrectSourcesTest extends PrepareJobAndPostAssert
         $this->prepareJobAndPostAssertions(
             'http://example.com/',
             0,
-            'no-sitemap',
+            'failed-no-sitemap',
             array()
         );
     } 

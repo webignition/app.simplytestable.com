@@ -9,7 +9,7 @@ class PrepareHttpErrorRetrievingRootWebPageTest extends PrepareJobAndPostAsserti
         $this->prepareJobAndPostAssertions(
             'http://example.com/',
             0,
-            'no-sitemap',
+            'failed-no-sitemap',
             array()
         );        
     }    
@@ -19,7 +19,7 @@ class PrepareHttpErrorRetrievingRootWebPageTest extends PrepareJobAndPostAsserti
         $this->prepareJobAndPostAssertions(
             'http://example.com/',
             0,
-            'no-sitemap',
+            'failed-no-sitemap',
             array()
         );  
     }
