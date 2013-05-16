@@ -151,7 +151,24 @@ class PlanTest extends BaseSimplyTestableTestCase {
         $retrievedPlan = $planEntityRepository->find($plan->getId());
         
         $this->assertEquals(2, $retrievedPlan->getConstraints()->count());
-
+    }
+    
+    
+    public function testHasConstraintNamed() {
+        $plan = new Plan();
+        $plan->setName('foo-plan');
+        
+        $constraint1 = new Constraint();
+        $constraint1->setName('foo');        
+        $plan->addConstraint($constraint1);
+        
+        $constraint2 = new Constraint();
+        $constraint2->setName('bar');        
+        $plan->addConstraint($constraint2);              
+        
+        $this->assertTrue($plan->hasConstraintNamed('foo'));
+        $this->assertTrue($plan->hasConstraintNamed('bar'));
+        $this->assertFalse($plan->hasConstraintNamed('foobar'));        
     }
 
 }

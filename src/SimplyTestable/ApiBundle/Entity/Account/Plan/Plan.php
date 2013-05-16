@@ -147,4 +147,20 @@ class Plan
     {
         return $this->constraints;
     }
+    
+    
+    /**
+     * 
+     * @param string $constraintName
+     * @return boolean
+     */
+    public function hasConstraintNamed($constraintName) {
+        foreach ($this->getConstraints() as $constraint) {
+            if ($constraint->getName() === $constraintName)  {
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
