@@ -5,7 +5,7 @@ app/logs/*
 build/
 vendor
 composer.phar
-#composer.lock
+phpcpd.phar
 app/config/parameters.yml
 /bin
 # IDE meta

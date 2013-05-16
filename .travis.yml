@@ -4,7 +4,10 @@ php:
   - 5.4
   - 5.5
   
-before_script:        
+before_script:   
+  # Install code quality tools
+  - wget http://pear.phpunit.de/get/phpcpd.phar  
+  
   # Install composer for dependency management
   - wget http://getcomposer.org/composer.phar 
   
@@ -26,6 +29,9 @@ before_script:
   
 script:
   - phpunit -c app
+  
+after_script:
+  - php phpcpd.phar --exclude src/SimplyTestable/ApiBundle/Tests/ src/SimplyTestable/ApiBundle/   
   
 notifications:
   irc:
