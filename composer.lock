@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "ce292b85ccb2825d064a7dd2e12a1aa6",
+    "hash": "1fd71a5a6a5b1e0e150e981b5967b77b",
     "packages": [
         {
             "name": "doctrine/common",
@@ -521,6 +521,51 @@
                 "web service"
             ],
             "time": "2013-03-10 23:05:38"
+        },
+        {
+            "name": "jasonlewis/expressive-date",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jasonlewis/expressive-date",
+                "reference": "v1.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/jasonlewis/expressive-date/archive/v1.0.1.zip",
+                "reference": "v1.0.1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Jason Lewis",
+                    "email": "jason.lewis1991@gmail.com",
+                    "homepage": "http://jasonlewis.me",
+                    "role": "Creator"
+                }
+            ],
+            "description": "A fluent extension to PHPs DateTime class.",
+            "keywords": [
+                "date",
+                "time"
+            ],
+            "time": "2012-12-14 12:46:47"
         },
         {
             "name": "jms/aop-bundle",
