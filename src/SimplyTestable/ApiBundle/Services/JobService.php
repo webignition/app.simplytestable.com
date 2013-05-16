@@ -21,7 +21,7 @@ class JobService extends EntityService {
     const IN_PROGRESS_STATE = 'job-in-progress';
     const PREPARING_STATE = 'job-preparing';
     const QUEUED_STATE = 'job-queued';
-    const NO_SITEMAP_STATE = 'job-no-sitemap';
+    const FAILED_NO_SITEMAP_STATE = 'job-failed-no-sitemap';
     
     private $incompleteStateNames = array(
         self::STARTING_STATE,
@@ -144,8 +144,8 @@ class JobService extends EntityService {
      *
      * @return \SimplyTestable\ApiBundle\Entity\State
      */
-    public function getNoSitemapState() {
-        return $this->stateService->fetch(self::NO_SITEMAP_STATE);
+    public function getFailedNoSitemapState() {
+        return $this->stateService->fetch(self::FAILED_NO_SITEMAP_STATE);
     }
     
     
@@ -248,7 +248,7 @@ class JobService extends EntityService {
             return true;
         }    
         
-        if ($this->hasNoSitemap($job)) {
+        if ($this->isFailedNoSitemap($job)) {
             return true;
         }
         
@@ -291,8 +291,8 @@ class JobService extends EntityService {
      * @param Job $job
      * @return boolean 
      */
-    private function hasNoSitemap(Job $job) {
-        return $job->getState()->equals($this->getNoSitemapState());
+    private function isFailedNoSitemap(Job $job) {
+        return $job->getState()->equals($this->getFailedNoSitemapState());
     }        
     
     
