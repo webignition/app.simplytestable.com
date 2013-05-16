@@ -611,4 +611,23 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         
         return $plan;
     }
+    
+    
+    /**
+     * 
+     * @param string $name
+     * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint
+     */
+    protected function createAccountPlanConstraint($name = null) {
+        $plan = $this->createAccountPlan();
+        
+        $constraint = new \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint();
+        $constraint->setName('bar');
+        $constraint->setPlan($plan);
+        
+        $this->getEntityManager()->persist($constraint);
+        $this->getEntityManager()->flush();         
+        
+        return $constraint;
+    }
 }
