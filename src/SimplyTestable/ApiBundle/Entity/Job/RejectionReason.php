@@ -49,6 +49,7 @@ class RejectionReason
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint")
      * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=true) 
+     * @SerializerAnnotation\Expose
      */
     protected $constraint; 
 

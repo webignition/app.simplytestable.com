@@ -145,4 +145,15 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
         emailCanonicalizer: "@fos_user.util.email_canonicalizer"
-        tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator        
+        tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator  
+        
+  simplytestable.services.jobUserAccountPlanEnforcementService:
+    class:   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+    arguments: 
+        userAccountPlanService: "@simplytestable.services.userAccountPlanService" 
+        jobService: "@simplytestable.services.jobservice"        
+        
+  simplytestable.services.jobRejectionReasonService:
+    class:   SimplyTestable\ApiBundle\Services\JobRejectionReasonService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"           

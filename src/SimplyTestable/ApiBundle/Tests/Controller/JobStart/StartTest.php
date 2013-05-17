@@ -74,7 +74,27 @@ class StartTest extends BaseControllerJsonTestCase {
     public function testStartActionInMaintenanceBackupReadOnlyModeReturns503() {            
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-backup-read-only'));
         $this->assertEquals(503, $this->getJobStartController('startAction')->startAction('http://example.com')->getStatusCode());
-    }    
+    } 
+    
+    
+    public function testRejectDueToPlanFullSiteTestConstraint() {
+        $canonicalUrl = 'http://example.com/';
+        
+        $user = $this->getUserService()->getPublicUser();
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
+        
+        $fullSiteJobsPerSiteConstraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');        
+        $fullSiteJobsPerSiteLimit = $fullSiteJobsPerSiteConstraint->getLimit();
+        
+        for ($i = 0; $i < $fullSiteJobsPerSiteLimit; $i++) {
+            $this->cancelJob($canonicalUrl, $this->createJobAndGetId($canonicalUrl));            
+        }
+        
+        $rejectedJobId = $this->createJobAndGetId($canonicalUrl);
+        $rejectedJob = $this->getJobService()->getById($rejectedJobId);
+        
+        $this->assertTrue($rejectedJob->getState()->equals($this->getJobService()->getRejectedState()));        
+    }
     
 }
 

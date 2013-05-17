@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -22,6 +23,7 @@ class JobService extends EntityService {
     const PREPARING_STATE = 'job-preparing';
     const QUEUED_STATE = 'job-queued';
     const FAILED_NO_SITEMAP_STATE = 'job-failed-no-sitemap';
+    const REJECTED_STATE = 'job-rejected';
     
     private $incompleteStateNames = array(
         self::STARTING_STATE,
@@ -151,11 +153,30 @@ class JobService extends EntityService {
     
     /**
      *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getRejectedState() {
+        return $this->stateService->fetch(self::REJECTED_STATE);
+    }    
+    
+    
+    /**
+     *
      * @param Job $job
      * @return boolean
      */
     public function isNew(Job $job) {
         return $job->getState()->equals($this->getStartingState());
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return boolean
+     */
+    public function isRejected(Job $job) {
+        return $job->getState()->equals($this->getRejectedState());
     }
     
     
@@ -231,6 +252,21 @@ class JobService extends EntityService {
         $job->setState($this->getCancelledState());
         return $this->persistAndFlush($job);
     }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
+     */
+    public function reject(Job $job) {        
+        if (!$this->isNew($job)) {
+            return $job;
+        }
+        
+        $job->setState($this->getRejectedState());
+        return $this->persistAndFlush($job);
+    }    
     
     
     

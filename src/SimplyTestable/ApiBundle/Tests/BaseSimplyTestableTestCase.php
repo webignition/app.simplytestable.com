@@ -241,6 +241,19 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     /**
      * 
      * @param string $canonicalUrl
+     * @param int $jobId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function cancelJob($canonicalUrl, $jobId) {
+        return $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
+    }
+
+
+
+
+    /**
+     * 
+     * @param string $canonicalUrl
      * @param int $job_id
      * @return \stdClass
      */
@@ -483,6 +496,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     protected function removeAllJobs() {
         $this->removeAllTasks();
+        $this->removeAllJobRejectionReasons();
         
         $jobs = $this->getJobService()->getEntityRepository()->findAll();
         foreach ($jobs as $job) {
@@ -510,6 +524,11 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function removeAllUserEmailChangeRequests() {
         $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest');      
     }
+    
+    
+    protected function removeAllJobRejectionReasons() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\RejectionReason');      
+    }    
     
     
     private function removeAllForEntity($entityName) {

@@ -265,5 +265,31 @@ class JobRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult();
         
         return (count($result)) ? $result : null;
-    }     
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
+     * @return int
+     */
+    public function getJobCountByUserAndWebsiteForCurrentMonth(User $user, WebSite $website) {
+        $now = new \ExpressiveDate();
+        
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('count(Job.id)');
+        $queryBuilder->join('Job.timePeriod', 'TimePeriod');
+        
+        $queryBuilder->where('Job.user = :User and Job.website = :Website and (TimePeriod.startDateTime >= :StartOfMonth and TimePeriod.startDateTime <= :EndOfMonth)');
+        
+        $queryBuilder->setParameter('User', $user);
+        $queryBuilder->setParameter('Website', $website);
+        $queryBuilder->setParameter('StartOfMonth', $now->format('Y-m-01'));
+        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()));
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return (int)$result[0][1];
+    }
 }

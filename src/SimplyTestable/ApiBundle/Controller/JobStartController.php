@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
@@ -24,10 +25,46 @@ class JobStartController extends ApiController
         
         if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
-        }    
+        }
         
         $this->siteRootUrl = $site_root_url;
         $requestedJobType = $this->getRequestJobType();
+        
+        $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
+        
+        if ($requestedJobType->equals($this->getJobTypeService()->getFullSiteType())) {
+            if ($this->getJobUserAccountPlanEnforcementService()->isFullSiteJobLimitReachedForWebSite($this->getWebsite())) {
+                $job = $this->getJobService()->create(
+                    $this->getUser(),
+                    $this->getWebsite(),
+                    $this->getTaskTypes(),
+                    $this->getTaskTypeOptions(),
+                    $requestedJobType
+                );
+                
+                $this->getJobService()->reject($job);
+                
+                $rejectionReason = new JobRejectionReason();
+                $rejectionReason->setConstraint($this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint());
+                $rejectionReason->setJob($job);
+                $rejectionReason->setReason('plan-constraint-limit-reached');
+                
+                $this->getDoctrine()->getEntityManager()->persist($rejectionReason);
+                $this->getDoctrine()->getEntityManager()->flush();
+                
+                return $this->redirect($this->generateUrl('job', array(
+                    'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
+                    'test_id' => $job->getId()
+                )));
+            }
+        }
+        
+        
+//        var_dump($requestedJobType->getName());
+//        exit();
+        
+        // full_site_jobs_per_site
+        // single_url_jobs_per_url
         
         $existingJobs = $this->getJobService()->getEntityRepository()->getAllByWebsiteAndStateAndUserAndType(
             $this->getWebsite(),
@@ -238,5 +275,14 @@ class JobStartController extends ApiController
      */
     private function getJobTypeService() {
         return $this->get('simplytestable.services.jobtypeservice');
-    }     
+    } 
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+     */
+    private function getJobUserAccountPlanEnforcementService() {
+        return $this->get('simplytestable.services.jobuseraccountplanenforcementservice');
+    }
 }

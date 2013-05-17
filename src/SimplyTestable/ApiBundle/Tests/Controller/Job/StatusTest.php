@@ -96,6 +96,32 @@ class StatusTest extends BaseControllerJsonTestCase {
         $this->assertEquals($canonicalUrl3, $status9ResponseObject->website);         
     }
     
+    
+    public function testStatusForRejectedDueToPlanFullSiteTestConstraint() {
+        $canonicalUrl = 'http://example.com/';
+        
+        $user = $this->getUserService()->getPublicUser();
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
+        
+        $fullSiteJobsPerSiteConstraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');        
+        $fullSiteJobsPerSiteLimit = $fullSiteJobsPerSiteConstraint->getLimit();
+        
+        for ($i = 0; $i < $fullSiteJobsPerSiteLimit; $i++) {
+            $this->cancelJob($canonicalUrl, $this->createJobAndGetId($canonicalUrl));            
+        }
+        
+        $rejectedJobId = $this->createJobAndGetId($canonicalUrl);        
+        $jobStatusObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $rejectedJobId)->getContent());
+        
+        $this->assertNotNull($jobStatusObject->rejection);
+        $this->assertEquals('plan-constraint-limit-reached', $jobStatusObject->rejection->reason);
+        
+        $this->assertNotNull($jobStatusObject->rejection->constraint);
+        $this->assertNotNull($jobStatusObject->rejection->constraint->name);
+        $this->assertEquals('full_site_jobs_per_site', $jobStatusObject->rejection->constraint->name);
+                
+    }
+    
 }
 
 

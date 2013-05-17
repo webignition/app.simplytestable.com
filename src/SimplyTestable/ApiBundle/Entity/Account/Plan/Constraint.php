@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Entity\Account\Plan;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * 
@@ -9,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(
  *     name="AccountPlanConstraint"
  * )
+ * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class Constraint
 {
@@ -28,6 +30,7 @@ class Constraint
      *
      * @var string
      * @ORM\Column(type="string", unique=true)
+     * @SerializerAnnotation\Expose
      */
     private $name;
     
@@ -37,6 +40,7 @@ class Constraint
      * @var integer
      * 
      * @ORM\Column(type="integer", nullable=true, name="limit_threshold")
+     * @SerializerAnnotation\Expose
      */  
     private $limit = null; 
     
@@ -45,6 +49,7 @@ class Constraint
      *
      * @var boolean
      * @ORM\Column(type="boolean")
+     * @SerializerAnnotation\Expose
      */    
     private $isAvailable = true;
     

@@ -74,7 +74,7 @@ class JobController extends ApiController
      * @return array 
      */
     private function getSummary(Job $job) {
-        return array(
+        $jobSummary = array(
             'id' => $job->getId(),
             'user' => $job->getPublicSerializedUser(),
             'website' => $job->getPublicSerializedWebsite(),
@@ -89,7 +89,17 @@ class JobController extends ApiController
             'skipped_task_count' => $this->getJobService()->getSkippedTaskCount($job),
             'task_type_options' => $this->getJobTaskTypeOptions($job),
             'type' => $job->getPublicSerializedType()
-        );        
+        );
+        
+        if ($this->getJobService()->isRejected($job)) {
+            $rejectionReason = $this->getJobRejectionReasonService()->getForJob($job);
+//            var_dump($rejectionReason);
+//            exit();
+            
+            $jobSummary['rejection'] = $rejectionReason;
+        }
+        
+        return $jobSummary;        
     }
     
     
@@ -375,6 +385,15 @@ class JobController extends ApiController
     private function getTaskService() {
         return $this->get('simplytestable.services.taskservice');
     } 
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobRejectionReasonService 
+     */
+    private function getJobRejectionReasonService() {
+        return $this->get('simplytestable.services.jobrejectionreasonservice');
+    }    
 
     
     /**
