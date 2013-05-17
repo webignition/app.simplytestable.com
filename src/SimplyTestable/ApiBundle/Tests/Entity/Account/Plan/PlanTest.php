@@ -170,5 +170,23 @@ class PlanTest extends BaseSimplyTestableTestCase {
         $this->assertTrue($plan->hasConstraintNamed('bar'));
         $this->assertFalse($plan->hasConstraintNamed('foobar'));        
     }
+    
+    
+    public function testGetConstraintNamed() {
+        $plan = new Plan();
+        $plan->setName('foo-plan');
+        
+        $constraint1 = new Constraint();
+        $constraint1->setName('foo');        
+        $plan->addConstraint($constraint1);
+        
+        $constraint2 = new Constraint();
+        $constraint2->setName('bar');        
+        $plan->addConstraint($constraint2);              
+        
+        $this->assertEquals('foo', $plan->getConstraintNamed('foo')->getName());
+        $this->assertEquals('bar', $plan->getConstraintNamed('bar')->getName());
+        $this->assertNull($plan->getConstraintNamed('foobar'));    
+    }    
 
 }
