@@ -232,8 +232,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $userEmail
      * @return int
      */
-    protected function createJobAndGetId($canonicalUrl, $userEmail = null) {
-        $response = $this->createJob($canonicalUrl, $userEmail);
+    protected function createJobAndGetId($canonicalUrl, $userEmail = null, $type = 'full site') {
+        $response = $this->createJob($canonicalUrl, $userEmail, $type);
         return $this->getJobIdFromUrl($response->getTargetUrl());
     } 
     

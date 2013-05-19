@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Services;
 class JobUserAccountPlanEnforcementService {
     
     const FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME = 'full_site_jobs_per_site';
+    const SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME = 'single_url_jobs_per_url';
     
     
     /**
@@ -25,6 +26,13 @@ class JobUserAccountPlanEnforcementService {
      * @var SimplyTestable\ApiBundle\Entity\User
      */
     private $user;
+    
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Entity\Job\Type
+     */
+    private $jobType;
     
     
     /**
@@ -51,6 +59,15 @@ class JobUserAccountPlanEnforcementService {
     
     /**
      * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $jobType
+     */
+    public function setJobType(\SimplyTestable\ApiBundle\Entity\Job\Type $jobType) {
+        $this->jobType = $jobType;
+    }
+    
+    
+    /**
+     * 
      * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
      * @return boolean
      */
@@ -61,7 +78,7 @@ class JobUserAccountPlanEnforcementService {
             return false;
         }
         
-        $currentCount = $this->jobService->getEntityRepository()->getJobCountByUserAndWebsiteForCurrentMonth($this->user, $website);        
+        $currentCount = $this->jobService->getEntityRepository()->getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth($this->user, $this->jobType, $website);        
         if ($currentCount === 0) {
             return false;
         }
@@ -70,12 +87,37 @@ class JobUserAccountPlanEnforcementService {
     }
     
     
+    public function isSingleUrlLimitReachedForWebsite(\SimplyTestable\ApiBundle\Entity\WebSite $website) {
+        $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+
+        if (!$userAccountPlan->getPlan()->hasConstraintNamed(self::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME)) {
+            return false;
+        }
+        
+        $currentCount = $this->jobService->getEntityRepository()->getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth($this->user, $this->jobType, $website);
+        if ($currentCount === 0) {
+            return false;
+        }
+        
+        return $currentCount >= $userAccountPlan->getPlan()->getConstraintNamed(self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME)->getLimit();
+    }
+    
+
     /**
      * 
      * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint
      */
     public function getFullSiteJobLimitConstraint() {
         return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME);
+    }    
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint
+     */
+    public function getSingleUrlJobLimitConstraint() {
+        return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(self::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME);
     }
     
 

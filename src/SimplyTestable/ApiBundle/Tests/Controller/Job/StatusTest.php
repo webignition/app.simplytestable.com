@@ -97,7 +97,7 @@ class StatusTest extends BaseControllerJsonTestCase {
     }
     
     
-    public function testStatusForRejectedDueToPlanFullSiteTestConstraint() {
+    public function testStatusForRejectedDueToPlanFullSiteConstraint() {
         $canonicalUrl = 'http://example.com/';
         
         $user = $this->getUserService()->getPublicUser();
@@ -121,6 +121,32 @@ class StatusTest extends BaseControllerJsonTestCase {
         $this->assertEquals('full_site_jobs_per_site', $jobStatusObject->rejection->constraint->name);
                 
     }
+    
+    
+    public function testStatusForRejectedDueToPlanSingleUrlConstraint() {
+        $canonicalUrl = 'http://example.com/';
+        
+        $user = $this->getUserService()->getPublicUser();
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
+        
+        $fullSiteJobsPerSiteConstraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');        
+        $fullSiteJobsPerSiteLimit = $fullSiteJobsPerSiteConstraint->getLimit();
+        
+        for ($i = 0; $i < $fullSiteJobsPerSiteLimit; $i++) {
+            $this->cancelJob($canonicalUrl, $this->createJobAndGetId($canonicalUrl, null, 'single url'));            
+        }
+        
+        $rejectedJobId = $this->createJobAndGetId($canonicalUrl, null, 'single url');        
+        $jobStatusObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $rejectedJobId)->getContent());
+        
+        $this->assertNotNull($jobStatusObject->rejection);
+        $this->assertEquals('plan-constraint-limit-reached', $jobStatusObject->rejection->reason);
+        
+        $this->assertNotNull($jobStatusObject->rejection->constraint);
+        $this->assertNotNull($jobStatusObject->rejection->constraint->name);
+        $this->assertEquals('single_url_jobs_per_url', $jobStatusObject->rejection->constraint->name);
+                
+    }    
     
 }
 

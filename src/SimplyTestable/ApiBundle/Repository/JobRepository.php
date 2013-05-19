@@ -271,19 +271,21 @@ class JobRepository extends EntityRepository
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $jobType
+     * * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
      * @return int
      */
-    public function getJobCountByUserAndWebsiteForCurrentMonth(User $user, WebSite $website) {
+    public function getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth(User $user, JobType $jobType, WebSite $website) {
         $now = new \ExpressiveDate();
         
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('count(Job.id)');
         $queryBuilder->join('Job.timePeriod', 'TimePeriod');
         
-        $queryBuilder->where('Job.user = :User and Job.website = :Website and (TimePeriod.startDateTime >= :StartOfMonth and TimePeriod.startDateTime <= :EndOfMonth)');
+        $queryBuilder->where('Job.user = :User AND Job.type = :JobType AND Job.website = :Website AND (TimePeriod.startDateTime >= :StartOfMonth and TimePeriod.startDateTime <= :EndOfMonth)');
         
         $queryBuilder->setParameter('User', $user);
+        $queryBuilder->setParameter('JobType', $jobType);
         $queryBuilder->setParameter('Website', $website);
         $queryBuilder->setParameter('StartOfMonth', $now->format('Y-m-01'));
         $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()));

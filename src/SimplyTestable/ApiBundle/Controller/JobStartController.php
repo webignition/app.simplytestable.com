@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
@@ -31,40 +32,20 @@ class JobStartController extends ApiController
         $requestedJobType = $this->getRequestJobType();
         
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
+        $this->getJobUserAccountPlanEnforcementService()->setJobType($requestedJobType);
         
         if ($requestedJobType->equals($this->getJobTypeService()->getFullSiteType())) {
             if ($this->getJobUserAccountPlanEnforcementService()->isFullSiteJobLimitReachedForWebSite($this->getWebsite())) {
-                $job = $this->getJobService()->create(
-                    $this->getUser(),
-                    $this->getWebsite(),
-                    $this->getTaskTypes(),
-                    $this->getTaskTypeOptions(),
-                    $requestedJobType
-                );
-                
-                $this->getJobService()->reject($job);
-                
-                $rejectionReason = new JobRejectionReason();
-                $rejectionReason->setConstraint($this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint());
-                $rejectionReason->setJob($job);
-                $rejectionReason->setReason('plan-constraint-limit-reached');
-                
-                $this->getDoctrine()->getEntityManager()->persist($rejectionReason);
-                $this->getDoctrine()->getEntityManager()->flush();
-                
-                return $this->redirect($this->generateUrl('job', array(
-                    'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
-                    'test_id' => $job->getId()
-                )));
+                return $this->rejectAndRedirect($this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint());
             }
         }
         
         
-//        var_dump($requestedJobType->getName());
-//        exit();
-        
-        // full_site_jobs_per_site
-        // single_url_jobs_per_url
+        if ($requestedJobType->equals($this->getJobTypeService()->getSingleUrlType())) { 
+            if ($this->getJobUserAccountPlanEnforcementService()->isSingleUrlLimitReachedForWebsite($this->getWebsite())) {                
+                return $this->rejectAndRedirect($this->getJobUserAccountPlanEnforcementService()->getSingleUrlJobLimitConstraint());
+            }
+        }
         
         $existingJobs = $this->getJobService()->getEntityRepository()->getAllByWebsiteAndStateAndUserAndType(
             $this->getWebsite(),
@@ -110,6 +91,31 @@ class JobStartController extends ApiController
             'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             'test_id' => $job->getId()
         )));
+    }
+    
+    private function rejectAndRedirect(AccountPlanConstraint $constraint) {
+        $job = $this->getJobService()->create(
+            $this->getUser(),
+            $this->getWebsite(),
+            $this->getTaskTypes(),
+            $this->getTaskTypeOptions(),
+            $this->getRequestJobType()
+        );
+
+        $this->getJobService()->reject($job);
+
+        $rejectionReason = new JobRejectionReason();
+        $rejectionReason->setConstraint($constraint);
+        $rejectionReason->setJob($job);
+        $rejectionReason->setReason('plan-constraint-limit-reached');
+
+        $this->getDoctrine()->getEntityManager()->persist($rejectionReason);
+        $this->getDoctrine()->getEntityManager()->flush();
+
+        return $this->redirect($this->generateUrl('job', array(
+            'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
+            'test_id' => $job->getId()
+        )));        
     }
     
     
