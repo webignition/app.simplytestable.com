@@ -106,7 +106,7 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertInternalType('integer', $job_id);
         $this->assertGreaterThan(0, $job_id);       
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+        $this->assertEquals(1, $this->runConsole('simplytestable:job:prepare', array(
             $job_id =>  true
         )));
         

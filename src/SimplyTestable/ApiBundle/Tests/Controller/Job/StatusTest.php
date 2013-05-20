@@ -146,7 +146,18 @@ class StatusTest extends BaseControllerJsonTestCase {
         $this->assertNotNull($jobStatusObject->rejection->constraint->name);
         $this->assertEquals('single_url_jobs_per_url', $jobStatusObject->rejection->constraint->name);
                 
-    }    
+    } 
+    
+    
+    public function testStatusForInstantlyPreparedSingleUrlJob() {
+        $canonicalUrl = 'http://example.com/';
+        
+        $jobId = $this->createJobAndGetId($canonicalUrl, null, 'single url');        
+        $jobObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId)->getContent());
+        
+        $this->assertEquals(1, $jobObject->url_count);
+        $this->assertEquals(3, $jobObject->task_count);      
+    }
     
 }
 

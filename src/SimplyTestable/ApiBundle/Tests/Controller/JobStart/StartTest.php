@@ -130,7 +130,7 @@ class StartTest extends BaseControllerJsonTestCase {
         }
         
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));        
-        $this->assertTrue($job->getState()->equals($this->getJobService()->getStartingState()));        
+        $this->assertTrue($job->getState()->equals($this->getJobService()->getQueuedState()));        
     }
     
     
@@ -149,10 +149,14 @@ class StartTest extends BaseControllerJsonTestCase {
         
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null));        
         $this->assertTrue($job->getState()->equals($this->getJobService()->getStartingState()));        
-    }    
+    }   
     
     
+    public function testSingleUrlJobIsInstantlyPrepared() {
+        $canonicalUrl = 'http://example.com/';        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));                
+        
+        $this->assertTrue($job->getState()->equals($this->getJobService()->getQueuedState()));         
+    }
     
 }
-
-
