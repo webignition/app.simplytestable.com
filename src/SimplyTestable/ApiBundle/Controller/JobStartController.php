@@ -85,6 +85,13 @@ class JobStartController extends ApiController
                 }
 
                 $this->getJobPreparationService()->prepare($job);
+                
+                if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
+                    $this->getResqueQueueService()->add(
+                        'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                        'task-assignment-selection'
+                    );             
+                }                
             } else {
                 $this->get('simplytestable.services.resqueQueueService')->add(
                     'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
@@ -311,5 +318,13 @@ class JobStartController extends ApiController
      */     
     private function getJobPreparationService() {
         return $this->get('simplytestable.services.jobpreparationservice');
+    }  
+    
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
+     */        
+    private function getResqueQueueService() {
+        return $this->getContainer()->get('simplytestable.services.resqueQueueService');
     }    
 }
