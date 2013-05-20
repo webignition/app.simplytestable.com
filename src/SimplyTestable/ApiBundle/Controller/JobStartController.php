@@ -325,6 +325,6 @@ class JobStartController extends ApiController
      * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
      */        
     private function getResqueQueueService() {
-        return $this->getContainer()->get('simplytestable.services.resqueQueueService');
+        return $this->get('simplytestable.services.resqueQueueService');
     }    
 }
