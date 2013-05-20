@@ -6,31 +6,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
-use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
-use SimplyTestable\ApiBundle\Entity\TimePeriod;
-
-use webignition\NormalisedUrl\NormalisedUrl;
-
 class JobPrepareCommand extends BaseCommand
 {
+    const RETURN_CODE_OK = 0;
     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
-    
-    /**
-     *
-     * @var SimplyTestable\ApiBundle\Services\WebSiteService
-     */
-    private $websiteService;    
-    
-    /**
-     *
-     * @var array
-     */
-    private $processedUrls = array();
+    const RETURN_CODE_NO_URLS = 3;
     
     protected function configure()
     {
@@ -56,86 +37,37 @@ class JobPrepareCommand extends BaseCommand
         $this->getLogger()->info("simplytestable:job:prepare running for job [".$input->getArgument('id')."]");
         
         $job = $this->getJobService()->getById((int)$input->getArgument('id'));
+        
+        foreach ($job->getRequestedTaskTypes() as $taskType) {
+            /* @var $taskType TaskType */
+            $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-ref-domains-to-ignore';            
 
-        if (!$this->getJobService()->isNew($job)) {
-            $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
-            return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
-        }
-        
-        $job->setState($this->getJobService()->getPreparingState());         
-        $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
-        $entityManager->persist($job);
-        $entityManager->flush();
-        
-        if ($job->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {            
-            $urls = array($job->getWebsite()->getCanonicalUrl());
-        } else { 
-            try {
-                $urls = $this->getWebsiteService()->getUrls($job->getWebsite());         
-            } catch (\Exception $e) {
-                var_dump($e);
-                exit();
+            if ($this->getContainer()->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
+                $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->getContainer()->getParameter($taskTypeParameterDomainsToIgnoreKey));
             }
         }
         
-        if ($urls === false || count($urls) == 0) {
-            $job->setState($this->getJobService()->getFailedNoSitemapState());
-            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
-            $entityManager->persist($job);
-            $entityManager->flush();
-            return $this->getLogger()->info("simplytestable:job:prepare: no sitemap found for [".(string)$job->getWebsite()."]");
+        try {
+            $jobPreparationResult = $this->getJobPreparationService()->prepare($job);
+        } catch (\Exception $e) {
+            var_dump(get_class($e), $e);
+            exit();
         }
         
-        $requestedTaskTypes = $job->getRequestedTaskTypes();
-        $newTaskState = $this->getTaskService()->getQueuedState();
-
-        $jobCount = 0;
-        
-        $predefinedDomainsToIgnore = array(
-            'CSS validation' => is_null($this->getContainer()->getParameter('css-validator-ref-domains-to-ignore')) ? array() : $this->getContainer()->getParameter('css-validator-ref-domains-to-ignore'),
-            'JS static analysis' => is_null($this->getContainer()->getParameter('js-static-analysis-domains-to-ignore')) ? array() : $this->getContainer()->getParameter('js-static-analysis-domains-to-ignore')
-        );
-        
-        foreach ($urls as $url) {            
-            $comparatorUrl = new NormalisedUrl($url);
-            if (!$this->isProcessedUrl($comparatorUrl)) {
-                foreach ($requestedTaskTypes as $taskType) {
-                    $taskTypeOptions = $this->getTaskTypeOptions($job, $taskType);
-                    
-                    $jobCount++;
-
-                    $task = new Task();
-                    $task->setJob($job);
-                    $task->setType($taskType);
-                    $task->setUrl($url);
-                    $task->setState($newTaskState);
-                    
-                    if ($taskTypeOptions->getOptionCount()) {
-                        $options = $taskTypeOptions->getOptions();                        
-                        
-                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $predefinedDomainsToIgnore);                                               
-                        if (count($domainsToIgnore)) {
-                            $options['domains-to-ignore'] = $domainsToIgnore;
-                        }
-                        
-                        $task->setParameters(json_encode($options));
-                    }
-
-                    $entityManager->persist($task);                             
-                }
+        switch ($jobPreparationResult) {
+            case 0:
+                // ok
+                break;
+            
+            case self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE:
+                $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
+                return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
                 
-                $this->processedUrls[] = (string)$comparatorUrl;
-            }
+            case self::RETURN_CODE_NO_URLS:
+                $this->getLogger()->info("simplytestable:job:prepare: no sitemap found for [".(string)$job->getWebsite()."]");
+                return self::RETURN_CODE_OK;
+                
         }
-        
-        $job->setState($this->getJobService()->getQueuedState());
-        
-        $timePeriod = new TimePeriod();
-        $timePeriod->setStartDateTime(new \DateTime());
-        $job->setTimePeriod($timePeriod);   
-        
-        $entityManager->persist($job);
-        $entityManager->flush(); 
         
         if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
             $this->getResqueQueueService()->add(
@@ -144,107 +76,8 @@ class JobPrepareCommand extends BaseCommand
             );             
         }
         
-        $this->getLogger()->info("simplytestable:job:prepare: queued up [".$jobCount."] tasks covering [".count($urls)."] urls and [".count($requestedTaskTypes)."] task types");
+        $this->getLogger()->info("simplytestable:job:prepare: queued up [".$job->getTasks()->count()."] tasks covering [".$job->getUrlCount()."] urls and [".count($job->getRequestedTaskTypes())."] task types");
     }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
-     * @param array $predefinedDomainsToIgnore
-     * @return array
-     */
-    private function getDomainsToIgnore(TaskTypeOptions $taskTypeOptions, $predefinedDomainsToIgnore) {
-        $rawDomainsToIgnore = array();
-        
-        if ($this->shouldIgnoreCommonCdns($taskTypeOptions)) {
-            if (isset($predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()])) {
-                $rawDomainsToIgnore = array_merge($rawDomainsToIgnore, $predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()]);
-            }
-        }
-        
-        if ($this->hasDomainsToIgnore($taskTypeOptions)) {
-            $specifiedDomainsToIgnore = $taskTypeOptions->getOption('domains-to-ignore');
-            if (is_array($specifiedDomainsToIgnore)) {
-                $rawDomainsToIgnore = array_merge($rawDomainsToIgnore, $specifiedDomainsToIgnore);
-            }
-        }
-        
-        $domainsToIgnore = array();
-        foreach ($rawDomainsToIgnore as $domainToIgnore) {
-            $domainToIgnore = trim(strtolower($domainToIgnore));
-            if (!in_array($domainToIgnore, $domainsToIgnore)) {
-                $domainsToIgnore[] = $domainToIgnore;
-            }
-        }
-        
-        return $domainsToIgnore;
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
-     * @return boolean
-     */
-    private function shouldIgnoreCommonCdns(TaskTypeOptions $taskTypeOptions) {
-        return $taskTypeOptions->getOption('ignore-common-cdns') == '1';
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
-     * @return boolean
-     */
-    private function hasDomainsToIgnore(TaskTypeOptions $taskTypeOptions) {
-        return is_array($taskTypeOptions->getOption('domains-to-ignore'));
-    }
-    
-    
-    
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType
-     * @return \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions
-     */
-    private function getTaskTypeOptions(Job $job, TaskType $taskType) {
-        foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
-            /* @var $taskTypeOptions TaskTypeOptions */
-            if ($taskTypeOptions->getTaskType()->equals($taskType)) {
-                return $taskTypeOptions;
-            }
-        }
-        
-        return new TaskTypeOptions();
-    }
-    
-    
-    /**
-     * 
-     * @param \webignition\NormalisedUrl\NormalisedUrl $url
-     * @return boolean
-     */
-    private function isProcessedUrl(NormalisedUrl $url) {
-        return in_array((string)$url, $this->processedUrls);
-    }
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WebSiteService
-     */
-    private function getWebsiteService() {
-        if (is_null($this->websiteService)) {
-            $this->websiteService = $this->getContainer()->get('simplytestable.services.websiteservice');
-        }
-        
-        return $this->websiteService;
-    }
-    
     
     /**
      *
@@ -252,8 +85,7 @@ class JobPrepareCommand extends BaseCommand
      */    
     private function getJobService() {
         return $this->getContainer()->get('simplytestable.services.jobservice');
-    }
-    
+    }    
     
     /**
      *
@@ -261,21 +93,13 @@ class JobPrepareCommand extends BaseCommand
      */        
     private function getResqueQueueService() {
         return $this->getContainer()->get('simplytestable.services.resqueQueueService');
-    } 
-    
+    }
+
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\TaskService
-     */    
-    private function getTaskService() {
-        return $this->getContainer()->get('simplytestable.services.taskservice');
-    }    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobTypeService
-     */    
-    private function getJobTypeService() {
-        return $this->getContainer()->get('simplytestable.services.jobtypeservice');
-    }    
+     * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
+     */     
+    private function getJobPreparationService() {
+        return $this->getContainer()->get('simplytestable.services.jobpreparationservice');
+    }
 }

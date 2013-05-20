@@ -157,3 +157,11 @@ services:
     class:   SimplyTestable\ApiBundle\Services\JobRejectionReasonService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"           
+        
+  simplytestable.services.jobPreparationService:
+    class:   SimplyTestable\ApiBundle\Services\JobPreparationService
+    arguments: 
+        jobService: "@simplytestable.services.jobservice"
+        taskService: "@simplytestable.services.taskservice"
+        jobTypeService: "@simplytestable.services.jobtypeservice"
+        websiteService: "@simplytestable.services.websiteservice"
