@@ -115,7 +115,7 @@ class JobUserAccountPlanEnforcementService {
             return false;
         }
         
-        return $urlCount >= $userAccountPlan->getPlan()->getConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME)->getLimit();        
+        return $urlCount > $userAccountPlan->getPlan()->getConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME)->getLimit();        
     }
     
 
