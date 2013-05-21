@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
+use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 
 class JobService extends EntityService {
     
@@ -218,6 +219,26 @@ class JobService extends EntityService {
         $this->getEntityManager()->flush();
 
         return $job;
+    }
+    
+
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param string $reason
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraint
+     */
+    public function addAmmendment(Job $job, $reason, \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraint = null) {        
+        $ammendment = new Ammendment();
+        $ammendment->setJob($job);
+        $ammendment->setReason($reason);
+        
+        if (!is_null($constraint)) {
+            $ammendment->setConstraint($constraint);
+        }
+       
+        $this->getEntityManager()->persist($ammendment);
+        $this->getEntityManager()->flush();
     }
     
     

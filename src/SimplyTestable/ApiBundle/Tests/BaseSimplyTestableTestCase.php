@@ -366,6 +366,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     /**
      *
+     * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+     */
+    protected function getJobUserAccountPlanEnforcementService() {
+        return $this->container->get('simplytestable.services.jobuseraccountplanenforcementservice');
+    }
+    
+    
+    /**
+     *
      * @return \SimplyTestable\ApiBundle\Services\WorkerService
      */
     protected function getWorkerService() {

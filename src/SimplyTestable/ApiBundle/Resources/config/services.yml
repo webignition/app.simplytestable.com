@@ -165,3 +165,4 @@ services:
         taskService: "@simplytestable.services.taskservice"
         jobTypeService: "@simplytestable.services.jobtypeservice"
         websiteService: "@simplytestable.services.websiteservice"
+        jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"

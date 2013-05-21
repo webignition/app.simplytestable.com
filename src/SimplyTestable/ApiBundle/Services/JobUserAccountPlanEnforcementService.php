@@ -5,6 +5,7 @@ class JobUserAccountPlanEnforcementService {
     
     const FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME = 'full_site_jobs_per_site';
     const SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME = 'single_url_jobs_per_url';
+    const URLS_PER_JOB_CONSTRAINT_NAME = 'urls_per_job';
     
     
     /**
@@ -102,6 +103,21 @@ class JobUserAccountPlanEnforcementService {
         return $currentCount >= $userAccountPlan->getPlan()->getConstraintNamed(self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME)->getLimit();
     }
     
+    
+    public function isJobUrlLimitReached($urlCount) {
+        if ($urlCount === 0) {
+            return false;
+        }
+        
+        $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+
+        if (!$userAccountPlan->getPlan()->hasConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME)) {
+            return false;
+        }
+        
+        return $urlCount >= $userAccountPlan->getPlan()->getConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME)->getLimit();        
+    }
+    
 
     /**
      * 
@@ -119,6 +135,15 @@ class JobUserAccountPlanEnforcementService {
     public function getSingleUrlJobLimitConstraint() {
         return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(self::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME);
     }
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint
+     */
+    public function getJobUrlLimitConstraint() {
+        return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME);
+    }    
     
 
 }

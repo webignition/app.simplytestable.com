@@ -128,5 +128,27 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         
         return;
     }
+    
+    
+    public function testPrepareFullSiteTestWithPublicUserCreatesUrlCountAmmendment() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $canonicalUrl = 'http://example.com/';        
+        $jobCreateResponse = $this->createJob($canonicalUrl);        
+        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
+        
+        $this->assertInternalType('integer', $job_id);
+        $this->assertGreaterThan(0, $job_id);
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job_id =>  true
+        )));
+        
+        $this->getJobService()->getEntityRepository()->clear();
+        
+        $job = $this->getJobService()->getById($job_id);
+        $this->assertEquals(1, $job->getAmmendments()->count());
+        $this->assertEquals('plan-url-limit-reached:discovered-url-count-11', $job->getAmmendments()->first()->getReason());
+    }
 
 }

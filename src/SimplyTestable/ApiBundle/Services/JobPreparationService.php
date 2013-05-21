@@ -46,7 +46,14 @@ class JobPreparationService {
      *
      * @var array
      */
-    private $processedUrls = array();    
+    private $processedUrls = array();
+    
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+     */
+    private $jobUserAccountPlanEnforcementService;       
     
     
     /**
@@ -60,12 +67,14 @@ class JobPreparationService {
         \SimplyTestable\ApiBundle\Services\JobService $jobService,
         \SimplyTestable\ApiBundle\Services\TaskService $taskService,
         \SimplyTestable\ApiBundle\Services\JobTypeService $jobTypeService,
-        \SimplyTestable\ApiBundle\Services\WebSiteService $websiteService
+        \SimplyTestable\ApiBundle\Services\WebSiteService $websiteService,
+        \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
         $this->jobTypeService = $jobTypeService;
         $this->websiteService = $websiteService;
+        $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
     }
     
     
@@ -94,12 +103,18 @@ class JobPreparationService {
             $job->setState($this->jobService->getFailedNoSitemapState());
             $this->jobService->persistAndFlush($job);
             return self::RETURN_CODE_NO_URLS;
-        }      
+        }
+        
+        $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());        
+        if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
+            $this->jobService->addAmmendment($job, 'plan-url-limit-reached:discovered-url-count-' . count($urls), $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());            
+            $urls = array_slice($urls, 0, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit());
+        }
         
         $requestedTaskTypes = $job->getRequestedTaskTypes();
         $newTaskState = $this->taskService->getQueuedState();
         
-        foreach ($urls as $url) {            
+        foreach ($urls as $url) {
             $comparatorUrl = new NormalisedUrl($url);
             if (!$this->isProcessedUrl($comparatorUrl)) {
                 foreach ($requestedTaskTypes as $taskType) {

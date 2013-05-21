@@ -91,12 +91,12 @@ class JobController extends ApiController
             'type' => $job->getPublicSerializedType()
         );
         
-        if ($this->getJobService()->isRejected($job)) {
-            $rejectionReason = $this->getJobRejectionReasonService()->getForJob($job);
-//            var_dump($rejectionReason);
-//            exit();
-            
-            $jobSummary['rejection'] = $rejectionReason;
+        if ($this->getJobService()->isRejected($job)) {            
+            $jobSummary['rejection'] = $this->getJobRejectionReasonService()->getForJob($job);
+        }
+        
+        if (!is_null($job->getAmmendments()) && $job->getAmmendments()->count() > 0) {
+            $jobSummary['ammendments'] = $job->getAmmendments();
         }
         
         return $jobSummary;        

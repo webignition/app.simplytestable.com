@@ -10,9 +10,7 @@ class StatusTest extends BaseControllerJsonTestCase {
         self::setupDatabaseIfNotExists();        
     }      
    
-    public function testStatusAction() {
-        $this->removeAllJobs();
-        
+    public function testStatusAction() {        
         $canonicalUrl = 'http://example.com/';
         
         $jobId = $this->createJobAndGetId($canonicalUrl);
@@ -40,8 +38,6 @@ class StatusTest extends BaseControllerJsonTestCase {
     }
     
     public function testStatusActionForDifferentUsers() {
-        $this->removeAllJobs();
-
         $canonicalUrl1 = 'http://one.example.com/';
         $canonicalUrl2 = 'http://two.example.com/';
         $canonicalUrl3 = 'http://three.example.com/';
@@ -157,6 +153,25 @@ class StatusTest extends BaseControllerJsonTestCase {
         
         $this->assertEquals(1, $jobObject->url_count);
         $this->assertEquals(3, $jobObject->task_count);      
+    }
+    
+    
+    public function testStatusForJobUrlLimitAmmendment() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $canonicalUrl = 'http://example.com/';
+        $job_id = $this->createJobAndGetId($canonicalUrl);        
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job_id =>  true
+        )));        
+        
+        $jobObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $job_id)->getContent());
+        
+        $this->assertNotNull($jobObject->ammendments);
+        $this->assertEquals(1, count($jobObject->ammendments));
+        $this->assertEquals('plan-url-limit-reached:discovered-url-count-11', $jobObject->ammendments[0]->reason);
+        $this->assertEquals('urls_per_job', $jobObject->ammendments[0]->constraint->name);      
     }
     
 }
