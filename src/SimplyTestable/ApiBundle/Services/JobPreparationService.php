@@ -114,7 +114,7 @@ class JobPreparationService {
                     if ($taskTypeOptions->getOptionCount()) {
                         $options = $taskTypeOptions->getOptions();                        
                         
-                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $predefinedDomainsToIgnore);                                               
+                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $this->predefinedDomainsToIgnore);                                               
                         if (count($domainsToIgnore)) {
                             $options['domains-to-ignore'] = $domainsToIgnore;
                         }
