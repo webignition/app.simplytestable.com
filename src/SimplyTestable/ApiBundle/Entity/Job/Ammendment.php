@@ -24,12 +24,12 @@ class Ammendment
      */
     protected $id;
     
-    
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Entity\Job\Job 
+     * @var SimplyTestable\ApiBundle\Entity\Job\Job 
      * 
-     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job")  
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="ammendments")
+     * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)     
      */
     protected $job;    
     
@@ -95,6 +95,7 @@ class Ammendment
     public function setJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job = null)
     {
         $this->job = $job;
+        $job->addAmmendment($this);
     
         return $this;
     }

@@ -497,6 +497,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function removeAllJobs() {
         $this->removeAllTasks();
         $this->removeAllJobRejectionReasons();
+        $this->removeAllJobAmmendments();
         
         $jobs = $this->getJobService()->getEntityRepository()->findAll();
         foreach ($jobs as $job) {
@@ -529,6 +530,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function removeAllJobRejectionReasons() {
         $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\RejectionReason');      
     }    
+    
+    protected function removeAllJobAmmendments() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\Ammendment');      
+    }       
     
     
     private function removeAllForEntity($entityName) {

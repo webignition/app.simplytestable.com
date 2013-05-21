@@ -137,6 +137,17 @@ class Job
      */
     protected $timePeriod;
     
+    
+    /**
+     *
+     * @var \Doctrine\Common\Collections\Collection
+     * 
+     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Ammendment", mappedBy="job", cascade={"persist"})  
+     */
+    private $ammendments;
+    
+    
+    
     public function __construct()
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
@@ -495,5 +506,38 @@ class Job
     public function getType()
     {
         return $this->type;
+    }    
+    
+    
+    /**
+     * Add tasks
+     *
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Ammendment $ammendment
+     * @return Job
+     */
+    public function addAmmendment(\SimplyTestable\ApiBundle\Entity\Job\Ammendment $ammendment)
+    {
+        $this->ammendments[] = $ammendment;
+        return $this;
+    }
+
+    /**
+     * Remove tasks
+     *
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Ammendment $ammendment
+     */
+    public function removeAmmendment(\SimplyTestable\ApiBundle\Entity\Job\Ammendment $ammendment)
+    {
+        $this->ammendments->removeElement($ammendment);
+    }
+
+    /**
+     * Get tasks
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getAmmendments()
+    {        
+        return $this->ammendments;
     }    
 }
