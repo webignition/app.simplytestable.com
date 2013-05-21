@@ -207,12 +207,13 @@ class JobService extends EntityService {
                     $taskTypeOptions->setOptions($taskTypeOptionsArray[$comparatorTaskTypeName]);                
 
                     $this->getEntityManager()->persist($taskTypeOptions);                    
+                    $job->getTaskTypeOptions()->add($taskTypeOptions);
                 }
             }
         }
         
         $job->setState($this->getStartingState());
-        $this->getEntityManager()->persist($job);
+        $this->getEntityManager()->persist($job);        
         
         $this->getEntityManager()->flush();
 
