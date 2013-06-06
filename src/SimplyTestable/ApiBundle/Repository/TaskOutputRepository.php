@@ -2,9 +2,37 @@
 namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
 class TaskOutputRepository extends EntityRepository
 {
+    public function findIdsByTaskType(TaskType $taskType, $limit = null) {
+        $queryBuilder = $this->createQueryBuilder('TaskOutput');
+        $queryBuilder->select('DISTINCT TaskOutput.id');        
+        
+        $queryBuilder->leftJoin('SimplyTestable\ApiBundle\Entity\Task\Task', 'Task', 'WITH', 'TaskOutput.id = Task.output');
+        $queryBuilder->where('Task.type = :TaskType');
+        $queryBuilder->setParameter('TaskType', $taskType);
+        
+        if (is_int($limit) && $limit > 0) {
+            $queryBuilder->setMaxResults($limit);
+        }
+        
+        $result = $queryBuilder->getQuery()->getResult();        
+        
+        return $this->getSingleFieldCollectionFromResult($result, 'id');        
+        
+        
+/**
+ * 
+SELECT DISTINCT output_id
+FROM Task
+WHERE tasktype_id =1
+AND output_id IS NOT NULL 
+ */        
+    }
+    
+    
     public function findUnusedIds($limit) {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');
         $queryBuilder->select('DISTINCT TaskOutput.id');        
