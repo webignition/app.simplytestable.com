@@ -120,3 +120,7 @@ leave_readonly:
 enable_backup_readonly:
     pattern: /maintenance/enable-backup-read-only/
     defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableBackupReadOnly, _format: json }
+    
+stripe_webhook_receiver:
+    pattern: /stripe/webhook/receiver/
+    defaults: { _controller: SimplyTestableApiBundle:Stripe\WebHook:index, _format: json }    

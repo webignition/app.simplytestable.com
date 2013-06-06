@@ -166,3 +166,8 @@ services:
         jobTypeService: "@simplytestable.services.jobtypeservice"
         websiteService: "@simplytestable.services.websiteservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
+        
+  simplytestable.services.stripeEventService:
+    class:   SimplyTestable\ApiBundle\Services\StripeEventService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"           

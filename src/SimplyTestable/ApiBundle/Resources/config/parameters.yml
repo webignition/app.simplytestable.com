@@ -21,3 +21,9 @@ parameters:
    - netdna.bootstrapcdn.com
    - ajax.aspnetcdn.com
    - static.nrelate.com   
+  stripe_webhook_developer_notification:
+    recipient_email: jon@simplytestable.com
+    sender_email: robot@simplytestable.com
+    sender_name: Simply Testable Robot
+    subject: Stripe Webhook Data {{ event-type }}
+    
