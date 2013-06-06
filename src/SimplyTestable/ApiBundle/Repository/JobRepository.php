@@ -294,4 +294,46 @@ class JobRepository extends EntityRepository
         
         return (int)$result[0][1];
     }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $type
+     * @param array $jobStates
+     * @return array
+     */
+    public function getIdsByUserAndTypeAndNotStates(User $user, JobType $type, $excludeStates = array()) {        
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.id');
+        
+        $where = 'Job.user = :User and Job.type = :Type';
+        
+        if (is_array($excludeStates)) {
+            foreach ($excludeStates as $stateIndex => $state) {
+                $where .= ' AND Job.state != :State' . $stateIndex;
+                $queryBuilder->setParameter('State'.$stateIndex, $state);
+            }
+        }
+        
+        $queryBuilder->where($where);
+        $queryBuilder->orderBy('Job.id', 'asc');
+
+        $queryBuilder->setParameter('User', $user);
+        $queryBuilder->setParameter('Type', $type);
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return $this->getSingleFieldCollectionFromResult($result, 'id');
+    }   
+    
+    
+    private function getSingleFieldCollectionFromResult($result, $fieldName) {
+        $collection = array();
+        
+        foreach ($result as $resultItem) {
+            $collection[] = $resultItem[$fieldName];
+        }
+        
+        return $collection;
+    }    
 }

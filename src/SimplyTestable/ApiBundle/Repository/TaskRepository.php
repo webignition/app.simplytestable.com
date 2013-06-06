@@ -8,7 +8,7 @@ use SimplyTestable\ApiBundle\Entity\State;
 
 class TaskRepository extends EntityRepository
 {    
-    
+
     /**
      * Get the total number of URLs covered by a Job
      * 
@@ -24,7 +24,7 @@ class TaskRepository extends EntityRepository
         
         $result = $queryBuilder->getQuery()->getResult();
         return (int)($result[0]['url_total']);
-    }
+    }    
     
     /**
      *
@@ -141,6 +141,7 @@ class TaskRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult();
         return (int)($result[0]['task_total']);        
     }      
+   
 
     public function getCollectionById($taskIds = array()) {
         $queryBuilder = $this->createQueryBuilder('Task');
@@ -188,6 +189,37 @@ class TaskRepository extends EntityRepository
         
         return $taskIds;
     }
+    
+    /**
+     *
+     * @param Job $job
+     * @return array 
+     */
+    public function getIdsByJobAndUrlExclusionSet(Job $job, $urlSet) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('Task.id');
+        
+        $urlParameterList = array();
+        foreach ($urlSet as $urlIndex => $url) {
+            $urlParameterList[] = ':Url' . $urlIndex.'';
+        }
+        
+        $queryBuilder->where('Task.job = :Job AND Task.url NOT IN ('.implode(', ', $urlParameterList).')');        
+        
+        $queryBuilder->setParameter('Job', $job);
+        foreach ($urlSet as $urlIndex => $url) {
+            $queryBuilder->setParameter('Url' . $urlIndex, $url);
+        }        
+        
+        $repostitoryResult = $queryBuilder->getQuery()->getResult();
+        
+        $taskIds = array();
+        foreach ($repostitoryResult as $taskId) {
+            $taskIds[] = $taskId['id'];
+        }
+        
+        return $taskIds;
+    }    
     
     
     /**
