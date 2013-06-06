@@ -7,25 +7,18 @@ class TaskOutputRepository extends EntityRepository
 {
     public function findUnusedIds($limit) {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');
-        $queryBuilder->select('TaskOutput.id');        
+        $queryBuilder->select('DISTINCT TaskOutput.id');        
         
         $queryBuilder->leftJoin('SimplyTestable\ApiBundle\Entity\Task\Task', 'Task', 'WITH', 'TaskOutput.id = Task.output');
         $queryBuilder->where('Task.output IS NULL');
-        $queryBuilder->orderBy('TaskOutput.id', 'ASC');
         
         if (is_int($limit) && $limit > 0) {
             $queryBuilder->setMaxResults($limit);
         }
         
-        $result = $queryBuilder->getQuery()->getResult();
+        $result = $queryBuilder->getQuery()->getResult();        
         
-        $ids = array();
-        
-        foreach ($result as $idResult) {
-            $ids[] = $idResult['id'];
-        }
-        
-        return $ids; 
+        return $this->getSingleFieldCollectionFromResult($result, 'id');
         
 /**
  * 
