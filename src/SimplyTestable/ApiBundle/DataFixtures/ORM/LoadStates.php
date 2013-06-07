@@ -30,9 +30,10 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
         'job-queued' => 'job-in-progress',
         'job-preparing' => 'job-queued',
         'job-new' => 'job-preparing',
-    );
-    
-    
+        'task-completed' => null,
+        'task-in-progress' => 'task-completed',
+        'task-queued' => 'task-in-progress',
+    );  
     
     /**
      * {@inheritDoc}
