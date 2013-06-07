@@ -6,7 +6,5 @@ use SimplyTestable\BaseMigrationsBundle\Migration\EntityModificationMigration,
     SimplyTestable\ApiBundle\Entity\User;        
 
 class Version20120906125906_add_admin_user extends EntityModificationMigration
-{    
-    public function postUp(Schema $schema) {
-    }
+{
 }
