@@ -26,7 +26,8 @@ class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInter
     
     private $taskTypeClasses = array(
         'verification' => 'For the verification of quality aspects such as HTML validity, CSS validity or the presence of a robot.txt file',
-        'discovery' => 'For the discovery of information, such as collecting all unique URLs within a given page'
+        'discovery' => 'For the discovery of information, such as collecting all unique URLs within a given page',
+        'validation' => 'For the validation of syntactial correctness, such as HTML or CSS validation'
     ); 
     
     /**
@@ -54,14 +55,5 @@ class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInter
     public function getOrder()
     {
         return 3; // the order in which fixtures will be loaded
-    }
-    
-    
-    /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Services\StateService
-     */
-    public function getStateService() {
-        return $this->container->get('simplytestable.services.stateservice');
     }
 }
