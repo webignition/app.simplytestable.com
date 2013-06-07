@@ -171,3 +171,8 @@ services:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"           
+        
+  simplytestable.services.stripeService:
+    class:   SimplyTestable\ApiBundle\Services\StripeService
+    arguments: 
+        apiKey: "%stripe_api_key%"           

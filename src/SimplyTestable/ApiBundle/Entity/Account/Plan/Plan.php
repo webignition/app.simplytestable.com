@@ -38,7 +38,15 @@ class Plan
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint", mappedBy="plan", cascade={"persist", "remove"})   
      */ 
-    private $constraints;  
+    private $constraints;
+    
+    
+    /**
+     *
+     * @var boolean
+     * @ORM\Column(type="boolean")
+     */
+    private $isPremium = false;
     
     
     /**
@@ -172,5 +180,29 @@ class Plan
         }
         
         return null;        
+    }
+   
+
+    /**
+     * Set isPremium
+     *
+     * @param boolean $isPremium
+     * @return Plan
+     */
+    public function setIsPremium($isPremium)
+    {
+        $this->isPremium = $isPremium;
+    
+        return $this;
+    }
+
+    /**
+     * Get isPremium
+     *
+     * @return boolean 
+     */
+    public function getIsPremium()
+    {
+        return $this->isPremium;
     }
 }

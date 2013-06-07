@@ -13,6 +13,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const USER_PASSWORD_RESET_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserPasswordResetController';
     const USER_EMAIL_CHANGE_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserEmailChangeController';
     const USER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserController';
+    const USER_ACCOUNT_PLAN_SUBSCRIPTION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController';
     const WORKER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\WorkerController';
     const TASK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TaskController';
     
@@ -113,6 +114,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function getUserCreationController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::USER_CREATION_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }    
+    
+    
+    /**
+     * 
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController
+     */
+    protected function getUserAccountPlanSubscriptionController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::USER_ACCOUNT_PLAN_SUBSCRIPTION_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }     
     
     
     /**
