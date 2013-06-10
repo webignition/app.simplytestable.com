@@ -33,6 +33,7 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
         'task-completed' => null,
         'task-in-progress' => 'task-completed',
         'task-queued' => 'task-in-progress',
+        'job-cancelled' => null
     );  
     
     /**
