@@ -40,6 +40,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
         array(
             'name' => 'personal-9',
             'visible' => true,
+            'isPremium' => true,
             'constraints'  => array(
                 array(
                     'name' => 'urls_per_job',
@@ -54,6 +55,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
         array(
             'name' => 'agency-19',
             'visible' => true,
+            'isPremium' => true,
             'constraints'  => array(
                 array(
                     'name' => 'urls_per_job',
@@ -68,6 +70,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
         array(
             'name' => 'business-59',
             'visible' => true,
+            'isPremium' => true,
             'constraints'  => array(
                 array(
                     'name' => 'urls_per_job',
@@ -81,6 +84,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
         ),
         array(
             'name' => 'enterprise-299',
+            'isPremium' => true,
             'visible' => true,
             'constraints'  => array(
                 array(
@@ -110,6 +114,10 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             if (isset($planDetails['visible']) && $planDetails['visible'] === true) {
                 $plan->setIsVisible(true);
             }
+            
+            if (isset($planDetails['isPremium']) && $planDetails['isPremium'] === true) {
+                $plan->setIsPremium(true);
+            }            
             
             if (isset($planDetails['constraints'])) {                
                 foreach ($planDetails['constraints'] as $constraintDetails) {                    
