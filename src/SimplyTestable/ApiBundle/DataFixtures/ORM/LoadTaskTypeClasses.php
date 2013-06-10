@@ -25,7 +25,7 @@ class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInter
     }
     
     private $taskTypeClasses = array(
-        'verification' => 'For the verification of quality aspects such as HTML validity, CSS validity or the presence of a robot.txt file',
+        'verification' => 'For the verification of quality aspects such as the presence of a robots.txt file',
         'discovery' => 'For the discovery of information, such as collecting all unique URLs within a given page',
         'validation' => 'For the validation of syntactial correctness, such as HTML or CSS validation'
     ); 
