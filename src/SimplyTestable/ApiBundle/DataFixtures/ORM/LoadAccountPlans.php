@@ -51,7 +51,59 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
         array(
             'name' => 'basic',
             'visible' => true
-        )        
+        ),
+        array(
+            'name' => 'personal-9',
+            'visible' => true,
+            'constraints'  => array(
+                array(
+                    'name' => 'urls_per_job',
+                    'limit' => 50
+                ),
+                array(
+                    'name' => 'credits_per_month',
+                    'limit' => 5000
+                )
+            )
+        ),
+        array(
+            'name' => 'agency-19',
+            'visible' => true,
+            'constraints'  => array(
+                array(
+                    'name' => 'urls_per_job',
+                    'limit' => 250
+                ),
+                array(
+                    'name' => 'credits_per_month',
+                    'limit' => 20000
+                )
+            )
+        ),
+        array(
+            'name' => 'business-59',
+            'visible' => true,
+            'constraints'  => array(
+                array(
+                    'name' => 'urls_per_job',
+                    'limit' => 2500
+                ),
+                array(
+                    'name' => 'credits_per_month',
+                    'limit' => 100000
+                )
+            )
+        ),
+        array(
+            'name' => 'enterprise-299',
+            'visible' => true,
+            'constraints'  => array(
+                array(
+                    'name' => 'urls_per_job',
+                    'limit' => 10000
+                )
+            )
+        ),        
     );    
     
     /**
