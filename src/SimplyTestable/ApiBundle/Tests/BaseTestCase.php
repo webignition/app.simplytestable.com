@@ -89,7 +89,7 @@ abstract class BaseTestCase extends WebTestCase {
         foreach ($commands as $command) {
             exec($command);
         }
-    }
+    } 
     
     
     protected static function setupDatabaseIfNotExists() {        
