@@ -29,7 +29,12 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
             'description' => 'Validates the HTML markup for a given URL',
             'class' => 'verification',
             'selectable' => true
-        )
+        ),
+        'CSS validation' => array(
+            'description' => 'Validates the CSS related to a given web document URL',
+            'class' => 'verification',
+            'selectable' => true
+        )        
     );
     
     /**
