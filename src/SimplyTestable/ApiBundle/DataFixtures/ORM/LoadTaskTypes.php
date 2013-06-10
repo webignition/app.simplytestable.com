@@ -27,7 +27,8 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
     private $taskTypes = array(
         'HTML validation' => array(
             'description' => 'Validates the HTML markup for a given URL',
-            'class' => 'verification'
+            'class' => 'verification',
+            'selectable' => true
         )
     );
     
@@ -51,6 +52,7 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
             $taskType->setClass($taskTypeClass);
             $taskType->setDescription($properties['description']);
             $taskType->setName($name);
+            $taskType->setSelectable($properties['selectable']);
             
             $manager->persist($taskType);
             $manager->flush();            
