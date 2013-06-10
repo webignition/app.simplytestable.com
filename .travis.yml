@@ -16,16 +16,13 @@ before_script:
   - cp .travis.composer.config.json ~/.composer/config.json    
   
   # Build!
-  #- mysql -e "create database myapp_test;"
-  #- mkdir app/cache
   - mkdir app/cache/test  
   - mv app/config/parameters.yml.travis app/config/parameters.yml
   - mv --force app/config/config_travis.yml app/config/config_test.yml
   - echo | php composer.phar install
   - php app/console doctrine:database:create
   - php app/console doctrine:migrations:migrate --no-interaction
-  #- php app/console doctrine:database:create
-  #- build/phing/bin/phing build:install:ci:travis
+  - php app/console doctrine:fixtures:load --append
   
 script:
   - phpunit -c app

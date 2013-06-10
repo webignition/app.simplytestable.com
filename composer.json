@@ -35,7 +35,8 @@
         "winzou/console-bundle":"1.0.0",
         "guzzle/guzzle":"3.3.1",
         "jasonlewis/expressive-date": "1.0.*",
-        "stripe/stripe-php": "1.7.15"
+        "stripe/stripe-php": "1.7.15",
+        "doctrine/doctrine-fixtures-bundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

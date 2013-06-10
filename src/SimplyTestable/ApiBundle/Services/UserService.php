@@ -56,12 +56,30 @@ class UserService extends UserManager {
     
     
     /**
+     * 
+     * @return boolean
+     */
+    public function hasPublicUser() {
+        return !is_null($this->getPublicUser());
+    }
+    
+    
+    /**
      *
      * @return \SimplyTestable\ApiBundle\Entity\User
      */    
     public function getAdminUser() {
         return $this->findUserByUsername('admin');  
     }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasAdminUser() {
+        return !is_null($this->getAdminUser());
+    }    
     
     
     /**
