@@ -5,25 +5,10 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass;
 
-class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
-{
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-    
+class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInterface
+{    
     private $taskTypeClasses = array(
         'verification' => 'For the verification of quality aspects such as the presence of a robots.txt file',
         'discovery' => 'For the discovery of information, such as collecting all unique URLs within a given page',
