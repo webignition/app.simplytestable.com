@@ -22,7 +22,7 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-    }
+    }  
     
     private $stateDetails = array(
         'job-completed' => null,
@@ -34,7 +34,10 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
         'task-in-progress' => 'task-completed',
         'task-queued' => 'task-in-progress',
         'job-cancelled' => null,
-        'task-cancelled' => null
+        'task-cancelled' => null,
+        'worker-activation-request-verified' => null,
+        'worker-activation-request-failed' => null,
+        'worker-activation-request-awaiting-verification' => 'worker-activation-request-verified'
     );  
     
     /**
