@@ -34,6 +34,11 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
             'description' => 'Validates the CSS related to a given web document URL',
             'class' => 'verification',
             'selectable' => true
+        ),
+        'JS static analysis' => array(
+            'description' => 'JavaScript static code analysis (via jslint)',
+            'class' => 'verification',
+            'selectable' => true
         )        
     );
     
