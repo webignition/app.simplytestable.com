@@ -39,7 +39,8 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
         'worker-activation-request-failed' => null,
         'worker-activation-request-awaiting-verification' => 'worker-activation-request-verified',
         'task-awaiting-cancellation' => null,
-        'job-no-sitemap' => null
+        'job-no-sitemap' => null,
+        'task-queued-for-assignment' => null,
     );  
     
     /**
