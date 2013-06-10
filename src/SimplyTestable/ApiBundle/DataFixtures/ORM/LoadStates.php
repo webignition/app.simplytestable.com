@@ -41,6 +41,9 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
         'task-awaiting-cancellation' => null,
         'job-no-sitemap' => null,
         'task-queued-for-assignment' => null,
+        'task-failed-no-retry-available' => null,
+        'task-failed-retry-available' => null,
+        'task-failed-retry-limit-reached' => null,   
     );  
     
     /**
