@@ -17,7 +17,7 @@ class Version20130607130241_add_AccountPlan_isPremium extends BaseMigration
         );
         
         $this->statements['sqlite'] = array(
-            "ALTER TABLE AccountPlan ADD isPremium TINYINT(1) NOT NULL",
+            "ALTER TABLE AccountPlan ADD isPremium TINYINT(1) NOT NULL DEFAULT 1",
 
         );     
         
