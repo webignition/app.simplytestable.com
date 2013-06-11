@@ -2,25 +2,18 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Stripe;
 use Stripe_Customer;
 
-class StripeService {
-    
-    /**
-     *
-     * @var string
-     */
-    private $apiKey = '';
-    
+class StripeService {    
     
     /**
      * 
      * @param string $apiKey
      */
     public function __construct($apiKey) {
-        $this->apiKey = $apiKey;
+        Stripe::setApiKey($apiKey);
     }
     
     /**
@@ -35,23 +28,37 @@ class StripeService {
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
+     * @return string
      */
-    public function subscribe(User $user, Plan $plan) {
-        Stripe::setApiKey($this->getApiKey());
-        
-//        var_dump("cp01", $user->getEmail(), $plan->getName());
-//        exit();
+    public function createCustomer(User $user) {
+        return Stripe_Customer::create(array(
+            'email' => $user->getEmail()
+        ))->id; 
+    }
+    
+    
 
-        $response = Stripe_Customer::create(array(
-            'email' => $user->getEmail(),
-            'plan' => $plan->getName()
-//          "description" => "Customer for test@example.com",
-//          "card" => "tok_1XneNoJMrMXWTn" // obtained with Stripe.js
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     */
+    public function subscribe(UserAccountPlan $userAccountPlan) {
+        $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
+        $stripeCustomerObject->updateSubscription(array(
+            'plan' => $userAccountPlan->getPlan()->getName()
         ));
         
-        var_dump($response);
-        exit();
+        return $userAccountPlan;
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     */
+    public function unsubscribe(UserAccountPlan $userAccountPlan) {
+        $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
+        $stripeCustomerObject->cancelSubscription();        
     }
     
 }

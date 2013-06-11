@@ -10,187 +10,79 @@ class SubscribeTest extends BaseControllerJsonTestCase {
         self::setupDatabaseIfNotExists();
     }
     
-//    public function testWithPublicUser() {
-//        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-//        
-//        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '');        
-//        $this->assertEquals(400, $response->getStatusCode());        
-//    }
-//    
-//    public function testWithWrongUser() {
-//        $email = 'user1@example.com';
-//        $password = 'password1';
-//        
-//        $user = $this->createAndFindUser($email, $password);
-//        $this->getUserService()->setUser($user);        
-//        
-//        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '');        
-//        $this->assertEquals(400, $response->getStatusCode());          
-//    }
-//    
-//    public function testWithCorrectUserAndInvalidPlan() {
-//        $email = 'user1@example.com';
-//        $password = 'password1';
-//        
-//        $user = $this->createAndFindUser($email, $password);
-//        $this->getUserService()->setUser($user);        
-//        
-//        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'invalid-plan');        
-//        $this->assertEquals(400, $response->getStatusCode());          
-//    } 
+    public function testWithPublicUser() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        
+        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '');        
+        $this->assertEquals(400, $response->getStatusCode());        
+    }
     
-    public function testWithCorrectUserAndValidPlan() {
+    public function testWithWrongUser() {
         $email = 'user1@example.com';
         $password = 'password1';
         
         $user = $this->createAndFindUser($email, $password);
         $this->getUserService()->setUser($user);        
         
-        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal-9');        
+        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '');        
+        $this->assertEquals(400, $response->getStatusCode());          
+    }
+    
+    public function testWithCorrectUserAndInvalidPlan() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);        
+        
+        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'invalid-plan');        
         $this->assertEquals(400, $response->getStatusCode());          
     } 
     
-/**
+    public function testBasicToBasic() {
         $email = 'user1@example.com';
+        $password = 'password1';
+        $newPlan = 'basic';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);        
+        
+        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, $newPlan);        
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
+        $this->assertEquals($newPlan, $userAccountPlan->getPlan()->getName());
+        
+    }
+    
+    public function testBasicToPersonal() {
+        $this->performCurrentPlanToNewPlan('basic', 'personal-9');      
+    }
+    
+    public function testPersonalToBasic() {
+        $this->performCurrentPlanToNewPlan('personal-9', 'basic');      
+    }
+    
+    private function performCurrentPlanToNewPlan($currentPlan, $newPlan) {
+        $email = 'user-' . $currentPlan . '-to-' . $newPlan . '@example.com';
         $password = 'password1';
         
         $user = $this->createAndFindUser($email, $password);
         $this->getUserService()->setUser($user);
         
-        $controller = $this->getUserEmailChangeController('createAction');
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find($currentPlan));
         
-        try {            
-            $controller->createAction($user->getEmail(), 'new_email');
-            $this->fail('Attempt to create for not-enabled user did not generate HTTP 404');
-        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
-            $this->assertEquals(404, $exception->getStatusCode());            
+        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, $newPlan);        
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
+        $this->assertEquals($newPlan, $userAccountPlan->getPlan()->getName());        
+        
+        if ($userAccountPlan->getPlan()->getIsPremium()) {
+            $this->assertNotNull($userAccountPlan->getStripeCustomer());
         }
- */    
+    }
     
-
-//    public function testCreateActionWithEmailPresent() {
-//        $email = 'user1@example.com';
-//        $password = 'password';
-//        
-//        $controller = $this->getUserAccountPlanSubscriptionController('subscribeAction', array(
-//            'email' => $email,
-//            'password' => $password
-//        ));
-//        
-//        $response = $controller->subscribeAction();
-//        
-//        $this->assertEquals(200, $response->getStatusCode());       
-//    }
-//
-//    public function testCreateActionWithoutCredentials() {        
-//        try {
-//            $controller = $this->getUserAccountPlanSubscriptionController('subscribeAction', array());
-//            $controller->subscribeAction();
-//            $this->fail('Attempt to create user with no email address did not generate HTTP 400');
-//        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
-//            $this->assertEquals(400, $exception->getStatusCode());            
-//        }
-//    }     
-//    
-//    public function testCreateActionWithoutEmail() {        
-//        try {
-//            $controller = $this->getUserAccountPlanSubscriptionController('subscribeAction', array(
-//                'password' => 'password'
-//            ));
-//            $controller->subscribeAction();
-//            $this->fail('Attempt to create user with no email address did not generate HTTP 400');
-//        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
-//            $this->assertEquals(400, $exception->getStatusCode());            
-//        }
-//    }   
-//    
-//    
-//    public function testCreateActionWithoutPassword() {        
-//        try {
-//            $controller = $this->getUserAccountPlanSubscriptionController('subscribeAction', array(
-//                'email' => 'email'
-//            ));
-//            $controller->subscribeAction();
-//            $this->fail('Attempt to create user with no email address did not generate HTTP 400');
-//        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
-//            $this->assertEquals(400, $exception->getStatusCode());            
-//        }
-//    }     
-//    
-//    public function testCreateWithEmailOfExistingNotEnabledUser() {
-//        $email = 'user1@example.com';
-//        $password = 'password1';
-//        $this->createAndFindUser($email, $password);
-//        
-//        $controller = $this->getUserAccountPlanSubscriptionController('subscribeAction', array(
-//            'email' => $email,
-//            'password' => $password
-//        ));
-//        
-//        $response = $controller->subscribeAction();
-//        
-//        $this->assertEquals(200, $response->getStatusCode());          
-//    }  
-//    
-//    
-//    public function testCreateWithEmailOfExistingEnabledUser() {
-//        $email = 'user1@example.com';
-//        $password = 'password1';        
-//        $this->createAndActivateUser($email, $password);
-//        
-//        $controller = $this->getUserAccountPlanSubscriptionController('subscribeAction', array(
-//            'email' => $email,
-//            'password' => $password
-//        ));
-//        
-//        $response = $controller->subscribeAction();
-//        
-//        $this->assertEquals(302, $response->getStatusCode());          
-//    }  
-//    
-//    
-//    public function testCreateInMaintenanceReadOnlyModeReturns503() {
-//        $email = 'user1@example.com';
-//        $password = 'password';
-//        
-//        $controller = $this->getUserAccountPlanSubscriptionController('subscribeAction', array(
-//            'email' => $email,
-//            'password' => $password
-//        ));
-//        
-//        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
-//        $this->assertEquals(503, $controller->subscribeAction()->getStatusCode());            
-//    }
-//    
-//    public function testWithEmailAndPasswordCreatesUser() {        
-//        $email = 'user1@example.com';
-//        $password = 'password1';        
-//        
-//        $this->assertNull($this->getUserService()->findUserByEmail($email));
-//        
-//        $controller = $this->getUserAccountPlanSubscriptionController('subscribeAction', array(
-//            'email' => $email,
-//            'password' => $password
-//        ));
-//        
-//        $response = $controller->subscribeAction();
-//        
-//        $this->assertEquals(200, $response->getStatusCode()); 
-//        
-//        $user = $this->getUserService()->findUserByEmail($email);
-//        $this->assertInstanceOf('SimplyTestable\ApiBundle\Entity\User', $user);
-//    }    
-//    
-//    
-//    public function testSuccessfulCreationAddsUserToBasicPlan() {        
-//        $email = 'user1@example.com';
-//        $password = 'password1';        
-//        
-//        $this->createAndActivateUser($email, $password);
-//
-//        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->findUserByEmail($email));
-//        $this->assertEquals('basic', $userAccountPlan->getPlan()->getName());
-//    }
     
     public function testActivateInMaintenanceReadOnlyModeReturns503() {
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));                 
