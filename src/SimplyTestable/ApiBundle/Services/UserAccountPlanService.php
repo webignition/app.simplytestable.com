@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\StripeService;
 
 
 class UserAccountPlanService extends EntityService {
@@ -19,14 +20,22 @@ class UserAccountPlanService extends EntityService {
      */
     private $userService;
     
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\StripeService 
+     */
+    private $stripeService;
+    
     /**
      *
      * @param \Doctrine\ORM\EntityManager $entityManager
      * @param \SimplyTestable\ApiBundle\Services\UserService $userService 
      */
-    public function __construct(EntityManager $entityManager, UserService $userService) {
+    public function __construct(EntityManager $entityManager, UserService $userService, StripeService $stripeService) {
         $this->entityManager = $entityManager;      
         $this->userService = $userService;
+        $this->stripeService = $stripeService;
     }     
     
     /**
@@ -44,7 +53,7 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
      * @return UserAccountPlan
      */
-    public function create(User $user, AccountPlan $plan) {
+    private function create(User $user, AccountPlan $plan) {
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setUser($user);
         $userAccountPlan->setPlan($plan);
@@ -59,13 +68,11 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
      * @return UserAccountPlan|false
      */
-    public function modify(User $user, AccountPlan $newPlan) {
+    public function subscribe(User $user, AccountPlan $newPlan) {
         $existingUserAccountPlan = $this->getForUser($user);
-        if (is_null($existingUserAccountPlan)) {
-            return false;
-        }
-        
-        $this->getEntityManager()->remove($existingUserAccountPlan);
+        if (!is_null($existingUserAccountPlan)) {
+            $this->getEntityManager()->remove($existingUserAccountPlan);
+        }        
         
         return $this->create($user, $newPlan);
     }

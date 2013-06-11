@@ -32,7 +32,7 @@ class SetPublicUserAccountPlan extends AbstractFixture implements OrderedFixture
         
         if (!$this->getUserAccountPlanService()->hasForUser($user)) {
             $plan = $this->getAccountPlanService()->find('public');
-            $this->getUserAccountPlanService()->create($user, $plan);        
+            $this->getUserAccountPlanService()->subscribe($user, $plan);        
         }
     }
 

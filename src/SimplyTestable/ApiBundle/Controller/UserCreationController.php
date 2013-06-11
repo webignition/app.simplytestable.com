@@ -46,7 +46,7 @@ class UserCreationController extends AbstractUserController
         
         if ($user instanceof User) {
             $plan = $this->getAccountPlanService()->find(self::DEFAULT_ACCOUNT_PLAN_NAME);        
-            $this->getUserAccountPlanService()->create($user, $plan);            
+            $this->getUserAccountPlanService()->subscribe($user, $plan);            
         }
         
         return new \Symfony\Component\HttpFoundation\Response();

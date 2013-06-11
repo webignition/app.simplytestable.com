@@ -82,8 +82,7 @@ abstract class BaseTestCase extends WebTestCase {
         $commands = array(
             'php app/console doctrine:database:drop -e test --force',
             'php app/console doctrine:database:create -e test',
-            'php app/console doctrine:migrations:migrate -e test --no-interaction',
-            'php app/console doctrine:fixtures:load -e test --append',
+            'php app/console doctrine:migrations:migrate -e test --no-interaction'
         );
         
         foreach ($commands as $command) {
@@ -91,6 +90,9 @@ abstract class BaseTestCase extends WebTestCase {
         }
     } 
     
+    protected static function loadDataFixtures() {
+        exec('php app/console doctrine:fixtures:load -e test --append');
+    }
     
     protected static function setupDatabaseIfNotExists() {        
         if (self::areDatabaseMigrationsNeeded()) {

@@ -139,6 +139,7 @@ services:
     arguments: 
         entityManager: "@doctrine.orm.entity_manager" 
         userService: "@simplytestable.services.userservice" 
+        stripeService: "@simplytestable.services.stripeservice" 
         
   simplytestable.services.useremailchangerequestservice:
     class:  SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService

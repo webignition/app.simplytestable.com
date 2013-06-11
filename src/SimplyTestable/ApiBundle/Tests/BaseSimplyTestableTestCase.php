@@ -26,17 +26,13 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeTestAccountPlanContraints();
         $this->removeTestAccountPlans();
         $this->removeAllUserEmailChangeRequests();
-        $this->rebuildDefaultUserState();
+        $this->rebuildDefaultDataState();
         $this->clearRedis();
-    }   
-
+    }
     
-    
-    protected function rebuildDefaultUserState() {
-        $this->removeAllUsers();        
-        $this->createPublicUserIfMissing();
-        $this->createAdminUserIfMissing();
-        $this->createPublicUserAccountPlan();        
+    protected function rebuildDefaultDataState() {
+        $this->removeAllUsers();
+        self::loadDataFixtures();
     }
     
     
@@ -44,7 +40,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $user = $this->getUserService()->getPublicUser();
         $plan = $this->getAccountPlanService()->find('public');
         
-        $this->getUserAccountPlanService()->create($user, $plan);          
+        $this->getUserAccountPlanService()->subscribe($user, $plan);          
     }
     
     
