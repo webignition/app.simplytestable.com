@@ -43,6 +43,23 @@ class UserAccountPlan
      * @ORM\JoinColumn(name="accountplan_id", referencedColumnName="id", nullable=false)
      */    
     private $plan;
+    
+    
+    /**
+     *
+     * @var boolean 
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isActive = true;
+    
+    
+    /**
+     *
+     * @var string 
+     * @ORM\Column(type="string", nullable=true)
+     */    
+    private $stripeCustomer = null;
+    
 
     /**
      * Get id
@@ -98,5 +115,61 @@ class UserAccountPlan
     public function getPlan()
     {
         return $this->plan;
+    }
+    
+    
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     * @return UserAccountPlan
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean 
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }    
+
+    /**
+     * Set stripeCustomer
+     *
+     * @param string $stripeCustomer
+     * @return UserAccountPlan
+     */
+    public function setStripeCustomer($stripeCustomer)
+    {
+        $this->stripeCustomer = $stripeCustomer;
+    
+        return $this;
+    }
+
+    /**
+     * Get stripeCustomer
+     *
+     * @return string 
+     */
+    public function getStripeCustomer()
+    {
+        return $this->stripeCustomer;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasStripeCustomer() {
+        return !is_null($this->getStripeCustomer());
     }
 }

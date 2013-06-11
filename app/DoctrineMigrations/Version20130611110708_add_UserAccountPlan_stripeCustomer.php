@@ -8,16 +8,16 @@ use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
 /**
  * Auto-generated Migration: Please modify to your need!
  */
-class Version20130607130241_add_AccountPlan_isPremium extends BaseMigration
+class Version20130611110708_add_UserAccountPlan_stripeCustomer extends BaseMigration
 {    
     public function up(Schema $schema)
     {        
         $this->statements['mysql'] = array(
-            "ALTER TABLE AccountPlan ADD isPremium TINYINT(1) DEFAULT NULL"
+            "ALTER TABLE UserAccountPlan ADD stripeCustomer VARCHAR(255) DEFAULT NULL"
         );
         
         $this->statements['sqlite'] = array(
-            "ALTER TABLE AccountPlan ADD isPremium TINYINT(1) DEFAULT NULL",
+            "ALTER TABLE UserAccountPlan ADD stripeCustomer VARCHAR(255) DEFAULT NULL",
 
         );     
         
@@ -27,7 +27,7 @@ class Version20130607130241_add_AccountPlan_isPremium extends BaseMigration
 
     public function down(Schema $schema)
     {           
-        $this->addCommonStatement("ALTER TABLE AccountPlan DROP isPremium");      
+        $this->addCommonStatement("ALTER TABLE UserAccountPlan DROP stripeCustomer");      
         
         parent::down($schema);
     }     
