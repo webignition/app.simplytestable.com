@@ -12,7 +12,9 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
 {    
     private $planDetails = array(
         array(
-            'name' => 'public',
+            'names' => array(
+                'public'
+            ),
             'visible' => false,
             'constraints'  => array(
                 array(
@@ -34,11 +36,17 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             )
         ),
         array(
-            'name' => 'basic',
+            'names' => array(
+                'basic'
+            ),
             'visible' => true
         ),
         array(
-            'name' => 'personal-9',
+            'names' => array(
+                'personal-9',
+                'personal'
+            ),
+            'stripeId' => 'personal-9',
             'visible' => true,
             'isPremium' => true,
             'constraints'  => array(
@@ -53,7 +61,11 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             )
         ),
         array(
-            'name' => 'agency-19',
+            'names' => array(
+                'agency-19',
+                'agency'
+            ),
+            'stripeId' => 'agency-19',
             'visible' => true,
             'isPremium' => true,
             'constraints'  => array(
@@ -68,7 +80,11 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             )
         ),
         array(
-            'name' => 'business-59',
+            'names' => array(
+                'business-59',
+                'business'
+            ),            
+            'stripeId' => 'business-59',
             'visible' => true,
             'isPremium' => true,
             'constraints'  => array(
@@ -83,7 +99,12 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             )
         ),
         array(
-            'name' => 'enterprise-299',
+            'names' => array(
+                'enterprise-299',
+                'enterprise'
+            ),            
+            'name' => 'enterprise',
+            'stripeId' => 'enterprise-299',
             'isPremium' => true,
             'visible' => true,
             'constraints'  => array(
@@ -93,23 +114,31 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
                 )
             )
         ),        
-    );    
+    );
+    
+    
+    /**
+     *
+     * @var \Doctrine\ORM\EntityRepository 
+     */
+    private $planRepository = null;
     
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $planRepository = $manager->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan');        
+        $this->planRepository = $manager->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan');        
         
         foreach ($this->planDetails as $planDetails) {
-            $plan = $planRepository->findOneByName($planDetails['name']);
+            $plan = $this->findPlanByNameHistory($planDetails['names']);
             
             if (is_null($plan)) {
                 $plan = new Plan();
-            }            
+            }
             
-            $plan->setName($planDetails['name']);
+            $planNames = $planDetails['names'];
+            $plan->setName($planNames[count($planNames) - 1]);
             
             if (isset($planDetails['visible']) && $planDetails['visible'] === true) {
                 $plan->setIsVisible(true);
@@ -118,6 +147,10 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             if (isset($planDetails['isPremium']) && $planDetails['isPremium'] === true) {
                 $plan->setIsPremium(true);
             }            
+            
+            if (isset($planDetails['stripeId'])) {
+                $plan->setStripeId($planDetails['stripeId']);
+            }              
             
             if (isset($planDetails['constraints'])) {                
                 foreach ($planDetails['constraints'] as $constraintDetails) {                    
@@ -148,6 +181,15 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             $manager->persist($plan);
             $manager->flush();              
         }
+    }
+    
+    private function findPlanByNameHistory($names) {
+        foreach ($names as $name) {
+            $plan = $this->planRepository->findOneByName($name);
+            if (!is_null($plan)) {
+                return $plan;
+            }
+        }      
     }
     
     
