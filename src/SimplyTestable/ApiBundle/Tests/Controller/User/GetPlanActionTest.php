@@ -10,29 +10,23 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         self::setupDatabaseIfNotExists();
     }    
 
-//    public function testForUserWithBasicPlan() {
-//        $email = 'user1@example.com';
-//        $password = 'password1';
-//        
-//        $user = $this->createAndFindUser($email, $password);        
-//        $this->getUserService()->setUser($user);
-//
-//        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
-//        
-//        $this->assertEquals('basic', $responseObject->name);         
-//    }   
+    public function testForUserWithBasicPlan() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);        
+        $this->getUserService()->setUser($user);
+
+        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
+        
+        $this->assertEquals('basic', $responseObject->name);         
+    }   
     
     public function testForUserWithPremiumPlan() {
-        //$email = 'user1@example.com';
-        //$password = 'password1';
-        //$email = 'jon@simplytestable.com';
+        $email = 'user1@example.com';
+        $password = 'password1';
         
-        $user = $this->getUserService()->getEntityRepository();
-        
-        var_dump($user);
-        exit();
-        
-        //$user = $this->createAndFindUser($email, $password);        
+        $user = $this->createAndFindUser($email, $password);        
         $this->getUserService()->setUser($user);
         
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -43,7 +37,7 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals('month', $responseObject->summary->interval);
         $this->assertEquals(900, $responseObject->summary->amount);
         $this->assertEquals(5000, $responseObject->credits->limit);
-        $this->assertEquals(100, $responseObject->credits->used);
+        $this->assertEquals(0, $responseObject->credits->used);
     }    
 }
 

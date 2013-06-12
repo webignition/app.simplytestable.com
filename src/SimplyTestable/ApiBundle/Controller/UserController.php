@@ -12,11 +12,7 @@ class UserController extends AbstractUserController
     
     
     public function getPlanAction() {
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());        
-        
-        var_dump($this->getUser()->getUsername(), $userAccountPlan);
-        exit();
-        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
         $stripePlan = $this->getStripeService()->getPlan($userAccountPlan);        
         
         $planDetails = array();
@@ -27,10 +23,13 @@ class UserController extends AbstractUserController
         );
         
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
-        $planDetails['credits'] = array(
-            'limit' => $userAccountPlan->getPlan()->getConstraintNamed('credits_per_month')->getLimit(),
-            'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()
-        );
+        
+        if ($userAccountPlan->getPlan()->hasConstraintNamed('credits_per_month')) {
+            $planDetails['credits'] = array(
+                'limit' => $userAccountPlan->getPlan()->getConstraintNamed('credits_per_month')->getLimit(),
+                'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()
+            );            
+        }
         
         return $this->sendResponse($planDetails);
     }
@@ -40,22 +39,6 @@ class UserController extends AbstractUserController
         return array(
             'email' => $user->getEmailCanonical()
         );
-    }
-    
-    private function getPlanSummary(User $user) {
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);        
-        $stripePlan = $this->getStripeService()->getPlan($userAccountPlan);
-        
-        $planSummary = array(
-            'name' => $userAccountPlan->getPlan()->getName()
-        );
-        
-        if (is_array($stripePlan)) {
-            $planSummary['interval'] = $stripePlan['interval'];
-            $planSummary['amount'] =  $stripePlan['amount'];
-        }
-        
-        return $planSummary;       
     }
     
     

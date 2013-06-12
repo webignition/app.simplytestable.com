@@ -129,13 +129,21 @@ class JobUserAccountPlanEnforcementService {
     }
     
     
-    public function getCreditsUsedThisMonth() {
-        return 0;
-        
-        $this->taskService->getEntityRepository()->getCountByUserAndStatesForCurrentMonth($this->user);
-        
-        var_dump("cp01");
-        exit();
+    /**
+     * 
+     * @return int
+     */
+    public function getCreditsUsedThisMonth() {                
+        return $this->taskService->getEntityRepository()->getCountByUserAndStatesForCurrentMonth(
+            $this->user,
+            array(
+                $this->taskService->getCompletedState(),
+                $this->taskService->getFailedNoRetryAvailableState(),
+                $this->taskService->getFailedRetryAvailableState(),
+                $this->taskService->getFailedRetryLimitReachedState(),
+                $this->taskService->getSkippedState(),
+            )
+        );
     }
     
 
