@@ -76,6 +76,10 @@ class SubscribeTest extends BaseControllerJsonTestCase {
         $this->performCurrentPlanToNewPlan('personal', 'basic');      
     }   
     
+    public function testPersonalToAgency() {
+        $this->performCurrentPlanToNewPlan('personal', 'agency');      
+    }     
+    
     
     private function performCurrentPlanToNewPlan($currentPlan, $newPlan) {
         $email = 'user-' . $currentPlan . '-to-' . $newPlan . '@example.com';

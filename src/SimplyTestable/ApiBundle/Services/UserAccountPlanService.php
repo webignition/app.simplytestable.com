@@ -97,15 +97,8 @@ class UserAccountPlanService extends EntityService {
             return $this->create($user, $newPlan);
         }
         
-        var_dump("cp02");
-        exit();
-        
-        
-//        else {
-//            $stripeCustomer = $currentUserAccountPlan->getStripeCustomer();
-//        }
-
-        
+        $stripeCustomer = $currentUserAccountPlan->getStripeCustomer();
+        return $this->stripeService->subscribe($this->create($user, $newPlan, $stripeCustomer));
     }
     
     
