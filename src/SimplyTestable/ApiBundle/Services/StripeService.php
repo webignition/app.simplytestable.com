@@ -45,7 +45,7 @@ class StripeService {
     public function subscribe(UserAccountPlan $userAccountPlan) {
         $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
         $stripeCustomerObject->updateSubscription(array(
-            'plan' => $userAccountPlan->getPlan()->getName()
+            'plan' => $userAccountPlan->getPlan()->getStripeId()
         ));
         
         return $userAccountPlan;
