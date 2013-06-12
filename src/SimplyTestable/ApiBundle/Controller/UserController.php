@@ -13,18 +13,38 @@ class UserController extends AbstractUserController
     
     public function getPlanAction() {
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
-        $stripePlan = $this->getStripeService()->getPlan($userAccountPlan);        
-        
+
         $planDetails = array();
         $planDetails['name'] = $userAccountPlan->getPlan()->getName();
-        $planDetails['summary'] = array(
-            'interval' => $stripePlan['interval'],
-            'amount' => $stripePlan['amount']
-        );
         
-        $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
+        if ($userAccountPlan->hasStripeCustomer()) {
+            $customer = $this->getStripeService()->getCustomer($userAccountPlan);
+
+            $planProperties = array(
+                'interval',
+                'amount',
+            );
+            
+            $subscriptionProperties = array(
+                'status',
+                'current_period_end',
+                'trial_end'
+            );            
+            
+            $planDetails['summary'] = array();
+            
+            foreach ($planProperties as $planProperty) {
+                $planDetails['summary'][$planProperty] = $customer['subscription']['plan'][$planProperty];
+            }
+            
+            foreach ($subscriptionProperties as $subscriptionProperty) {
+                $planDetails['summary'][$subscriptionProperty] = $customer['subscription'][$subscriptionProperty];
+            }            
+        }
+        
         
         if ($userAccountPlan->getPlan()->hasConstraintNamed('credits_per_month')) {
+            $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
             $planDetails['credits'] = array(
                 'limit' => $userAccountPlan->getPlan()->getConstraintNamed('credits_per_month')->getLimit(),
                 'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()

@@ -38,6 +38,19 @@ class StripeService {
     }
     
     
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @return array
+     */
+    public function getCustomer(UserAccountPlan $userAccountPlan) {
+        if ($userAccountPlan->hasStripeCustomer()) {
+            $customer = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
+            return $customer->__toArray(true);
+        }        
+    }
+    
+    
 
     /**
      * 
@@ -60,21 +73,6 @@ class StripeService {
     public function unsubscribe(UserAccountPlan $userAccountPlan) {
         $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
         $stripeCustomerObject->cancelSubscription();        
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $accountPlan
-     * @return Stripe_Plan
-     */
-    public function getPlan(UserAccountPlan $userAccountPlan) {
-        $plan = $userAccountPlan->getPlan();
-        if ($plan->getIsPremium()) {
-            return Stripe_Plan::retrieve($userAccountPlan->getPlan()->getStripeId())->__toArray();
-        }
-        
-        return null;       
     }
     
 }

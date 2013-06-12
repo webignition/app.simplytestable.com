@@ -40,6 +40,53 @@ class TestStripeService extends StripeService {
     }
     
     
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @return array
+     */
+    public function getCustomer(UserAccountPlan $userAccountPlan) {
+        if ($userAccountPlan->hasStripeCustomer()) {
+            $customer = array(
+                'object' => 'customer',
+                'created' => 1371075807,
+                'livemode' => false,
+                'description' => NULL,
+                'active_card' => NULL,
+                'email' => $userAccountPlan->getUser()->getEmail(),
+                'delinquent' => false,
+                'subscription' => array(
+                    'plan' => array(
+                        'interval' => 'month',
+                        'name' => 'Personal',
+                        'amount' => 900,
+                        'currency' => 'gbp',
+                        'object' => 'plan',
+                        'livemode' => false,
+                        'interval_count' => 1,
+                        'trial_period_days' => 30,
+                    ),
+                    'object' => 'subscription',
+                    'start' => 1371075809,
+                    'status' => 'trialing',
+                    'customer' => $userAccountPlan->getStripeCustomer(),
+                    'cancel_at_period_end' => false,
+                    'current_period_start' => 1371075809,
+                    'current_period_end' => 1373667809,
+                    'ended_at' => NULL,
+                    'trial_start' => 1371075809,
+                    'trial_end' => 1373667809,
+                    'canceled_at' => NULL,
+                    'quantity' => 1,
+                ),
+                'discount' => NULL,
+                'account_balance' => 0,
+            );          
+            
+            return $customer;            
+        }        
+    }
+    
 
     /**
      * 
@@ -62,38 +109,6 @@ class TestStripeService extends StripeService {
         if ($this->hasInvalidApiKey === true) {
             throw new Stripe_AuthenticationError();
         }        
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $accountPlan
-     * @return Stripe_Plan
-     */
-    public function getPlan(UserAccountPlan $userAccountPlan) {
-        if ($this->hasInvalidApiKey === true) {
-            throw new Stripe_AuthenticationError();
-        }        
-        
-        $plan = $userAccountPlan->getPlan();
-        if ($plan->getIsPremium()) {
-            switch ($userAccountPlan->getPlan()->getName()) {
-                case 'personal':
-                    return array(
-                        'id' => 'personal-9',
-                        'interval' => 'month',
-                        'name' => 'Personal',
-                        'amount' => 900,
-                        'currency' => 'gbp',
-                        'object' => 'plan',
-                        'livemode' => false,
-                        'interval_count' => 1,
-                        'trial_period_days' => 30,
-                    );                    
-            }
-        }
-        
-        return null;       
-    }    
+    }   
     
 }

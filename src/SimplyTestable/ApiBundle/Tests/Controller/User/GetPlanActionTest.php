@@ -20,7 +20,7 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
 
         $this->assertEquals('basic', $responseObject->name);         
-    }   
+    }
     
     public function testForUserWithPremiumPlan() {
         $email = 'user1@example.com';
@@ -39,6 +39,10 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(5000, $responseObject->credits->limit);
         $this->assertEquals(0, $responseObject->credits->used);
         $this->assertEquals(50, $responseObject->urls_per_job);
+        
+        $this->assertEquals('trialing', $responseObject->summary->status);        
+        $this->assertInternalType('int', $responseObject->summary->current_period_end);
+        $this->assertInternalType('int', $responseObject->summary->trial_end);       
     }    
 }
 
