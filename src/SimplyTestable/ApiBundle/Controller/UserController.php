@@ -19,7 +19,7 @@ class UserController extends AbstractUserController
         $planDetails['name'] = $userAccountPlan->getPlan()->getName();
         $planDetails['summary'] = array(
             'interval' => $stripePlan['interval'],
-            'amount' => $stripePlan['amount']            
+            'amount' => $stripePlan['amount']
         );
         
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
@@ -29,6 +29,10 @@ class UserController extends AbstractUserController
                 'limit' => $userAccountPlan->getPlan()->getConstraintNamed('credits_per_month')->getLimit(),
                 'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()
             );            
+        }
+        
+        if ($userAccountPlan->getPlan()->hasConstraintNamed('urls_per_job')) {
+            $planDetails['urls_per_job'] = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();          
         }
         
         return $this->sendResponse($planDetails);

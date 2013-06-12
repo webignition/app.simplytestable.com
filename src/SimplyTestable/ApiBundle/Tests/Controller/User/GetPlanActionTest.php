@@ -18,7 +18,7 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $this->getUserService()->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
-        
+
         $this->assertEquals('basic', $responseObject->name);         
     }   
     
@@ -38,6 +38,7 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(900, $responseObject->summary->amount);
         $this->assertEquals(5000, $responseObject->credits->limit);
         $this->assertEquals(0, $responseObject->credits->used);
+        $this->assertEquals(50, $responseObject->urls_per_job);
     }    
 }
 
