@@ -56,11 +56,11 @@ class SubscribeTest extends BaseControllerJsonTestCase {
     }
     
     public function testBasicToPersonal() {
-        $this->performCurrentPlanToNewPlan('basic', 'personal-9');      
+        $this->performCurrentPlanToNewPlan('basic', 'personal');      
     }
     
     public function testPersonalToBasic() {
-        $this->performCurrentPlanToNewPlan('personal-9', 'basic');      
+        $this->performCurrentPlanToNewPlan('personal', 'basic');      
     }
     
     private function performCurrentPlanToNewPlan($currentPlan, $newPlan) {
