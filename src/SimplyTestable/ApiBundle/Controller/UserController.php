@@ -11,13 +11,27 @@ class UserController extends AbstractUserController
     }
     
     
-    private function getUserSummary(User $user) {
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
-        
+    private function getUserSummary(User $user) {        
         return array(
             'email' => $user->getEmailCanonical(),
-            'plan' => $userAccountPlan->getPlan()->getName()
+            'plan' => $this->getPlanSummary($user)
         );
+    }
+    
+    private function getPlanSummary(User $user) {
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);        
+        $stripePlan = $this->getStripeService()->getPlan($userAccountPlan);
+        
+        $planSummary = array(
+            'name' => $userAccountPlan->getPlan()->getName()
+        );
+        
+        if (is_array($stripePlan)) {
+            $planSummary['interval'] = $stripePlan['interval'];
+            $planSummary['amount'] =  $stripePlan['amount'];
+        }
+        
+        return $planSummary;       
     }
     
     
@@ -71,6 +85,14 @@ class UserController extends AbstractUserController
         }
         
         throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+    }
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\StripeService
+     */
+    private function getStripeService() {
+        return $this->get('simplytestable.services.stripeservice');
     }
     
     

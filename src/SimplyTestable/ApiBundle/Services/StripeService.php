@@ -5,6 +5,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Stripe;
 use Stripe_Customer;
+use Stripe_Plan;
 
 class StripeService {    
     
@@ -59,6 +60,21 @@ class StripeService {
     public function unsubscribe(UserAccountPlan $userAccountPlan) {
         $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
         $stripeCustomerObject->cancelSubscription();        
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $accountPlan
+     * @return Stripe_Plan
+     */
+    public function getPlan(UserAccountPlan $userAccountPlan) {
+        $plan = $userAccountPlan->getPlan();
+        if ($plan->getIsPremium()) {
+            return Stripe_Plan::retrieve($userAccountPlan->getPlan()->getStripeId())->__toArray();
+        }
+        
+        return null;       
     }
     
 }
