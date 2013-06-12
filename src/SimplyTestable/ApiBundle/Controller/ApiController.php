@@ -162,6 +162,14 @@ abstract class ApiController extends Controller
         return $this->sendResponse('', 400);
     }
     
+    /**
+     * 
+     * @return Response
+     */
+    public function sendForbiddenResponse() {
+        return $this->sendResponse('', 403);
+    }    
+    
 
     /**
      * 

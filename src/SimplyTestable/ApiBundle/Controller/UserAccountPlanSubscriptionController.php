@@ -29,7 +29,12 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
             return $this->sendFailureResponse();
         }
         
-        $this->getUserAccountPlanService()->subscribe($this->getUser(), $this->getAccountPlanService()->find($plan_name));
+        try {
+            $this->getUserAccountPlanService()->subscribe($this->getUser(), $this->getAccountPlanService()->find($plan_name));
+        } catch (\Stripe_AuthenticationError $stripeAuthenticationError) {
+            return $this->sendForbiddenResponse();
+        }        
+        
         return $this->sendSuccessResponse();
     }
     

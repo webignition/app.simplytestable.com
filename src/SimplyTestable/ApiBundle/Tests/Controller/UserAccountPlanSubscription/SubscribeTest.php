@@ -39,6 +39,20 @@ class SubscribeTest extends BaseControllerJsonTestCase {
         $this->assertEquals(400, $response->getStatusCode());          
     } 
     
+    public function testWithInvalidStripeApiKey() {
+        $email = 'invalid-api-key@example.com';
+        $password = 'password1';
+        $newPlan = 'personal';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user); 
+        
+        $this->getStripeService()->setHasInvalidApiKey(true);
+        
+        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, $newPlan);        
+        $this->assertEquals(403, $response->getStatusCode());        
+    }
+    
     public function testBasicToBasic() {
         $email = 'user1@example.com';
         $password = 'password1';
@@ -51,8 +65,7 @@ class SubscribeTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());
         
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
-        $this->assertEquals($newPlan, $userAccountPlan->getPlan()->getName());
-        
+        $this->assertEquals($newPlan, $userAccountPlan->getPlan()->getName());        
     }
     
     public function testBasicToPersonal() {
@@ -61,7 +74,8 @@ class SubscribeTest extends BaseControllerJsonTestCase {
     
     public function testPersonalToBasic() {
         $this->performCurrentPlanToNewPlan('personal', 'basic');      
-    }
+    }   
+    
     
     private function performCurrentPlanToNewPlan($currentPlan, $newPlan) {
         $email = 'user-' . $currentPlan . '-to-' . $newPlan . '@example.com';

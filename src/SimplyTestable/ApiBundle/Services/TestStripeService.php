@@ -5,8 +5,25 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Stripe;
 use Stripe_Customer;
+use Stripe_AuthenticationError;  
 
 class TestStripeService extends StripeService {
+    
+    
+    /**
+     *
+     * @var boolean
+     */
+    private $hasInvalidApiKey = false;
+    
+    
+    /**
+     * 
+     * @param boolean $hasInvalidApiKey
+     */
+    public function setHasInvalidApiKey($hasInvalidApiKey) {
+        $this->hasInvalidApiKey = $hasInvalidApiKey;
+    }
     
     
     /**
@@ -15,6 +32,10 @@ class TestStripeService extends StripeService {
      * @return string
      */
     public function createCustomer(User $user) {
+        if ($this->hasInvalidApiKey === true) {
+            throw new Stripe_AuthenticationError();
+        }
+        
         return md5($user->getEmail());
     }
     
@@ -25,6 +46,10 @@ class TestStripeService extends StripeService {
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
      */
     public function subscribe(UserAccountPlan $userAccountPlan) {               
+        if ($this->hasInvalidApiKey === true) {
+            throw new Stripe_AuthenticationError();
+        }        
+        
         return $userAccountPlan;
     }
     
@@ -34,6 +59,9 @@ class TestStripeService extends StripeService {
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
      */
     public function unsubscribe(UserAccountPlan $userAccountPlan) {    
+        if ($this->hasInvalidApiKey === true) {
+            throw new Stripe_AuthenticationError();
+        }        
     }
     
     
@@ -43,6 +71,10 @@ class TestStripeService extends StripeService {
      * @return Stripe_Plan
      */
     public function getPlan(UserAccountPlan $userAccountPlan) {
+        if ($this->hasInvalidApiKey === true) {
+            throw new Stripe_AuthenticationError();
+        }        
+        
         $plan = $userAccountPlan->getPlan();
         if ($plan->getIsPremium()) {
             switch ($userAccountPlan->getPlan()->getName()) {

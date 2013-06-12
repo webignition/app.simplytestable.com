@@ -479,6 +479,14 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getHttpClientService() {
         return $this->container->get('simplytestable.services.httpclientservice');
+    }     
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\StripeService
+     */
+    protected function getStripeService() {
+        return $this->container->get('simplytestable.services.stripeservice');
     }         
     
     
