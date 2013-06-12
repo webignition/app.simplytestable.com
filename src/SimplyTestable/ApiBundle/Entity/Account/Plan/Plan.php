@@ -58,6 +58,14 @@ class Plan
     
     
     /**
+     *
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */    
+    private $stripe_id = null;
+    
+    
+    /**
      * Constructor
      */
     public function __construct()
@@ -204,5 +212,28 @@ class Plan
     public function getIsPremium()
     {
         return $this->isPremium;
+    }
+
+    /**
+     * Set stripe_id
+     *
+     * @param string $stripeId
+     * @return Plan
+     */
+    public function setStripeId($stripeId)
+    {
+        $this->stripe_id = $stripeId;
+    
+        return $this;
+    }
+
+    /**
+     * Get stripe_id
+     *
+     * @return string 
+     */
+    public function getStripeId()
+    {
+        return $this->stripe_id;
     }
 }
