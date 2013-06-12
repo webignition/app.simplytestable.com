@@ -24,6 +24,13 @@ class JobUserAccountPlanEnforcementService {
     
     /**
      *
+     * @var SimplyTestable\ApiBundle\Services\TaskService 
+     */
+    private $taskService;    
+    
+    
+    /**
+     *
      * @var SimplyTestable\ApiBundle\Entity\User
      */
     private $user;
@@ -40,12 +47,15 @@ class JobUserAccountPlanEnforcementService {
      * 
      * @param \SimplyTestable\ApiBundle\Services\UserAccountPlanService $userAccountPlanService
      * @param \SimplyTestable\ApiBundle\Services\JobService $jobService
+     * @param \SimplyTestable\ApiBundle\Services\TaskService $taskService
      */
     public function __construct(
             \SimplyTestable\ApiBundle\Services\UserAccountPlanService $userAccountPlanService,
-            \SimplyTestable\ApiBundle\Services\JobService $jobService) {
+            \SimplyTestable\ApiBundle\Services\JobService $jobService,
+            \SimplyTestable\ApiBundle\Services\TaskService $taskService) {
         $this->userAccountPlanService = $userAccountPlanService;
         $this->jobService = $jobService;
+        $this->taskService = $taskService;
     }
     
     
@@ -116,6 +126,16 @@ class JobUserAccountPlanEnforcementService {
         }
         
         return $urlCount > $userAccountPlan->getPlan()->getConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME)->getLimit();        
+    }
+    
+    
+    public function getCreditsUsedThisMonth() {
+        return 0;
+        
+        $this->taskService->getEntityRepository()->getCountByUserAndStatesForCurrentMonth($this->user);
+        
+        var_dump("cp01");
+        exit();
     }
     
 

@@ -153,6 +153,7 @@ services:
     arguments: 
         userAccountPlanService: "@simplytestable.services.userAccountPlanService" 
         jobService: "@simplytestable.services.jobservice"        
+        taskService: "@simplytestable.services.taskservice" 
         
   simplytestable.services.jobRejectionReasonService:
     class:   SimplyTestable\ApiBundle\Services\JobRejectionReasonService

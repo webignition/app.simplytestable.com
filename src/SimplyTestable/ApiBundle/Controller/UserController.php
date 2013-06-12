@@ -11,10 +11,34 @@ class UserController extends AbstractUserController
     }
     
     
+    public function getPlanAction() {
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());        
+        
+        var_dump($this->getUser()->getUsername(), $userAccountPlan);
+        exit();
+        
+        $stripePlan = $this->getStripeService()->getPlan($userAccountPlan);        
+        
+        $planDetails = array();
+        $planDetails['name'] = $userAccountPlan->getPlan()->getName();
+        $planDetails['summary'] = array(
+            'interval' => $stripePlan['interval'],
+            'amount' => $stripePlan['amount']            
+        );
+        
+        $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
+        $planDetails['credits'] = array(
+            'limit' => $userAccountPlan->getPlan()->getConstraintNamed('credits_per_month')->getLimit(),
+            'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()
+        );
+        
+        return $this->sendResponse($planDetails);
+    }
+    
+    
     private function getUserSummary(User $user) {        
         return array(
-            'email' => $user->getEmailCanonical(),
-            'plan' => $this->getPlanSummary($user)
+            'email' => $user->getEmailCanonical()
         );
     }
     
@@ -103,4 +127,13 @@ class UserController extends AbstractUserController
     private function getUserAccountPlanService() {
         return $this->get('simplytestable.services.useraccountplanservice');
     }     
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+     */
+    private function getJobUserAccountPlanEnforcementService() {
+        return $this->get('simplytestable.services.jobuseraccountplanenforcementservice');
+    }       
 }

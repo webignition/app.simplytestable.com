@@ -19,8 +19,7 @@ class GetActionTest extends BaseControllerJsonTestCase {
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         
-        $this->assertEquals($email, $responseObject->email);
-        $this->assertEquals('basic', $responseObject->plan->name);         
+        $this->assertEquals($email, $responseObject->email);        
     }   
     
     public function testGetForUserWithPremiumPlan() {
@@ -34,10 +33,7 @@ class GetActionTest extends BaseControllerJsonTestCase {
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         
-        $this->assertEquals($email, $responseObject->email);
-        $this->assertEquals('personal', $responseObject->plan->name);
-        $this->assertEquals('month', $responseObject->plan->interval);
-        $this->assertEquals(900, $responseObject->plan->amount);         
+        $this->assertEquals($email, $responseObject->email);       
     }    
 }
 

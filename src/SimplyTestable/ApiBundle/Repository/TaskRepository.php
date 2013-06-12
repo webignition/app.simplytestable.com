@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\User;
 
 class TaskRepository extends EntityRepository
 {    
@@ -333,5 +334,38 @@ class TaskRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult(); 
         
         return (int)$result[0][1];       
+    }
+    
+    
+    public function getCountByUserAndStatesForCurrentMonth(User $user) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('COUNT(Task.id)');
+        $queryBuilder->join('Task.timePeriod', 'TimePeriod');
+        $queryBuilder->join('Task.job', 'Job');
+        
+        $queryBuilder->where('Job.user = :User');
+        $queryBuilder->setParameter('User', $user);
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        var_dump($result);
+        exit();
+        
+        
+        
+/**
+SELECT COUNT( Task.id ) 
+FROM Task
+LEFT JOIN Job ON Task.job_id = Job.id
+LEFT JOIN fos_user ON Job.user_id = fos_user.id
+LEFT JOIN State ON Task.state_id = State.id
+LEFT JOIN TimePeriod ON Task.timePeriod_id = TimePeriod.id
+WHERE fos_user.id =3
+AND State.name
+IN (
+'task-completed',  'task-failed-no-retry-available',  'task-failed-retry-available',  'task-failed-retry-limit-reached',  'task-skipped'
+)
+AND TimePeriod.startDateTime >=  '2013-06-01'
+AND TimePeriod.startDateTime <=  '2013-06-30'
+ */        
     }
 }
