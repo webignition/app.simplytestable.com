@@ -12,8 +12,11 @@ class UserController extends AbstractUserController
     
     
     private function getUserSummary(User $user) {
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
+        
         return array(
-            'email' => $user->getEmailCanonical()           
+            'email' => $user->getEmailCanonical(),
+            'plan' => $userAccountPlan->getPlan()->getName()
         );
     }
     
@@ -69,4 +72,13 @@ class UserController extends AbstractUserController
         
         throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
     }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService 
+     */
+    private function getUserAccountPlanService() {
+        return $this->get('simplytestable.services.useraccountplanservice');
+    }     
 }
