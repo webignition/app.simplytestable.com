@@ -60,6 +60,14 @@ class UserAccountPlan
      */    
     private $stripeCustomer = null;
     
+    
+    /**
+     *
+     * @var int
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $startTrialPeriod = 30;
+    
 
     /**
      * Get id
@@ -171,5 +179,28 @@ class UserAccountPlan
      */
     public function hasStripeCustomer() {
         return !is_null($this->getStripeCustomer());
+    }
+
+    /**
+     * Set startTrialPeriod
+     *
+     * @param integer $startTrialPeriod
+     * @return UserAccountPlan
+     */
+    public function setStartTrialPeriod($startTrialPeriod)
+    {
+        $this->startTrialPeriod = $startTrialPeriod;
+    
+        return $this;
+    }
+
+    /**
+     * Get startTrialPeriod
+     *
+     * @return integer 
+     */
+    public function getStartTrialPeriod()
+    {
+        return $this->startTrialPeriod;
     }
 }

@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Entity;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 
 class UserAccountPlanTest extends BaseSimplyTestableTestCase {
 
@@ -43,6 +42,27 @@ class UserAccountPlanTest extends BaseSimplyTestableTestCase {
         
         $this->assertNotNull($userAccountPlan1->getId());
         $this->assertNotNull($userAccountPlan2->getId());
+    }
+    
+    
+    public function testDefaultStartTrialPeriod() {
+        $defaultStartTrialPeriod = 30;
+        
+        $user = $this->getUserService()->create('user@example.com', 'password');
+        
+        $plan = $this->createAccountPlan();       
+        
+        $userAccountPlan = new UserAccountPlan();
+        $userAccountPlan->setUser($user);
+        $userAccountPlan->setPlan($plan);
+        
+        $this->assertEquals($defaultStartTrialPeriod, $userAccountPlan->getStartTrialPeriod());
+    
+        $this->getEntityManager()->persist($userAccountPlan);
+        $this->getEntityManager()->flush();
+        
+        $this->getEntityManager()->clear();
+        $this->assertEquals($defaultStartTrialPeriod, $this->getUserAccountPlanService()->getForUser($user)->getStartTrialPeriod());
     }
 
 }
