@@ -101,6 +101,21 @@ class SubscribeTest extends BaseControllerJsonTestCase {
         }
     }
     
+    public function testPremiumToNonPremiumChangeRetainsStripeCustomerId() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);
+        
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        
+        $personalAccountPlanStripeCustomer = $this->getUserAccountPlanService()->getForUser($user)->getStripeCustomer();
+        
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('basic'));
+        
+        $this->assertEquals($personalAccountPlanStripeCustomer, $this->getUserAccountPlanService()->getForUser($user)->getStripeCustomer());      
+    }
     
     public function testActivateInMaintenanceReadOnlyModeReturns503() {
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));                 
