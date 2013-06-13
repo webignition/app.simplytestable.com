@@ -73,6 +73,10 @@ user_plan:
   pattern: /user/{email_canonical}/plan/
   defaults: { _controller: SimplyTestableApiBundle:User:getPlan, _format: json }      
   
+user_card_summary:
+  pattern: /user/{email_canonical}/card-summary/
+  defaults: { _controller: SimplyTestableApiBundle:User:getCardSummary, _format: json }       
+  
 user_plan_subscribe:
   pattern: /user/{email_canonical}/{plan_name}/subscribe/
   defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:subscribe, _format: json }               
