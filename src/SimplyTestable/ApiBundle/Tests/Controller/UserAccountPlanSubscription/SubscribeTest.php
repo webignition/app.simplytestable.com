@@ -191,6 +191,23 @@ class SubscribeTest extends BaseControllerJsonTestCase {
         
         $this->assertEquals($trialDaysPassed, $this->getUserAccountPlanService()->getForUser($user)->getStartTrialPeriod());
     }
+    
+    public function testStripeUserIsRetainedWhenSwitchingFromPremiumToFreeToPremium() {
+        $email = 'user-'.md5(microtime(true)).'@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);       
+        
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        
+        $initialStripeCustomerId = $this->getUserAccountPlanService()->getForUser($user)->getStripeCustomer();
+      
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'basic');        
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'agency');
+        
+        $this->assertEquals($initialStripeCustomerId, $this->getUserAccountPlanService()->getForUser($user)->getStripeCustomer());
+    }
 }
 
 

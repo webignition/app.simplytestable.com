@@ -92,8 +92,9 @@ class UserAccountPlanService extends EntityService {
             return $this->create($user, $newPlan);
         }
         
+        $stripeCustomer = $currentUserAccountPlan->hasStripeCustomer() ? $currentUserAccountPlan->getStripeCustomer() : $this->stripeService->createCustomer($user);
+        
         if ($this->isNonPremiumToPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {            
-            $stripeCustomer = $this->stripeService->createCustomer($user);
             return $this->stripeService->subscribe($this->create(
                 $user,
                 $newPlan,
@@ -101,8 +102,6 @@ class UserAccountPlanService extends EntityService {
                 $currentUserAccountPlan->getStartTrialPeriod()
             ));
         }
-        
-        $stripeCustomer = $currentUserAccountPlan->getStripeCustomer();
         
         if ($this->isPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
             $this->stripeService->unsubscribe($currentUserAccountPlan);
