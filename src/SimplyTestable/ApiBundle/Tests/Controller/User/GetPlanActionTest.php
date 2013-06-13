@@ -41,6 +41,7 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(50, $responseObject->urls_per_job);
         
         $this->assertEquals('trialing', $responseObject->summary->status);        
+        $this->assertEquals(30, $responseObject->summary->trial_period_days);        
         $this->assertInternalType('int', $responseObject->summary->current_period_end);
         $this->assertInternalType('int', $responseObject->summary->trial_end);       
     }    

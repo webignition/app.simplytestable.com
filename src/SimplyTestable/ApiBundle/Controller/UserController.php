@@ -23,6 +23,7 @@ class UserController extends AbstractUserController
             $planProperties = array(
                 'interval',
                 'amount',
+                'trial_period_days'
             );
             
             $subscriptionProperties = array(
