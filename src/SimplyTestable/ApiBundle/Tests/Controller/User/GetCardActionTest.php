@@ -17,7 +17,7 @@ class GetCardActionTest extends BaseControllerJsonTestCase {
         $user = $this->createAndFindUser($email, $password);        
         $this->getUserService()->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getCardAction')->getCardAction()->getContent());
+        $responseObject = json_decode($this->getUserController('getCardSummaryAction')->getCardSummaryAction()->getContent());
         $this->assertEquals(array(), $responseObject);
     }
     
@@ -39,7 +39,7 @@ class GetCardActionTest extends BaseControllerJsonTestCase {
             'active_card' => $card
         ));         
 
-        $responseObject = json_decode($this->getUserController('getCardAction')->getCardAction()->getContent());
+        $responseObject = json_decode($this->getUserController('getCardSummaryAction')->getCardSummaryAction()->getContent());
         
         foreach ($card as $key => $value) {
             $this->assertEquals($value, $responseObject->$key);
@@ -64,7 +64,7 @@ class GetCardActionTest extends BaseControllerJsonTestCase {
             'active_card' => $card
         ));         
 
-        $responseObject = json_decode($this->getUserController('getCardAction')->getCardAction()->getContent());
+        $responseObject = json_decode($this->getUserController('getCardSummaryAction')->getCardSummaryAction()->getContent());
         
         foreach ($card as $key => $value) {
             $this->assertEquals($value, $responseObject->$key);
