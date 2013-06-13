@@ -36,7 +36,7 @@ class TestStripeService extends StripeService {
             throw new Stripe_AuthenticationError();
         }
         
-        return md5($user->getEmail());
+        return md5(microtime(true));
     }
     
     

@@ -94,7 +94,7 @@ class UserAccountPlanService extends EntityService {
         if ($this->isPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
             $stripeCustomer = $currentUserAccountPlan->getStripeCustomer();
             $this->stripeService->unsubscribe($currentUserAccountPlan);
-            return $this->create($user, $newPlan);
+            return $this->create($user, $newPlan, $stripeCustomer);
         }
         
         $stripeCustomer = $currentUserAccountPlan->getStripeCustomer();
