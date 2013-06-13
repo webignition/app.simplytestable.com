@@ -52,7 +52,7 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
      * @return UserAccountPlan
      */
-    private function create(User $user, AccountPlan $plan, $stripeCustomer = null) {
+    private function create(User $user, AccountPlan $plan, $stripeCustomer = null, $startTrialPeriod = null) {
         $this->deactivateAllForUser($user);
         
         $userAccountPlan = new UserAccountPlan();
@@ -60,6 +60,10 @@ class UserAccountPlanService extends EntityService {
         $userAccountPlan->setPlan($plan);
         $userAccountPlan->setStripeCustomer($stripeCustomer);        
         $userAccountPlan->setIsActive(true);
+        
+        if (!is_null($startTrialPeriod)) {
+            $userAccountPlan->setStartTrialPeriod($startTrialPeriod);
+        }
         
         return $this->persistAndFlush($userAccountPlan);
     }
@@ -71,13 +75,15 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
      * @return UserAccountPlan|false
      */
-    public function subscribe(User $user, AccountPlan $newPlan) {
+    public function subscribe(User $user, AccountPlan $newPlan) {        
         if (!$this->hasForUser($user)) {
             return $this->create($user, $newPlan);
         }
         
         $currentUserAccountPlan = $this->getForUser($user);
         
+        $stripeCustomerRecord = $this->stripeService->getCustomer($currentUserAccountPlan);
+
         if ($this->isSameAccountPlan($currentUserAccountPlan->getPlan(), $newPlan)) {
             return $currentUserAccountPlan;
         }
@@ -86,19 +92,45 @@ class UserAccountPlanService extends EntityService {
             return $this->create($user, $newPlan);
         }
         
-        if ($this->isNonPremiumToPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
+        if ($this->isNonPremiumToPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {            
             $stripeCustomer = $this->stripeService->createCustomer($user);
-            return $this->stripeService->subscribe($this->create($user, $newPlan, $stripeCustomer));
-        }
-        
-        if ($this->isPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
-            $stripeCustomer = $currentUserAccountPlan->getStripeCustomer();
-            $this->stripeService->unsubscribe($currentUserAccountPlan);
-            return $this->create($user, $newPlan, $stripeCustomer);
+            return $this->stripeService->subscribe($this->create(
+                $user,
+                $newPlan,
+                $stripeCustomer,
+                $currentUserAccountPlan->getStartTrialPeriod()
+            ));
         }
         
         $stripeCustomer = $currentUserAccountPlan->getStripeCustomer();
-        return $this->stripeService->subscribe($this->create($user, $newPlan, $stripeCustomer));
+        
+        if ($this->isPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
+            $this->stripeService->unsubscribe($currentUserAccountPlan);
+            return $this->create(
+                $user,
+                $newPlan,
+                $stripeCustomer,
+                $this->getStartTrialPeriod($stripeCustomerRecord['subscription']['trial_end'])    
+            );
+        }        
+
+        return $this->stripeService->subscribe($this->create(
+            $user,
+            $newPlan,
+            $stripeCustomer,
+            $this->getStartTrialPeriod($stripeCustomerRecord['subscription']['trial_end'])
+        ));
+    }
+    
+    
+    /**
+     * 
+     * @param int $trialEndTimestamp
+     * @return int
+     */
+    private function getStartTrialPeriod($trialEndTimestamp) {        
+        $difference = $trialEndTimestamp - time();
+        return (int)ceil($difference / 86400);
     }
     
     

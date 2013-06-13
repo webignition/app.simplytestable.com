@@ -59,10 +59,20 @@ class StripeService {
     public function subscribe(UserAccountPlan $userAccountPlan) {
         $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
         $stripeCustomerObject->updateSubscription(array(
-            'plan' => $userAccountPlan->getPlan()->getStripeId()
+            'plan' => $userAccountPlan->getPlan()->getStripeId(),
+            'trial_end' => $this->getTrialEndTimestamp($userAccountPlan)
         ));
         
         return $userAccountPlan;
+    }
+    
+    
+    private function getTrialEndTimestamp(UserAccountPlan $userAccountPlan) {
+        if ($userAccountPlan->getStartTrialPeriod() <= 0) {
+            return 'now';
+        }
+        
+        return time() + ($userAccountPlan->getStartTrialPeriod() * 86400);
     }
     
     

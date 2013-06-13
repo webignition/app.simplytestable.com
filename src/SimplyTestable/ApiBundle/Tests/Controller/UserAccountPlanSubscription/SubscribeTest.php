@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class SubscribeTest extends BaseControllerJsonTestCase {
-    
+
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();
     }
@@ -120,7 +120,77 @@ class SubscribeTest extends BaseControllerJsonTestCase {
     public function testActivateInMaintenanceReadOnlyModeReturns503() {
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));                 
         $this->assertEquals(503, $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '')->getStatusCode());           
-    }     
+    }  
+    
+    public function testRetentionOfTrialPeriodWhenSwitchingPlansFromPremiumToPremium() {
+        $trialDaysPassed = rand(1, 30);
+        $email = 'user-test-retention-of-trial-period@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);       
+        
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        
+        // Mock the fact that the Stripe customer.subscription.trial_end is
+        // $trialDaysPassed days from now      
+        $this->getStripeService()->addResponseData('getCustomer', array(
+            'subscription' => array(
+                'trial_end' => time() + (86400 * $trialDaysPassed)
+            )
+        )); 
+      
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'agency');
+        
+        $this->assertEquals($trialDaysPassed, $this->getUserAccountPlanService()->getForUser($user)->getStartTrialPeriod());      
+    }  
+    
+    public function testRetentionOfTrialPeriodWhenSwitchingPlansFromPremiumToFree() {
+        $trialDaysPassed = rand(1, 30);
+        $email = 'user-test-retention-of-trial-period@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);       
+        
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        
+        // Mock the fact that the Stripe customer.subscription.trial_end is
+        // $trialDaysPassed days from now      
+        $this->getStripeService()->addResponseData('getCustomer', array(
+            'subscription' => array(
+                'trial_end' => time() + (86400 * $trialDaysPassed)
+            )
+        )); 
+      
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'basic');
+        
+        $this->assertEquals($trialDaysPassed, $this->getUserAccountPlanService()->getForUser($user)->getStartTrialPeriod());      
+    }  
+    
+    public function testRetentionOfTrialPeriodWhenSwitchingPlansFromPremiumToFreeToPremium() {
+        $trialDaysPassed = 16;
+        $email = 'user-test-retention-of-trial-period@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);       
+        
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        
+        // Mock the fact that the Stripe customer.subscription.trial_end is
+        // $trialDaysPassed days from now      
+        $this->getStripeService()->addResponseData('getCustomer', array(
+            'subscription' => array(
+                'trial_end' => time() + (86400 * $trialDaysPassed)
+            )
+        )); 
+      
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'basic');        
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'agency');//        
+        
+        $this->assertEquals($trialDaysPassed, $this->getUserAccountPlanService()->getForUser($user)->getStartTrialPeriod());
+    }
 }
 
 

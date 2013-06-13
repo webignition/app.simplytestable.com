@@ -483,7 +483,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\StripeService
+     * @return \SimplyTestable\ApiBundle\Services\TestStripeService
      */
     protected function getStripeService() {
         return $this->container->get('simplytestable.services.stripeservice');
