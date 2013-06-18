@@ -17,22 +17,10 @@ class UserController extends AbstractUserController
 
         if ($userAccountPlan->hasStripeCustomer()) {
             $customer = $this->getStripeService()->getCustomer($userAccountPlan);
-            $card = $this->getCardSummary($customer['active_card']);
+            $card = $customer['active_card'];
         }        
         
         return $this->sendResponse($card);
-    }
-    
-    
-    private function getCardSummary($activeCard) {
-        $cardProperties = array('exp_month', 'exp_year', 'last4', 'type');        
-        $cardSummary = array();
-        
-        foreach ($cardProperties as $propertyName) {
-            $cardSummary[$propertyName] = $activeCard[$propertyName];
-        }
-        
-        return $cardSummary;
     }
     
     
