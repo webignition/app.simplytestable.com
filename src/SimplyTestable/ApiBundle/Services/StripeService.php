@@ -51,6 +51,22 @@ class StripeService {
     }
     
     
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @param array $updatedProperties
+     */
+    public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties) {
+        $customer = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
+        
+        foreach ($updatedProperties as $key => $value) {
+            $customer->{$key} = $value;
+        }
+
+        $customer->save();        
+    }
+    
+    
 
     /**
      * 

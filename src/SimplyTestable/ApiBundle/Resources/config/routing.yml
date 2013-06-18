@@ -77,6 +77,10 @@ user_card_summary:
   pattern: /user/{email_canonical}/card-summary/
   defaults: { _controller: SimplyTestableApiBundle:User:getCardSummary, _format: json }       
   
+user_card_associate:
+  pattern: /user/{email_canonical}/card/{stripe_card_token}/associate/
+  defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:associateCard, _format: json }    
+  
 user_plan_subscribe:
   pattern: /user/{email_canonical}/{plan_name}/subscribe/
   defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:subscribe, _format: json }               

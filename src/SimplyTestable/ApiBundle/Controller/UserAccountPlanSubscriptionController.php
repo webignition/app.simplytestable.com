@@ -38,6 +38,52 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
         return $this->sendSuccessResponse();
     }
     
+    public function associateCardAction($email_canonical, $stripe_card_token) {
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+        
+        if ($this->getUserService()->isPublicUser($this->getUser())) {
+            return $this->sendFailureResponse();
+        } 
+        
+        if ($email_canonical !== $this->getUser()->getEmail()) {
+            return $this->sendFailureResponse();
+        }
+        
+        if (!$this->isValidStripeCardToken($stripe_card_token)) {
+            return $this->sendFailureResponse();
+        }
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
+        if (!$userAccountPlan->hasStripeCustomer()) {
+            return $this->sendFailureResponse();
+        }
+        
+        $this->getStripeService()->updateCustomer($userAccountPlan, array(
+            'card' => $stripe_card_token
+        ));
+        
+        return $this->sendSuccessResponse();
+    } 
+    
+    /**
+     * 
+     * @param string $token
+     * @return boolean
+     */
+    private function isValidStripeCardToken($token) {
+        return preg_match('/tok_[a-z0-9]{14}/i', $token) > 0;
+    }
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\StripeService 
+     */
+    private function getStripeService() {
+        return $this->get('simplytestable.services.stripeservice');
+    }     
+    
     
     /**
      *

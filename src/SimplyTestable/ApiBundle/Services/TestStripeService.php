@@ -73,6 +73,16 @@ class TestStripeService extends StripeService {
     }
     
     
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @param array $updatedProperties
+     */
+    public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties) {
+        return null;        
+    }    
+    
+    
     private function populateCustomerTemplate($template, $values) {
         $customer = array();
         
