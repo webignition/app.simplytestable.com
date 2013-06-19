@@ -6,6 +6,8 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class GetPlanActionTest extends BaseControllerJsonTestCase {
     
+    const DEFAULT_TRIAL_PERIOD = 30;
+    
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();
     }    
@@ -75,7 +77,66 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
 
         $this->assertEquals('agency', $responseObject->name);             
+    }  
+    
+    
+    public function testStartTrialPeriodForUserWithBasicPlan() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);        
+        $this->getUserService()->setUser($user);
+
+        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
+        $this->assertEquals(self::DEFAULT_TRIAL_PERIOD, $responseObject->start_trial_period);         
     }    
+    
+    public function testStartTrialPeriodForUserWithPartExpiredPremiumTrial() {
+        $trialDaysRemaining = rand(1, self::DEFAULT_TRIAL_PERIOD);
+        $email = 'user-test-retention-of-trial-period@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);       
+        
+        // Mock the fact that the Stripe customer.subscription.trial_end is
+        // $trialDaysPassed days from now      
+        $this->getStripeService()->addResponseData('getCustomer', array(
+            'subscription' => array(
+                'trial_end' => time() + (86400 * $trialDaysRemaining)
+            )
+        )); 
+        
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
+        
+        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());        
+        $this->assertEquals($trialDaysRemaining, $responseObject->start_trial_period);                
+    }  
+    
+    
+    public function testStartTrialPeriodForUserWithPartExpiredPremiumTrialBackOnBasic() {
+        $trialDaysRemaining = rand(1, self::DEFAULT_TRIAL_PERIOD);
+        $email = 'user-test-retention-of-trial-period@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);       
+        
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        
+        // Mock the fact that the Stripe customer.subscription.trial_end is
+        // $trialDaysPassed days from now      
+        $this->getStripeService()->addResponseData('getCustomer', array(
+            'subscription' => array(
+                'trial_end' => time() + (86400 * $trialDaysRemaining)
+            )
+        )); 
+      
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'basic');
+        
+        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());        
+        $this->assertEquals($trialDaysRemaining, $responseObject->start_trial_period);                
+    }     
 }
 
 

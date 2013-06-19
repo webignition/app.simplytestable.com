@@ -56,6 +56,9 @@ class UserController extends AbstractUserController
             }            
         }
         
+        if ($userAccountPlan->getStartTrialPeriod()) {
+            $planDetails['start_trial_period'] = $userAccountPlan->getStartTrialPeriod();
+        }
         
         if ($userAccountPlan->getPlan()->hasConstraintNamed('credits_per_month')) {
             $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
