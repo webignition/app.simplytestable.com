@@ -194,10 +194,25 @@ class UserAccountPlanService extends EntityService {
      * @return UserAccountPlan
      */
     public function getForUser(User $user) {
-        return $this->getEntityRepository()->findOneBy(array(
+        $userAccountPlan = $this->getEntityRepository()->findOneBy(array(
             'user' => $user,
             'isActive' => true
         ));
+        
+        if (!is_null($userAccountPlan)) {
+            return $userAccountPlan;
+        }
+        
+        $result = $this->getEntityRepository()->findBy(array(
+            'user' => $user,
+            'isActive' => false
+        ), array(
+            'id' => 'DESC'
+        ));    
+        
+        if (count($result)) {
+            return $result[0];
+        }
     }
     
     

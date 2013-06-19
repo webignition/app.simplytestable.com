@@ -44,6 +44,37 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(30, $responseObject->summary->trial_period_days);        
         $this->assertInternalType('int', $responseObject->summary->current_period_end);
         $this->assertInternalType('int', $responseObject->summary->trial_end);       
+    }   
+    
+    public function testRetrieveForUserWhereIsActiveIsZero() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);        
+        $this->getUserService()->setUser($user);
+        
+        $this->getUserAccountPlanService()->deactivateAllForUser($user);
+
+        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
+
+        $this->assertEquals('basic', $responseObject->name);             
+    }
+    
+    public function testRetrieveForUserWhereIsActiveIsZeroAndUserHasMany() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);        
+        $this->getUserService()->setUser($user);
+        
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('agency'));
+        
+        $this->getUserAccountPlanService()->deactivateAllForUser($user);
+
+        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
+
+        $this->assertEquals('agency', $responseObject->name);             
     }    
 }
 
