@@ -99,17 +99,19 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $user = $this->createAndFindUser($email, $password);
         $this->getUserService()->setUser($user);       
         
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
+        
         // Mock the fact that the Stripe customer.subscription.trial_end is
         // $trialDaysPassed days from now      
         $this->getStripeService()->addResponseData('getCustomer', array(
             'subscription' => array(
                 'trial_end' => time() + (86400 * $trialDaysRemaining)
             )
-        )); 
+        ));        
         
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'agency');
         
-        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());        
+        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
         $this->assertEquals($trialDaysRemaining, $responseObject->start_trial_period);                
     }  
     
