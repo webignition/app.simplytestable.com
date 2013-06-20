@@ -71,10 +71,25 @@ class Event
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
      * 
      * @SerializerAnnotation\Expose 
      */
     protected $user;
+    
+    
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedUser() {
+        if (is_null($this->getUser())) {
+            return null;
+        }
+        
+        return $this->getUser()->getUsername();
+    }    
+    
     
     /**
      * Get id

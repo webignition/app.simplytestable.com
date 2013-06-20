@@ -58,10 +58,10 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());
         
         $responseObject = json_decode($response->getContent());
-        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
+        $this->assertEquals($email, $responseObject->user);
         
-        $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
-        
+        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);        
+        $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());        
     }    
     
     public function testWithStripeCustomerSubscriptionCreatedEventForUnknownUser() {
@@ -101,9 +101,10 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());
         
         $responseObject = json_decode($response->getContent());
-        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
+        $this->assertEquals($email, $responseObject->user);
         
-        $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
+        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);        
+        $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());  
         
     } 
     
@@ -145,9 +146,10 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());
         
         $responseObject = json_decode($response->getContent());
-        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
+        $this->assertEquals($email, $responseObject->user);
         
-        $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
+        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);        
+        $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());  
         
     } 
     
@@ -189,10 +191,10 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());
         
         $responseObject = json_decode($response->getContent());
-        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
+        $this->assertEquals($email, $responseObject->user);
         
+        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);        
         $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
-        
     }     
 
 }
