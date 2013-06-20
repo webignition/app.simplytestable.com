@@ -26,6 +26,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeTestAccountPlanContraints();
         $this->removeTestAccountPlans();
         $this->removeAllUserEmailChangeRequests();
+        $this->removeAllStripeEvents();
         $this->rebuildDefaultDataState();
         $this->clearRedis();
     }
@@ -551,6 +552,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function removeAllUserEmailChangeRequests() {
         $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest');      
     }
+    
+    protected function removeAllStripeEvents() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Stripe\Event');      
+    }    
     
     
     protected function removeAllJobRejectionReasons() {

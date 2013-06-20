@@ -52,7 +52,19 @@ class Event
      * @ORM\Column(type="boolean")
      * @SerializerAnnotation\Expose
      */
-    protected $isLive; 
+    protected $isLive;
+    
+    
+    /**
+     *
+     * @var string
+     * 
+     * @ORM\Column(type="text", nullable=true)
+     * @SerializerAnnotation\Expose
+     */
+    protected $data;
+    
+    
 
     /**
      * Get id
@@ -131,5 +143,41 @@ class Event
     public function getIsLive()
     {
         return $this->isLive;
+    }
+
+    /**
+     * Set data
+     *
+     * @param string $data
+     * @return Event
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+    
+        return $this;
+    }
+
+    /**
+     * Get data
+     *
+     * @return string 
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+    
+    
+    /**
+     * 
+     * @return \stdClass
+     */
+    public function getDataObject() {
+        if (is_null($this->getData())) {
+            return null;
+        }
+        
+        return json_decode($this->getData());
     }
 }
