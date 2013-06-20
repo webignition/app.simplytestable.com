@@ -32,7 +32,7 @@ class StripeEventService extends EntityService {
      * @param string $name
      * @return \SimplyTestable\ApiBundle\Entity\Stripe\Event
      */
-    public function create($stripeId, $type, $isLiveMode, $user = null) {
+    public function create($stripeId, $type, $isLiveMode, $data, $user = null) {
         if ($this->has($stripeId)) {
             return $this->find($stripeId);
         }
@@ -42,6 +42,7 @@ class StripeEventService extends EntityService {
         $stripeEvent->setStripeId($stripeId);
         $stripeEvent->setType($type); 
         $stripeEvent->setIsLive($isLiveMode);
+        $stripeEvent->setData($data);
         
         if (!is_null($user)) {
             $stripeEvent->setUser($user);

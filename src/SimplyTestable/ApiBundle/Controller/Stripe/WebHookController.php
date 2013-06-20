@@ -21,7 +21,7 @@ class WebHookController extends ApiController {
         $stripeCustomer = $this->getStripeCustomerFromEventData($requestData->data);
         $user = $this->getUserAccountPlanService()->getUserByStripeCustomer($stripeCustomer);
         
-        $stripeEvent = $this->getStripeEventService()->create($requestData->id, $requestData->type, $requestData->livemode, $user);
+        $stripeEvent = $this->getStripeEventService()->create($requestData->id, $requestData->type, $requestData->livemode, json_encode($requestData->data->object), $user);
         
         return $this->sendResponse($stripeEvent);
     }

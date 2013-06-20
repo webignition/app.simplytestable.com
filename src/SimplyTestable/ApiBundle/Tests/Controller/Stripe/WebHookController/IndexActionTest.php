@@ -75,8 +75,7 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         $responseObject = json_decode($response->getContent());
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
         
-        $this->assertEquals($responseObject->stripe_id, $stripeEvent->getStripeId());
-        
+        $this->assertEquals($responseObject->stripe_id, $stripeEvent->getStripeId());        
     }   
     
     
@@ -195,7 +194,38 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);        
         $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
-    }     
+    } 
+    
+    public function testStripeEventDataIsPersisted() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);       
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));        
+        
+        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.subscription.created.event.json');
+        $fixtureObject = json_decode($fixture);
+        
+        $fixtureObject->data->object->customer = $userAccountPlan->getStripeCustomer();
+
+        $response = $this->getStripeWebHookController('indexAction', array(
+            'event' => json_encode($fixtureObject)
+        ))->indexAction();        
+        
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        $responseObject = json_decode($response->getContent());
+        $this->assertEquals($email, $responseObject->user);
+        
+        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);        
+        $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());         
+        $this->assertNotNull($stripeEvent->getData());
+        
+        $this->assertEquals(json_encode($fixtureObject->data->object), $stripeEvent->getData());
+        $this->assertEquals($fixtureObject->data->object, $stripeEvent->getDataObject());
+    }
 
 }
 
