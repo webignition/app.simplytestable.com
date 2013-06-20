@@ -17,9 +17,29 @@ class WebHookController extends ApiController {
         $requestData = json_decode($this->getEventContent());
         
         $this->sendDeveloperWebhookNotification($requestBody, $requestData->type);        
-        $stripeEvent = $this->getStripeEventService()->create($requestData->id, $requestData->type, $requestData->livemode);
+        
+        $stripeCustomer = $this->getStripeCustomerFromEventData($requestData->data);
+        $user = $this->getUserAccountPlanService()->getUserByStripeCustomer($stripeCustomer);
+        
+        $stripeEvent = $this->getStripeEventService()->create($requestData->id, $requestData->type, $requestData->livemode, $user);
         
         return $this->sendResponse($stripeEvent);
+    }
+    
+    private function getStripeCustomerFromEventData(\stdClass $eventData) {
+        if (!isset($eventData->object)) {
+            return null;
+        }
+        
+        $eventDataObject = $eventData->object;
+        
+        if (isset($eventDataObject->customer)) {
+            return $eventDataObject->customer;
+        }
+        
+        if ($eventDataObject->object == 'customer') {
+            return $eventDataObject->id;
+        }
     }
     
     private function getEventContent() {
@@ -102,6 +122,15 @@ class WebHookController extends ApiController {
 
         $this->get('mailer')->send($message);
     }
+    
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
+     */
+    private function getUserAccountPlanService() {
+        return $this->container->get('simplytestable.services.useraccountplanservice');
+    }    
 
     /**
      *

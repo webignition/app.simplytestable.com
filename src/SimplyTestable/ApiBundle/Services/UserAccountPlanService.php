@@ -216,6 +216,22 @@ class UserAccountPlanService extends EntityService {
     }
     
     
+    /**
+     * 
+     * @param string $stripeCustomer
+     * @return User
+     */
+    public function getUserByStripeCustomer($stripeCustomer) {
+        $userAccountPlan = $this->getEntityRepository()->findOneBy(array(
+            'stripeCustomer' => $stripeCustomer
+        ));
+        
+        if (!is_null($userAccountPlan)) {
+            return $userAccountPlan->getUser();
+        }
+    }
+    
+    
     
     /**
      * 

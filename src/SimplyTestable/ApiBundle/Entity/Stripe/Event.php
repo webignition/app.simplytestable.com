@@ -65,7 +65,17 @@ class Event
     protected $data;
     
     
-
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Entity\User
+     * 
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
+     * 
+     * @SerializerAnnotation\Expose 
+     */
+    protected $user;
+    
     /**
      * Get id
      *
@@ -179,5 +189,28 @@ class Event
         }
         
         return json_decode($this->getData());
+    }
+
+    /**
+     * Set user
+     *
+     * @param SimplyTestable\ApiBundle\Entity\User $user
+     * @return Event
+     */
+    public function setUser(\SimplyTestable\ApiBundle\Entity\User $user)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return SimplyTestable\ApiBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }
