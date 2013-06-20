@@ -16,6 +16,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const USER_ACCOUNT_PLAN_SUBSCRIPTION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController';
     const WORKER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\WorkerController';
     const TASK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TaskController';
+    const STRIPE_WEBHOOK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Stripe\WebHookController';
     
     public function setUp() {
         parent::setUp();
@@ -183,6 +184,17 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function getTaskController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::TASK_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }      
+    
+    /**
+     * 
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\Stripe\WebHookController
+     */
+    protected function getStripeWebHookController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::STRIPE_WEBHOOK_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }     
     
     
     /**
@@ -481,6 +493,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function getHttpClientService() {
         return $this->container->get('simplytestable.services.httpclientservice');
     }     
+
     
     /**
      *
@@ -488,6 +501,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getStripeService() {
         return $this->container->get('simplytestable.services.stripeservice');
+    }  
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\StripeEventService
+     */
+    protected function getStripeEventService() {
+        return $this->container->get('simplytestable.services.stripeeventservice');
     }         
     
     

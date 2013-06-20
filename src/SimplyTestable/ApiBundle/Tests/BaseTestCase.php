@@ -228,5 +228,9 @@ abstract class BaseTestCase extends WebTestCase {
         return $fixtures;
     }
     
+    protected function getFixture($path) {
+        return file_get_contents($path);
+    }
+    
 
 }

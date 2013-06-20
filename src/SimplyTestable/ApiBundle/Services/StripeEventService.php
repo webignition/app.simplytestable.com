@@ -16,6 +16,18 @@ class StripeEventService extends EntityService {
     }
     
     /**
+     * 
+     * @param string $stripeId
+     * @return StripeEvent
+     */
+    public function getByStripeId($stripeId) {
+        return $this->getEntityRepository()->findOneBy(array(
+            'stripeId' => $stripeId
+        ));
+    }
+    
+    
+    /**
      *
      * @param string $name
      * @return \SimplyTestable\ApiBundle\Entity\Stripe\Event
