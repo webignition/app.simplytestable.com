@@ -17,6 +17,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const WORKER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\WorkerController';
     const TASK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TaskController';
     const STRIPE_WEBHOOK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Stripe\WebHookController';
+    const USER_STRIPE_EVENT_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserStripeEventController';
     
     public function setUp() {
         parent::setUp();
@@ -194,6 +195,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getStripeWebHookController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::STRIPE_WEBHOOK_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }     
+    
+
+    /**
+     * 
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\UserStripeEventController
+     */
+    protected function getUserStripeEventController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::USER_STRIPE_EVENT_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }     
     
     

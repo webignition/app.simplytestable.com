@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
+use SimplyTestable\ApiBundle\Entity\User;
 
 class StripeEventService extends EntityService {
     
@@ -28,9 +29,13 @@ class StripeEventService extends EntityService {
     
     
     /**
-     *
-     * @param string $name
-     * @return \SimplyTestable\ApiBundle\Entity\Stripe\Event
+     * 
+     * @param string $stripeId
+     * @param string $type
+     * @param boolean $isLiveMode
+     * @param string $data
+     * @param User $user
+     * @return StripeEvent
      */
     public function create($stripeId, $type, $isLiveMode, $data, $user = null) {
         if ($this->has($stripeId)) {
@@ -49,6 +54,28 @@ class StripeEventService extends EntityService {
         }
         
         return $this->persistAndFlush($stripeEvent);
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Services\User $user
+     * @param string $type
+     * @return array
+     */
+    public function getForUserAndType(User $user, $type = null) {        
+        $criteria = array(
+            'user' => $user
+        );
+        
+        $type = trim($type);
+        if ($type != '') {
+            $criteria['type'] = $type;
+        }
+        
+        return $this->getEntityRepository()->findBy($criteria, array(
+            'id' => 'DESC'
+        ));
     }
     
     

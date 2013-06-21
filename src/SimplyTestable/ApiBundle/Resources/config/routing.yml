@@ -85,6 +85,10 @@ user_plan_subscribe:
   pattern: /user/{email_canonical}/{plan_name}/subscribe/
   defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:subscribe, _format: json }               
   
+user_list_stripe_events:
+  pattern: /user/{email_canonical}/stripe-events/{type}/
+  defaults: { _controller: SimplyTestableApiBundle:UserStripeEvent:list, _format: json }      
+  
 user_activate:
   pattern: /user/activate/{token}/
   defaults: { _controller: SimplyTestableApiBundle:UserCreation:activate, _format: json }
