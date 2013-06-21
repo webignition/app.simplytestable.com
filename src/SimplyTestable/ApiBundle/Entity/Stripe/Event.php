@@ -8,7 +8,10 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * 
  * @ORM\Entity
  * @ORM\Table(
- *     name="StripeEvent"
+ *     name="StripeEvent",
+ *     indexes={
+ *         @ORM\Index(name="type_idx", columns={"type"})
+ *     }
  * )
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
