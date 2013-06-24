@@ -4,12 +4,25 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class GetPlanActionTest extends BaseControllerJsonTestCase {
+class GetActionUserPlanTest extends BaseControllerJsonTestCase {
     
     const DEFAULT_TRIAL_PERIOD = 30;
     
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();
+    }    
+    
+    public function testHasUserPlan() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);        
+        $this->getUserService()->setUser($user);
+
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        
+        $this->assertTrue(isset($responseObject->user_plan));
+        $this->assertTrue(isset($responseObject->user_plan->plan));
     }    
 
     public function testForUserWithBasicPlan() {
@@ -19,9 +32,10 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $user = $this->createAndFindUser($email, $password);        
         $this->getUserService()->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
-
-        $this->assertEquals('basic', $responseObject->name);         
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        
+        $this->assertEquals('basic', $responseObject->user_plan->plan->name);
+        $this->assertFalse($responseObject->user_plan->plan->is_premium);
     }
     
     public function testForUserWithPremiumPlan() {
@@ -33,20 +47,11 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
-        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         
-        $this->assertEquals('personal', $responseObject->name);
-        $this->assertEquals('month', $responseObject->summary->interval);
-        $this->assertEquals(900, $responseObject->summary->amount);
-        $this->assertEquals(5000, $responseObject->credits->limit);
-        $this->assertEquals(0, $responseObject->credits->used);
-        $this->assertEquals(50, $responseObject->urls_per_job);
-        
-        $this->assertEquals('trialing', $responseObject->summary->status);        
-        $this->assertEquals(30, $responseObject->summary->trial_period_days);        
-        $this->assertInternalType('int', $responseObject->summary->current_period_end);
-        $this->assertInternalType('int', $responseObject->summary->trial_end);       
-        $this->assertNotNull($responseObject->summary->stripe_customer);
+        $this->assertEquals('personal', $responseObject->user_plan->plan->name);
+        $this->assertTrue($responseObject->user_plan->plan->is_premium);
+        $this->assertEquals(self::DEFAULT_TRIAL_PERIOD, $responseObject->user_plan->start_trial_period);
     }   
     
     public function testRetrieveForUserWhereIsActiveIsZero() {
@@ -58,9 +63,9 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         
         $this->getUserAccountPlanService()->deactivateAllForUser($user);
 
-        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
 
-        $this->assertEquals('basic', $responseObject->name);             
+        $this->assertEquals('basic', $responseObject->user_plan->plan->name);             
     }
     
     public function testRetrieveForUserWhereIsActiveIsZeroAndUserHasMany() {
@@ -75,9 +80,9 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         
         $this->getUserAccountPlanService()->deactivateAllForUser($user);
 
-        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
 
-        $this->assertEquals('agency', $responseObject->name);             
+        $this->assertEquals('agency', $responseObject->user_plan->plan->name);  ;           
     }  
     
     
@@ -88,8 +93,8 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $user = $this->createAndFindUser($email, $password);        
         $this->getUserService()->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
-        $this->assertEquals(self::DEFAULT_TRIAL_PERIOD, $responseObject->start_trial_period);         
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $this->assertEquals(self::DEFAULT_TRIAL_PERIOD, $responseObject->user_plan->start_trial_period);         
     }    
     
     public function testStartTrialPeriodForUserWithPartExpiredPremiumTrial() {
@@ -112,8 +117,8 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         
         $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'agency');
         
-        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());
-        $this->assertEquals($trialDaysRemaining, $responseObject->start_trial_period);                
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $this->assertEquals($trialDaysRemaining, $responseObject->user_plan->start_trial_period);                
     }  
     
     
@@ -137,8 +142,8 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
       
         $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'basic');
         
-        $responseObject = json_decode($this->getUserController('getPlanAction')->getPlanAction()->getContent());        
-        $this->assertEquals($trialDaysRemaining, $responseObject->start_trial_period);                
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());        
+        $this->assertEquals($trialDaysRemaining, $responseObject->user_plan->start_trial_period);                
     }     
 }
 

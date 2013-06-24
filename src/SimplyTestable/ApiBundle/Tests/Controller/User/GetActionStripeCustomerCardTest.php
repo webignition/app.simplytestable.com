@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class GetCardActionTest extends BaseControllerJsonTestCase {
+class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {
     
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();
@@ -17,8 +17,8 @@ class GetCardActionTest extends BaseControllerJsonTestCase {
         $user = $this->createAndFindUser($email, $password);        
         $this->getUserService()->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getCardSummaryAction')->getCardSummaryAction()->getContent());
-        $this->assertEquals(array(), $responseObject);
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());        
+        $this->assertFalse(isset($responseObject->stripe_customer));
     }
     
     public function testForUserWithBasicPlanAndHasCard() {        
@@ -39,10 +39,13 @@ class GetCardActionTest extends BaseControllerJsonTestCase {
             'active_card' => $card
         ));         
 
-        $responseObject = json_decode($this->getUserController('getCardSummaryAction')->getCardSummaryAction()->getContent());
-        
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $this->assertTrue(isset($responseObject->stripe_customer));
+        $this->assertTrue(isset($responseObject->stripe_customer->active_card));        
+        $this->assertNotNull($responseObject->stripe_customer->active_card);
+    
         foreach ($card as $key => $value) {
-            $this->assertEquals($value, $responseObject->$key);
+            $this->assertEquals($value, $responseObject->stripe_customer->active_card->$key);
         }
     }  
     
@@ -64,10 +67,13 @@ class GetCardActionTest extends BaseControllerJsonTestCase {
             'active_card' => $card
         ));         
 
-        $responseObject = json_decode($this->getUserController('getCardSummaryAction')->getCardSummaryAction()->getContent());
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $this->assertTrue(isset($responseObject->stripe_customer));
+        $this->assertTrue(isset($responseObject->stripe_customer->active_card));        
+        $this->assertNotNull($responseObject->stripe_customer->active_card);        
         
         foreach ($card as $key => $value) {
-            $this->assertEquals($value, $responseObject->$key);
+            $this->assertEquals($value, $responseObject->stripe_customer->active_card->$key);
         }
     }     
     

@@ -31,8 +31,7 @@ class GetActionTest extends BaseControllerJsonTestCase {
         
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
-        
+        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());        
         $this->assertEquals($email, $responseObject->email);       
     }    
 }

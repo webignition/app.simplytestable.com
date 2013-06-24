@@ -11,77 +11,20 @@ class UserController extends AbstractUserController
     }
     
     
-    public function getCardSummaryAction() {
-        $card = array();        
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
-
-        if ($userAccountPlan->hasStripeCustomer()) {
-            $customer = $this->getStripeService()->getCustomer($userAccountPlan);
-            $card = $customer['active_card'];
-        }        
-        
-        return $this->sendResponse($card);
-    }
-    
-    
-    public function getPlanAction() {
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
-
-        $planDetails = array();
-        $planDetails['name'] = $userAccountPlan->getPlan()->getName();
-        
-        if ($userAccountPlan->hasStripeCustomer()) {
-            $customer = $this->getStripeService()->getCustomer($userAccountPlan);
-
-            $planProperties = array(
-                'interval',
-                'amount',
-                'trial_period_days'
-            );
-            
-            $subscriptionProperties = array(
-                'status',
-                'current_period_end',
-                'trial_end'
-            );            
-            
-            $planDetails['summary'] = array();
-            
-            foreach ($planProperties as $planProperty) {
-                $planDetails['summary'][$planProperty] = $customer['subscription']['plan'][$planProperty];
-            }
-            
-            foreach ($subscriptionProperties as $subscriptionProperty) {
-                $planDetails['summary'][$subscriptionProperty] = $customer['subscription'][$subscriptionProperty];
-            }
-            
-            $planDetails['summary']['stripe_customer'] = $customer['id'];
-        }
-        
-        if ($userAccountPlan->getStartTrialPeriod()) {
-            $planDetails['start_trial_period'] = $userAccountPlan->getStartTrialPeriod();
-        }
-        
-        if ($userAccountPlan->getPlan()->hasConstraintNamed('credits_per_month')) {
-            $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
-            $planDetails['credits'] = array(
-                'limit' => $userAccountPlan->getPlan()->getConstraintNamed('credits_per_month')->getLimit(),
-                'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()
-            );            
-        }
-        
-        if ($userAccountPlan->getPlan()->hasConstraintNamed('urls_per_job')) {
-            $planDetails['urls_per_job'] = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();          
-        }
-        
-        return $this->sendResponse($planDetails);
-    }
-    
-    
     private function getUserSummary(User $user) {        
-        return array(
-            'email' => $user->getEmailCanonical()
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
+        
+        $userSummary = array(
+            'email' => $user->getEmailCanonical(),
+            'user_plan' => $userAccountPlan
+                
         );
+        
+        if ($userAccountPlan->hasStripeCustomer()) {
+            $userSummary['stripe_customer'] = $this->getStripeService()->getCustomer($userAccountPlan);
+        }
+        
+        return $userSummary;
     }
     
     
@@ -152,14 +95,5 @@ class UserController extends AbstractUserController
      */
     private function getUserAccountPlanService() {
         return $this->get('simplytestable.services.useraccountplanservice');
-    }     
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
-     */
-    private function getJobUserAccountPlanEnforcementService() {
-        return $this->get('simplytestable.services.jobuseraccountplanenforcementservice');
-    }       
+    }      
 }

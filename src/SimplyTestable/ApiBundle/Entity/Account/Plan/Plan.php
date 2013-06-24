@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Entity\Account\Plan;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * 
@@ -9,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(
  *     name="AccountPlan"
  * )
+ * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class Plan
 {
@@ -28,6 +30,7 @@ class Plan
      *
      * @var string
      * @ORM\Column(type="string", unique=true)
+     * @SerializerAnnotation\Expose
      */
     private $name;
     
@@ -45,6 +48,7 @@ class Plan
      *
      * @var boolean
      * @ORM\Column(type="boolean", nullable=true)
+     * @SerializerAnnotation\Expose
      */
     private $isPremium = false;
     
