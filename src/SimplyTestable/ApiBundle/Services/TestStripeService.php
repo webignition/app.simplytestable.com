@@ -101,6 +101,7 @@ class TestStripeService extends StripeService {
     private function getCustomerTemplate(UserAccountPlan $userAccountPlan) {
         return array(
             'object' => 'customer',
+            'id' => $userAccountPlan->getStripeCustomer(),
             'created' => 1371075807,
             'livemode' => false,
             'description' => NULL,

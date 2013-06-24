@@ -46,6 +46,7 @@ class GetPlanActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(30, $responseObject->summary->trial_period_days);        
         $this->assertInternalType('int', $responseObject->summary->current_period_end);
         $this->assertInternalType('int', $responseObject->summary->trial_end);       
+        $this->assertNotNull($responseObject->summary->stripe_customer);
     }   
     
     public function testRetrieveForUserWhereIsActiveIsZero() {

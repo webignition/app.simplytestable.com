@@ -53,7 +53,9 @@ class UserController extends AbstractUserController
             
             foreach ($subscriptionProperties as $subscriptionProperty) {
                 $planDetails['summary'][$subscriptionProperty] = $customer['subscription'][$subscriptionProperty];
-            }            
+            }
+            
+            $planDetails['summary']['stripe_customer'] = $customer['id'];
         }
         
         if ($userAccountPlan->getStartTrialPeriod()) {
