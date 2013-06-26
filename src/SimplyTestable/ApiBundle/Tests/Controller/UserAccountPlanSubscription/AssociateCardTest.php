@@ -62,6 +62,22 @@ class AssociateCardTest extends BaseControllerJsonTestCase {
         $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, $this->generateStripeCardToken());        
         $this->assertEquals(200, $response->getStatusCode());
     }
+    
+    
+    public function testWithTokenForCardFailingCheck() {
+        $email = 'jon@simplytestable.com';
+        $password = 'password1';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);
+        
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
+        
+        $this->getStripeService()->setIssueStripeCardError(true);
+        
+        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, $this->generateStripeCardToken());        
+        $this->assertEquals(400, $response->getStatusCode());        
+    }
 
     
     private function generateStripeCardToken() {

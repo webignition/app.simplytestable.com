@@ -24,11 +24,27 @@ class TestStripeService extends StripeService {
     
     
     /**
+     *
+     * @var boolean
+     */
+    private $issueStripeCardError = false;
+    
+    
+    /**
      * 
      * @param boolean $hasInvalidApiKey
      */
     public function setHasInvalidApiKey($hasInvalidApiKey) {
         $this->hasInvalidApiKey = $hasInvalidApiKey;
+    }
+    
+    
+    /**
+     * 
+     * @param boolean $issueStripeCardError
+     */
+    public function setIssueStripeCardError($issueStripeCardError) {
+        $this->issueStripeCardError = $issueStripeCardError;
     }
     
     
@@ -79,6 +95,14 @@ class TestStripeService extends StripeService {
      * @param array $updatedProperties
      */
     public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties) {
+        if ($this->issueStripeCardError === true) {
+            $this->issueStripeCardError = false;
+            $message = 'Stripe_CardErrorMessage';
+            $param = 'Stripe_CardErrorParam';
+            $code = 1;
+            throw new \Stripe_CardError($message, $param, $code);
+        }
+        
         return null;        
     }    
     

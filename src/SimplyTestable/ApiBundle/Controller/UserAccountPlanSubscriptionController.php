@@ -60,9 +60,13 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
             return $this->sendFailureResponse();
         }
         
-        $this->getStripeService()->updateCustomer($userAccountPlan, array(
-            'card' => $stripe_card_token
-        ));
+        try {
+            $this->getStripeService()->updateCustomer($userAccountPlan, array(
+                'card' => $stripe_card_token
+            ));            
+        } catch (\Stripe_CardError $stripeCardError) {
+            return $this->sendFailureResponse();
+        }
         
         return $this->sendSuccessResponse();
     } 
