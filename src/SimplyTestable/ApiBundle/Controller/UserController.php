@@ -22,7 +22,23 @@ class UserController extends AbstractUserController
         
         if ($userAccountPlan->hasStripeCustomer()) {
             $userSummary['stripe_customer'] = $this->getStripeService()->getCustomer($userAccountPlan);
+        }  
+        
+        $planConstraints = array();
+
+        if ($userAccountPlan->getPlan()->hasConstraintNamed('credits_per_month')) {
+            $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
+            $planConstraints['credits'] = array(
+                'limit' => $userAccountPlan->getPlan()->getConstraintNamed('credits_per_month')->getLimit(),
+                'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()
+            );            
         }
+        
+        if ($userAccountPlan->getPlan()->hasConstraintNamed('urls_per_job')) {
+            $planConstraints['urls_per_job'] = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();          
+        }
+        
+        $userSummary['plan_constraints'] = $planConstraints;
         
         return $userSummary;
     }
@@ -95,5 +111,14 @@ class UserController extends AbstractUserController
      */
     private function getUserAccountPlanService() {
         return $this->get('simplytestable.services.useraccountplanservice');
-    }      
+    }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+     */
+    private function getJobUserAccountPlanEnforcementService() {
+        return $this->get('simplytestable.services.jobuseraccountplanenforcementservice');
+    }        
 }
