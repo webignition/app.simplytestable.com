@@ -31,7 +31,7 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
         
         try {
             $this->getUserAccountPlanService()->subscribe($this->getUser(), $this->getAccountPlanService()->find($plan_name));
-        } catch (\Stripe_AuthenticationError $stripeAuthenticationError) {
+        } catch (\Stripe_AuthenticationError $stripeAuthenticationError) {            
             return $this->sendForbiddenResponse();
         }        
         
@@ -65,7 +65,11 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
                 'card' => $stripe_card_token
             ));            
         } catch (\Stripe_CardError $stripeCardError) {
-            return $this->sendFailureResponse();
+            return $this->sendFailureResponse(array(
+                'X-Stripe-Error-Message' => $stripeCardError->getMessage(),
+                'X-Stripe-Error-Param' => $stripeCardError->param,
+                'X-Stripe-Error-Code' => $stripeCardError->getCode()
+            ));
         }
         
         return $this->sendSuccessResponse();

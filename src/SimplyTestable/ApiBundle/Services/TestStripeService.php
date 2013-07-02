@@ -31,6 +31,26 @@ class TestStripeService extends StripeService {
     
     
     /**
+     *
+     * @var string
+     */
+    private $nextStripeCardErrorMessage = 'Stripe_CardErrorMessage';
+    
+   
+    /**
+     *
+     * @var string
+     */
+    private $nextStripeCardErrorParam = 'Stripe_CardErrorParam';
+    
+    
+    /**
+     *
+     * @var string
+     */
+    private $nextStripeCardErrorCode = 'Stripe_CardErrorCode';
+    
+    /**
      * 
      * @param boolean $hasInvalidApiKey
      */
@@ -45,6 +65,33 @@ class TestStripeService extends StripeService {
      */
     public function setIssueStripeCardError($issueStripeCardError) {
         $this->issueStripeCardError = $issueStripeCardError;
+    }
+    
+    
+    /**
+     * 
+     * @param string $message
+     */
+    public function setNextStripeCardErrorMessage($message) {
+        $this->nextStripeCardErrorMessage = $message;
+    }    
+    
+    
+    /**
+     * 
+     * @param string $param
+     */
+    public function setNextStripeCardErrorParam($param) {
+        $this->nextStripeCardErrorParam = $param;
+    }    
+    
+    
+    /**
+     * 
+     * @param string $code
+     */
+    public function setNextStripeCardErrorCode($code) {
+        $this->nextStripeCardErrorCode = $code;
     }
     
     
@@ -97,10 +144,11 @@ class TestStripeService extends StripeService {
     public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties) {
         if ($this->issueStripeCardError === true) {
             $this->issueStripeCardError = false;
-            $message = 'Stripe_CardErrorMessage';
-            $param = 'Stripe_CardErrorParam';
-            $code = 1;
-            throw new \Stripe_CardError($message, $param, $code);
+            throw new \Stripe_CardError(
+                $this->nextStripeCardErrorMessage,
+                $this->nextStripeCardErrorParam,
+                $this->nextStripeCardErrorCode
+            );
         }
         
         return null;        

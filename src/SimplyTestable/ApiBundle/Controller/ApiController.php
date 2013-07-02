@@ -158,7 +158,11 @@ abstract class ApiController extends Controller
      * 
      * @return Response
      */
-    public function sendFailureResponse() {
+    public function sendFailureResponse($headers = null) {        
+        if (is_array($headers)) {
+            return Response::create('', 400, $headers);
+        }
+        
         return $this->sendResponse('', 400);
     }
     

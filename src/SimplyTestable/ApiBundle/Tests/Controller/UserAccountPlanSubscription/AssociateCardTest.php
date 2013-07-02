@@ -62,11 +62,13 @@ class AssociateCardTest extends BaseControllerJsonTestCase {
         $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, $this->generateStripeCardToken());        
         $this->assertEquals(200, $response->getStatusCode());
     }
-    
-    
-    public function testWithTokenForCardFailingCheck() {
+
+    public function testWithTokenForCardFailingZipCheck() {
         $email = 'jon@simplytestable.com';
         $password = 'password1';
+        $stripeErrorMessage = 'The zip code you supplied failed validation.';
+        $stripeErrorParam = 'address_zip';
+        $stripeErrorCode = 'incorrect_zip';
         
         $user = $this->createAndFindUser($email, $password);
         $this->getUserService()->setUser($user);
@@ -74,9 +76,42 @@ class AssociateCardTest extends BaseControllerJsonTestCase {
         $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
         
         $this->getStripeService()->setIssueStripeCardError(true);
+        $this->getStripeService()->setNextStripeCardErrorMessage($stripeErrorMessage);
+        $this->getStripeService()->setNextStripeCardErrorParam($stripeErrorParam);
+        $this->getStripeService()->setNextStripeCardErrorCode($stripeErrorCode);
         
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, $this->generateStripeCardToken());        
+        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, $this->generateStripeCardToken());
         $this->assertEquals(400, $response->getStatusCode());        
+        
+        $this->assertEquals($stripeErrorMessage, $response->headers->get('X-Stripe-Error-Message'));
+        $this->assertEquals($stripeErrorParam, $response->headers->get('X-Stripe-Error-Param'));
+        $this->assertEquals($stripeErrorCode, $response->headers->get('X-Stripe-Error-Code'));
+    }    
+    
+    
+    public function testWithTokenForCardFailingCvcCheck() {
+        $email = 'jon@simplytestable.com';
+        $password = 'password1';
+        $stripeErrorMessage = 'Your card\'s security code is incorrect.';
+        $stripeErrorParam = 'cvc';
+        $stripeErrorCode = 'incorrect_cvc';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);
+        
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
+        
+        $this->getStripeService()->setIssueStripeCardError(true);
+        $this->getStripeService()->setNextStripeCardErrorMessage($stripeErrorMessage);
+        $this->getStripeService()->setNextStripeCardErrorParam($stripeErrorParam);
+        $this->getStripeService()->setNextStripeCardErrorCode($stripeErrorCode);
+        
+        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, $this->generateStripeCardToken());
+        $this->assertEquals(400, $response->getStatusCode());        
+        
+        $this->assertEquals($stripeErrorMessage, $response->headers->get('X-Stripe-Error-Message'));
+        $this->assertEquals($stripeErrorParam, $response->headers->get('X-Stripe-Error-Param'));
+        $this->assertEquals($stripeErrorCode, $response->headers->get('X-Stripe-Error-Code'));
     }
 
     
