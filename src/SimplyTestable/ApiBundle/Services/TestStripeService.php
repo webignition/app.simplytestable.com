@@ -240,9 +240,18 @@ class TestStripeService extends StripeService {
      * 
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
      */
-    public function subscribe(UserAccountPlan $userAccountPlan) {               
+    public function subscribe(UserAccountPlan $userAccountPlan) {        
         if ($this->hasInvalidApiKey === true) {
             throw new Stripe_AuthenticationError();
+        }        
+        
+        if ($this->issueStripeCardError === true) {
+            $this->issueStripeCardError = false;
+            throw new \Stripe_CardError(
+                $this->nextStripeCardErrorMessage,
+                $this->nextStripeCardErrorParam,
+                $this->nextStripeCardErrorCode
+            );
         }        
         
         return $userAccountPlan;

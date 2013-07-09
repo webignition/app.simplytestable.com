@@ -208,6 +208,34 @@ class SubscribeTest extends BaseControllerJsonTestCase {
         
         $this->assertEquals($initialStripeCustomerId, $this->getUserAccountPlanService()->getForUser($user)->getStripeCustomer());
     }
+    
+    public function testSubscribeWithUserThatHasDecliningCard() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        $currentPlan = 'basic';
+        $newPlan = 'personal';
+        
+        $stripeErrorMessage = 'Your card was declined.';
+        $stripeErrorParam = null;
+        $stripeErrorCode = 'card_declined';
+        
+        $user = $this->createAndFindUser($email, $password);
+        $this->getUserService()->setUser($user);    
+        
+        $this->getStripeService()->setIssueStripeCardError(true);
+        $this->getStripeService()->setNextStripeCardErrorMessage($stripeErrorMessage);
+        $this->getStripeService()->setNextStripeCardErrorParam($stripeErrorParam);
+        $this->getStripeService()->setNextStripeCardErrorCode($stripeErrorCode);        
+        
+        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, $newPlan);        
+        $this->assertEquals(400, $response->getStatusCode());
+        
+        $this->assertEquals($stripeErrorMessage, $response->headers->get('X-Stripe-Error-Message'));  
+        $this->assertEquals($stripeErrorCode, $response->headers->get('X-Stripe-Error-Code'));        
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
+        $this->assertEquals($currentPlan, $userAccountPlan->getPlan()->getName());
+    }
 }
 
 

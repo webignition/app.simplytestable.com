@@ -94,7 +94,7 @@ class UserAccountPlanService extends EntityService {
         
         $stripeCustomer = $currentUserAccountPlan->hasStripeCustomer() ? $currentUserAccountPlan->getStripeCustomer() : $this->stripeService->createCustomer($user);
         
-        if ($this->isNonPremiumToPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {            
+        if ($this->isNonPremiumToPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {                        
             return $this->stripeService->subscribe($this->create(
                 $user,
                 $newPlan,
@@ -231,6 +231,23 @@ class UserAccountPlanService extends EntityService {
         }
     }
     
+
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     */
+    public function removeCurrentForUser(User $user) {
+        $userAccountPlans = $this->getEntityRepository()->findBy(array(
+            'user' => $user,            
+        ), array(
+            'id' => 'DESC'
+        ), 1);
+        
+        if (count($userAccountPlans) === 1) {        
+            $this->getEntityManager()->remove($userAccountPlans[0]);
+            $this->getEntityManager()->flush();
+        }
+    }    
     
     
     /**

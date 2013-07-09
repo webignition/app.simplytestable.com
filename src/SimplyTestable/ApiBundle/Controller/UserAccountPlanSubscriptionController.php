@@ -33,6 +33,13 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
             $this->getUserAccountPlanService()->subscribe($this->getUser(), $this->getAccountPlanService()->find($plan_name));
         } catch (\Stripe_AuthenticationError $stripeAuthenticationError) {            
             return $this->sendForbiddenResponse();
+        } catch (\Stripe_CardError $stripeCardError) {
+            $this->getUserAccountPlanService()->removeCurrentForUser($this->getUser());
+            return $this->sendFailureResponse(array(
+                'X-Stripe-Error-Message' => $stripeCardError->getMessage(),
+                'X-Stripe-Error-Param' => $stripeCardError->param,
+                'X-Stripe-Error-Code' => $stripeCardError->getCode()
+            ));           
         }        
         
         return $this->sendSuccessResponse();
