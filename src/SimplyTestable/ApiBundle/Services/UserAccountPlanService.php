@@ -204,24 +204,19 @@ class UserAccountPlanService extends EntityService {
      * @return UserAccountPlan
      */
     public function getForUser(User $user) {
-        $userAccountPlan = $this->getEntityRepository()->findOneBy(array(
-            'user' => $user,
-            'isActive' => true
-        ));
+        $isActiveValues = array(
+            true, false, null
+        );
         
-        if (!is_null($userAccountPlan)) {
-            return $userAccountPlan;
-        }
-        
-        $result = $this->getEntityRepository()->findBy(array(
-            'user' => $user,
-            'isActive' => false
-        ), array(
-            'id' => 'DESC'
-        ));    
-        
-        if (count($result)) {
-            return $result[0];
+        foreach ($isActiveValues as $isActiveValue) {
+            $userAccountPlan = $this->getEntityRepository()->findOneBy(array(
+                'user' => $user,
+                'isActive' => $isActiveValue
+            ));
+
+            if (!is_null($userAccountPlan)) {
+                return $userAccountPlan;
+            }            
         }
     }
     
@@ -317,7 +312,19 @@ class UserAccountPlanService extends EntityService {
            $this->getEntityRepository()->findUserIdsWithPlan(),
            array($this->userService->getAdminUser()->getId())
         ));
-    }     
+    }   
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
+     * @return array
+     */
+    public function findAllByPlan(AccountPlan $plan) {
+        return $this->getEntityRepository()->findBy(array(
+            'plan' => $plan            
+        ));
+    }
     
 
 }
