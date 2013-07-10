@@ -133,6 +133,18 @@ class CreateTest extends BaseControllerJsonTestCase {
 
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->findUserByEmail($email));
         $this->assertEquals('basic', $userAccountPlan->getPlan()->getName());
+    }    
+    
+    public function testInitialUserPlanTakeConfiguredDefaultTrialPeriod() {
+        var_dump($this->container->getParameter('default_trial_period'));
+        
+        $email = 'user1@example.com';
+        $password = 'password1';        
+        
+        $this->createAndActivateUser($email, $password);
+
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->findUserByEmail($email));
+        $this->assertEquals($this->container->getParameter('default_trial_period'), $userAccountPlan->getStartTrialPeriod());        
     }
 }
 

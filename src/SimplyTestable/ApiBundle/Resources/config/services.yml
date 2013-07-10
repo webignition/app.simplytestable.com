@@ -140,6 +140,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager" 
         userService: "@simplytestable.services.userservice" 
         stripeService: "@simplytestable.services.stripeservice" 
+        defaultTrialPeriod: "%default_trial_period%"
         
   simplytestable.services.useremailchangerequestservice:
     class:  SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService

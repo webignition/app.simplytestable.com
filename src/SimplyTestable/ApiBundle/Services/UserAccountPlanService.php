@@ -26,15 +26,23 @@ class UserAccountPlanService extends EntityService {
      */
     private $stripeService;
     
+    
+    /**
+     *
+     * @var int 
+     */
+    private $defaultTrialPeriod = null;    
+    
     /**
      *
      * @param \Doctrine\ORM\EntityManager $entityManager
      * @param \SimplyTestable\ApiBundle\Services\UserService $userService 
      */
-    public function __construct(EntityManager $entityManager, UserService $userService, StripeService $stripeService) {
+    public function __construct(EntityManager $entityManager, UserService $userService, StripeService $stripeService, $defaultTrialPeriod) {
         $this->entityManager = $entityManager;      
         $this->userService = $userService;
         $this->stripeService = $stripeService;
+        $this->defaultTrialPeriod = $defaultTrialPeriod;
     }     
     
     /**
@@ -61,9 +69,11 @@ class UserAccountPlanService extends EntityService {
         $userAccountPlan->setStripeCustomer($stripeCustomer);        
         $userAccountPlan->setIsActive(true);
         
-        if (!is_null($startTrialPeriod)) {
-            $userAccountPlan->setStartTrialPeriod($startTrialPeriod);
+        if (is_null($startTrialPeriod)) {
+            $startTrialPeriod = $this->defaultTrialPeriod;
         }
+        
+        $userAccountPlan->setStartTrialPeriod($startTrialPeriod); 
         
         return $this->persistAndFlush($userAccountPlan);
     }

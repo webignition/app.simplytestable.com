@@ -15,3 +15,4 @@ parameters:
     admin_user_email: SetThis!@example.com
     admin_user_password: setThis!    
     stripe_api_key: stripe_api_key_value
+    default_trial_period: 30
