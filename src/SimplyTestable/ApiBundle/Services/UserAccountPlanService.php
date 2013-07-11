@@ -85,9 +85,17 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
      * @return UserAccountPlan|false
      */
-    public function subscribe(User $user, AccountPlan $newPlan) {        
+    public function subscribe(User $user, AccountPlan $newPlan) {
         if (!$this->hasForUser($user)) {
-            return $this->create($user, $newPlan);
+            if ($newPlan->getIsPremium()) {
+                return $this->stripeService->subscribe($this->create(
+                    $user,
+                    $newPlan,
+                    $this->stripeService->createCustomer($user)
+                ));                
+            } else {
+                return $this->create($user, $newPlan);
+            }
         }
         
         $currentUserAccountPlan = $this->getForUser($user);

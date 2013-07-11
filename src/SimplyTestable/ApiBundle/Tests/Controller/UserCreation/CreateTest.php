@@ -204,6 +204,23 @@ class CreateTest extends BaseControllerJsonTestCase {
     }
     
     
+    
+    public function testCreateWithPremiumPlanCreatesStripeCustomer() {
+        $email = 'user1@example.com';
+        $password = 'password1';        
+        $plan = 'personal';
+        
+        $this->assertNull($this->getUserService()->findUserByEmail($email));
+        
+        $this->getUserCreationController('createAction', array(
+            'email' => $email,
+            'password' => $password,
+            'plan' => $plan
+        ))->createAction();
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->findUserByEmail($email));
+        $this->assertNotNull($userAccountPlan->getStripeCustomer());    
+    }
+    
 }
-
 
