@@ -135,9 +135,7 @@ class CreateTest extends BaseControllerJsonTestCase {
         $this->assertEquals('basic', $userAccountPlan->getPlan()->getName());
     }    
     
-    public function testInitialUserPlanTakeConfiguredDefaultTrialPeriod() {
-        var_dump($this->container->getParameter('default_trial_period'));
-        
+    public function testInitialUserPlanTakeConfiguredDefaultTrialPeriod() {        
         $email = 'user1@example.com';
         $password = 'password1';        
         
@@ -146,6 +144,66 @@ class CreateTest extends BaseControllerJsonTestCase {
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->findUserByEmail($email));
         $this->assertEquals($this->container->getParameter('default_trial_period'), $userAccountPlan->getStartTrialPeriod());        
     }
+    
+    
+    public function testInvalidPlanDefaultsToBasicPlan() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        $plan = 'invalid-plan-name';
+        
+        $this->assertNull($this->getUserService()->findUserByEmail($email));
+        
+        $this->getUserCreationController('createAction', array(
+            'email' => $email,
+            'password' => $password,
+            'plan' => $plan
+        ))->createAction();
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->findUserByEmail($email));
+        $this->assertEquals('basic', $userAccountPlan->getPlan()->getName());      
+    }
+    
+    
+    public function testValidPlanIsSetForUser() {
+        $email = 'user1@example.com';
+        $password = 'password1';        
+        $plan = 'personal';
+        
+        $this->assertNull($this->getUserService()->findUserByEmail($email));
+        
+        $this->getUserCreationController('createAction', array(
+            'email' => $email,
+            'password' => $password,
+            'plan' => $plan
+        ))->createAction();
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->findUserByEmail($email));
+        $this->assertEquals($plan, $userAccountPlan->getPlan()->getName());      
+    }
+    
+    
+    public function testAllVisiblePlansAreSetForUser() {
+        $visiblePlans = $this->getAccountPlanService()->listVisible();
+        $this->assertGreaterThan(0, count($visiblePlans));
+        
+        foreach ($visiblePlans as $plan) {
+            $email = 'user-'.$plan->getName().'@example.com';
+            $password = 'password1';
+
+            $this->assertNull($this->getUserService()->findUserByEmail($email));
+
+            $this->getUserCreationController('createAction', array(
+                'email' => $email,
+                'password' => $password,
+                'plan' => $plan->getName()
+            ))->createAction();
+
+            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->findUserByEmail($email));
+            $this->assertEquals($plan->getName(), $userAccountPlan->getPlan()->getName());               
+        }
+    }
+    
+    
 }
 
 
