@@ -203,20 +203,22 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @return UserAccountPlan
      */
-    public function getForUser(User $user) {
+    public function getForUser(User $user) {        
         $isActiveValues = array(
             true, false, null
         );
         
         foreach ($isActiveValues as $isActiveValue) {
-            $userAccountPlan = $this->getEntityRepository()->findOneBy(array(
+            $userAccountPlans = $this->getEntityRepository()->findBy(array(
                 'user' => $user,
-                'isActive' => $isActiveValue
-            ));
-
-            if (!is_null($userAccountPlan)) {
-                return $userAccountPlan;
-            }            
+                'isActive' => $isActiveValue                
+            ), array(
+                'id' => 'DESC'
+            ), 1);
+            
+            if (count($userAccountPlans)) {
+                return $userAccountPlans[0];
+            }           
         }
     }
     
