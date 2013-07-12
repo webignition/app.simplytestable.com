@@ -21,7 +21,13 @@ class GetActionPlanContraintsTest extends BaseControllerJsonTestCase {
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         
-        $this->assertEquals(array(), $responseObject->plan_constraints);
+        $this->assertInstanceOf('\stdClass', $responseObject->plan_constraints);        
+        $this->assertTrue(isset($responseObject->plan_constraints->credits));
+        $this->assertEquals(50, $responseObject->plan_constraints->credits->limit);
+        $this->assertEquals(0, $responseObject->plan_constraints->credits->used);
+        
+        $this->assertTrue(isset($responseObject->plan_constraints->urls_per_job));
+        $this->assertEquals(10, $responseObject->plan_constraints->urls_per_job);
     }
 
     
