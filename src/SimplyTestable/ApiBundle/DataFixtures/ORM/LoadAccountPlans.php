@@ -39,7 +39,17 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             'names' => array(
                 'basic'
             ),
-            'visible' => true
+            'visible' => true,
+            'constraints'  => array(
+                array(
+                    'name' => 'urls_per_job',
+                    'limit' => 10
+                ),
+                array(
+                    'name' => 'credits_per_month',
+                    'limit' => 50
+                )
+            )            
         ),
         array(
             'names' => array(
