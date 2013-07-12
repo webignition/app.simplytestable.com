@@ -4,6 +4,8 @@ namespace SimplyTestable\ApiBundle\Tests;
 
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\TimePeriod;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
@@ -254,10 +256,25 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     } 
     
     
-    protected function createAndPrepareJob($canonicalUrl, $userEmail = null) {
-        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail);
+    protected function createAndPrepareJob($canonicalUrl, $userEmail = null, $type = null) {
+        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type);
         $this->prepareJob($canonicalUrl, $job_id);
         return $job_id;
+    }
+    
+    protected function setJobTasksCompleted(Job $job) {
+        foreach ($job->getTasks() as $task) {
+            /* @var $task Task */            
+            $task->setState($this->getTaskService()->getCompletedState());
+            
+            $timePeriod = new TimePeriod();
+            $timePeriod->setStartDateTime(new \DateTime());
+            $timePeriod->setEndDateTime(new \DateTime());
+            $task->setTimePeriod($timePeriod);
+            
+            $this->getTaskService()->getEntityManager()->persist($task);
+            $this->getTaskService()->getEntityManager()->flush($task);
+        }        
     }
     
     
@@ -397,6 +414,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function getJobService() {
         return $this->container->get('simplytestable.services.jobservice');
     } 
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobRejectionReasonService
+     */
+    protected function getJobRejectionReasonService() {
+        return $this->container->get('simplytestable.services.jobrejectionreasonservice');
+    }    
     
     
     /**

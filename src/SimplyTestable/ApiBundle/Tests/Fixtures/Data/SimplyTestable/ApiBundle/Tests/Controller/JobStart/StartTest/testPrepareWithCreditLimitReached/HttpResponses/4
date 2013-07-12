@@ -1,0 +1,49 @@
+HTTP/1.1 200 OK
+Date: Wed, 03 Oct 2012 08:35:57 GMT
+Server: Apache
+Last-Modified: Fri, 20 Jul 2012 05:36:23 GMT
+ETag: "87625c-820-4c53c46c703c0"
+Accept-Ranges: bytes
+Content-Length: 2080
+Vary: Accept-Encoding,User-Agent
+Content-Type: text/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+<url>
+  <loc>http://two.example.com/1/</loc>
+</url>
+<url>
+  <loc>http://two.example.com/2/</loc>
+</url>
+<url>
+  <loc>http://two.example.com/3/</loc>
+</url>
+<url>
+  <loc>http://two.example.com/4/</loc>
+</url>
+<url>
+  <loc>http://two.example.com/5/</loc>
+</url>
+<url>
+  <loc>http://two.example.com/6/</loc>
+</url>
+<url>
+  <loc>http://two.example.com/7/</loc>
+</url>
+<url>
+  <loc>http://two.example.com/8/</loc>
+</url>
+<url>
+  <loc>http://two.example.com/9/</loc>
+</url>
+<url>
+  <loc>http://two.example.com/10/</loc>
+</url>
+</urlset>

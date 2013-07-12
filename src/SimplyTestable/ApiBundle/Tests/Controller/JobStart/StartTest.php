@@ -159,4 +159,33 @@ class StartTest extends BaseControllerJsonTestCase {
         $this->assertTrue($job->getState()->equals($this->getJobService()->getQueuedState()));         
     }
     
+    
+    public function testPrepareWithCreditLimitReached() {        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $email = 'user-basic@example.com';
+        $password = 'password1';
+        
+        $this->createUser($email, $password);        
+        
+        $job_id_1 = $this->createAndPrepareJob('http://one.example.com/', $email);
+        $job1 = $this->getJobService()->getById($job_id_1);
+        $this->getJobService()->getEntityManager()->refresh($job1);
+        $this->setJobTasksCompleted($job1);
+        
+        $job_id_2 = $this->createAndPrepareJob('http://two.example.com/', $email);
+        $job2 = $this->getJobService()->getById($job_id_2);
+        $this->getJobService()->getEntityManager()->refresh($job2);
+        $this->setJobTasksCompleted($job2);
+        
+        $job_id_3 = $this->createJobAndGetId('http://three.example.com/', $email);        
+                
+        $job3 = $this->getJobService()->getById($job_id_3);
+        $rejectionReason = $this->getJobRejectionReasonService()->getForJob($job3);
+        
+        $this->assertEquals('job-rejected', $job3->getState()->getName());
+        $this->assertEquals('plan-constraint-limit-reached', $rejectionReason->getReason());
+        $this->assertEquals('credits_per_month', $rejectionReason->getConstraint()->getName());      
+    }    
+    
 }
