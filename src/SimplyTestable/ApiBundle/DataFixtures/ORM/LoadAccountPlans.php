@@ -47,7 +47,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
                 ),
                 array(
                     'name' => 'credits_per_month',
-                    'limit' => 50
+                    'limit' => 500
                 )
             )            
         ),

@@ -17,33 +17,33 @@ Content-Type: text/xml
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
 <url>
-  <loc>http://one.example.com/1/</loc>
+  <loc>http://example.com/1/</loc>
 </url>
 <url>
-  <loc>http://one.example.com/2/</loc>
+  <loc>http://example.com/2/</loc>
 </url>
 <url>
-  <loc>http://one.example.com/3/</loc>
+  <loc>http://example.com/3/</loc>
 </url>
 <url>
-  <loc>http://one.example.com/4/</loc>
+  <loc>http://example.com/4/</loc>
 </url>
 <url>
-  <loc>http://one.example.com/5/</loc>
+  <loc>http://example.com/5/</loc>
 </url>
 <url>
-  <loc>http://one.example.com/6/</loc>
+  <loc>http://example.com/6/</loc>
 </url>
 <url>
-  <loc>http://one.example.com/7/</loc>
+  <loc>http://example.com/7/</loc>
 </url>
 <url>
-  <loc>http://one.example.com/8/</loc>
+  <loc>http://example.com/8/</loc>
 </url>
 <url>
-  <loc>http://one.example.com/9/</loc>
+  <loc>http://example.com/9/</loc>
 </url>
 <url>
-  <loc>http://one.example.com/10/</loc>
+  <loc>http://example.com/10/</loc>
 </url>
 </urlset>

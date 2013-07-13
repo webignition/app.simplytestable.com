@@ -160,30 +160,32 @@ class StartTest extends BaseControllerJsonTestCase {
     }
     
     
-    public function testPrepareWithCreditLimitReached() {        
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+    public function testPrepareWithCreditLimitReached() {
+        $tasksPerJob = 30;
+        $creditsPerMonth = 50;
+        $jobsRequiredToExhaustCredits = (int)ceil($creditsPerMonth/$tasksPerJob);
         
         $email = 'user-basic@example.com';
         $password = 'password1';
         
-        $this->createUser($email, $password);        
+        $this->createUser($email, $password);
         
-        $job_id_1 = $this->createAndPrepareJob('http://one.example.com/', $email);
-        $job1 = $this->getJobService()->getById($job_id_1);
-        $this->getJobService()->getEntityManager()->refresh($job1);
-        $this->setJobTasksCompleted($job1);
+        $this->getAccountPlanService()->find('basic')->getConstraintNamed('credits_per_month')->setLimit($creditsPerMonth);
         
-        $job_id_2 = $this->createAndPrepareJob('http://two.example.com/', $email);
-        $job2 = $this->getJobService()->getById($job_id_2);
-        $this->getJobService()->getEntityManager()->refresh($job2);
-        $this->setJobTasksCompleted($job2);
+        for ($jobIndex = 0; $jobIndex < $jobsRequiredToExhaustCredits; $jobIndex++) {
+            $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));           
+            $job = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com/', $email));
+            $this->getJobService()->getEntityManager()->refresh($job);
+            $this->setJobTasksCompleted($job);
+            $this->completeJob($job);            
+        }
         
-        $job_id_3 = $this->createJobAndGetId('http://three.example.com/', $email);        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
                 
-        $job3 = $this->getJobService()->getById($job_id_3);
-        $rejectionReason = $this->getJobRejectionReasonService()->getForJob($job3);
+        $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/', $email));
+        $rejectionReason = $this->getJobRejectionReasonService()->getForJob($job);
         
-        $this->assertEquals('job-rejected', $job3->getState()->getName());
+        $this->assertEquals('job-rejected', $job->getState()->getName());
         $this->assertEquals('plan-constraint-limit-reached', $rejectionReason->getReason());
         $this->assertEquals('credits_per_month', $rejectionReason->getConstraint()->getName());      
     }    

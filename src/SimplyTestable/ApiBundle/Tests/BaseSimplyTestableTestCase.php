@@ -299,8 +299,13 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function cancelJob($canonicalUrl, $jobId) {
         return $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
     }
-
-
+    
+    
+    protected function completeJob(Job $job) {
+        $this->setJobTasksCompleted($job);
+        $job->setState($this->getJobService()->getInProgressState());
+        $this->getJobService()->complete($job);
+    }
 
 
     /**
