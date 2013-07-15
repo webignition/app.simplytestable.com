@@ -233,6 +233,18 @@ class UserAccountPlanService extends EntityService {
     
     /**
      * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return int
+     */
+    public function countForUser(User $user) {
+        return count($this->getEntityRepository()->findBy(array(
+            'user' => $user
+        )));
+    }
+    
+    
+    /**
+     * 
      * @param string $stripeCustomer
      * @return User
      */

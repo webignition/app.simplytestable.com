@@ -94,6 +94,26 @@ class UserService extends UserManager {
     
     /**
      * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return boolean
+     */
+    public function isAdminUser(User $user) {
+        return $user->equals($this->getAdminUser());
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return boolean
+     */
+    public function isSpecialUser(User $user) {
+        return $this->isPublicUser($user) || $this->isAdminUser($user);
+    }
+    
+    
+    /**
+     * 
      * @param string $email
      * @param string $password
      * @return \SimplyTestable\ApiBundle\Entity\User
