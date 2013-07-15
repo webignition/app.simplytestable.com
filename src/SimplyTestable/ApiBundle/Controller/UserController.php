@@ -107,6 +107,14 @@ class UserController extends AbstractUserController
         return $this->get('simplytestable.services.stripeservice');
     }
     
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\AccountPlanService 
+     */
+    private function getAccountPlanService() {
+        return $this->get('simplytestable.services.accountplanservice');
+    }    
+    
     
     /**
      *
