@@ -13,6 +13,9 @@ class UserController extends AbstractUserController
     
     private function getUserSummary(User $user) {        
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
+        if (is_null($userAccountPlan)) {            
+            $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('basic'));
+        }
         
         $userSummary = array(
             'email' => $user->getEmailCanonical(),
