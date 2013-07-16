@@ -4,6 +4,8 @@ namespace SimplyTestable\ApiBundle\Tests;
 
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\TimePeriod;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
@@ -13,8 +15,11 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const USER_PASSWORD_RESET_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserPasswordResetController';
     const USER_EMAIL_CHANGE_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserEmailChangeController';
     const USER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserController';
+    const USER_ACCOUNT_PLAN_SUBSCRIPTION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController';
     const WORKER_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\WorkerController';
     const TASK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TaskController';
+    const STRIPE_WEBHOOK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Stripe\WebHookController';
+    const USER_STRIPE_EVENT_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserStripeEventController';
     
     public function setUp() {
         parent::setUp();
@@ -25,17 +30,14 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeTestAccountPlanContraints();
         $this->removeTestAccountPlans();
         $this->removeAllUserEmailChangeRequests();
-        $this->rebuildDefaultUserState();
+        $this->removeAllStripeEvents();
+        $this->rebuildDefaultDataState();
         $this->clearRedis();
-    }   
-
+    }
     
-    
-    protected function rebuildDefaultUserState() {
-        $this->removeAllUsers();        
-        $this->createPublicUserIfMissing();
-        $this->createAdminUserIfMissing();
-        $this->createPublicUserAccountPlan();        
+    protected function rebuildDefaultDataState() {
+        $this->removeAllUsers();
+        self::loadDataFixtures();
     }
     
     
@@ -43,7 +45,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $user = $this->getUserService()->getPublicUser();
         $plan = $this->getAccountPlanService()->find('public');
         
-        $this->getUserAccountPlanService()->create($user, $plan);          
+        $this->getUserAccountPlanService()->subscribe($user, $plan);          
     }
     
     
@@ -120,6 +122,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $methodName
      * @param array $postData
      * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController
+     */
+    protected function getUserAccountPlanSubscriptionController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::USER_ACCOUNT_PLAN_SUBSCRIPTION_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }     
+    
+    
+    /**
+     * 
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
      * @return \SimplyTestable\ApiBundle\Controller\UserPasswordResetController
      */
     protected function getUserPasswordResetController($methodName, $postData = array(), $queryData = array()) {
@@ -174,6 +188,29 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         return $this->getController(self::TASK_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }      
     
+    /**
+     * 
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\Stripe\WebHookController
+     */
+    protected function getStripeWebHookController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::STRIPE_WEBHOOK_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }     
+    
+
+    /**
+     * 
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\UserStripeEventController
+     */
+    protected function getUserStripeEventController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::USER_STRIPE_EVENT_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }     
+    
     
     /**
      * 
@@ -219,10 +256,25 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     } 
     
     
-    protected function createAndPrepareJob($canonicalUrl, $userEmail = null) {
-        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail);
+    protected function createAndPrepareJob($canonicalUrl, $userEmail = null, $type = null) {
+        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type);
         $this->prepareJob($canonicalUrl, $job_id);
         return $job_id;
+    }
+    
+    protected function setJobTasksCompleted(Job $job) {
+        foreach ($job->getTasks() as $task) {
+            /* @var $task Task */            
+            $task->setState($this->getTaskService()->getCompletedState());
+            
+            $timePeriod = new TimePeriod();
+            $timePeriod->setStartDateTime(new \DateTime());
+            $timePeriod->setEndDateTime(new \DateTime());
+            $task->setTimePeriod($timePeriod);
+            
+            $this->getTaskService()->getEntityManager()->persist($task);
+            $this->getTaskService()->getEntityManager()->flush($task);
+        }        
     }
     
     
@@ -247,8 +299,13 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function cancelJob($canonicalUrl, $jobId) {
         return $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
     }
-
-
+    
+    
+    protected function completeJob(Job $job) {
+        $this->setJobTasksCompleted($job);
+        $job->setState($this->getJobService()->getInProgressState());
+        $this->getJobService()->complete($job);
+    }
 
 
     /**
@@ -366,6 +423,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     /**
      *
+     * @return \SimplyTestable\ApiBundle\Services\JobRejectionReasonService
+     */
+    protected function getJobRejectionReasonService() {
+        return $this->container->get('simplytestable.services.jobrejectionreasonservice');
+    }    
+    
+    
+    /**
+     *
      * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
      */
     protected function getJobUserAccountPlanEnforcementService() {
@@ -470,6 +536,24 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getHttpClientService() {
         return $this->container->get('simplytestable.services.httpclientservice');
+    }     
+
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TestStripeService
+     */
+    protected function getStripeService() {
+        return $this->container->get('simplytestable.services.stripeservice');
+    }  
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\StripeEventService
+     */
+    protected function getStripeEventService() {
+        return $this->container->get('simplytestable.services.stripeeventservice');
     }         
     
     
@@ -534,6 +618,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function removeAllUserEmailChangeRequests() {
         $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest');      
     }
+    
+    protected function removeAllStripeEvents() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Stripe\Event');      
+    }    
     
     
     protected function removeAllJobRejectionReasons() {

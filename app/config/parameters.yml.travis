@@ -5,6 +5,7 @@ parameters:
     database_name: myapp_test
     database_user: root
     database_password: null
+    mailer_auth_mode: login
     mailer_transport: smtp
     mailer_host: localhost
     mailer_user: null
@@ -13,3 +14,5 @@ parameters:
     secret: SetThis!
     admin_user_email: travis.admin@example.com
     admin_user_password: password1
+    stripe_api_key: stripe_api_key_value
+    default_trial_period: 30

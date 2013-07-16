@@ -1,0 +1,37 @@
+{
+  "id": "evt_1y4YHpNISGpVqC",
+  "created": 1370544419,
+  "livemode": false,
+  "type": "customer.subscription.created",
+  "data": {
+    "object": {
+      "plan": {
+        "interval": "month",
+        "name": "Studio",
+        "amount": 1900,
+        "currency": "gbp",
+        "id": "studio-19",
+        "object": "plan",
+        "livemode": false,
+        "interval_count": 1,
+        "trial_period_days": 30
+      },
+      "object": "subscription",
+      "start": 1370544419,
+      "status": "trialing",
+      "customer": "cus_1spX4UqYQUwPh0",
+      "cancel_at_period_end": false,
+      "current_period_start": 1370544419,
+      "current_period_end": 1371946086,
+      "ended_at": null,
+      "trial_start": 1370544419,
+      "trial_end": 1371946086,
+      "canceled_at": null,
+      "quantity": 1
+    }
+  },
+  "object": "event",
+  "pending_webhooks": 1,
+  "request": "iar_1y4YEt1S1KiJPk"
+}
+

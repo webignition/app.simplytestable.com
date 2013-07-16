@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Entity;;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * 
@@ -10,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     name="UserAccountPlan"
  * )
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\UserAccountPlanRepository")
+ * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class UserAccountPlan
 {
@@ -41,8 +43,36 @@ class UserAccountPlan
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Plan")
      * @ORM\JoinColumn(name="accountplan_id", referencedColumnName="id", nullable=false)
+     * @SerializerAnnotation\Expose
      */    
     private $plan;
+    
+    
+    /**
+     *
+     * @var boolean 
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isActive = true;
+    
+    
+    /**
+     *
+     * @var string 
+     * @ORM\Column(type="string", nullable=true)
+     * @SerializerAnnotation\Expose
+     */    
+    private $stripeCustomer = null;
+    
+    
+    /**
+     *
+     * @var int
+     * @ORM\Column(type="integer", nullable=true)
+     * @SerializerAnnotation\Expose
+     */
+    private $startTrialPeriod = 30;
+    
 
     /**
      * Get id
@@ -98,5 +128,84 @@ class UserAccountPlan
     public function getPlan()
     {
         return $this->plan;
+    }
+    
+    
+    /**
+     * Set isActive
+     *
+     * @param boolean $isActive
+     * @return UserAccountPlan
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+    
+        return $this;
+    }
+
+    /**
+     * Get isActive
+     *
+     * @return boolean 
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }    
+
+    /**
+     * Set stripeCustomer
+     *
+     * @param string $stripeCustomer
+     * @return UserAccountPlan
+     */
+    public function setStripeCustomer($stripeCustomer)
+    {
+        $this->stripeCustomer = $stripeCustomer;
+    
+        return $this;
+    }
+
+    /**
+     * Get stripeCustomer
+     *
+     * @return string 
+     */
+    public function getStripeCustomer()
+    {
+        return $this->stripeCustomer;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasStripeCustomer() {
+        return !is_null($this->getStripeCustomer());
+    }
+
+    /**
+     * Set startTrialPeriod
+     *
+     * @param integer $startTrialPeriod
+     * @return UserAccountPlan
+     */
+    public function setStartTrialPeriod($startTrialPeriod)
+    {
+        $this->startTrialPeriod = $startTrialPeriod;
+    
+        return $this;
+    }
+
+    /**
+     * Get startTrialPeriod
+     *
+     * @return integer 
+     */
+    public function getStartTrialPeriod()
+    {
+        return $this->startTrialPeriod;
     }
 }

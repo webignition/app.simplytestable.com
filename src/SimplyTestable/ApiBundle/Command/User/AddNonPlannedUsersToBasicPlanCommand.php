@@ -48,7 +48,7 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
             $output->writeln('Setting basic plan for ' . $user->getUsername());                       
             
             if (!$this->isDryRun($input)) {     
-                $this->getUserAccountPlanService()->create($user, $plan);                
+                $this->getUserAccountPlanService()->subscribe($user, $plan);                
             }
         }
         

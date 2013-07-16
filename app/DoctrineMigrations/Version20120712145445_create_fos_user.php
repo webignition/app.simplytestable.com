@@ -34,17 +34,4 @@ class Version20120712145445_create_fos_user extends BaseMigration
         
         parent::down($schema);        
     }
-    
-    public function postUp(Schema $schema) {
-        $user = new User();
-        $user->setEmail('public@simplytestable.com');
-        $user->setPlainPassword('public');
-        $user->setUsername('public');        
-        
-        $userManager = $this->container->get('fos_user.user_manager');        
-        $userManager->updateUser($user);
-        
-        $manipulator = $this->container->get('fos_user.util.user_manipulator');
-        $manipulator->activate($user->getUsername());
-    }
 }

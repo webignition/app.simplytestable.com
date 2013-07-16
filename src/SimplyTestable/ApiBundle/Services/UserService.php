@@ -56,6 +56,15 @@ class UserService extends UserManager {
     
     
     /**
+     * 
+     * @return boolean
+     */
+    public function hasPublicUser() {
+        return !is_null($this->getPublicUser());
+    }
+    
+    
+    /**
      *
      * @return \SimplyTestable\ApiBundle\Entity\User
      */    
@@ -66,11 +75,40 @@ class UserService extends UserManager {
     
     /**
      * 
+     * @return boolean
+     */
+    public function hasAdminUser() {
+        return !is_null($this->getAdminUser());
+    }    
+    
+    
+    /**
+     * 
      * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @return boolean
      */
     public function isPublicUser(User $user) {
         return $user->equals($this->getPublicUser());
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return boolean
+     */
+    public function isAdminUser(User $user) {
+        return $user->equals($this->getAdminUser());
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return boolean
+     */
+    public function isSpecialUser(User $user) {
+        return $this->isPublicUser($user) || $this->isAdminUser($user);
     }
     
     

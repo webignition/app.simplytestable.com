@@ -2,11 +2,11 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
-use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\StripeService;
 
 
 class UserAccountPlanService extends EntityService {
@@ -19,14 +19,30 @@ class UserAccountPlanService extends EntityService {
      */
     private $userService;
     
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\StripeService 
+     */
+    private $stripeService;
+    
+    
+    /**
+     *
+     * @var int 
+     */
+    private $defaultTrialPeriod = null;    
+    
     /**
      *
      * @param \Doctrine\ORM\EntityManager $entityManager
      * @param \SimplyTestable\ApiBundle\Services\UserService $userService 
      */
-    public function __construct(EntityManager $entityManager, UserService $userService) {
+    public function __construct(EntityManager $entityManager, UserService $userService, StripeService $stripeService, $defaultTrialPeriod) {
         $this->entityManager = $entityManager;      
         $this->userService = $userService;
+        $this->stripeService = $stripeService;
+        $this->defaultTrialPeriod = $defaultTrialPeriod;
     }     
     
     /**
@@ -44,10 +60,20 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
      * @return UserAccountPlan
      */
-    public function create(User $user, AccountPlan $plan) {
+    private function create(User $user, AccountPlan $plan, $stripeCustomer = null, $startTrialPeriod = null) {
+        $this->deactivateAllForUser($user);
+        
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setUser($user);
         $userAccountPlan->setPlan($plan);
+        $userAccountPlan->setStripeCustomer($stripeCustomer);        
+        $userAccountPlan->setIsActive(true);
+        
+        if (is_null($startTrialPeriod)) {
+            $startTrialPeriod = $this->defaultTrialPeriod;
+        }
+        
+        $userAccountPlan->setStartTrialPeriod($startTrialPeriod); 
         
         return $this->persistAndFlush($userAccountPlan);
     }
@@ -59,15 +85,124 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
      * @return UserAccountPlan|false
      */
-    public function modify(User $user, AccountPlan $newPlan) {
-        $existingUserAccountPlan = $this->getForUser($user);
-        if (is_null($existingUserAccountPlan)) {
-            return false;
+    public function subscribe(User $user, AccountPlan $newPlan) {
+        if (!$this->hasForUser($user)) {
+            if ($newPlan->getIsPremium()) {
+                return $this->stripeService->subscribe($this->create(
+                    $user,
+                    $newPlan,
+                    $this->stripeService->createCustomer($user)
+                ));                
+            } else {
+                return $this->create($user, $newPlan);
+            }
         }
         
-        $this->getEntityManager()->remove($existingUserAccountPlan);
+        $currentUserAccountPlan = $this->getForUser($user);
         
-        return $this->create($user, $newPlan);
+        $stripeCustomerRecord = $this->stripeService->getCustomer($currentUserAccountPlan);
+
+        if ($this->isSameAccountPlan($currentUserAccountPlan->getPlan(), $newPlan)) {
+            return $currentUserAccountPlan;
+        }
+        
+        if ($this->isNonPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
+            return $this->create($user, $newPlan);
+        }
+        
+        $stripeCustomer = $currentUserAccountPlan->hasStripeCustomer() ? $currentUserAccountPlan->getStripeCustomer() : $this->stripeService->createCustomer($user);
+        
+        if ($this->isNonPremiumToPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {                        
+            return $this->stripeService->subscribe($this->create(
+                $user,
+                $newPlan,
+                $stripeCustomer,
+                $currentUserAccountPlan->getStartTrialPeriod()
+            ));
+        }
+        
+        if ($this->isPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
+            $this->stripeService->unsubscribe($currentUserAccountPlan);
+            return $this->create(
+                $user,
+                $newPlan,
+                $stripeCustomer,
+                $this->getStartTrialPeriod($stripeCustomerRecord['subscription']['trial_end'])    
+            );
+        }        
+
+        return $this->stripeService->subscribe($this->create(
+            $user,
+            $newPlan,
+            $stripeCustomer,
+            $this->getStartTrialPeriod($stripeCustomerRecord['subscription']['trial_end'])
+        ));
+    }
+    
+    
+    /**
+     * 
+     * @param int $trialEndTimestamp
+     * @return int
+     */
+    private function getStartTrialPeriod($trialEndTimestamp) {        
+        $difference = $trialEndTimestamp - time();
+        return (int)ceil($difference / 86400);
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $currentPlan
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
+     * @return boolean
+     */
+    private function isSameAccountPlan(AccountPlan $currentPlan, AccountPlan $newPlan) {
+        return $currentPlan->getName() == $newPlan->getName();
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $currentPlan
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
+     * @return boolean
+     */
+    private function isNonPremiumToPremiumChange(AccountPlan $currentPlan, AccountPlan $newPlan) {
+        return $currentPlan->getIsPremium() == false && $newPlan->getIsPremium() === true;
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $currentPlan
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
+     * @return boolean
+     */
+    private function isPremiumToPremiumChange(AccountPlan $currentPlan, AccountPlan $newPlan) {
+        return $currentPlan->getIsPremium() === true && $newPlan->getIsPremium() === true;
+    }    
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $currentPlan
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
+     * @return boolean
+     */
+    private function isPremiumToNonPremiumChange(AccountPlan $currentPlan, AccountPlan $newPlan) {
+        return $currentPlan->getIsPremium() === true && $newPlan->getIsPremium() == false;
+    }     
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $currentPlan
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
+     * @return boolean
+     */
+    private function isNonPremiumToNonPremiumChange(AccountPlan $currentPlan, AccountPlan $newPlan) {
+        return $currentPlan->getIsPremium() == false && $newPlan->getIsPremium() == false;
     }
     
     
@@ -76,8 +211,90 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @return UserAccountPlan
      */
-    public function getForUser(User $user) {
-        return $this->getEntityRepository()->findOneByUser($user);
+    public function getForUser(User $user) {        
+        $isActiveValues = array(
+            true, false, null
+        );
+        
+        foreach ($isActiveValues as $isActiveValue) {
+            $userAccountPlans = $this->getEntityRepository()->findBy(array(
+                'user' => $user,
+                'isActive' => $isActiveValue                
+            ), array(
+                'id' => 'DESC'
+            ), 1);
+            
+            if (count($userAccountPlans)) {
+                return $userAccountPlans[0];
+            }           
+        }
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @return int
+     */
+    public function countForUser(User $user) {
+        return count($this->getEntityRepository()->findBy(array(
+            'user' => $user
+        )));
+    }
+    
+    
+    /**
+     * 
+     * @param string $stripeCustomer
+     * @return User
+     */
+    public function getUserByStripeCustomer($stripeCustomer) {
+        $userAccountPlan = $this->getEntityRepository()->findOneBy(array(
+            'stripeCustomer' => $stripeCustomer
+        ));
+        
+        if (!is_null($userAccountPlan)) {
+            return $userAccountPlan->getUser();
+        }
+    }
+    
+
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     */
+    public function removeCurrentForUser(User $user) {
+        $userAccountPlans = $this->getEntityRepository()->findBy(array(
+            'user' => $user,            
+        ), array(
+            'id' => 'DESC'
+        ), 1);
+        
+        if (count($userAccountPlans) === 1) {        
+            $this->getEntityManager()->remove($userAccountPlans[0]);
+            $this->getEntityManager()->flush();
+        }
+    }    
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     */
+    public function deactivateAllForUser(User $user) {
+        $userAccountPlans = $this->getEntityRepository()->findBy(array(
+            'user' => $user
+        ));
+        
+        foreach ($userAccountPlans as $userAccountPlan) {
+            /* @var $userAccountPlan UserAccountPlan */
+            $userAccountPlan->setIsActive(false);
+            $this->getEntityManager()->persist($userAccountPlan);
+        }
+        
+        if (count($userAccountPlans)) {
+            $this->getEntityManager()->flush();
+        }
     }
     
     
@@ -117,7 +334,19 @@ class UserAccountPlanService extends EntityService {
            $this->getEntityRepository()->findUserIdsWithPlan(),
            array($this->userService->getAdminUser()->getId())
         ));
-    }     
+    }   
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
+     * @return array
+     */
+    public function findAllByPlan(AccountPlan $plan) {
+        return $this->getEntityRepository()->findBy(array(
+            'plan' => $plan            
+        ));
+    }
     
 
 }

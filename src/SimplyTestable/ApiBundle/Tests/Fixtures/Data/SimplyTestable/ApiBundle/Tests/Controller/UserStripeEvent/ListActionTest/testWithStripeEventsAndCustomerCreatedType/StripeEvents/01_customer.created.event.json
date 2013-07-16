@@ -1,0 +1,24 @@
+{
+  "id": "evt_23aeu5EiYS3caY",
+  "created": 1371817019,
+  "livemode": false,
+  "type": "customer.created",
+  "data": {
+    "object": {
+      "object": "customer",
+      "created": 1371817019,
+      "id": "cus_23aeeDYE1rZMH5",
+      "livemode": false,
+      "description": null,
+      "active_card": null,
+      "email": "jon@webignition.net",
+      "delinquent": false,
+      "subscription": null,
+      "discount": null,
+      "account_balance": 0
+    }
+  },
+  "object": "event",
+  "pending_webhooks": 1,
+  "request": "iar_23aeJEC0B4h46g"
+}

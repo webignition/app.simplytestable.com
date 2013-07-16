@@ -90,6 +90,8 @@ class JobPreparationService {
     
     
     public function prepare(Job $job) {        
+        $this->processedUrls = array();
+        
         if (!$this->jobService->isNew($job)) {
             return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
         }  
@@ -150,7 +152,7 @@ class JobPreparationService {
         $timePeriod->setStartDateTime(new \DateTime());
         $job->setTimePeriod($timePeriod);   
         
-        $this->jobService->persistAndFlush($job);        
+        $this->jobService->persistAndFlush($job);
         
         return self::RETRUN_CODE_OK;
     }

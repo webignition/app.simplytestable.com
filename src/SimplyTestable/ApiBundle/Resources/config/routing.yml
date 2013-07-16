@@ -67,7 +67,19 @@ user_create:
 
 user:
   pattern: /user/{email_canonical}/
-  defaults: { _controller: SimplyTestableApiBundle:User:get, _format: json }             
+  defaults: { _controller: SimplyTestableApiBundle:User:get, _format: json }                   
+  
+user_card_associate:
+  pattern: /user/{email_canonical}/card/{stripe_card_token}/associate/
+  defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:associateCard, _format: json }    
+  
+user_plan_subscribe:
+  pattern: /user/{email_canonical}/{plan_name}/subscribe/
+  defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:subscribe, _format: json }               
+  
+user_list_stripe_events:
+  pattern: /user/{email_canonical}/stripe-events/{type}/
+  defaults: { _controller: SimplyTestableApiBundle:UserStripeEvent:list, _format: json }      
   
 user_activate:
   pattern: /user/activate/{token}/
@@ -120,3 +132,7 @@ leave_readonly:
 enable_backup_readonly:
     pattern: /maintenance/enable-backup-read-only/
     defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableBackupReadOnly, _format: json }
+    
+stripe_webhook_receiver:
+    pattern: /stripe/webhook/receiver/
+    defaults: { _controller: SimplyTestableApiBundle:Stripe\WebHook:index, _format: json }    

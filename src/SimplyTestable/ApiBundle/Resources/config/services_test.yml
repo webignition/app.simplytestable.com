@@ -12,3 +12,8 @@ services:
         objectManager: "@doctrine.orm.entity_manager"
         class: %fos_user.model.user.class%
         tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator    
+        
+  simplytestable.services.stripeService:
+    class:   SimplyTestable\ApiBundle\Services\TestStripeService
+    arguments: 
+        apiKey: "%stripe_api_key%"         

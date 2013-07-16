@@ -45,6 +45,10 @@ class JobStartController extends ApiController
             if ($this->getJobUserAccountPlanEnforcementService()->isSingleUrlLimitReachedForWebsite($this->getWebsite())) {                
                 return $this->rejectAndRedirect($this->getJobUserAccountPlanEnforcementService()->getSingleUrlJobLimitConstraint());
             }
+        }        
+        
+        if ($this->getJobUserAccountPlanEnforcementService()->isUserCreditLimitReached()) {
+            return $this->rejectAndRedirect($this->getJobUserAccountPlanEnforcementService()->getCreditsPerMonthConstraint());
         }
         
         $existingJobs = $this->getJobService()->getEntityRepository()->getAllByWebsiteAndStateAndUserAndType(

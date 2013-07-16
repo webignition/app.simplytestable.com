@@ -12,39 +12,4 @@ use SimplyTestable\BaseMigrationsBundle\Migration\EntityModificationMigration,
  */
 class Version20120906125907_add_CSS_validation_TaskType extends EntityModificationMigration
 {
-    private $taskTypes = array(
-        'CSS validation' => array(
-            'description' => 'Validates the CSS related to a given web document URL',
-            'class' => 'verification',
-            'selectable' => true
-        )
-    );
-    
-    public function postUp(Schema $schema)
-    {
-        foreach ($this->taskTypes as $name => $properties) {
-            $class = $taskTypeClass = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->findOneByName($properties['class']);
- 
-            $taskType = new Type();
-            $taskType->setClass($class);
-            $taskType->setDescription($properties['description']);
-            $taskType->setName($name);
-            
-            if ($properties['selectable'] === true) {
-                $taskType->setSelectable(true);
-            }
-            
-            $this->getEntityManager()->persist($taskType);
-            $this->getEntityManager()->flush();            
-        }
-    }
-    
-    public function postDown(Schema $schema)
-    {
-        foreach ($this->taskTypes as $name => $properties) {            
-            $taskType = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->findOneByName($properties[$name]);
-            $this->getEntityManager()->remove($taskType);
-            $this->getEntityManager()->flush();
-        }        
-    }
 }

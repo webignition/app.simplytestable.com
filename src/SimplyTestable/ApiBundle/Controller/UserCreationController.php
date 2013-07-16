@@ -14,7 +14,8 @@ class UserCreationController extends AbstractUserController
         $this->setInputDefinitions(array(
             'createAction' => new InputDefinition(array(
                 new InputArgument('email', InputArgument::REQUIRED, 'User email address'),
-                new InputArgument('password', InputArgument::REQUIRED, 'User password')
+                new InputArgument('password', InputArgument::REQUIRED, 'User password'),
+                new InputArgument('plan', InputArgument::OPTIONAL, 'Plan for user')
             ))
         ));
         
@@ -44,12 +45,25 @@ class UserCreationController extends AbstractUserController
         
         $user = $this->getUserService()->create($email, $password);
         
-        if ($user instanceof User) {
-            $plan = $this->getAccountPlanService()->find(self::DEFAULT_ACCOUNT_PLAN_NAME);        
-            $this->getUserAccountPlanService()->create($user, $plan);            
+        if ($user instanceof User) {    
+            $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan());            
         }
         
         return new \Symfony\Component\HttpFoundation\Response();
+    }
+    
+    
+    /**
+     * 
+     * @return string
+     */
+    private function getNewUserPlan() {
+        $planName = $this->getArguments('createAction')->get('plan');
+        if (is_null($planName) || !$this->getAccountPlanService()->has($planName)) {
+            $planName = self::DEFAULT_ACCOUNT_PLAN_NAME;
+        }
+        
+        return $this->getAccountPlanService()->find($planName);    
     }
     
     

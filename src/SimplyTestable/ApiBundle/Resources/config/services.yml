@@ -139,6 +139,8 @@ services:
     arguments: 
         entityManager: "@doctrine.orm.entity_manager" 
         userService: "@simplytestable.services.userservice" 
+        stripeService: "@simplytestable.services.stripeservice" 
+        defaultTrialPeriod: "%default_trial_period%"
         
   simplytestable.services.useremailchangerequestservice:
     class:  SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService
@@ -152,6 +154,7 @@ services:
     arguments: 
         userAccountPlanService: "@simplytestable.services.userAccountPlanService" 
         jobService: "@simplytestable.services.jobservice"        
+        taskService: "@simplytestable.services.taskservice" 
         
   simplytestable.services.jobRejectionReasonService:
     class:   SimplyTestable\ApiBundle\Services\JobRejectionReasonService
@@ -166,3 +169,13 @@ services:
         jobTypeService: "@simplytestable.services.jobtypeservice"
         websiteService: "@simplytestable.services.websiteservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
+        
+  simplytestable.services.stripeEventService:
+    class:   SimplyTestable\ApiBundle\Services\StripeEventService
+    arguments: 
+        entityManager: "@doctrine.orm.entity_manager"           
+        
+  simplytestable.services.stripeService:
+    class:   SimplyTestable\ApiBundle\Services\StripeService
+    arguments: 
+        apiKey: "%stripe_api_key%"           

@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Entity\Account\Plan;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * 
@@ -9,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(
  *     name="AccountPlan"
  * )
+ * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class Plan
 {
@@ -28,6 +30,7 @@ class Plan
      *
      * @var string
      * @ORM\Column(type="string", unique=true)
+     * @SerializerAnnotation\Expose
      */
     private $name;
     
@@ -38,7 +41,16 @@ class Plan
      * 
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint", mappedBy="plan", cascade={"persist", "remove"})   
      */ 
-    private $constraints;  
+    private $constraints;
+    
+    
+    /**
+     *
+     * @var boolean
+     * @ORM\Column(type="boolean", nullable=true)
+     * @SerializerAnnotation\Expose
+     */
+    private $isPremium = false;
     
     
     /**
@@ -47,6 +59,14 @@ class Plan
      * @ORM\Column(type="boolean")
      */
     private $isVisible = false;
+    
+    
+    /**
+     *
+     * @var string
+     * @ORM\Column(type="string", nullable=true)
+     */    
+    private $stripe_id = null;
     
     
     /**
@@ -172,5 +192,52 @@ class Plan
         }
         
         return null;        
+    }
+   
+
+    /**
+     * Set isPremium
+     *
+     * @param boolean $isPremium
+     * @return Plan
+     */
+    public function setIsPremium($isPremium)
+    {
+        $this->isPremium = $isPremium;
+    
+        return $this;
+    }
+
+    /**
+     * Get isPremium
+     *
+     * @return boolean 
+     */
+    public function getIsPremium()
+    {
+        return $this->isPremium;
+    }
+
+    /**
+     * Set stripe_id
+     *
+     * @param string $stripeId
+     * @return Plan
+     */
+    public function setStripeId($stripeId)
+    {
+        $this->stripe_id = $stripeId;
+    
+        return $this;
+    }
+
+    /**
+     * Get stripe_id
+     *
+     * @return string 
+     */
+    public function getStripeId()
+    {
+        return $this->stripe_id;
     }
 }

@@ -62,7 +62,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCas
         
         $fooPlan = $this->createAccountPlan('foo-plan');
         
-        $this->getUserAccountPlanService()->modify($user1, $fooPlan);        
+        $this->getUserAccountPlanService()->subscribe($user1, $fooPlan);        
         
         $userEmailAddresses = array(
             'user2@example.com',
