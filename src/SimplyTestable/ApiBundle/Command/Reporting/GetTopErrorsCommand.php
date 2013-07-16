@@ -176,7 +176,9 @@ EOF
                 
                 if ($decodedOutput instanceof \stdClass) {
                     foreach ($decodedOutput->messages as $message) {
-                        $messages[] = $message->message;              
+                        if ($message->type == 'error') {
+                            $messages[] = $message->message;   
+                        }                                   
                     }                    
                 }
                 
