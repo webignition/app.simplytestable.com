@@ -170,6 +170,10 @@ EOF
     private function getMessagesForTaskOutput(TaskOutput $taskOutput) {
         $messages = array();
         
+        if ($taskOutput->getErrorCount() === 0) {
+            return $messages;
+        }
+        
         switch ($this->taskType->getName()) {
             case 'HTML validation':
                 $decodedOutput = json_decode($taskOutput->getOutput());
