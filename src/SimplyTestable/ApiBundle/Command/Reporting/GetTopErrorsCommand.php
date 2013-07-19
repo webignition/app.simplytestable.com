@@ -130,10 +130,12 @@ EOF
                 $this->messages[$messageToStore]['frequency']++;
                 
                 if ($normalisationResult->isNormalised()) {
-//                    if ($normalisationResult->getNormalisedError()->getNormalForm() == 'value of attribute "%0" cannot be ""%1"%0"') {
+//                    if ($normalisationResult->getNormalisedError()->getNormalForm() == 'character "%0""%1"id"') {
 //                        var_dump($message);
 //                        exit();
 //                    }
+                    
+                    // character """ is not allowed in the value of attribute "id"
                             
                     // value of attribute "%0" cannot be ""%1"%0"
                     
@@ -144,19 +146,13 @@ EOF
                             $this->messages[$messageToStore]['parameters'][$position] = array();
                         }
                         
-                        if (count($this->messages[$messageToStore]['parameters'][$position]) <= 10) {
-                            if (!isset($this->messages[$messageToStore]['parameters'][$position][$value])) {
-                                $this->messages[$messageToStore]['parameters'][$position][$value] = 0;
-                            }
 
-                                                         
+                        if (!isset($this->messages[$messageToStore]['parameters'][$position][$value])) {
+                            $this->messages[$messageToStore]['parameters'][$position][$value] = 0;
                         }
+                       
                         
-                        if (isset($this->messages[$messageToStore]['parameters'][$position][$value])) {
-                            $this->messages[$messageToStore]['parameters'][$position][$value]++;
-                        }                        
-                        
-                        //$this->messages[$messageToStore]['parameters'][$position][$value]++;
+                        $this->messages[$messageToStore]['parameters'][$position][$value]++;
                         
                        
                     }
@@ -178,7 +174,7 @@ EOF
         $output->writeln('Total messages analysed: ' . count($this->messages));
         $output->writeln('');
         
-        arsort($this->messages);
+        $this->sortMessagesByFrequency();
         
         $this->messages = array_slice($this->messages, 0, $this->getReportLimit());
         
@@ -192,15 +188,7 @@ EOF
                     $parametersSection = ' (';
                     
                     foreach ($messageStatistics['parameters'] as $position => $valueStatistics) {
-                        if ($position === 0) {
-//                            var_dump($valueStatistics);
-//                            
-//                            arsort($valueStatistics);
-////                            
-////                            
-//                            var_dump($valueStatistics);
-//                            exit();                            
-                            
+                        if ($position === 0) {                                                     
                             arsort($valueStatistics);
                             
                             $keyValuePairs = array();
@@ -209,20 +197,11 @@ EOF
                                 $keyValuePairs[] = $key.':'.$value;
                             }
                             
-                            $parametersSection .= implode(', ', $keyValuePairs);
-                            
-//                            if (isset($valueStatistics['sizes']) && $valueStatistics['sizes'] === 5) {
-
-//                            }
-                            
-
+                            $parametersSection .= implode(', ', array_slice($keyValuePairs, 0, 10));
                         }
                     }
                     
                     $parametersSection .= ')';
-                    
-//                    var_dump($messageStatistics['parameters']);
-//                    exit();
                 }
                 
                 $output->writeln($reportLine .  $parametersSection);
@@ -230,7 +209,26 @@ EOF
         }        
         
         return self::RETURN_CODE_OK;
-    }    
+    } 
+    
+    
+    private function sortMessagesByFrequency() {
+        $frequencyIndex = array();
+        
+        foreach ($this->messages as $message => $messageStatistics) {
+            $frequencyIndex[$message] = $messageStatistics['frequency'];
+        }
+        
+        arsort($frequencyIndex);
+        
+        $messages = array();
+        
+        foreach ($frequencyIndex as $message => $frequency) {
+            $messages[$message] = $this->messages[$message];
+        }
+
+        $this->messages = $messages;
+    }
     
     /**
      * 
