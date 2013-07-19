@@ -10,6 +10,8 @@ use SimplyTestable\ApiBundle\Command\BaseCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
+use webignition\HtmlValidationErrorNormaliser\HtmlValidationErrorNormaliser;
+
 
 class GetTopErrorsCommand extends BaseCommand
 {
@@ -55,7 +57,7 @@ class GetTopErrorsCommand extends BaseCommand
             ->addOption('dry-run', null, InputOption::VALUE_OPTIONAL, 'Run through the process without writing any data')
             ->addOption('task-type', null, InputOption::VALUE_REQUIRED, 'Name of task type for which to generate report')
             ->addOption('task-output-limit', null, InputOption::VALUE_OPTIONAL, 'Limit the number of task outputs processed')
-            ->addOption('report-limit', null, InputOption::VALUE_OPTIONAL, 'Limit the number lines in the report')
+            ->addOption('report-limit', null, InputOption::VALUE_OPTIONAL, 'Limit the number lines in the report')            
             ->setHelp(<<<EOF
 Generate top errors report by task type.
 EOF
@@ -100,6 +102,8 @@ EOF
         
         $processedTaskOutputCount = 0;
         
+        $normaliser = new HtmlValidationErrorNormaliser();
+        
         foreach ($taskOutputIds as $taskOutputId) {
             $processedTaskOutputCount++;
             $output->writeln('Processing task output ['.$taskOutputId.'] ['.$processedTaskOutputCount.' of '.$taskOutputCount.']');
@@ -108,31 +112,120 @@ EOF
             
             $messages = $this->getMessagesForTaskOutput($taskOutput);
             
-            foreach ($messages as $message) {
-                if (!array_key_exists($message, $this->messages)) {
-                    $this->messages[$message] = 0;
+            foreach ($messages as $message) {                
+                $normalisationResult = $normaliser->normalise($message);                
+                $messageToStore = $normalisationResult->isNormalised() ? $normalisationResult->getNormalisedError()->getNormalForm() : $message;
+
+                if (!array_key_exists($messageToStore, $this->messages)) {
+                    $this->messages[$messageToStore] = array(
+                        'frequency' => 0,
+                        'normalised' => $normalisationResult->isNormalised()
+                    );
+                    
+                    if ($normalisationResult->isNormalised()) {
+                        $this->messages[$messageToStore]['parameters'] = array();
+                    }                    
                 }
                 
-                $this->messages[$message]++;
+                $this->messages[$messageToStore]['frequency']++;
+                
+                if ($normalisationResult->isNormalised()) {
+//                    if ($normalisationResult->getNormalisedError()->getNormalForm() == 'value of attribute "%0" cannot be ""%1"%0"') {
+//                        var_dump($message);
+//                        exit();
+//                    }
+                            
+                    // value of attribute "%0" cannot be ""%1"%0"
+                    
+                    foreach ($normalisationResult->getNormalisedError()->getParameters() as $position => $value) {
+                        $value = strtolower($value);
+                        
+                        if (!isset($this->messages[$messageToStore]['parameters'][$position])) {
+                            $this->messages[$messageToStore]['parameters'][$position] = array();
+                        }
+                        
+                        if (count($this->messages[$messageToStore]['parameters'][$position]) <= 10) {
+                            if (!isset($this->messages[$messageToStore]['parameters'][$position][$value])) {
+                                $this->messages[$messageToStore]['parameters'][$position][$value] = 0;
+                            }
+
+                                                         
+                        }
+                        
+                        if (isset($this->messages[$messageToStore]['parameters'][$position][$value])) {
+                            $this->messages[$messageToStore]['parameters'][$position][$value]++;
+                        }                        
+                        
+                        //$this->messages[$messageToStore]['parameters'][$position][$value]++;
+                        
+                       
+                    }
+                    
+                    //var_dump($normalisationResult->getNormalisedError()->getParameters());
+                    //exit();
+                }
+                
+//                /exit();
+
             }
             
             $this->getEntityManager()->detach($taskOutput);
         }
         
         $output->writeln('');
-        
-        $output->writeln('');
-        $output->writeln('');
         $output->writeln('<info>============================================</info>');
-        $output->writeln('');        
+        $output->writeln('');
+        $output->writeln('Total messages analysed: ' . count($this->messages));
+        $output->writeln('');
         
         arsort($this->messages);
         
         $this->messages = array_slice($this->messages, 0, $this->getReportLimit());
         
-        foreach ($this->messages as $message => $frequency) {
-            if ($frequency > 1) {
-                $output->writeln($frequency . "\t" . $message);
+        foreach ($this->messages as $message => $messageStatistics) {
+            if ($messageStatistics['frequency'] > 1) {
+                $reportLine = $messageStatistics['frequency'] . "\t" . ($messageStatistics['normalised'] ? 'N' : 'R') . "\t" . $message;
+                
+                $parametersSection = '';
+                
+                if ($messageStatistics['normalised']) {
+                    $parametersSection = ' (';
+                    
+                    foreach ($messageStatistics['parameters'] as $position => $valueStatistics) {
+                        if ($position === 0) {
+//                            var_dump($valueStatistics);
+//                            
+//                            arsort($valueStatistics);
+////                            
+////                            
+//                            var_dump($valueStatistics);
+//                            exit();                            
+                            
+                            arsort($valueStatistics);
+                            
+                            $keyValuePairs = array();
+                            
+                            foreach ($valueStatistics as $key => $value) {
+                                $keyValuePairs[] = $key.':'.$value;
+                            }
+                            
+                            $parametersSection .= implode(', ', $keyValuePairs);
+                            
+//                            if (isset($valueStatistics['sizes']) && $valueStatistics['sizes'] === 5) {
+
+//                            }
+                            
+
+                        }
+                    }
+                    
+                    $parametersSection .= ')';
+                    
+//                    var_dump($messageStatistics['parameters']);
+//                    exit();
+                }
+                
+                $output->writeln($reportLine .  $parametersSection);
             }
         }        
         
@@ -190,7 +283,15 @@ EOF
         }
         
         return $messages;      
-    }    
+    }
+    
+    // reference to entity "order" for which no system identifier could be generated
+    
+    private function getGenericHtmlError($htmlErrorString) {
+        
+        
+        return $htmlErrorString;
+    }
     
     /**
      *

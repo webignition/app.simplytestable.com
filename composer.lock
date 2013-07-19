@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "6f4a2d92712a3fff4e7c128280317f7f",
+    "hash": "e346e3dfc2a81f4efbba95ecab48b91a",
     "packages": [
         {
             "name": "doctrine/common",
@@ -1996,6 +1996,50 @@
             "time": "2012-07-14 13:29:54"
         },
         {
+            "name": "webignition/html-validation-error-normaliser",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/html-validation-error-normaliser.git",
+                "reference": "fc0e53eed45c86acf6d1d5c673f37c751a431e20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/html-validation-error-normaliser/zipball/fc0e53eed45c86acf6d1d5c673f37c751a431e20",
+                "reference": "fc0e53eed45c86acf6d1d5c673f37c751a431e20",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Take an HTML validation error and get the normal form of it",
+            "homepage": "https://github.com/webignition/html-validation-error-normaliser",
+            "keywords": [
+                "error",
+                "html",
+                "normaliser",
+                "normalizer",
+                "validation"
+            ],
+            "time": "2013-07-19 16:31:38"
+        },
+        {
             "name": "webignition/internet-media-type",
             "version": "0.4",
             "source": {
@@ -2665,7 +2709,8 @@
     "stability-flags": {
         "webignition/website-sitemap-finder": 20,
         "webignition/website-rss-feed-finder": 20,
-        "doctrine/doctrine-fixtures-bundle": 20
+        "doctrine/doctrine-fixtures-bundle": 20,
+        "webignition/html-validation-error-normaliser": 20
     },
     "platform": {
         "php": ">=5.3.3"
