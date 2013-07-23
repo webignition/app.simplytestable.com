@@ -140,10 +140,11 @@ EOF
                 
                 if ($this->shouldNormalise() && $normalisationResult->isNormalised()) {
                     $currentParameterIndex = array();
-                        
+                    $parameterCount = count($normalisationResult->getNormalisedError()->getParameters());
+                    
                     foreach ($normalisationResult->getNormalisedError()->getParameters() as $position => $value) {                                               
                         $currentParameterIndex[] = $value;                          
-                        $parameterStore = $this->getParameterStore($currentParameterIndex, $messageToStore);
+                        $parameterStore = $this->getParameterStore($currentParameterIndex, $messageToStore, $parameterCount);
                         $parameterStore['count']++;
                         $this->setParameterStore($currentParameterIndex, $messageToStore, $parameterStore);                                            
                     }
@@ -174,7 +175,7 @@ EOF
             
             if ($this->shouldNormalise()) {                
                 $reportItem = new \stdClass();
-                $reportItem->frequency = $messageStatistics['count'];
+                $reportItem->count = $messageStatistics['count'];
                 $reportItem->normal_form = $message;
                 
                 if (isset($messageStatistics['parameters'])) {
@@ -195,54 +196,51 @@ EOF
         return self::RETURN_CODE_OK;
     }
     
-    private function getParameterStore($parameterIndex, $messageToStore) {
+    private function getEmptyParameterStore($parameterIndex, $parameterCount) {
+        $parameterStore = array(
+            'count' => 0
+        );
+        
+        if ($parameterCount > $parameterIndex) {
+            $parameterStore['children'] = array();
+        }
+        
+        return $parameterStore;
+    }
+    
+    private function getParameterStore($parameterIndex, $messageToStore, $parameterCount) {
         switch (count($parameterIndex)) {
-            case 1:
+            case 1:                
                 if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]])) {
-                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]] = array(
-                        'count' => 0,
-                        'children' => array()
-                    );
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]] = $this->getEmptyParameterStore($parameterIndex, $parameterCount);
                 }
                 
                 return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]];
             
             case 2:
                 if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]])) {
-                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]] = array(
-                        'count' => 0,
-                        'children' => array()
-                    );
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]] = $this->getEmptyParameterStore($parameterIndex, $parameterCount);;
                 }
                 
                 return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]];                
             
             case 3:
                 if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]])) {
-                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]] = array(
-                        'count' => 0,
-                        'children' => array()
-                    );
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]] = $this->getEmptyParameterStore($parameterIndex, $parameterCount);
                 }
                 
                 return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]];                  
             
             case 4:
                 if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]])) {
-                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]] = array(
-                        'count' => 0,
-                        'children' => array()
-                    );
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]] = $this->getEmptyParameterStore($parameterIndex, $parameterCount);
                 }
                 
                 return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]];
             
             case 5:
                 if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]]['children'][$parameterIndex[4]])) {
-                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]]['children'][$parameterIndex[4]] = array(
-                        'count' => 0,
-                        'children' => array()
-                    );
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]]['children'][$parameterIndex[4]] = $this->getEmptyParameterStore($parameterIndex, $parameterCount);
                 }
                 
                 return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]]['children'][$parameterIndex[4]];                
