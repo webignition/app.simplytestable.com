@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "e346e3dfc2a81f4efbba95ecab48b91a",
+    "hash": "cf3438a0c586e9356fda26723842e7e4",
     "packages": [
         {
             "name": "doctrine/common",
@@ -2001,12 +2001,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/html-validation-error-normaliser.git",
-                "reference": "17d64f14c247c1ff3d9b655aaab67a11142f5de6"
+                "reference": "e4104bbeb0494e22e6f47a4470c0ee39aa45392e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/html-validation-error-normaliser/zipball/17d64f14c247c1ff3d9b655aaab67a11142f5de6",
-                "reference": "17d64f14c247c1ff3d9b655aaab67a11142f5de6",
+                "url": "https://api.github.com/repos/webignition/html-validation-error-normaliser/zipball/e4104bbeb0494e22e6f47a4470c0ee39aa45392e",
+                "reference": "e4104bbeb0494e22e6f47a4470c0ee39aa45392e",
                 "shasum": ""
             },
             "require": {
@@ -2037,7 +2037,7 @@
                 "normalizer",
                 "validation"
             ],
-            "time": "2013-07-19 17:40:35"
+            "time": "2013-07-22 15:19:49"
         },
         {
             "name": "webignition/internet-media-type",
@@ -2083,6 +2083,48 @@
                 "media-type"
             ],
             "time": "2012-08-16 15:14:02"
+        },
+        {
+            "name": "webignition/json-pretty-print",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/json-pretty-print.git",
+                "reference": "72831627c3264374766f100145ca11fee3581729"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/json-pretty-print/zipball/72831627c3264374766f100145ca11fee3581729",
+                "reference": "72831627c3264374766f100145ca11fee3581729",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "Prettifies a JSON string for human readability",
+            "homepage": "https://github.com/webignition/json-pretty-print",
+            "keywords": [
+                "formatter",
+                "json",
+                "pretty-print"
+            ],
+            "time": "2012-07-23 23:22:31"
         },
         {
             "name": "webignition/quoted-string",
@@ -2710,7 +2752,8 @@
         "webignition/website-sitemap-finder": 20,
         "webignition/website-rss-feed-finder": 20,
         "doctrine/doctrine-fixtures-bundle": 20,
-        "webignition/html-validation-error-normaliser": 20
+        "webignition/html-validation-error-normaliser": 20,
+        "webignition/json-pretty-print": 20
     },
     "platform": {
         "php": ">=5.3.3"
