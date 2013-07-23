@@ -69,6 +69,8 @@ EOF
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {   
+        ini_set('xdebug.var_display_max_depth', '10'); 
+        
         $this->input = $input;
         
         $output->write('<info>Requested task type: '.$input->getOption('task-type').' ... </info>');        
@@ -125,7 +127,7 @@ EOF
 
                 if (!array_key_exists($messageToStore, $this->messages)) {
                     $this->messages[$messageToStore] = array(
-                        'frequency' => 0,
+                        'count' => 0,
                         'normalised' => ($this->shouldNormalise()) ? $normalisationResult->isNormalised() : false
                     );
                     
@@ -134,21 +136,16 @@ EOF
                     }                    
                 }
                 
-                $this->messages[$messageToStore]['frequency']++;
+                $this->messages[$messageToStore]['count']++;
                 
                 if ($this->shouldNormalise() && $normalisationResult->isNormalised()) {
-                    foreach ($normalisationResult->getNormalisedError()->getParameters() as $position => $value) {                       
-                        $value = strtolower($value);
+                    $currentParameterIndex = array();
                         
-                        if (!isset($this->messages[$messageToStore]['parameters'][$position])) {
-                            $this->messages[$messageToStore]['parameters'][$position] = array();
-                        }                        
-
-                        if (!isset($this->messages[$messageToStore]['parameters'][$position][$value])) {
-                            $this->messages[$messageToStore]['parameters'][$position][$value] = 0;
-                        }                       
-                        
-                        $this->messages[$messageToStore]['parameters'][$position][$value]++;                                              
+                    foreach ($normalisationResult->getNormalisedError()->getParameters() as $position => $value) {                                               
+                        $currentParameterIndex[] = $value;                          
+                        $parameterStore = $this->getParameterStore($currentParameterIndex, $messageToStore);
+                        $parameterStore['count']++;
+                        $this->setParameterStore($currentParameterIndex, $messageToStore, $parameterStore);                                            
                     }
                 }
             }
@@ -177,7 +174,7 @@ EOF
             
             if ($this->shouldNormalise()) {                
                 $reportItem = new \stdClass();
-                $reportItem->frequency = $messageStatistics['frequency'];
+                $reportItem->frequency = $messageStatistics['count'];
                 $reportItem->normal_form = $message;
                 
                 if (isset($messageStatistics['parameters'])) {
@@ -186,7 +183,7 @@ EOF
                 
                 $reportData[] = $reportItem;
             } else {
-                $output->writeln($messageStatistics['frequency'] . "\t" . $message);
+                $output->writeln($messageStatistics['count'] . "\t" . $message);
             }            
 
         }
@@ -196,6 +193,85 @@ EOF
         }        
         
         return self::RETURN_CODE_OK;
+    }
+    
+    private function getParameterStore($parameterIndex, $messageToStore) {
+        switch (count($parameterIndex)) {
+            case 1:
+                if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]])) {
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]] = array(
+                        'count' => 0,
+                        'children' => array()
+                    );
+                }
+                
+                return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]];
+            
+            case 2:
+                if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]])) {
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]] = array(
+                        'count' => 0,
+                        'children' => array()
+                    );
+                }
+                
+                return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]];                
+            
+            case 3:
+                if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]])) {
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]] = array(
+                        'count' => 0,
+                        'children' => array()
+                    );
+                }
+                
+                return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]];                  
+            
+            case 4:
+                if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]])) {
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]] = array(
+                        'count' => 0,
+                        'children' => array()
+                    );
+                }
+                
+                return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]];
+            
+            case 5:
+                if (!isset($this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]]['children'][$parameterIndex[4]])) {
+                    $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]]['children'][$parameterIndex[4]] = array(
+                        'count' => 0,
+                        'children' => array()
+                    );
+                }
+                
+                return $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]]['children'][$parameterIndex[4]];                
+        }
+    }
+    
+    
+    private function setParameterStore($parameterIndex, $messageToStore, $parameterStore) {        
+        switch (count($parameterIndex)) {
+            case 1:
+                $this->messages[$messageToStore]['parameters'][$parameterIndex[0]] = $parameterStore;
+                break;
+            
+            case 2:                
+                $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]] = $parameterStore;                
+                break;
+            
+            case 3:
+                $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]] = $parameterStore;   
+                break;
+            
+            case 4:
+                $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]] = $parameterStore;
+                break;
+            
+            case 5:
+                $this->messages[$messageToStore]['parameters'][$parameterIndex[0]]['children'][$parameterIndex[1]]['children'][$parameterIndex[2]]['children'][$parameterIndex[3]]['children'][$parameterIndex[4]] = $parameterStore;
+                break;
+        }        
     }
     
     /**
@@ -227,14 +303,14 @@ EOF
         $frequencyIndex = array();
         
         foreach ($this->messages as $message => $messageStatistics) {
-            $frequencyIndex[$message] = $messageStatistics['frequency'];
+            $frequencyIndex[$message] = $messageStatistics['count'];
         }
         
         arsort($frequencyIndex);
         
         $messages = array();
         
-        foreach ($frequencyIndex as $message => $frequency) {
+        foreach ($frequencyIndex as $message => $count) {
             $messages[$message] = $this->messages[$message];
             
             if (isset($messages[$message]['parameters'])) {
