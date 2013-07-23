@@ -171,8 +171,6 @@ EOF
                 continue;
             }
             
-            $parametersSection = '';
-            
             if ($this->shouldNormalise()) {                
                 $reportItem = new \stdClass();
                 $reportItem->count = $messageStatistics['count'];
@@ -308,18 +306,38 @@ EOF
         
         $messages = array();
         
-        foreach ($frequencyIndex as $message => $count) {
+        foreach ($frequencyIndex as $message => $count) {            
             $messages[$message] = $this->messages[$message];
             
-            if (isset($messages[$message]['parameters'])) {
-                foreach ($messages[$message]['parameters'] as $parameterIndex => $values) {
-                    arsort($values);
-                    $messages[$message]['parameters'][$parameterIndex] = $values;
-                }
+            if (isset($messages[$message]['parameters'])) {            
+                $messages[$message]['parameters'] = $this->sortMessageParameters($messages[$message]['parameters']);
             }
         }
 
         $this->messages = $messages;
+    }
+    
+    private function sortMessageParameters($parameters) {
+        $index = array();
+        foreach ($parameters as $value => $properties) {
+            if (isset($properties['children'])) {                
+                $parameters[$value]['children'] = $this->sortMessageParameters($properties['children']);                
+            }
+            
+            $index[$value] = $properties['count'];
+        }
+        
+        arsort($index);
+        
+        $sortedParameters = array();
+        
+        foreach ($index as $value => $count) {
+            $sortedParameters[$value] = $parameters[$value];
+        }       
+        
+        return $sortedParameters;
+        
+
     }
     
     /**
