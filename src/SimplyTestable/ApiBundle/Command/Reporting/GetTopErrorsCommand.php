@@ -43,13 +43,10 @@ class GetTopErrorsCommand extends BaseCommand
      *
      * @var \Doctrine\ORM\EntityRepository
      */
-    private $taskOutputRepository; 
+    private $taskOutputRepository;
     
     
-    private $messages = array();
-    
-    private $formatter = null;
-    
+    private $messages = array();    
     
     protected function configure()
     {
@@ -58,9 +55,11 @@ class GetTopErrorsCommand extends BaseCommand
             ->setDescription('Generate top errors report by task type')
             ->addOption('task-type', null, InputOption::VALUE_REQUIRED, 'Name of task type for which to generate report')
             ->addOption('task-output-limit', null, InputOption::VALUE_OPTIONAL, 'Limit the number of task outputs processed')
+            ->addOption('task-output-offset', null, InputOption::VALUE_OPTIONAL, 'Offset for task output list')
             ->addOption('report-limit', null, InputOption::VALUE_OPTIONAL, 'Limit the number lines in the report')            
             ->addOption('type-filter', null, InputOption::VALUE_OPTIONAL, 'Filter to normalised only (N) or non-normalised only (R)')
             ->addOption('normalise', null, InputOption::VALUE_OPTIONAL, 'Normalise error messages to common form?')
+            ->addOption('report-only', null, InputOption::VALUE_OPTIONAL, 'Output report only, no errors or meta data')
             ->setHelp(<<<EOF
 Generate top errors report by task type.
 EOF
@@ -73,33 +72,42 @@ EOF
         
         $this->input = $input;
         
-        $output->write('<info>Requested task type: '.$input->getOption('task-type').' ... </info>');        
+        if ($this->isReportOnly() === false) $output->write('<info>Requested task type: '.$input->getOption('task-type').' ... </info>');        
         $this->taskType = $this->getTaskTypeService()->getByName($input->getOption('task-type'));
         
         if (is_null($this->taskType)) {
-            $output->writeln('invalid task type');
+            if ($this->isReportOnly() === false) $output->writeln('invalid task type');
             return self::RETURN_CODE_INVALID_TASK_TYPE;
         }
         
-        $output->writeln('ok');
+        if ($this->isReportOnly() === false) $output->writeln('ok');
         
         $limit = $this->getTaskOutputLimit();
-        $output->write('<info>Requested limit: ');
+        if ($this->isReportOnly() === false) $output->write('<info>Requested limit: ');
         
         if (is_null($limit)) {
-            $output->writeln('NONE');
+            if ($this->isReportOnly() === false) $output->writeln('NONE');
         } else {
-            $output->writeln($limit);
+            if ($this->isReportOnly() === false) $output->writeln($limit);
         }        
         
-        $output->writeln('');
+        $offset = $this->getTaskOutputOffset();
+        if ($this->isReportOnly() === false) $output->write('<info>Requested offset: ');
         
-        $output->write('Finding task output for ['.$this->taskType->getName().'] tasks ... ');
+        if (is_null($offset)) {
+            if ($this->isReportOnly() === false) $output->writeln('NONE');
+        } else {
+            if ($this->isReportOnly() === false) $output->writeln($offset);
+        }
         
-        $taskOutputIds = $this->getTaskOutputRepository()->findIdsByTaskType($this->taskType, $limit);
+        if ($this->isReportOnly() === false) $output->writeln('');
+        
+        if ($this->isReportOnly() === false) $output->write('Finding task output for ['.$this->taskType->getName().'] tasks ... ');
+        
+        $taskOutputIds = $this->getTaskOutputRepository()->findIdsByTaskType($this->taskType, $limit, $offset);
         $taskOutputCount = count($taskOutputIds);
         
-        $output->writeln('['.$taskOutputCount.'] task outputs found');
+        if ($this->isReportOnly() === false) $output->writeln('['.$taskOutputCount.'] task outputs found');
         
         $processedTaskOutputCount = 0;
         
@@ -109,7 +117,7 @@ EOF
         
         foreach ($taskOutputIds as $taskOutputId) {
             $processedTaskOutputCount++;
-            $output->writeln('Processing task output ['.$taskOutputId.'] ['.$processedTaskOutputCount.' of '.$taskOutputCount.']');
+            if ($this->isReportOnly() === false) $output->writeln('Processing task output ['.$taskOutputId.'] ['.$processedTaskOutputCount.' of '.$taskOutputCount.']');
             
             $taskOutput = $this->getTaskOutputRepository()->find($taskOutputId);
             
@@ -138,13 +146,14 @@ EOF
                 
                 $this->messages[$messageToStore]['count']++;
                 
-                if ($this->shouldNormalise() && $normalisationResult->isNormalised()) {
+                if ($this->shouldNormalise() && $normalisationResult->isNormalised()) {                    
                     $currentParameterIndex = array();
                     $parameterCount = count($normalisationResult->getNormalisedError()->getParameters());
                     
-                    foreach ($normalisationResult->getNormalisedError()->getParameters() as $position => $value) {                                               
+                    foreach ($normalisationResult->getNormalisedError()->getParameters() as $position => $value) {                        
                         $currentParameterIndex[] = $value;                          
-                        $parameterStore = $this->getParameterStore($currentParameterIndex, $messageToStore, $parameterCount);
+                        $parameterStore = $this->getParameterStore($currentParameterIndex, $messageToStore, $parameterCount);                        
+                        
                         $parameterStore['count']++;
                         $this->setParameterStore($currentParameterIndex, $messageToStore, $parameterStore);                                            
                     }
@@ -154,11 +163,11 @@ EOF
             $this->getEntityManager()->detach($taskOutput);
         }
         
-        $output->writeln('');
-        $output->writeln('<info>============================================</info>');
-        $output->writeln('');
-        $output->writeln('Total messages analysed: ' . $messageCount);
-        $output->writeln('');
+        if ($this->isReportOnly() === false) $output->writeln('');
+        if ($this->isReportOnly() === false) $output->writeln('<info>============================================</info>');
+        if ($this->isReportOnly() === false) $output->writeln('');
+        if ($this->isReportOnly() === false) $output->writeln('Total messages analysed: ' . $messageCount);
+        if ($this->isReportOnly() === false) $output->writeln('');
         
         $this->sortMessages();
         
@@ -188,7 +197,7 @@ EOF
         }
         
         if ($this->shouldNormalise()) {
-            $output->writeln($this->getFormatter()->format(json_encode($reportData)));
+            $output->writeln(json_encode($reportData));
         }        
         
         return self::RETURN_CODE_OK;
@@ -274,6 +283,14 @@ EOF
      * 
      * @return boolean
      */
+    private function isReportOnly() {        
+        return $this->input->getOption('report-only') == 'true';
+    }     
+    
+    /**
+     * 
+     * @return boolean
+     */
     private function shouldNormalise() {        
         return $this->input->getOption('normalise') == 'true';
     }    
@@ -347,7 +364,6 @@ EOF
     private function getTypeFilter() {
         return $this->input->getOption('type-filter');        
     }    
-        
     
     /**
      * 
@@ -356,6 +372,16 @@ EOF
     private function getTaskOutputLimit() {
         $limit = (int)$this->input->getOption('task-output-limit');        
         return ($limit > 0) ? $limit : null;
+    }       
+        
+    
+    /**
+     * 
+     * @return int
+     */
+    private function getTaskOutputOffset() {
+        $offset = (int)$this->input->getOption('task-output-offset');        
+        return ($offset > 0) ? $offset : null;
     }    
     
     
@@ -394,14 +420,6 @@ EOF
         return $messages;      
     }
     
-    // reference to entity "order" for which no system identifier could be generated
-    
-    private function getGenericHtmlError($htmlErrorString) {
-        
-        
-        return $htmlErrorString;
-    }
-    
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\TaskTypeService
@@ -434,17 +452,5 @@ EOF
         }
         
         return $this->taskOutputRepository;
-    } 
-    
-    /**
-     *
-     * @return \webignition\JsonPrettyPrinter\JsonPrettyPrinter
-     */
-    private function getFormatter() {
-        if (is_null($this->formatter)) {
-            $this->formatter = new \webignition\JsonPrettyPrinter\JsonPrettyPrinter();
-        }
-        
-        return $this->formatter;
-    }    
+    }  
 }

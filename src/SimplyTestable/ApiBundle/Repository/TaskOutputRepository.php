@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
 class TaskOutputRepository extends EntityRepository
 {
-    public function findIdsByTaskType(TaskType $taskType, $limit = null) {
+    public function findIdsByTaskType(TaskType $taskType, $limit = null, $offset = null) {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');
         $queryBuilder->select('DISTINCT TaskOutput.id');        
         
@@ -17,6 +17,10 @@ class TaskOutputRepository extends EntityRepository
         if (is_int($limit) && $limit > 0) {
             $queryBuilder->setMaxResults($limit);
         }
+        
+        if (is_int($offset) && $offset > 0) {
+            $queryBuilder->setFirstResult($offset);
+        }        
         
         $result = $queryBuilder->getQuery()->getResult();        
         
