@@ -2001,12 +2001,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/html-validation-error-normaliser.git",
-                "reference": "0b1a6cc3a8e4557d245646904ce6bb59425e1c66"
+                "reference": "28a3459b43a4145cb3a84c6eeca835d0d25e1b35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/html-validation-error-normaliser/zipball/0b1a6cc3a8e4557d245646904ce6bb59425e1c66",
-                "reference": "0b1a6cc3a8e4557d245646904ce6bb59425e1c66",
+                "url": "https://api.github.com/repos/webignition/html-validation-error-normaliser/zipball/28a3459b43a4145cb3a84c6eeca835d0d25e1b35",
+                "reference": "28a3459b43a4145cb3a84c6eeca835d0d25e1b35",
                 "shasum": ""
             },
             "require": {
@@ -2037,7 +2037,7 @@
                 "normalizer",
                 "validation"
             ],
-            "time": "2013-07-23 11:24:54"
+            "time": "2013-07-24 16:44:57"
         },
         {
             "name": "webignition/internet-media-type",

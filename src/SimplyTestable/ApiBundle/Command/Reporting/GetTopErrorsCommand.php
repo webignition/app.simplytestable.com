@@ -60,6 +60,7 @@ class GetTopErrorsCommand extends BaseCommand
             ->addOption('type-filter', null, InputOption::VALUE_OPTIONAL, 'Filter to normalised only (N) or non-normalised only (R)')
             ->addOption('normalise', null, InputOption::VALUE_OPTIONAL, 'Normalise error messages to common form?')
             ->addOption('report-only', null, InputOption::VALUE_OPTIONAL, 'Output report only, no errors or meta data')
+            ->addOption('error-only', null, InputOption::VALUE_OPTIONAL, 'Output errors only, no counts')
             ->setHelp(<<<EOF
 Generate top errors report by task type.
 EOF
@@ -67,7 +68,7 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {   
+    {        
         ini_set('xdebug.var_display_max_depth', '10'); 
         
         $this->input = $input;
@@ -123,15 +124,16 @@ EOF
             
             $messages = $this->getMessagesForTaskOutput($taskOutput);
             
-            foreach ($messages as $message) {                
+            foreach ($messages as $message) {                               
                 $messageCount++;
                 
                 if ($this->shouldNormalise()) {
+                    $normaliser = new HtmlValidationErrorNormaliser();
                     $normalisationResult = $normaliser->normalise($message);                
-                    $messageToStore = $normalisationResult->isNormalised() ? $normalisationResult->getNormalisedError()->getNormalForm() : $message;                    
+                    $messageToStore = $normalisationResult->isNormalised() ? trim($normalisationResult->getNormalisedError()->getNormalForm()) : trim($message); 
                 } else {
-                    $messageToStore = $message;
-                }
+                    $messageToStore = trim($message);
+                }              
 
                 if (!array_key_exists($messageToStore, $this->messages)) {
                     $this->messages[$messageToStore] = array(
@@ -191,7 +193,13 @@ EOF
                 
                 $reportData[] = $reportItem;
             } else {
-                $output->writeln($messageStatistics['count'] . "\t" . $message);
+                if ($this->isErrorOnly()) {
+                    if (substr_count($message, "\n") === 0) {
+                        $output->writeln($message);
+                    }                    
+                } else {
+                    $output->writeln($messageStatistics['count'] . "\t" . $message);
+                }
             }            
 
         }
@@ -278,13 +286,21 @@ EOF
                 break;
         }        
     }
-    
+
     /**
      * 
      * @return boolean
      */
     private function isReportOnly() {        
         return $this->input->getOption('report-only') == 'true';
+    }     
+    
+    /**
+     * 
+     * @return boolean
+     */
+    private function isErrorOnly() {        
+        return $this->input->getOption('error-only') == 'true';
     }     
     
     /**
