@@ -115,8 +115,9 @@ EOF
         $normaliser = new HtmlValidationErrorNormaliser();
         
         $messageCount = 0;
+        $outputIds = array();
         
-        foreach ($taskOutputIds as $taskOutputId) {
+        foreach ($taskOutputIds as $taskOutputId) {            
             $processedTaskOutputCount++;
             if ($this->isReportOnly() === false) $output->writeln('Processing task output ['.$taskOutputId.'] ['.$processedTaskOutputCount.' of '.$taskOutputCount.']');
             
@@ -124,7 +125,7 @@ EOF
             
             $messages = $this->getMessagesForTaskOutput($taskOutput);
             
-            foreach ($messages as $message) {                               
+            foreach ($messages as $message) {
                 $messageCount++;
                 
                 if ($this->shouldNormalise()) {
