@@ -410,6 +410,15 @@ class Task
      */
     public function hasParameters() {
         return $this->getParameters() != '';
-    }   
+    }
+    
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getParametersHash() {
+        return md5($this->getParameters());
+    }
    
 }

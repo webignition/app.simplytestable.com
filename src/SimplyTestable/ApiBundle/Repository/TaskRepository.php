@@ -271,7 +271,26 @@ class TaskRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult();
         
         return (int)$result[0][1];
-    }    
+    } 
+    
+    
+    public function getCollectionByUrlAndTaskTypeAndStates($url, TaskType $taskType, $states) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('Task');
+
+        $stateConditions = array();
+
+        foreach ($states as $stateIndex => $state) {
+            $stateConditions[] = '(Task.state = :State'.$stateIndex.') ';
+            $queryBuilder->setParameter('State'.$stateIndex, $state);
+        }        
+        
+        $queryBuilder->where('Task.url = :Url and Task.type = :TaskType AND ('.implode('OR ', $stateConditions).')');        
+        $queryBuilder->setParameter('Url', $url);
+        $queryBuilder->setParameter('TaskType', $taskType);
+        
+        return $queryBuilder->getQuery()->getResult();       
+    }
     
     
     public function findUsedTaskOutputIds() {

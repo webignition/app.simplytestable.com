@@ -240,9 +240,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $canonicalUrl
      * @param string $userEmail
      * @param string $type
+     * @param array $testTypes
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    protected function createJob($canonicalUrl, $userEmail = null, $type = null) {
+    protected function createJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null) {
         $postData = array();
         if (!is_null($userEmail)) {
             $postData['user'] = $userEmail;
@@ -251,6 +252,14 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         if (!is_null($type)) {
             $postData['type'] = $type;
         }
+        
+        if (is_array($testTypes)) {
+            $postData['test-types'] = $testTypes;
+        }
+        
+        if (is_array($testTypeOptions)) {
+            $postData['test-type-options'] = $testTypeOptions;
+        }               
         
         return $this->getJobStartController('startAction', $postData)->startAction($canonicalUrl);
     } 
@@ -377,6 +386,21 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         
         return $user;          
     } 
+    
+    
+    /**
+     * 
+     * @param int $count
+     * @return array
+     */
+    protected function createAndActivateUserCollection($count) {
+        $users = array();
+        for ($index = 0; $index < $count; $index++) {
+            $users[] = $this->createAndActivateUser('user'.$index.'@example.com', 'password');
+        }
+        
+        return $users;
+    }
     
     
     /**

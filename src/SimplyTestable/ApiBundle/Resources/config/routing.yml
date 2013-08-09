@@ -57,6 +57,12 @@ task_complete:
   pattern: /task/{worker_hostname}/{remote_task_id}/complete/
   defaults: { _controller: SimplyTestableApiBundle:Task:complete, _format: json }     
   
+task_complete_by_url_and_task_type:
+  pattern: /task/{canonical_url}/{task_type}/{parameter_hash}/complete/
+  defaults: { _controller: SimplyTestableApiBundle:Task:completeByUrlAndTaskType, _format: json }     
+  requirements:
+      canonical_url: ".+"    
+  
 status:
   pattern: /
   defaults: { _controller: SimplyTestableApiBundle:Status:index, _format: json }     

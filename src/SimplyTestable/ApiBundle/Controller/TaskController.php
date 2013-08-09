@@ -28,13 +28,80 @@ class TaskController extends ApiController
                 new InputArgument('state', InputArgument::REQUIRED, 'Task ending state'),
                 new InputArgument('errorCount', InputArgument::REQUIRED, 'Task error count'),
                 new InputArgument('warningCount', InputArgument::REQUIRED, 'Task warning count')
-            ))
+            )),
+            'completeByUrlAndTaskTypeAction' => new InputDefinition(array(
+                new InputArgument('end_date_time', InputArgument::REQUIRED, 'Task end date and time'),
+                new InputArgument('output', InputArgument::REQUIRED, 'Task output'),
+                new InputArgument('contentType', InputArgument::REQUIRED, 'Task output content type'),
+                new InputArgument('state', InputArgument::REQUIRED, 'Task ending state'),
+                new InputArgument('errorCount', InputArgument::REQUIRED, 'Task error count'),
+                new InputArgument('warningCount', InputArgument::REQUIRED, 'Task warning count')
+            ))            
         ));
         
         $this->setRequestTypes(array(
-            'completeAction' => \Guzzle\Http\Message\Request::POST
-        ));
-    }    
+            'completeAction' => \Guzzle\Http\Message\Request::POST,
+            'completeByUrlAndTaskTypeAction' => \Guzzle\Http\Message\Request::POST
+        ));       
+    }  
+    
+    
+    public function completeByUrlAndTaskTypeAction($canonical_url, $task_type, $parameter_hash) {        
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+        
+        if (!$this->getTaskTypeService()->exists($task_type)) {
+            return $this->sendFailureResponse();
+        }
+        
+        $taskType = $this->getTaskTypeService()->getByName($task_type);        
+        
+        $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByUrlAndTaskTypeAndStates(
+            $canonical_url,
+            $taskType,
+            $this->getTaskService()->getIncompleteStates()
+        );
+        
+        if (count($tasks) === 0) {
+            return $this->sendNotFoundResponse();
+        }
+        
+        $parameter_hash = trim($parameter_hash);
+        
+        if ($parameter_hash !== '') {
+            foreach ($tasks as $taskIndex => $task) {
+                if ($task->getParametersHash() !== $parameter_hash) {
+                    unset($tasks[$taskIndex]);
+                }
+            }            
+        }      
+        
+        $endDateTime = new \DateTime($this->getArguments('completeByUrlAndTaskTypeAction')->get('end_date_time'));
+        $rawOutput = $this->getArguments('completeByUrlAndTaskTypeAction')->get('output');
+        
+        $mediaTypeParser = new \webignition\InternetMediaType\Parser\Parser();
+        $contentType = $mediaTypeParser->parse($this->getArguments('completeByUrlAndTaskTypeAction')->get('contentType'));
+        
+        $output = new Output();
+        $output->setOutput($rawOutput);
+        $output->setContentType($contentType);
+        $output->setErrorCount($this->getArguments('completeByUrlAndTaskTypeAction')->get('errorCount'));
+        $output->setWarningCount($this->getArguments('completeByUrlAndTaskTypeAction')->get('warningCount'));
+                
+        $state = $this->getTaskEndState($this->getArguments('completeByUrlAndTaskTypeAction')->get('state'));
+        
+        foreach ($tasks as $task) {
+            $this->getTaskService()->complete($task, $endDateTime, $output, $state);
+            
+            if (!$this->getJobService()->hasIncompleteTasks($task->getJob())) {
+                $this->getJobService()->complete($task->getJob());
+            }             
+        }
+        
+        return $this->sendSuccessResponse();
+    }
+    
     
     public function completeAction($worker_hostname, $remote_task_id)
     {        
@@ -58,7 +125,7 @@ class TaskController extends ApiController
         if (!$this->getTaskService()->isInProgress($task)) {
             return $this->sendSuccessResponse();
         }
-
+        
         $endDateTime = new \DateTime($this->getArguments('startAction')->get('end_date_time'));
         $rawOutput = $this->getArguments('completeAction')->get('output');
         

@@ -37,8 +37,7 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
         ))->completeAction('http://hydrogen.worker.simplytestable.com', 1);
         
         $this->assertEquals(200, $response->getStatusCode());
-    }
-    
+    }    
     
     public function testCompleteActionInMaintenanceReadOnlyModeReturns503() {                
         $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
@@ -68,7 +67,8 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
         ))->completeAction('hydrogen.worker.simplytestable.com', 1);
         
         $this->assertEquals(410, $response->getStatusCode());
-    }    
+    }
+
     
 }
 

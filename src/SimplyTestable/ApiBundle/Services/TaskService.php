@@ -449,7 +449,14 @@ class TaskService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
     public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state) {
-        if (!$this->isInProgress($task)) {
+        $taskIsInCorrectState = false;
+        foreach ($this->getIncompleteStates() as $incompleteState) {
+            if ($task->getState()->equals($incompleteState)) {
+                $taskIsInCorrectState = true;
+            }
+        }
+        
+        if (!$taskIsInCorrectState) {
             return $task;
         }
         
@@ -458,6 +465,12 @@ class TaskService extends EntityService {
         
         if (!is_null($existingOutput)) {
             $output = $existingOutput;
+        }
+        
+        if (is_null($task->getTimePeriod())) {
+            $timePeriod = new TimePeriod();
+            $timePeriod->setStartDateTime($endDateTime);
+            $task->setTimePeriod($timePeriod);
         }
 
         $task->getTimePeriod()->setEndDateTime($endDateTime);
@@ -610,7 +623,7 @@ class TaskService extends EntityService {
      */
     public function getEntityRepository() {
         return parent::getEntityRepository();
-    }    
+    }  
     
-  
+    
 }
