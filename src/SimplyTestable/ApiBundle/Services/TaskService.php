@@ -626,4 +626,32 @@ class TaskService extends EntityService {
     }  
     
     
+    /**
+     * 
+     * @param string $url
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType
+     * @param string $parameter_hash
+     * @param array $states
+     * @return array
+     */
+    public function getEquivalentTasks($url, TaskType $taskType, $parameter_hash, $states) {
+        $tasks = $this->getEntityRepository()->getCollectionByUrlAndTaskTypeAndStates(
+            $url,
+            $taskType,
+            $states
+        );
+        
+        $parameter_hash = trim($parameter_hash);
+        
+        if ($parameter_hash !== '') {
+            foreach ($tasks as $taskIndex => $task) {
+                if ($task->getParametersHash() !== $parameter_hash) {
+                    unset($tasks[$taskIndex]);
+                }
+            }            
+        } 
+        
+        return $tasks;
+    }
+    
 }

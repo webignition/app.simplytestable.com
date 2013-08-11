@@ -58,25 +58,11 @@ class TaskController extends ApiController
         
         $taskType = $this->getTaskTypeService()->getByName($task_type);        
         
-        $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByUrlAndTaskTypeAndStates(
-            $canonical_url,
-            $taskType,
-            $this->getTaskService()->getIncompleteStates()
-        );
+        $tasks = $this->getTaskService()->getEquivalentTasks($canonical_url, $taskType, $parameter_hash, $this->getTaskService()->getIncompleteStates());
         
         if (count($tasks) === 0) {
             return $this->sendNotFoundResponse();
-        }
-        
-        $parameter_hash = trim($parameter_hash);
-        
-        if ($parameter_hash !== '') {
-            foreach ($tasks as $taskIndex => $task) {
-                if ($task->getParametersHash() !== $parameter_hash) {
-                    unset($tasks[$taskIndex]);
-                }
-            }            
-        }      
+        }     
         
         $endDateTime = new \DateTime($this->getArguments('completeByUrlAndTaskTypeAction')->get('end_date_time'));
         $rawOutput = $this->getArguments('completeByUrlAndTaskTypeAction')->get('output');

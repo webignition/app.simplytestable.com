@@ -330,6 +330,87 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
                 $this->assertEquals('task-completed', $task->getState()->getName());
             }
         }       
+    } 
+    
+    public function testWithNoMatchingTaskFromMultiplePossibleTasksByParameters() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');        
+        $canonicalUrl = 'http://example.com/'; 
+        
+        $jobIds = array();
+        
+        $jobIds[] = $this->getJobIdFromUrl(
+            $this->createJob(
+                $canonicalUrl,
+                null,
+                'full site',
+                array(
+                    'CSS validation'
+                ),
+                array(
+                    'CSS validation' => array(
+                        'ignore-warnings' => 1,
+                        'ignore-common-cdns' => 1,
+                        'vendor-extensions' => 'warn'
+                    )
+                )
+             )->getTargetUrl()
+        );
+        
+        $jobIds[] = $this->getJobIdFromUrl(
+            $this->createJob(
+                $canonicalUrl,
+                null,
+                'full site',
+                array(
+                    'HTML validation',
+                    'CSS validation'
+                ),
+                array(
+                    'CSS validation' => array(
+                        'ignore-warnings' => 0,
+                        'ignore-common-cdns' => 1,
+                        'vendor-extensions' => 'warn'
+                    )
+                )
+             )->getTargetUrl()
+        );     
+        
+        $taskIds = array();
+        
+        foreach ($jobIds as $job_id) {
+             $this->prepareJob($canonicalUrl, $job_id);
+             $taskIds[$job_id] = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
+        }
+        
+        $task = $this->getTaskService()->getById($taskIds[$jobIds[0]][0]);        
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
+            $task->getId() =>  true
+        )));
+        
+        $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+            'end_date_time' => '2012-03-08 17:03:00',
+            'output' => '[]',
+            'contentType' => 'application/json',
+            'state' => 'completed',
+            'errorCount' => 0,
+            'warningCount' => 0
+        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), 'invalid-parameter-hash');        
+
+        $this->assertEquals(404, $response->getStatusCode());
+        
+        $tasks = $this->getTaskService()->getEntityRepository()->findBy(array(
+            'url' => (string)$task->getUrl(),
+            'type' => $this->getTaskTypeService()->getByName('CSS validation')
+        ));
+        
+        $this->assertEquals(2, count($tasks));        
+        
+        foreach ($tasks as $taskIndex => $task) {
+            $this->assertEquals($canonicalUrl, (string)$task->getUrl());
+            $this->assertEquals(($taskIndex ===0 ? 'task-in-progress' : 'task-queued'), $task->getState()->getName());
+        }        
     }    
     
 }
