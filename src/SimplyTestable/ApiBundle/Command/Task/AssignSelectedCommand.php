@@ -44,24 +44,47 @@ EOF
         
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);                
         $workers = $this->getWorkerService()->getActiveCollection();
-        
-        if (count($workers) === 0) {
+                
+        if (count($workers) === 0) {            
             $this->getLogger()->err("TaskAssignSelectedCommand::execute: Cannot assign, no workers.");
             return self::RETURN_CODE_FAILED_NO_WORKERS;
-        }  
+        }             
         
-        $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);
+        $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);        
         if ($response === 0) {
             $output->writeln('ok');
-            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();             
+            
+            $startedTasks = array();
+            foreach ($tasks as $task) {
+                $equivalentTasks = $this->getTaskService()->getEquivalentTasks($task->getUrl(), $task->getType(), $task->getParametersHash(), array(
+                    $this->getTaskService()->getQueuedForAssignmentState(),
+                    $this->getTaskService()->getQueuedState()                
+                ));
+                
+                foreach ($equivalentTasks as $equivalentTask) {                
+                    $this->getTaskService()->setStarted(
+                        $equivalentTask,
+                        $task->getWorker(),
+                        $task->getRemoteId()
+                    );  
 
-            $job = $tasks[0]->getJob();
-            if ($job->getState()->getName() == 'job-queued') {                
-                $job->setState($this->getJobService()->getInProgressState());
-                $entityManager->persist($job);          
-            }       
-
-            $entityManager->flush();            
+                    $this->getTaskService()->persistAndFlush($equivalentTask);
+                } 
+                
+                $startedTasks = array_merge($startedTasks, $equivalentTasks, array($task));
+            }
+            
+            foreach ($startedTasks as $startedTask) {
+                $job = $startedTask->getJob();
+                
+                if ($job->getState()->getName() == 'job-queued') {                
+                    $job->setState($this->getJobService()->getInProgressState());
+                    $entityManager->persist($job);
+                    $entityManager->flush();          
+                }                  
+            }
+                        
         } else {
             $output->writeln('Failed to assign task collection, response '.$response);
         }
