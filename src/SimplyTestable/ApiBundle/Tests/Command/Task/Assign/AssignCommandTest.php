@@ -184,6 +184,76 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
                 'id' => $taskIds[0]
             )
         ));         
-    }      
+    } 
+    
+    public function testAssignTaskWithInProgressEquivalentDoesNotAssignAndInsteadMarksAsInProgress() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');        
+        $canonicalUrl = 'http://example.com/'; 
+        
+        $jobIds = array();
+        
+        $jobIds[] = $this->getJobIdFromUrl(
+            $this->createJob(
+                $canonicalUrl,
+                null,
+                'full site',
+                array(
+                    'CSS validation'
+                ),
+                array(
+                    'CSS validation' => array(
+                        'ignore-warnings' => 1,
+                        'ignore-common-cdns' => 1,
+                        'vendor-extensions' => 'warn'
+                    )
+                )
+             )->getTargetUrl()
+        );
+        
+        $jobIds[] = $this->getJobIdFromUrl(
+            $this->createJob(
+                $canonicalUrl,
+                null,
+                'full site',
+                array(
+                    'HTML validation',
+                    'CSS validation'
+                ),
+                array(
+                    'CSS validation' => array(
+                        'ignore-warnings' => 1,
+                        'ignore-common-cdns' => 1,
+                        'vendor-extensions' => 'warn'
+                    )
+                )
+             )->getTargetUrl()
+        );     
+        
+        $taskIds = array();
+        
+        foreach ($jobIds as $job_id) {
+             $this->prepareJob($canonicalUrl, $job_id);
+             $taskIds[$job_id] = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
+        }
+        
+        $tasks = array(
+            $this->getTaskService()->getById($taskIds[$jobIds[0]][0]),
+            $this->getTaskService()->getById($taskIds[$jobIds[1]][1])
+        );
+    
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
+            $tasks[0]->getId() =>  true
+        )));
+        
+        $this->assertEquals(1, $this->runConsole('simplytestable:task:assign', array(
+            $tasks[0]->getId() =>  true
+        )));        
+        
+        foreach ($tasks as $task) {
+            $this->assertEquals('task-in-progress', $task->getState());
+        }       
+    }
     
 }

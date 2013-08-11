@@ -56,12 +56,31 @@ EOF
 
         // 0,1,2,3
         if ($result === 0) {
-            if ($task->getJob()->getState()->getName() == 'job-queued') {
-                $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
-                $task->getJob()->setNextState();                
+            $equivalentTasks = $this->getTaskService()->getEquivalentTasks($task->getUrl(), $task->getType(), $task->getParametersHash(), array(
+                $this->getTaskService()->getQueuedForAssignmentState(),
+                $this->getTaskService()->getQueuedState()                
+            ));
+            
+            foreach ($equivalentTasks as $equivalentTask) {                
+                $this->getTaskService()->setStarted(
+                    $equivalentTask,
+                    $task->getWorker(),
+                    $task->getRemoteId()
+                );  
                 
-                $entityManager->persist($task->getJob());
-                $entityManager->flush();               
+                $this->getTaskService()->persistAndFlush($equivalentTask);
+            }
+            
+            $startedTasks = array_merge(array($task), $equivalentTasks);
+            
+            foreach ($startedTasks as $startedTask) {
+                if ($startedTask->getJob()->getState()->getName() == 'job-queued') {
+                    $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+                    $startedTask->getJob()->setNextState();                
+
+                    $entityManager->persist($startedTask->getJob());
+                    $entityManager->flush();               
+                }                
             }
             
             return self::RETURN_CODE_OK;
@@ -84,7 +103,7 @@ EOF
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\TaskService
+     * @return \SimplyTestable\ApiBundle\Services\TaskService
      */
     private function getTaskService() {
         return $this->getContainer()->get('simplytestable.services.taskservice');
