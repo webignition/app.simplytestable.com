@@ -46,14 +46,15 @@ class TaskController extends ApiController
     }  
     
     
-    public function completeByUrlAndTaskTypeAction($canonical_url, $task_type, $parameter_hash) {        
+    public function completeByUrlAndTaskTypeAction($canonical_url, $task_type, $parameter_hash) {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
         
+        $task_type = urldecode($task_type);
         if (!$this->getTaskTypeService()->exists($task_type)) {
             return $this->sendFailureResponse();
-        }
+        }        
         
         $taskType = $this->getTaskTypeService()->getByName($task_type);        
         
