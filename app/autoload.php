@@ -2,39 +2,21 @@
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
-$loader = require __DIR__.'/../vendor/autoload.php';
 
-//        require_once(realpath(__DIR__ . '/../../../../vendor/stripe/stripe-php/lib/Stripe.php'));
-//        
-////        var_dump(realpath(__DIR__ . '/../../../../vendor/stripe/stripe-php/lib/Stripe.php'));
-////        exit();
-        
-        if (!class_exists('Stripe')) {
-            
-            
-            var_dump("Class 'Stripe' not found");
-            
-            if (!class_exists('\\Stripe')) {
-                var_dump("Class '\Stripe' not found");
-            }             
-            
-            if (!class_exists('Stripe_Customer')) {
-                var_dump("Class 'Stripe_Customer' not found");
-            }            
-            
-            if (!class_exists('\\Stripe_Customer')) {
-                var_dump("Class '\Stripe_Customer' not found");
-            }      
-            
-            if (!class_exists('QueryPath')) {
-                var_dump("Class 'QueryPath' not found");
-            }                  
-            
-            if (!class_exists('\\QueryPath')) {
-                var_dump("Class '\QueryPath' not found");
-            }               
-            exit();
+if (getenv('IS_JENKINS') === 'true') {
+    $jenkinsNeedsThese = array(
+        'Stripe' => '/stripe/stripe-php/lib/Stripe.php'
+    );    
+    
+    foreach ($jenkinsNeedsThese as $class => $path) {
+        if (!class_exists($class)) {
+            require_once(realpath(__DIR__ . '/../../../../vendor' . $path));
         }
+    }    
+}
+
+
+$loader = require __DIR__.'/../vendor/autoload.php';
 
 // intl
 if (!function_exists('intl_get_error_code')) {
