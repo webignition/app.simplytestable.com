@@ -26,6 +26,9 @@ $jenkinsNeedsThese = array(
 
 foreach ($jenkinsNeedsThese as $class => $path) {
     if (!class_exists($class)) {
+        var_dump("cp01");
+        exit();
+        
         require_once(realpath(__DIR__ . '/../vendor' . $path));
     }
 }  
