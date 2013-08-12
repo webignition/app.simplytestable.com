@@ -398,7 +398,7 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), 'invalid-parameter-hash');        
 
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals(410, $response->getStatusCode());
         
         $tasks = $this->getTaskService()->getEntityRepository()->findBy(array(
             'url' => (string)$task->getUrl(),

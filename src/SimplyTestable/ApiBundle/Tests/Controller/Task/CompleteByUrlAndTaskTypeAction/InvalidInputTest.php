@@ -31,7 +31,7 @@ class InvalidInputTest extends BaseControllerJsonTestCase {
     
     public function testWithInvalidUrl() {        
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', $this->taskCompletionData)->completeByUrlAndTaskTypeAction('http://example.com', 'HTML validation', '');        
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals(410, $response->getStatusCode());
     }
     
 }

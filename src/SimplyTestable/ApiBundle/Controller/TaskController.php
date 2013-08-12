@@ -61,7 +61,7 @@ class TaskController extends ApiController
         $tasks = $this->getTaskService()->getEquivalentTasks($canonical_url, $taskType, $parameter_hash, $this->getTaskService()->getIncompleteStates());
         
         if (count($tasks) === 0) {
-            return $this->sendNotFoundResponse();
+            return $this->sendGoneResponse();
         }     
         
         $endDateTime = new \DateTime($this->getArguments('completeByUrlAndTaskTypeAction')->get('end_date_time'));
