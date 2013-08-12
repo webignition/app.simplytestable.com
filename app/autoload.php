@@ -2,7 +2,12 @@
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
-
+/**
+ * Explicitly include some dependencies that otherwise result in 'class not found'
+ * errors when running on Jenkins.
+ * 
+ * Works on local dev environment. Works on live. Works on Travis. Doesn't work on Jenkins.
+ */
 if (getenv('IS_JENKINS') === 'true') {
     $jenkinsNeedsThese = array(
         'Stripe' => '/stripe/stripe-php/lib/Stripe.php',
@@ -15,7 +20,6 @@ if (getenv('IS_JENKINS') === 'true') {
         }
     }    
 }
-
 
 $loader = require __DIR__.'/../vendor/autoload.php';
 
