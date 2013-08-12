@@ -28,7 +28,7 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface
         'URL discovery' => array(
             'description' => 'Discover in-scope URLs from the anchors within a given URL',
             'class' => 'discovery',
-            'selectable' => true
+            'selectable' => false
         )           
     );
     
