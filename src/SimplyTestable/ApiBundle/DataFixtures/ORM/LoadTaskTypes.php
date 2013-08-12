@@ -24,7 +24,12 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface
             'description' => 'JavaScript static code analysis (via jslint)',
             'class' => 'verification',
             'selectable' => true
-        )        
+        ),
+        'URL discovery' => array(
+            'description' => 'Discover in-scope URLs from the anchors within a given URL',
+            'class' => 'discovery',
+            'selectable' => true
+        )           
     );
     
     /**
