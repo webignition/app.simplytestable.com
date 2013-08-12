@@ -16,6 +16,18 @@ class StripeService {
     public function __construct($apiKey) {
         if (!class_exists('Stripe')) {
             var_dump("Class 'Stripe' not found");
+            
+            if (!class_exists('\\Stripe')) {
+                var_dump("Class '\Stripe' not found");
+            }             
+            
+            if (!class_exists('Stripe_Customer')) {
+                var_dump("Class 'Stripe_Customer' not found");
+            }            
+            
+            if (!class_exists('\\Stripe_Customer')) {
+                var_dump("Class '\Stripe_Customer' not found");
+            }             
             exit();
         }
         
