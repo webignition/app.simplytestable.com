@@ -13,7 +13,7 @@ class StripeService {
      * 
      * @param string $apiKey
      */
-    public function __construct($apiKey) {
+    public function __construct($apiKey) {        
         if (!class_exists('Stripe')) {
             var_dump("Class 'Stripe' not found");
             
@@ -27,7 +27,15 @@ class StripeService {
             
             if (!class_exists('\\Stripe_Customer')) {
                 var_dump("Class '\Stripe_Customer' not found");
-            }             
+            }      
+            
+            if (!class_exists('QueryPath')) {
+                var_dump("Class 'QueryPath' not found");
+            }                  
+            
+            if (!class_exists('\\QueryPath')) {
+                var_dump("Class '\QueryPath' not found");
+            }               
             exit();
         }
         
