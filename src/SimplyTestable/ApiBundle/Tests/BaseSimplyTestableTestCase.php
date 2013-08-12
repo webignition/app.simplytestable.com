@@ -621,6 +621,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     protected function removeAllJobs() {
         $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions');
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\CrawlJob');
         
         $this->removeAllTasks();
         $this->removeAllJobRejectionReasons();
