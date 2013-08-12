@@ -13,8 +13,15 @@ class StripeService {
      * 
      * @param string $apiKey
      */
-    public function __construct($apiKey) {        
+    public function __construct($apiKey) {
+        require_once(realpath(__DIR__ . '/../../../../vendor/stripe/stripe-php/lib/Stripe.php'));
+        
+//        var_dump(realpath(__DIR__ . '/../../../../vendor/stripe/stripe-php/lib/Stripe.php'));
+//        exit();
+        
         if (!class_exists('Stripe')) {
+            
+            
             var_dump("Class 'Stripe' not found");
             
             if (!class_exists('\\Stripe')) {
