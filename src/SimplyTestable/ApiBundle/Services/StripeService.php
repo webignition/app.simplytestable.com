@@ -14,6 +14,11 @@ class StripeService {
      * @param string $apiKey
      */
     public function __construct($apiKey) {
+        if (!class_exists('Stripe')) {
+            var_dump("Class 'Stripe' not found");
+            exit();
+        }
+        
         Stripe::setApiKey($apiKey);
     }
     
