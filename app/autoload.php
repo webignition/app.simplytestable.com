@@ -5,7 +5,9 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 
 if (getenv('IS_JENKINS') === 'true') {
     $jenkinsNeedsThese = array(
-        'Stripe' => '/stripe/stripe-php/lib/Stripe.php'
+        'Stripe' => '/stripe/stripe-php/lib/Stripe.php',
+        'ExpressiveDate' => '/jasonlewis/expressive-date/src/ExpressiveDate.php',
+        'ExpressiveDateServiceProvider' => '/jasonlewis/expressive-date/src/ExpressiveDateServiceProvider.php'
     );    
     
     foreach ($jenkinsNeedsThese as $class => $path) {
