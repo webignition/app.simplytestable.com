@@ -50,6 +50,9 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
         'worker-offline' => null,
         'worker-unactivated' => null,    
         'job-rejected' => null,
+        'crawl-completed' => null,
+        'crawl-in-progress' => 'crawl-completed',
+        'crawl-queued' => 'crawl-in-progress',
     );  
     
     /**
