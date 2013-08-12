@@ -10,9 +10,9 @@ if (getenv('IS_JENKINS') === 'true') {
     
     foreach ($jenkinsNeedsThese as $class => $path) {
         if (!class_exists($class)) {
-            $fullPath = realpath(__DIR__ . '/../../../../vendor' . $path);
+            $fullPath = __DIR__ . '/../vendor' . $path;
             
-            var_dump($fullPath);
+            var_dump($fullPath, file_exists($fullPath));
             exit();
         }
     }    
