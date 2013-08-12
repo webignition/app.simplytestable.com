@@ -435,6 +435,14 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         return json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
     }
     
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\CrawlJobService
+     */
+    protected function getCrawlJobService() {
+        return $this->container->get('simplytestable.services.crawljobservice');
+    }     
+    
     
     /**
      *
