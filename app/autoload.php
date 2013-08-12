@@ -19,18 +19,18 @@ AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
  * 
  * Works on local dev environment. Works on live. Works on Travis. Doesn't work on Jenkins.
  */
-$jenkinsNeedsThese = array(
-    'Stripe' => '/stripe/stripe-php/lib/Stripe.php',
-    'ExpressiveDate' => '/jasonlewis/expressive-date/src/ExpressiveDate.php'
-);    
-
-foreach ($jenkinsNeedsThese as $class => $path) {
-    if (!class_exists($class)) {
-        var_dump("cp01");
-        exit();
-        
-        require_once(realpath(__DIR__ . '/../vendor' . $path));
-    }
-}  
+//$jenkinsNeedsThese = array(
+//    'Stripe' => '/stripe/stripe-php/lib/Stripe.php',
+//    'ExpressiveDate' => '/jasonlewis/expressive-date/src/ExpressiveDate.php'
+//);    
+//
+//foreach ($jenkinsNeedsThese as $class => $path) {
+//    if (!class_exists($class)) {
+//        var_dump("cp01");
+//        exit();
+//        
+//        require_once(realpath(__DIR__ . '/../vendor' . $path));
+//    }
+//}  
 
 return $loader;
