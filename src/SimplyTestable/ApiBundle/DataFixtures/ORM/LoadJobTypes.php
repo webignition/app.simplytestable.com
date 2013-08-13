@@ -15,6 +15,9 @@ class LoadJobTypes extends AbstractFixture implements OrderedFixtureInterface
         ),
         'Single URL' => array(
             'description' => 'Test only the submitted URL'
+        ),
+        'crawl' => array(
+            'description' => 'Crawl the site to find URLs for testing'
         )        
     );
     
