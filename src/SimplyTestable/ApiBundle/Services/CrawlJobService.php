@@ -4,12 +4,6 @@ namespace SimplyTestable\ApiBundle\Services;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Job\CrawlJob;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
-use SimplyTestable\ApiBundle\Entity\WebSite;
-use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 
 class CrawlJobService extends EntityService {
     
@@ -18,11 +12,6 @@ class CrawlJobService extends EntityService {
     const COMPLETED_STATE = 'crawl-completed';
     const IN_PROGRESS_STATE = 'crawl-in-progress';
     const QUEUED_STATE = 'crawl-queued';
-    
-    private $incompleteStateNames = array(
-        self::IN_PROGRESS_STATE,
-        self::QUEUED_STATE
-    );
     
     /**
      *
@@ -64,13 +53,17 @@ class CrawlJobService extends EntityService {
     }
     
     
-//    /**
-//     *
-//     * @return \SimplyTestable\ApiBundle\Services\StateService
-//     */
-//    public function getStateService() {
-//        return $this->stateService;                
-//    }
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return boolean
+     */
+    public function hasForJob(Job $job) {        
+        return count($this->getEntityRepository()->findAllByJobAndStates($job, array(
+            $this->getInProgressState(),
+            $this->getQueuedState()
+        ))) > 0;
+    }
     
     
     /**
@@ -100,204 +93,35 @@ class CrawlJobService extends EntityService {
     }
     
     
-//    /**
-//     *
-//     * @param Job $job
-//     * @return boolean
-//     */
-//    public function isNew(Job $job) {
-//        return $job->getState()->equals($this->getQueuedState());
-//    }
-    
-    
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return CrawlJob
      */
     public function create(Job $job) {        
-        var_dump("cp01");
-        exit();
+        $crawlJob = new CrawlJob();
+        $crawlJob->setJob($job);
+        $crawlJob->setState($this->getQueuedState());
         
-        $job = new Job();
-        $job->setUser($user);
-        $job->setWebsite($website);
-        $job->setType($type);
-        
-        foreach ($taskTypes as $taskType) {
-            if ($taskType instanceof TaskType) {                
-                $job->addRequestedTaskType($taskType);
-                $comparatorTaskTypeName = strtolower($taskType->getName());                
-                
-                if (isset($taskTypeOptionsArray[$comparatorTaskTypeName])) {
-                    $taskTypeOptions = new TaskTypeOptions();
-                    $taskTypeOptions->setJob($job);
-                    $taskTypeOptions->setTaskType($taskType);
-                    $taskTypeOptions->setOptions($taskTypeOptionsArray[$comparatorTaskTypeName]);                
-
-                    $this->getEntityManager()->persist($taskTypeOptions);                    
-                    $job->getTaskTypeOptions()->add($taskTypeOptions);
-                }
-            }
-        }
-        
-        $job->setState($this->getStartingState());
-        $this->getEntityManager()->persist($job);        
-        
-        $this->getEntityManager()->flush();
-
-        return $job;
-    }    
-    
-    
-//    /**
-//     *
-//     * @param Job $job
-//     * @return boolean 
-//     */
-//    private function isFinished(Job $job) {
-//        if ($this->isCancelled($job)) {
-//            return true;
-//        }
-//        
-//        if ($this->isCompleted($job)) {
-//            return true;
-//        }    
-//        
-//        if ($this->isFailedNoSitemap($job)) {
-//            return true;
-//        }
-//        
-//        return false;
-//    }
-
-    
-    
-//    /**
-//     *
-//     * @param Job $job
-//     * @return boolean 
-//     */
-//    private function isCompleted(Job $job) {
-//        return $job->getState()->equals($this->getCompletedState());
-//    }    
-    
-
-//    /**
-//     *
-//     * @param Job $job
-//     * @return boolean 
-//     */
-//    private function isInProgress(Job $job) {
-//        return $job->getState()->equals($this->getInProgressState());
-//    }     
-    
-      
-    
-    
-//    /**
-//     *
-//     * @param Job $job
-//     * @return \SimplyTestable\ApiBundle\Entity\Job\Job|boolean 
-//     */
-//    public function fetch(Job $job) {        
-//        $jobs = $this->getEntityRepository()->findBy(array(
-//            'state' => $job->getState(),
-//            'user' => $job->getUser(),
-//            'website' => $job->getWebsite()
-//        ));        
-//        
-//        /* @var $comparator Job */
-//        foreach ($jobs as $comparator) {
-//            if ($job->equals($comparator)) {
-//                return $comparator;
-//            }
-//        }
-//        
-//        return false;  
-//    }
-    
-    
-//    /**
-//     *
-//     * @param Job $job
-//     * @return boolean
-//     */
-//    public function has(Job $job) {        
-//        return $this->fetch($job) !== false;
-//    }
-    
-    
-    /**
-     *
-     * @param Job $job
-     * @return Job
-     */
-    public function persistAndFlush(Job $job) {
-        $this->getEntityManager()->persist($job);
-        $this->getEntityManager()->flush();
-        return $job;
+        return $this->persistAndFlush($crawlJob);
     }
     
     
-//    /**
-//     * Does a job have any tasks which have not yet completed?
-//     * 
-//     * @param Job $job
-//     * @return boolean 
-//     */
-//    public function hasIncompleteTasks(Job $job) {
-//        $incompleteTaskStates = $this->taskService->getIncompleteStates();
-//        foreach ($incompleteTaskStates as $state) {
-//            $taskCount = $this->taskService->getCountByJobAndState($job, $state);
-//            if ($taskCount > 0) {
-//                return true;
-//            }
-//        }
-//        
-//        return false;
-//    }
-            
-    
-//    /**
-//     *
-//     * @param Job $job
-//     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
-//     */
-//    public function complete(Job $job) {
-//        if (!$this->isInProgress($job)) {
-//            return $job;
-//        }        
-//        
-//        if ($this->hasIncompleteTasks($job)) {
-//            return $job;
-//        }
-//        
-//        $job->getTimePeriod()->setEndDateTime(new \DateTime());        
-//        $job->setNextState();       
-//        
-//        return $this->persistAndFlush($job);
-//    }
+    /**
+     *
+     * @param CrawlJob $job
+     * @return CrawlJob
+     */
+    public function persistAndFlush(CrawlJob $crawlJob) {
+        $this->getEntityManager()->persist($crawlJob);
+        $this->getEntityManager()->flush();
+        return $crawlJob;
+    }
 
-
-    
-    
-//    /**
-//     * 
-//     * @return array
-//     */
-//    public function getIncompleteStates() {
-//        $incompleteStates = array();
-//        
-//        foreach ($this->incompleteStateNames as $stateName) {
-//            $incompleteStates[] = $this->stateService->fetch($stateName);
-//        }
-//        
-//        return $incompleteStates;      
-//    }
     
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Repository\JobRepository
+     * @return \SimplyTestable\ApiBundle\Repository\CrawlJobRepository
      */
     public function getEntityRepository() {
         return parent::getEntityRepository();
