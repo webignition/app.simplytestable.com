@@ -125,15 +125,7 @@ class CrawlJobContainerService extends EntityService {
             return true;
         }                
         
-        $task = new Task();
-        
-        $task->setJob($crawlJobContainer->getCrawlJob());
-        $task->setParameters(json_encode(array(
-            'scope' => (string)$crawlJobContainer->getParentJob()->getWebsite()
-        )));
-        $task->setState($this->taskService->getQueuedState());
-        $task->setType($this->taskTypeService->getByName('URL discovery'));
-        $task->setUrl((string)$crawlJobContainer->getParentJob()->getWebsite());
+        $task = $this->createUrlDiscoveryTask($crawlJobContainer, (string)$crawlJobContainer->getParentJob()->getWebsite());
         
         $crawlJobContainer->getCrawlJob()->addTask($task);
         $crawlJobContainer->getCrawlJob()->setState($this->jobService->getQueuedState());
@@ -147,6 +139,84 @@ class CrawlJobContainerService extends EntityService {
         $this->getEntityManager()->flush();
         
         return true;
+    }
+    
+    
+    private function createUrlDiscoveryTask(CrawlJobContainer $crawlJobContainer, $url) {
+        $task = new Task();
+        
+        $task->setJob($crawlJobContainer->getCrawlJob());
+        $task->setParameters(json_encode(array(
+            'scope' => (string)$crawlJobContainer->getParentJob()->getWebsite()
+        )));
+        $task->setState($this->taskService->getQueuedState());
+        $task->setType($this->taskTypeService->getByName('URL discovery'));
+        $task->setUrl($url);
+        
+        return $task;
+    }
+    
+    
+    public function processTaskResults(Task $task) {
+        if (is_null($task->getType())) {
+            return false;
+        }
+        
+        if (!$task->getType()->equals($this->taskTypeService->getByName('URL discovery'))) {
+            return false;
+        }
+        
+        if (is_null($task->getState())) {
+            return false;
+        } 
+        
+        if (!$task->getState()->equals($this->taskService->getCompletedState())) {
+            return false;
+        }
+        
+        if (is_null($task->getOutput())) {
+            return false;
+        }
+        
+        $crawlJobContainer = $this->getEntityRepository()->findOneBy(array(
+            'crawlJob' => $task->getJob()
+        ));
+      
+        $discoveredUrlSet = json_decode($task->getOutput()->getOutput());
+        $isFlushRequired = false;
+        
+        foreach ($discoveredUrlSet as $url) {
+            if (!$this->isProcessedUrl($crawlJobContainer, $url)) {
+                $task = $this->createUrlDiscoveryTask($crawlJobContainer, $url);
+                $this->getEntityManager()->persist($task);
+                $crawlJobContainer->getCrawlJob()->addTask($task);
+                $isFlushRequired = true;
+            }
+        }
+        
+        if ($isFlushRequired) {
+            $this->getEntityManager()->persist($crawlJobContainer->getCrawlJob());
+            $this->getEntityManager()->flush();            
+        }
+        
+        return true;
+    }
+    
+    
+    public function getProcessedUrls(CrawlJobContainer $crawlJobContainer) {
+        return $this->taskService->getEntityRepository()->findUrlsByJobAndState(
+            $crawlJobContainer->getCrawlJob(),
+            $this->taskService->getCompletedState()
+        );
+    }
+    
+    private function isProcessedUrl(CrawlJobContainer $crawlJobContainer, $url) {
+        $url = (string)new \webignition\NormalisedUrl\NormalisedUrl($url);
+        return $this->taskService->getEntityRepository()->findUrlExistsByJobAndUrlAndState(
+            $crawlJobContainer->getCrawlJob(),
+            $url,
+            $this->taskService->getCompletedState()
+        );      
     }
     
     

@@ -42,6 +42,44 @@ class TaskRepository extends EntityRepository
         return $queryBuilder->getQuery()->getArrayResult();
     }
     
+    public function findUrlsByJobAndState(Job $job, State $state) {        
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('DISTINCT Task.url');
+        $queryBuilder->where('Task.job = :Job AND Task.state = :State');
+        $queryBuilder->setParameter('Job', $job);
+        $queryBuilder->setParameter('State', $state);     
+        
+        $urls = array();
+        $result = $queryBuilder->getQuery()->getResult();        
+        
+        foreach ($result as $item) {
+            $urls[] = $item['url'];
+        }
+        
+        return $urls;
+    }  
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param string $url
+     * @param \SimplyTestable\ApiBundle\Entity\State $state
+     * @return boolean
+     */
+    public function findUrlExistsByJobAndUrlAndState(Job $job, $url, State $state) {        
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('COUNT(Task.url)');
+        $queryBuilder->where('Task.job = :Job AND Task.url = :Url AND Task.state = :State');
+        $queryBuilder->setParameter('Job', $job);
+        $queryBuilder->setParameter('Url', $url);
+        $queryBuilder->setParameter('State', $state);
+
+        $result = $queryBuilder->getQuery()->getResult();        
+        
+        return $result[0][1] == 1;
+    }
+    
+    
     
     /**
      *
