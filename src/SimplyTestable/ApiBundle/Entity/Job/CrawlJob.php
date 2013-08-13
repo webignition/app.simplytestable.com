@@ -33,10 +33,21 @@ class CrawlJob
      * @var \SimplyTestable\ApiBundle\Entity\Job\Job
      * 
      * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job")
-     * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="crawl_job_id", referencedColumnName="id", nullable=false)
      * 
      */
-    protected $job;
+    protected $crawlJob;
+    
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Entity\Job\Job
+     * 
+     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job")
+     * @ORM\JoinColumn(name="parent_job_id", referencedColumnName="id", nullable=false)
+     * 
+     */
+    protected $parentJob;    
     
     
     /**
@@ -49,17 +60,7 @@ class CrawlJob
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
      * @SerializerAnnotation\Expose 
      */
-    protected $state;     
-    
-    
-    /**
-     *
-     * @var \Doctrine\Common\Collections\Collection
-     * 
-     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedTasks")     
-     */
-    private $tasks;
+    protected $state;
     
     
     public function __construct()
@@ -126,59 +127,46 @@ class CrawlJob
         return $this->state;
     }
     
-
     /**
-     * Add tasks
-     *
-     * @param SimplyTestable\ApiBundle\Entity\Task\Task $task
-     * @return Job
-     */
-    public function addTask(\SimplyTestable\ApiBundle\Entity\Task\Task $task)
-    {
-        $this->tasks[] = $task;
-        return $this;
-    }
-
-    /**
-     * Remove tasks
-     *
-     * @param SimplyTestable\ApiBundle\Entity\Task\Task $task
-     */
-    public function removeTask(\SimplyTestable\ApiBundle\Entity\Task\Task $task)
-    {
-        $this->tasks->removeElement($task);
-    }
-
-    /**
-     * Get tasks
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getTasks()
-    {        
-        return $this->tasks;
-    }  
-
-    /**
-     * Set job
      *
      * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
      * @return CrawlJob
      */
-    public function setJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
+    public function setCrawlJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
     {
-        $this->job = $job;
+        $this->crawlJob = $job;
     
         return $this;
     }
 
     /**
-     * Get job
      *
      * @return SimplyTestable\ApiBundle\Entity\Job\Job
      */
-    public function getJob()
+    public function getCrawlJob()
     {
-        return $this->job;
+        return $this->crawlJob;
+    }    
+    
+
+    /**
+     *
+     * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return CrawlJob
+     */
+    public function setParentJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
+    {
+        $this->parentJob = $job;
+    
+        return $this;
+    }
+
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Entity\Job\Job
+     */
+    public function getParentJob()
+    {
+        return $this->parentJob;
     }
 }
