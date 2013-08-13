@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\CrawlJob;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class HasForJobTeset extends BaseSimplyTestableTestCase {
+class HasForJobTest extends BaseSimplyTestableTestCase {
 
     public function testHas() {        
         $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/'));        

@@ -67,6 +67,22 @@ class CrawlJobService extends EntityService {
     
     
     /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return CrawlJob
+     */
+    public function getForJob(Job $job) {
+        if (!$this->hasForJob($job)) {
+            return null;
+        }
+        
+        return $this->getEntityRepository()->findOneBy(array(
+            'job' => $job
+        ));       
+    }
+    
+    
+    /**
      *
      * @return \SimplyTestable\ApiBundle\Entity\State
      */
