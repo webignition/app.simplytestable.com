@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task\AssignmentSelectionCommand;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
@@ -77,11 +77,7 @@ class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
     }
     
     
-    private function runForNWorkers($requestedWorkerCount) {
-//        $this->removeAllWorkers();
-//        $this->removeAllJobs();
-//        $this->clearRedis();      
-        
+    private function runForNWorkers($requestedWorkerCount) {        
         $canonicalUrl = 'http://example.com/';   
         
         $jobCreateResponse = $this->createJob($canonicalUrl);        

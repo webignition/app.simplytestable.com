@@ -136,6 +136,7 @@ class CrawlJobContainerService extends EntityService {
         $task->setUrl((string)$crawlJobContainer->getParentJob()->getWebsite());
         
         $crawlJobContainer->getCrawlJob()->addTask($task);
+        $crawlJobContainer->getCrawlJob()->setState($this->jobService->getQueuedState());
         
         $this->getEntityManager()->persist($task);
         $this->getEntityManager()->persist($crawlJobContainer->getCrawlJob());
