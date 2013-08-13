@@ -178,6 +178,10 @@ class CrawlJobContainerService extends EntityService {
             return false;
         }
         
+        if ($task->getOutput()->getErrorCount() > 0) {
+            return false;
+        }
+        
         $crawlJobContainer = $this->getEntityRepository()->findOneBy(array(
             'crawlJob' => $task->getJob()
         ));
@@ -203,12 +207,50 @@ class CrawlJobContainerService extends EntityService {
     }
     
     
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\CrawlJobContainer $crawlJobContainer
+     * @return array
+     */
     public function getProcessedUrls(CrawlJobContainer $crawlJobContainer) {
         return $this->taskService->getEntityRepository()->findUrlsByJobAndState(
             $crawlJobContainer->getCrawlJob(),
             $this->taskService->getCompletedState()
         );
     }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\CrawlJobContainer $crawlJobContainer
+     * @return array
+     */
+    public function getDiscoveredUrls(CrawlJobContainer $crawlJobContainer) {
+        $discoveredUrls = array();
+        
+        $completedTasks = $this->taskService->getEntityRepository()->findBy(array(
+            'job' => $crawlJobContainer->getCrawlJob(),
+            'state' => $this->taskService->getCompletedState()
+        ));
+        
+        foreach ($completedTasks as $task) {
+            if ($task->getOutput()->getErrorCount() === 0) {
+                if (!in_array($task->getUrl(), $discoveredUrls)) {
+                    $discoveredUrls[] = $task->getUrl();
+                }                
+                
+                $urlSet = json_decode($task->getOutput()->getOutput());
+                
+                foreach ($urlSet as $url) {
+                    if (!in_array($url, $discoveredUrls)) {
+                        $discoveredUrls[] = $url;
+                    }
+                }
+            }
+        }
+        
+        return $discoveredUrls;
+    }    
     
     private function isProcessedUrl(CrawlJobContainer $crawlJobContainer, $url) {
         $url = (string)new \webignition\NormalisedUrl\NormalisedUrl($url);
