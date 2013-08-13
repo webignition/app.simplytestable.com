@@ -24,7 +24,6 @@ class CrawlJob
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      * 
-     * @SerializerAnnotation\Expose 
      */
     protected $id;    
     
@@ -36,7 +35,6 @@ class CrawlJob
      * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job")
      * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)
      * 
-     * @SerializerAnnotation\Expose 
      */
     protected $job;
     
@@ -76,7 +74,7 @@ class CrawlJob
      * @return string
      */
     public function getPublicSerializedState() {
-        return str_replace('job-', '', (string)$this->getState());
+        return str_replace('crawl-', '', (string)$this->getState());
     }
         
     

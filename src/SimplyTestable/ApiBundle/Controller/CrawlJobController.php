@@ -28,13 +28,5 @@ class CrawlJobController extends JobController
         
         return $this->sendResponse();
     }
-       
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\CrawlJobService 
-     */
-    private function getCrawlJobService() {
-        return $this->get('simplytestable.services.crawljobservice');
-    }    
-    
+   
 }

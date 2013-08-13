@@ -99,6 +99,10 @@ class JobController extends ApiController
             $jobSummary['ammendments'] = $job->getAmmendments();
         }
         
+        if ($this->getCrawlJobService()->hasForJob($job)) {
+            $jobSummary['crawl'] = $this->getCrawlJobService()->getForJob($job);
+        }
+        
         return $jobSummary;        
     }
     
@@ -421,7 +425,15 @@ class JobController extends ApiController
         }
         
         return (count($taskIds) > 0) ? $taskIds : null;
-    }    
+    }
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\CrawlJobService 
+     */
+    protected function getCrawlJobService() {
+        return $this->get('simplytestable.services.crawljobservice');
+    }        
     
     
 }
