@@ -81,6 +81,10 @@ class TaskController extends ApiController
         foreach ($tasks as $task) {
             $this->getTaskService()->complete($task, $endDateTime, $output, $state);
             
+            if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery'))) {
+                $this->getCrawlJobContainerService()->processTaskResults($task);
+            }
+            
             if (!$this->getJobService()->hasIncompleteTasks($task->getJob())) {
                 $this->getJobService()->complete($task->getJob());
             }             
@@ -224,4 +228,13 @@ class TaskController extends ApiController
     private function getStateService() {
         return $this->container->get('simplytestable.services.stateservice');
     }      
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\CrawlJobContainerService
+     */
+    private function getCrawlJobContainerService() {
+        return $this->container->get('simplytestable.services.crawljobcontainerservice');
+    }      
 }
+
