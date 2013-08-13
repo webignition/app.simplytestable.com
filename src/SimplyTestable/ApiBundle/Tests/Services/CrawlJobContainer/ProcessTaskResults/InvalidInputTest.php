@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\CrawlJobContainer\ProcessTaskR
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 
-class ProcessTaskResultsTest extends BaseSimplyTestableTestCase {
+class InvalidInputTest extends BaseSimplyTestableTestCase {
     
     public function testWithNoTaskType() {        
         $this->assertFalse($this->getCrawlJobContainerService()->processTaskResults(new Task));
