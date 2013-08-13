@@ -138,6 +138,10 @@ class CrawlJobContainerService extends EntityService {
         $crawlJobContainer->getCrawlJob()->addTask($task);
         $crawlJobContainer->getCrawlJob()->setState($this->jobService->getQueuedState());
         
+        $timePeriod = new \SimplyTestable\ApiBundle\Entity\TimePeriod();
+        $timePeriod->setStartDateTime(new \DateTime());
+        $crawlJobContainer->getCrawlJob()->setTimePeriod($timePeriod);          
+        
         $this->getEntityManager()->persist($task);
         $this->getEntityManager()->persist($crawlJobContainer->getCrawlJob());
         $this->getEntityManager()->flush();

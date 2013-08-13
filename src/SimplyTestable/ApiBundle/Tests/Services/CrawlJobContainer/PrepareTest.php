@@ -43,6 +43,7 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(1, $crawlJobContainer->getCrawlJob()->getTasks()->count());      
         $this->assertEquals('URL discovery', $crawlJobContainer->getCrawlJob()->getTasks()->first()->getType()->getName());
         $this->assertEquals('job-queued', $crawlJobContainer->getCrawlJob()->getState()->getName());
+        $this->assertNotNull($crawlJobContainer->getCrawlJob()->getTimePeriod());
     } 
     
     public function testPrepareIsIdempotent() {
