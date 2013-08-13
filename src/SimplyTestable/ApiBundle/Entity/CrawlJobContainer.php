@@ -1,5 +1,5 @@
 <?php
-namespace SimplyTestable\ApiBundle\Entity\Job;
+namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use SimplyTestable\ApiBundle\Entity\State;
@@ -9,12 +9,12 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * 
  * @ORM\Entity
  * @ORM\Table(
- *     name="CrawlJob"
+ *     name="CrawlJobContainer"
  * )
- * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\CrawlJobRepository")
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository")
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class CrawlJob
+class CrawlJobContainer
 {    
     /**
      * 
@@ -130,7 +130,7 @@ class CrawlJob
     /**
      *
      * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return CrawlJob
+     * @return CrawlJobContainer
      */
     public function setCrawlJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
     {
@@ -152,7 +152,7 @@ class CrawlJob
     /**
      *
      * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return CrawlJob
+     * @return CrawlJobContainer
      */
     public function setParentJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
     {

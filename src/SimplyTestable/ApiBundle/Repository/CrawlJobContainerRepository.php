@@ -5,21 +5,21 @@ use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 
-class CrawlJobRepository extends EntityRepository
+class CrawlJobContainerRepository extends EntityRepository
 {
     
     public function findAllByJobAndStates(Job $job, $states) {
-        $queryBuilder = $this->createQueryBuilder('CrawlJob');
-        $queryBuilder->select('CrawlJob');
-        $queryBuilder->join('CrawlJob.job', 'Job');
+        $queryBuilder = $this->createQueryBuilder('CrawlJobContainer');
+        $queryBuilder->select('CrawlJobContainer');
+        $queryBuilder->join('CrawlJobContainer.parentJob', 'ParentJob');
         
-        $where = 'Job = :Job';
+        $where = 'ParentJob = :Job';
 
         $stateWhere = '';
         $stateCount = count($states);
 
         foreach ($states as $stateIndex => $state) {
-            $stateWhere .= 'CrawlJob.state = :State' . $stateIndex;
+            $stateWhere .= 'CrawlJobContainer.state = :State' . $stateIndex;
             if ($stateIndex < $stateCount - 1) {
                 $stateWhere .= ' OR ';
             }
@@ -30,7 +30,7 @@ class CrawlJobRepository extends EntityRepository
         
         $queryBuilder->where($where);
         $queryBuilder->setParameter('Job', $job);                        
-        
+
         return $queryBuilder->getQuery()->getResult();        
     }
     

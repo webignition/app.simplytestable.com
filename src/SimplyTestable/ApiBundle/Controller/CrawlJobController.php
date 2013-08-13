@@ -22,8 +22,9 @@ class CrawlJobController extends JobController
             return $this->sendFailureResponse();          
         }
         
-        if (!$this->getCrawlJobService()->hasForJob($job)) {
-            $this->getCrawlJobService()->create($job);
+        if (!$this->getCrawlJobContainerService()->hasForJob($job)) {
+            $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
+            $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         }
         
         return $this->sendResponse();

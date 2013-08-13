@@ -180,9 +180,13 @@ services:
     arguments: 
         apiKey: "%stripe_api_key%"          
         
-  simplytestable.services.crawljobservice:
-    class:  SimplyTestable\ApiBundle\Services\CrawlJobService
+  simplytestable.services.crawljobcontainerservice:
+    class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
         stateService: "@simplytestable.services.stateservice"
+        taskService: "@simplytestable.services.taskservice"
+        taskTypeService: "@simplytestable.services.tasktypeservice"
+        jobTypeService: "@simplytestable.services.jobtypeservice"
+        jobService: "@simplytestable.services.jobservice"
      

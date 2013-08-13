@@ -448,11 +448,19 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\CrawlJobService
+     * @return \SimplyTestable\ApiBundle\Services\CrawlJobContainerService
      */
-    protected function getCrawlJobService() {
-        return $this->container->get('simplytestable.services.crawljobservice');
+    protected function getCrawlJobContainerService() {
+        return $this->container->get('simplytestable.services.crawljobcontainerservice');
     }     
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobTypeService
+     */
+    protected function getJobTypeService() {
+        return $this->container->get('simplytestable.services.jobtypeservice');
+    }    
     
     
     /**
@@ -632,7 +640,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     protected function removeAllJobs() {
         $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions');
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\CrawlJob');
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\CrawlJobContainer');
         
         $this->removeAllTasks();
         $this->removeAllJobRejectionReasons();

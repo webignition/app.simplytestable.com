@@ -44,11 +44,27 @@ class StartActionTest extends BaseControllerJsonTestCase {
         $job->setState($this->getJobService()->getFailedNoSitemapState());
         $this->getJobService()->persistAndFlush($job);
         
-        $this->getCrawlJobService()->create($job);
+        $this->getCrawlJobContainerService()->create($job);
 
         $response = $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());
         $this->assertEquals(200, $response->getStatusCode());
-    }     
+    }  
+    
+    public function testStartAlsoPreparesCrawlJob() {
+        $canonicalUrl = 'http://example.com';        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        
+        $job->setState($this->getJobService()->getFailedNoSitemapState());
+        $this->getJobService()->persistAndFlush($job);
+
+        $response = $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());
+        $this->assertEquals(200, $response->getStatusCode());        
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+
+        $this->assertEquals(1, $crawlJobContainer->getCrawlJob()->getTasks()->count());      
+        $this->assertEquals('URL discovery', $crawlJobContainer->getCrawlJob()->getTasks()->first()->getType()->getName());
+    }
     
 }
 

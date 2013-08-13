@@ -10,6 +10,7 @@ class JobTypeService extends EntityService {
     const DEFAULT_TYPE_ID = 1;
     const FULL_SITE_NAME = 'full site';
     const SINGLE_URL_NAME = 'single url';
+    const CRAWL_NAME = 'crawl';
     
     /**
      *
@@ -59,13 +60,21 @@ class JobTypeService extends EntityService {
         return $this->getByName(self::FULL_SITE_NAME);
     }
     
-    
     /**
      * 
      * @return Type
      */
     public function getSingleUrlType() {
         return $this->getByName(self::SINGLE_URL_NAME);
+    }      
+    
+    
+    /**
+     * 
+     * @return Type
+     */
+    public function getCrawlType() {
+        return $this->getByName(self::CRAWL_NAME);
     }    
     
 }
