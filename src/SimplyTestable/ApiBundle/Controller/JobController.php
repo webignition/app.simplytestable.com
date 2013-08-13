@@ -13,8 +13,8 @@ use Symfony\Component\Console\Input\InputDefinition;
 
 class JobController extends ApiController
 {
-    private $siteRootUrl = null;
-    private $testId = null;
+    protected $siteRootUrl = null;
+    protected $testId = null;
     
     
     public function latestAction($site_root_url) {
@@ -262,7 +262,7 @@ class JobController extends ApiController
      *
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
-    private function getJob() {      
+    protected function getJob() {      
         $job = $this->getJobService()->getEntityRepository()->findByIdAndWebsiteAndUsers(
             $this->testId,
             $this->getWebsite(),
@@ -372,7 +372,7 @@ class JobController extends ApiController
      *
      * @return \SimplyTestable\ApiBundle\Services\JobService 
      */
-    private function getJobService() {
+    protected function getJobService() {
         return $this->get('simplytestable.services.jobservice');
     }
     

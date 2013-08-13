@@ -11,6 +11,7 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * @ORM\Table(
  *     name="CrawlJob"
  * )
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\CrawlJobRepository")
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class CrawlJob
