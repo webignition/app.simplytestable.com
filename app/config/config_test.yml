@@ -15,17 +15,17 @@ web_profiler:
 swiftmailer:
     disable_delivery: true
 
-parameters:    
-    database_driver: pdo_mysql
-    database_host: localhost
-    database_port: null
-    database_name: test_app_simplytestable_com
-    database_user: st_app_test
-    database_password: st_app_test_password 
+#parameters:    
+#    database_driver: pdo_mysql
+#    database_host: localhost
+#    database_port: null
+#    database_name: test_app_simplytestable_com
+#    database_user: st_app_test
+#    database_password: st_app_test_password 
     
-#doctrine:
-#  dbal:
-#    connections:
-#      default:
-#        driver: pdo_sqlite
-#        path: /run/shm/app.simplytestable.com.db
+doctrine:
+  dbal:
+    connections:
+      default:
+        driver: pdo_sqlite
+        path: /run/shm/app.simplytestable.com.db

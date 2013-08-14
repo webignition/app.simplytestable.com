@@ -63,16 +63,14 @@ class TaskRepository extends EntityRepository
      * 
      * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
      * @param string $url
-     * @param \SimplyTestable\ApiBundle\Entity\State $state
      * @return boolean
      */
-    public function findUrlExistsByJobAndUrlAndState(Job $job, $url, State $state) {        
+    public function findUrlExistsByJobAndUrl(Job $job, $url) {        
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('COUNT(Task.url)');
-        $queryBuilder->where('Task.job = :Job AND Task.url = :Url AND Task.state = :State');
+        $queryBuilder->where('Task.job = :Job AND Task.url = :Url');
         $queryBuilder->setParameter('Job', $job);
         $queryBuilder->setParameter('Url', $url);
-        $queryBuilder->setParameter('State', $state);
 
         $result = $queryBuilder->getQuery()->getResult();        
         

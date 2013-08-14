@@ -189,8 +189,8 @@ class CrawlJobContainerService extends EntityService {
         $discoveredUrlSet = json_decode($task->getOutput()->getOutput());
         $isFlushRequired = false;
         
-        foreach ($discoveredUrlSet as $url) {
-            if (!$this->isProcessedUrl($crawlJobContainer, $url)) {
+        foreach ($discoveredUrlSet as $url) {            
+            if (!$this->isTaskUrl($crawlJobContainer, $url)) {
                 $task = $this->createUrlDiscoveryTask($crawlJobContainer, $url);
                 $this->getEntityManager()->persist($task);
                 $crawlJobContainer->getCrawlJob()->addTask($task);
@@ -252,15 +252,13 @@ class CrawlJobContainerService extends EntityService {
         return $discoveredUrls;
     }    
     
-    private function isProcessedUrl(CrawlJobContainer $crawlJobContainer, $url) {
+    private function isTaskUrl(CrawlJobContainer $crawlJobContainer, $url) {
         $url = (string)new \webignition\NormalisedUrl\NormalisedUrl($url);
-        return $this->taskService->getEntityRepository()->findUrlExistsByJobAndUrlAndState(
+        return $this->taskService->getEntityRepository()->findUrlExistsByJobAndUrl(
             $crawlJobContainer->getCrawlJob(),
-            $url,
-            $this->taskService->getCompletedState()
+            $url
         );      
     }
-    
     
     /**
      *
