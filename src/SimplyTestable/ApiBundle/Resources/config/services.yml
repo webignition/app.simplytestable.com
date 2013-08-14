@@ -189,4 +189,5 @@ services:
         taskTypeService: "@simplytestable.services.tasktypeservice"
         jobTypeService: "@simplytestable.services.jobtypeservice"
         jobService: "@simplytestable.services.jobservice"
+        jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
      

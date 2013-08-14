@@ -62,6 +62,15 @@ class JobUserAccountPlanEnforcementService {
     
     /**
      * 
+     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
+     */
+    public function getUserAccountPlanService() {
+        return $this->userAccountPlanService;
+    }
+    
+    
+    /**
+     * 
      * @param \SimplyTestable\ApiBundle\Entity\User $user
      */
     public function setUser(\SimplyTestable\ApiBundle\Entity\User $user) {

@@ -45,7 +45,13 @@ class CrawlJobContainerService extends EntityService {
      *
      * @var \SimplyTestable\ApiBundle\Services\JobService
      */
-    private $jobService;       
+    private $jobService; 
+    
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+     */
+    private $jobUserAccountPlanEnforcementService;        
     
     
     public function __construct(
@@ -54,7 +60,8 @@ class CrawlJobContainerService extends EntityService {
             \SimplyTestable\ApiBundle\Services\TaskService $taskService,
             \SimplyTestable\ApiBundle\Services\TaskTypeService $taskTypeService,
             \SimplyTestable\ApiBundle\Services\JobTypeService $jobTypeService,
-            \SimplyTestable\ApiBundle\Services\JobService $jobService)
+            \SimplyTestable\ApiBundle\Services\JobService $jobService,
+            \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService)
     {
         parent::__construct($entityManager);        
         $this->stateService = $stateService;
@@ -62,6 +69,7 @@ class CrawlJobContainerService extends EntityService {
         $this->taskTypeService = $taskTypeService;
         $this->jobTypeService = $jobTypeService;
         $this->jobService = $jobService;
+        $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
     }
     
     /**
@@ -186,7 +194,16 @@ class CrawlJobContainerService extends EntityService {
             'crawlJob' => $task->getJob()
         ));
       
-        $discoveredUrlSet = json_decode($task->getOutput()->getOutput());
+        $discoveredUrlSet = json_decode($task->getOutput()->getOutput());        
+        if (count($discoveredUrlSet) === 0) {
+            return true;
+        }
+        
+        $this->jobUserAccountPlanEnforcementService->setUser($crawlJobContainer->getCrawlJob()->getUser());
+        if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($this->getDiscoveredUrls($crawlJobContainer)))) {
+            return true;
+        }
+        
         $isFlushRequired = false;
         
         foreach ($discoveredUrlSet as $url) {            
@@ -249,7 +266,12 @@ class CrawlJobContainerService extends EntityService {
             }
         }
         
-        return $discoveredUrls;
+        $accountPlan = $this->jobUserAccountPlanEnforcementService->getUserAccountPlanService()->getForUser($crawlJobContainer->getCrawlJob()->getUser())->getPlan();
+        if ($accountPlan->hasConstraintNamed('urls_per_job')) {
+            return array_slice($discoveredUrls, 0, $accountPlan->getConstraintNamed('urls_per_job')->getLimit());
+        }
+        
+        return $discoveredUrls; 
     }    
     
     private function isTaskUrl(CrawlJobContainer $crawlJobContainer, $url) {
