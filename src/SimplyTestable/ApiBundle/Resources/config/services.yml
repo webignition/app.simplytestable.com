@@ -169,6 +169,7 @@ services:
         jobTypeService: "@simplytestable.services.jobtypeservice"
         websiteService: "@simplytestable.services.websiteservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
+        crawlJobContainerService: "@simplytestable.services.crawljobcontainerservice"
         
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService

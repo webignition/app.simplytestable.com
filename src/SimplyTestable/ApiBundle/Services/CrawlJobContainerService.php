@@ -109,13 +109,17 @@ class CrawlJobContainerService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
      * @return CrawlJob
      */
-    public function getForJob(Job $job) {
-        if (!$this->hasForJob($job)) {
-            return null;
+    public function getForJob(Job $job) {        
+        $parentJob =  $this->getEntityRepository()->findOneBy(array(
+            'parentJob' => $job
+        ));        
+        
+        if (!is_null($parentJob)) {
+            return $parentJob;
         }
         
         return $this->getEntityRepository()->findOneBy(array(
-            'parentJob' => $job
+            'crawlJob' => $job
         ));       
     }
     

@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use webignition\NormalisedUrl\NormalisedUrl;
+use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 
 class JobPreparationService {
     
@@ -63,18 +64,27 @@ class JobPreparationService {
     private $predefinedDomainsToIgnore = array();
     
     
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\CrawlJobContainerService
+     */
+    private $crawlJobContainerService;
+    
+    
     public function __construct(
         \SimplyTestable\ApiBundle\Services\JobService $jobService,
         \SimplyTestable\ApiBundle\Services\TaskService $taskService,
         \SimplyTestable\ApiBundle\Services\JobTypeService $jobTypeService,
         \SimplyTestable\ApiBundle\Services\WebSiteService $websiteService,
-        \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
+        \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
+        \SimplyTestable\ApiBundle\Services\CrawlJobContainerService $crawlJobContainerService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
         $this->jobTypeService = $jobTypeService;
         $this->websiteService = $websiteService;
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
+        $this->crawlJobContainerService = $crawlJobContainerService;
     }
     
     
@@ -140,6 +150,77 @@ class JobPreparationService {
                     }
                     
                     $this->taskService->persist($task);                           
+                }
+                
+                $this->processedUrls[] = (string)$comparatorUrl;
+            }
+        }
+        
+        $job->setState($this->jobService->getQueuedState());
+        
+        $timePeriod = new TimePeriod();
+        $timePeriod->setStartDateTime(new \DateTime());
+        $job->setTimePeriod($timePeriod);   
+        
+        $this->jobService->persistAndFlush($job);
+        
+        return self::RETRUN_CODE_OK;
+    }
+    
+    
+    public function prepareFromCrawl(CrawlJobContainer $crawlJobContainer) {
+        $this->processedUrls = array();
+        $job = $crawlJobContainer->getParentJob();
+        
+        if (!$this->jobService->isFailedNoSitepmap($job)) {
+            return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
+        }  
+        
+        $job->setState($this->jobService->getPreparingState());         
+        $this->jobService->persistAndFlush($job);
+        
+        $urls = $this->crawlJobContainerService->getDiscoveredUrls($crawlJobContainer, true);
+        
+        if ($urls === false || count($urls) == 0) {
+            $job->setState($this->jobService->getFailedNoSitemapState());
+            $this->jobService->persistAndFlush($job);
+            return self::RETURN_CODE_NO_URLS;
+        }
+        
+        $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());        
+        if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
+            $this->jobService->addAmmendment($job, 'plan-url-limit-reached:discovered-url-count-' . count($urls), $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());            
+            $urls = array_slice($urls, 0, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit());
+        }
+        
+        $requestedTaskTypes = $job->getRequestedTaskTypes();
+        $newTaskState = $this->taskService->getQueuedState();
+        
+        foreach ($urls as $url) {
+            $comparatorUrl = new NormalisedUrl($url);
+            if (!$this->isProcessedUrl($comparatorUrl)) {                
+                foreach ($requestedTaskTypes as $taskType) {
+                    $taskTypeOptions = $this->getTaskTypeOptions($job, $taskType);
+
+                    $task = new Task();
+                    $task->setJob($job);
+                    $task->setType($taskType);
+                    $task->setUrl($url);
+                    $task->setState($newTaskState);
+                    
+                    if ($taskTypeOptions->getOptionCount()) {
+                        $options = $taskTypeOptions->getOptions();                        
+                        
+                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $this->predefinedDomainsToIgnore);                                               
+                        if (count($domainsToIgnore)) {
+                            $options['domains-to-ignore'] = $domainsToIgnore;
+                        }
+                        
+                        $task->setParameters(json_encode($options));
+                    }
+                    
+                    $this->taskService->persist($task);
+                    $job->addTask($task);
                 }
                 
                 $this->processedUrls[] = (string)$comparatorUrl;

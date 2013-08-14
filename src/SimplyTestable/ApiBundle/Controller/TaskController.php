@@ -46,7 +46,7 @@ class TaskController extends ApiController
     }  
     
     
-    public function completeByUrlAndTaskTypeAction($canonical_url, $task_type, $parameter_hash) {
+    public function completeByUrlAndTaskTypeAction($canonical_url, $task_type, $parameter_hash) {        
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
@@ -87,7 +87,11 @@ class TaskController extends ApiController
             
             if (!$this->getJobService()->hasIncompleteTasks($task->getJob())) {
                 $this->getJobService()->complete($task->getJob());
-            }             
+            } 
+            
+            if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery')) && $this->getJobService()->isCompleted($task->getJob())) {
+                $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($task->getJob()));
+            }            
         }
         
         return $this->sendSuccessResponse();
@@ -210,6 +214,15 @@ class TaskController extends ApiController
      */
     private function getJobService() {
         return $this->container->get('simplytestable.services.jobservice');
+    }     
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
+     */
+    private function getJobPreparationService() {
+        return $this->container->get('simplytestable.services.jobpreparationservice');
     }     
     
     

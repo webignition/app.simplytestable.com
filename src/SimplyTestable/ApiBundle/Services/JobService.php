@@ -170,6 +170,15 @@ class JobService extends EntityService {
         return $job->getState()->equals($this->getStartingState());
     }
     
+    /**
+     *
+     * @param Job $job
+     * @return boolean
+     */
+    public function isQueued(Job $job) {
+        return $job->getState()->equals($this->getQueuedState());
+    }    
+    
     
     /**
      * 
@@ -179,6 +188,25 @@ class JobService extends EntityService {
     public function isRejected(Job $job) {
         return $job->getState()->equals($this->getRejectedState());
     }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return boolean
+     */
+    public function isFailedNoSitepmap(Job $job) {
+        return $job->getState()->equals($this->getFailedNoSitemapState());
+    }
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return boolean
+     */
+    public function isCompleted(Job $job) {
+        return $job->getState()->equals($this->getCompletedState());
+    }    
     
     
     /**
@@ -321,17 +349,7 @@ class JobService extends EntityService {
      */
     private function isCancelled(Job $job) {
         return $job->getState()->equals($this->getCancelledState());
-    }
-    
-    
-    /**
-     *
-     * @param Job $job
-     * @return boolean 
-     */
-    private function isCompleted(Job $job) {
-        return $job->getState()->equals($this->getCompletedState());
-    }    
+    }   
     
 
     /**
