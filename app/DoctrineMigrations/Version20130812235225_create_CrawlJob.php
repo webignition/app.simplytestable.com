@@ -17,13 +17,10 @@ class Version20130812235225_create_CrawlJob extends BaseMigration
                 id INT AUTO_INCREMENT NOT NULL,
                 parent_job_id INT NOT NULL,
                 crawl_job_id INT NOT NULL,
-                state_id INT NOT NULL,
-                INDEX IDX_7CB90CF45D83CC1 (state_id),
                 UNIQUE INDEX UNIQ_7CB90CF4C04B9157 (crawl_job_id),
                 UNIQUE INDEX UNIQ_7CB90CF444F38D6F (parent_job_id),
                 PRIMARY KEY(id)
              )DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB",
-            "ALTER TABLE CrawlJobContainer ADD CONSTRAINT FK_7CB90CF45D83CC1 FOREIGN KEY (state_id) REFERENCES State (id)",
             "ALTER TABLE CrawlJobContainer ADD CONSTRAINT FK_7CB90CF4C04B9157 FOREIGN KEY (crawl_job_id) REFERENCES Job (id)",
             "ALTER TABLE CrawlJobContainer ADD CONSTRAINT FK_7CB90CF444F38D6F FOREIGN KEY (parent_job_id) REFERENCES Job (id)"            
         );
@@ -33,12 +30,9 @@ class Version20130812235225_create_CrawlJob extends BaseMigration
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 parent_job_id INT NOT NULL,
                 crawl_job_id INT NOT NULL,
-                state_id INT NOT NULL,
-                FOREIGN KEY(state_id) REFERENCES State (id),
                 FOREIGN KEY(crawl_job_id) REFERENCES Job (id),
                 FOREIGN KEY(parent_job_id) REFERENCES Job (id)
              )",
-            "CREATE INDEX IDX_7CB90CF45D83CC1 ON CrawlJobContainer (state_id)",
             "CREATE UNIQUE INDEX UNIQ_7CB90CF4C04B9157 ON CrawlJobContainer (crawl_job_id)",
             "CREATE UNIQUE INDEX UNIQ_7CB90CF444F38D6F ON CrawlJobContainer (parent_job_id)"            
         );     

@@ -47,52 +47,13 @@ class CrawlJobContainer
      * @ORM\JoinColumn(name="parent_job_id", referencedColumnName="id", nullable=false)
      * 
      */
-    protected $parentJob;    
-    
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\State
-     * 
-     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
-     * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
-     * 
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
-     * @SerializerAnnotation\Expose 
-     */
-    protected $state;
+    protected $parentJob;
     
     
     public function __construct()
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    
-    
-    /**
-     *
-     * @return string
-     */
-    public function getPublicSerializedState() {
-        return str_replace('crawl-', '', (string)$this->getState());
-    }
-        
-    
-
-    /**
-     * 
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getPublicSerializedTasks() {
-        $tasks = clone $this->getTasks();        
-        foreach ($tasks as $task) {
-            /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
-            $task->setOutput(null);
-        }
-        
-        return $tasks;
-    }
+    }        
     
     
     /**
@@ -103,28 +64,6 @@ class CrawlJobContainer
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set state
-     *
-     * @param use SimplyTestable\ApiBundle\Entity\State $state
-     * @return Job
-     */
-    public function setState(State $state)
-    {
-        $this->state = $state;
-        return $this;
-    }
-
-    /**
-     * Get state
-     *
-     * @return use SimplyTestable\ApiBundle\Entity\State 
-     */
-    public function getState()
-    {
-        return $this->state;
     }
     
     /**
