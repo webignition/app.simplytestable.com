@@ -11,9 +11,9 @@ class InvalidInputTest extends BaseSimplyTestableTestCase {
         $this->assertFalse($this->getCrawlJobContainerService()->processTaskResults(new Task));
     }
     
-    public function testWithInvalidTaskType() {    
+    public function testWithInvalidTaskType() {        
         $task = new Task();
-        $task->setType($this->getTaskTypeService()->getByName('HTML Validation'));
+        $task->setType($this->getTaskTypeService()->getByName('HTML validation'));
         
         $this->assertFalse($this->getCrawlJobContainerService()->processTaskResults($task));
     }  

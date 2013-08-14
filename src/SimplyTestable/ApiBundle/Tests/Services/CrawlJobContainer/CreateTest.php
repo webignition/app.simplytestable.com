@@ -11,7 +11,7 @@ class CreateTest extends BaseSimplyTestableTestCase {
         $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
         
         $this->assertInternalType('int', $crawlJobContainer->getId());
-        $this->assertTrue($crawlJobContainer->getState()->equals($this->getCrawlJobContainerService()->getQueuedState()));
+        $this->assertTrue($crawlJobContainer->getCrawlJob()->getState()->equals($this->getJobService()->getStartingState()));
     }
 
 }

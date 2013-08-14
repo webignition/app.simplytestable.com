@@ -22,7 +22,6 @@ class PersistTest extends BaseSimplyTestableTestCase {
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setParentJob($parentJob);
         $crawlJobContainer->setCrawlJob($crawlJob);
-        $crawlJobContainer->setState($this->getCrawlJobContainerService()->getQueuedState());
      
         $this->getEntityManager()->persist($crawlJobContainer);        
         $this->getEntityManager()->flush();

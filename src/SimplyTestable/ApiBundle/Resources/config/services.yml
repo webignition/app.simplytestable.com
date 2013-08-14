@@ -185,7 +185,6 @@ services:
     class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
     arguments: 
         entityManager: "@doctrine.orm.entity_manager"
-        stateService: "@simplytestable.services.stateservice"
         taskService: "@simplytestable.services.taskservice"
         taskTypeService: "@simplytestable.services.tasktypeservice"
         jobTypeService: "@simplytestable.services.jobtypeservice"

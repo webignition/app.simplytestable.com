@@ -9,16 +9,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 class CrawlJobContainerService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\CrawlJobContainer';
-
-    const COMPLETED_STATE = 'crawl-completed';
-    const IN_PROGRESS_STATE = 'crawl-in-progress';
-    const QUEUED_STATE = 'crawl-queued';
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\StateService
-     */
-    private $stateService;
     
     
     /**
@@ -56,7 +46,6 @@ class CrawlJobContainerService extends EntityService {
     
     public function __construct(
             EntityManager $entityManager,
-            \SimplyTestable\ApiBundle\Services\StateService $stateService,
             \SimplyTestable\ApiBundle\Services\TaskService $taskService,
             \SimplyTestable\ApiBundle\Services\TaskTypeService $taskTypeService,
             \SimplyTestable\ApiBundle\Services\JobTypeService $jobTypeService,
@@ -64,7 +53,6 @@ class CrawlJobContainerService extends EntityService {
             \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService)
     {
         parent::__construct($entityManager);        
-        $this->stateService = $stateService;
         $this->taskService = $taskService;
         $this->taskTypeService = $taskTypeService;
         $this->jobTypeService = $jobTypeService;
@@ -96,10 +84,11 @@ class CrawlJobContainerService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
      * @return boolean
      */
-    public function hasForJob(Job $job) {        
-        return count($this->getEntityRepository()->findAllByJobAndStates($job, array(
-            $this->getInProgressState(),
-            $this->getQueuedState()
+    public function hasForJob(Job $job) {
+        return count($this->getEntityRepository()->findAllByJobAndJobStates($job, array(
+            $this->jobService->getStartingState(),
+            $this->jobService->getInProgressState(),
+            $this->jobService->getQueuedState()
         ))) > 0;
     }
     
@@ -124,11 +113,7 @@ class CrawlJobContainerService extends EntityService {
     }
     
     
-    public function prepare(CrawlJobContainer $crawlJobContainer) {
-        if (!$crawlJobContainer->getState()->equals($this->getQueuedState())) {
-            return false;
-        }
-        
+    public function prepare(CrawlJobContainer $crawlJobContainer) {                
         if ($crawlJobContainer->getCrawlJob()->getTasks()->count() > 1) {
             return false;
         }        
@@ -136,6 +121,10 @@ class CrawlJobContainerService extends EntityService {
         if ($crawlJobContainer->getCrawlJob()->getTasks()->count() === 1) {
             return true;
         }                
+        
+        if (!$this->jobService->isNew($crawlJobContainer->getCrawlJob())) {
+            return false;
+        }        
         
         $task = $this->createUrlDiscoveryTask($crawlJobContainer, (string)$crawlJobContainer->getParentJob()->getWebsite());
         
@@ -301,32 +290,6 @@ class CrawlJobContainerService extends EntityService {
         );      
     }
     
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
-     */
-    public function getCompletedState() {
-        return $this->stateService->fetch(self::COMPLETED_STATE);
-    }
-
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
-     */
-    public function getInProgressState() {
-        return $this->stateService->fetch(self::IN_PROGRESS_STATE);
-    }
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
-     */
-    public function getQueuedState() {
-        return $this->stateService->fetch(self::QUEUED_STATE);
-    }
-    
     
     /**
      * 
@@ -345,7 +308,6 @@ class CrawlJobContainerService extends EntityService {
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setParentJob($job);
         $crawlJobContainer->setCrawlJob($crawlJob);
-        $crawlJobContainer->setState($this->getQueuedState());
 
         return $this->persistAndFlush($crawlJobContainer);
     }

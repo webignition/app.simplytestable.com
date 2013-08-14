@@ -12,10 +12,10 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJob = $this->getCrawlJobContainerService()->create($job);
-        $crawlJob->setState($this->getCrawlJobContainerService()->getInProgressState());
+        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
+        $crawlJobContainer->getCrawlJob()->setState($this->getJobService()->getInProgressState());
         
-        $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJob));
+        $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
     }
     
     public function testForCompletedState() {        
@@ -24,10 +24,10 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJob = $this->getCrawlJobContainerService()->create($job);
-        $crawlJob->setState($this->getCrawlJobContainerService()->getInProgressState());
+        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
+        $crawlJobContainer->getCrawlJob()->setState($this->getJobService()->getCompletedState());
         
-        $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJob));
+        $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
     }    
     
     public function testForQueuedState() {        
