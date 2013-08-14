@@ -25,9 +25,25 @@ class CrawlJobController extends JobController
         if (!$this->getCrawlJobContainerService()->hasForJob($job)) {
             $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
             $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
-        }
+            
+            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
+                $this->getResqueQueueService()->add(
+                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                    'task-assignment-selection'
+                );             
+            }               
+        }        
         
         return $this->sendResponse();
     }
+    
+    
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
+     */        
+    private function getResqueQueueService() {
+        return $this->get('simplytestable.services.resqueQueueService');
+    }        
    
 }
