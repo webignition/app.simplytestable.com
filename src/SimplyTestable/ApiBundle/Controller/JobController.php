@@ -100,7 +100,12 @@ class JobController extends ApiController
         }
         
         if ($this->getCrawlJobContainerService()->hasForJob($job)) {
-            $jobSummary['crawl'] = $this->getCrawlJobContainerService()->getForJob($job);
+            $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);            
+            $jobSummary['crawl'] = array(
+                'state' => $crawlJobContainer->getCrawlJob()->getPublicSerializedState(),
+                'processedUrls' => $this->getCrawlJobContainerService()->getProcessedUrls($crawlJobContainer),
+                'discoveredUrls' => $this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer, true)
+            );;
         }
         
         return $jobSummary;        
