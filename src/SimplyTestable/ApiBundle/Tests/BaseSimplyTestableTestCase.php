@@ -805,4 +805,21 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         
         return $constraint;
     }
+    
+    
+    /**
+     * 
+     * @param string $baseUrl
+     * @param int $count
+     * @return string
+     */
+    protected function createUrlResultSet($baseUrl, $count, $offset = 0) {
+        $urlResultSet = array();
+        
+        for ($index = $offset; $index < $count + $offset; $index++) {
+            $urlResultSet[] = $baseUrl . $index . '/';
+        }
+        
+        return $urlResultSet;
+    }    
 }

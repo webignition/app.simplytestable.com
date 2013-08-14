@@ -190,23 +190,31 @@ class CrawlJobContainerService extends EntityService {
             return false;
         }
         
+        /* @var $crawlJobContainer \SimplyTestable\ApiBundle\Entity\CrawlJobContainer */
         $crawlJobContainer = $this->getEntityRepository()->findOneBy(array(
             'crawlJob' => $task->getJob()
         ));
       
-        $discoveredUrlSet = json_decode($task->getOutput()->getOutput());        
-        if (count($discoveredUrlSet) === 0) {
+        $taskDiscoveredUrlSet = json_decode($task->getOutput()->getOutput());        
+        if (count($taskDiscoveredUrlSet) === 0) {
             return true;
         }
         
         $this->jobUserAccountPlanEnforcementService->setUser($crawlJobContainer->getCrawlJob()->getUser());
-        if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($this->getDiscoveredUrls($crawlJobContainer)))) {
+        $crawlDiscoveredUrlCount = count($this->getDiscoveredUrls($crawlJobContainer));
+        
+        if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($crawlDiscoveredUrlCount)) {            
+            if ($crawlJobContainer->getCrawlJob()->getAmmendments()->isEmpty()) {
+                $this->jobService->addAmmendment($crawlJobContainer->getCrawlJob(), 'plan-url-limit-reached:discovered-url-count-' . $crawlDiscoveredUrlCount, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());            
+                $this->jobService->persistAndFlush($crawlJobContainer->getCrawlJob());
+            }
+     
             return true;
         }
         
         $isFlushRequired = false;
         
-        foreach ($discoveredUrlSet as $url) {            
+        foreach ($taskDiscoveredUrlSet as $url) {            
             if (!$this->isTaskUrl($crawlJobContainer, $url)) {
                 $task = $this->createUrlDiscoveryTask($crawlJobContainer, $url);
                 $this->getEntityManager()->persist($task);
@@ -242,7 +250,7 @@ class CrawlJobContainerService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\CrawlJobContainer $crawlJobContainer
      * @return array
      */
-    public function getDiscoveredUrls(CrawlJobContainer $crawlJobContainer) {
+    public function getDiscoveredUrls(CrawlJobContainer $crawlJobContainer, $constrainToAccountPlan = false) {
         $discoveredUrls = array();
         
         $completedTasks = $this->taskService->getEntityRepository()->findBy(array(
@@ -266,9 +274,11 @@ class CrawlJobContainerService extends EntityService {
             }
         }
         
-        $accountPlan = $this->jobUserAccountPlanEnforcementService->getUserAccountPlanService()->getForUser($crawlJobContainer->getCrawlJob()->getUser())->getPlan();
-        if ($accountPlan->hasConstraintNamed('urls_per_job')) {
-            return array_slice($discoveredUrls, 0, $accountPlan->getConstraintNamed('urls_per_job')->getLimit());
+        if ($constrainToAccountPlan) {
+            $accountPlan = $this->jobUserAccountPlanEnforcementService->getUserAccountPlanService()->getForUser($crawlJobContainer->getCrawlJob()->getUser())->getPlan();
+            if ($accountPlan->hasConstraintNamed('urls_per_job')) {                     
+                return array_slice($discoveredUrls, 0, $accountPlan->getConstraintNamed('urls_per_job')->getLimit());
+            }            
         }
         
         return $discoveredUrls; 
