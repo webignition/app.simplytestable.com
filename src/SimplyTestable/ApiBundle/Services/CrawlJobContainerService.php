@@ -212,6 +212,11 @@ class CrawlJobContainerService extends EntityService {
                 $this->jobService->addAmmendment($crawlJobContainer->getCrawlJob(), 'plan-url-limit-reached:discovered-url-count-' . $crawlDiscoveredUrlCount, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());            
                 $this->jobService->persistAndFlush($crawlJobContainer->getCrawlJob());
             }
+            
+            if (!$this->jobService->isCompleted($crawlJobContainer->getCrawlJob())) {
+                $this->jobService->cancelIncompleteTasks($crawlJobContainer->getCrawlJob());
+                $this->taskService->getEntityManager()->flush();
+            }
      
             return true;
         }
