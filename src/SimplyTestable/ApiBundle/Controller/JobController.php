@@ -104,8 +104,14 @@ class JobController extends ApiController
             $jobSummary['crawl'] = array(
                 'state' => $crawlJobContainer->getCrawlJob()->getPublicSerializedState(),
                 'processed_url_count' => count($this->getCrawlJobContainerService()->getProcessedUrls($crawlJobContainer)),
-                'discovered_url_count' => count($this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer, true))
+                'discovered_url_count' => count($this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer, true)),
             );
+            
+            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan();
+            
+            if ($userAccountPlan->hasConstraintNamed('urls_per_job')) {
+                $jobSummary['crawl']['limit'] = $userAccountPlan->getConstraintNamed('urls_per_job')->getLimit();
+            }
         }
         
         return $jobSummary;        
@@ -403,6 +409,23 @@ class JobController extends ApiController
     private function getJobRejectionReasonService() {
         return $this->get('simplytestable.services.jobrejectionreasonservice');
     }    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+     */
+    private function getJobUserAccountPlanEnforcementService() {
+        return $this->get('simplytestable.services.JobUserAccountPlanEnforcementService');
+    }      
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
+     */
+    private function getUserAccountPlanService() {
+        return $this->get('simplytestable.services.UserAccountPlanService');
+    }     
 
     
     /**
