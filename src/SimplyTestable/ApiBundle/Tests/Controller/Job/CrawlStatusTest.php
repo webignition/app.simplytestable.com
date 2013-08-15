@@ -56,17 +56,8 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals('in-progress', $jobObject->crawl->state);
-        $this->assertEquals(array(
-            'http://example.com/'
-        ), $jobObject->crawl->processedUrls);
-        $this->assertEquals(array(
-            'http://example.com/',
-            'http://example.com/0/',
-            'http://example.com/1/',
-            'http://example.com/2/',
-            'http://example.com/3/',
-            'http://example.com/4/'
-        ), $jobObject->crawl->discoveredUrls);
+        $this->assertEquals(1, $jobObject->crawl->processed_url_count);
+        $this->assertEquals(6, $jobObject->crawl->discovered_url_count);
     }
     
 }
