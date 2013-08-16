@@ -18,7 +18,7 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
@@ -49,7 +49,7 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
@@ -81,7 +81,7 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
@@ -115,7 +115,7 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
@@ -150,7 +150,7 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());      
