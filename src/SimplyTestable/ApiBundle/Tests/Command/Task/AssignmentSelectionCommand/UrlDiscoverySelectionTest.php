@@ -19,7 +19,7 @@ class UrlDiscoverySelectionTest extends BaseSimplyTestableTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $this->assertEquals(0, $this->runConsole('simplytestable:task:assign:select'));        
