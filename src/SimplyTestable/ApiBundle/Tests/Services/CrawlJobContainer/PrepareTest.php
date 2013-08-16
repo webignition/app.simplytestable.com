@@ -60,5 +60,31 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(1, $crawlJobContainer->getCrawlJob()->getTasks()->count());      
         $this->assertEquals('URL discovery', $crawlJobContainer->getCrawlJob()->getTasks()->first()->getType()->getName());        
     }
+    
+    public function testUrlDiscoveryTaskHasWwwAndNonWwwScope() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        
+        $this->assertTrue($this->getCrawlJobContainerService()->prepare($crawlJobContainer));     
+        
+        $this->assertEquals('{"scope":["http:\/\/example.com\/","http:\/\/www.example.com\/"]}', $crawlJobContainer->getCrawlJob()->getTasks()->first()->getParameters());       
+    }    
+    
+    public function testUrlDiscoveryTaskHasNonWwwAndWwwScope() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $canonicalUrl = 'http://www.example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        
+        $this->assertTrue($this->getCrawlJobContainerService()->prepare($crawlJobContainer));     
+        
+        $this->assertEquals('{"scope":["http:\/\/www.example.com\/","http:\/\/example.com\/"]}', $crawlJobContainer->getCrawlJob()->getTasks()->first()->getParameters());       
+    }        
 
 }

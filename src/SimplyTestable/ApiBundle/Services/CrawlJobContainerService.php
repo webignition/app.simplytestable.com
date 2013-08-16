@@ -134,11 +134,28 @@ class CrawlJobContainerService extends EntityService {
     
     
     private function createUrlDiscoveryTask(CrawlJobContainer $crawlJobContainer, $url) {
+        $parentCanonicalUrl = new \webignition\NormalisedUrl\NormalisedUrl($crawlJobContainer->getParentJob()->getWebsite()->getCanonicalUrl());
+        
+        $scope = array(
+            (string)$parentCanonicalUrl
+        );
+        
+        $hostParts = $parentCanonicalUrl->getHost()->getParts();
+        if ($hostParts[0] === 'www') {
+            $variant = clone $parentCanonicalUrl;            
+            $variant->setHost(implode('.', array_slice($parentCanonicalUrl->getHost()->getParts(), 1)));            
+            $scope[] = (string)$variant;
+        } else {
+            $variant = new \webignition\NormalisedUrl\NormalisedUrl($parentCanonicalUrl);
+            $variant->setHost('www.' . (string)$variant->getHost());            
+            $scope[] = (string)$variant;
+        }
+        
         $task = new Task();
         
         $task->setJob($crawlJobContainer->getCrawlJob());
         $task->setParameters(json_encode(array(
-            'scope' => (string)$crawlJobContainer->getParentJob()->getWebsite()
+            'scope' => $scope
         )));
         $task->setState($this->taskService->getQueuedState());
         $task->setType($this->taskTypeService->getByName('URL discovery'));
