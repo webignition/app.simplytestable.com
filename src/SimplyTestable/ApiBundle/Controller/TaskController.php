@@ -85,28 +85,21 @@ class TaskController extends ApiController
                 $this->getCrawlJobContainerService()->processTaskResults($task);
             }
             
-            if ($this->getJobService()->hasIncompleteTasks($task->getJob())) {
-                if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                    $this->getResqueQueueService()->add(
-                        'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-                        'task-assignment-selection'
-                    );             
-                }                 
-            } else {
+            if (!$this->getJobService()->hasIncompleteTasks($task->getJob())) {
                 $this->getJobService()->complete($task->getJob());
             }
             
             if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery')) && $this->getJobService()->isCompleted($task->getJob())) {
-                $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($task->getJob()));
-                
-                if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                    $this->getResqueQueueService()->add(
-                        'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-                        'task-assignment-selection'
-                    );             
-                }                  
+                $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($task->getJob()));                 
             }            
         }
+        
+        if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
+            $this->getResqueQueueService()->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                'task-assignment-selection'
+            );             
+        }          
         
         return $this->sendSuccessResponse();
     }
