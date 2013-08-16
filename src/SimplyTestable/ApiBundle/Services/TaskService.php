@@ -429,6 +429,18 @@ class TaskService extends EntityService {
     
     
     /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @return Task
+     */
+    public function reQueue(Task $task) {
+        $task->setState($this->getQueuedState());
+        $this->getEntityManager()->persist($task);
+        return $task;
+    }
+    
+    
+    /**
      *
      * @param int $remoteId
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task
@@ -579,6 +591,16 @@ class TaskService extends EntityService {
     public function getCountByJobAndState(Job $job, State $state) {
         return $this->getEntityRepository()->getCountByJobAndState($job, $state);
     }   
+    
+    /**
+     *
+     * @param Job $job
+     * @param State $state
+     * @return int 
+     */
+    public function getByJobAndStates(Job $job, $states) {
+        return $this->getEntityRepository()->getByJobAndStates($job, $states);
+    }      
     
     
     /**

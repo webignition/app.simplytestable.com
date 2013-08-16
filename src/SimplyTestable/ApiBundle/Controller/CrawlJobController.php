@@ -22,28 +22,52 @@ class CrawlJobController extends JobController
             return $this->sendFailureResponse();          
         }
         
-        if (!$this->getCrawlJobContainerService()->hasForJob($job)) {
+        if ($this->getCrawlJobContainerService()->hasForJob($job)) {
             $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
-            $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
             
-            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                $this->getResqueQueueService()->add(
-                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-                    'task-assignment-selection'
-                );             
-            }               
+            $tasksToRestart = $this->getTaskService()->getByJobAndStates($crawlJobContainer->getCrawlJob(), array(
+                $this->getTaskService()->getInProgressState(),
+                $this->getTaskService()->getQueuedState(),
+                $this->getTaskService()->getCancelledState(),
+                $this->getTaskService()->getAwaitingCancellationState(),
+                $this->getTaskService()->getQueuedForAssignmentState()                
+            ));            
+            
+            foreach ($tasksToRestart as $task) {
+                $this->getTaskService()->reQueue($task);
+            }
+            
+            $this->getTaskService()->getEntityManager()->flush();             
+        } else {
+            $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+            $this->getCrawlJobContainerService()->prepare($crawlJobContainer);  
         }        
+        
+        if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
+            $this->getResqueQueueService()->add(
+                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                'task-assignment-selection'
+            );             
+        }         
         
         return $this->sendResponse();
     }
     
-    
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
+     * @return \SimplyTestable\ApiBundle\Services\ResqueQueueService
      */        
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
+    }     
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskService
+     */        
+    private function getTaskService() {
+        return $this->get('simplytestable.services.taskservice');
     }        
    
 }

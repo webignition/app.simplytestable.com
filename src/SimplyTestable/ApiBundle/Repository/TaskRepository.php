@@ -120,6 +120,36 @@ class TaskRepository extends EntityRepository
         return (int)($result[0]['task_total']);        
     }  
     
+    
+    /**
+     *
+     * @param Job $job
+     * @param State $state
+     * @return array 
+     */
+    public function getByJobAndStates(Job $job, $states)
+    {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('Task');
+        
+        $where = 'Task.job = :Job AND ';
+        $stateWhereParts = '';        
+
+        foreach ($states as $stateIndex => $state) {
+            $stateWhereParts[] = 'Task.state = :State' . $stateIndex;
+            $queryBuilder->setParameter('State'.$stateIndex, $state);
+        }
+        
+        $where .= '(' . implode(' OR ', $stateWhereParts) . ')';
+
+        
+        $queryBuilder->where($where);        
+
+        $queryBuilder->setParameter('Job', $job);
+        
+        return $queryBuilder->getQuery()->getResult();      
+    }      
+    
 
     /**
      *
