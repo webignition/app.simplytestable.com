@@ -23,7 +23,7 @@ class CrawlJobController extends JobController
         }
         
         if (!$this->getCrawlJobContainerService()->hasForJob($job)) {
-            $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
+            $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
             $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
             
             if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {

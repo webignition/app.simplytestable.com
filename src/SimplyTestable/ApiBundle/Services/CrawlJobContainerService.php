@@ -85,11 +85,7 @@ class CrawlJobContainerService extends EntityService {
      * @return boolean
      */
     public function hasForJob(Job $job) {
-        return count($this->getEntityRepository()->findAllByJobAndJobStates($job, array(
-            $this->jobService->getStartingState(),
-            $this->jobService->getInProgressState(),
-            $this->jobService->getQueuedState()
-        ))) > 0;
+        return $this->getEntityRepository()->hasForJob($job);
     }
     
     
@@ -98,18 +94,12 @@ class CrawlJobContainerService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
      * @return CrawlJobContainer
      */
-    public function getForJob(Job $job) {        
-        $parentJob =  $this->getEntityRepository()->findOneBy(array(
-            'parentJob' => $job
-        ));        
-        
-        if (!is_null($parentJob)) {
-            return $parentJob;
+    public function getForJob(Job $job) {
+        if (!$this->hasForJob($job)) {
+            return $this->create($job);
         }
         
-        return $this->getEntityRepository()->findOneBy(array(
-            'crawlJob' => $job
-        ));       
+        return $this->getEntityRepository()->getForJob($job);      
     }
     
     
@@ -296,7 +286,7 @@ class CrawlJobContainerService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
      * @return CrawlJobContainer
      */
-    public function create(Job $job) {
+    private function create(Job $job) {        
         $crawlJob = new Job();
         $crawlJob->setType($this->jobTypeService->getCrawlType());
         $crawlJob->setState($this->jobService->getStartingState());

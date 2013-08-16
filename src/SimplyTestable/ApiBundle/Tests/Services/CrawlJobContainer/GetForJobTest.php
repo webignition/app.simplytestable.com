@@ -8,12 +8,11 @@ class GetForJobTest extends BaseSimplyTestableTestCase {
 
     public function testGet() {        
         $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/'));        
-        $this->getCrawlJobContainerService()->create($job);
         
-        $crawlJob = $this->getCrawlJobContainerService()->getForJob($job);
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         
-        $this->assertNotNull($crawlJob);
-        $this->assertEquals($job->getId(), $crawlJob->getParentJob()->getId());
+        $this->assertNotNull($crawlJobContainer);
+        $this->assertEquals($job->getId(), $crawlJobContainer->getParentJob()->getId());
     }    
 
 }

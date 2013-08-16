@@ -3,37 +3,38 @@ namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-//use SimplyTestable\ApiBundle\Entity\State;
-//use SimplyTestable\ApiBundle\Entity\Task\Task;
-//use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 
 class CrawlJobContainerRepository extends EntityRepository
 {
     
-    public function findAllByJobAndJobStates(Job $job, $states) {        
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return boolean
+     */
+    public function hasForJob(Job $job) {
+        return !is_null($this->getForJob($job));
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return \SimplyTestable\ApiBundle\Entity\CrawlJobContainer
+     */
+    public function getForJob(Job $job) {        
         $queryBuilder = $this->createQueryBuilder('CrawlJobContainer');
         $queryBuilder->select('CrawlJobContainer');
         $queryBuilder->join('CrawlJobContainer.parentJob', 'ParentJob');
         $queryBuilder->join('CrawlJobContainer.crawlJob', 'CrawlJob');
         
-        $where = 'ParentJob = :Job';
-
-        $stateWhere = '';
-        $stateCount = count($states);
-
-        foreach ($states as $stateIndex => $state) {
-            $stateWhere .= 'CrawlJob.state = :State' . $stateIndex;
-            if ($stateIndex < $stateCount - 1) {
-                $stateWhere .= ' OR ';
-            }
-            $queryBuilder->setParameter('State'.$stateIndex, $state);
-        }
-
-        $where .= ' AND ('.$stateWhere.')';
+        $queryBuilder->where('ParentJob = :ParentJob OR CrawlJob = :CrawlJob');
+        $queryBuilder->setParameter('ParentJob', $job);
+        $queryBuilder->setParameter('CrawlJob', $job);        
         
-        $queryBuilder->where($where);
-        $queryBuilder->setParameter('Job', $job);
-
-        return $queryBuilder->getQuery()->getResult();        
+        $queryBuilder->setMaxResults(1);
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        return (count($result) === 0) ? null : $result[0];    
     }
 }

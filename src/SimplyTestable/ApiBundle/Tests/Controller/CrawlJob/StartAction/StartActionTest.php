@@ -44,7 +44,7 @@ class StartActionTest extends BaseControllerJsonTestCase {
         $job->setState($this->getJobService()->getFailedNoSitemapState());
         $this->getJobService()->persistAndFlush($job);
         
-        $this->getCrawlJobContainerService()->create($job);
+        $this->getCrawlJobContainerService()->getForJob($job);
 
         $response = $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());
         $this->assertEquals(200, $response->getStatusCode());

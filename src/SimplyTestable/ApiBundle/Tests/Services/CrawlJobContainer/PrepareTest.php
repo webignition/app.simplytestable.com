@@ -12,7 +12,7 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $crawlJobContainer->getCrawlJob()->setState($this->getJobService()->getInProgressState());
         
         $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
@@ -24,7 +24,7 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $crawlJobContainer->getCrawlJob()->setState($this->getJobService()->getCompletedState());
         
         $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
@@ -36,7 +36,7 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         
         $this->assertTrue($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
         
@@ -52,7 +52,7 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
         
-        $crawlJobContainer = $this->getCrawlJobContainerService()->create($job);
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         
         $this->assertTrue($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
         $this->assertTrue($this->getCrawlJobContainerService()->prepare($crawlJobContainer));      
