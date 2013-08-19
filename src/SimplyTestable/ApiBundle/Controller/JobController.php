@@ -137,6 +137,17 @@ class JobController extends ApiController
     
     public function listAction($limit = 1)
     {
+        $excludeTypes = array();
+        if (!is_null($this->get('request')->query->get('exclude-types'))) {
+            $exludeTypeNames = $this->get('request')->query->get('exclude-types');
+            
+            foreach ($exludeTypeNames as $typeName) {
+                if ($this->getJobTypeService()->has($typeName)) {
+                    $excludeTypes[] = $this->getJobTypeService()->getByName($typeName);
+                }
+            }
+        }
+        
         $limit = filter_var($limit, FILTER_VALIDATE_INT, array(
             'options' => array(
                 'default' => 1,
@@ -144,7 +155,7 @@ class JobController extends ApiController
             )
         ));
         
-        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserOrderedByIdDesc($this->getUser(), $limit);
+        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserAndNotTypeOrderedByIdDesc($this->getUser(), $limit, $excludeTypes);
         $jobSummaries = array();
         
         foreach ($jobs as $job) {
@@ -463,5 +474,11 @@ class JobController extends ApiController
         return $this->get('simplytestable.services.crawljobcontainerservice');
     }        
     
-    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobTypeService
+     */
+    protected function getJobTypeService() {
+        return $this->get('simplytestable.services.JobTypeService');
+    }       
 }

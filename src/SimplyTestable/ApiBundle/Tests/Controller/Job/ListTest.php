@@ -9,9 +9,9 @@ class ListTest extends BaseControllerJsonTestCase {
     public function setUp() {        
         self::setupDatabase();
         parent::setUp();        
-    }
+    }     
     
-    public function testListAction() {        
+    public function testListAction() {
         $jobController = $this->getJobController('listAction');        
         $jobStartController = $this->getJobStartController('startAction');
         
@@ -174,6 +174,21 @@ class ListTest extends BaseControllerJsonTestCase {
                 }           
             }             
         }        
+    }
+    
+    public function testExludeCrawlJobsFromList() {
+        $this->createJobAndGetId('http://one.example.com');
+        $job2_id = $this->createJobAndGetId('http://two.example.com');
+        $this->createJobAndGetId('http://three.example.com');
+        
+        $job2 = $this->getJobService()->getById($job2_id);
+        $job2->setType($this->getJobTypeService()->getByName('crawl'));
+        $this->getJobService()->getEntityManager()->persist($job2);
+        $this->getJobService()->getEntityManager()->flush();         
+        
+        $listResponse = $this->getJobController('listAction', array(), array('exclude-types' => array('crawl', 'foo')))->listAction(3);      
+        
+        $this->assertEquals(2, count(json_decode($listResponse->getContent())));
     }
 
     /**

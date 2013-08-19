@@ -112,8 +112,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param array $postData
      * @return \SimplyTestable\ApiBundle\Controller\JobController
      */
-    protected function getJobController($methodName, $postData = array()) {
-        return $this->getController(self::JOB_CONTROLLER_NAME, $methodName, $postData);
+    protected function getJobController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::JOB_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }
     
     /**

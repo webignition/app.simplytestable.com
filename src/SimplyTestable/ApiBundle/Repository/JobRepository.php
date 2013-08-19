@@ -34,6 +34,32 @@ class JobRepository extends EntityRepository
         return $queryBuilder->getQuery()->getResult();         
     }
     
+    
+    public function findAllByUserAndNotTypeOrderedByIdDesc(User $user, $limit = null, $excludeTypes = array()) {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job');
+        
+        $where = 'Job.user = :User';
+        
+        if (is_array($excludeTypes) && count($excludeTypes) > 0) {            
+            $typeExclusionParts = array();
+            
+            foreach ($excludeTypes as $typeIndex => $type) {
+                $typeExclusionParts[] = 'Job.type != :Type' .  $typeIndex;
+                $queryBuilder->setParameter('Type' .  $typeIndex, $type);
+            }
+
+            $where .= ' AND ('.implode(' AND ', $typeExclusionParts).')';
+        }        
+        
+        $queryBuilder->where($where);
+        $queryBuilder->setMaxResults($limit);
+        $queryBuilder->orderBy('Job.id', 'DESC');
+
+        $queryBuilder->setParameter('User', $user);
+        return $queryBuilder->getQuery()->getResult();          
+    }
+    
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
