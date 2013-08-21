@@ -53,8 +53,8 @@ class JobController extends ApiController
     }
     
     public function statusAction($site_root_url, $test_id)
-    {
-        $this->siteRootUrl = $site_root_url;
+    {        
+        $this->siteRootUrl = $this->fixSiteRootUrl($site_root_url);
         $this->testId = $test_id;
         
         $job = $this->getJob();
@@ -65,6 +65,32 @@ class JobController extends ApiController
         }
         
         return $this->sendResponse($this->getSummary($job));
+    }
+    
+    
+    private function fixSiteRootUrl($site_root_url) {
+        $expectedUrlStart = array(
+            'http' => 'http://',
+            'https' => 'https://'
+        );
+        
+        foreach ($expectedUrlStart as $protocol => $startString) {
+            if (substr($site_root_url, 0, strlen($protocol)) == $protocol) {
+                $expectedStartString = $startString;
+                
+                while (substr($site_root_url, 0, strlen($startString)) !== $startString && strlen($startString) !== 0) {
+                    $startString = substr($startString, 0, strlen($startString) - 1);
+                }
+                
+                if ($startString === '') {
+                    $site_root_url = $expectedStartString . $site_root_url;
+                } else {
+                    $site_root_url = $expectedStartString . substr($site_root_url, strlen($startString));                       
+                }
+            }
+        }
+        
+        return $site_root_url;
     }
     
     
