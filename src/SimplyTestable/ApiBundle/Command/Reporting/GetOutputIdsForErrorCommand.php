@@ -158,11 +158,12 @@ EOF
      * @param array $fragments
      * @return boolean
      */
-    private function isFragmentMatch($message, $fragments) {
+    private function isFragmentMatch($message, $fragments) {        
         $isMatch = true;
+        $message = strtolower($message);
         
-        foreach ($fragments as $fragment) {
-            $fragment = trim($fragment);
+        foreach ($fragments as $fragment) {            
+            $fragment = strtolower(trim($fragment));
             if (!substr_count($message, $fragment)) {
                 $isMatch = false;
             }
