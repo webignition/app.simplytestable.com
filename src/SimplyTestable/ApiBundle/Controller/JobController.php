@@ -314,15 +314,14 @@ class JobController extends ApiController
      *
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
-    protected function getJob() {      
-        $job = $this->getJobService()->getEntityRepository()->findByIdAndWebsiteAndUsers(
-            $this->testId,
-            $this->getWebsite(),
-            array(
+    protected function getJob() {
+        $job = $this->getJobService()->getEntityRepository()->findOneBy(array(
+            'id' => $this->testId,
+            'user' => array(
                 $this->getUser(),
-                $this->getUserService()->getPublicUser()
+                $this->getUserService()->getPublicUser()                
             )
-        );
+        ));
 
         if (is_null($job)) {
             return false;           
