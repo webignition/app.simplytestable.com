@@ -8,7 +8,6 @@ class CrawlJobController extends JobController
 {
     
     public function startAction($site_root_url, $test_id) {
-        $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
         $job = $this->getJob();        

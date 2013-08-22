@@ -13,18 +13,15 @@ use Symfony\Component\Console\Input\InputDefinition;
 
 class JobController extends ApiController
 {
-    protected $siteRootUrl = null;
-    protected $testId = null;
-    
+    protected $testId = null;    
     
     public function latestAction($site_root_url) {
-        $this->siteRootUrl = $site_root_url;
-        
+        $website = $this->get('simplytestable.services.websiteservice')->fetch($site_root_url);        
         $latestJob = null;
         
         if (!$this->getUserService()->isPublicUser($this->getUser())) {
             $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
-                $this->getWebsite(),
+                $website,
                 array(
                     $this->getUser()
                 )
@@ -33,7 +30,7 @@ class JobController extends ApiController
         
         if (is_null($latestJob)) {
             $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
-                $this->getWebsite(),
+                $website,
                 array(   
                     $this->getUserService()->getPublicUser()
                 )
@@ -54,7 +51,6 @@ class JobController extends ApiController
     
     public function statusAction($site_root_url, $test_id)
     {        
-        $this->siteRootUrl = $this->fixSiteRootUrl($site_root_url);
         $this->testId = $test_id;
         
         $job = $this->getJob();
@@ -65,32 +61,6 @@ class JobController extends ApiController
         }
         
         return $this->sendResponse($this->getSummary($job));
-    }
-    
-    
-    private function fixSiteRootUrl($site_root_url) {
-        $expectedUrlStart = array(
-            'http' => 'http://',
-            'https' => 'https://'
-        );
-        
-        foreach ($expectedUrlStart as $protocol => $startString) {
-            if (substr($site_root_url, 0, strlen($protocol)) == $protocol) {
-                $expectedStartString = $startString;
-                
-                while (substr($site_root_url, 0, strlen($startString)) !== $startString && strlen($startString) !== 0) {
-                    $startString = substr($startString, 0, strlen($startString) - 1);
-                }
-                
-                if ($startString === '') {
-                    $site_root_url = $expectedStartString . $site_root_url;
-                } else {
-                    $site_root_url = $expectedStartString . substr($site_root_url, strlen($startString));                       
-                }
-            }
-        }
-        
-        return $site_root_url;
     }
     
     
@@ -201,7 +171,6 @@ class JobController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
         
-        $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
         $job = $this->getJob();
@@ -260,7 +229,6 @@ class JobController extends ApiController
     }    
     
     public function tasksAction($site_root_url, $test_id) {        
-        $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
         $job = $this->getJob();
@@ -278,7 +246,6 @@ class JobController extends ApiController
     
     
     public function taskIdsAction($site_root_url, $test_id) {        
-        $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
         $job = $this->getJob();
@@ -295,7 +262,6 @@ class JobController extends ApiController
     
     
     public function listUrlsAction($site_root_url, $test_id) {
-        $this->siteRootUrl = $site_root_url;
         $this->testId = $test_id;
         
         $job = $this->getJob();
@@ -407,16 +373,7 @@ class JobController extends ApiController
         }
         
         return $this->get('simplytestable.services.userservice')->findUserByEmail($this->getRequestValue('user'));
-    }
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\WebSite 
-     */
-    private function getWebsite() {        
-        return $this->get('simplytestable.services.websiteservice')->fetch($this->siteRootUrl);
-    }
-    
+    }   
     
     
     /**
