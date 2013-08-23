@@ -49,7 +49,7 @@ class CancelTest extends BaseControllerJsonTestCase {
         
         $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $crawlJobContainer->getParentJob()->getId());
         
-        $this->assertTrue($crawlJobContainer->getParentJob()->getState()->equals($this->getJobService()->getFailedNoSitemapState()));
+        $this->assertTrue($crawlJobContainer->getParentJob()->getState()->equals($this->getJobService()->getCancelledState()));
         $this->assertTrue($crawlJobContainer->getCrawlJob()->getState()->equals($this->getJobService()->getCancelledState()));       
     }
     

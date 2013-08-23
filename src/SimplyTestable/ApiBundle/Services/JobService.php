@@ -276,7 +276,7 @@ class JobService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job
      */
     public function cancel(Job $job) {
-        if ($this->isFinished($job)) {
+        if ($this->isFinished($job) && $job->getState()->equals($this->getFailedNoSitemapState()) === false) {
             return $job;
         }       
         
