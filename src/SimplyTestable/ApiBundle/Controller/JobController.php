@@ -180,6 +180,23 @@ class JobController extends ApiController
             return $response;  
         }
         
+        if ($job->getState()->equals($this->getJobService()->getFailedNoSitemapState())) {
+            $crawlJob = $this->getCrawlJobContainerService()->getForJob($job)->getCrawlJob();            
+            $this->cancelAction($site_root_url, $crawlJob->getId());
+        }
+        
+        if ($job->getType()->equals($this->getJobTypeService()->getCrawlType())) {
+            $parentJob = $this->getCrawlJobContainerService()->getForJob($job)->getParentJob();            
+            $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));          
+            
+            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
+                $this->getResqueQueueService()->add(
+                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                    'task-assignment-selection'
+                );             
+            }             
+        }
+        
         $preCancellationState = clone $job->getState();
 
         $this->getJobService()->cancel($job);        
@@ -462,5 +479,22 @@ class JobController extends ApiController
      */
     protected function getJobTypeService() {
         return $this->get('simplytestable.services.JobTypeService');
-    }       
+    }  
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
+     */
+    private function getJobPreparationService() {
+        return $this->container->get('simplytestable.services.jobpreparationservice');
+    } 
+    
+    
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
+     */        
+    private function getResqueQueueService() {
+        return $this->get('simplytestable.services.resqueQueueService');
+    }        
 }

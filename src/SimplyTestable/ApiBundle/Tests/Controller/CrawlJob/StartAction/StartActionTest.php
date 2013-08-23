@@ -76,7 +76,7 @@ class StartActionTest extends BaseControllerJsonTestCase {
         $job->setState($this->getJobService()->getFailedNoSitemapState());
         $this->getJobService()->persistAndFlush($job);
 
-        $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());     
+        $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());        
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
@@ -96,12 +96,8 @@ class StartActionTest extends BaseControllerJsonTestCase {
             'errorCount' => 0,
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
-        $completedTaskId = $task->getId();
+        $completedTaskId = $task->getId();          
 
-        $this->getJobController('cancelAction')->cancelAction((string)$crawlJobContainer->getCrawlJob()->getWebsite(), $crawlJobContainer->getCrawlJob()->getId());
-        
-        $this->assertFalse($this->getJobService()->hasIncompleteTasks($crawlJobContainer->getCrawlJob()));
-        
         $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId()); 
         $this->assertTrue($this->getJobService()->hasIncompleteTasks($crawlJobContainer->getCrawlJob()));
     

@@ -36,6 +36,49 @@ class CancelTest extends BaseControllerJsonTestCase {
         $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction('http://example.com', 1)->getStatusCode());        
     }
     
+    
+    public function testCancelParentJobCancelsParentJobAndCrawlJob() {
+        $canonicalUrl = 'http://example.com';        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        
+        $job->setState($this->getJobService()->getFailedNoSitemapState());
+        $this->getJobService()->persistAndFlush($job);
+
+        $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());       
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        
+        $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $crawlJobContainer->getParentJob()->getId());
+        
+        $this->assertTrue($crawlJobContainer->getParentJob()->getState()->equals($this->getJobService()->getFailedNoSitemapState()));
+        $this->assertTrue($crawlJobContainer->getCrawlJob()->getState()->equals($this->getJobService()->getCancelledState()));       
+    }
+    
+    public function testCancelCrawlJobRestartsParentJob() {
+        $canonicalUrl = 'http://example.com';        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        
+        $job->setState($this->getJobService()->getFailedNoSitemapState());
+        $this->getJobService()->persistAndFlush($job);
+
+        $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());       
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        
+        $crawlTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
+        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+            'end_date_time' => '2012-03-08 17:03:00',
+            'output' => '["http:\/\/example.com\/one\/","http:\/\/example.com\/two\/","http:\/\/example.com\/three\/"]',
+            'contentType' => 'application/json',
+            'state' => 'completed',
+            'errorCount' => 0,
+            'warningCount' => 0
+        ))->completeByUrlAndTaskTypeAction((string)$crawlTask->getUrl(), $crawlTask->getType()->getName(), $crawlTask->getParametersHash());         
+
+        $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $crawlJobContainer->getCrawlJob()->getId());
+        
+        $this->assertTrue($crawlJobContainer->getParentJob()->getState()->equals($this->getJobService()->getQueuedState()));
+        $this->assertTrue($crawlJobContainer->getCrawlJob()->getState()->equals($this->getJobService()->getCancelledState()));                 
+    }
+    
 }
 
 
