@@ -98,9 +98,10 @@ class JobController extends ApiController
         if ($this->getCrawlJobContainerService()->hasForJob($job)) {
             $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);            
             $jobSummary['crawl'] = array(
+                'id' => $crawlJobContainer->getCrawlJob()->getId(),
                 'state' => $crawlJobContainer->getCrawlJob()->getPublicSerializedState(),
                 'processed_url_count' => count($this->getCrawlJobContainerService()->getProcessedUrls($crawlJobContainer)),
-                'discovered_url_count' => count($this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer, true)),
+                'discovered_url_count' => count($this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer, true)),                
             );
             
             $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan();
