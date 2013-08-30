@@ -38,6 +38,11 @@ class CrawlJobController extends JobController
             
             $this->getTaskService()->getEntityManager()->flush();             
         } else {
+            if ($job->getUser()->equals($this->getUserService()->getPublicUser()) === true && $this->getUser()->equals($this->getUserService()->getPublicUser()) === false) {
+                $job->setUser($this->getUser());
+                $this->getJobService()->persistAndFlush($job);
+            }
+            
             $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
             $this->getCrawlJobContainerService()->prepare($crawlJobContainer);  
         }        

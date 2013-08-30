@@ -108,6 +108,30 @@ class StartActionTest extends BaseControllerJsonTestCase {
         }   
     }
     
+    public function testStartCrawlForJobOwnedByPublicUserChangesOwnershipToNonPublicUser() {
+        $canonicalUrl = 'http://example.com';        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        $this->assertTrue($job->getUser()->equals($this->getUserService()->getPublicUser()));
+        
+        $job->setState($this->getJobService()->getFailedNoSitemapState());
+        $this->getJobService()->persistAndFlush($job);
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password1');       
+
+        $response = $this->getCrawlJobController('startAction', array(
+            'user' => $user->getEmail()
+        ))->startAction((string)$job->getWebsite(), $job->getId());
+        $this->assertEquals(200, $response->getStatusCode());        
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+
+        $this->assertEquals(1, $crawlJobContainer->getCrawlJob()->getTasks()->count());      
+        $this->assertEquals('URL discovery', $crawlJobContainer->getCrawlJob()->getTasks()->first()->getType()->getName());        
+        
+        $this->assertTrue($crawlJobContainer->getParentJob()->getUser()->equals($user));
+        $this->assertTrue($crawlJobContainer->getCrawlJob()->getUser()->equals($user));
+    }
+    
 }
 
 
