@@ -40,7 +40,7 @@ class JobPrepareCommand extends BaseCommand
         
         foreach ($job->getRequestedTaskTypes() as $taskType) {
             /* @var $taskType TaskType */
-            $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-ref-domains-to-ignore';            
+            $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';            
 
             if ($this->getContainer()->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
                 $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->getContainer()->getParameter($taskTypeParameterDomainsToIgnoreKey));

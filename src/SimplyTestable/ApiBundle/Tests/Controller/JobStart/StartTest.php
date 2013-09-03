@@ -188,6 +188,34 @@ class StartTest extends BaseControllerJsonTestCase {
         $this->assertEquals('job-rejected', $job->getState()->getName());
         $this->assertEquals('plan-constraint-limit-reached', $rejectionReason->getReason());
         $this->assertEquals('credits_per_month', $rejectionReason->getConstraint()->getName());      
-    }    
+    }
+    
+    public function testSingleUrlJobJsStaticAnalysisIgnoreCommonCdns() {
+        $canonicalUrl = 'http://example.com/';
+        
+        $jobId = $this->getJobIdFromUrl(
+            $this->createJob(
+                $canonicalUrl,
+                null,
+                'single url',
+                array(
+                    'JS static analysis'
+                ),
+                array(
+                    'JS static analysis' => array(
+                        'ignore-common-cdns' => 1
+                    )
+                )
+             )->getTargetUrl()
+        );
+        
+        $this->getJobService()->getEntityManager()->clear();
+        
+        $job = $this->getJobService()->getById($jobId);        
+        $task = $job->getTasks()->first();
+        
+        $parametersObject = json_decode($task->getParameters());
+        $this->assertTrue(count($parametersObject->{'domains-to-ignore'}) > 0);          
+    }
     
 }

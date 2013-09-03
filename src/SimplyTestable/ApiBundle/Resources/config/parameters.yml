@@ -9,7 +9,7 @@ parameters:
     "task-assign": "SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob"       
     "task-cancel": "SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob"
   resque_pid: "simplytestable_apibundle"
-  css-validation-ref-domains-to-ignore:
+  css-validation-domains-to-ignore:
    - cdnjs.cloudflare.com
    - ajax.googleapis.com
    - netdna.bootstrapcdn.com

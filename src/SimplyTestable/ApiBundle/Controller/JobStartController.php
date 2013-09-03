@@ -81,7 +81,7 @@ class JobStartController extends ApiController
             if ($requestedJobType->equals($this->getJobTypeService()->getSingleUrlType())) { 
                 foreach ($job->getRequestedTaskTypes() as $taskType) {
                     /* @var $taskType TaskType */
-                    $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-ref-domains-to-ignore';            
+                    $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';            
 
                     if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
                         $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey));
