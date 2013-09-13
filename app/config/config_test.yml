@@ -20,8 +20,8 @@ swiftmailer:
 #    database_host: localhost
 #    database_port: null
 #    database_name: test_app_simplytestable_com
-#    database_user: st_app_test
-#    database_password: st_app_test_password 
+#    database_user: root
+#    database_password: root 
     
 doctrine:
   dbal:

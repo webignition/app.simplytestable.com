@@ -2388,16 +2388,16 @@
         },
         {
             "name": "webignition/url",
-            "version": "1.7.2",
+            "version": "1.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url.git",
-                "reference": "1.7.2"
+                "reference": "1b2f059b2b5a3fc8427596eea5453245e3df338b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url/zipball/1.7.2",
-                "reference": "1.7.2",
+                "url": "https://api.github.com/repos/webignition/url/zipball/1b2f059b2b5a3fc8427596eea5453245e3df338b",
+                "reference": "1b2f059b2b5a3fc8427596eea5453245e3df338b",
                 "shasum": ""
             },
             "require": {
@@ -2425,7 +2425,7 @@
             "keywords": [
                 "url"
             ],
-            "time": "2013-04-05 15:56:13"
+            "time": "2013-09-13 10:21:21"
         },
         {
             "name": "webignition/web-page-model",

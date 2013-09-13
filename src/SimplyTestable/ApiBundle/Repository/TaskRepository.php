@@ -340,7 +340,7 @@ class TaskRepository extends EntityRepository
     } 
     
     
-    public function getCollectionByUrlAndTaskTypeAndStates($url, TaskType $taskType, $states) {
+    public function getCollectionByUrlSetAndTaskTypeAndStates($urlSet, TaskType $taskType, $states) {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task');
 
@@ -351,10 +351,16 @@ class TaskRepository extends EntityRepository
             $queryBuilder->setParameter('State'.$stateIndex, $state);
         }        
         
-        $queryBuilder->where('Task.url = :Url and Task.type = :TaskType AND ('.implode('OR ', $stateConditions).')');        
-        $queryBuilder->setParameter('Url', $url);
-        $queryBuilder->setParameter('TaskType', $taskType);
+        $urlConditions = array();
         
+        foreach ($urlSet as $urlIndex => $url) {
+            $urlConditions[] = 'Task.url = :Url' . $urlIndex;
+            $queryBuilder->setParameter('Url' . $urlIndex, $url);
+        }
+        
+        $queryBuilder->where('('.implode(' OR ', $urlConditions).') and Task.type = :TaskType AND ('.implode('OR ', $stateConditions).')');        
+        
+        $queryBuilder->setParameter('TaskType', $taskType);
         return $queryBuilder->getQuery()->getResult();       
     }
     

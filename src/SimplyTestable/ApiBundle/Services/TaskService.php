@@ -657,8 +657,16 @@ class TaskService extends EntityService {
      * @return array
      */
     public function getEquivalentTasks($url, TaskType $taskType, $parameter_hash, $states) {
-        $tasks = $this->getEntityRepository()->getCollectionByUrlAndTaskTypeAndStates(
+        $urlEncoder = new \webignition\Url\Encoder();
+        
+        $urlSet = array(
             $url,
+            urldecode($url),
+            (string)$urlEncoder->encode(new \webignition\Url\Url(($url)))
+        );
+        
+        $tasks = $this->getEntityRepository()->getCollectionByUrlSetAndTaskTypeAndStates(
+            $urlSet,
             $taskType,
             $states
         );
