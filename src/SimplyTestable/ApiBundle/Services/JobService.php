@@ -45,21 +45,30 @@ class JobService extends EntityService {
      */
     private $taskService;      
     
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\TaskTypeService
+     */
+    private $taskTypeService;
+    
     
     /**
      *
      * @param EntityManager $entityManager
      * @param \SimplyTestable\ApiBundle\Services\StateService $stateService 
      * @param \SimplyTestable\ApiBundle\Services\TaskService $taskService
+     * @param \SimplyTestable\ApiBundle\Services\TaskTypeService $taskTypeService
      */
     public function __construct(
             EntityManager $entityManager,
             \SimplyTestable\ApiBundle\Services\StateService $stateService,
-            \SimplyTestable\ApiBundle\Services\TaskService $taskService)
+            \SimplyTestable\ApiBundle\Services\TaskService $taskService,
+            \SimplyTestable\ApiBundle\Services\TaskTypeService $taskTypeService)
     {
         parent::__construct($entityManager);        
         $this->stateService = $stateService;
         $this->taskService = $taskService;
+        $this->taskTypeService = $taskTypeService;
     }
     
     /**
@@ -227,17 +236,21 @@ class JobService extends EntityService {
         foreach ($taskTypes as $taskType) {
             if ($taskType instanceof TaskType) {                
                 $job->addRequestedTaskType($taskType);
-                $comparatorTaskTypeName = strtolower($taskType->getName());                
+            }
+        }
+        
+        foreach ($taskTypeOptionsArray as $taskTypeName => $taskTypeOptions) {
+            if ($this->taskTypeService->exists($taskTypeName)) {
+                $taskType = $this->taskTypeService->getByName($taskTypeName);
+                $comparatorTaskTypeName = strtolower($taskType->getName());
                 
-                if (isset($taskTypeOptionsArray[$comparatorTaskTypeName])) {
-                    $taskTypeOptions = new TaskTypeOptions();
-                    $taskTypeOptions->setJob($job);
-                    $taskTypeOptions->setTaskType($taskType);
-                    $taskTypeOptions->setOptions($taskTypeOptionsArray[$comparatorTaskTypeName]);                
+                $taskTypeOptions = new TaskTypeOptions();
+                $taskTypeOptions->setJob($job);
+                $taskTypeOptions->setTaskType($taskType);
+                $taskTypeOptions->setOptions($taskTypeOptionsArray[$comparatorTaskTypeName]);                
 
-                    $this->getEntityManager()->persist($taskTypeOptions);                    
-                    $job->getTaskTypeOptions()->add($taskTypeOptions);
-                }
+                $this->getEntityManager()->persist($taskTypeOptions);                    
+                $job->getTaskTypeOptions()->add($taskTypeOptions);             
             }
         }
         

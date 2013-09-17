@@ -218,4 +218,36 @@ class StartTest extends BaseControllerJsonTestCase {
         $this->assertTrue(count($parametersObject->{'domains-to-ignore'}) > 0);          
     }
     
+    public function testStoreTaskTypeOptionsForTaskTypesThatHaveNotBeenSelected() {
+        $canonicalUrl = 'http://example.com/';
+        
+        $jobId = $this->getJobIdFromUrl(
+            $this->createJob(
+                $canonicalUrl,
+                null,
+                'single url',
+                array(
+                    'JS static analysis'
+                ),
+                array(
+                    'CSS validation' => array(
+                        'ignore-common-cdns' => 1
+                    )
+                )
+             )->getTargetUrl()
+        );
+        
+        $this->getJobService()->getEntityManager()->clear();
+        
+        $job = $this->getJobService()->getById($jobId);
+        
+        $this->assertEquals(1, $job->getTaskTypeOptions()->count());
+        
+        /* @var $cssValidationTaskTypeOptions \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions */
+        $cssValidationTaskTypeOptions = $job->getTaskTypeOptions()->first();
+        $this->assertEquals(array(
+            'ignore-common-cdns' => 1
+        ), $cssValidationTaskTypeOptions->getOptions());         
+    }
+    
 }
