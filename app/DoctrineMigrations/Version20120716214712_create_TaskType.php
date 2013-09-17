@@ -28,7 +28,7 @@ class Version20120716214712_create_TaskType extends BaseMigration
         $this->statements['sqlite'] = array(
             "CREATE TABLE TaskType (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                name VARCHAR(255) NOT NULL,
+                name VARCHAR(255) NOT NULL COLLATE NOCASE,
                 tasktypeclass_id INT NOT NULL,
                 description LONGTEXT NOT NULL,
                 selectable TINYINT(1) NOT NULL,
