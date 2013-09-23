@@ -187,6 +187,19 @@ class JobPreparationService {
             return self::RETURN_CODE_NO_URLS;
         }
         
+        if ($crawlJobContainer->getCrawlJob()->getAmmendments()->count()) {
+            /* @var $ammendment \SimplyTestable\ApiBundle\Entity\Job\Ammendment */
+            
+            foreach ($crawlJobContainer->getCrawlJob()->getAmmendments() as $ammendment) {
+                /* @var $ammendment \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint */
+                $constraint = $ammendment->getConstraint();                
+                
+                if ($constraint->getName() == JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME) {                    
+                    $this->jobService->addAmmendment($job, $ammendment->getReason(), $constraint);                             
+                }
+            }          
+        }
+        
         $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());        
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
             $this->jobService->addAmmendment($job, 'plan-url-limit-reached:discovered-url-count-' . count($urls), $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());            
