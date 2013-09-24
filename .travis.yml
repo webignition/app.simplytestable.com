@@ -9,7 +9,7 @@ before_script:
   - phpenv config-add travis.php.ini
   
   # Install code quality tools
-  - wget http://pear.phpunit.de/get/phpcpd.phar  
+  - wget https://phar.phpunit.de/phpcpd.phar
   
   # Install composer for dependency management
   - wget http://getcomposer.org/composer.phar 
