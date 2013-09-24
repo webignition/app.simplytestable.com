@@ -526,6 +526,23 @@ class JobService extends EntityService {
         );        
         
         return $this->taskService->getEntityRepository()->getErrorCountByJob($job, $excludeStates);
+    }      
+    
+    
+    /**
+     * Get the number of tasks that have warnings
+     * i.e. how many tasks have warnings?
+     * 
+     * @param Job $job
+     * @return int
+     */
+    public function getWarningedTaskCount(Job $job) {
+        $excludeStates = array(
+            $this->taskService->getCancelledState(),
+            $this->taskService->getAwaitingCancellationState()
+        );        
+        
+        return $this->taskService->getEntityRepository()->getErrorCountByJob($job, $excludeStates);
     }    
     
     

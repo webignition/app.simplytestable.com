@@ -35,6 +35,7 @@ class StatusTest extends BaseControllerJsonTestCase {
         $this->assertEquals(0, $responseJsonObject->errored_task_count);
         $this->assertEquals(0, $responseJsonObject->cancelled_task_count);
         $this->assertEquals(0, $responseJsonObject->skipped_task_count);
+        $this->assertEquals(0, $responseJsonObject->warninged_task_count);
     }
     
     public function testStatusActionForDifferentUsers() {
