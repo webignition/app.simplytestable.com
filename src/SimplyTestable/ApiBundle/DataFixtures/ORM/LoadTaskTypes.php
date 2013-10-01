@@ -30,7 +30,7 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface
             'class' => 'discovery',
             'selectable' => false
         ),
-        'Link verification' => array(
+        'Link integrity' => array(
             'description' => 'Check links in a HTML document and determine those that don\'t work',
             'class' => 'verification',
             'selectable' => true
