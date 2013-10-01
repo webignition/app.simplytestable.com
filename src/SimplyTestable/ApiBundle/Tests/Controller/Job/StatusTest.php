@@ -153,7 +153,7 @@ class StatusTest extends BaseControllerJsonTestCase {
         $jobObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId)->getContent());
         
         $this->assertEquals(1, $jobObject->url_count);
-        $this->assertEquals(3, $jobObject->task_count);      
+        $this->assertEquals(4, $jobObject->task_count);      
     }
     
     

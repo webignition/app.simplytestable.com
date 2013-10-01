@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 abstract class PrepareJobAndPostAssertionsTest extends BaseSimplyTestableTestCase {    
     
-    const EXPECTED_TASK_TYPE_COUNT = 3;
+    const EXPECTED_TASK_TYPE_COUNT = 4;
     
     public function setUp() {
         parent::setUp();
@@ -37,10 +37,10 @@ abstract class PrepareJobAndPostAssertionsTest extends BaseSimplyTestableTestCas
         
         $job = $this->getJobService()->getById($job_id);
         $tasks = $job->getTasks();
-        
+     
         $this->assertEquals($expectedTaskCount, $tasks->count());
 
-        for ($subsetOffset = 0; $subsetOffset < $expectedTaskCount; $subsetOffset += 3) {
+        for ($subsetOffset = 0; $subsetOffset < $expectedTaskCount; $subsetOffset += self::EXPECTED_TASK_TYPE_COUNT) {
             $taskSubset = $tasks->slice($subsetOffset, self::EXPECTED_TASK_TYPE_COUNT);
             
             foreach ($taskSubset as $task) {
