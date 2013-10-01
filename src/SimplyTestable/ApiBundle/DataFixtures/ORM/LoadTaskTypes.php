@@ -29,7 +29,12 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface
             'description' => 'Discover in-scope URLs from the anchors within a given URL',
             'class' => 'discovery',
             'selectable' => false
-        )           
+        ),
+        'Link verification' => array(
+            'description' => 'Check links in a HTML document and determine those that don\'t work',
+            'class' => 'verification',
+            'selectable' => true
+        ),        
     );
     
     /**
