@@ -37,7 +37,8 @@
         "jasonlewis/expressive-date": "1.0.*",
         "stripe/stripe-php": "1.7.15",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
-        "webignition/html-validation-error-normaliser":"dev-master"
+        "webignition/html-validation-error-normaliser":"dev-master",
+        "webignition/html-document-link-finder":">=0.4.2,<1.0"
     },
     "scripts": {
         "post-install-cmd": [
