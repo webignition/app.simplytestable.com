@@ -50,7 +50,12 @@ EOF
             ); 
             
             return self::RETURN_CODE_FAILED_NO_WORKERS;
-        }         
+        }
+        
+        if ($this->getTaskPreprocessorFactoryService()->hasPreprocessor($task->getType())) {
+            var_dump("cp01");
+            exit();
+        }
         
         $result = $this->getWorkerTaskAssignmentService()->assign($task, $workers);
 
@@ -134,4 +139,12 @@ EOF
     private function getResqueQueueService() {
         return $this->getContainer()->get('simplytestable.services.resquequeueservice');
     }
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService
+     */    
+    private function getTaskPreprocessorFactoryService() {
+        return $this->getContainer()->get('simplytestable.services.TaskPreProcessorServiceFactory');
+    }     
 }

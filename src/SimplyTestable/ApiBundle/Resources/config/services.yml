@@ -192,3 +192,7 @@ services:
         jobService: "@simplytestable.services.jobservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
      
+  simplytestable.services.taskPreprocessorServiceFactory:
+    class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService
+    arguments:
+        taskPreProcessors: %task_pre_processors%              

@@ -124,5 +124,14 @@ EOF
      */    
     private function getWorkerTaskAssignmentService() {
         return $this->getContainer()->get('simplytestable.services.workertaskassignmentservice');
-    }   
+    }       
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskPreProcessorFactoryService
+     */    
+    private function getTaskPreprocessorFactoryService() {
+        return $this->getContainer()->get('simplytestable.services.TaskPreProcessorServiceFactory');
+    }      
 }
