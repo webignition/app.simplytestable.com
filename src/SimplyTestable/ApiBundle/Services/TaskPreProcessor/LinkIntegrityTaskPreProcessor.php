@@ -5,12 +5,14 @@ use SimplyTestable\ApiBundle\Exception\WebResourceException;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use webignition\InternetMediaType\InternetMediaType;
 
-class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {    
+class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
+    
+    const DEFAULT_MAX_AGE = 300;
     
     public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {                
         $task->setUrl('http://webignition.net/articles/');
         
-        $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndTypeSince($task, new \DateTime('-1 minute'));
+        $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndTypeSince($task, new \DateTime('-'.$this->getMaxAge().' second'));
         if (count($rawTaskOutputs) === 0) {
             return;
         }
@@ -53,6 +55,15 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
         }
         
         return false;        
+    }
+    
+    
+    /**
+     * 
+     * @return int
+     */
+    public function getMaxAge() {
+        return is_null($this->getParameter('max_age')) ? self::DEFAULT_MAX_AGE : $this->getParameter('max_age');
     }
     
     
@@ -136,13 +147,13 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
      * @param \SimplyTestable\ApiBundle\Entity\Task\Tas $task
      * @return WebResource 
      */
-    private function getWebResource(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {        
+    private function getWebResource(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {                        
         try {            
             $request = $this->getWebResourceService()->getHttpClientService()->getRequest($task->getUrl());
             return $this->getWebResourceService()->get($request);            
         } catch (WebResourceException $webResourceException) {
             $this->getLogger()->err('LinkIntegrityTaskPreProcessor::getWebResource ['.$task->getUrl().'][http exception]['.$webResourceException->getResponse()->getStatusCode().']');           
-        } catch (\Guzzle\Http\Exception\CurlException $curlException) {
+        } catch (\Guzzle\Http\Exception\CurlException $curlException) {            
             $this->getLogger()->err('LinkIntegrityTaskPreProcessor::getWebResource ['.$task->getUrl().'][curl exception]['.$curlException->getErrorNo().']');            
         } catch (\Guzzle\Http\Exception\TooManyRedirectsException $tooManyRedirectsException) {            
             $this->getLogger()->err('LinkIntegrityTaskPreProcessor::getWebResource ['.$task->getUrl().'][http exception][too many redirects]');

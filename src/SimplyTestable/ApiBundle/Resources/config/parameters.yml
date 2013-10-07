@@ -29,6 +29,8 @@ parameters:
   task_pre_processors:   
     link-integrity:
       class: SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
+      parameters:
+        max_age: 300
   content_type_web_resource_map:
     default: webignition\WebResource\WebResource
     text/html: webignition\WebResource\WebPage\WebPage

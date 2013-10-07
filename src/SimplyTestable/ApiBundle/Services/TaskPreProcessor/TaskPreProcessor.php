@@ -10,6 +10,13 @@ abstract class TaskPreProcessor {
     protected $container;
     
     /**
+     *
+     * @var array
+     */
+    private $parameters;
+    
+    
+    /**
      * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
      */
     abstract public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task);
@@ -22,6 +29,24 @@ abstract class TaskPreProcessor {
      */
     public function setContainer(\Symfony\Component\DependencyInjection\Container $container) {
         $this->container = $container;
+    }
+    
+    
+    /**
+     * 
+     * @param array $parameters
+     */
+    public function setParameters($parameters) {
+        $this->parameters = $parameters;
+    }
+    
+    
+    protected function getParameter($name) {        
+        if (!is_array($this->parameters)) {
+            return null;
+        }
+        
+        return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
     }
     
 }

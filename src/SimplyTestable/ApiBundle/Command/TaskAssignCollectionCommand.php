@@ -28,15 +28,34 @@ EOF
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {        
+    {          
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
         
-        $taskIds = explode(',', $input->getArgument('ids'));              
+        $taskIds = explode(',', $input->getArgument('ids'));                      
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
         
         if (count($taskIds) === 0) {
+            return self::RETURN_CODE_OK;
+        }
+        
+        foreach ($tasks as $taskIndex => $task) {            
+            if ($this->getTaskPreprocessorFactoryService()->hasPreprocessor($task)) {            
+                $preProcessorResponse = false;
+                
+                try {
+                    $preProcessorResponse = $this->getTaskPreprocessorFactoryService()->getPreprocessor($task)->process($task);
+                } catch (\Exception $e) {
+                }
+                
+                if ($preProcessorResponse === true) {
+                    unset($tasks[$taskIndex]);
+                }
+            }              
+        } 
+        
+        if (count($tasks) === 0) {
             return self::RETURN_CODE_OK;
         }
         
@@ -110,5 +129,13 @@ EOF
      */    
     private function getWorkerTaskAssignmentService() {
         return $this->getContainer()->get('simplytestable.services.workertaskassignmentservice');
-    }    
+    }  
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskPreProcessorFactoryService
+     */    
+    private function getTaskPreprocessorFactoryService() {
+        return $this->getContainer()->get('simplytestable.services.TaskPreProcessorServiceFactory');
+    }     
 }

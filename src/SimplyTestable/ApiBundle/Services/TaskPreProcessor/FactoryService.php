@@ -20,6 +20,10 @@ class FactoryService {
             $preprocessor = new $className;
             $preprocessor->setContainer($container);
             
+            if (isset($properties['parameters'])) {
+                $preprocessor->setParameters($properties['parameters']);
+            }
+            
             $this->taskPreProcessors[$key] = $preprocessor;
         }
     }

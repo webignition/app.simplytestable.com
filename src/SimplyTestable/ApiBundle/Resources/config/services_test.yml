@@ -1,7 +1,6 @@
 services:
-  simplytestable.services.httpClient:
-    class:  webignition\Http\Mock\Client\Client
-    public: false
+  simplytestable.services.httpClientService:
+    class:  SimplyTestable\ApiBundle\Services\TestHttpClientService
     
   simplytestable.services.userservice:
     class:  SimplyTestable\ApiBundle\Services\TestUserService

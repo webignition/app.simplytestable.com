@@ -60,7 +60,7 @@ class WebResourceService {
      * @param \Guzzle\Http\Message\Request $request
      * @return \webignition\WebResource\WebResource 
      */
-    public function get(\Guzzle\Http\Message\Request $request) {        
+    public function get(\Guzzle\Http\Message\Request $request) {                
         // Guzzle seems to be flailing in errors if redirects total more than 4
         $request->getParams()->set('redirect.max', self::MAX_REDIRECTS);
         
@@ -97,7 +97,7 @@ class WebResourceService {
         $resource = new $webResourceClassName;                
         $resource->setContent($response->getBody(true));                              
         $resource->setContentType((string)$contentType);        
-        $resource->setUrl($response->getRequest()->getUrl());          
+        $resource->setUrl($response->getEffectiveUrl());          
 
         return $resource;
     }
