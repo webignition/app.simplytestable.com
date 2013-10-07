@@ -195,4 +195,11 @@ services:
   simplytestable.services.taskPreprocessorServiceFactory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService
     arguments:
+        container: "@service_container"
         taskPreProcessors: %task_pre_processors%              
+        
+  simplytestable.services.webresourceservice:
+    class:   SimplyTestable\ApiBundle\Services\WebResourceService
+    arguments:
+        httpClientService: "@simplytestable.services.httpClientService"
+        contentTypeWebResourceMap: %content_type_web_resource_map%        

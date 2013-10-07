@@ -458,6 +458,36 @@ class TaskRepository extends EntityRepository
     }
     
     
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @param \DateTime $since
+     * @return array
+     */
+    public function findOutputByJobAndTypeSince(\SimplyTestable\ApiBundle\Entity\Task\Task $task, \DateTime $since) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->join('Task.output', 'TaskOutput');
+        $queryBuilder->join('Task.job', 'Job');
+        $queryBuilder->join('Task.timePeriod', 'TimePeriod');
+        
+        $queryBuilder->select('TaskOutput.output');
+        $queryBuilder->where('Job = :Job AND Task.type = :Type AND TimePeriod.endDateTime >= :Since');
+        
+        $queryBuilder->setParameter('Job', $task->getJob());
+        $queryBuilder->setParameter('Type', $task->getType());
+        $queryBuilder->setParameter('Since', $since);
+        
+        $result = $queryBuilder->getQuery()->getResult();        
+        $rawTaskOutputs = array();
+        
+        foreach ($result as $item) {
+            $rawTaskOutputs[] = $item['output'];
+        }
+        
+        return $rawTaskOutputs;
+    }    
+    
+    
     public function getCountByUserAndStatesForCurrentMonth(User $user, $states) {
         $now = new \ExpressiveDate();
         

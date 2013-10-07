@@ -38,6 +38,19 @@ EOF
             return self::RETURN_CODE_FAILED_TASK_INVALID;
         }
         
+        if ($this->getTaskPreprocessorFactoryService()->hasPreprocessor($task)) {            
+            $preProcessorResponse = false;
+            
+            try {
+                $preProcessorResponse = $this->getTaskPreprocessorFactoryService()->getPreprocessor($task)->process($task);
+            } catch (\Exception $e) {
+            }
+            
+            if ($preProcessorResponse === true) {
+                return self::RETURN_CODE_OK;
+            }
+        }        
+        
         $workers = $this->getWorkerService()->getActiveCollection();
         if (count($workers) === 0) {
             $this->getLogger()->err("TaskAssignCommand::execute: Cannot assign, no workers.");                       
@@ -50,11 +63,6 @@ EOF
             ); 
             
             return self::RETURN_CODE_FAILED_NO_WORKERS;
-        }
-        
-        if ($this->getTaskPreprocessorFactoryService()->hasPreprocessor($task->getType())) {
-            var_dump("cp01");
-            exit();
         }
         
         $result = $this->getWorkerTaskAssignmentService()->assign($task, $workers);

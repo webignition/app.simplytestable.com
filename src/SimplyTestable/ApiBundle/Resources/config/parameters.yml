@@ -29,4 +29,9 @@ parameters:
   task_pre_processors:   
     link-integrity:
       class: SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
+  content_type_web_resource_map:
+    default: webignition\WebResource\WebResource
+    text/html: webignition\WebResource\WebPage\WebPage
+    application/xhtml+xml: webignition\WebResource\WebPage\WebPage
+    application/json: webignition\WebResource\JsonDocument\JsonDocument      
     

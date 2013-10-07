@@ -138,6 +138,8 @@ class JobPreparationService {
                     $task->setUrl($url);
                     $task->setState($newTaskState);
                     
+                    $job->addTask($task);
+                    
                     if ($taskTypeOptions->getOptionCount()) {
                         $options = $taskTypeOptions->getOptions();                        
                         
@@ -149,7 +151,7 @@ class JobPreparationService {
                         $task->setParameters(json_encode($options));
                     }
                     
-                    $this->taskService->persist($task);                           
+                    $this->taskService->persist($task);                    
                 }
                 
                 $this->processedUrls[] = (string)$comparatorUrl;

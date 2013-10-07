@@ -43,6 +43,20 @@ EOF
         $output->writeln('Attempting to assign tasks '.  implode(',', $taskIds));
         
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);                
+        
+        if ($this->getTaskPreprocessorFactoryService()->hasPreprocessor($task)) {            
+            $preProcessorResponse = false;
+            
+            try {
+                $preProcessorResponse = $this->getTaskPreprocessorFactoryService()->getPreprocessor($task)->process($task);
+            } catch (\Exception $e) {
+            }
+            
+            if ($preProcessorResponse === true) {
+                return self::RETURN_CODE_OK;
+            }
+        }         
+        
         $workers = $this->getWorkerService()->getActiveCollection();
                 
         if (count($workers) === 0) {            

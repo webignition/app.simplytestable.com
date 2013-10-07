@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\TaskPreProcessor;
 
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 class FactoryService { 
 
@@ -11,10 +11,15 @@ class FactoryService {
      */
     private $taskPreProcessors = array();
 
-    public function __construct($taskPreProcessors) {
+    public function __construct(
+        \Symfony\Component\DependencyInjection\Container $container,
+        $taskPreProcessors
+    ) { 
         foreach ($taskPreProcessors as $key => $properties) {
             $className = $properties['class'];
             $preprocessor = new $className;
+            $preprocessor->setContainer($container);
+            
             $this->taskPreProcessors[$key] = $preprocessor;
         }
     }
@@ -22,12 +27,23 @@ class FactoryService {
     
     /**
      * 
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
      * @return boolean
      */
-    public function hasPreprocessor(TaskType $taskType) {
-        $taskTypeKey = str_replace(' ', '-', strtolower($taskType->getName()));
+    public function hasPreprocessor(Task $task) {
+        $taskTypeKey = str_replace(' ', '-', strtolower($task->getType()->getName()));
         return isset($this->taskPreProcessors[$taskTypeKey]);
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @return \SimplyTestable\ApiBundle\Services\TaskPreProcessor\TaskPreProcessor
+     */
+    public function getPreprocessor(Task $task) {
+        $taskTypeKey = str_replace(' ', '-', strtolower($task->getType()->getName()));
+        return $this->taskPreProcessors[$taskTypeKey];
     }
     
 }
