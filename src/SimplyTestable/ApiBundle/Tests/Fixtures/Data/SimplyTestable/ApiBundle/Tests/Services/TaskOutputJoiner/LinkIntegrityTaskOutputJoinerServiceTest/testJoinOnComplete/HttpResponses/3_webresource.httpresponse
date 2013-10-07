@@ -1,0 +1,16 @@
+HTTP/1.1 200 OK
+Content-Type: text/html
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Foo</title>
+  </head>
+  <body>
+<a href="http://example.com/three">Another Example Three</a>
+<a href="http://example.com/one">Another Example One</a>
+<a href="http://example.com/two">Another Example Two</a>
+<a href="http://example.com/four">Example Four</a>
+  </body>
+</html>

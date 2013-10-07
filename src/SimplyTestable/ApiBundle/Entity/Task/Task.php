@@ -369,7 +369,16 @@ class Task
     public function getOutput()
     {
         return $this->output;
-    }  
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasOutput() {
+        return !is_null($this->getOutput());
+    }
     
     
     /**

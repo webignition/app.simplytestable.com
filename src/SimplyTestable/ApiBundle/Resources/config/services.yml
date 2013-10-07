@@ -203,3 +203,9 @@ services:
     arguments:
         httpClientService: "@simplytestable.services.httpClientService"
         contentTypeWebResourceMap: %content_type_web_resource_map%        
+        
+  simplytestable.services.taskOutputJoinerServiceFactory:
+    class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\FactoryService
+    arguments:
+        container: "@service_container"
+        taskOutputJoiners: %task_output_joiners%          

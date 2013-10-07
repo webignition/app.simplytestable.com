@@ -39,7 +39,7 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
             }            
         }
         
-        if (count($linkIntegrityResults) == count($links)) {
+        if (count($linkIntegrityResults)) {
             $mediaType = new InternetMediaType();
             $mediaType->setType('application');
             $mediaType->setSubtype('json');
@@ -48,10 +48,16 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
             $output->setOutput(json_encode($linkIntegrityResults));
             $output->setContentType($mediaType);
             $output->setErrorCount($this->getErrorCount($linkIntegrityResults));
-            $output->setWarningCount(0);            
+            $output->setWarningCount(0);
             
-            $this->getTaskService()->complete($task, new \DateTime(), $output, $this->getTaskService()->getCompletedState());
-            return true;
+            if (count($linkIntegrityResults) == count($links)) {
+                $this->getTaskService()->complete($task, new \DateTime(), $output, $this->getTaskService()->getCompletedState());
+                return true;
+            }
+            
+            $task->setOutput($output);
+            $this->getTaskService()->getEntityManager()->persist($task);
+            $this->getTaskService()->getEntityManager()->flush();
         }
         
         return false;        

@@ -62,7 +62,7 @@ class TaskController extends ApiController
         
         if (count($tasks) === 0) {
             return $this->sendGoneResponse();
-        }     
+        }
         
         $endDateTime = new \DateTime($this->getArguments('completeByUrlAndTaskTypeAction')->get('end_date_time'));
         $rawOutput = $this->getArguments('completeByUrlAndTaskTypeAction')->get('output');
@@ -79,6 +79,15 @@ class TaskController extends ApiController
         $state = $this->getTaskEndState($this->getArguments('completeByUrlAndTaskTypeAction')->get('state'));
         
         foreach ($tasks as $task) {
+            /* @var $task Task */
+            
+            if ($task->hasOutput() && $this->getTaskOutputJoinerFactoryService()->hasTaskOutputJoiner($task)) {
+                $output = $this->getTaskOutputJoinerFactoryService()->getTaskOutputJoiner($task)->join(array(
+                    $task->getOutput(),
+                    $output
+                ));
+            }
+            
             $this->getTaskService()->complete($task, $endDateTime, $output, $state);
             
             if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery'))) {
@@ -264,5 +273,13 @@ class TaskController extends ApiController
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
     }     
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskOutputJoiner\FactoryService
+     */    
+    private function getTaskOutputJoinerFactoryService() {
+        return $this->container->get('simplytestable.services.TaskOutputJoinerServiceFactory');
+    }        
 }
 
