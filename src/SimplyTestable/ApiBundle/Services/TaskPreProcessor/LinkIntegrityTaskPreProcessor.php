@@ -55,12 +55,28 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
                 return true;
             }
             
+            $parameters = ($task->hasParameters()) ? json_decode($task->getParameters()) : array();
+            $parameters['excluded-urls'] = $this->getUniqueUrlListFromLinkIntegrityResults($linkIntegrityResults);            
+            $task->setParameters(json_encode($parameters));
+            
             $task->setOutput($output);
             $this->getTaskService()->getEntityManager()->persist($task);
             $this->getTaskService()->getEntityManager()->flush();
         }
         
         return false;        
+    }
+    
+    private function getUniqueUrlListFromLinkIntegrityResults($linkIntegrityResults) {
+        $urls = array();
+        
+        foreach ($linkIntegrityResults as $linkIntegrityResult) {
+            if (!in_array($linkIntegrityResult->url, $urls)) {
+                $urls[] = $linkIntegrityResult->url;
+            }
+        }
+        
+        return $urls;
     }
     
     
