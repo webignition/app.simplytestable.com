@@ -29,7 +29,7 @@
         "webignition/container-aware-migration": "*",
         "webignition/simplytestable-base-migrations-bundle":"1.1",
         "webignition/resque-bundle":"*",
-        "webignition/internet-media-type":">=0.1,<2.0",
+        "webignition/internet-media-type":">=0.4.4,<2.0",
         "simplepie/simplepie":"*",
         "webignition/website-rss-feed-finder":"dev-master",
         "winzou/console-bundle":"1.0.0",

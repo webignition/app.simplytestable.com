@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "c9167e1ff7b6c3ea49a880b6bfd910c3",
+    "hash": "dbee1b0efa576bf940ecf9f650b74af2",
     "packages": [
         {
             "name": "doctrine/common",
@@ -2086,22 +2086,22 @@
         },
         {
             "name": "webignition/internet-media-type",
-            "version": "0.4",
+            "version": "0.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/internet-media-type.git",
-                "reference": "0.4"
+                "reference": "de30f77c5e9d3584b8bdfba29dce5517f10c9ab1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/internet-media-type/zipball/0.4",
-                "reference": "0.4",
+                "url": "https://api.github.com/repos/webignition/internet-media-type/zipball/de30f77c5e9d3584b8bdfba29dce5517f10c9ab1",
+                "reference": "de30f77c5e9d3584b8bdfba29dce5517f10c9ab1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
                 "webignition/quoted-string": ">=0.1,<2.0",
-                "webignition/string-parser": ">=0.1, <2.0"
+                "webignition/string-parser": ">=0.2.1, <2.0"
             },
             "type": "library",
             "autoload": {
@@ -2109,6 +2109,7 @@
                     "": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2127,25 +2128,24 @@
                 "media type",
                 "media-type"
             ],
-            "time": "2012-08-16 15:14:02"
+            "time": "2013-09-05 16:34:19"
         },
         {
             "name": "webignition/quoted-string",
-            "version": "0.2",
+            "version": "0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/quoted-string.git",
-                "reference": "0.2"
+                "reference": "43fa25f8c81eaa5aef4c2376703fe90d1449fdf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/quoted-string/zipball/0.2",
-                "reference": "0.2",
+                "url": "https://api.github.com/repos/webignition/quoted-string/zipball/43fa25f8c81eaa5aef4c2376703fe90d1449fdf8",
+                "reference": "43fa25f8c81eaa5aef4c2376703fe90d1449fdf8",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
-                "webignition/string-parser": "0.1"
+                "php": ">=5.3.0"
             },
             "type": "library",
             "autoload": {
@@ -2153,6 +2153,7 @@
                     "": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2168,7 +2169,7 @@
                 "parser",
                 "quoted-string"
             ],
-            "time": "2012-08-15 19:44:56"
+            "time": "2012-08-15 16:52:06"
         },
         {
             "name": "webignition/resque-bundle",
@@ -2393,16 +2394,16 @@
         },
         {
             "name": "webignition/string-parser",
-            "version": "0.1",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/string-parser.git",
-                "reference": "0.1"
+                "reference": "a37b2b7d49da4ef6a806ad77b609033b9133bd5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/webignition/string-parser/zipball/0.1",
-                "reference": "0.1",
+                "url": "https://api.github.com/repos/webignition/string-parser/zipball/a37b2b7d49da4ef6a806ad77b609033b9133bd5d",
+                "reference": "a37b2b7d49da4ef6a806ad77b609033b9133bd5d",
                 "shasum": ""
             },
             "require": {
@@ -2414,6 +2415,7 @@
                     "": "src/"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -2429,7 +2431,7 @@
                 "parser",
                 "string"
             ],
-            "time": "2012-08-15 19:36:12"
+            "time": "2013-03-18 14:32:24"
         },
         {
             "name": "webignition/url",
