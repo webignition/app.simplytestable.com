@@ -276,8 +276,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     } 
     
     
-    protected function createAndPrepareJob($canonicalUrl, $userEmail = null, $type = null) {
-        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type);
+    protected function createAndPrepareJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null) {
+        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes);
         $this->prepareJob($canonicalUrl, $job_id);
         return $job_id;
     }
@@ -304,8 +304,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $userEmail
      * @return int
      */
-    protected function createJobAndGetId($canonicalUrl, $userEmail = null, $type = 'full site') {
-        $response = $this->createJob($canonicalUrl, $userEmail, $type);
+    protected function createJobAndGetId($canonicalUrl, $userEmail = null, $type = 'full site', $testTypes = null) {
+        $response = $this->createJob($canonicalUrl, $userEmail, $type, $testTypes);
         return $this->getJobIdFromUrl($response->getTargetUrl());
     } 
     
