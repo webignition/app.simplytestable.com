@@ -256,4 +256,36 @@ class AssignCommandTest extends BaseSimplyTestableTestCase {
         }       
     }
     
+    
+    public function testAssignFirstTaskOfJobDoesNotBreakRemainingTaskUrls() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $this->createWorker();
+        
+        $canonicalUrl = 'http://example.com/';       
+        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl, null, 'full site', array('Link integrity'))->getTargetUrl());
+        
+        $this->prepareJob($canonicalUrl, $job_id);
+
+        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
+
+        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
+            $taskIds[0] =>  true
+        )));
+        
+        $job = $this->getJobService()->getById($job_id);
+        $tasks = $job->getTasks();
+        
+        $taskUrls = array();
+        foreach ($tasks as $task) {
+            $taskUrls[] = $task->getUrl();
+        } 
+        
+        $this->assertEquals(array(
+            'http://example.com/',
+            'http://example.com/articles/',
+            'http://example.com/articles/i-make-the-internet/'
+        ), $taskUrls);    
+    }
+    
 }

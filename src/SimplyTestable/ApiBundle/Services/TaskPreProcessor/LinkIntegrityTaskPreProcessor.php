@@ -9,9 +9,7 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     
     const DEFAULT_MAX_AGE = 300;
     
-    public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {                
-        $task->setUrl('http://webignition.net/articles/');
-        
+    public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {        
         $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndTypeSince($task, new \DateTime('-'.$this->getMaxAge().' second'));
         if (count($rawTaskOutputs) === 0) {
             return;
