@@ -22,6 +22,7 @@ before_script:
   - mkdir app/cache/test  
   - mv app/config/parameters.yml.travis app/config/parameters.yml
   - mv --force app/config/config_travis.yml app/config/config_test.yml
+  - cp src/SimplyTestable/ApiBundle/Resources/config/parameters.yml.dist.yml src/SimplyTestable/ApiBundle/Resources/config/parameters.yml
   - echo | php composer.phar install
   - php app/console doctrine:database:create
   - php app/console doctrine:migrations:migrate --no-interaction
