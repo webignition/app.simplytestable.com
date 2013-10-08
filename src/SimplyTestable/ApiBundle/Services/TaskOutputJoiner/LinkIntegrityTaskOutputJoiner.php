@@ -8,15 +8,33 @@ class LinkIntegrityTaskOutputJoiner extends TaskOutputJoiner {
     public function process($taskOutputs) {        
         $linkIntegrityResults = $this->getJoinedOutputBody($taskOutputs);
         
-        $joinedOutput = new TaskOutput();        
+        $joinedOutput = new TaskOutput();
         
-        $joinedOutput->setContentType($taskOutputs[0]->getContentType());
+        $joinedOutput->setContentType($this->getContentType($taskOutputs));
         $joinedOutput->setErrorCount($this->getErrorCount($linkIntegrityResults));
         $joinedOutput->generateHash();
         $joinedOutput->setOutput(json_encode($linkIntegrityResults));
         $joinedOutput->setWarningCount(0);
         
         return $joinedOutput;
+    }
+    
+    
+    /**
+     * 
+     * @param array $taskOutputs
+     * @return \webignition\InternetMediaType\InternetMediaType
+     */
+    private function getContentType($taskOutputs) {
+        /* @var $taskOutput TaskOutput */
+        $taskOutput = $taskOutputs[0];
+        
+        if ($taskOutput->getContentType() instanceof \webignition\InternetMediaType\InternetMediaType) {
+            return $taskOutput->getContentType();            
+        }        
+        
+        $mediaTypeParser = new \webignition\InternetMediaType\Parser\Parser();
+        return $mediaTypeParser->parse($taskOutput->getContentType());
     }
     
     
