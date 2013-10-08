@@ -25,7 +25,7 @@ class LinkIntegrityTaskOutputJoiner extends TaskOutputJoiner {
      * @param array $taskOutputs
      * @return \webignition\InternetMediaType\InternetMediaType
      */
-    private function getContentType($taskOutputs) {
+    private function getContentType($taskOutputs) {        
         /* @var $taskOutput TaskOutput */
         $taskOutput = $taskOutputs[0];
         
