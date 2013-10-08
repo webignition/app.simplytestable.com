@@ -10,3 +10,4 @@ app/config/parameters.yml
 /bin
 # IDE meta
 /nbproject
+/src/SimplyTestable/ApiBundle/Resources/config/parameters.yml

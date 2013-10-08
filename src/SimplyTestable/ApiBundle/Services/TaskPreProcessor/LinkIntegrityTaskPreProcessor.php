@@ -7,10 +7,8 @@ use webignition\InternetMediaType\InternetMediaType;
 
 class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     
-    const DEFAULT_MAX_AGE = 300;
-    
     public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {        
-        $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndTypeSince($task, new \DateTime('-'.$this->getMaxAge().' second'));
+        $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndType($task);
         if (count($rawTaskOutputs) === 0) {
             return;
         }
@@ -75,15 +73,6 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
         }
         
         return $urls;
-    }
-    
-    
-    /**
-     * 
-     * @return int
-     */
-    public function getMaxAge() {
-        return is_null($this->getParameter('max_age')) ? self::DEFAULT_MAX_AGE : $this->getParameter('max_age');
     }
     
     
