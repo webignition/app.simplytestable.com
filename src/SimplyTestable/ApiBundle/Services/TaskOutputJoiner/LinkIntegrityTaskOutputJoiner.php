@@ -47,17 +47,32 @@ class LinkIntegrityTaskOutputJoiner extends TaskOutputJoiner {
         $errorCount = 0;
         
         foreach ($linkIntegrityResults as $linkIntegrityResult) {
-            if ($linkIntegrityResult->type == 'curl') {
-                $errorCount++;
-            }
-            
-            if ($linkIntegrityResult->type == 'http' && $linkIntegrityResult->state != 200) {
+            if ($this->isLinkIntegrityError($linkIntegrityResult)) {
                 $errorCount++;
             }
         }
         
         return $errorCount;
-    }    
+    }
+    
+    
+    
+    /**
+     * 
+     * @param \stdClass $linkIntegrityResult
+     * @return boolean
+     */
+    private function isLinkIntegrityError($linkIntegrityResult) {
+        if ($linkIntegrityResult->type == 'curl') {
+            return true;
+        }
+        
+        if ($linkIntegrityResult->type == 'http' && in_array(substr($linkIntegrityResult->state, 0, 1), array('3', '4', '5'))) {
+            return true;
+        }
+        
+        return false;
+    }
     
     
     
