@@ -19,7 +19,8 @@ class TaskIdsTest extends BaseControllerJsonTestCase {
         $job = $this->prepareJob($canonicalUrl, $job_id);
         
         $response = $this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id);
-        $taskIds = json_decode($response->getContent());
+        $taskIds = json_decode($response->getContent());  
+        
         $expectedTaskIdCount = $job->url_count * count($job->task_types);
         
         $this->assertEquals($expectedTaskIdCount, count($taskIds));

@@ -260,6 +260,13 @@ class JobController extends ApiController
         $taskIds = $this->getRequestTaskIds();        
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $taskIds);
         
+        foreach ($tasks as $task) {
+            /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */            
+            if (!$this->getTaskService()->isFinished($task)) {
+                $task->setOutput(null);
+            }                       
+        }
+        
         return $this->sendResponse($tasks);
     }
     
