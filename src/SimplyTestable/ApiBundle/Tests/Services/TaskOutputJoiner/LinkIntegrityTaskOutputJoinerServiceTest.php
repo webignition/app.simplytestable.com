@@ -56,6 +56,12 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             'end_date_time' => $now->format('Y-m-d H:i:s'),
             'output' => json_encode(array(
                 array(
+                    'context' => '<a href="http://example.com/one">Example One</a>',
+                    'state' => 404,
+                    'type' => 'http',
+                    'url' => 'http://example.com/one'
+                ),                
+                array(
                     'context' => '<a href="http://example.com/four">Example Four</a>',
                     'state' => 404,
                     'type' => 'http',
@@ -117,6 +123,12 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => $now->format('Y-m-d H:i:s'),
             'output' => json_encode(array(
+                array(
+                    'context' => '<a href="http://example.com/one">Example One</a>',
+                    'state' => 404,
+                    'type' => 'http',
+                    'url' => 'http://example.com/one'
+                ),                
                 array(
                     'context' => '<a href="http://example.com/four">Example Four</a>',
                     'state' => 404,

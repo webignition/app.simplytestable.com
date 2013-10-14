@@ -67,7 +67,7 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
         $urls = array();
         
         foreach ($linkIntegrityResults as $linkIntegrityResult) {
-            if (!in_array($linkIntegrityResult->url, $urls)) {
+            if (!$this->isLinkIntegrityError($linkIntegrityResult) && !in_array($linkIntegrityResult->url, $urls)) {
                 $urls[] = $linkIntegrityResult->url;
             }
         }
@@ -112,18 +112,37 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
         }
     }
     
-    private function getLinkIntegrityResultsFromRawTaskOutputs($rawTaskOutputs) {
+    private function getLinkIntegrityResultsFromRawTaskOutputs($rawTaskOutputs) {        
         $linkIntegrityResults = array();
         
         foreach ($rawTaskOutputs as $rawTaskOutput) {            
             $decodedTaskOutput = json_decode($rawTaskOutput);
             foreach ($decodedTaskOutput as $linkIntegrityResult) {
-                $linkIntegrityResults[] = $linkIntegrityResult;
+                if (!$this->isLinkIntegrityError($linkIntegrityResult)) {
+                    $linkIntegrityResults[] = $linkIntegrityResult;
+                }                
             }
         }        
         
         return $linkIntegrityResults;
     }
+    
+    /**
+     * 
+     * @param \stdClass $linkIntegrityResult
+     * @return boolean
+     */
+    private function isLinkIntegrityError($linkIntegrityResult) {
+        if ($linkIntegrityResult->type == 'curl') {
+            return true;
+        }
+        
+        if ($linkIntegrityResult->type == 'http' && in_array(substr($linkIntegrityResult->state, 0, 1), array('3', '4', '5'))) {
+            return true;
+        }
+        
+        return false;
+    }    
     
     /**
      * 

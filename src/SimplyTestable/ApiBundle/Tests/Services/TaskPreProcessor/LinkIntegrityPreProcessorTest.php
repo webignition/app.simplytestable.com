@@ -217,7 +217,7 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
             $tasks[1]->getId() =>  true
         ));
         
-        $this->assertEquals(1, $tasks[1]->getOutput()->getErrorCount());
+        $this->assertEquals(0, $tasks[1]->getOutput()->getErrorCount());
     }
     
     public function testWithAssignSelected() {
@@ -267,8 +267,9 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
         $this->getTaskService()->getEntityManager()->persist($task);
         $this->getTaskService()->getEntityManager()->flush();
         
+        $this->createWorker();
         $this->assertEquals(0, $this->runConsole('simplytestable:task:assign-selected'));        
-        $this->assertEquals(1, $task->getOutput()->getErrorCount());
+        $this->assertEquals(0, $task->getOutput()->getErrorCount());
     }  
     
     public function testWithAssignCollection() {
@@ -313,12 +314,13 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
         
         /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
         $task = $tasks[1];
-        
+
+        $this->createWorker();
         $this->assertEquals(0, $this->runConsole('simplytestable:task:assigncollection', array(
             $task->getId() => true
         )));
         
-        $this->assertEquals(1, $task->getOutput()->getErrorCount());
+        $this->assertEquals(0, $task->getOutput()->getErrorCount());
     }  
     
     public function testPreprocessingUsesCorrectHistoricTaskType() {
@@ -440,20 +442,10 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(array(
             'excluded-urls' => array(
                 'http://example.com/three',
-                'http://example.com/one',
                 'http://example.com/two'
                 
             )
         ), json_decode($tasks[1]->getParameters(), true));        
-    }
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService
-     */    
-    private function getTaskPreprocessorFactoryService() {
-        return $this->container->get('simplytestable.services.TaskPreProcessorServiceFactory');
-    }     
+    }    
     
 }
