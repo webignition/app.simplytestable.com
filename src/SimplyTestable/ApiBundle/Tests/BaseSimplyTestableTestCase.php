@@ -254,7 +254,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param array $testTypes
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    protected function createJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null) {
+    protected function createJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null) {        
         $postData = array();
         if (!is_null($userEmail)) {
             $postData['user'] = $userEmail;
@@ -276,8 +276,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     } 
     
     
-    protected function createAndPrepareJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null) {
-        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes);
+    protected function createAndPrepareJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null) {
+        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions);
         $this->prepareJob($canonicalUrl, $job_id);
         return $job_id;
     }
@@ -304,8 +304,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $userEmail
      * @return int
      */
-    protected function createJobAndGetId($canonicalUrl, $userEmail = null, $type = 'full site', $testTypes = null) {
-        $response = $this->createJob($canonicalUrl, $userEmail, $type, $testTypes);
+    protected function createJobAndGetId($canonicalUrl, $userEmail = null, $type = 'full site', $testTypes = null, $testTypeOptions = null) {
+        $response = $this->createJob($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions);
         return $this->getJobIdFromUrl($response->getTargetUrl());
     } 
     
