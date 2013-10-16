@@ -147,6 +147,16 @@ class Job
     private $ammendments;
     
     
+    /**
+     *
+     * @var boolean
+     * 
+     * @ORM\Column(type="integer")
+     * @SerializerAnnotation\Expose 
+     */
+    private $isPublic = false;
+    
+    
     
     public function __construct()
     {
@@ -540,5 +550,31 @@ class Job
     public function getAmmendments()
     {        
         return $this->ammendments;
-    }    
+    } 
+    
+    
+    
+
+    /**
+     * Set isPublic
+     *
+     * @param integer $isPublic
+     * @return Job
+     */
+    public function setIsPublic($isPublic)
+    {
+        $this->isPublic = $isPublic;
+    
+        return $this;
+    }
+
+    /**
+     * Get isPublic
+     *
+     * @return integer 
+     */
+    public function getIsPublic()
+    {
+        return $this->isPublic;
+    }
 }
