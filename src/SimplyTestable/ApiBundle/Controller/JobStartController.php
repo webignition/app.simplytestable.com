@@ -78,6 +78,11 @@ class JobStartController extends ApiController
                 $requestedJobType
             );
             
+            if ($this->getUserService()->isPublicUser($this->getUser())) {
+                $job->setIsPublic(true);
+                $this->getJobService()->persistAndFlush($job);
+            }
+            
             if ($requestedJobType->equals($this->getJobTypeService()->getSingleUrlType())) { 
                 foreach ($job->getRequestedTaskTypes() as $taskType) {
                     /* @var $taskType TaskType */
