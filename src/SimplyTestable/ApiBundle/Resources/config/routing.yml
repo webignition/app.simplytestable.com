@@ -49,6 +49,18 @@ job:
     defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
     requirements:
         site_root_url: ".+"        
+        
+job_set_public:
+    pattern: /job/{site_root_url}/{test_id}/set-public/
+    defaults: { _controller: SimplyTestableApiBundle:Job:setPublic, _format: json }    
+    requirements:
+        site_root_url: ".+"           
+        
+job_set_private:
+    pattern: /job/{site_root_url}/{test_id}/set-private/
+    defaults: { _controller: SimplyTestableApiBundle:Job:setPrivate, _format: json }    
+    requirements:
+        site_root_url: ".+"          
     
 task_type_count:
   pattern: /tasks/{task_type}/{state_name}/count/

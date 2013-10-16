@@ -49,6 +49,45 @@ class JobController extends ApiController
         ), true));
     }
     
+    public function setPublicAction($site_root_url, $test_id) {
+        return $this->setIsPublic($site_root_url, $test_id, true);
+    }
+    
+    public function setPrivateAction($site_root_url, $test_id) {
+        return $this->setIsPublic($site_root_url, $test_id, false);
+    }
+    
+    private function setIsPublic($site_root_url, $test_id, $isPublic) {
+        $this->testId = $test_id;
+        
+        $job = $this->getJob();
+        if ($job === false) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;  
+        }
+        
+        if ($this->getUserService()->isPublicUser($this->getUser())) {
+            return $this->redirect($this->generateUrl('job', array(
+                'site_root_url' => $site_root_url,
+                'test_id' => $job->getId()
+            ), true));               
+        }        
+
+        if ($job->getIsPublic() !== $isPublic) {
+            $job->setIsPublic(filter_var($isPublic, FILTER_VALIDATE_BOOLEAN));
+            $this->getJobService()->getEntityManager()->persist($job);
+            $this->getJobService()->getEntityManager()->flush();                
+        }
+
+        
+        return $this->redirect($this->generateUrl('job', array(
+            'site_root_url' => $site_root_url,
+            'test_id' => $job->getId()
+        ), true));         
+    }
+    
+    
     public function statusAction($site_root_url, $test_id)
     {        
         $this->testId = $test_id;
