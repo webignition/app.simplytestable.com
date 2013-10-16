@@ -13,11 +13,11 @@ class Version20131016144353_add_Job_isPublic extends BaseMigration
     public function up(Schema $schema)
     {        
         $this->statements['mysql'] = array(
-            "ALTER TABLE Job ADD isPublic INT NOT NULL"
+            "ALTER TABLE Job ADD isPublic TINYINT(1) NOT NULL"
         );
         
         $this->statements['sqlite'] = array(
-            "ALTER TABLE Job ADD isPublic INT NOT NULL DEFAULT 0"
+            "ALTER TABLE Job ADD isPublic TINYINT(1) NOT NULL DEFAULT 0"
         );     
         
         parent::up($schema);

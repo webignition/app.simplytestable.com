@@ -151,7 +151,7 @@ class Job
      *
      * @var boolean
      * 
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="boolean")
      * @SerializerAnnotation\Expose 
      */
     private $isPublic = false;
@@ -558,7 +558,7 @@ class Job
     /**
      * Set isPublic
      *
-     * @param integer $isPublic
+     * @param boolean $isPublic
      * @return Job
      */
     public function setIsPublic($isPublic)
@@ -571,10 +571,10 @@ class Job
     /**
      * Get isPublic
      *
-     * @return integer 
+     * @return boolean 
      */
     public function getIsPublic()
     {
-        return $this->isPublic;
+        return filter_var($this->isPublic, FILTER_VALIDATE_BOOLEAN);
     }
 }
