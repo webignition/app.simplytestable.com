@@ -175,6 +175,35 @@ class StatusTest extends BaseControllerJsonTestCase {
         $this->assertEquals('urls_per_job', $jobObject->ammendments[0]->constraint->name);      
     }
     
+    public function testDefaultIsPublicIfOwnedByPublicUser() {        
+        $canonicalUrl = 'http://example.com/';
+        
+        $jobId = $this->createJobAndGetId($canonicalUrl);
+        
+        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);
+        $responseJsonObject = json_decode($response->getContent());
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertEquals('public', $responseJsonObject->user);
+        $this->assertEquals(true, $responseJsonObject->is_public);
+    }    
+    
+    public function testDefaultIsPrivateIfNotOwnedByPublicUser() {        
+        $user = $this->createAndActivateUser('user@example.com', 'password1');
+        
+        $canonicalUrl = 'http://example.com/';
+        
+        $jobId = $this->createJobAndGetId($canonicalUrl, $user->getEmail());
+        
+        $response = $this->getJobStatus($canonicalUrl, $jobId, $user->getEmail());
+        $responseJsonObject = json_decode($response->getContent());
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->assertEquals($user->getEmail(), $responseJsonObject->user);
+        $this->assertEquals(false, $responseJsonObject->is_public);
+    }     
 }
 
 

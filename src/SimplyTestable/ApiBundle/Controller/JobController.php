@@ -85,7 +85,8 @@ class JobController extends ApiController
             'skipped_task_count' => $this->getJobService()->getSkippedTaskCount($job),
             'warninged_task_count' => $this->getJobService()->getWarningedTaskCount($job),
             'task_type_options' => $this->getJobTaskTypeOptions($job),
-            'type' => $job->getPublicSerializedType()
+            'type' => $job->getPublicSerializedType(),
+            'is_public' => $this->getIsJobPublic($job)
         );
         
         if ($this->getJobService()->isRejected($job)) {            
@@ -113,6 +114,20 @@ class JobController extends ApiController
         }
         
         return $jobSummary;        
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return boolean
+     */
+    private function getIsJobPublic(Job $job) {
+        if ($this->getUserService()->isPublicUser($this->getUser())) {
+            return true;
+        }
+        
+        return $job->getIsPublic();
     }
     
     
