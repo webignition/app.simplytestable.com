@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "5ee0fa02e1412f765a4d03643cbd1507",
+    "hash": "e9468424215a1c88c8009ffc13858e73",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2383,16 +2383,16 @@
         },
         {
             "name": "webignition/html-document-link-finder",
-            "version": "0.4.2",
+            "version": "0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/html-document-link-url-finder.git",
-                "reference": "ad1b21891222d3a6356f338370345d4028eaf228"
+                "reference": "c0c071207256055a22c4a4ad0db368a1d1b63ff6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/html-document-link-url-finder/zipball/ad1b21891222d3a6356f338370345d4028eaf228",
-                "reference": "ad1b21891222d3a6356f338370345d4028eaf228",
+                "url": "https://api.github.com/repos/webignition/html-document-link-url-finder/zipball/c0c071207256055a22c4a4ad0db368a1d1b63ff6",
+                "reference": "c0c071207256055a22c4a4ad0db368a1d1b63ff6",
                 "shasum": ""
             },
             "require": {
@@ -2424,7 +2424,7 @@
                 "linkifier",
                 "validation"
             ],
-            "time": "2013-10-03 13:41:52"
+            "time": "2013-10-16 08:23:00"
         },
         {
             "name": "webignition/html-validation-error-normaliser",
