@@ -304,7 +304,7 @@ class JobController extends ApiController
     public function tasksAction($site_root_url, $test_id) {        
         $this->testId = $test_id;
         
-        $job = $this->getJobByUser();
+        $job = $this->getJobByVisibilityOrUser();
         if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);

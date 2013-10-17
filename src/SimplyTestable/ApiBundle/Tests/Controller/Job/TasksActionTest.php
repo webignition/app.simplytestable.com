@@ -63,6 +63,127 @@ class TasksActionTest extends BaseControllerJsonTestCase {
         }   
     }
     
+    
+    public function testGetForPublicJobOwnedByPublicUserByPublicUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        
+        $this->assertTrue($job->getIsPublic());
+        $this->assertEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());
+        
+        $tasksResponse = $this->getJobController('tasksAction')->tasksAction($canonicalUrl, $job->getId());
+        $this->assertEquals(200, $tasksResponse->getStatusCode());      
+    }
+    
+    public function testGetForPublicJobOwnedByPublicUserByNonPublicUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        
+        $this->assertTrue($job->getIsPublic());
+        $this->assertEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());        
+        
+        $tasksResponse = $this->getJobController('tasksAction', array(
+            'user' => $user->getEmail()
+        ))->tasksAction($canonicalUrl, $job->getId());
+        $this->assertEquals(200, $tasksResponse->getStatusCode());          
+    } 
+    
+    public function testGetForPublicJobOwnedByNonPublicUserByNonPublicUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        $job->setIsPublic(true);
+        $this->getJobService()->persistAndFlush($job);
+        
+        $this->assertTrue($job->getIsPublic());
+        $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());         
+        
+        $tasksResponse = $this->getJobController('tasksAction', array(
+            'user' => $user->getEmail()
+        ))->tasksAction($canonicalUrl, $job->getId());
+        $this->assertEquals(200, $tasksResponse->getStatusCode());         
+    }
+    
+    public function testGetForPublicJobOwnedByNonPublicUserByDifferenNonPublicUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        
+        $user1 = $this->createAndActivateUser('user1@example.com', 'password');
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user1->getEmail()));
+        $job->setIsPublic(true);
+        $this->getJobService()->persistAndFlush($job);        
+        
+        $this->assertTrue($job->getIsPublic());
+        $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());
+        
+        $tasksResponse = $this->getJobController('tasksAction', array(
+            'user' => $user2->getEmail()
+        ))->tasksAction($canonicalUrl, $job->getId());
+        $this->assertEquals(200, $tasksResponse->getStatusCode());          
+    }    
+    
+    public function testGetForPrivateJobOwnedByNonPublicUserByPublicUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        
+        $this->assertFalse($job->getIsPublic());
+        $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());
+        
+        $tasksResponse = $this->getJobController('tasksAction')->tasksAction($canonicalUrl, $job->getId());
+        $this->assertEquals(403, $tasksResponse->getStatusCode());            
+    }    
+
+    
+    public function testGetForPrivateJobOwnedByNonPublicUserByNonPublicUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        
+        $this->assertFalse($job->getIsPublic());
+        $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());
+        
+        $tasksResponse = $this->getJobController('tasksAction', array(
+            'user' => $user->getEmail()
+        ))->tasksAction($canonicalUrl, $job->getId());
+        $this->assertEquals(200, $tasksResponse->getStatusCode());            
+    }
+    
+    public function testGetForPrivateJobOwnedByNonPublicUserByDifferentNonPublicUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        
+        $user1 = $this->createAndActivateUser('user1@example.com', 'password');
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user1->getEmail()));    
+        
+        $this->assertFalse($job->getIsPublic());
+        $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());
+        
+        $tasksResponse = $this->getJobController('tasksAction', array(
+            'user' => $user2->getEmail()
+        ))->tasksAction($canonicalUrl, $job->getId());
+        $this->assertEquals(403, $tasksResponse->getStatusCode());          
+    }     
+    
 }
 
 
