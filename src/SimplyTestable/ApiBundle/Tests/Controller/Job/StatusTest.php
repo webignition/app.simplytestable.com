@@ -2,14 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
 
-use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
-
-class StatusTest extends BaseControllerJsonTestCase {
+class StatusTest extends AbstractAccessTest {
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();        
-    }      
-   
+    protected function getActionName() {
+        return 'statusAction';
+    }
+    
     public function testStatusAction() {        
         $canonicalUrl = 'http://example.com/';
         
@@ -36,63 +34,7 @@ class StatusTest extends BaseControllerJsonTestCase {
         $this->assertEquals(0, $responseJsonObject->cancelled_task_count);
         $this->assertEquals(0, $responseJsonObject->skipped_task_count);
         $this->assertEquals(0, $responseJsonObject->warninged_task_count);
-    }
-    
-    public function testStatusActionForDifferentUsers() {
-        $canonicalUrl1 = 'http://one.example.com/';
-        $canonicalUrl2 = 'http://two.example.com/';
-        $canonicalUrl3 = 'http://three.example.com/';
-        
-        $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
-                
-        $jobId1 = $this->createJobAndGetId($canonicalUrl1, $user1->getEmail());
-        $jobId2 = $this->createJobAndGetId($canonicalUrl2, $user2->getEmail());
-        $jobId3 = $this->createJobAndGetId($canonicalUrl3);
-                
-        $status1Response = $this->getJobStatus($canonicalUrl1, $jobId1, $user1->getEmail());
-        $status1ResponseObject = json_decode($status1Response->getContent());        
-        $this->assertEquals(200, $status1Response->getStatusCode());
-        $this->assertEquals($user1->getEmail(), $status1ResponseObject->user);
-        $this->assertEquals($canonicalUrl1, $status1ResponseObject->website);        
-        
-        $status2Response = $this->getJobStatus($canonicalUrl1, $jobId1, $user2->getEmail());        
-        $this->assertEquals(403, $status2Response->getStatusCode());
-        
-        $status3Response = $this->getJobStatus($canonicalUrl1, $jobId1);
-        $this->assertEquals(403, $status3Response->getStatusCode());
-        
-        $status4Response = $this->getJobStatus($canonicalUrl2, $jobId2, $user1->getEmail());
-        $this->assertEquals(403, $status4Response->getStatusCode());
-        
-        $status5Response = $this->getJobStatus($canonicalUrl2, $jobId2, $user2->getEmail());
-        $status5ResponseObject = json_decode($status5Response->getContent());        
-        $this->assertEquals(200, $status5Response->getStatusCode());
-        $this->assertEquals($user2->getEmail(), $status5ResponseObject->user);
-        $this->assertEquals($canonicalUrl2, $status5ResponseObject->website); 
-        
-        $status6Response = $this->getJobStatus($canonicalUrl2, $jobId2);      
-        $this->assertEquals(403, $status6Response->getStatusCode());
-        
-        $status7Response = $this->getJobStatus($canonicalUrl3, $jobId3, $user1->getEmail());
-        $status7ResponseObject = json_decode($status7Response->getContent());        
-        $this->assertEquals(200, $status7Response->getStatusCode());
-        $this->assertEquals('public', $status7ResponseObject->user);
-        $this->assertEquals($canonicalUrl3, $status7ResponseObject->website);          
-        
-        $status8Response = $this->getJobStatus($canonicalUrl3, $jobId3, $user2->getEmail());
-        $status8ResponseObject = json_decode($status8Response->getContent());        
-        $this->assertEquals(200, $status8Response->getStatusCode());
-        $this->assertEquals('public', $status8ResponseObject->user);
-        $this->assertEquals($canonicalUrl3, $status8ResponseObject->website); 
-        
-        $status9Response = $this->getJobStatus($canonicalUrl3, $jobId3);
-        $status9ResponseObject = json_decode($status9Response->getContent());        
-        $this->assertEquals(200, $status9Response->getStatusCode());
-        $this->assertEquals('public', $status9ResponseObject->user);
-        $this->assertEquals($canonicalUrl3, $status9ResponseObject->website);         
-    }
-    
+    }    
     
     public function testStatusForRejectedDueToPlanFullSiteConstraint() {
         $canonicalUrl = 'http://example.com/';
@@ -203,44 +145,8 @@ class StatusTest extends BaseControllerJsonTestCase {
 
         $this->assertEquals($user->getEmail(), $responseJsonObject->user);
         $this->assertEquals(false, $responseJsonObject->is_public);
-    }   
-    
-    public function testPublicUserCanAccessNonPublicUserPublicJob() {
-        $canonicalUrl = 'http://one.example.com/';
-        
-        $user = $this->createAndActivateUser('user@example.com', 'password1');
-                
-        $jobId = $this->createJobAndGetId($canonicalUrl, $user->getEmail());
-        
-        $this->getJobController('setPublicAction', array(
-            'user' => $user->getEmail()
-        ))->setPublicAction($canonicalUrl, $jobId);
-                
-        $statusResponse = $this->getJobStatus($canonicalUrl, $jobId);
-        $statusResponseObject = json_decode($statusResponse->getContent());  
-        
-        $this->assertEquals(200, $statusResponse->getStatusCode());
-        $this->assertEquals($jobId, $statusResponseObject->id);        
-    }   
-    
-    public function testNonPublicUserCanAccessDifferentNonPublicUserPublicJob() {
-        $canonicalUrl = 'http://one.example.com/';
-        
-        $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
-                
-        $jobId = $this->createJobAndGetId($canonicalUrl, $user1->getEmail());
-        
-        $this->getJobController('setPublicAction', array(
-            'user' => $user1->getEmail()
-        ))->setPublicAction($canonicalUrl, $jobId);
-                
-        $statusResponse = $this->getJobStatus($canonicalUrl, $jobId, $user2->getEmail());
-        $statusResponseObject = json_decode($statusResponse->getContent());  
-        
-        $this->assertEquals(200, $statusResponse->getStatusCode());
-        $this->assertEquals($jobId, $statusResponseObject->id);        
-    }     
+    }    
+   
 }
 
 
