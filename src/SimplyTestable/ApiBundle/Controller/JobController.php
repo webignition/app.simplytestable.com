@@ -325,7 +325,7 @@ class JobController extends ApiController
     }
     
     
-    public function taskIdsAction($site_root_url, $test_id) {        
+    public function taskIdsAction($site_root_url, $test_id) {                
         $this->testId = $test_id;
         
         $job = $this->getJobByVisibilityOrUser();
@@ -341,10 +341,10 @@ class JobController extends ApiController
     }    
     
     
-    public function listUrlsAction($site_root_url, $test_id) {
+    public function listUrlsAction($site_root_url, $test_id) {      
         $this->testId = $test_id;
         
-        $job = $this->getJobByUser();
+        $job = $this->getJobByVisibilityOrUser();
         if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);
