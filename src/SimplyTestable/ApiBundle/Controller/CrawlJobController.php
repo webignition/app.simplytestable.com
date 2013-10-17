@@ -10,7 +10,7 @@ class CrawlJobController extends JobController
     public function startAction($site_root_url, $test_id) {
         $this->testId = $test_id;
         
-        $job = $this->getJob();        
+        $job = $this->getJobByUser();        
         if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);

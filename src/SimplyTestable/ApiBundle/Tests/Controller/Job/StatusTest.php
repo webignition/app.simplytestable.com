@@ -203,6 +203,43 @@ class StatusTest extends BaseControllerJsonTestCase {
 
         $this->assertEquals($user->getEmail(), $responseJsonObject->user);
         $this->assertEquals(false, $responseJsonObject->is_public);
+    }   
+    
+    public function testPublicUserCanAccessNonPublicUserPublicJob() {
+        $canonicalUrl = 'http://one.example.com/';
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password1');
+                
+        $jobId = $this->createJobAndGetId($canonicalUrl, $user->getEmail());
+        
+        $this->getJobController('setPublicAction', array(
+            'user' => $user->getEmail()
+        ))->setPublicAction($canonicalUrl, $jobId);
+                
+        $statusResponse = $this->getJobStatus($canonicalUrl, $jobId);
+        $statusResponseObject = json_decode($statusResponse->getContent());  
+        
+        $this->assertEquals(200, $statusResponse->getStatusCode());
+        $this->assertEquals($jobId, $statusResponseObject->id);        
+    }   
+    
+    public function testNonPublicUserCanAccessDifferentNonPublicUserPublicJob() {
+        $canonicalUrl = 'http://one.example.com/';
+        
+        $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
+                
+        $jobId = $this->createJobAndGetId($canonicalUrl, $user1->getEmail());
+        
+        $this->getJobController('setPublicAction', array(
+            'user' => $user1->getEmail()
+        ))->setPublicAction($canonicalUrl, $jobId);
+                
+        $statusResponse = $this->getJobStatus($canonicalUrl, $jobId, $user2->getEmail());
+        $statusResponseObject = json_decode($statusResponse->getContent());  
+        
+        $this->assertEquals(200, $statusResponse->getStatusCode());
+        $this->assertEquals($jobId, $statusResponseObject->id);        
     }     
 }
 

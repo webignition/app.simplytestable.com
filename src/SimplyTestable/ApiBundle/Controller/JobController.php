@@ -60,7 +60,7 @@ class JobController extends ApiController
     private function setIsPublic($site_root_url, $test_id, $isPublic) {
         $this->testId = $test_id;
         
-        $job = $this->getJob();
+        $job = $this->getJobByUser();
         if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -92,7 +92,7 @@ class JobController extends ApiController
     {        
         $this->testId = $test_id;
         
-        $job = $this->getJob();
+        $job = $this->getJobByVisibilityOrUser();
         if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -229,7 +229,7 @@ class JobController extends ApiController
         
         $this->testId = $test_id;
         
-        $job = $this->getJob();
+        $job = $this->getJobByUser();
         if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -304,7 +304,7 @@ class JobController extends ApiController
     public function tasksAction($site_root_url, $test_id) {        
         $this->testId = $test_id;
         
-        $job = $this->getJob();
+        $job = $this->getJobByUser();
         if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -328,7 +328,7 @@ class JobController extends ApiController
     public function taskIdsAction($site_root_url, $test_id) {        
         $this->testId = $test_id;
         
-        $job = $this->getJob();
+        $job = $this->getJobByUser();
         if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -344,7 +344,7 @@ class JobController extends ApiController
     public function listUrlsAction($site_root_url, $test_id) {
         $this->testId = $test_id;
         
-        $job = $this->getJob();
+        $job = $this->getJobByUser();
         if ($job === false) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -360,7 +360,7 @@ class JobController extends ApiController
      *
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
-    protected function getJob() {
+    protected function getJobByUser() {
         $job = $this->getJobService()->getEntityRepository()->findOneBy(array(
             'id' => $this->testId,
             'user' => array(
@@ -373,10 +373,34 @@ class JobController extends ApiController
             return false;           
         }
      
+        return $this->populateJob($job);     
+    }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
+     */
+    protected function getJobByVisibilityOrUser() {
+        // Check for jobs that are public by owner
+        $publicJob = $this->getJobService()->getEntityRepository()->findOneBy(array(
+            'id' => $this->testId,
+            'isPublic' => true            
+        ));
+        
+        if (!is_null($publicJob)) {
+            return $this->populateJob($publicJob);
+        }
+        
+        return $this->getJobByUser();
+    }
+    
+    
+    private function populateJob(Job $job) {
         $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());        
         $job->setUrlCount($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
-        return $job;      
-    }
+        return $job;         
+    }    
     
     
     /**
