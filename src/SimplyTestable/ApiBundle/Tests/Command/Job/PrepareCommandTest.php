@@ -150,5 +150,20 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(1, $job->getAmmendments()->count());
         $this->assertEquals('plan-url-limit-reached:discovered-url-count-11', $job->getAmmendments()->first()->getReason());
     }
+    
+    
+    public function testPrepareFullSiteJobWithNoSitemapSetsJobStateAsFailedNoSitemap() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $canonicalUrl = 'http://example.com/';        
+        $job_id = $this->createJobAndGetId($canonicalUrl);
+        
+        $this->runConsole('simplytestable:job:prepare', array(
+            $job_id =>  true
+        ));
+        
+        $job = $this->getJobService()->getById($job_id);
+        $this->assertEquals($this->getJobService()->getFailedNoSitemapState()->getName(), $job->getState()->getName());
+    }
 
 }
