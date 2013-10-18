@@ -75,7 +75,106 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         $this->assertEquals('queued', $jobObject->crawl->state);
         $this->assertEquals(10, $jobObject->crawl->limit);
         $this->assertNotNull($jobObject->crawl->id);        
-    }     
+    }
+    
+    public function testGetForPublicJobOwnedByNonPublicUserByNonPublicUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        
+        $this->getJobController('setPublicAction', array(
+            'user' => $user->getEmail()
+        ))->setPublicAction($canonicalUrl, $job->getId());        
+        
+        $this->getCrawlJobController('startAction', array(
+            'user' => $user->getEmail()
+        ))->startAction((string)$job->getWebsite(), $job->getId());        
+        
+        $jobObject = json_decode($this->getJobController('statusAction', array(
+            'user' => $user->getEmail()
+        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        
+        $this->assertTrue(isset($jobObject->crawl));       
+    }
+    
+    public function testGetForPublicJobOwnedByNonPublicUserByDifferenNonPublicUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user1 = $this->createAndActivateUser('user1@example.com', 'password');
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user1->getEmail()));
+        
+        $this->getJobController('setPublicAction', array(
+            'user' => $user1->getEmail()
+        ))->setPublicAction($canonicalUrl, $job->getId());        
+        
+        $this->getCrawlJobController('startAction', array(
+            'user' => $user1->getEmail()
+        ))->startAction((string)$job->getWebsite(), $job->getId());        
+        
+        $jobObject = json_decode($this->getJobController('statusAction', array(
+            'user' => $user2->getEmail()
+        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        
+        $this->assertTrue(isset($jobObject->crawl));         
+    }    
+    
+    public function testGetForPrivateJobOwnedByNonPublicUserByPublicUser() {                
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));       
+        
+        $this->getCrawlJobController('startAction', array(
+            'user' => $user->getEmail()
+        ))->startAction((string)$job->getWebsite(), $job->getId());        
+        
+        $this->assertEquals(403, $this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getStatusCode());
+    }    
+    
+    public function testGetForPrivateJobOwnedByNonPublicUserByNonPublicUser() {      
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));      
+        
+        $this->getCrawlJobController('startAction', array(
+            'user' => $user->getEmail()
+        ))->startAction((string)$job->getWebsite(), $job->getId());        
+        
+        $jobObject = json_decode($this->getJobController('statusAction', array(
+            'user' => $user->getEmail()
+        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        
+        $this->assertTrue(isset($jobObject->crawl));            
+    }
+    
+    public function testGetForPrivateJobOwnedByNonPublicUserByDifferentNonPublicUser() {        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user1 = $this->createAndActivateUser('user1@example.com', 'password');
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user1->getEmail()));    
+        
+        $this->getCrawlJobController('startAction', array(
+            'user' => $user1->getEmail()
+        ))->startAction((string)$job->getWebsite(), $job->getId());
+        
+        $this->assertEquals(403, $this->getJobController('statusAction', array(
+            'user' => $user2->getEmail()
+        ))->statusAction((string)$job->getWebsite(), $job->getId())->getStatusCode());        
+    }    
     
 }
 
