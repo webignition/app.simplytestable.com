@@ -38,32 +38,48 @@ class CancelTest extends BaseControllerJsonTestCase {
     
     
     public function testCancelParentJobCancelsParentJobAndCrawlJob() {
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
         $canonicalUrl = 'http://example.com';        
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, $user->getEmail()));
+        
+        $this->assertFalse($this->getCrawlJobContainerService()->hasForJob($job));
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        $this->getCrawlJobContainerService()->prepare($crawlJobContainer);            
         
         $job->setState($this->getJobService()->getFailedNoSitemapState());
         $this->getJobService()->persistAndFlush($job);
-
-        $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());       
-        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         
-        $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $crawlJobContainer->getParentJob()->getId());
+        $this->assertTrue($this->getCrawlJobContainerService()->hasForJob($job));
+        
+        $this->getJobController('cancelAction', array(
+            'user' => $user->getEmail()
+        ))->cancelAction($canonicalUrl, $crawlJobContainer->getParentJob()->getId());
         
         $this->assertTrue($crawlJobContainer->getParentJob()->getState()->equals($this->getJobService()->getCancelledState()));
         $this->assertTrue($crawlJobContainer->getCrawlJob()->getState()->equals($this->getJobService()->getCancelledState()));       
     }
     
     public function testCancelCrawlJobRestartsParentJob() {
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
         $canonicalUrl = 'http://example.com';        
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, $user->getEmail()));
         
         $job->setState($this->getJobService()->getFailedNoSitemapState());
         $this->getJobService()->persistAndFlush($job);
-
-        $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());       
-        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         
-        $crawlTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
+        $this->assertFalse($this->getCrawlJobContainerService()->hasForJob($job));
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        $this->getCrawlJobContainerService()->prepare($crawlJobContainer);            
+        
+        $job->setState($this->getJobService()->getFailedNoSitemapState());
+        $this->getJobService()->persistAndFlush($job);        
+        
+        $crawlTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();      
+        
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '["http:\/\/example.com\/one\/","http:\/\/example.com\/two\/","http:\/\/example.com\/three\/"]',
@@ -73,7 +89,9 @@ class CancelTest extends BaseControllerJsonTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string)$crawlTask->getUrl(), $crawlTask->getType()->getName(), $crawlTask->getParametersHash());         
 
-        $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $crawlJobContainer->getCrawlJob()->getId());
+        $this->getJobController('cancelAction', array(
+            'user' => $user->getEmail()
+        ))->cancelAction($canonicalUrl, $crawlJobContainer->getCrawlJob()->getId());
         
         $this->assertTrue($crawlJobContainer->getParentJob()->getState()->equals($this->getJobService()->getQueuedState()));
         $this->assertTrue($crawlJobContainer->getCrawlJob()->getState()->equals($this->getJobService()->getCancelledState()));                 
