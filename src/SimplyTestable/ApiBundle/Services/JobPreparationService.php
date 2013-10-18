@@ -71,13 +71,21 @@ class JobPreparationService {
     private $crawlJobContainerService;
     
     
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\UserService
+     */
+    private $userService;    
+    
+    
     public function __construct(
         \SimplyTestable\ApiBundle\Services\JobService $jobService,
         \SimplyTestable\ApiBundle\Services\TaskService $taskService,
         \SimplyTestable\ApiBundle\Services\JobTypeService $jobTypeService,
         \SimplyTestable\ApiBundle\Services\WebSiteService $websiteService,
         \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
-        \SimplyTestable\ApiBundle\Services\CrawlJobContainerService $crawlJobContainerService
+        \SimplyTestable\ApiBundle\Services\CrawlJobContainerService $crawlJobContainerService,
+        \SimplyTestable\ApiBundle\Services\UserService $userService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
@@ -85,6 +93,7 @@ class JobPreparationService {
         $this->websiteService = $websiteService;
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->crawlJobContainerService = $crawlJobContainerService;
+        $this->userService = $userService;
     }
     
     
@@ -111,8 +120,16 @@ class JobPreparationService {
         
         $urls = $this->collectUrlsForJob($job);
         
-        if ($urls === false || count($urls) == 0) {
+        if ($urls === false || count($urls) == 0) {            
             $job->setState($this->jobService->getFailedNoSitemapState());
+            
+            if (!$this->userService->isPublicUser($job->getUser())) {
+                if (!$this->crawlJobContainerService->hasForJob($job)) {
+                    $crawlJobContainer = $this->crawlJobContainerService->getForJob($job);
+                    $this->crawlJobContainerService->prepare($crawlJobContainer);                                                
+                }
+            }            
+            
             $this->jobService->persistAndFlush($job);
             return self::RETURN_CODE_NO_URLS;
         }

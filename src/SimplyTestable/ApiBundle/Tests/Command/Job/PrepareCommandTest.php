@@ -165,5 +165,43 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $job = $this->getJobService()->getById($job_id);
         $this->assertEquals($this->getJobService()->getFailedNoSitemapState()->getName(), $job->getState()->getName());
     }
+    
+    
+    public function testPrepareFullSiteJobOwnedByPublicUserWithNoSitemapDoesNotAutostartCrawlJob() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $canonicalUrl = 'http://example.com/';        
+        $job_id = $this->createJobAndGetId($canonicalUrl);
+        
+        $this->runConsole('simplytestable:job:prepare', array(
+            $job_id =>  true
+        ));
+        
+        $job = $this->getJobService()->getById($job_id);
+        $this->assertEquals($this->getJobService()->getFailedNoSitemapState()->getName(), $job->getState()->getName());
+    }    
+    
+    public function testPrepareFullSiteJobOwnedByNonPublicUserWithNoSitemapDoesAutostartCrawlJob() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
+        $canonicalUrl = 'http://example.com/';        
+        $job_id = $this->createJobAndGetId($canonicalUrl, $user->getEmail());
+        
+        $this->runConsole('simplytestable:job:prepare', array(
+            $job_id =>  true
+        ));
+        
+        $job = $this->getJobService()->getById($job_id);
+        $this->assertEquals($this->getJobService()->getFailedNoSitemapState()->getName(), $job->getState()->getName());
+        
+        $this->assertTrue($this->getCrawlJobContainerService()->hasForJob($job));
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        $this->assertEquals($job_id, $crawlJobContainer->getParentJob()->getId());
+        
+        $this->assertEquals($this->getJobService()->getQueuedState(), $crawlJobContainer->getCrawlJob()->getState());
+    }     
 
 }
