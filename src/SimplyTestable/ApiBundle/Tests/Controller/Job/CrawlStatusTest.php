@@ -13,12 +13,14 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
     public function testWithQueuedCrawlJob() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
         $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
         
-        $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());
-        
-        $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        $jobObject = json_decode($this->getJobController('statusAction', array(
+            'user' => $user->getEmail()
+        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals('queued', $jobObject->crawl->state);
         $this->assertEquals(10, $jobObject->crawl->limit);
@@ -28,8 +30,10 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->createWorker('http://hydrogen.worker.simplytestable.com');
         
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
         $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
@@ -54,7 +58,9 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
-        $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        $jobObject = json_decode($this->getJobController('statusAction', array(
+            'user' => $user->getEmail()
+        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals('in-progress', $jobObject->crawl->state);
         $this->assertEquals(1, $jobObject->crawl->processed_url_count);
@@ -64,13 +70,14 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
     
     public function testCrawlJobIdIsExposed() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $user = $this->createAndActivateUser('user@example.com', 'password');
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $canonicalUrl = 'http://example.com/';        
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
         
-        $this->getCrawlJobController('startAction')->startAction((string)$job->getWebsite(), $job->getId());
-        
-        $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        $jobObject = json_decode($this->getJobController('statusAction', array(
+            'user' => $user->getEmail()
+        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals('queued', $jobObject->crawl->state);
         $this->assertEquals(10, $jobObject->crawl->limit);
@@ -87,11 +94,9 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         
         $this->getJobController('setPublicAction', array(
             'user' => $user->getEmail()
-        ))->setPublicAction($canonicalUrl, $job->getId());        
+        ))->setPublicAction($canonicalUrl, $job->getId()); 
         
-        $this->getCrawlJobController('startAction', array(
-            'user' => $user->getEmail()
-        ))->startAction((string)$job->getWebsite(), $job->getId());        
+        $this->assertTrue($job->getIsPublic());       
         
         $jobObject = json_decode($this->getJobController('statusAction', array(
             'user' => $user->getEmail()
@@ -113,9 +118,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
             'user' => $user1->getEmail()
         ))->setPublicAction($canonicalUrl, $job->getId());        
         
-        $this->getCrawlJobController('startAction', array(
-            'user' => $user1->getEmail()
-        ))->startAction((string)$job->getWebsite(), $job->getId());        
+        $this->assertTrue($job->getIsPublic());           
         
         $jobObject = json_decode($this->getJobController('statusAction', array(
             'user' => $user2->getEmail()
@@ -132,10 +135,6 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));       
         
-        $this->getCrawlJobController('startAction', array(
-            'user' => $user->getEmail()
-        ))->startAction((string)$job->getWebsite(), $job->getId());        
-        
         $this->assertEquals(403, $this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getStatusCode());
     }    
     
@@ -146,10 +145,6 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));      
-        
-        $this->getCrawlJobController('startAction', array(
-            'user' => $user->getEmail()
-        ))->startAction((string)$job->getWebsite(), $job->getId());        
         
         $jobObject = json_decode($this->getJobController('statusAction', array(
             'user' => $user->getEmail()
@@ -166,10 +161,6 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         
         $canonicalUrl = 'http://example.com/';
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user1->getEmail()));    
-        
-        $this->getCrawlJobController('startAction', array(
-            'user' => $user1->getEmail()
-        ))->startAction((string)$job->getWebsite(), $job->getId());
         
         $this->assertEquals(403, $this->getJobController('statusAction', array(
             'user' => $user2->getEmail()
