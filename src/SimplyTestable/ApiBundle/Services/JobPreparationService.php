@@ -77,6 +77,12 @@ class JobPreparationService {
      */
     private $userService;    
     
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\ResqueQueueService
+     */
+    private $resqueService;      
+    
     
     public function __construct(
         \SimplyTestable\ApiBundle\Services\JobService $jobService,
@@ -85,7 +91,8 @@ class JobPreparationService {
         \SimplyTestable\ApiBundle\Services\WebSiteService $websiteService,
         \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         \SimplyTestable\ApiBundle\Services\CrawlJobContainerService $crawlJobContainerService,
-        \SimplyTestable\ApiBundle\Services\UserService $userService
+        \SimplyTestable\ApiBundle\Services\UserService $userService,
+        \SimplyTestable\ApiBundle\Services\ResqueQueueService $resqueQueueService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
@@ -94,6 +101,7 @@ class JobPreparationService {
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->userService = $userService;
+        $this->resqueService = $resqueQueueService;
     }
     
     
@@ -127,6 +135,13 @@ class JobPreparationService {
                 if (!$this->crawlJobContainerService->hasForJob($job)) {
                     $crawlJobContainer = $this->crawlJobContainerService->getForJob($job);
                     $this->crawlJobContainerService->prepare($crawlJobContainer);                                                
+                    
+                    if ($this->resqueService->isEmpty('task-assignment-selection')) {
+                        $this->resqueService->add(
+                            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                            'task-assignment-selection'
+                        );             
+                    }                     
                 }
             }            
             
