@@ -88,6 +88,10 @@ status:
 user_create:
   pattern: /user/create/
   defaults: { _controller: SimplyTestableApiBundle:UserCreation:create, _format: json }   
+  
+user_activate_failure:
+  pattern: /user/activate/
+  defaults: { _controller: SimplyTestableApiBundle:UserCreation:activate, _format: json }  
 
 user:
   pattern: /user/{email_canonical}/

@@ -67,10 +67,15 @@ class UserCreationController extends AbstractUserController
     }
     
     
-    public function activateAction($token) {
+    public function activateAction($token = null) {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
-        }          
+        }
+        
+        $token = trim($token);        
+        if ($token == '') {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
+        }        
         
         $user = $this->getUserService()->findUserByConfirmationToken($token);
         if (is_null($user)) {
