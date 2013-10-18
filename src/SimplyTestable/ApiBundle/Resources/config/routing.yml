@@ -44,11 +44,6 @@ job_cancel:
     requirements:
         site_root_url: ".+"            
         
-job:
-    pattern: /job/{site_root_url}/{test_id}/
-    defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
-    requirements:
-        site_root_url: ".+"
         
 job_set_public:
     pattern: /job/{site_root_url}/{test_id}/set-public/
@@ -66,6 +61,12 @@ job_set_private:
 job_is_public:
     pattern: /job/{site_root_url}/{test_id}/is_public/
     defaults: { _controller: SimplyTestableApiBundle:Job:isPublic, _format: json }    
+    requirements:
+        site_root_url: ".+"        
+        
+job:
+    pattern: /job/{site_root_url}/{test_id}/
+    defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
     requirements:
         site_root_url: ".+"         
     
