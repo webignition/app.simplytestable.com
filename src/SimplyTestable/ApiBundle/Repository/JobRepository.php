@@ -322,5 +322,27 @@ class JobRepository extends EntityRepository
         }
         
         return $collection;
-    }    
+    }
+    
+    
+    /**
+     * 
+     * @param int $jobId
+     * @return boolean
+     */
+    public function getIsPublicByJobId($jobId) {        
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job.isPublic');
+        
+        $queryBuilder->where('Job.id = :JobId');
+        $queryBuilder->setParameter('JobId', $jobId, \Doctrine\DBAL\Types\Type::INTEGER);
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        if (count($result) === 0) {
+            return false;
+        }
+        
+        return $result[0]['isPublic'] === true;        
+    }
 }

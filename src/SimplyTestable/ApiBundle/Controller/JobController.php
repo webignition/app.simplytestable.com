@@ -57,6 +57,16 @@ class JobController extends ApiController
         return $this->setIsPublic($site_root_url, $test_id, false);
     }
     
+    public function isPublicAction($site_root_url, $test_id) {
+        $response = new Response();
+        
+        if (!$this->getJobService()->getIsPublic($test_id)) {
+            $response->setStatusCode(404);
+        }
+ 
+        return $response;
+    }
+    
     private function setIsPublic($site_root_url, $test_id, $isPublic) {
         $this->testId = $test_id;
         

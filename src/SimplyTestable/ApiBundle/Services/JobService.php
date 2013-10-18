@@ -596,5 +596,15 @@ class JobService extends EntityService {
      */
     public function getEntityRepository() {
         return parent::getEntityRepository();
-    }    
+    }
+    
+    
+    /**
+     * 
+     * @param int $jobId
+     * @return boolean
+     */
+    public function getIsPublic($jobId) {
+        return $this->getEntityRepository()->getIsPublicByJobId($jobId);
+    }
 }
