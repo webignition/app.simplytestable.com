@@ -99,7 +99,7 @@ class JobController extends ApiController
     
     
     public function statusAction($site_root_url, $test_id)
-    {        
+    {                    
         $this->testId = $test_id;
         
         $job = $this->getJobByVisibilityOrUser();
@@ -155,7 +155,7 @@ class JobController extends ApiController
                 'discovered_url_count' => count($this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer, true)),                
             );
             
-            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan();
+            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($job->getUser())->getPlan();
             
             if ($userAccountPlan->hasConstraintNamed('urls_per_job')) {
                 $jobSummary['crawl']['limit'] = $userAccountPlan->getConstraintNamed('urls_per_job')->getLimit();

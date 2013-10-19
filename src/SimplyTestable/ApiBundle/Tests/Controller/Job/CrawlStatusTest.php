@@ -187,7 +187,30 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
     }   
     
     
-    //public function 
+    public function testGetJobOwnerCrawlLimitForPublicJobOwnedByPrivateUser() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $this->getUserService()->setUser($user);
+        
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($user->getEmail(), 'agency');
+        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
+        
+        $accountPlanUrlLimit = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        
+        $this->getJobController('setPublicAction', array(
+            'user' => $user->getEmail()
+        ))->setPublicAction($canonicalUrl, $job->getId());        
+        
+        $this->assertTrue($job->getIsPublic());        
+        
+        $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());        
+        $this->assertEquals($accountPlanUrlLimit, $jobObject->crawl->limit);        
+    }
     
 }
 
