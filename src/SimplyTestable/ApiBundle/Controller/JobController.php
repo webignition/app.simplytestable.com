@@ -227,6 +227,28 @@ class JobController extends ApiController
         return $this->sendResponse($jobSummaries);       
     }    
     
+    
+    public function currentAction($limit = null)
+    {   
+        $limit = filter_var($limit, FILTER_VALIDATE_INT, array(
+            'options' => array(
+                'default' => null,
+                'min_range' => 0
+            )
+        ));
+        
+        
+        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserAndStates($this->getUser(), $limit, $this->getJobService()->getIncompleteStates());
+
+        $jobSummaries = array();
+        
+        foreach ($jobs as $job) {
+            $jobSummaries[] = $this->getSummary($job);
+        }
+        
+        return $this->sendResponse($jobSummaries);       
+    }    
+    
     public function cancelAction($site_root_url, $test_id)
     {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {

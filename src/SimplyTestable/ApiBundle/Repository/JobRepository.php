@@ -345,4 +345,37 @@ class JobRepository extends EntityRepository
         
         return $result[0]['isPublic'] === true;        
     }
+    
+
+    public function findAllByUserAndStates(User $user, $limit = null, $includeStates = array()) {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->select('Job');
+        
+        $where = 'Job.user = :User';
+        
+        if (is_array($includeStates)) {
+            $stateWhere = '';
+            $stateCount = count($includeStates);
+            
+            foreach ($includeStates as $stateIndex => $jobState) {
+                $stateWhere .= 'Job.state = :JobState' . $stateIndex;
+                if ($stateIndex < $stateCount - 1) {
+                    $stateWhere .= ' OR ';
+                }
+                $queryBuilder->setParameter('JobState'.$stateIndex, $jobState);
+            }
+            
+            $where .= ' AND ('.$stateWhere.')';
+        }
+        
+        $queryBuilder->where($where);
+        $queryBuilder->orderBy('Job.id', 'desc');
+        
+        if (!is_null($limit)) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        $queryBuilder->setParameter('User', $user);
+        return $queryBuilder->getQuery()->getResult();
+    }    
 }
