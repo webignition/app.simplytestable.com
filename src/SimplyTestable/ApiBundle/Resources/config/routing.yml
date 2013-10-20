@@ -5,6 +5,10 @@ jobs_list:
 jobs_current:
     pattern: /jobs/current/{limit}/
     defaults: { _controller: SimplyTestableApiBundle:Job:current, limit: null, _format: json }      
+    
+jobs_current_all:
+    pattern: /jobs/current/
+    defaults: { _controller: SimplyTestableApiBundle:Job:current, limit: null, _format: json }          
 
 job_start:
     pattern: /job/{site_root_url}/start/
