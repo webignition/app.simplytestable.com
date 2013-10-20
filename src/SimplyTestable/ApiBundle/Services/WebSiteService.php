@@ -138,8 +138,8 @@ class WebSiteService extends EntityService {
         $filteredUrls = array();
         
         foreach ($urls as $url) {
-            $urlObject = new \webignition\Url\Url($url);
-            if ($urlObject->getHost()->isEquivalentTo($websiteUrl->getHost(), array(
+            $urlObject = new \webignition\Url\Url($url);            
+            if ($urlObject->hasHost() && $urlObject->getHost()->isEquivalentTo($websiteUrl->getHost(), array(
                 'www'
             ))) {
                 $filteredUrls[] = $url;
@@ -156,7 +156,7 @@ class WebSiteService extends EntityService {
         $urlsFromSitemap = $this->getUrlsFromSitemap($website);                
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
-        }       
+        }
         
         $urlsFromRssFeed = $this->getUrlsFromRssFeed($website);        
         if (count($urlsFromRssFeed)) {

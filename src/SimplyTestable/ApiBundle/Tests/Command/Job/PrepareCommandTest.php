@@ -202,6 +202,20 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals($job_id, $crawlJobContainer->getParentJob()->getId());
         
         $this->assertEquals($this->getJobService()->getQueuedState(), $crawlJobContainer->getCrawlJob()->getState());
-    }     
+    }
+    
+    
+    public function testHandleSitemapContainingHostlessUrls() {
+        $canonicalUrl = 'http://example.com/';
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        )));
+        
+        $this->assertEquals(0, count($job->getTasks()));
+        $this->assertEquals($this->getJobService()->getFailedNoSitemapState(), $job->getState());
+    }
 
 }
