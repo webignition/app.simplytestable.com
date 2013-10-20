@@ -80,4 +80,12 @@ class StateService extends EntityService {
         $this->getEntityManager()->flush();
         return $state;
     }    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Repository\StateRepository
+     */
+    public function getEntityRepository() {
+        return parent::getEntityRepository();
+    }
 }

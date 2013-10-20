@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * 
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\StateRepository")
  */
 class State
 {    

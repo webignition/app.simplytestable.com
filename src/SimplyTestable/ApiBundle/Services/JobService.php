@@ -590,6 +590,11 @@ class JobService extends EntityService {
         return $incompleteStates;      
     }
     
+    
+    public function getFinishedStates() {
+        return $this->stateService->getEntityRepository()->findAllStartingWithAndExcluding('job-', $this->getIncompleteStates());
+    }
+    
     /**
      *
      * @return \SimplyTestable\ApiBundle\Repository\JobRepository
