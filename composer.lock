@@ -3002,12 +3002,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "82bb58f520eef6eb65cd53aacfbcc1cb676b4c4f"
+                "reference": "7945ddcabfb2719b0b22cda4d0e34523a8c4518e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/82bb58f520eef6eb65cd53aacfbcc1cb676b4c4f",
-                "reference": "82bb58f520eef6eb65cd53aacfbcc1cb676b4c4f",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/7945ddcabfb2719b0b22cda4d0e34523a8c4518e",
+                "reference": "7945ddcabfb2719b0b22cda4d0e34523a8c4518e",
                 "shasum": ""
             },
             "require": {
@@ -3041,7 +3041,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-10-07 09:55:23"
+            "time": "2013-10-20 14:45:01"
         },
         {
             "name": "webignition/website-sitemap-retriever",
