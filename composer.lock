@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "e9468424215a1c88c8009ffc13858e73",
+    "hash": "fb2814318ac81f8c2d89700d7b6705e4",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3002,12 +3002,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "7945ddcabfb2719b0b22cda4d0e34523a8c4518e"
+                "reference": "f0d4f5d3a78c3cbe8aa417b4751c277b8986ee9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/7945ddcabfb2719b0b22cda4d0e34523a8c4518e",
-                "reference": "7945ddcabfb2719b0b22cda4d0e34523a8c4518e",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/f0d4f5d3a78c3cbe8aa417b4751c277b8986ee9b",
+                "reference": "f0d4f5d3a78c3cbe8aa417b4751c277b8986ee9b",
                 "shasum": ""
             },
             "require": {
@@ -3018,7 +3018,7 @@
                 "webignition/robots-txt-parser": "dev-master",
                 "webignition/sitemap-model": "dev-master",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/website-sitemap-retriever": ">0.1,<1.0"
+                "webignition/website-sitemap-retriever": ">=0.3,<1.0"
             },
             "type": "library",
             "autoload": {
@@ -3041,20 +3041,20 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-10-20 14:45:01"
+            "time": "2013-10-20 15:17:08"
         },
         {
             "name": "webignition/website-sitemap-retriever",
-            "version": "0.2.1",
+            "version": "0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-retriever.git",
-                "reference": "2d74c8d03b2cf89379da5646c74f21df9fe36c50"
+                "reference": "a39d0f388ab86d510984a38dd81a5a9acb192e22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/2d74c8d03b2cf89379da5646c74f21df9fe36c50",
-                "reference": "2d74c8d03b2cf89379da5646c74f21df9fe36c50",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/a39d0f388ab86d510984a38dd81a5a9acb192e22",
+                "reference": "a39d0f388ab86d510984a38dd81a5a9acb192e22",
                 "shasum": ""
             },
             "require": {
@@ -3085,7 +3085,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-10-07 10:06:23"
+            "time": "2013-10-20 15:10:28"
         },
         {
             "name": "winzou/console-bundle",

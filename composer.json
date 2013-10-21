@@ -24,7 +24,7 @@
         "webignition/url": "*",
         "jms/serializer-bundle": "0.9",
         "webignition/website-sitemap-finder":"dev-master",
-        "webignition/website-sitemap-retriever":">=0.2.1,<1.0",
+        "webignition/website-sitemap-retriever":">=0.3,<1.0",
         "doctrine/migrations": "*",
         "webignition/doctrine-migrations-bundle": "*",
         "webignition/container-aware-migration": "*",
