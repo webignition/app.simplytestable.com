@@ -126,7 +126,10 @@ class JobPreparationService {
         $job->setState($this->jobService->getPreparingState());         
         $this->jobService->persistAndFlush($job);
         
-        $urls = $this->collectUrlsForJob($job);
+        $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());        
+        $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit();      
+
+        $urls = $this->collectUrlsForJob($job, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit());
         
         if ($urls === false || count($urls) == 0) {            
             $job->setState($this->jobService->getFailedNoSitemapState());
@@ -149,7 +152,6 @@ class JobPreparationService {
             return self::RETURN_CODE_NO_URLS;
         }
         
-        $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());        
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
             $this->jobService->addAmmendment($job, 'plan-url-limit-reached:discovered-url-count-' . count($urls), $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());            
             $urls = array_slice($urls, 0, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit());
@@ -300,14 +302,15 @@ class JobPreparationService {
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param int $softLimit
      * @return array
      */
-    private function collectUrlsForJob(Job $job) {
+    private function collectUrlsForJob(Job $job, $softLimit) {
         if ($this->isSingleUrlJob($job)) {        
             return array($job->getWebsite()->getCanonicalUrl());
         } else { 
             try {
-                return $this->websiteService->getUrls($job->getWebsite());         
+                return $this->websiteService->getUrls($job->getWebsite(), $softLimit);         
             } catch (\Exception $e) {
                 var_dump($e);
                 exit();

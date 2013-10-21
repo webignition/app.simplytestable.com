@@ -120,10 +120,11 @@ class WebSiteService extends EntityService {
      * Get collection of URLs to be tested for a given website
      * 
      * @param WebSite $website
+     * @param int $softLimit
      * @return array
      */
-    public function getUrls(WebSite $website) {
-        return $this->filterUrlsToWebsiteHost($website, $this->collectUrls($website));
+    public function getUrls(WebSite $website, $softLimit) {
+        return $this->filterUrlsToWebsiteHost($website, $this->collectUrls($website, $softLimit));
     }
     
     
@@ -150,10 +151,10 @@ class WebSiteService extends EntityService {
     }
     
     
-    private function collectUrls(WebSite $website) {   
+    private function collectUrls(WebSite $website, $softLimit) {   
         $this->websiteRssFeedFinder = null;
         
-        $urlsFromSitemap = $this->getUrlsFromSitemap($website);                
+        $urlsFromSitemap = $this->getUrlsFromSitemap($website, $softLimit);                
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
         }
@@ -175,14 +176,16 @@ class WebSiteService extends EntityService {
     /**
      *
      * @param WebSite $website
+     * @param int $softLimit
      * @return array 
      */
-    private function getUrlsFromSitemap(WebSite $website) {
+    private function getUrlsFromSitemap(WebSite $website, $softLimit) {
         $this->getHttpClientService()->get()->setUserAgent('SimplyTestable Sitemap URL Retriever/0.1 (http://simplytestable.com/)');
         
         $sitemapFinder = new WebsiteSitemapFinder();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
         $sitemapFinder->setHttpClient($this->httpClientService->get());
+        $sitemapFinder->getSitemapRetriever()->disableRetrieveChildSitemaps();
         $sitemaps = $sitemapFinder->getSitemaps();
         
         if (count($sitemaps) === 0) {
@@ -190,9 +193,13 @@ class WebSiteService extends EntityService {
         }
         
         $urls = array();
-        foreach ($sitemaps as $sitemap) {
+        foreach ($sitemaps as $sitemap) {            
             /* @var $sitemap Sitemap */
-            $urls = array_merge($urls, $this->getUrlsFromSingleSitemap($sitemap));
+            
+            if (count($urls) < $softLimit) {                
+                $urls = array_merge($urls, $this->getUrlsFromSingleSitemap($sitemap, $softLimit, count($urls)));                
+            }
+
         }
         
         return $urls;
@@ -204,7 +211,11 @@ class WebSiteService extends EntityService {
      * @param \webignition\WebResource\Sitemap\Sitemap $sitemap
      * @return array
      */
-    private function getUrlsFromSingleSitemap(Sitemap $sitemap) {
+    private function getUrlsFromSingleSitemap(Sitemap $sitemap, $softLimit, $count) {
+        if ($count >= $softLimit) {
+            return array();
+        }
+        
         if (!$sitemap->isSitemap()) {
             return array();
         }
@@ -215,8 +226,20 @@ class WebSiteService extends EntityService {
         
         $urls = array();
         foreach  ($sitemap->getChildren() as $childSitemap) {
+            if ($count + count($urls) >= $softLimit) {
+                return $urls;
+            }            
+            
             /* @var $childSitemap Sitemap */
-            $urls = array_merge($urls, $this->getUrlsFromSingleSitemap($childSitemap));
+            if (is_null($childSitemap->getContent())) {                
+                $sitemapRetriever = new \webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever();
+                $sitemapRetriever->setHttpClient($this->httpClientService->get());
+                $sitemapRetriever->disableRetrieveChildSitemaps();
+                $sitemapRetriever->retrieve($childSitemap);              
+            }
+            
+            $childSitemapUrls = $this->getUrlsFromSingleSitemap($childSitemap, $softLimit, $count + count($urls));            
+            $urls = array_merge($urls, $childSitemapUrls);
         }
         
         return $urls;
