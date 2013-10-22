@@ -186,6 +186,7 @@ class WebSiteService extends EntityService {
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
         $sitemapFinder->setHttpClient($this->httpClientService->get());
         $sitemapFinder->getSitemapRetriever()->disableRetrieveChildSitemaps();
+        $sitemapFinder->getUrlLimitListener()->setSoftLimit($softLimit);
         $sitemaps = $sitemapFinder->getSitemaps();
         
         if (count($sitemaps) === 0) {

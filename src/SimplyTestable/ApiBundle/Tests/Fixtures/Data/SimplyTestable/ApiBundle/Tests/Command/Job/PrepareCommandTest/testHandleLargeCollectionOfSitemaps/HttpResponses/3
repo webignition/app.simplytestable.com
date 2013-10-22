@@ -1,0 +1,197 @@
+HTTP/1.1 200 OK
+Content-Type: text/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">                
+    <url>
+        <loc>http://example.com/forum/categorie/c-net-vb-net</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/langage-java</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/langage-python</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/base-de-donnees</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/mobile</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/autres-langages</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/windows</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/linux-freebsd</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/mac-os-x</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/graphisme-3d</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/graphisme-2d</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/discussions-informatiques</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/choix-du-materiel-configuration</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/problemes-techniques</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/discussions-jeux-video</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/mapping-modding</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/discussions-generales</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/vos-etudes</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/recrutement-pour-vos-projets</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/presentation-de-vos-projets</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/discussions-sur-les-tutoriels</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/forum-des-inities</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/questions-sur-les-tutoriels</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/concours</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/jsdz-et-evenements</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/forum-des-zeros-d-honneur</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/mathematiques</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/physique</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/chimie</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/biologie-et-geologie</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/electronique</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/autres-sciences</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+</urlset>

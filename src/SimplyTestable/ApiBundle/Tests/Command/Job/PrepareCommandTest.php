@@ -218,12 +218,11 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals($this->getJobService()->getFailedNoSitemapState(), $job->getState());
     }
     
-    public function testHandleLargeIndexedSitemaps() {
+    public function testHandleSingleIndexLargeSitemap() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
         $canonicalUrl = 'http://example.com/';        
 
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
         
         $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
@@ -233,6 +232,22 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $jobControllerResponse = json_decode($this->getJobController('statusAction')->statusAction($job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals(10, $jobControllerResponse->url_count);
-    }    
+    } 
+    
+    
+    public function testHandleLargeCollectionOfSitemaps() {        
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $canonicalUrl = 'http://example.com/';        
+
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        )));
+        
+        $jobControllerResponse = json_decode($this->getJobController('statusAction')->statusAction($job->getWebsite(), $job->getId())->getContent());
+        
+        $this->assertEquals(10, $jobControllerResponse->url_count);
+    }
 
 }

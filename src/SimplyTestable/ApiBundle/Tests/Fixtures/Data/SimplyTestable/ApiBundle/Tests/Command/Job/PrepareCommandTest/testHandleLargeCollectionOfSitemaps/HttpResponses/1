@@ -1,0 +1,24 @@
+HTTP/1.1 200 OK
+Date: Thu, 31 Jan 2013 12:32:15 GMT
+Server: Apache
+Last-Modified: Mon, 12 Nov 2012 11:35:59 GMT
+ETag: "87625b-49-4ce4ab48ec5c0"
+Accept-Ranges: bytes
+Vary: Accept-Encoding,User-Agent
+Content-Type: text/plain
+
+User-Agent: *
+Sitemap: http://example.com/sitemap1.xml
+Sitemap: http://example.com/sitemap2.xml
+Sitemap: http://example.com/sitemap3.xml
+Sitemap: http://example.com/sitemap4.xml
+Sitemap: http://example.com/sitemap5.xml
+Sitemap: http://example.com/sitemap6.xml
+Sitemap: http://example.com/sitemap7.xml
+Sitemap: http://example.com/sitemap8.xml
+Sitemap: http://example.com/sitemap9.xml
+Sitemap: http://example.com/sitemap10.xml
+Sitemap: http://example.com/sitemap11.xml
+Sitemap: http://example.com/sitemap12.xml
+Sitemap: http://example.com/sitemap13.xml
+Sitemap: http://example.com/sitemap14.xml

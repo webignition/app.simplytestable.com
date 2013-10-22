@@ -1,0 +1,35 @@
+HTTP/1.1 200 OK
+Content-Type: text/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>http://example.com/forum/categorie/html-css</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/javascript</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/php</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/langage-c</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+                
+    <url>
+        <loc>http://example.com/forum/categorie/langage-c-1</loc>
+        <lastmod>2013-10-20T03:14:06+02:00</lastmod>
+        <priority>0.7</priority>
+    </url>
+</urlset>

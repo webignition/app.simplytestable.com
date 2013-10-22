@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "fb2814318ac81f8c2d89700d7b6705e4",
+    "hash": "d8b142b02ff3690a0649994f7add1b4c",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -972,6 +972,50 @@
                 "web service"
             ],
             "time": "2013-10-02 20:47:00"
+        },
+        {
+            "name": "hobnob/xml-stream-reader",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hobnob/xmlStreamReader.git",
+                "reference": "3f130f937c94accb6b7c6e30de3d736ff7d1b0ce"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hobnob/xmlStreamReader/zipball/3f130f937c94accb6b7c6e30de3d736ff7d1b0ce",
+                "reference": "3f130f937c94accb6b7c6e30de3d736ff7d1b0ce",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Hobnob\\XmlStreamReader": "/classes/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David North",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP SAX XML Stream Reader",
+            "homepage": "https://github.com/hobnob/xmlStreamReader",
+            "keywords": [
+                "stream",
+                "xml"
+            ],
+            "time": "2013-07-04 08:07:40"
         },
         {
             "name": "jasonlewis/expressive-date",
@@ -2746,17 +2790,17 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/sitemap-model.git",
-                "reference": "7d1fbb7e775843908ced710206679a2eefb5f50c"
+                "reference": "a10055a161ca654c269bd38b809e6e2cc1da75af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/7d1fbb7e775843908ced710206679a2eefb5f50c",
-                "reference": "7d1fbb7e775843908ced710206679a2eefb5f50c",
+                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/a10055a161ca654c269bd38b809e6e2cc1da75af",
+                "reference": "a10055a161ca654c269bd38b809e6e2cc1da75af",
                 "shasum": ""
             },
             "require": {
+                "hobnob/xml-stream-reader": "1.0.3",
                 "php": ">=5.3.0",
-                "querypath/querypath": ">=3.0.0",
                 "simplepie/simplepie": "*",
                 "webignition/url": ">=0.1,<2.0",
                 "webignition/web-resource-model": ">=0.1,<2.0"
@@ -2782,7 +2826,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2012-10-09 19:10:42"
+            "time": "2013-10-21 15:14:23"
         },
         {
             "name": "webignition/string-parser",
@@ -3002,23 +3046,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "f0d4f5d3a78c3cbe8aa417b4751c277b8986ee9b"
+                "reference": "c8cfffc3d858d588a16e52787acfda85c9494e9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/f0d4f5d3a78c3cbe8aa417b4751c277b8986ee9b",
-                "reference": "f0d4f5d3a78c3cbe8aa417b4751c277b8986ee9b",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/c8cfffc3d858d588a16e52787acfda85c9494e9d",
+                "reference": "c8cfffc3d858d588a16e52787acfda85c9494e9d",
                 "shasum": ""
             },
             "require": {
                 "guzzle/guzzle": ">=3.3.1",
                 "php": ">=5.3.0",
+                "symfony/event-dispatcher": ">=2.1",
                 "webignition/absolute-url-deriver": ">=1.3.3,<2.0",
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/robots-txt-parser": "dev-master",
-                "webignition/sitemap-model": "dev-master",
+                "webignition/sitemap-model": ">=0.1",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/website-sitemap-retriever": ">=0.3,<1.0"
+                "webignition/website-sitemap-retriever": ">=0.3.2,<1.0"
             },
             "type": "library",
             "autoload": {
@@ -3041,28 +3086,27 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-10-20 15:17:08"
+            "time": "2013-10-22 10:28:28"
         },
         {
             "name": "webignition/website-sitemap-retriever",
-            "version": "0.3",
+            "version": "0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-retriever.git",
-                "reference": "a39d0f388ab86d510984a38dd81a5a9acb192e22"
+                "reference": "253c52424c7540a3b5d4b580e011ea3be7a42dff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/a39d0f388ab86d510984a38dd81a5a9acb192e22",
-                "reference": "a39d0f388ab86d510984a38dd81a5a9acb192e22",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/253c52424c7540a3b5d4b580e011ea3be7a42dff",
+                "reference": "253c52424c7540a3b5d4b580e011ea3be7a42dff",
                 "shasum": ""
             },
             "require": {
                 "guzzle/guzzle": ">=3.3.1",
                 "php": ">=5.3.0",
-                "querypath/querypath": ">=3.0.0",
                 "webignition/internet-media-type": ">=0.1,<2.0",
-                "webignition/sitemap-model": "dev-master"
+                "webignition/sitemap-model": ">=0.1"
             },
             "type": "library",
             "autoload": {
@@ -3085,7 +3129,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-10-20 15:10:28"
+            "time": "2013-10-21 15:27:59"
         },
         {
             "name": "winzou/console-bundle",
@@ -3150,7 +3194,6 @@
     "stability-flags": {
         "twig/extensions": 20,
         "kriswallsmith/assetic": 20,
-        "webignition/website-sitemap-finder": 20,
         "webignition/website-rss-feed-finder": 20,
         "doctrine/doctrine-fixtures-bundle": 20,
         "webignition/html-validation-error-normaliser": 20
