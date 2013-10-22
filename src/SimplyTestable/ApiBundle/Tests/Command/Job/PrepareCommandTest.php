@@ -221,6 +221,8 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
     public function testHandleSingleIndexLargeSitemap() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
+        $this->getWebSiteService()->getSitemapFinder()->getSitemapRetriever()->setTotalTransferTimeout(0.00001);
+        
         $canonicalUrl = 'http://example.com/';        
 
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
@@ -248,6 +250,6 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $jobControllerResponse = json_decode($this->getJobController('statusAction')->statusAction($job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals(10, $jobControllerResponse->url_count);
-    }
+    }   
 
 }

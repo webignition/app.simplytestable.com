@@ -11,6 +11,7 @@ use webignition\WebResource\Sitemap\Sitemap;
 class WebSiteService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WebSite';
+    const DEFAULT_URL_RETRIEVER_TOTAL_TIMEOUT = 30;
     
     /**
      *
@@ -24,6 +25,13 @@ class WebSiteService extends EntityService {
      * @var \webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder
      */
     private $websiteRssFeedFinder;
+
+    /**
+     *
+     * @var WebsiteSitemapFinder
+     */
+    private $sitemapFinder = null;
+    
     
     /**
      *
@@ -181,11 +189,10 @@ class WebSiteService extends EntityService {
      */
     private function getUrlsFromSitemap(WebSite $website, $softLimit) {
         $this->getHttpClientService()->get()->setUserAgent('SimplyTestable Sitemap URL Retriever/0.1 (http://simplytestable.com/)');
-        
-        $sitemapFinder = new WebsiteSitemapFinder();
+               
+        $sitemapFinder = $this->getSitemapFinder();
+        $sitemapFinder->getSitemapRetriever()->reset();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
-        $sitemapFinder->setHttpClient($this->httpClientService->get());
-        $sitemapFinder->getSitemapRetriever()->disableRetrieveChildSitemaps();
         $sitemapFinder->getUrlLimitListener()->setSoftLimit($softLimit);
         $sitemaps = $sitemapFinder->getSitemaps();
         
@@ -204,6 +211,23 @@ class WebSiteService extends EntityService {
         }
         
         return $urls;
+    }
+    
+    
+    /**
+     * @return WebsiteSitemapFinder
+     */
+    public function getSitemapFinder() {
+        if (is_null($this->sitemapFinder)) {
+            $this->sitemapFinder = new WebsiteSitemapFinder();
+            $this->sitemapFinder->setHttpClient($this->httpClientService->get()); 
+            
+            if ($this->sitemapFinder->getSitemapRetriever()->getTotalTransferTimeout() == \webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever::DEFAULT_TOTAL_TRANSFER_TIMEOUT) {
+                $this->sitemapFinder->getSitemapRetriever()->setTotalTransferTimeout(self::DEFAULT_URL_RETRIEVER_TOTAL_TIMEOUT);
+            }
+        }
+        
+        return $this->sitemapFinder;
     }
     
     
