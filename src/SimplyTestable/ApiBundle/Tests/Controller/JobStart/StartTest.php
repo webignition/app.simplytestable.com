@@ -250,4 +250,28 @@ class StartTest extends BaseControllerJsonTestCase {
         ), $cssValidationTaskTypeOptions->getOptions());         
     }
     
+    
+    public function testRejectForUnroutableIpHost() {
+        $canonicalUrl = 'http://127.0.0.1/';
+
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        
+        $jobControllerResponse = json_decode($this->getJobController('statusAction')->statusAction($job->getWebsite(), $job->getId())->getContent());
+        
+        $this->assertEquals('rejected', $jobControllerResponse->state);
+        $this->assertEquals('unroutable', $jobControllerResponse->rejection->reason);    
+    }    
+    
+    
+    public function testRejectForUnroutableDomainHost() {
+        $canonicalUrl = 'http://example/';
+
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        
+        $jobControllerResponse = json_decode($this->getJobController('statusAction')->statusAction($job->getWebsite(), $job->getId())->getContent());
+        
+        $this->assertEquals('rejected', $jobControllerResponse->state);
+        $this->assertEquals('unroutable', $jobControllerResponse->rejection->reason);    
+    }      
+    
 }

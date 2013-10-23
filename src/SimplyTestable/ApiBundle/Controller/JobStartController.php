@@ -29,6 +29,11 @@ class JobStartController extends ApiController
         }
         
         $this->siteRootUrl = $site_root_url;
+        
+        if (!$this->getWebsite()->isPubliclyRoutable()) {
+            return $this->rejectAsUnroutableAndRedirect();
+        }
+
         $requestedJobType = $this->getRequestJobType();
         
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
@@ -121,6 +126,30 @@ class JobStartController extends ApiController
             'test_id' => $job->getId()
         )));
     }
+    
+    private function rejectAsUnroutableAndRedirect() {
+        $job = $this->getJobService()->create(
+            $this->getUser(),
+            $this->getWebsite(),
+            $this->getTaskTypes(),
+            $this->getTaskTypeOptions(),
+            $this->getRequestJobType()
+        );
+
+        $this->getJobService()->reject($job);
+
+        $rejectionReason = new JobRejectionReason();
+        $rejectionReason->setJob($job);
+        $rejectionReason->setReason('unroutable');
+
+        $this->getDoctrine()->getEntityManager()->persist($rejectionReason);
+        $this->getDoctrine()->getEntityManager()->flush();
+
+        return $this->redirect($this->generateUrl('job', array(
+            'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
+            'test_id' => $job->getId()
+        )));        
+    }    
     
     private function rejectAndRedirect(AccountPlanConstraint $constraint) {
         $job = $this->getJobService()->create(
