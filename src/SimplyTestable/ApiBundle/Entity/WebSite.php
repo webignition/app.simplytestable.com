@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use webignition\Url\Url;
 
 /**
  * @ORM\Entity
@@ -75,5 +76,25 @@ class WebSite
      */
     public function equals(Website $website) {
         return $this->getCanonicalUrl() == $website->getCanonicalUrl();
+    }
+    
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function isPubliclyRoutable() {
+        $url = new Url($this->getCanonicalUrl());
+        
+        if (!$url->getHost()->isPubliclyRoutable()) {
+            return false;
+        }        
+        
+        if (!substr_count($url->getHost()->get(), '.') || (strpos($url->getHost()->get(), '.') === 0) || strpos($url->getHost()->get(), '.') === strlen($url->getHost()->get() - 1)) { 
+            return false;
+        }
+        
+        return true;
     }
 }

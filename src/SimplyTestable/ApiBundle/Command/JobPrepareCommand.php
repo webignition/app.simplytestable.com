@@ -12,6 +12,7 @@ class JobPrepareCommand extends BaseCommand
     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
     const RETURN_CODE_NO_URLS = 3;
+    const RETURN_CODE_UNROUTABLE = 4;
     
     protected function configure()
     {
@@ -66,6 +67,10 @@ class JobPrepareCommand extends BaseCommand
             case self::RETURN_CODE_NO_URLS:
                 $this->getLogger()->info("simplytestable:job:prepare: no sitemap found for [".(string)$job->getWebsite()."]");
                 return self::RETURN_CODE_OK;
+                
+            case self::RETURN_CODE_UNROUTABLE:
+                $this->getLogger()->info("simplytestable:job:prepare: unroutable [".(string)$job->getWebsite()."]");
+                return self::RETURN_CODE_UNROUTABLE;                
                 
         }
         

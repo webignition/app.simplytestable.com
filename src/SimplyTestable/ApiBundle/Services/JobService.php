@@ -168,7 +168,7 @@ class JobService extends EntityService {
     public function getRejectedState() {
         return $this->stateService->fetch(self::REJECTED_STATE);
     }    
-    
+
     
     /**
      *
@@ -177,6 +177,15 @@ class JobService extends EntityService {
      */
     public function isNew(Job $job) {
         return $job->getState()->equals($this->getStartingState());
+    }    
+    
+    /**
+     *
+     * @param Job $job
+     * @return boolean
+     */
+    public function isPreparing(Job $job) {
+        return $job->getState()->equals($this->getPreparingState());
     }
     
     /**
@@ -332,7 +341,7 @@ class JobService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job
      */
     public function reject(Job $job) {        
-        if (!$this->isNew($job)) {
+        if (!$this->isNew($job) && !$this->isPreparing($job)) {
             return $job;
         }
         

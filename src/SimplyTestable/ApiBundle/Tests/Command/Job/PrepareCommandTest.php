@@ -251,5 +251,35 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         
         $this->assertEquals(10, $jobControllerResponse->url_count);
     }   
+    
+    public function testRejectForUnroutableIp() {
+        $canonicalUrl = 'http://192.168.0.173:8020';        
+
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
+        
+        $this->assertEquals(4, $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        )));
+        
+        $jobControllerResponse = json_decode($this->getJobController('statusAction')->statusAction($job->getWebsite(), $job->getId())->getContent());
+        
+        $this->assertEquals('rejected', $jobControllerResponse->state);
+        $this->assertEquals('unroutable', $jobControllerResponse->rejection->reason);
+    }     
+    
+    public function testRejectForUnroutableDomain() {
+        $canonicalUrl = 'http://example/';        
+
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
+        
+        $this->assertEquals(4, $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        )));
+        
+        $jobControllerResponse = json_decode($this->getJobController('statusAction')->statusAction($job->getWebsite(), $job->getId())->getContent());
+        
+        $this->assertEquals('rejected', $jobControllerResponse->state);
+        $this->assertEquals('unroutable', $jobControllerResponse->rejection->reason);
+    }     
 
 }

@@ -21,7 +21,7 @@
         "kriswallsmith/assetic": "1.1.*@dev",
         "friendsofsymfony/user-bundle": "1.3.1",
         "glit/resque": "*",
-        "webignition/url": "*",
+        "webignition/url": ">=1.9.4",
         "jms/serializer-bundle": "0.9",
         "webignition/website-sitemap-finder":">=0.2.1",
         "webignition/website-sitemap-retriever":">=0.4,<1.0",

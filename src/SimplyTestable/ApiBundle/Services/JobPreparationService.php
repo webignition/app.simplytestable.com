@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use webignition\NormalisedUrl\NormalisedUrl;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
+use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
 
 class JobPreparationService {
     
@@ -15,6 +16,7 @@ class JobPreparationService {
     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;    
     const RETURN_CODE_NO_URLS = 3;
+    const RETURN_CODE_UNROUTABLE = 4;
     
     /**
      *
@@ -117,14 +119,19 @@ class JobPreparationService {
     
     
     public function prepare(Job $job) {        
-        $this->processedUrls = array();
-        
         if (!$this->jobService->isNew($job)) {
             return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
         }  
-        
+
         $job->setState($this->jobService->getPreparingState());         
         $this->jobService->persistAndFlush($job);
+        
+        if (!$job->getWebsite()->isPubliclyRoutable()) {
+            $this->rejectAsUnroutable($job);
+            return self::RETURN_CODE_UNROUTABLE;
+        }
+        
+        $this->processedUrls = array();        
         
         $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());        
         $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit();      
@@ -201,6 +208,18 @@ class JobPreparationService {
         $this->jobService->persistAndFlush($job);
         
         return self::RETRUN_CODE_OK;
+    }
+    
+    private function rejectAsUnroutable(Job $job) {
+        $this->jobService->reject($job);
+
+        $rejectionReason = new JobRejectionReason();
+        $rejectionReason->setJob($job);
+        $rejectionReason->setReason('unroutable');
+        
+        $this->jobService->getEntityManager()->persist($rejectionReason);
+        $this->jobService->getEntityManager()->flush();       
+        $this->jobService->persistAndFlush($job);
     }
     
     

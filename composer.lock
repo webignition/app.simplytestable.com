@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "31d81d1d3bf6bca6a5bbb60633277306",
+    "hash": "e14f39c709454b155dfb8d8ec66d1d40",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2871,21 +2871,22 @@
         },
         {
             "name": "webignition/url",
-            "version": "1.9.3",
+            "version": "1.9.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url.git",
-                "reference": "c93cae6c5d5fc8fe4834877a697bc9764c365045"
+                "reference": "44d1b11889cee7bb7994ee5a7e45ea36fc9905a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url/zipball/c93cae6c5d5fc8fe4834877a697bc9764c365045",
-                "reference": "c93cae6c5d5fc8fe4834877a697bc9764c365045",
+                "url": "https://api.github.com/repos/webignition/url/zipball/44d1b11889cee7bb7994ee5a7e45ea36fc9905a5",
+                "reference": "44d1b11889cee7bb7994ee5a7e45ea36fc9905a5",
                 "shasum": ""
             },
             "require": {
                 "ext-intl": "*",
-                "php": ">=5.3.0"
+                "php": ">=5.3.0",
+                "xrstf/ip-utils": "v1.0.0"
             },
             "type": "library",
             "autoload": {
@@ -2908,7 +2909,7 @@
             "keywords": [
                 "url"
             ],
-            "time": "2013-10-03 10:01:18"
+            "time": "2013-10-23 11:12:43"
         },
         {
             "name": "webignition/web-page-model",
@@ -3183,6 +3184,54 @@
                 "symfony"
             ],
             "time": "2013-02-21 19:48:51"
+        },
+        {
+            "name": "xrstf/ip-utils",
+            "version": "v1.0.0",
+            "source": {
+                "type": "hg",
+                "url": "https://bitbucket.org/xrstf/ip-utils",
+                "reference": "d7469bb0c407e423c9d1b49ff2e8980c800871e2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/xrstf/ip-utils/get/d7469bb0c407e423c9d1b49ff2e8980c800871e2.zip",
+                "reference": "d7469bb0c407e423c9d1b49ff2e8980c800871e2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-default": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "IpUtils\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christoph Mewes",
+                    "homepage": "http://www.xrstf.de/"
+                }
+            ],
+            "description": "small library to deal with IPv4 & IPv6 addresses and subnets",
+            "keywords": [
+                "IP",
+                "ipv4",
+                "ipv6",
+                "matching",
+                "subnet"
+            ],
+            "time": "2013-02-27 03:27:30"
         }
     ],
     "packages-dev": [
