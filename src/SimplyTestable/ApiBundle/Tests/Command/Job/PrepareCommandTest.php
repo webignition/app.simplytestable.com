@@ -253,9 +253,15 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
     }   
     
     public function testRejectForUnroutableIp() {
-        $canonicalUrl = 'http://192.168.0.173:8020';        
-
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
+        $canonicalUrl = 'http://192.168.0.173:8020';
+        
+        $job = $this->getJobService()->create(
+                $this->getUserService()->getPublicUser(),
+                $this->getWebSiteService()->fetch($canonicalUrl),
+                array(),
+                array(),
+                $this->getJobTypeService()->getByName('Full site')
+        );    
         
         $this->assertEquals(4, $this->runConsole('simplytestable:job:prepare', array(
             $job->getId() =>  true
@@ -270,7 +276,13 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
     public function testRejectForUnroutableDomain() {
         $canonicalUrl = 'http://example/';        
 
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
+        $job = $this->getJobService()->create(
+                $this->getUserService()->getPublicUser(),
+                $this->getWebSiteService()->fetch($canonicalUrl),
+                array(),
+                array(),
+                $this->getJobTypeService()->getByName('Full site')
+        );     
         
         $this->assertEquals(4, $this->runConsole('simplytestable:job:prepare', array(
             $job->getId() =>  true
