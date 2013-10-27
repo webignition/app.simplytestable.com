@@ -292,6 +292,20 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         
         $this->assertEquals('rejected', $jobControllerResponse->state);
         $this->assertEquals('unroutable', $jobControllerResponse->rejection->reason);
-    }     
+    }
+    
+    
+    public function testMalformedRssUrl() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $canonicalUrl = 'http://beebac.com/';        
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        )));  
+        
+        $this->assertEquals('job-failed-no-sitemap', $job->getState()->getName());     
+    }
 
 }

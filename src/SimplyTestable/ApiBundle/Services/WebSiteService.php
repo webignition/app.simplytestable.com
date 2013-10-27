@@ -340,12 +340,13 @@ class WebSiteService extends EntityService {
      * @param string $feedUrl
      * @return array
      */
-    private function getUrlsFromNewsFeed($feedUrl) {
-        $request = $this->getHttpClientService()->getRequest($feedUrl);
-        
+    private function getUrlsFromNewsFeed($feedUrl) {        
         try {
+            $request = $this->getHttpClientService()->getRequest($feedUrl);
             $response = $request->send();
         } catch (\Guzzle\Http\Exception\RequestException $requestException) {
+            return array();
+        } catch (\Guzzle\Common\Exception\InvalidArgumentException $e) {
             return array();
         }
       

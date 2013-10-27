@@ -1,0 +1,558 @@
+HTTP/1.1 200 Ok
+Content-type:text/html
+
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="fr"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="fr"> <![endif]-->
+<!--[if IEMobile 7 ]>    <html class="no-js iem7" lang="fr"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="fr"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="fr"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<title>Beebac - Social School</title>
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width">
+			<link rel="apple-touch-icon-precomposed" sizes="114x114" href="http://www.beebac.com/mod/beebac-bootstrap/graphics/mobile/h/apple-touch-icon.png">
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="http://www.beebac.com/mod/beebac-bootstrap/graphics/mobile/m/apple-touch-icon.png">
+	<link rel="apple-touch-icon-precomposed" href="http://www.beebac.com/mod/beebac-bootstrap/graphics/mobile/l/apple-touch-icon-precomposed.png">
+	<link rel="shortcut icon" href="http://www.beebac.com/flavicon.ico">
+  		<meta name="author" content="Beebac" /> 
+	<meta property="og:title" content="Beebac" />
+	<meta property="og:locale" content="fr_FR" />
+	<meta property="og:site_name" content="Beebac" />
+	<meta property="og:image" content="http://www.beebac.com/beebacadmin/images/?lastcache=1352741056&joindate=1240286481&type=login" />
+	
+	
+	<meta property="og:type" content="website" />	
+	<meta property="fb:app_id" content="appid" />
+	<link rel="stylesheet" href="http://www.beebac.com/cache/css/default/elgg.1381142173.css" type="text/css" />
+
+	<!--[if gt IE 7]>
+		<link rel="stylesheet" type="text/css" href="http://www.beebac.com/cache/css/default/ie.1381142173.css" />
+	<![endif]-->
+	<!--[if IE 7]>
+		<link rel="stylesheet" type="text/css" href="http://www.beebac.com/cache/css/default/ie7.1381142173.css" />
+	<![endif]-->
+	<!--[if IE 6]>
+		<link rel="stylesheet" type="text/css" href="http://www.beebac.com/cache/css/default/ie6.1381142173.css" />
+	<![endif]-->
+
+	<script type="text/javascript" src="http://www.beebac.com/mod/beebac-bootstrap/vendors/modernizr-2.5.3.min.js"></script>
+	<script type="text/javascript" src="http://www.beebac.com/mod/beebac-bootstrap/vendors/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" src="http://www.beebac.com/mod/beebac-bootstrap/vendors/jquery-ui-1.10.3.custom.min.js"></script>
+	<script type="text/javascript" src="http://www.beebac.com/cache/js/default/elgg.1381142173.js"></script>
+
+<script type="text/javascript">
+	/**
+ * Don't want to cache these -- they could change for every request
+ */
+elgg.config.lastcache = 1381142173;
+elgg.config.viewtype = 'default';
+elgg.config.simplecache_enabled = 1;
+
+elgg.security.token.__elgg_ts = 1382865304;
+elgg.security.token.__elgg_token = 'f5ba767eece82a787c0a6eb1cddb17b3';
+
+elgg.page_owner =  {"guid":1,"type":"site","subtype":false,"time_created":"1240286481","time_updated":"1378818949","container_guid":"0","owner_guid":"0","site_guid":"1","name":"Beebac","description":"Social School","url":"http:\/\/www.beebac.com\/view\/1"};
+//Before the DOM is ready, but elgg's js framework is fully initalized
+elgg.trigger_hook('boot', 'system');</script>
+
+	<meta http-equiv="cleartype" content="on">
+
+
+	<link rel="alternate" type="application/rss+xml" title="RSS" href="http:///?view=rss" />
+<style>
+#page-footer {
+height:360px;
+}</style>
+</head>
+<body class="body-homepage  frame">
+<!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
+<header class="lrow">
+	<div id="page-header">
+		<div class="page-messages">
+			<div class="system-messages"></div>		</div>
+			</div>
+</header>
+	
+<div id="page-body" class="lrow">
+		<div class="elgg-layout elgg-layout-one-column clearfix boostrap-main">
+	<div class="elgg-body elgg-main">
+	<div id="home-hello" class="hpsection">
+	<div class="container clearfix">
+		<a id="login-btn" data-toggle="modal" data-target="#modal-login" data-remote="false" class="btn btn-info btn-small" href="http://www.beebac.com/login"><i class="icon-off hidden-phone"></i> Connexion</a>
+		<img class="logo pull-left" src="mod/beebac/graphics/beebaclogo.png" />
+		<div class="wrapper">
+			<h1>Beebac Social School</h1>
+			<h2>Le réseau social de l'éducation au service de votre réussite</h2>
+			<div>
+				<strong>Rejoignez Beebac aujourd'hui</strong>
+			</div>
+			<div class="hp-register-btn">
+				<a href="http://www.beebac.com/register" class="btn btn-success"><img src="http://www.beebac.com/mod/beebac/graphics/registerbtnicon.png" /> Créer un compte</a>
+			<a data-network="facebook" class="btn  facebook snconnect" href="http://www.beebac.com/social/connect/facebook"><i class="icon-facebook"></i> Se connecter avec Facebook</a>			</div>
+		</div>
+	</div>
+</div>
+<div id="home-features" class="hpsection strip-grey">
+	<div class="container">
+		<h3>Vous êtes collégien, lycéen, étudiant, enseignant ou parent d’élèves</h3>
+		<div class="small-title">
+			<h4>découvrez ce que Beebac peut faire pour vous</h4>
+			<div class="long-bar"></div>
+		</div>
+		<div class="row-test clearfix">
+			<div class="block25">
+				<div class="hbox clearfix">
+					<i class="icon-flag pull-left"></i>
+					<div class="wrapper">
+						<h5>Suivez des Pages</h5>
+						<p>Construisez votre fil d'actualité en suivant les pages des matières, des écoles, des universités et des acteurs de l'éducation qui vous intéressent.</p>
+				<!--	<div class="action">
+						<a class="btn btn-small" href="http://www.beebac.com/profile/samilabidi">Voir un exemple »</a>
+					</div> -->
+					</div>
+				</div>
+			</div>
+			<div class="block25">
+				<div class="hbox clearfix">
+					<i class="icon-share-alt pull-left"></i>
+					<div class="wrapper">
+						<h5>Partagez vos cours et votre actualité</h5>
+						<p>Contribuez à l'évolution de la ruche du savoir pour tous en partageant vos cours, exercices, fiches de révision, mémoires et bien plus...</p>
+				<!--	<div class="action">
+						<a class="btn btn-small" href="http://www.beebac.com/topics">Parcourir les publications »</a>
+					</div> -->
+					</div>
+				</div>
+			</div>
+			<div class="block25">
+				<div class="hbox clearfix">
+					<i class="icon-comments-alt pull-left"></i>
+					<div class="wrapper">
+						<h5>Posez vos questions</h5>
+						<p>Sur Beebac des milliers d'étudiants, d'enseignants et de professionnels sont prêts à partager leurs savoirs. Vous avez une question ? Posez la.</p>
+				<!--	<div class="action">
+						<a class="btn btn-small" href="http://www.beebac.com/question">Parcourir les questions »</a>
+					</div> -->
+					</div>
+				</div>
+			</div>
+			<div class="block25">
+				<div class="hbox last clearfix">
+					<i class="group-icon pull-left"></i>
+					<div class="wrapper">
+						<h5>Créez des groupes classes virtuelles et collaboratifs</h5>
+						<p>Les groupes vous permettent de créer des classes virtuelles si vous êtes enseignant et de travailler en groupe si vous êtes lycéen ou étudiant.</p>
+				<!--	<div class="action">
+						<a class="btn btn-small" href="http://www.beebac.com/groups">Parcourir les groupes »</a>
+					</div> -->
+					</div>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="home-partners" class="hpsection">
+	<div class="container">
+		<div class="row">
+			<div class="span8">
+				<h3>Suivez les cours et l'actualité</h3>
+				<h4 class="hp-underline">des plus grandes écoles et des universités les plus prestigieuses</h4>
+				<ul class="unstyled clearfix">
+					<li>
+						<a href="http://www.beebac.com/topics/unisciel">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/unisciel.png" alt="Unisciel, l'Université des Sciences en Ligne" />
+							<div class="name">
+								<strong>Unisciel</strong>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="http://www.beebac.com/topics/epitech">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/epitech.png" alt="EPITECH" />
+							<div class="name">
+								<strong>EPITECH</strong>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="http://www.beebac.com/topics/hecparis">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/hec.png" alt="HEC Paris" />
+							<div class="name">
+								<strong>HEC Paris</strong>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="http://www.beebac.com/topics/essec">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/essec.png" alt="ESSEC" />
+							<div class="name">
+								<strong>ESSEC</strong>
+							</div>
+						</a>
+					</li>
+				</ul>
+				<hr />
+				<ul class="unstyled clearfix">
+					<li>
+						<a href="http://www.beebac.com/topics/epita">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/epita.png" alt="EPITA" />
+							<div class="name">
+								<strong>EPITA</strong>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="http://www.beebac.com/topics/centrale_lyon">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/centralelyon.png" alt="Centrale Lyon" />
+							<div class="name">
+								<strong>Centrale Lyon</strong>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="http://www.beebac.com/topics/stanford">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/stanford.png" alt="Stanford University" />
+							<div class="name">
+								<strong>Stanford</strong>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="http://www.beebac.com/topics/harvard">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/harvard.png" alt="harvard" />
+							<div class="name">
+								<strong>Harvard</strong>
+							</div>
+						</a>
+					</li>
+				</ul>
+				<hr />
+				<ul class="unstyled clearfix">
+					<li>
+						<a href="http://www.beebac.com/topics/emlyon">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/emlyon.png" alt="EM Lyon" />
+							<div class="name">
+								<strong>EM Lyon</strong>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="http://www.beebac.com/topics/supinfo">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/supinfo.png" alt="SupInfo" />
+							<div class="name">
+								<strong>SUPINFO</strong>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="http://www.beebac.com/topics/eartsup">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/eartsup.png" alt="e-artsup" />
+							<div class="name">
+								<strong>e-artsup</strong>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="http://www.beebac.com/topics/rise">
+							<img src="http://www.beebac.com/mod/beebac/graphics/home/logo/rise.png" alt="RISE" />
+							<div class="name">
+								<strong>RISE</strong>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="span4">
+				<h3>Zoom sur...</h3>
+				<h4 id="hp-pzst" class="hp-underline">Beebac dans SFR Player</h4>
+				<a class="pub" href="http://www.sfr.com/sfr-player/magazine/sfrplayer11/">
+					<img alt="Interview Sami Labidi - Co-fondateur Beebac dans SFR player" src="http://www.beebac.com/mod/beebac/graphics/home/player.jpg" />
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="home-publications" class="hpsection strip-grey hidden-phone">
+	<div class="container">
+		<div class="clearfix">
+			<i class="icon-star pull-left"></i>
+			<div class="title-wrapper">
+				<h3>La selection Beebac</h3>
+				<h4>Chaque semaine, découvrez notre sélection des meilleurs cours</h4>
+			</div>
+		</div>
+		<div class="row">
+		<div class="span3">
+		<a href="http://www.beebac.com/publication/101840/anatomie-du-systeme-nerveux-le-cervelet" class="featuredpub" title="Anatomie du système nerveux : le cervelet.">
+			<div class="title">
+				<h5><span>Anatomie du système nerveux : le cervelet.</span></h5>
+			</div>
+						<div class="img_container" style="background-image:url(http://i1.ytimg.com/vi/OSwHIoj7Mlc/0.jpg)"></div>
+									<div class="footer">
+				<div class="wrapper">
+					<img width="16" class="pull-left" src="http://www.beebac.com/mod/beebac-topics/icondirect.php?lastcache=1382340262&joindate=1382339993&guid=101821&size=topbar" /> <span class="muted">Neuromatiq</span>
+				</div>
+			</div>
+					</a>
+	</div>
+		<div class="span3">
+		<a href="http://www.beebac.com/publication/101802/dessine-moi-leco-comment-calcule-t-on-limpot-sur-le-revenu" class="featuredpub" title="Dessine-moi l'éco : Comment calcule-t-on l'impôt sur le revenu ?">
+			<div class="title">
+				<h5><span>Dessine-moi l'éco : Comment calcule-t-on l'impôt sur le...</span></h5>
+			</div>
+						<div class="img_container" style="background-image:url(http://s2.dmcdn.net/BgWuY/x240-Qyi.jpg)"></div>
+									<div class="footer">
+				<div class="wrapper">
+					<img width="16" class="pull-left" src="http://www.beebac.com/mod/beebac-topics/icondirect.php?lastcache=1382298073&joindate=1382297936&guid=101781&size=topbar" /> <span class="muted">Dessine-moi l'éco</span>
+				</div>
+			</div>
+					</a>
+	</div>
+		<div class="span3">
+		<a href="http://www.beebac.com/publication/100579/open-innovation-strategy-in-asia-f-luc-thales-asia-isis-innovation" class="featuredpub" title="Open innovation strategy in Asia - F. Luc, Thales Asia - ISIS Innovation Masterclass - 13/12/12">
+			<div class="title">
+				<h5><span>Open innovation strategy in Asia - F. Luc, Thales Asia -...</span></h5>
+			</div>
+						<div class="img_container" style="background-image:url(http://i1.ytimg.com/vi/HwPjYBk6Hhs/0.jpg)"></div>
+									<div class="footer">
+				<div class="wrapper">
+					<img width="16" class="pull-left" src="http://www.beebac.com/mod/beebac-topics/icondirect.php?lastcache=1354529342&joindate=1354302736&guid=67644&size=topbar" /> <span class="muted">ESSEC</span>
+				</div>
+			</div>
+					</a>
+	</div>
+		<div class="span3">
+		<a href="http://www.beebac.com/publication/100559/zodiac-de-david-fincher-analyse-par-mathieu-dupre" class="featuredpub" title="&quot;Zodiac&quot; de David Fincher, analysé par Mathieu Dupré">
+			<div class="title">
+				<h5><span>&quot;Zodiac&quot; de David Fincher, analysé par Mathieu...</span></h5>
+			</div>
+						<div class="img_container" style="background-image:url(http://s2.dmcdn.net/Cdg_6/x240-Pw5.jpg)"></div>
+									<div class="footer">
+				<div class="wrapper">
+					<img width="16" class="pull-left" src="http://www.beebac.com/mod/beebac-topics/icondirect.php?lastcache=1365003870&joindate=1365003724&guid=78717&size=topbar" /> <span class="muted">Forum des Images</span>
+				</div>
+			</div>
+					</a>
+	</div>
+		<div class="span3">
+		<a href="http://www.beebac.com/publication/98651/emarketing-podcast-etre-en-premiere-position-sur-google-partie-2" class="featuredpub" title="Emarketing Podcast - Etre en première position sur Google - Partie 2">
+			<div class="title">
+				<h5><span>Emarketing Podcast - Etre en première position sur Google -...</span></h5>
+			</div>
+						<div class="img_container" style="background-image:url(http://i1.ytimg.com/vi/QECIPU_US54/0.jpg)"></div>
+									<div class="footer">
+				<div class="wrapper">
+					<img width="16" class="pull-left" src="http://www.beebac.com/mod/beebac-topics/icondirect.php?lastcache=1354544491&joindate=1354544368&guid=68101&size=topbar" /> <span class="muted">SUPINFO</span>
+				</div>
+			</div>
+					</a>
+	</div>
+		<div class="span3">
+		<a href="http://www.beebac.com/publication/97880/webdoc-c2ab-plongee-au-coeur-de-la-chine-c2bb-portraits-planete-parler-chinois-nc790" class="featuredpub" title="Webdoc « Plongée au cœur de la Chine », Portraits, Planète, Parler Chinois nǐ hǎo - 你 好  (Bonjour)">
+			<div class="title">
+				<h5><span>Webdoc « Plongée au cœur de la Chine », Portraits, Planète,...</span></h5>
+			</div>
+						<div class="img_container" style="background-image:url(http://i1.ytimg.com/vi/pNh1kKk3uGM/maxresdefault.jpg?feature=og)"></div>
+									<div class="footer">
+				<div class="wrapper">
+					<img width="16" class="pull-left" src="http://www.beebac.com/mod/beebac-topics/icondirect.php?lastcache=1361450889&joindate=1361450767&guid=72785&size=topbar" /> <span class="muted">CDDP de l'OISE</span>
+				</div>
+			</div>
+					</a>
+	</div>
+		<div class="span3">
+		<a href="http://www.beebac.com/publication/73504/is-it-too-late-to-avoid-serious-impacts-of-climate-change-harvard-thinks" class="featuredpub" title="Is It Too Late to Avoid Serious Impacts of Climate Change? | Harvard Thinks Green">
+			<div class="title">
+				<h5><span>Is It Too Late to Avoid Serious Impacts of Climate Change?...</span></h5>
+			</div>
+						<div class="img_container" style="background-image:url(http://i1.ytimg.com/vi/EZ6XHuOnDPU/0.jpg)"></div>
+									<div class="footer">
+				<div class="wrapper">
+					<img width="16" class="pull-left" src="http://www.beebac.com/mod/beebac-topics/icondirect.php?lastcache=1352647731&joindate=1352647637&guid=67065&size=topbar" /> <span class="muted">Harvard University</span>
+				</div>
+			</div>
+					</a>
+	</div>
+		<div class="span3">
+		<a href="http://www.beebac.com/publication/98006/cours-ts-2012-ch13-reaction-acide-base-iii-4-acide-fort-et-faible-base" class="featuredpub" title="Cours TS 2012 / ch13: réaction acide base III-4 acide fort et faible, base forte et faible">
+			<div class="title">
+				<h5><span>Cours TS 2012 / ch13: réaction acide base III-4 acide fort...</span></h5>
+			</div>
+						<div class="img_container" style="background-image:url(http://i1.ytimg.com/vi/34Cvefn12pY/0.jpg)"></div>
+									<div class="footer">
+				<div class="wrapper">
+					<img width="16" class="pull-left" src="http://www.beebac.com/mod/beebac-topics/icondirect.php?lastcache=1363975575&joindate=1363951697&guid=75116&size=topbar" /> <span class="muted">Exovideo</span>
+				</div>
+			</div>
+					</a>
+	</div>
+	</div>
+	</div>
+</div>
+<div id="home-domain" class="hpsection strip-grey">
+	<div class="container">
+		<div class="row">
+			<div class="span8">
+				<h3>+40 000 cours organisés par domaines et matières</h3>
+				<h4 class="hp-underline">Accédez gratuitement à des cours de qualité de la 6ème au doctorat</h4>
+				<ul class="unstyled clearfix">
+	<li><a class="hp-dm-art" href="http://www.beebac.com/topics/disciplines/16980/art"><span>Art</span></a></li>
+	<li><a class="hp-dm-audiovisuel" href="http://www.beebac.com/topics/disciplines/20875/audiovisuel"><span>Audiovisuel</span></a></li>
+	<li><a class="hp-dm-baccalaureat" href="http://www.beebac.com/topics/baccalaureat"><span>Baccalauréat 2013</span></a></li>
+	<li><a class="hp-dm-commerce" href="http://www.beebac.com/topics/disciplines/20872/commerce"><span>Commerce</span></a></li>
+	<li><a class="hp-dm-droit" href="http://www.beebac.com/topics/disciplines/17023/droit"><span>Droit</span></a></li>
+	<li><a class="hp-dm-encadrement" href="http://www.beebac.com/topics/disciplines/57993/encadrement"><span>Encadrement</span></a></li>
+	<li><a class="hp-dm-francais_-_lettres" href="http://www.beebac.com/topics/disciplines/20871/francais_-_lettres"><span>Français - Lettres</span></a></li>
+	<li><a class="hp-dm-gestion" href="http://www.beebac.com/topics/disciplines/17817/gestion"><span>Gestion</span></a></li>
+	<li><a class="hp-dm-histoire_-_geographie" href="http://www.beebac.com/topics/disciplines/20873/histoire_-_geographie"><span>Histoire - Géographie</span></a></li>
+	<li><a class="hp-dm-information_-_communication" href="http://www.beebac.com/topics/disciplines/20874/information_-_communication"><span>Information - Communication</span></a></li>
+	<li><a class="hp-dm-informatique" href="http://www.beebac.com/topics/disciplines/17870/informatique"><span>Informatique</span></a></li>
+	<li><a class="hp-dm-langues" href="http://www.beebac.com/topics/disciplines/20870/langues"><span>Langues</span></a></li>
+	<li><a class="hp-dm-methodologie" href="http://www.beebac.com/topics/disciplines/16972/methodologie"><span>Methodologie</span></a></li>
+	<li><a class="hp-dm-orientation" href="http://www.beebac.com/topics/disciplines/20877/orientation"><span>Orientation</span></a></li>
+	<li><a class="hp-dm-sciences" href="http://www.beebac.com/topics/disciplines/20869/sciences"><span>Sciences</span></a></li>
+	<li><a class="hp-dm-social" href="http://www.beebac.com/topics/disciplines/20876/social"><span>Social</span></a></li>
+</ul>
+			</div>
+			<div class="span4">
+				<h3>Zoom sur...</h3>
+				<h4 id="hp-dzst" class="hp-underline">Beebac à l'IUT de Béziers</h4>
+				<div class="video_container">
+					<iframe src="http://player.vimeo.com/video/42187031?title=0&amp;byline=0&amp;portrait=0&amp;color=f0d000" width="337" height="190" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="home-press" class="hpsection">
+	<div class="container">
+		<h3>Ils parlent de Beebac</h3>
+		<img id="mediaimg" widh="963" height="55" src="http://www.beebac.com/mod/beebac/graphics/home/media.jpg" alt="Beebac dans la presse" />
+		<div class="hp-register-btn">
+			<a href="http://www.beebac.com/register" class="btn btn-success"><img src="http://www.beebac.com/mod/beebac/graphics/registerbtnicon.png" /> Créer un compte</a>
+		<a data-network="facebook" class="btn  facebook snconnect" href="http://www.beebac.com/social/connect/facebook"><i class="icon-facebook"></i> Se connecter avec Facebook</a>		</div>
+	</div>
+</div><div class="row">
+	<div class="span8">
+			</div>
+	<div class="span4">
+			</div>
+</div>
+	</div>
+</div></div>
+
+
+<footer class="lrow">
+	<div class="modal fade hide" id="modal-login">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">×</a>
+		<h3>Connexion</h3>
+	</div>
+<form method="post" action="http://www.beebac.com/action/login" class="elgg-form elgg-form-login"><fieldset><input type="hidden" name="__elgg_token" value="f5ba767eece82a787c0a6eb1cddb17b3" /><input type="hidden" name="__elgg_ts" value="1382865304" /><div class="modal-body">
+	<div class="loginbox_wrapper clearfix">
+		<div class="wrow">
+				<div class="control-group">
+				<label class="control-label" for="username">Votre e-mail</label>
+				<div class="controls">
+					<input type="text" value="" name="username" class="elgg-input-text elgg-autofocus" />				</div>
+			</div>
+			
+			<div class="control-group">
+				<label class="control-label" for="password">Mot de passe</label>
+				<div class="controls">
+					
+<input type="password" value="" name="password" class="elgg-input-password" />
+					<span class="help-block"><label class="checkbox inline"><input type="checkbox" name="persistent" checked="checked" value="true"> <small>Garder ma session active | <a class="forgot_link" href="http://www.beebac.com/forgotpassword">Mot de passe perdu</a></small></label></span>
+				</div>
+			</div>
+			<button type="submit" class="btn btn-small btn-success"><i class="icon-off"></i> Connexion</button>
+			</div>
+		<div class="wrow logo">
+			<img class="hidden-phone logo" width="" height="" src="http://www.beebac.com/beebacadmin/images/?lastcache=&joindate=1240286481&type=login" title="" />			<a data-network="facebook" class="btn btn-small snbtn facebook snconnect" href="http://www.beebac.com/social/connect/facebook"><i class="icon-facebook"></i> Se connecter avec Facebook</a><a data-network="linkedin" class="btn btn-small snbtn linkedin snconnect" href="http://www.beebac.com/social/connect/linkedin"><i class="icon-linkedin"></i> Se connecter avec LinkedIn</a><a data-network="google" class="btn btn-small snbtn google snconnect" href="http://www.beebac.com/social/connect/google"><i class="icon-google-plus"></i> Se connecter avec Google+</a>		</div>
+	</div>
+</div>
+<div class="modal-footer modal-center">
+	Pas encore inscrit sur Beebac ? <a class="registration_link" href="http://www.beebac.com/register">Créer un compte</a></div>
+<input type="hidden" name="returntoreferer" value="true" /></fieldset></form></div><form method="post" action="http://www.beebac.com/action/content/report/new" id="reportcontent" class="elgg-form modal fade hide elgg-form-reportcontent-modal"><fieldset><input type="hidden" name="__elgg_token" value="f5ba767eece82a787c0a6eb1cddb17b3" /><input type="hidden" name="__elgg_ts" value="1382865304" /><div class="modal-header">
+	<a class="close" data-dismiss="modal">×</a>
+	<h3>Signaler</h3>
+</div>
+<div class="modal-body">
+	</div>
+<div class="modal-footer">
+	<button class="btn" data-dismiss="modal">Annuler</button>
+	<input type="submit" value="Envoyer" class="btn btn btn-primary" />
+</div>
+</fieldset></form><div id="page-footer">
+	<div class="container">
+<div class="row"><div class="span3 elgg-widgets" id="elgg-widget-col-1"><div class="elgg-module elgg-module elgg-module-widget elgg-state-fixed elgg-widget-instance-free_html" id="elgg-widget-67057"><div class="elgg-head">	<div class="elgg-widget-handle clearfix"><h3>Aide</h3>
+	<ul class="nav menu-widget elgg-menu-hz menu-widget-default"><li class="elgg-menu-item-collapse active"><a href="#elgg-widget-content-67057" class="elgg-widget-collapse-button" rel="toggle"> </a></li></ul>
+	</div></div><div class="elgg-body">	
+	<div class="elgg-widget-content" id="elgg-widget-content-67057">
+		<ul>
+<li><a rel="nofollow" href="http://www.beebac.com/info/faq/">F.A.Q.</a></li>
+<li><a rel="nofollow" href="http://www.beebac.com/info/bestpractices">Charte d'utilisation</a></li>
+<li><a rel="nofollow" href="http://www.beebac.com/info/security">Sécurité</a></li>
+<li><a rel="nofollow" href="http://www.beebac.com/info/contact/">Contactez-nous</a></li>				
+</ul>
+	</div></div></div></div><div class="span3 elgg-widgets" id="elgg-widget-col-2"><div class="elgg-module elgg-module elgg-module-widget elgg-state-fixed elgg-widget-instance-free_html" id="elgg-widget-67056"><div class="elgg-head">	<div class="elgg-widget-handle clearfix"><h3>Legal</h3>
+	<ul class="nav menu-widget elgg-menu-hz menu-widget-default"><li class="elgg-menu-item-collapse active"><a href="#elgg-widget-content-67056" class="elgg-widget-collapse-button" rel="toggle"> </a></li></ul>
+	</div></div><div class="elgg-body">	
+	<div class="elgg-widget-content" id="elgg-widget-content-67056">
+		<ul>
+<li><a href="http://www.beebac.com/info/termsofuse">Conditions d'utilisation</a></li>
+<li><a href="http://www.beebac.com/info/privacy">Vie privée</a></li>
+<li><a href="http://www.beebac.com/info/signal/">Signaler</a></li>
+<li><a href="http://www.beebac.com/info/legals">Mentions légales</a></li>
+</ul>
+	</div></div></div></div><div class="span3 elgg-widgets" id="elgg-widget-col-3"><div class="elgg-module elgg-module elgg-module-widget elgg-state-fixed elgg-widget-instance-free_html" id="elgg-widget-67055"><div class="elgg-head">	<div class="elgg-widget-handle clearfix"><h3>Beebac</h3>
+	<ul class="nav menu-widget elgg-menu-hz menu-widget-default"><li class="elgg-menu-item-collapse active"><a href="#elgg-widget-content-67055" class="elgg-widget-collapse-button" rel="toggle"> </a></li></ul>
+	</div></div><div class="elgg-body">	
+	<div class="elgg-widget-content" id="elgg-widget-content-67055">
+		<ul>
+<li><a href="http://www.beebac.com/info/about">A propos</a></li>
+					<li><a href="http://www.beebac.com/info/concept">Concept Beebac</a></li>
+<li><a href="http://www.beebac.com/info/licences">Licences ouvertes</a></li>
+					<li><a href="http://www.beebac.com/info/newsletter">Newsletter</a></li>
+</ul>
+	</div></div></div></div><div class="span3 elgg-widgets" id="elgg-widget-col-4"><div class="elgg-module elgg-module elgg-module-widget elgg-state-fixed elgg-widget-instance-free_html" id="elgg-widget-67054"><div class="elgg-head">	<div class="elgg-widget-handle clearfix"><h3>Devenez partenaire</h3>
+	<ul class="nav menu-widget elgg-menu-hz menu-widget-default"><li class="elgg-menu-item-collapse active"><a href="#elgg-widget-content-67054" class="elgg-widget-collapse-button" rel="toggle"> </a></li></ul>
+	</div></div><div class="elgg-body">	
+	<div class="elgg-widget-content" id="elgg-widget-content-67054">
+		<ul>
+<li><a rel="nofollow" href="http://www.beebac.com/info/partnerchannel">Avoir une Page Partenaire</a></li>
+					<li><a rel="nofollow" href="http://www.beebac.com/info/partners">Nos partenaires</a></li>
+					<li><a rel="nofollow" href="http://campus.beebac.com" target="_blank">Beebac pour votre école</a></li>
+</ul>
+	</div></div></div></div></div>
+<div class="elgg-ajax-loader hidden" id="elgg-widget-loader"></div>
+	</div>
+	<div id="footer_mentions">
+		<div class="container">
+			Conçu par <a title="Le réseau social de l'éducation" target="_blank" href="http://www.beebac.com">Beebac</a> propulsé par <a title="Le réseau social privé pour votre école" target="_blank" href="http://campus.beebac.com">Beebac CAMPUS</a>			<div class="snfooter hidden-phone clearfix">
+				<a target="_blank" title="Beebac sur Twitter" href="http://twitter.com/beebac" class="pull-left ico-social ico-twitter"></a>
+				<a target="_blank" title="Beebac sur Facebook" href="http://facebook.com/beebac" class="pull-left ico-social ico-facebook"></a>
+				<a target="_blank" title="Beebac sur Vimeo" href="http://vimeo.com/beebac" class="pull-left ico-social ico-vimeo"></a>
+			</div>
+		</div>
+	</div>
+</div></footer>
+<script>
+	var _gaq = Array();
+	_gaq.push(
+		['_setAccount', 'UA-8327446-1'],
+		['_trackPageview']
+	);
+   (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.async = true;
+    g.src = ('https:' == location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    s.parentNode.insertBefore(g, s);
+   })(document, 'script');
+</script>
+</body>
+</html>
