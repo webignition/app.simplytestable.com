@@ -4,12 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class CurrentTest extends BaseControllerJsonTestCase {
-    
-    public function setUp() {        
-        self::setupDatabase();
-        parent::setUp();        
-    }     
+class CurrentTest extends BaseControllerJsonTestCase {  
     
     public function testForPublicUserWithNoLimitAndNoTests() {
         $jobList = json_decode($this->getJobController('currentAction')->currentAction()->getContent());
@@ -112,6 +107,62 @@ class CurrentTest extends BaseControllerJsonTestCase {
         foreach (array_reverse($incompleteStates) as $index => $incompleteState) {
             $this->assertEquals('http://'.$incompleteState->getName().'.example.com/', $jobList[$index]->website);
         }    
+    }
+    
+    
+    public function testIncludeFailedNoSitemapJobsThatHaveActiveCrawlJobs() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $canonicalUrl = 'http://example.com';
+        
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        
+        $jobList = json_decode($this->getJobController('currentAction', array(
+            'user' => $user->getEmail()
+        ))->currentAction()->getContent());
+        
+        $listContainsCrawlingParentJob = false;
+        foreach ($jobList as $listedJob) {
+            if ($listedJob->id == $job->getId()) {
+                $listContainsCrawlingParentJob = true;
+            }
+        }
+        
+        $this->assertTrue($listContainsCrawlingParentJob); 
+    }
+    
+    
+    public function testListIsSortedByJobId() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
+        $jobNotCrawling = $this->getJobService()->getById($this->createAndPrepareJob('http://foo.example.com', $user->getEmail()));        
+        $jobIsCrawling = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com', $user->getEmail()));                      
+        
+        $jobList = json_decode($this->getJobController('currentAction', array(
+            'user' => $user->getEmail()
+        ))->currentAction()->getContent());
+        
+        $this->assertEquals($jobIsCrawling->getId(), $jobList[0]->id);
+        $this->assertEquals($jobNotCrawling->getId(), $jobList[1]->id);
+    }
+    
+    public function testDoesNotIncludeCrawlJobs() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $canonicalUrl = 'http://example.com';
+        
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        
+        $jobList = json_decode($this->getJobController('currentAction', array(
+            'user' => $user->getEmail()
+        ))->currentAction()->getContent());
+        
+        $this->assertEquals(1, count($jobList));
+        $this->assertEquals($job->getId(), $jobList[0]->id);
     }
     
 }

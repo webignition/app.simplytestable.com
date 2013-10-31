@@ -237,17 +237,28 @@ class JobController extends ApiController
             )
         ));
         
+        $types = array(
+            $this->getJobTypeService()->getFullSiteType(),
+            $this->getJobTypeService()->getSingleUrlType(),
+        );        
         
-        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserAndStates($this->getUser(), $limit, $this->getJobService()->getIncompleteStates());
+        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserAndTypeAndStates($this->getUser(), $types, $limit, $this->getJobService()->getIncompleteStates());
 
         $jobSummaries = array();
         
         foreach ($jobs as $job) {
-            $jobSummaries[] = $this->getSummary($job);
+            $jobSummaries[$job->getId()] = $this->getSummary($job);
         }
         
-        return $this->sendResponse($jobSummaries);       
-    }    
+        $activeCrawlJobContainers = $this->getCrawlJobContainerService()->getAllActiveForUser($this->getUser());
+        
+        foreach ($activeCrawlJobContainers as $crawlJobContainer) {
+            $jobSummaries[$crawlJobContainer->getParentJob()->getId()] = $this->getSummary($crawlJobContainer->getParentJob());
+        }
+        
+        krsort($jobSummaries);        
+        return $this->sendResponse(array_values($jobSummaries));       
+    }
     
     public function cancelAction($site_root_url, $test_id)
     {

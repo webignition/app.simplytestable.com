@@ -275,7 +275,7 @@ class JobRepository extends EntityRepository
         $queryBuilder->setParameter('JobType', $jobType);
         $queryBuilder->setParameter('Website', $website);
         $queryBuilder->setParameter('StartOfMonth', $now->format('Y-m-01'));
-        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()));
+        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()).' 23:59:59');
         
         $result = $queryBuilder->getQuery()->getResult();
         
@@ -347,11 +347,19 @@ class JobRepository extends EntityRepository
     }
     
 
-    public function findAllByUserAndStates(User $user, $limit = null, $includeStates = array()) {
+    public function findAllByUserAndTypeAndStates(User $user, $jobTypes, $limit = null, $includeStates = array()) {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('Job');
         
         $where = 'Job.user = :User';
+        
+        $typeWhereParts = array();
+        foreach ($jobTypes as $typeIndex => $jobType) {
+            $typeWhereParts[] = 'Job.type = :Type' . $typeIndex;
+            $queryBuilder->setParameter('Type' . $typeIndex, $jobType);
+        }
+        
+        $where .= ' AND ('.  implode(' OR ', $typeWhereParts).')';
         
         if (is_array($includeStates)) {
             $stateWhere = '';

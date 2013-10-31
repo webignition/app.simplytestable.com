@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\User;
 
 class CrawlJobContainerRepository extends EntityRepository
 {
@@ -36,5 +37,25 @@ class CrawlJobContainerRepository extends EntityRepository
         
         $result = $queryBuilder->getQuery()->getResult();
         return (count($result) === 0) ? null : $result[0];    
+    }
+    
+    
+    public function getAllForUserByCrawlJobStates(User $user, $states) {
+        $queryBuilder = $this->createQueryBuilder('CrawlJobContainer');
+        $queryBuilder->join('CrawlJobContainer.parentJob', 'ParentJob');
+        $queryBuilder->join('CrawlJobContainer.crawlJob', 'CrawlJob');        
+        $queryBuilder->select('CrawlJobContainer');
+        
+        $stateWhereParts = array();
+        
+        foreach ($states as $stateIndex => $state) {            
+            $stateWhereParts[] = 'CrawlJob.state = :State' . $stateIndex;
+            $queryBuilder->setParameter('State' . $stateIndex, $state);
+        }
+        
+        $queryBuilder->where('CrawlJob.user = :User AND ('.implode(' OR ', $stateWhereParts).')');
+        $queryBuilder->setParameter('User', $user);        
+        
+        return $queryBuilder->getQuery()->getResult();         
     }
 }

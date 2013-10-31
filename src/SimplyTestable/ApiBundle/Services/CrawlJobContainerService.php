@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\User;
 
 class CrawlJobContainerService extends EntityService {
     
@@ -338,5 +339,10 @@ class CrawlJobContainerService extends EntityService {
      */
     public function getEntityRepository() {
         return parent::getEntityRepository();
-    }    
+    }
+    
+    
+    public function getAllActiveForUser(User $user) {
+        return $this->getEntityRepository()->getAllForUserByCrawlJobStates($user, $this->jobService->getIncompleteStates());
+    }
 }

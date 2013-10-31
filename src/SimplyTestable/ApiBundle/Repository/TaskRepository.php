@@ -511,26 +511,10 @@ class TaskRepository extends EntityRepository
         $queryBuilder->where($where);
         $queryBuilder->setParameter('User', $user);
         $queryBuilder->setParameter('StartOfMonth', $now->format('Y-m-01'));
-        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()));        
+        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()).' 23:59:59');        
         
         $result = $queryBuilder->getQuery()->getResult();
         
-        return (int)$result[0][1];
-        
-/**
-SELECT COUNT( Task.id ) 
-FROM Task
-LEFT JOIN Job ON Task.job_id = Job.id
-LEFT JOIN fos_user ON Job.user_id = fos_user.id
-LEFT JOIN State ON Task.state_id = State.id
-LEFT JOIN TimePeriod ON Task.timePeriod_id = TimePeriod.id
-WHERE fos_user.id =3
-AND State.name
-IN (
-'task-completed',  'task-failed-no-retry-available',  'task-failed-retry-available',  'task-failed-retry-limit-reached',  'task-skipped'
-)
-AND TimePeriod.startDateTime >=  '2013-06-01'
-AND TimePeriod.startDateTime <=  '2013-06-30'
- */      
+        return (int)$result[0][1];   
     }
 }
