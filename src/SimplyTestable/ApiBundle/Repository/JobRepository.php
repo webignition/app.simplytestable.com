@@ -35,7 +35,7 @@ class JobRepository extends EntityRepository
     }
     
     
-    public function findAllByUserAndNotTypeOrderedByIdDesc(User $user, $limit = null, $excludeTypes = array()) {
+    public function findAllByUserAndNotTypeAndNotStatesOrderedByIdDesc(User $user, $limit = null, $excludeTypes = array(), $excludeStates = array()) {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('Job');
         
@@ -50,7 +50,18 @@ class JobRepository extends EntityRepository
             }
 
             $where .= ' AND ('.implode(' AND ', $typeExclusionParts).')';
-        }        
+        }
+        
+        if (is_array($excludeStates) && count($excludeStates) > 0) {            
+            $stateExclusionParts = array();
+            
+            foreach ($excludeStates as $stateIndex => $state) {                
+                $stateExclusionParts[] = 'Job.state != :State' .  $stateIndex;
+                $queryBuilder->setParameter('State' .  $stateIndex, $state);
+            }
+
+            $where .= ' AND ('.implode(' AND ', $stateExclusionParts).')';
+        }
         
         $queryBuilder->where($where);
         $queryBuilder->setMaxResults($limit);

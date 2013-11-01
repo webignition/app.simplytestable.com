@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class ListTest extends BaseControllerJsonTestCase {
+class ListTest extends BaseControllerJsonTestCase {      
     
     public function setUp() {        
         self::setupDatabase();
@@ -190,6 +190,23 @@ class ListTest extends BaseControllerJsonTestCase {
         
         $this->assertEquals(2, count(json_decode($listResponse->getContent())));
     }
+
+    public function testExcludeCurrentJobsFromList() {
+        $jobs = array();
+        $jobs[] = $this->getJobService()->getById($this->createJobAndGetId('http://one.example.com', null, 'single url'));
+        $jobs[] = $this->getJobService()->getById($this->createJobAndGetId('http://two.example.com', null, 'single url'));
+        $jobs[] = $this->getJobService()->getById($this->createJobAndGetId('http://three.example.com', null, 'single url'));
+        
+        $jobs[0]->setState($this->getJobService()->getCompletedState());
+        $this->getJobService()->persistAndFlush($jobs[0]);
+
+        $listObject = json_decode($this->getJobController('listAction', array(), array(
+            'exclude-current' => '1'
+        ))->listAction(count($jobs))->getContent());
+        
+        $this->assertEquals(1, count($listObject));
+        $this->assertEquals($jobs[0]->getId(), $listObject[0]->id);
+    }    
 
     /**
      * 

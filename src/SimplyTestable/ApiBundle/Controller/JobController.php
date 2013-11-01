@@ -210,6 +210,11 @@ class JobController extends ApiController
             }
         }
         
+        $excludeStates = array();
+        if (!is_null($this->get('request')->query->get('exclude-current'))) {
+            $excludeStates = $this->getJobService()->getIncompleteStates();
+        }
+        
         $limit = filter_var($limit, FILTER_VALIDATE_INT, array(
             'options' => array(
                 'default' => 1,
@@ -217,7 +222,7 @@ class JobController extends ApiController
             )
         ));
         
-        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserAndNotTypeOrderedByIdDesc($this->getUser(), $limit, $excludeTypes);
+        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserAndNotTypeAndNotStatesOrderedByIdDesc($this->getUser(), $limit, $excludeTypes, $excludeStates);        
         $jobSummaries = array();
         
         foreach ($jobs as $job) {
