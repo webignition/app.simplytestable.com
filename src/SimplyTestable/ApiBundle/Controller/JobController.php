@@ -210,9 +210,28 @@ class JobController extends ApiController
             }
         }
         
-        $excludeStates = array();
+        $excludeStateNames = array();
+        if (!is_null($this->get('request')->query->get('exclude-states'))) {
+            $truncatedStateNames = $this->get('request')->query->get('exclude-states');
+            foreach ($truncatedStateNames as $truncatedStateName) {
+                $stateName = 'job-' . $truncatedStateName;
+                if (!in_array($stateName, $excludeStateNames)) {
+                    $excludeStateNames[] = $stateName;
+                }
+            }
+        }        
+        
         if (!is_null($this->get('request')->query->get('exclude-current'))) {
-            $excludeStates = $this->getJobService()->getIncompleteStates();
+            foreach ($this->getJobService()->getIncompleteStates() as $incompleteState) {
+                $excludeStateNames[] = $incompleteState->getName();
+            }
+        }
+        
+        $excludeStates = array();
+        foreach ($excludeStateNames as $stateName) {
+            if ($this->getStateService()->has($stateName)) {
+                $excludeStates[] = $this->getStateService()->fetch($stateName);
+            }
         }
         
         $limit = filter_var($limit, FILTER_VALIDATE_INT, array(
@@ -624,12 +643,20 @@ class JobController extends ApiController
         return $this->container->get('simplytestable.services.jobpreparationservice');
     } 
     
-    
     /**
      *
      * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
      */        
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
+    }       
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\StateService
+     */        
+    private function getStateService() {
+        return $this->get('simplytestable.services.stateservice');
     }        
 }
