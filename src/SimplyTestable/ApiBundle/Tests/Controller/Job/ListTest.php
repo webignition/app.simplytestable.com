@@ -230,7 +230,15 @@ class ListTest extends BaseControllerJsonTestCase {
         
         $this->assertEquals(1, count($listObject));
         $this->assertEquals($jobs[0]->getId(), $listObject[0]->id);
-    }     
+    } 
+    
+    
+    public function testListIncludesUrlCount() {
+        $this->getJobService()->getById($this->createJobAndGetId('http://one.example.com', null, 'single url'));     
+        $listObject = json_decode($this->getJobController('listAction')->listAction(1)->getContent());        
+        
+        $this->assertEquals(1, $listObject[0]->url_count);     
+    }
 
     /**
      * 

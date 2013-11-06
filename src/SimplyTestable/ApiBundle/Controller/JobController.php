@@ -245,6 +245,7 @@ class JobController extends ApiController
         $jobSummaries = array();
         
         foreach ($jobs as $job) {
+            $this->populateJob($job);            
             $jobSummaries[] = $this->getSummary($job);
         }
         
