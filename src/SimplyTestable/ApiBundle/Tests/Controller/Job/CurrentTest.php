@@ -165,6 +165,14 @@ class CurrentTest extends BaseControllerJsonTestCase {
         $this->assertEquals($job->getId(), $jobList[0]->id);
     }
     
+    
+    public function testListIncludesJobUrlCount() {
+        $this->createJob('http://one.example.com/');        
+        $jobList = json_decode($this->getJobController('currentAction')->currentAction()->getContent());
+        
+        $this->assertTrue(isset($jobList[0]->url_count));   
+    }     
+    
 }
 
 

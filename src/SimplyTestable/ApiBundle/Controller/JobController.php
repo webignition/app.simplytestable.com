@@ -272,12 +272,14 @@ class JobController extends ApiController
         $jobSummaries = array();
         
         foreach ($jobs as $job) {
+            $this->populateJob($job);
             $jobSummaries[$job->getId()] = $this->getSummary($job);
         }
         
         $activeCrawlJobContainers = $this->getCrawlJobContainerService()->getAllActiveForUser($this->getUser());
         
         foreach ($activeCrawlJobContainers as $crawlJobContainer) {
+            $this->populateJob($crawlJobContainer->getParentJob());
             $jobSummaries[$crawlJobContainer->getParentJob()->getId()] = $this->getSummary($crawlJobContainer->getParentJob());
         }
         
