@@ -127,6 +127,36 @@ class JobStartController extends ApiController
         )));
     }
     
+    
+    public function retestAction($site_root_url, $test_id) {
+        $job = $this->getJobService()->getById($test_id);
+        if (is_null($job)) {
+            return $this->sendFailureResponse();
+        }
+        
+        if (!$this->getJobService()->isFinished($job)) {
+            return $this->sendFailureResponse();
+        }
+        
+        $taskTypeNames = array();        
+        foreach ($job->getRequestedTaskTypes() as $taskType) {
+            $taskTypeNames[] = $taskType->getName();
+        }
+        
+        $taskTypeOptionsArray = array();        
+        foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
+            $taskTypeOptionsArray[strtolower($taskTypeOptions->getTaskType()->getName())] = $taskTypeOptions->getOptions();
+        }        
+        
+        /* @var $query \Symfony\Component\HttpFoundation\ParameterBag */
+        $query = $this->get('request')->query;        
+        $query->set('type', $job->getType()->getName());
+        $query->set('test-types', $taskTypeNames);        
+        $query->set('test-type-options', $taskTypeOptionsArray);
+        
+        return $this->startAction($job->getWebsite()->getCanonicalUrl());
+    }      
+    
     private function rejectAsUnroutableAndRedirect() {
         $job = $this->getJobService()->create(
             $this->getUser(),
@@ -365,4 +395,8 @@ class JobStartController extends ApiController
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
     }    
+    
+
+    
+  
 }

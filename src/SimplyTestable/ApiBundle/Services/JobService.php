@@ -356,7 +356,7 @@ class JobService extends EntityService {
      * @param Job $job
      * @return boolean 
      */
-    private function isFinished(Job $job) {
+    public function isFinished(Job $job) {
         if ($this->isCancelled($job)) {
             return true;
         }
