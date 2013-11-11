@@ -31,6 +31,11 @@ services:
         taskService: "@simplytestable.services.taskservice"
         taskTypeService: "@simplytestable.services.tasktypeservice"
         
+  simplytestable.services.joblistservice:
+    class:  SimplyTestable\ApiBundle\Services\JobListService
+    arguments: 
+        jobService: "@simplytestable.services.jobservice"        
+        
   simplytestable.services.userservice:
     class:  SimplyTestable\ApiBundle\Services\UserService
     arguments:

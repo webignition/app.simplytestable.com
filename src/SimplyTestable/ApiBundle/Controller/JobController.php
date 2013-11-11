@@ -197,20 +197,46 @@ class JobController extends ApiController
     }
     
     
-    public function listAction($limit = 1)
+    public function listAction($limit = null, $offset = null)
     {
+        $this->getJobListService()->setUser($this->getUser());
+        
+        $this->getJobListService()->setLimit($limit);
+        $this->getJobListService()->setOffset($offset);
+        $this->getJobListService()->setOrderBy($this->get('request')->query->get('order-by'));
+        
+        $excludeTypeNames = (is_null($this->get('request')->query->get('exclude-types'))) ? array('crawl') : $this->get('request')->query->get('exclude-types');
+        if (!in_array('crawl', $excludeTypeNames)) {
+            $excludeTypeNames[] = 'crawl';
+        }        
+
         $excludeTypes = array();
-        if (!is_null($this->get('request')->query->get('exclude-types'))) {
-            $exludeTypeNames = $this->get('request')->query->get('exclude-types');
-            
-            foreach ($exludeTypeNames as $typeName) {
-                if ($this->getJobTypeService()->has($typeName)) {
-                    $excludeTypes[] = $this->getJobTypeService()->getByName($typeName);
+
+        foreach ($excludeTypeNames as $typeName) {
+            if ($this->getJobTypeService()->has($typeName)) {
+                $excludeTypes[] = $this->getJobTypeService()->getByName($typeName);
+            }
+        }
+
+        $this->getJobListService()->setExcludeTypes($excludeTypes);
+
+        $excludeStateNames = array();
+        if (!is_null($this->get('request')->query->get('exclude-current'))) {            
+            foreach ($this->getJobService()->getIncompleteStates() as $state) {
+                if (!in_array($state->getName(), $excludeStateNames)) {
+                    $excludeStateNames[] = $state->getName();
                 }
             }
         }
         
-        $excludeStateNames = array();
+        if (!is_null($this->get('request')->query->get('exclude-finished'))) {            
+            foreach ($this->getJobService()->getFinishedStates() as $state) {
+                if (!in_array($state->getName(), $excludeStateNames)) {
+                    $excludeStateNames[] = $state->getName();
+                }
+            }
+        }        
+        
         if (!is_null($this->get('request')->query->get('exclude-states'))) {
             $truncatedStateNames = $this->get('request')->query->get('exclude-states');
             foreach ($truncatedStateNames as $truncatedStateName) {
@@ -221,71 +247,39 @@ class JobController extends ApiController
             }
         }        
         
-        if (!is_null($this->get('request')->query->get('exclude-current'))) {
-            foreach ($this->getJobService()->getIncompleteStates() as $incompleteState) {
-                $excludeStateNames[] = $incompleteState->getName();
-            }
-        }
-        
         $excludeStates = array();
         foreach ($excludeStateNames as $stateName) {
             if ($this->getStateService()->has($stateName)) {
                 $excludeStates[] = $this->getStateService()->fetch($stateName);
             }
+        } 
+        
+        $this->getJobListService()->setExcludeStates($excludeStates);        
+
+        $crawlJobParentIds = array();
+        $crawlJobContainers = $this->getCrawlJobContainerService()->getAllActiveForUser($this->getUser());
+        foreach ($crawlJobContainers as $crawlJobContainer) {
+            $crawlJobParentIds[] = $crawlJobContainer->getParentJob()->getId();
         }
         
-        $limit = filter_var($limit, FILTER_VALIDATE_INT, array(
-            'options' => array(
-                'default' => 1,
-                'min_range' => 0
-            )
-        ));
+        if (is_null($this->get('request')->query->get('exclude-current'))) { 
+            $this->getJobListService()->setIncludeIds($crawlJobParentIds);
+        } else {
+            $this->getJobListService()->setExcludeIds($crawlJobParentIds);
+        }
         
-        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserAndNotTypeAndNotStatesOrderedByIdDesc($this->getUser(), $limit, $excludeTypes, $excludeStates);        
-        $jobSummaries = array();
+        $jobs = $this->getJobListService()->get();
+        
+        $summaries = array();
         
         foreach ($jobs as $job) {
             $this->populateJob($job);            
-            $jobSummaries[] = $this->getSummary($job);
+            $summaries[] = $this->getSummary($job);
         }
         
-        return $this->sendResponse($jobSummaries);       
-    }    
-    
-    
-    public function currentAction($limit = null)
-    {   
-        $limit = filter_var($limit, FILTER_VALIDATE_INT, array(
-            'options' => array(
-                'default' => null,
-                'min_range' => 0
-            )
-        ));
-        
-        $types = array(
-            $this->getJobTypeService()->getFullSiteType(),
-            $this->getJobTypeService()->getSingleUrlType(),
-        );        
-        
-        $jobs = $this->getJobService()->getEntityRepository()->findAllByUserAndTypeAndStates($this->getUser(), $types, $limit, $this->getJobService()->getIncompleteStates());
-
-        $jobSummaries = array();
-        
-        foreach ($jobs as $job) {
-            $this->populateJob($job);
-            $jobSummaries[$job->getId()] = $this->getSummary($job);
-        }
-        
-        $activeCrawlJobContainers = $this->getCrawlJobContainerService()->getAllActiveForUser($this->getUser());
-        
-        foreach ($activeCrawlJobContainers as $crawlJobContainer) {
-            $this->populateJob($crawlJobContainer->getParentJob());
-            $jobSummaries[$crawlJobContainer->getParentJob()->getId()] = $this->getSummary($crawlJobContainer->getParentJob());
-        }
-        
-        krsort($jobSummaries);        
-        return $this->sendResponse(array_values($jobSummaries));       
+        return $this->sendResponse($summaries);      
     }
+
     
     public function cancelAction($site_root_url, $test_id)
     {
@@ -652,7 +646,7 @@ class JobController extends ApiController
      */        
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
-    }       
+    }
     
     
     /**
@@ -661,5 +655,14 @@ class JobController extends ApiController
      */        
     private function getStateService() {
         return $this->get('simplytestable.services.stateservice');
+    }    
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\JobListService
+     */        
+    private function getJobListService() {
+        return $this->get('simplytestable.services.joblistservice');
     }        
 }

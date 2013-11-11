@@ -1,13 +1,13 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\ListAction;
 
-use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
-
-class CurrentTest extends BaseControllerJsonTestCase {  
+class CurrentTest extends AbstractListTest {  
     
     public function testForPublicUserWithNoLimitAndNoTests() {
-        $jobList = json_decode($this->getJobController('currentAction')->currentAction()->getContent());
+        $jobList = json_decode($this->getJobController('listAction', array(), array(
+            'exclude-finished' => '1'
+        ))->listAction()->getContent());
         $this->assertEquals(array(), $jobList);  
     }    
     
@@ -22,7 +22,9 @@ class CurrentTest extends BaseControllerJsonTestCase {
             $this->createJob($canonicalUrl);
         }        
         
-        $jobList = json_decode($this->getJobController('currentAction')->currentAction()->getContent());
+        $jobList = json_decode($this->getJobController('listAction', array(), array(
+            'exclude-finished' => '1'
+        ))->listAction(count($canonicalUrls))->getContent());
         
         foreach (array_reverse($canonicalUrls) as $index => $canonicalUrl) {
             $this->assertEquals($canonicalUrl, $jobList[$index]->website);
@@ -42,7 +44,9 @@ class CurrentTest extends BaseControllerJsonTestCase {
         }        
         
         $limit = 1;
-        $jobList = json_decode($this->getJobController('currentAction')->currentAction($limit)->getContent());
+        $jobList = json_decode($this->getJobController('listAction', array(), array(
+            'exclude-finished' => '1'
+        ))->listAction($limit)->getContent());
         
         $this->assertEquals($limit, count($jobList));  
     }     
@@ -60,7 +64,9 @@ class CurrentTest extends BaseControllerJsonTestCase {
         }        
         
         $limit = 2;
-        $jobList = json_decode($this->getJobController('currentAction')->currentAction($limit)->getContent());
+        $jobList = json_decode($this->getJobController('listAction', array(), array(
+            'exclude-finished' => '1'
+        ))->listAction($limit)->getContent());
         
         $this->assertEquals($limit, count($jobList));  
     }     
@@ -73,7 +79,9 @@ class CurrentTest extends BaseControllerJsonTestCase {
             $jobs[$incompleteState->getName()] = $this->getJobService()->getById($this->createJobAndGetId('http://'.$incompleteState->getName().'.example.com/'));
         }
         
-        $jobList = json_decode($this->getJobController('currentAction')->currentAction()->getContent());
+        $jobList = json_decode($this->getJobController('listAction', array(), array(
+            'exclude-finished' => '1'
+        ))->listAction(count($incompleteStates))->getContent());
         
         $this->assertEquals(count($incompleteStates), count($jobList));
         
@@ -100,7 +108,9 @@ class CurrentTest extends BaseControllerJsonTestCase {
             $jobs[$finishedState->getName()] = $job;
         }
         
-        $jobList = json_decode($this->getJobController('currentAction')->currentAction()->getContent());
+        $jobList = json_decode($this->getJobController('listAction', array(), array(
+            'exclude-finished' => '1'
+        ))->listAction(count($jobs))->getContent());
         
         $this->assertEquals(count($incompleteStates), count($jobList));
         
@@ -118,9 +128,11 @@ class CurrentTest extends BaseControllerJsonTestCase {
         
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
         
-        $jobList = json_decode($this->getJobController('currentAction', array(
+        $jobList = json_decode($this->getJobController('listAction', array(
             'user' => $user->getEmail()
-        ))->currentAction()->getContent());
+        ), array(
+            'exclude-finished' => '1'
+        ))->listAction()->getContent());
         
         $listContainsCrawlingParentJob = false;
         foreach ($jobList as $listedJob) {
@@ -139,12 +151,13 @@ class CurrentTest extends BaseControllerJsonTestCase {
         $user = $this->createAndActivateUser('user@example.com', 'password');
         
         $jobNotCrawling = $this->getJobService()->getById($this->createAndPrepareJob('http://foo.example.com', $user->getEmail()));        
-        $jobIsCrawling = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com', $user->getEmail()));                      
+        $jobIsCrawling = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com', $user->getEmail()));
         
-        $jobList = json_decode($this->getJobController('currentAction', array(
-            'user' => $user->getEmail()
-        ))->currentAction()->getContent());
-        
+        $jobList = json_decode($this->getJobController('listAction', array(
+            'user' => $user->getEmail(),
+            'exclude-finished' => '1'            
+        ))->listAction(10)->getContent());
+      
         $this->assertEquals($jobIsCrawling->getId(), $jobList[0]->id);
         $this->assertEquals($jobNotCrawling->getId(), $jobList[1]->id);
     }
@@ -157,9 +170,10 @@ class CurrentTest extends BaseControllerJsonTestCase {
         
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
         
-        $jobList = json_decode($this->getJobController('currentAction', array(
-            'user' => $user->getEmail()
-        ))->currentAction()->getContent());
+        $jobList = json_decode($this->getJobController('listAction', array(
+            'user' => $user->getEmail(),
+            'exclude-finished' => '1'  
+        ))->listAction(10)->getContent());
         
         $this->assertEquals(1, count($jobList));
         $this->assertEquals($job->getId(), $jobList[0]->id);
@@ -168,7 +182,7 @@ class CurrentTest extends BaseControllerJsonTestCase {
     
     public function testListIncludesJobUrlCount() {
         $this->createJob('http://one.example.com/');        
-        $jobList = json_decode($this->getJobController('currentAction')->currentAction()->getContent());
+        $jobList = json_decode($this->getJobController('listAction')->listAction(10)->getContent());
         
         $this->assertTrue(isset($jobList[0]->url_count));   
     }     
