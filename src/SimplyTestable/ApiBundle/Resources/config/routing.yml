@@ -66,17 +66,17 @@ job_is_public:
     requirements:
         site_root_url: ".+"        
         
-job:
-    pattern: /job/{site_root_url}/{test_id}/
-    defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
-    requirements:
-        site_root_url: ".+" 
-        
 job_retest:
     pattern: /job/{site_root_url}/{test_id}/re-test/
     defaults: { _controller: SimplyTestableApiBundle:JobStart:retest, _format: json }    
     requirements:
-        site_root_url: ".+"         
+        site_root_url: ".+"          
+        
+job:
+    pattern: /job/{site_root_url}/{test_id}/
+    defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
+    requirements:
+        site_root_url: ".+"
     
 task_type_count:
   pattern: /tasks/{task_type}/{state_name}/count/
