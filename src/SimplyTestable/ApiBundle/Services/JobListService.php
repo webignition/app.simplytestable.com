@@ -9,7 +9,11 @@ use SimplyTestable\ApiBundle\Entity\State;
 class JobListService  {
     
     const DEFAULT_LIMIT = 1;
-    const DEFAULT_OFFSET = 0;    
+    const MIN_LIMIT = 1;
+    const MAX_LIMIT = 100;
+    
+    const DEFAULT_OFFSET = 0; 
+    const MIN_OFFSET = 0;
     
     const DEFAULT_ORDER_BY = 'id';
     
@@ -108,13 +112,14 @@ class JobListService  {
      * @param int $limit
      */
     public function setLimit($limit) {        
-        $limit = filter_var($limit, FILTER_VALIDATE_INT, array(
-            'options' => array(
-                'min_range' => 1
-        )));        
+        $limit = (int)filter_var($limit, FILTER_VALIDATE_INT);
         
-        if ($limit === false) {
-            $limit = self::DEFAULT_LIMIT;
+        if ($limit < self::MIN_LIMIT) {
+            $limit = self::MIN_LIMIT;
+        }
+        
+        if ($limit > self::MAX_LIMIT) {
+            $limit = self::MAX_LIMIT;
         }
         
         $this->limit = $limit;
@@ -126,6 +131,12 @@ class JobListService  {
      * @param int $offset
      */
     public function setOffset($offset) {
+        $offset = (int)filter_var($offset, FILTER_VALIDATE_INT);        
+        
+        if ($offset < self::MIN_OFFSET) {
+            $offset = self::MIN_OFFSET;
+        }
+        
         $this->offset = $offset;
     }
     
@@ -256,9 +267,36 @@ class JobListService  {
      * @return array
      */
     public function get() {
-        $queryBuilder = $this->getQueryBuilder();
+        $queryBuilder = $this->getDefaultQueryBuilder();
+        
+        $queryBuilder->setMaxResults($this->getLimit());
+        $queryBuilder->setFirstResult($this->getOffset());
         
         $queryBuilder->select('Job');
+        
+        return $queryBuilder->getQuery()->getResult();
+    }
+    
+    
+    public function getMaxResults() {
+        $queryBuilder = $this->getDefaultQueryBuilder();
+        
+        $queryBuilder->select('COUNT(Job.id)');
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return (int)$result[0][1];    
+    }
+    
+    
+    
+    /**
+     * 
+     * @return \Doctrine\ORM\QueryBuilder
+     */    
+    private function getDefaultQueryBuilder() {
+        $queryBuilder = $this->getQueryBuilder();
+        
         $queryBuilder->where('Job.user = :User');
         $queryBuilder->setParameter('User', $this->user);
         
@@ -306,13 +344,13 @@ class JobListService  {
             $queryBuilder->andWhere(implode(' AND ', $idWhereParts));
         }        
         
-        $queryBuilder->orderBy($this->getOrderByField(), $this->getOrder());
+        $queryBuilder->orderBy($this->getOrderByField(), $this->getOrder());        
         
-        $queryBuilder->setMaxResults($this->getLimit());
-        $queryBuilder->setFirstResult($this->getOffset());
-        
-        return $queryBuilder->getQuery()->getResult();
+        return $queryBuilder;
     }
+    
+    
+    
     
     
     /**
@@ -339,44 +377,7 @@ class JobListService  {
      */
     private function getOrderByField() {
         return isset($this->orderByFieldMap[$this->getOrderBy()]) ? $this->orderByFieldMap[$this->getOrderBy()] : $this->orderByFieldMap[self::DEFAULT_ORDER_BY];
-    }
-    
-    
-/**
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job');
-        
-        $where = 'Job.user = :User';
-        
-        if (is_array($excludeTypes) && count($excludeTypes) > 0) {            
-            $typeExclusionParts = array();
-            
-            foreach ($excludeTypes as $typeIndex => $type) {
-                $typeExclusionParts[] = 'Job.type != :Type' .  $typeIndex;
-                $queryBuilder->setParameter('Type' .  $typeIndex, $type);
-            }
-
-            $where .= ' AND ('.implode(' AND ', $typeExclusionParts).')';
-        }
-        
-        if (is_array($excludeStates) && count($excludeStates) > 0) {            
-            $stateExclusionParts = array();
-            
-            foreach ($excludeStates as $stateIndex => $state) {                
-                $stateExclusionParts[] = 'Job.state != :State' .  $stateIndex;
-                $queryBuilder->setParameter('State' .  $stateIndex, $state);
-            }
-
-            $where .= ' AND ('.implode(' AND ', $stateExclusionParts).')';
-        }
-        
-        $queryBuilder->where($where);
-        $queryBuilder->setMaxResults($limit);
-        $queryBuilder->orderBy('Job.id', 'DESC');
-
-        $queryBuilder->setParameter('User', $user);
-        return $queryBuilder->getQuery()->getResult();
- */    
+    } 
     
     
     /**

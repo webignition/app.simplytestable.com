@@ -268,14 +268,20 @@ class JobController extends ApiController
             $this->getJobListService()->setExcludeIds($crawlJobParentIds);
         }
         
-        $jobs = $this->getJobListService()->get();
-        
+        $jobs = $this->getJobListService()->get();        
         $summaries = array();
         
         foreach ($jobs as $job) {
             $this->populateJob($job);            
             $summaries[] = $this->getSummary($job);
         }
+        
+        return $this->sendResponse(array(
+            'max_results' => $this->getJobListService()->getMaxResults(),
+            'limit' => $this->getJobListService()->getLimit(),
+            'offset' => $this->getJobListService()->getOffset(),
+            'jobs' => $summaries
+        ));
         
         return $this->sendResponse($summaries);      
     }

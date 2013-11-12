@@ -32,7 +32,7 @@ class UserTest extends AbstractListTest {
         foreach ($lists as $user => $list) {
             $listJobIds = array();
             
-            foreach ($list as $job) {
+            foreach ($list->jobs as $job) {
                 $listJobIds[] = $job->id;
             }
             

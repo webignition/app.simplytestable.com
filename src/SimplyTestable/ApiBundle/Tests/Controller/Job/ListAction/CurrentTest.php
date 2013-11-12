@@ -5,10 +5,10 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\ListAction;
 class CurrentTest extends AbstractListTest {  
     
     public function testForPublicUserWithNoLimitAndNoTests() {
-        $jobList = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobController('listAction', array(), array(
             'exclude-finished' => '1'
         ))->listAction()->getContent());
-        $this->assertEquals(array(), $jobList);  
+        $this->assertEquals(array(), $list->jobs);  
     }    
     
     public function testForPublicUserWithNoLimitAndOnlyNewTests() {
@@ -22,12 +22,12 @@ class CurrentTest extends AbstractListTest {
             $this->createJob($canonicalUrl);
         }        
         
-        $jobList = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobController('listAction', array(), array(
             'exclude-finished' => '1'
         ))->listAction(count($canonicalUrls))->getContent());
         
         foreach (array_reverse($canonicalUrls) as $index => $canonicalUrl) {
-            $this->assertEquals($canonicalUrl, $jobList[$index]->website);
+            $this->assertEquals($canonicalUrl, $list->jobs[$index]->website);
         }    
     } 
     
@@ -44,11 +44,11 @@ class CurrentTest extends AbstractListTest {
         }        
         
         $limit = 1;
-        $jobList = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobController('listAction', array(), array(
             'exclude-finished' => '1'
         ))->listAction($limit)->getContent());
         
-        $this->assertEquals($limit, count($jobList));  
+        $this->assertEquals($limit, count($list->jobs));  
     }     
     
     
@@ -64,11 +64,11 @@ class CurrentTest extends AbstractListTest {
         }        
         
         $limit = 2;
-        $jobList = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobController('listAction', array(), array(
             'exclude-finished' => '1'
         ))->listAction($limit)->getContent());
         
-        $this->assertEquals($limit, count($jobList));  
+        $this->assertEquals($limit, count($list->jobs));  
     }     
 
     public function testForPublicUserWithNoLimitAndVariedIncompleteStateTests() {
@@ -79,14 +79,14 @@ class CurrentTest extends AbstractListTest {
             $jobs[$incompleteState->getName()] = $this->getJobService()->getById($this->createJobAndGetId('http://'.$incompleteState->getName().'.example.com/'));
         }
         
-        $jobList = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobController('listAction', array(), array(
             'exclude-finished' => '1'
         ))->listAction(count($incompleteStates))->getContent());
         
-        $this->assertEquals(count($incompleteStates), count($jobList));
+        $this->assertEquals(count($incompleteStates), count($list->jobs));
         
         foreach (array_reverse($incompleteStates) as $index => $incompleteState) {
-            $this->assertEquals('http://'.$incompleteState->getName().'.example.com/', $jobList[$index]->website);
+            $this->assertEquals('http://'.$incompleteState->getName().'.example.com/', $list->jobs[$index]->website);
         }    
     }    
     
@@ -108,14 +108,14 @@ class CurrentTest extends AbstractListTest {
             $jobs[$finishedState->getName()] = $job;
         }
         
-        $jobList = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobController('listAction', array(), array(
             'exclude-finished' => '1'
         ))->listAction(count($jobs))->getContent());
         
-        $this->assertEquals(count($incompleteStates), count($jobList));
+        $this->assertEquals(count($incompleteStates), count($list->jobs));
         
         foreach (array_reverse($incompleteStates) as $index => $incompleteState) {
-            $this->assertEquals('http://'.$incompleteState->getName().'.example.com/', $jobList[$index]->website);
+            $this->assertEquals('http://'.$incompleteState->getName().'.example.com/', $list->jobs[$index]->website);
         }    
     }
     
@@ -128,14 +128,14 @@ class CurrentTest extends AbstractListTest {
         
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
         
-        $jobList = json_decode($this->getJobController('listAction', array(
+        $list = json_decode($this->getJobController('listAction', array(
             'user' => $user->getEmail()
         ), array(
             'exclude-finished' => '1'
         ))->listAction()->getContent());
         
         $listContainsCrawlingParentJob = false;
-        foreach ($jobList as $listedJob) {
+        foreach ($list->jobs as $listedJob) {
             if ($listedJob->id == $job->getId()) {
                 $listContainsCrawlingParentJob = true;
             }
@@ -153,13 +153,13 @@ class CurrentTest extends AbstractListTest {
         $jobNotCrawling = $this->getJobService()->getById($this->createAndPrepareJob('http://foo.example.com', $user->getEmail()));        
         $jobIsCrawling = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com', $user->getEmail()));
         
-        $jobList = json_decode($this->getJobController('listAction', array(
+        $list = json_decode($this->getJobController('listAction', array(
             'user' => $user->getEmail(),
             'exclude-finished' => '1'            
         ))->listAction(10)->getContent());
       
-        $this->assertEquals($jobIsCrawling->getId(), $jobList[0]->id);
-        $this->assertEquals($jobNotCrawling->getId(), $jobList[1]->id);
+        $this->assertEquals($jobIsCrawling->getId(), $list->jobs[0]->id);
+        $this->assertEquals($jobNotCrawling->getId(), $list->jobs[1]->id);
     }
     
     public function testDoesNotIncludeCrawlJobs() {
@@ -170,21 +170,21 @@ class CurrentTest extends AbstractListTest {
         
         $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
         
-        $jobList = json_decode($this->getJobController('listAction', array(
+        $list = json_decode($this->getJobController('listAction', array(
             'user' => $user->getEmail(),
             'exclude-finished' => '1'  
         ))->listAction(10)->getContent());
         
-        $this->assertEquals(1, count($jobList));
-        $this->assertEquals($job->getId(), $jobList[0]->id);
+        $this->assertEquals(1, count($list->jobs));
+        $this->assertEquals($job->getId(), $list->jobs[0]->id);
     }
     
     
     public function testListIncludesJobUrlCount() {
         $this->createJob('http://one.example.com/');        
-        $jobList = json_decode($this->getJobController('listAction')->listAction(10)->getContent());
+        $list = json_decode($this->getJobController('listAction')->listAction(10)->getContent());
         
-        $this->assertTrue(isset($jobList[0]->url_count));   
+        $this->assertTrue(isset($list->jobs[0]->url_count));   
     }     
     
 }

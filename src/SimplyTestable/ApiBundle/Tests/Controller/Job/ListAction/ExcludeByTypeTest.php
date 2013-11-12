@@ -22,9 +22,9 @@ class ExcludeByTypeTest extends AbstractListTest {
             ))
         )->listAction($jobTotal)->getContent());      
         
-        $this->assertEquals($jobTotal - 1, count($list));
+        $this->assertEquals($jobTotal - 1, count($list->jobs));
         
-        foreach ($list as $job) {
+        foreach ($list->jobs as $job) {
             $this->assertNotEquals($excludeType, $job->type);
         }        
     }    

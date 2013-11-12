@@ -16,15 +16,15 @@ class ExcludeByStateTest extends AbstractListTest {
         $jobs[1]->setState($this->getJobService()->getRejectedState());
         $this->getJobService()->persistAndFlush($jobs[0]);        
 
-        $listObject = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobController('listAction', array(), array(
             'exclude-states' => array(
                 'rejected',
                 'queued'
             )
         ))->listAction(count($jobs))->getContent());
         
-        $this->assertEquals(1, count($listObject));
-        $this->assertEquals($jobs[0]->getId(), $listObject[0]->id);      
+        $this->assertEquals(1, count($list->jobs));
+        $this->assertEquals($jobs[0]->getId(), $list->jobs[0]->id);      
     }    
     
 }

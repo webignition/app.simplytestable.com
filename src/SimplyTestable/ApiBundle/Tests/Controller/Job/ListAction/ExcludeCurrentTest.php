@@ -13,12 +13,12 @@ class ExcludeCurrentTest extends AbstractListTest {
         $jobs[0]->setState($this->getJobService()->getCompletedState());
         $this->getJobService()->persistAndFlush($jobs[0]);
 
-        $listObject = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobController('listAction', array(), array(
             'exclude-current' => '1'
         ))->listAction(count($jobs))->getContent());
         
-        $this->assertEquals(1, count($listObject));
-        $this->assertEquals($jobs[0]->getId(), $listObject[0]->id);     
+        $this->assertEquals(1, count($list->jobs));
+        $this->assertEquals($jobs[0]->getId(), $list->jobs[0]->id);     
     } 
     
     
@@ -28,15 +28,15 @@ class ExcludeCurrentTest extends AbstractListTest {
         $user = $this->createAndActivateUser('user@example.com', 'password');
         $canonicalUrl = 'http://example.com';
         
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        $this->createAndPrepareJob($canonicalUrl, $user->getEmail());
         
-        $jobList = json_decode($this->getJobController('listAction', array(
+        $list = json_decode($this->getJobController('listAction', array(
             'user' => $user->getEmail()
         ), array(
             'exclude-current' => '1'
         ))->listAction()->getContent());
         
-        $this->assertEquals(0, count($jobList));      
+        $this->assertEquals(0, count($list->jobs));      
     }
     
 }

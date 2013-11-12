@@ -12,7 +12,7 @@ class LimitTest extends AbstractListTest {
         }
         
         $list = json_decode($this->getJobController('listAction')->listAction()->getContent());        
-        $this->assertEquals(1, count($list));  
+        $this->assertEquals(1, count($list->jobs));  
     }
     
     
@@ -24,7 +24,7 @@ class LimitTest extends AbstractListTest {
         }
         
         $list = json_decode($this->getJobController('listAction')->listAction(0)->getContent());        
-        $this->assertEquals(1, count($list));          
+        $this->assertEquals(1, count($list->jobs));          
     }
     
     
@@ -36,7 +36,7 @@ class LimitTest extends AbstractListTest {
         }
         
         $list = json_decode($this->getJobController('listAction')->listAction(-1)->getContent());        
-        $this->assertEquals(1, count($list));          
+        $this->assertEquals(1, count($list->jobs));          
     }
     
     
@@ -48,7 +48,7 @@ class LimitTest extends AbstractListTest {
         }
         
         $list = json_decode($this->getJobController('listAction')->listAction(1)->getContent());        
-        $this->assertEquals(1, count($list));           
+        $this->assertEquals(1, count($list->jobs));           
     }
     
     
@@ -60,7 +60,7 @@ class LimitTest extends AbstractListTest {
         }
         
         $list = json_decode($this->getJobController('listAction')->listAction(2)->getContent());                
-        $this->assertEquals(2, count($list));           
+        $this->assertEquals(2, count($list->jobs));           
     }    
     
     
@@ -72,7 +72,7 @@ class LimitTest extends AbstractListTest {
         }
         
         $list = json_decode($this->getJobController('listAction')->listAction(50)->getContent());                
-        $this->assertEquals(10, count($list));           
+        $this->assertEquals(10, count($list->jobs));           
     }     
     
     
