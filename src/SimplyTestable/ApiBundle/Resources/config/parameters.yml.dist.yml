@@ -21,6 +21,7 @@ parameters:
    - netdna.bootstrapcdn.com
    - ajax.aspnetcdn.com
    - static.nrelate.com   
+   - connect.facebook.net   
   stripe_webhook_developer_notification:
     recipient_email: jon@simplytestable.com
     sender_email: robot@simplytestable.com
