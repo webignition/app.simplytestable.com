@@ -297,8 +297,12 @@ class JobListService  {
     private function getDefaultQueryBuilder() {
         $queryBuilder = $this->getQueryBuilder();
         
-        $queryBuilder->where('Job.user = :User');
-        $queryBuilder->setParameter('User', $this->user);
+        $queryBuilder->where('1 = 1');
+        
+        if (!is_null($this->user)) {
+            $queryBuilder->andWhere('Job.user = :User');
+            $queryBuilder->setParameter('User', $this->user);            
+        }
         
         if (is_array($this->excludeTypes) && count($this->excludeTypes) > 0) {            
             $typeExclusionParts = array();
