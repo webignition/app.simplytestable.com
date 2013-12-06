@@ -62,8 +62,8 @@ abstract class BaseTestCase extends WebTestCase {
         }
 
 
-        $input = new ArgvInput($args);                 
-        return $this->application->run($input);
+        $input = new ArgvInput($args); 
+        return $response = $this->application->run($input);
     }
     
     

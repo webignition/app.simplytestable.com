@@ -615,6 +615,14 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getStripeEventService() {
         return $this->container->get('simplytestable.services.stripeeventservice');
+    }    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\CommandService
+     */
+    protected function getCommandService() {
+        return $this->container->get('simplytestable.services.commandservice');
     }         
     
     

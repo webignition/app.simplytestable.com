@@ -473,7 +473,7 @@ class JobService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
      */
     public function complete(Job $job) {
-        if (!$this->isInProgress($job)) {
+        if ($this->isFinished($job)) {
             return $job;
         }        
         
@@ -482,7 +482,7 @@ class JobService extends EntityService {
         }
         
         $job->getTimePeriod()->setEndDateTime(new \DateTime());        
-        $job->setNextState();       
+        $job->setState($this->getCompletedState());
         
         return $this->persistAndFlush($job);
     }
@@ -500,6 +500,27 @@ class JobService extends EntityService {
         );
         
         $jobs = $this->getEntityRepository()->getByStateAndTaskState($states, $this->taskService->getQueuedState());
+        
+        return $jobs;
+    }
+    
+    
+    public function getUnfinishedJobsWithTasksAndNoIncompleteTasks() {
+        $jobs = $this->getEntityRepository()->findBy(array(
+            'state' => $this->getIncompleteStates()
+        ));
+        
+        foreach ($jobs as $jobIndex => $job) {
+            // Exclude jobs with no tasks
+            if (count($job->getTasks()) === 0) {
+                unset($jobs[$jobIndex]);
+            }
+            
+            // Exclude jobs with incomplete tasks
+            if ($this->hasIncompleteTasks($job)) {
+                unset($jobs[$jobIndex]);
+            }
+        }
         
         return $jobs;
     }
