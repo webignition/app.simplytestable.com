@@ -174,9 +174,7 @@ class Job
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
         $this->requestedTaskTypes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->taskTypeOptions = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->ammendments = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->featureOptions = new FeatureOptions();
-        $this->featureOptions->setJob($this);
+        $this->ammendments = new \Doctrine\Common\Collections\ArrayCollection();        
     }
     
     

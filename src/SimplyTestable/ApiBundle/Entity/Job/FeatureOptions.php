@@ -28,7 +28,7 @@ class FeatureOptions
      *
      * @var SimplyTestable\ApiBundle\Entity\Job\Job 
      * 
-     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="ammendments")
+     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="featureOptions", cascade={"persist"})
      * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)     
      */
     protected $job;    
@@ -82,7 +82,7 @@ class FeatureOptions
     public function setJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job = null)
     {
         $this->job = $job;
-        $job->addFeatureOptions($this);
+        $job->setFeatureOptions($this);
     
         return $this;
     }
