@@ -260,7 +260,8 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
                 $this->getWebSiteService()->fetch($canonicalUrl),
                 array(),
                 array(),
-                $this->getJobTypeService()->getByName('Full site')
+                $this->getJobTypeService()->getByName('Full site'),
+                array()
         );    
         
         $this->assertEquals(4, $this->runConsole('simplytestable:job:prepare', array(
@@ -281,7 +282,8 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
                 $this->getWebSiteService()->fetch($canonicalUrl),
                 array(),
                 array(),
-                $this->getJobTypeService()->getByName('Full site')
+                $this->getJobTypeService()->getByName('Full site'),
+                array()
         );     
         
         $this->assertEquals(4, $this->runConsole('simplytestable:job:prepare', array(
@@ -306,6 +308,55 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         )));  
         
         $this->assertEquals('job-failed-no-sitemap', $job->getState()->getName());     
+    }
+    
+    public function testWithFullSiteTestAndHttpAuthParameters() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $canonicalUrl = 'http://example.com/';        
+        
+        $httpAuthUsernameKey = 'http-auth-username';
+        $httpAuthPasswordKey = 'http-auth-password';
+        $httpAuthUsernameValue = 'foo';
+        $httpAuthPasswordValue = 'bar';
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, null, array('html validation'), null, array(
+            $httpAuthUsernameKey => $httpAuthUsernameValue,
+            $httpAuthPasswordKey => $httpAuthPasswordValue            
+        )));       
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        )));  
+        
+        foreach ($job->getTasks() as $task) {
+            $decodedParameters = json_decode($task->getParameters());
+            $this->assertTrue(isset($decodedParameters->$httpAuthUsernameKey));
+            $this->assertEquals($httpAuthUsernameValue, $decodedParameters->$httpAuthUsernameKey);
+            $this->assertTrue(isset($decodedParameters->$httpAuthPasswordKey));
+            $this->assertEquals($httpAuthPasswordValue, $decodedParameters->$httpAuthPasswordKey);
+        }            
+    }
+    
+    public function testWithSingleUrlTestAndHttpAuthParameters() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $canonicalUrl = 'http://example.com/';        
+        
+        $httpAuthUsernameKey = 'http-auth-username';
+        $httpAuthPasswordKey = 'http-auth-password';
+        $httpAuthUsernameValue = 'foo';
+        $httpAuthPasswordValue = 'bar';
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url', array('html validation'), null, array(
+            $httpAuthUsernameKey => $httpAuthUsernameValue,
+            $httpAuthPasswordKey => $httpAuthPasswordValue            
+        )));
+
+        $decodedParameters = json_decode($job->getTasks()->first()->getParameters());
+        $this->assertTrue(isset($decodedParameters->$httpAuthUsernameKey));
+        $this->assertEquals($httpAuthUsernameValue, $decodedParameters->$httpAuthUsernameKey);
+        $this->assertTrue(isset($decodedParameters->$httpAuthPasswordKey));
+        $this->assertEquals($httpAuthPasswordValue, $decodedParameters->$httpAuthPasswordKey);
+           
     }
 
 }

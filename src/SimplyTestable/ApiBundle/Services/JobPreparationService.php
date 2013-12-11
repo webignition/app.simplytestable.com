@@ -181,16 +181,22 @@ class JobPreparationService {
                     
                     $job->addTask($task);
                     
+                    $parameters = array();
+                    
                     if ($taskTypeOptions->getOptionCount()) {
-                        $options = $taskTypeOptions->getOptions();                        
+                        $parameters = $taskTypeOptions->getOptions();                      
                         
                         $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $this->predefinedDomainsToIgnore);                                               
                         if (count($domainsToIgnore)) {
-                            $options['domains-to-ignore'] = $domainsToIgnore;
+                            $parameters['domains-to-ignore'] = $domainsToIgnore;
                         }
-                        
-                        $task->setParameters(json_encode($options));
                     }
+                    
+                    if ($job->hasParameters()) {
+                        $parameters = array_merge($parameters, json_decode($job->getParameters(), true));
+                    }
+                    
+                    $task->setParameters(json_encode($parameters));                    
                     
                     $this->taskService->persist($task);                    
                 }
