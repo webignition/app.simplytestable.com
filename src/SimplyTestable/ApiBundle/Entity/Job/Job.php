@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Entity\Job\FeatureOptions as JobFeatureOptions;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
@@ -147,6 +148,16 @@ class Job
     private $ammendments;
     
     
+    
+    /**
+     *
+     * @var FeatureOptions
+     * 
+     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\FeatureOptions", mappedBy="job", cascade={"persist"})  
+     */
+    private $featureOptions;
+    
+    
     /**
      *
      * @var boolean
@@ -164,6 +175,8 @@ class Job
         $this->requestedTaskTypes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->taskTypeOptions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->ammendments = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->featureOptions = new FeatureOptions();
+        $this->featureOptions->setJob($this);
     }
     
     
@@ -576,5 +589,25 @@ class Job
     public function getIsPublic()
     {
         return filter_var($this->isPublic, FILTER_VALIDATE_BOOLEAN);
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\FeatureOptions $featureOptions
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
+     */
+    public function setFeatureOptions(FeatureOptions $featureOptions) {
+        $this->featureOptions = $featureOptions;
+        return $this;
+    }
+    
+    
+    /**
+     * 
+     * @return FeatureOptions
+     */
+    public function getFeatureOptions() {
+        return $this->featureOptions;
     }
 }
