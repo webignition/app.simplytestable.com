@@ -147,15 +147,12 @@ class Job
      */
     private $ammendments;
     
-    
-    
     /**
      *
-     * @var FeatureOptions
-     * 
-     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\FeatureOptions", mappedBy="job", cascade={"persist"})  
+     * @var string
+     * @ORM\Column(type="text", nullable=true)
      */
-    private $featureOptions;
+    protected $parameters;
     
     
     /**
@@ -175,6 +172,7 @@ class Job
         $this->requestedTaskTypes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->taskTypeOptions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->ammendments = new \Doctrine\Common\Collections\ArrayCollection();        
+        $this->parameters = array();
     }
     
     
@@ -591,21 +589,42 @@ class Job
     
     
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\FeatureOptions $featureOptions
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
+     * Set parameters
+     *
+     * @param string $parameters
+     * @return Task
      */
-    public function setFeatureOptions(FeatureOptions $featureOptions) {
-        $this->featureOptions = $featureOptions;
+    public function setParameters($parameters)
+    {
+        $this->parameters = $parameters;
+    
         return $this;
+    }
+
+    /**
+     * Get parameters
+     *
+     * @return string
+     */
+    public function getParameters()
+    {
+        return $this->parameters;
+    }  
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasParameters() {
+        return $this->getParameters() != '';
     }
     
     
     /**
      * 
-     * @return FeatureOptions
+     * @return string
      */
-    public function getFeatureOptions() {
-        return $this->featureOptions;
+    public function getParametersHash() {
+        return md5($this->getParameters());
     }
 }
