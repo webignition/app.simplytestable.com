@@ -172,7 +172,7 @@ class Job
         $this->requestedTaskTypes = new \Doctrine\Common\Collections\ArrayCollection();
         $this->taskTypeOptions = new \Doctrine\Common\Collections\ArrayCollection();
         $this->ammendments = new \Doctrine\Common\Collections\ArrayCollection();        
-        $this->parameters = array();
+        $this->parameters = '';
     }
     
     

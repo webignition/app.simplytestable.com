@@ -35,7 +35,7 @@ class JobStartController extends ApiController
         }
 
         $requestedJobType = $this->getRequestJobType();
-        
+
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
         $this->getJobUserAccountPlanEnforcementService()->setJobType($requestedJobType);
         
@@ -74,13 +74,14 @@ class JobStartController extends ApiController
             }            
         }
         
-        if (is_null($existingJobId)) {           
+        if (is_null($existingJobId)) {            
             $job = $this->getJobService()->create(
                 $this->getUser(),
                 $this->getWebsite(),
                 $this->getTaskTypes(),
                 $this->getTaskTypeOptions(),
-                $requestedJobType
+                $requestedJobType,
+                $this->getParameters()
             );
             
             if ($this->getUserService()->isPublicUser($this->getUser())) {
@@ -163,7 +164,8 @@ class JobStartController extends ApiController
             $this->getWebsite(),
             $this->getTaskTypes(),
             $this->getTaskTypeOptions(),
-            $this->getRequestJobType()
+            $this->getRequestJobType(),
+            $this->getParameters()
         );
 
         $this->getJobService()->reject($job);
@@ -187,7 +189,8 @@ class JobStartController extends ApiController
             $this->getWebsite(),
             $this->getTaskTypes(),
             $this->getTaskTypeOptions(),
-            $this->getRequestJobType()
+            $this->getRequestJobType(),
+            $this->getParameters()
         );
 
         $this->getJobService()->reject($job);
@@ -253,6 +256,22 @@ class JobStartController extends ApiController
     private function getTaskTypes() {        
         $requestTaskTypes = $this->getRequestTaskTypes();                
         return (count($requestTaskTypes) === 0) ? $this->getAllSelectableTaskTypes() : $requestTaskTypes;
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    private function getParameters() {
+        $featureOptions = (is_array($this->getRequestValue('parameters'))) ? $this->getRequestValue('parameters') : array();
+        
+        foreach ($featureOptions as $optionName => $optionValue) {
+            unset($featureOptions[$optionName]);
+            $featureOptions[urldecode(strtolower($optionName))] = $optionValue;
+        }      
+        
+        return $featureOptions;        
     }
     
     

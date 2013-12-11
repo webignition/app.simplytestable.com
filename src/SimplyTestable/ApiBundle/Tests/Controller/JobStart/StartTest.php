@@ -45,7 +45,7 @@ class StartTest extends BaseControllerJsonTestCase {
     }
     
     
-    public function testStartForExistingJobForDifferentUsers() {
+    public function testStartForExistingJobForDifferentUsers() {        
         $canonicalUrl = 'http://example.com/';        
         $email1 = 'user1@example.com';
         $email2 = 'user2@example.com';
@@ -272,6 +272,18 @@ class StartTest extends BaseControllerJsonTestCase {
         
         $this->assertEquals('rejected', $jobControllerResponse->state);
         $this->assertEquals('unroutable', $jobControllerResponse->rejection->reason);    
-    }      
+    }
+    
+    
+    public function testWithParameters() {
+        $canonicalUrl = 'http://example.com/';
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, null, null, null, array(
+            'http-auth-username' => 'user',
+            'http-auth-password' => 'pass'
+        )));
+        
+        $this->assertEquals('{"http-auth-username":"user","http-auth-password":"pass"}', $job->getParameters());      
+    }
     
 }

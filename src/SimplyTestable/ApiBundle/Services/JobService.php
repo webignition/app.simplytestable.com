@@ -233,10 +233,11 @@ class JobService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
      * @param array $taskTypes
      * @param array $taskTypeOptionsArray
-     * @param \SimplyTestable\ApiBundle\Services\JobType $type
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $type
+     * @param array $parameters
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job
      */
-    public function create(User $user, WebSite $website, array $taskTypes, array $taskTypeOptionsArray, JobType $type) {        
+    public function create(User $user, WebSite $website, array $taskTypes, array $taskTypeOptionsArray, JobType $type, array $parameters) {        
         $job = new Job();
         $job->setUser($user);
         $job->setWebsite($website);
@@ -263,9 +264,12 @@ class JobService extends EntityService {
             }
         }
         
-        $job->setState($this->getStartingState());
-        $this->getEntityManager()->persist($job);        
+        if (count($parameters)) {
+            $job->setParameters(json_encode($parameters));
+        }
         
+        $job->setState($this->getStartingState());
+        $this->getEntityManager()->persist($job);
         $this->getEntityManager()->flush();
 
         return $job;

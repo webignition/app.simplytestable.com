@@ -37,7 +37,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     }
     
     protected function rebuildDefaultDataState() {
-        //$this->removeAllUsers();
+        $this->removeAllUsers();
         self::loadDataFixtures();
     }
     
@@ -255,7 +255,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param array $testTypes
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    protected function createJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null) {        
+    protected function createJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null, $parameters = null) {        
         $postData = array();
         if (!is_null($userEmail)) {
             $postData['user'] = $userEmail;
@@ -271,7 +271,11 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         
         if (is_array($testTypeOptions)) {
             $postData['test-type-options'] = $testTypeOptions;
-        }               
+        } 
+        
+        if (is_array($parameters)) {
+            $postData['parameters'] = $parameters;
+        }
         
         return $this->getJobStartController('startAction', $postData)->startAction($canonicalUrl);
     } 
@@ -305,8 +309,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $userEmail
      * @return int
      */
-    protected function createJobAndGetId($canonicalUrl, $userEmail = null, $type = 'full site', $testTypes = null, $testTypeOptions = null) {
-        $response = $this->createJob($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions);
+    protected function createJobAndGetId($canonicalUrl, $userEmail = null, $type = 'full site', $testTypes = null, $testTypeOptions = null, $parameters = null) {
+        $response = $this->createJob($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
         return $this->getJobIdFromUrl($response->getTargetUrl());
     } 
     
@@ -679,8 +683,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         foreach ($users as $user) {
             $this->getUserService()->deleteUser($user);
         }
-        
-        var_dump(count($this->getUserService()->findUsers()), "removed all users");
     }
     
     
