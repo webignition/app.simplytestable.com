@@ -37,7 +37,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     }
     
     protected function rebuildDefaultDataState() {
-        $this->removeAllUsers();
+        //$this->removeAllUsers();
         self::loadDataFixtures();
     }
     
@@ -679,6 +679,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         foreach ($users as $user) {
             $this->getUserService()->deleteUser($user);
         }
+        
+        var_dump(count($this->getUserService()->findUsers()), "removed all users");
     }
     
     
