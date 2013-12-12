@@ -281,8 +281,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     } 
     
     
-    protected function createAndPrepareJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null) {
-        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions);
+    protected function createAndPrepareJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null, $parameters = null) {
+        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
         $this->prepareJob($canonicalUrl, $job_id);
         return $job_id;
     }
