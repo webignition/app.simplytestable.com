@@ -152,12 +152,17 @@ class CrawlJobContainerService extends EntityService {
             $scope[] = (string)$variant;
         }
         
-        $task = new Task();
-        
-        $task->setJob($crawlJobContainer->getCrawlJob());
-        $task->setParameters(json_encode(array(
+        $parameters = array(
             'scope' => $scope
-        )));
+        );
+        
+        if ($crawlJobContainer->getCrawlJob()->hasParameters()) {
+            $parameters = array_merge($parameters, json_decode($crawlJobContainer->getCrawlJob()->getParameters(), true));
+        }
+        
+        $task = new Task();        
+        $task->setJob($crawlJobContainer->getCrawlJob());        
+        $task->setParameters(json_encode($parameters));
         $task->setState($this->taskService->getQueuedState());
         $task->setType($this->taskTypeService->getByName('URL discovery'));
         $task->setUrl($url);
@@ -310,6 +315,7 @@ class CrawlJobContainerService extends EntityService {
         $crawlJob->setState($this->jobService->getStartingState());
         $crawlJob->setUser($job->getUser());
         $crawlJob->setWebsite($job->getWebsite());
+        $crawlJob->setParameters($job->getParameters());
         
         $this->getEntityManager()->persist($crawlJob); 
         

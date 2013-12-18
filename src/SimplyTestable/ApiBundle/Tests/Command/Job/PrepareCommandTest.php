@@ -422,6 +422,60 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         ))); 
         
         $this->assertTrue(count($job->getTasks()) > 0);
-    }    
+    } 
+    
+    
+    public function testCrawlJobTakesParametersOfParentJob() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $canonicalUrl = 'http://example.com/';
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, $user->getEmail(), 'full site', array('HTML validation'), null, array(
+            'http-auth-username' => 'example',
+            'http-auth-password' => 'password'
+        )));
+        
+        $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        ));
+        
+        $this->assertTrue($this->getCrawlJobContainerService()->hasForJob($job));
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        $this->assertEquals($crawlJobContainer->getParentJob()->getParameters(), $crawlJobContainer->getCrawlJob()->getParameters());
+    } 
+    
+    
+    public function testCrawlJobTaskTakesHttpAuthParameters() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        
+        $canonicalUrl = 'http://example.com/';
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+        
+        $httpAuthUsernameKey = 'http-auth-username';
+        $httpAuthPasswordKey = 'http-auth-password';
+        $httpAuthUsername = 'example';
+        $httpAuthPassword = 'password';
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, $user->getEmail(), 'full site', array('HTML validation'), null, array(
+            $httpAuthUsernameKey => $httpAuthUsername,
+            $httpAuthPasswordKey=> $httpAuthPassword
+        )));
+        
+        $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        ));
+        
+        $this->assertTrue($this->getCrawlJobContainerService()->hasForJob($job));
+        $crawlJob = $this->getCrawlJobContainerService()->getForJob($job)->getCrawlJob();
+        
+        $taskParameters = json_decode($crawlJob->getTasks()->first()->getParameters());
+        
+        $this->assertTrue(isset($taskParameters->$httpAuthUsernameKey));
+        $this->assertTrue(isset($taskParameters->$httpAuthPasswordKey));
+        $this->assertEquals($httpAuthUsername, $taskParameters->$httpAuthUsernameKey);
+        $this->assertEquals($httpAuthPassword, $taskParameters->$httpAuthPasswordKey);
+    }     
 
 }
