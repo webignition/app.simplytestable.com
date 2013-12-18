@@ -353,7 +353,7 @@ class WebSiteService extends EntityService {
         
         try {
             foreach ($feedUrls as $feedUrl) {
-                $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
+                $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl, $parameters));
             }            
         } catch (\Exception $e) {
             var_dump($e);
