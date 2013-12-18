@@ -331,11 +331,14 @@ class JobPreparationService {
      * @return array
      */
     private function collectUrlsForJob(Job $job, $softLimit) {
+        $parameters = ($job->hasParameters()) ? json_decode($job->getParameters(), true) : array();
+        $parameters['softLimit'] = $softLimit;
+        
         if ($this->isSingleUrlJob($job)) {        
             return array($job->getWebsite()->getCanonicalUrl());
         } else { 
             try {
-                return $this->websiteService->getUrls($job->getWebsite(), $softLimit);         
+                return $this->websiteService->getUrls($job->getWebsite(), $parameters);         
             } catch (\Exception $e) {
                 var_dump($e);
                 exit();

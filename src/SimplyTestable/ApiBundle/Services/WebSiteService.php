@@ -10,6 +10,15 @@ use webignition\WebResource\Sitemap\Sitemap;
 
 class WebSiteService extends EntityService {
     
+    const HTTP_AUTH_BASIC_NAME = 'Basic';
+    const HTTP_AUTH_DIGEST_NAME = 'Digest';
+    
+    
+    private $httpAuthNameToCurlAuthScheme = array(
+        self::HTTP_AUTH_BASIC_NAME => CURLAUTH_BASIC,
+        self::HTTP_AUTH_DIGEST_NAME => CURLAUTH_DIGEST
+    );     
+    
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WebSite';
     const DEFAULT_URL_RETRIEVER_TOTAL_TIMEOUT = 30;
     
@@ -131,8 +140,8 @@ class WebSiteService extends EntityService {
      * @param int $softLimit
      * @return array
      */
-    public function getUrls(WebSite $website, $softLimit) {
-        return $this->filterUrlsToWebsiteHost($website, $this->collectUrls($website, $softLimit));
+    public function getUrls(WebSite $website, $parameters) {
+        return $this->filterUrlsToWebsiteHost($website, $this->collectUrls($website, $parameters));
     }
     
     
@@ -159,20 +168,20 @@ class WebSiteService extends EntityService {
     }
     
     
-    private function collectUrls(WebSite $website, $softLimit) {   
+    private function collectUrls(WebSite $website, $parameters) {   
         $this->websiteRssFeedFinder = null;
         
-        $urlsFromSitemap = $this->getUrlsFromSitemap($website, $softLimit);                
+        $urlsFromSitemap = $this->getUrlsFromSitemap($website, $parameters);                
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
         }
         
-        $urlsFromRssFeed = $this->getUrlsFromRssFeed($website);        
+        $urlsFromRssFeed = $this->getUrlsFromRssFeed($website, $parameters);        
         if (count($urlsFromRssFeed)) {
             return $urlsFromRssFeed;
         }
         
-        $urlsFromAtomFeed = $this->getUrlsFromAtomFeed($website);                
+        $urlsFromAtomFeed = $this->getUrlsFromAtomFeed($website, $parameters);                
         if (count($urlsFromAtomFeed)) {
             return $urlsFromAtomFeed;
         }           
@@ -184,16 +193,28 @@ class WebSiteService extends EntityService {
     /**
      *
      * @param WebSite $website
-     * @param int $softLimit
+     * @param array $parameters
      * @return array 
      */
-    private function getUrlsFromSitemap(WebSite $website, $softLimit) {
+    private function getUrlsFromSitemap(WebSite $website, $parameters) {        
         $this->getHttpClientService()->get()->setUserAgent('SimplyTestable Sitemap URL Retriever/0.1 (http://simplytestable.com/)');
                
         $sitemapFinder = $this->getSitemapFinder();
         $sitemapFinder->getSitemapRetriever()->reset();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
-        $sitemapFinder->getUrlLimitListener()->setSoftLimit($softLimit);
+        
+        if (isset($parameters['softLimit'])) {
+            $sitemapFinder->getUrlLimitListener()->setSoftLimit($parameters['softLimit']);
+        }        
+
+        if (isset($parameters['http-auth-username'])) {
+            $sitemapFinder->setHttpAuthenticationUser($parameters['http-auth-username']);
+        }        
+        
+        if (isset($parameters['http-auth-password'])) {
+            $sitemapFinder->setHttpAuthenticationPassword($parameters['http-auth-password']);
+        }
+        
         $sitemaps = $sitemapFinder->getSitemaps();
         
         if (count($sitemaps) === 0) {
@@ -204,8 +225,8 @@ class WebSiteService extends EntityService {
         foreach ($sitemaps as $sitemap) {            
             /* @var $sitemap Sitemap */
             
-            if (count($urls) < $softLimit) {                
-                $urls = array_merge($urls, $this->getUrlsFromSingleSitemap($sitemap, $softLimit, count($urls)));                
+            if (isset($parameters['softLimit']) && count($urls) < $parameters['softLimit']) {                
+                $urls = array_merge($urls, $this->getUrlsFromSingleSitemap($sitemap, $parameters, count($urls)));                
             }
 
         }
@@ -236,8 +257,8 @@ class WebSiteService extends EntityService {
      * @param \webignition\WebResource\Sitemap\Sitemap $sitemap
      * @return array
      */
-    private function getUrlsFromSingleSitemap(Sitemap $sitemap, $softLimit, $count) {
-        if ($count >= $softLimit) {
+    private function getUrlsFromSingleSitemap(Sitemap $sitemap, $parameters, $count) {
+        if (isset($parameters['softLimit']) && $count >= $parameters['softLimit']) {
             return array();
         }
         
@@ -251,7 +272,7 @@ class WebSiteService extends EntityService {
         
         $urls = array();
         foreach  ($sitemap->getChildren() as $childSitemap) {
-            if ($count + count($urls) >= $softLimit) {
+            if (isset($parameters['softLimit'])  && ($count + count($urls) >= $parameters['softLimit'])) {
                 return $urls;
             }            
             
@@ -263,7 +284,7 @@ class WebSiteService extends EntityService {
                 $sitemapRetriever->retrieve($childSitemap);              
             }
             
-            $childSitemapUrls = $this->getUrlsFromSingleSitemap($childSitemap, $softLimit, $count + count($urls));            
+            $childSitemapUrls = $this->getUrlsFromSingleSitemap($childSitemap, $parameters, $count + count($urls));            
             $urls = array_merge($urls, $childSitemapUrls);
         }
         
@@ -276,11 +297,19 @@ class WebSiteService extends EntityService {
      * @param WebSite $website
      * @return array 
      */    
-    private function getUrlsFromRssFeed(WebSite $website) {
+    private function getUrlsFromRssFeed(WebSite $website, $parameters) {
         $feedFinder = $this->getWebsiteRssFeedFinder($website);
         $feedFinder->getHttpClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
+        
+        if (isset($parameters['http-auth-username'])) {
+            $feedFinder->setHttpAuthenticationUser($parameters['http-auth-username']);
+        }
+        
+        if (isset($parameters['http-auth-password'])) {
+            $feedFinder->setHttpAuthenticationPassword($parameters['http-auth-password']);
+        }        
 
-        $feedUrls = $feedFinder->getRssFeedUrls();       
+        $feedUrls = $feedFinder->getRssFeedUrls();               
         if (is_null($feedUrls)) {
             return array();
         }
@@ -288,7 +317,7 @@ class WebSiteService extends EntityService {
         $urlsFromFeed = array();
 
         foreach ($feedUrls as $feedUrl) {
-            $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl));
+            $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl, $parameters));
         }
 
         return is_null($urlsFromFeed) ? array() : $urlsFromFeed;
@@ -311,7 +340,7 @@ class WebSiteService extends EntityService {
      * @param WebSite $website
      * @return array 
      */
-    private function getUrlsFromAtomFeed(WebSite $website) {
+    private function getUrlsFromAtomFeed(WebSite $website, $parameters) {
         $feedFinder = $this->getWebsiteRssFeedFinder($website);
         $feedFinder->getHttpClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');      
 
@@ -340,10 +369,10 @@ class WebSiteService extends EntityService {
      * @param string $feedUrl
      * @return array
      */
-    private function getUrlsFromNewsFeed($feedUrl) {        
+    private function getUrlsFromNewsFeed($feedUrl, $parameters) {        
         try {
             $request = $this->getHttpClientService()->getRequest($feedUrl);
-            $response = $request->send();
+            $response = $this->getNewsFeedResponse($request, $parameters);
         } catch (\Guzzle\Http\Exception\RequestException $requestException) {
             return array();
         } catch (\Guzzle\Common\Exception\InvalidArgumentException $e) {
@@ -367,5 +396,44 @@ class WebSiteService extends EntityService {
         
         return $urls;        
     }
+    
+    
+    private function getNewsFeedResponse(\Guzzle\Http\Message\Request $request, $parameters, $failOnAuthenticationFailure = false) {
+        try {
+            return $request->send();     
+        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $clientErrorResponseException) {            
+            /* @var $response \Guzzle\Http\Message\Response */
+            $response = $clientErrorResponseException->getResponse();                        
+            $authenticationScheme = $this->getWwwAuthenticateSchemeFromResponse($response);                        
+            
+            if (is_null($authenticationScheme) || $failOnAuthenticationFailure || !isset($parameters['http-auth-username']) || !isset($parameters['http-auth-username'])) {
+                throw $clientErrorResponseException;
+            }            
+
+            $request->setAuth($parameters['http-auth-username'], $parameters['http-auth-password'], $this->getWwwAuthenticateSchemeFromResponse($response));
+            return $this->getNewsFeedResponse($request, $parameters, true);
+        }        
+    }   
+    
+    
+    /**
+     * 
+     * @param \Guzzle\Http\Message\Response $response
+     * @return int|null
+     */
+    private function getWwwAuthenticateSchemeFromResponse(\Guzzle\Http\Message\Response $response) {
+        if ($response->getStatusCode() !== 401) {
+            return null;
+        }
+        
+        if (!$response->hasHeader('www-authenticate')) {
+            return null;
+        }        
+              
+        $wwwAuthenticateHeaderValues = $response->getHeader('www-authenticate')->toArray();
+        $firstLineParts = explode(' ', $wwwAuthenticateHeaderValues[0]);
+
+        return (isset($this->httpAuthNameToCurlAuthScheme[$firstLineParts[0]])) ? $this->httpAuthNameToCurlAuthScheme[$firstLineParts[0]] : null;    
+    }     
     
 }

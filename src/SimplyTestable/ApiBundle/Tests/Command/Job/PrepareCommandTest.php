@@ -358,5 +358,70 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals($httpAuthPasswordValue, $decodedParameters->$httpAuthPasswordKey);
            
     }
+    
+    
+    public function testWithHttpAuthWithUrlsCollectedViaSitemapViaRobotsTxt() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $canonicalUrl = 'http://example.com/';        
+        
+        $httpAuthUsernameKey = 'http-auth-username';
+        $httpAuthPasswordKey = 'http-auth-password';
+        $httpAuthUsernameValue = 'example';
+        $httpAuthPasswordValue = 'password';        
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'full site', null, null, array(
+            $httpAuthUsernameKey => $httpAuthUsernameValue,
+            $httpAuthPasswordKey => $httpAuthPasswordValue            
+        )));
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        ))); 
+        
+        $this->assertTrue(count($job->getTasks()) > 0);
+    }
+    
+    
+    public function testWithHttpAuthWithUrlsCollectedSitemapViaGuessingPath() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $canonicalUrl = 'http://example.com/';        
+        
+        $httpAuthUsernameKey = 'http-auth-username';
+        $httpAuthPasswordKey = 'http-auth-password';
+        $httpAuthUsernameValue = 'example';
+        $httpAuthPasswordValue = 'password';        
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'full site', null, null, array(
+            $httpAuthUsernameKey => $httpAuthUsernameValue,
+            $httpAuthPasswordKey => $httpAuthPasswordValue            
+        )));
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        ))); 
+        
+        $this->assertTrue(count($job->getTasks()) > 0);
+    }    
+    
+    public function testWithHttpAuthWithUrlsCollectedViaRssFeed() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $canonicalUrl = 'http://example.com/';        
+        
+        $httpAuthUsernameKey = 'http-auth-username';
+        $httpAuthPasswordKey = 'http-auth-password';
+        $httpAuthUsernameValue = 'example';
+        $httpAuthPasswordValue = 'password';        
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'full site', null, null, array(
+            $httpAuthUsernameKey => $httpAuthUsernameValue,
+            $httpAuthPasswordKey => $httpAuthPasswordValue            
+        )));
+        
+        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
+            $job->getId() =>  true
+        ))); 
+        
+        $this->assertTrue(count($job->getTasks()) > 0);
+    }    
 
 }

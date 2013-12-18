@@ -1,0 +1,46 @@
+HTTP/1.1 200 Ok
+Content-type: application/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>Example Blag</title>
+		<description>Blag, blog, thing</description>
+		<link>http://example.com/</link>
+		<atom:link href="http://example.com/feed.xml" rel="self" type="application/rss+xml" />
+                
+			<item>
+				<title>Example Title 01</title>
+				<description></description>
+				<pubDate>Wed, 11 Dec 2013 00:00:00 -0800</pubDate>
+				<link>http://example.com/</link>
+				<guid isPermaLink="true">http://example.com/</guid>
+			</item>                   
+		
+			<item>
+				<title>Example Title 02</title>
+				<description></description>
+				<pubDate>Wed, 11 Dec 2013 00:00:00 -0800</pubDate>
+				<link>http://example.com/two.html</link>
+				<guid isPermaLink="true">http://example.com/two.html</guid>
+			</item>
+
+			<item>
+				<title>Example Title 03</title>
+				<description></description>
+				<pubDate>Wed, 11 Dec 2013 00:00:00 -0800</pubDate>
+				<link>http://example.com/three.html</link>
+				<guid isPermaLink="true">http://example.com/three.html</guid>
+			</item>
+                        
+			<item>
+				<title>Example Title 04</title>
+				<description></description>
+				<pubDate>Wed, 11 Dec 2013 00:00:00 -0800</pubDate>
+				<link>http://example.com/four.html</link>
+				<guid isPermaLink="true">http://example.com/four.html</guid>
+			</item>
+                        
+                                                                                                                     		
+	</channel>
+</rss>
