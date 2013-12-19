@@ -200,9 +200,9 @@ class CrawlJobContainerService extends EntityService {
         $crawlJobContainer = $this->getEntityRepository()->findOneBy(array(
             'crawlJob' => $task->getJob()
         ));
-      
-        $taskDiscoveredUrlSet = json_decode($task->getOutput()->getOutput());        
-        if (count($taskDiscoveredUrlSet) === 0) {
+        
+        $taskDiscoveredUrlSet = $this->getDiscoveredUrlsFromTask($task);       
+        if (!count($taskDiscoveredUrlSet) === 0) {
             return true;
         }
         
@@ -245,6 +245,17 @@ class CrawlJobContainerService extends EntityService {
     
     /**
      * 
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @return array
+     */
+    private function getDiscoveredUrlsFromTask(Task $task) {
+        $taskDiscoveredUrlSet = json_decode($task->getOutput()->getOutput());
+        return (is_array($taskDiscoveredUrlSet)) ? $taskDiscoveredUrlSet : array();
+    }
+    
+    
+    /**
+     * 
      * @param \SimplyTestable\ApiBundle\Entity\CrawlJobContainer $crawlJobContainer
      * @return array
      */
@@ -262,21 +273,22 @@ class CrawlJobContainerService extends EntityService {
      * @return array
      */
     public function getDiscoveredUrls(CrawlJobContainer $crawlJobContainer, $constrainToAccountPlan = false) {
-        $discoveredUrls = array();
+        $discoveredUrls = array(
+            $crawlJobContainer->getParentJob()->getWebsite()->getCanonicalUrl()
+        );
         
         $completedTasks = $this->taskService->getEntityRepository()->findBy(array(
             'job' => $crawlJobContainer->getCrawlJob(),
             'state' => $this->taskService->getCompletedState()
         ));
         
-        foreach ($completedTasks as $task) {
+        foreach ($completedTasks as $task) {            
             if ($task->getOutput()->getErrorCount() === 0) {
                 if (!in_array($task->getUrl(), $discoveredUrls)) {
                     $discoveredUrls[] = $task->getUrl();
-                }                
+                } 
                 
-                $urlSet = json_decode($task->getOutput()->getOutput());
-                
+                $urlSet = $this->getDiscoveredUrlsFromTask($task);                   
                 foreach ($urlSet as $url) {
                     if (!in_array($url, $discoveredUrls)) {
                         $discoveredUrls[] = $url;

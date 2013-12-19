@@ -276,7 +276,42 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $this->assertEquals($job->getParameters(), $job->getTasks()->first()->getParameters());    
-    }    
+    } 
+    
+    
+    public function testUrlDiscoveryTaskErrorIsIgnoredWhenCollectingUrls() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
+        $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
+        
+        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
+        $task = $this->getTaskService()->getById($taskIds[0]);
+        
+        $this->runConsole('simplytestable:task:assign', array(
+            $task->getId() =>  true
+        ));
+        
+        $this->assertEquals('task-in-progress', $task->getState()->getName());
+        
+        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+            'end_date_time' => '2012-03-08 17:03:00',
+            'output' => '{"messages":[{"message":"Unauthorized","messageId":"http-retrieval-401","type":"error"}]}',
+            'contentType' => 'application/json',
+            'state' => 'completed',
+            'errorCount' => 1,
+            'warningCount' => 0
+        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
+        
+        $expectedTaskCount = count($this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer, true)) * $crawlJobContainer->getParentJob()->getRequestedTaskTypes()->count();
+        
+        $this->assertTrue($this->getJobService()->isQueued($crawlJobContainer->getParentJob()));
+        $this->assertEquals($expectedTaskCount, $crawlJobContainer->getParentJob()->getTasks()->count());          
+    }
 }
 
 
