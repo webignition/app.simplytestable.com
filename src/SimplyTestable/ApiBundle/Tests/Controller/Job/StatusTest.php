@@ -145,8 +145,23 @@ class StatusTest extends AbstractAccessTest {
 
         $this->assertEquals($user->getEmail(), $responseJsonObject->user);
         $this->assertEquals(false, $responseJsonObject->is_public);
-    }    
-   
+    } 
+    
+    
+    public function testParametersAreExposed() {
+        $canonicalUrl = 'http://example.com/';
+        
+        $jobId = $this->createJobAndGetId($canonicalUrl, null, null, null, null, array(
+            'http-auth-username' => 'example',
+            'http-auth-password' => 'password'
+        ));
+        
+        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);
+        $responseJsonObject = json_decode($response->getContent());
+
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        $this->assertTrue(isset($responseJsonObject->parameters));
+        $this->assertEquals('{"http-auth-username":"example","http-auth-password":"password"}', $responseJsonObject->parameters);
+    }   
 }
-
-

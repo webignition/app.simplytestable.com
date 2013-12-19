@@ -135,7 +135,8 @@ class JobController extends ApiController
             'warninged_task_count' => $this->getJobService()->getWarningedTaskCount($job),
             'task_type_options' => $this->getJobTaskTypeOptions($job),
             'type' => $job->getPublicSerializedType(),
-            'is_public' => $this->getIsJobPublic($job)
+            'is_public' => $this->getIsJobPublic($job),
+            'parameters' => $job->getParameters()
         );
         
         if ($this->getJobService()->isRejected($job)) {            

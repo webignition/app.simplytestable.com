@@ -151,6 +151,7 @@ class Job
      *
      * @var string
      * @ORM\Column(type="text", nullable=true)
+     * @SerializerAnnotation\Expose 
      */
     protected $parameters;
     
