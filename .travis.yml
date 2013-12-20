@@ -10,7 +10,8 @@ php:
   - hhvm  
   
 before_script:
-  # Additional PHP config
+  # Additional PHP config  
+  - sudo find / -name 'php.ini'
   - phpenv config-add travis.php.ini
   
   # Install code quality tools
