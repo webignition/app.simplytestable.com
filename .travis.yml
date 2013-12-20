@@ -12,7 +12,7 @@ php:
 before_script:
   # Additional PHP config  
   #- sudo find / -name 'php.ini'
-  #- phpenv config-add travis.php.ini
+  - phpenv config-add travis.php.ini
   
   # Install code quality tools
   - wget https://phar.phpunit.de/phpcpd.phar
