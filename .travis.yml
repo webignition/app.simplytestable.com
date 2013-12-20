@@ -12,6 +12,7 @@ php:
 before_script:
   # Additional PHP config  
   - sudo find / -name 'php.ini'
+  - php -r "echo ini_get('memory_limit');"
   - phpenv config-add travis.php.ini
   
   # Install code quality tools
