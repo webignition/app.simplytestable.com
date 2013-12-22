@@ -1,5 +1,8 @@
 <?php
 
+phpinfo();
+exit();
+
 use Symfony\Component\ClassLoader\ApcClassLoader;
 use Symfony\Component\HttpFoundation\Request;
 
