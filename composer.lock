@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "fb85a4f6de200b2b3bb55f342595be72",
+    "hash": "b09820fe15adf448041c6d6692208ee2",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -355,12 +355,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "2196da9cd9fc72e343560fce818affbcfbdf93d0"
+                "reference": "9ec63e25b572db79c09cacccb844e33ed435e479"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/2196da9cd9fc72e343560fce818affbcfbdf93d0",
-                "reference": "2196da9cd9fc72e343560fce818affbcfbdf93d0",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/9ec63e25b572db79c09cacccb844e33ed435e479",
+                "reference": "9ec63e25b572db79c09cacccb844e33ed435e479",
                 "shasum": ""
             },
             "require": {
@@ -391,7 +391,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan H. Wage",
+                    "name": "Jonathan Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -418,7 +418,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2013-12-23 05:23:06"
+            "time": "2013-12-30 07:54:23"
         },
         {
             "name": "doctrine/doctrine-bundle",
@@ -799,12 +799,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/doctrine2.git",
-                "reference": "7360231b4b615837cc61ec660dd10539df8e7d59"
+                "reference": "58c57c50bf3582a1672bc09733afab4167ebd5ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/7360231b4b615837cc61ec660dd10539df8e7d59",
-                "reference": "7360231b4b615837cc61ec660dd10539df8e7d59",
+                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/58c57c50bf3582a1672bc09733afab4167ebd5ba",
+                "reference": "58c57c50bf3582a1672bc09733afab4167ebd5ba",
                 "shasum": ""
             },
             "require": {
@@ -867,7 +867,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2013-12-25 22:12:38"
+            "time": "2013-12-30 08:33:03"
         },
         {
             "name": "etechnika/idna-convert",
@@ -2522,12 +2522,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "6387fc457792f38189bdd5729b500772bbddfa4d"
+                "reference": "27f3e0fc1efd1dbaf6d10598d148d7ec3070b51d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/6387fc457792f38189bdd5729b500772bbddfa4d",
-                "reference": "6387fc457792f38189bdd5729b500772bbddfa4d",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/27f3e0fc1efd1dbaf6d10598d148d7ec3070b51d",
+                "reference": "27f3e0fc1efd1dbaf6d10598d148d7ec3070b51d",
                 "shasum": ""
             },
             "require": {
@@ -2563,7 +2563,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2013-12-10 10:23:00"
+            "time": "2013-12-27 14:37:02"
         },
         {
             "name": "webignition/absolute-url-deriver",
@@ -3271,12 +3271,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "5157026c30ce9b797fa4e67b214bbf7693008f94"
+                "reference": "07b5914dc47d35fdea995a9a461c91105c414df1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/5157026c30ce9b797fa4e67b214bbf7693008f94",
-                "reference": "5157026c30ce9b797fa4e67b214bbf7693008f94",
+                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/07b5914dc47d35fdea995a9a461c91105c414df1",
+                "reference": "07b5914dc47d35fdea995a9a461c91105c414df1",
                 "shasum": ""
             },
             "require": {
@@ -3307,7 +3307,7 @@
             "keywords": [
                 "rss"
             ],
-            "time": "2013-12-16 09:44:48"
+            "time": "2013-12-30 15:49:36"
         },
         {
             "name": "webignition/website-sitemap-finder",
@@ -3315,12 +3315,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "56d84bfab61ee0c3bc250d8b461de352a463baa4"
+                "reference": "be5f64778e9e2a8840c216898e3fe8159f992815"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/56d84bfab61ee0c3bc250d8b461de352a463baa4",
-                "reference": "56d84bfab61ee0c3bc250d8b461de352a463baa4",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/be5f64778e9e2a8840c216898e3fe8159f992815",
+                "reference": "be5f64778e9e2a8840c216898e3fe8159f992815",
                 "shasum": ""
             },
             "require": {
@@ -3332,7 +3332,7 @@
                 "webignition/robots-txt-parser": "dev-master",
                 "webignition/sitemap-model": ">=0.1",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/website-sitemap-retriever": ">=0.5,<1.0"
+                "webignition/website-sitemap-retriever": ">=0.6,<1.0"
             },
             "type": "library",
             "autoload": {
@@ -3355,20 +3355,20 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-12-16 09:25:37"
+            "time": "2013-12-30 15:29:17"
         },
         {
             "name": "webignition/website-sitemap-retriever",
-            "version": "0.5",
+            "version": "0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-retriever.git",
-                "reference": "5ecc4696804551b408ad975335b6057fe858cd8a"
+                "reference": "1bf64173bc4151e80e729ef14aaa681c64f23cfa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/5ecc4696804551b408ad975335b6057fe858cd8a",
-                "reference": "5ecc4696804551b408ad975335b6057fe858cd8a",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/1bf64173bc4151e80e729ef14aaa681c64f23cfa",
+                "reference": "1bf64173bc4151e80e729ef14aaa681c64f23cfa",
                 "shasum": ""
             },
             "require": {
@@ -3399,7 +3399,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-12-13 19:20:21"
+            "time": "2013-12-30 15:00:06"
         },
         {
             "name": "winzou/console-bundle",
