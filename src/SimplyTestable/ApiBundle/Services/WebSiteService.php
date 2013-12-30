@@ -196,10 +196,9 @@ class WebSiteService extends EntityService {
      * @param array $parameters
      * @return array 
      */
-    private function getUrlsFromSitemap(WebSite $website, $parameters) {        
-        $this->getHttpClientService()->get()->setUserAgent('SimplyTestable Sitemap URL Retriever/0.1 (http://simplytestable.com/)');
-               
+    private function getUrlsFromSitemap(WebSite $website, $parameters) {               
         $sitemapFinder = $this->getSitemapFinder();
+        $sitemapFinder->getBaseRequest()->getClient()->setUserAgent('SimplyTestable Sitemap URL Retriever/0.1 (http://simplytestable.com/)');
         $sitemapFinder->getSitemapRetriever()->reset();
         $sitemapFinder->setRootUrl($website->getCanonicalUrl());
         
@@ -207,13 +206,13 @@ class WebSiteService extends EntityService {
             $sitemapFinder->getUrlLimitListener()->setSoftLimit($parameters['softLimit']);
         }        
 
-        if (isset($parameters['http-auth-username'])) {
-            $sitemapFinder->setHttpAuthenticationUser($parameters['http-auth-username']);
+        if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {
+            $sitemapFinder->getBaseRequest()->setAuth(
+                isset($parameters['http-auth-username']) ? isset($parameters['http-auth-username']) : '',
+                isset($parameters['http-auth-password']) ? isset($parameters['http-auth-password']) : '',
+                'any'
+            );
         }        
-        
-        if (isset($parameters['http-auth-password'])) {
-            $sitemapFinder->setHttpAuthenticationPassword($parameters['http-auth-password']);
-        }
         
         $sitemaps = $sitemapFinder->getSitemaps();
         
@@ -241,7 +240,7 @@ class WebSiteService extends EntityService {
     public function getSitemapFinder() {
         if (is_null($this->sitemapFinder)) {
             $this->sitemapFinder = new WebsiteSitemapFinder();
-            $this->sitemapFinder->setBaseRequest($this->httpClientService->get()->get());
+            $this->sitemapFinder->setBaseRequest($this->httpClientService->get()->get());           
             
             if ($this->sitemapFinder->getSitemapRetriever()->getTotalTransferTimeout() == \webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever::DEFAULT_TOTAL_TRANSFER_TIMEOUT) {
                 $this->sitemapFinder->getSitemapRetriever()->setTotalTransferTimeout(self::DEFAULT_URL_RETRIEVER_TOTAL_TIMEOUT);
@@ -279,7 +278,7 @@ class WebSiteService extends EntityService {
             /* @var $childSitemap Sitemap */
             if (is_null($childSitemap->getContent())) {                
                 $sitemapRetriever = new \webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever();
-                $sitemapRetriever->setHttpClient($this->httpClientService->get());
+                $sitemapRetriever->setBaseRequest($this->getHttpClientService()->get()->get());
                 $sitemapRetriever->disableRetrieveChildSitemaps();
                 $sitemapRetriever->retrieve($childSitemap);              
             }
@@ -299,15 +298,15 @@ class WebSiteService extends EntityService {
      */    
     private function getUrlsFromRssFeed(WebSite $website, $parameters) {
         $feedFinder = $this->getWebsiteRssFeedFinder($website);
-        $feedFinder->getHttpClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
+        $feedFinder->getBaseRequest()->getClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
         
-        if (isset($parameters['http-auth-username'])) {
-            $feedFinder->setHttpAuthenticationUser($parameters['http-auth-username']);
-        }
-        
-        if (isset($parameters['http-auth-password'])) {
-            $feedFinder->setHttpAuthenticationPassword($parameters['http-auth-password']);
-        }        
+        if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {
+            $feedFinder->getBaseRequest()->setAuth(
+                isset($parameters['http-auth-username']) ? isset($parameters['http-auth-username']) : '',
+                isset($parameters['http-auth-password']) ? isset($parameters['http-auth-password']) : '',
+                'any'
+            );
+        }       
 
         $feedUrls = $feedFinder->getRssFeedUrls();               
         if (is_null($feedUrls)) {
@@ -327,8 +326,8 @@ class WebSiteService extends EntityService {
     private function getWebsiteRssFeedFinder(WebSite $website) {
         if (is_null($this->websiteRssFeedFinder)) {
             $this->websiteRssFeedFinder = new WebsiteRssFeedFinder();
+            $this->websiteRssFeedFinder->setBaseRequest($this->httpClientService->get()->get());
             $this->websiteRssFeedFinder->setRootUrl($website->getCanonicalUrl());
-            $this->websiteRssFeedFinder->setHttpClient($this->httpClientService->get());
         }
         
         return $this->websiteRssFeedFinder;
@@ -342,7 +341,7 @@ class WebSiteService extends EntityService {
      */
     private function getUrlsFromAtomFeed(WebSite $website, $parameters) {
         $feedFinder = $this->getWebsiteRssFeedFinder($website);
-        $feedFinder->getHttpClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');      
+        $feedFinder->getBaseRequest()->getClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');      
 
         $feedUrls = $feedFinder->getAtomFeedUrls();                
         if (is_null($feedUrls)) {
