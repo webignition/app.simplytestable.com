@@ -169,6 +169,7 @@ class WebSiteService extends EntityService {
     
     
     private function collectUrls(WebSite $website, $parameters) {   
+        $this->sitemapFinder = null;
         $this->websiteRssFeedFinder = null;
         
         $urlsFromSitemap = $this->getUrlsFromSitemap($website, $parameters);                

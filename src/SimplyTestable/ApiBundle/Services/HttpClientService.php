@@ -17,6 +17,11 @@ class HttpClientService {
     protected $httpClient = null;     
     
     
+    public function reset() {
+        $this->httpClient = null;
+    }
+    
+    
     public function get($baseUrl = '', $config = null) {
         if (is_null($this->httpClient)) {
             $this->httpClient = new HttpClient($baseUrl, $config);

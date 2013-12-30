@@ -197,7 +197,9 @@ abstract class BaseTestCase extends WebTestCase {
     
     
     protected function setHttpFixtures($fixtures) {
-        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();
+        $this->getHttpClientService()->reset();
+        
+        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();        
         
         foreach ($fixtures as $fixture) {
             if ($fixture instanceof \Exception) {
@@ -205,9 +207,9 @@ abstract class BaseTestCase extends WebTestCase {
             } else {
                 $plugin->addResponse($fixture);
             }            
-        }         
-            
-        $this->getHttpClientService()->get()->addSubscriber($plugin);  
+        }
+        
+        $this->getHttpClientService()->get()->addSubscriber($plugin);      
     }
     
     
