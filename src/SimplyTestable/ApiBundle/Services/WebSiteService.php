@@ -241,7 +241,7 @@ class WebSiteService extends EntityService {
     public function getSitemapFinder() {
         if (is_null($this->sitemapFinder)) {
             $this->sitemapFinder = new WebsiteSitemapFinder();
-            $this->sitemapFinder->setHttpClient($this->httpClientService->get()); 
+            $this->sitemapFinder->setBaseRequest($this->httpClientService->get()->get());
             
             if ($this->sitemapFinder->getSitemapRetriever()->getTotalTransferTimeout() == \webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever::DEFAULT_TOTAL_TRANSFER_TIMEOUT) {
                 $this->sitemapFinder->getSitemapRetriever()->setTotalTransferTimeout(self::DEFAULT_URL_RETRIEVER_TOTAL_TIMEOUT);
