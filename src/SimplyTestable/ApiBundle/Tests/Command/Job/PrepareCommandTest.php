@@ -379,6 +379,9 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         ))); 
         
         $this->assertTrue(count($job->getTasks()) > 0);
+        
+        $this->assertEquals($httpAuthUsernameValue, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getUsername());
+        $this->assertEquals($httpAuthPasswordValue, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getPassword());
     }
     
     
@@ -401,6 +404,9 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
         ))); 
         
         $this->assertTrue(count($job->getTasks()) > 0);
+        
+        $this->assertEquals($httpAuthUsernameValue, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getUsername());
+        $this->assertEquals($httpAuthPasswordValue, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getPassword());        
     }    
     
     public function testWithHttpAuthWithUrlsCollectedViaRssFeed() {
@@ -421,7 +427,11 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
             $job->getId() =>  true
         ))); 
         
-        $this->assertTrue(count($job->getTasks()) > 0);
+        $this->assertTrue(count($job->getTasks()) > 0);        
+              
+        $this->assertEquals($httpAuthUsernameValue, $this->getJobPreparationService()->getWebsiteService()->getWebsiteRssFeedFinder($job->getWebsite(), $job->getParameters())->getBaseRequest()->getUsername());
+        $this->assertEquals($httpAuthPasswordValue, $this->getJobPreparationService()->getWebsiteService()->getWebsiteRssFeedFinder($job->getWebsite(), $job->getParameters())->getBaseRequest()->getPassword());
+                
     } 
     
     

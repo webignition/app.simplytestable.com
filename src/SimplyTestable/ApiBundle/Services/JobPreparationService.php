@@ -431,5 +431,14 @@ class JobPreparationService {
      */
     private function hasDomainsToIgnore(TaskTypeOptions $taskTypeOptions) {
         return is_array($taskTypeOptions->getOption('domains-to-ignore'));
-    }    
+    } 
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Services\WebSiteService
+     */
+    public function getWebsiteService() {
+        return $this->websiteService;
+    }
 }

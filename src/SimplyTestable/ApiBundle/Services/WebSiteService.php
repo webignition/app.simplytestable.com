@@ -207,10 +207,10 @@ class WebSiteService extends EntityService {
             $sitemapFinder->getUrlLimitListener()->setSoftLimit($parameters['softLimit']);
         }        
 
-        if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {
+        if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {            
             $sitemapFinder->getBaseRequest()->setAuth(
-                isset($parameters['http-auth-username']) ? isset($parameters['http-auth-username']) : '',
-                isset($parameters['http-auth-password']) ? isset($parameters['http-auth-password']) : '',
+                isset($parameters['http-auth-username']) ? $parameters['http-auth-username'] : '',
+                isset($parameters['http-auth-password']) ? $parameters['http-auth-password'] : '',
                 'any'
             );
         }        
@@ -298,16 +298,8 @@ class WebSiteService extends EntityService {
      * @return array 
      */    
     private function getUrlsFromRssFeed(WebSite $website, $parameters) {
-        $feedFinder = $this->getWebsiteRssFeedFinder($website);
+        $feedFinder = $this->getWebsiteRssFeedFinder($website, $parameters);
         $feedFinder->getBaseRequest()->getClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
-        
-        if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {
-            $feedFinder->getBaseRequest()->setAuth(
-                isset($parameters['http-auth-username']) ? isset($parameters['http-auth-username']) : '',
-                isset($parameters['http-auth-password']) ? isset($parameters['http-auth-password']) : '',
-                'any'
-            );
-        }       
 
         $feedUrls = $feedFinder->getRssFeedUrls();               
         if (is_null($feedUrls)) {
@@ -324,11 +316,19 @@ class WebSiteService extends EntityService {
     }
     
     
-    private function getWebsiteRssFeedFinder(WebSite $website) {
+    public function getWebsiteRssFeedFinder(WebSite $website, $parameters) {
         if (is_null($this->websiteRssFeedFinder)) {
             $this->websiteRssFeedFinder = new WebsiteRssFeedFinder();
             $this->websiteRssFeedFinder->setBaseRequest($this->httpClientService->get()->get());
             $this->websiteRssFeedFinder->setRootUrl($website->getCanonicalUrl());
+            
+            if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {
+                $this->websiteRssFeedFinder->getBaseRequest()->setAuth(
+                    isset($parameters['http-auth-username']) ? $parameters['http-auth-username'] : '',
+                    isset($parameters['http-auth-password']) ? $parameters['http-auth-password'] : '',
+                    'any'
+                );
+            }               
         }
         
         return $this->websiteRssFeedFinder;
@@ -341,7 +341,7 @@ class WebSiteService extends EntityService {
      * @return array 
      */
     private function getUrlsFromAtomFeed(WebSite $website, $parameters) {
-        $feedFinder = $this->getWebsiteRssFeedFinder($website);
+        $feedFinder = $this->getWebsiteRssFeedFinder($website, $parameters);
         $feedFinder->getBaseRequest()->getClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');      
 
         $feedUrls = $feedFinder->getAtomFeedUrls();                
@@ -372,7 +372,16 @@ class WebSiteService extends EntityService {
     private function getUrlsFromNewsFeed($feedUrl, $parameters) {        
         try {
             $request = $this->getHttpClientService()->getRequest($feedUrl);
-            $response = $this->getNewsFeedResponse($request, $parameters);
+            
+            if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {
+                $request->setAuth(
+                    isset($parameters['http-auth-username']) ? $parameters['http-auth-username'] : '',
+                    isset($parameters['http-auth-password']) ? $parameters['http-auth-password'] : '',
+                    'any'
+                );
+            }            
+            
+            $response = $request->send();
         } catch (\Guzzle\Http\Exception\RequestException $requestException) {
             return array();
         } catch (\Guzzle\Common\Exception\InvalidArgumentException $e) {
@@ -395,45 +404,6 @@ class WebSiteService extends EntityService {
         }
         
         return $urls;        
-    }
-    
-    
-    private function getNewsFeedResponse(\Guzzle\Http\Message\Request $request, $parameters, $failOnAuthenticationFailure = false) {
-        try {
-            return $request->send();     
-        } catch (\Guzzle\Http\Exception\ClientErrorResponseException $clientErrorResponseException) {            
-            /* @var $response \Guzzle\Http\Message\Response */
-            $response = $clientErrorResponseException->getResponse();                        
-            $authenticationScheme = $this->getWwwAuthenticateSchemeFromResponse($response);                        
-            
-            if (is_null($authenticationScheme) || $failOnAuthenticationFailure || !isset($parameters['http-auth-username']) || !isset($parameters['http-auth-username'])) {
-                throw $clientErrorResponseException;
-            }            
-
-            $request->setAuth($parameters['http-auth-username'], $parameters['http-auth-password'], $this->getWwwAuthenticateSchemeFromResponse($response));
-            return $this->getNewsFeedResponse($request, $parameters, true);
-        }        
-    }   
-    
-    
-    /**
-     * 
-     * @param \Guzzle\Http\Message\Response $response
-     * @return int|null
-     */
-    private function getWwwAuthenticateSchemeFromResponse(\Guzzle\Http\Message\Response $response) {
-        if ($response->getStatusCode() !== 401) {
-            return null;
-        }
-        
-        if (!$response->hasHeader('www-authenticate')) {
-            return null;
-        }        
-              
-        $wwwAuthenticateHeaderValues = $response->getHeader('www-authenticate')->toArray();
-        $firstLineParts = explode(' ', $wwwAuthenticateHeaderValues[0]);
-
-        return (isset($this->httpAuthNameToCurlAuthScheme[$firstLineParts[0]])) ? $this->httpAuthNameToCurlAuthScheme[$firstLineParts[0]] : null;    
-    }     
+    }    
     
 }
