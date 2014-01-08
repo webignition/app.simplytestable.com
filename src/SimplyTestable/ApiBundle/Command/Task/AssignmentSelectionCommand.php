@@ -59,7 +59,7 @@ EOF
         foreach ($taskGroups as $taskGroupIndex => $taskGroup) {
             $output->writeln('Processing task group '.($taskGroupIndex + 1));
             
-            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();            
+            $entityManager = $this->getContainer()->get('doctrine')->getManager();            
             $taskIds = array();
             
             foreach ($taskGroup as $task) {

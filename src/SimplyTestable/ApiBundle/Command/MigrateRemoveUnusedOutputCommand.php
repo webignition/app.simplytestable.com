@@ -153,7 +153,7 @@ class MigrateRemoveUnusedOutputCommand extends BaseCommand
      */
     private function getEntityManager() {
         if (is_null($this->entityManager)) {
-            $this->entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+            $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
         }
         
         return  $this->entityManager;

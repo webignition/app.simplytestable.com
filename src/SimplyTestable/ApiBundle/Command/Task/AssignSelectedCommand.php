@@ -73,7 +73,7 @@ EOF
         $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);        
         if ($response === 0) {
             $output->writeln('ok');
-            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();             
+            $entityManager = $this->getContainer()->get('doctrine')->getManager();             
             
             $startedTasks = array();
             foreach ($tasks as $task) {

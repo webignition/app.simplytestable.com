@@ -75,7 +75,7 @@ EOF
         
         $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);        
         if ($response === 0) {
-            $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+            $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
             $job = $tasks[0]->getJob();
             if ($job->getState()->getName() == 'job-queued') {                
