@@ -86,9 +86,9 @@ EOF
             
             $startedTasks = array_merge(array($task), $equivalentTasks);
             
-            foreach ($startedTasks as $startedTask) {
+            foreach ($startedTasks as $startedTask) {                
                 if ($startedTask->getJob()->getState()->getName() == 'job-queued') {
-                    $entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+                    $entityManager = $this->getContainer()->get('doctrine')->getManager();                    
                     $startedTask->getJob()->setNextState();                
 
                     $entityManager->persist($startedTask->getJob());
