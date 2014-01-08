@@ -35,7 +35,7 @@ class MigrateAddHashToHashlessOutputCommand extends BaseCommand
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    { 
+    {         
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
@@ -105,7 +105,7 @@ class MigrateAddHashToHashlessOutputCommand extends BaseCommand
      */
     private function getEntityManager() {
         if (is_null($this->entityManager)) {
-            $this->entityManager = $this->getContainer()->get('doctrine')->getEntityManager();
+            $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
         }
         
         return  $this->entityManager;
