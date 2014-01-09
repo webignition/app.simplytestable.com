@@ -314,6 +314,16 @@ class JobController extends ApiController
         
         if ($job->getType()->equals($this->getJobTypeService()->getCrawlType())) {
             $parentJob = $this->getCrawlJobContainerService()->getForJob($job)->getParentJob();            
+            
+            foreach ($parentJob->getRequestedTaskTypes() as $taskType) {
+                /* @var $taskType TaskType */
+                $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';            
+
+                if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
+                    $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey));
+                }
+            }            
+            
             $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));          
             
             if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {

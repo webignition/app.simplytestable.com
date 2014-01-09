@@ -99,7 +99,18 @@ class TaskController extends ApiController
             }
             
             if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery')) && $this->getJobService()->isCompleted($task->getJob())) {
-                $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($task->getJob()));                 
+                $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($task->getJob());                
+                
+                foreach ($crawlJobContainer->getParentJob()->getRequestedTaskTypes() as $taskType) {                                     
+                    /* @var $taskType TaskType */
+                    $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';            
+
+                    if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
+                        $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey));
+                    }
+                }                 
+                
+                $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);                 
             }            
         }
         

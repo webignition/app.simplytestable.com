@@ -312,6 +312,83 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $this->assertTrue($this->getJobService()->isQueued($crawlJobContainer->getParentJob()));
         $this->assertEquals($expectedTaskCount, $crawlJobContainer->getParentJob()->getTasks()->count());          
     }
+
+    public function testPostCrawlPrepareSetsPrefinedDomainsToIgnoreForCssValidation() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('CSS validation'), array(
+            'CSS validation' => array(
+                'ignore-common-cdns' => 1
+            )               
+        )));
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
+        $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
+        
+        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
+        $task = $this->getTaskService()->getById($taskIds[0]);
+        
+        $this->runConsole('simplytestable:task:assign', array(
+            $task->getId() =>  true
+        ));
+        
+        $this->assertEquals('task-in-progress', $task->getState()->getName());
+        
+        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+            'end_date_time' => '2012-03-08 17:03:00',
+            'output' => '[]',
+            'contentType' => 'application/json',
+            'state' => 'completed',
+            'errorCount' => 0,
+            'warningCount' => 0
+        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
+        
+        $jobTaskParametersObject = json_decode($job->getTasks()->first()->getParameters());
+        
+        $this->assertTrue(isset($jobTaskParametersObject->{'domains-to-ignore'}));
+        $this->assertEquals($this->container->getParameter('css-validation-domains-to-ignore'), $jobTaskParametersObject->{'domains-to-ignore'});                 
+    }    
+    
+    
+    public function testPostCrawlPrepareSetsPrefinedDomainsToIgnoreForJsStaticAnalysis() {
+        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        
+        $canonicalUrl = 'http://example.com/';
+        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('JS static analysis'), array(
+            'JS static analysis' => array(
+                'ignore-common-cdns' => 1
+            )               
+        )));
+        
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
+        $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
+        
+        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
+        $task = $this->getTaskService()->getById($taskIds[0]);
+        
+        $this->runConsole('simplytestable:task:assign', array(
+            $task->getId() =>  true
+        ));
+        
+        $this->assertEquals('task-in-progress', $task->getState()->getName());
+        
+        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+            'end_date_time' => '2012-03-08 17:03:00',
+            'output' => '[]',
+            'contentType' => 'application/json',
+            'state' => 'completed',
+            'errorCount' => 0,
+            'warningCount' => 0
+        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
+        
+        $jobTaskParametersObject = json_decode($job->getTasks()->first()->getParameters());
+        
+        $this->assertTrue(isset($jobTaskParametersObject->{'domains-to-ignore'}));
+        $this->assertEquals($this->container->getParameter('js-static-analysis-domains-to-ignore'), $jobTaskParametersObject->{'domains-to-ignore'});                 
+    }    
 }
 
 
