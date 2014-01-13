@@ -87,6 +87,10 @@ class WebSite
     public function isPubliclyRoutable() {
         $url = new Url($this->getCanonicalUrl());
         
+        if (!$url->hasHost()) {
+            return false;
+        }
+        
         if (!$url->getHost()->isPubliclyRoutable()) {
             return false;
         }
