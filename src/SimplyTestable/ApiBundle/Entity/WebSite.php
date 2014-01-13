@@ -89,12 +89,49 @@ class WebSite
         
         if (!$url->getHost()->isPubliclyRoutable()) {
             return false;
-        }        
+        }
         
-        if (!substr_count($url->getHost()->get(), '.') || (strpos($url->getHost()->get(), '.') === 0) || strpos($url->getHost()->get(), '.') === strlen($url->getHost()->get() - 1)) { 
+        if ($this->isUrlHostDotless($url)) {
+            return false;
+        }
+        
+        if ($this->doesUrlHostStartWithDot($url)) {
+            return false;
+        }
+        
+        if ($this->doesUrlHostEndWithDot($url)) {
             return false;
         }
         
         return true;
+    }
+    
+    /**
+     * 
+     * @param \webignition\Url\Url $url
+     * @return boolean
+     */
+    private function isUrlHostDotless(Url $url) {        
+        return !substr_count($url->getHost()->get(), '.');
+    }
+    
+    
+    /**
+     * 
+     * @param \webignition\Url\Url $url
+     * @return boolean
+     */
+    private function doesUrlHostStartWithDot(Url $url) {
+        return strpos($url->getHost()->get(), '.') === 0;
+    }
+    
+    
+    /**
+     * 
+     * @param \webignition\Url\Url $url
+     * @return boolean
+     */
+    private function doesUrlHostEndWithDot(Url $url) {
+        return strpos($url->getHost()->get(), '.') === strlen($url->getHost()->get()) - 1;
     }
 }
