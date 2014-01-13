@@ -6,6 +6,29 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 
 class UserAccountPlanTest extends BaseSimplyTestableTestCase {
+    
+    public function testUtf8StripeCustomer() {
+        $stripeCustomer = 'test-ɸ';
+        
+        $user = $this->getUserService()->create('user@example.com', 'password');
+        
+        $plan = $this->createAccountPlan();       
+        
+        $userAccountPlan = new UserAccountPlan();
+        $userAccountPlan->setUser($user);
+        $userAccountPlan->setPlan($plan);
+        $userAccountPlan->setStripeCustomer($stripeCustomer);
+    
+        $this->getEntityManager()->persist($userAccountPlan);
+        $this->getEntityManager()->flush();
+        
+        $userAccountPlanId = $userAccountPlan->getId();
+        
+        $this->getEntityManager()->clear();
+  
+        $this->assertEquals($stripeCustomer, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserAccountPlan')->find($userAccountPlanId)->getStripeCustomer());
+    }
+    
 
     public function testPersist() {
         $user = $this->getUserService()->create('user@example.com', 'password');

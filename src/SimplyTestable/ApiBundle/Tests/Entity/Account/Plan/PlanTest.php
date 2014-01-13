@@ -7,10 +7,46 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 
 class PlanTest extends BaseSimplyTestableTestCase {
+    
+    public static function setUpBeforeClass() {
+        self::setupDatabaseIfNotExists();        
+    }          
+    
+    public function testUtf8Name() {
+        $name = 'test-ɸ';
+        
+        $plan = new Plan();
+        $plan->setName($name);        
+        
+        $this->getEntityManager()->persist($plan);
+        $this->getEntityManager()->flush();
+        
+        $planId = $plan->getId();
+        
+        $this->getEntityManager()->clear();        
+        $this->assertEquals($name, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan')->find($planId)->getName());
+    }
+    
+    public function testUtf8StripeId() {
+        $name = 'test-foo-plan';
+        $stripeId = 'ɸ';
+        
+        $plan = new Plan();
+        $plan->setName($name);        
+        $plan->setStripeId($stripeId);
+        
+        $this->getEntityManager()->persist($plan);
+        $this->getEntityManager()->flush();
+        
+        $planId = $plan->getId();
+        
+        $this->getEntityManager()->clear();        
+        $this->assertEquals($stripeId, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan')->find($planId)->getStripeId());
+    }    
 
     public function testCreateAndPersistWithNoConstraints() {
         $plan = new Plan();
-        $plan->setName('foo-plan');
+        $plan->setName('test-foo-plan');
       
         $this->getEntityManager()->persist($plan);
         $this->getEntityManager()->flush();
@@ -21,7 +57,7 @@ class PlanTest extends BaseSimplyTestableTestCase {
     
     public function testDefaultVisibilityIsFalse() {
         $plan = new Plan();
-        $plan->setName('foo-plan');
+        $plan->setName('test-foo-plan');
       
         $this->getEntityManager()->persist($plan);
         $this->getEntityManager()->flush();
@@ -32,7 +68,7 @@ class PlanTest extends BaseSimplyTestableTestCase {
     
     public function testMakeVisible() {
         $plan = new Plan();
-        $plan->setName('foo-plan');
+        $plan->setName('test-foo-plan');
         $plan->setIsVisible(true);
       
         $this->getEntityManager()->persist($plan);
@@ -44,13 +80,13 @@ class PlanTest extends BaseSimplyTestableTestCase {
     
     public function testNameUniqueness() {
         $plan1 = new Plan();
-        $plan1->setName('bar-plan');
+        $plan1->setName('test-bar-plan');
       
         $this->getEntityManager()->persist($plan1);
         $this->getEntityManager()->flush();     
         
         $plan2 = new Plan();
-        $plan2->setName('bar-plan');           
+        $plan2->setName('test-bar-plan');           
     
         $this->getEntityManager()->persist($plan2);
         
@@ -65,7 +101,7 @@ class PlanTest extends BaseSimplyTestableTestCase {
     
     public function testAddConstraintToPlan() {
         $plan = new Plan();
-        $plan->setName('foo-plan');
+        $plan->setName('test-foo-plan');
         
         $constraint = new Constraint();
         $constraint->setName('foo');
@@ -83,7 +119,7 @@ class PlanTest extends BaseSimplyTestableTestCase {
     
     public function testAddConstraintsToPlan() {
         $plan = new Plan();
-        $plan->setName('foo-plan');
+        $plan->setName('test-foo-plan');
         
         $constraint1 = new Constraint();
         $constraint1->setName('foo');        
@@ -104,7 +140,7 @@ class PlanTest extends BaseSimplyTestableTestCase {
     
     public function testRemoveConstraintFromPlan() {
         $plan = new Plan();
-        $plan->setName('foo-plan');
+        $plan->setName('test-foo-plan');
         
         $constraint1 = new Constraint();
         $constraint1->setName('foo');        
@@ -132,7 +168,7 @@ class PlanTest extends BaseSimplyTestableTestCase {
     
     public function testPersistAndRetrievePlanWithConstraints() {
         $plan = new Plan();
-        $plan->setName('foo-plan');
+        $plan->setName('test-foo-plan');
         
         $constraint1 = new Constraint();
         $constraint1->setName('foo');        
@@ -156,7 +192,7 @@ class PlanTest extends BaseSimplyTestableTestCase {
     
     public function testHasConstraintNamed() {
         $plan = new Plan();
-        $plan->setName('foo-plan');
+        $plan->setName('test-foo-plan');
         
         $constraint1 = new Constraint();
         $constraint1->setName('foo');        
@@ -174,7 +210,7 @@ class PlanTest extends BaseSimplyTestableTestCase {
     
     public function testGetConstraintNamed() {
         $plan = new Plan();
-        $plan->setName('foo-plan');
+        $plan->setName('test-foo-plan');
         
         $constraint1 = new Constraint();
         $constraint1->setName('foo');        

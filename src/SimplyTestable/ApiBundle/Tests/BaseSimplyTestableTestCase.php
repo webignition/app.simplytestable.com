@@ -23,13 +23,18 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const USER_STRIPE_EVENT_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserStripeEventController';
     
     public function setUp() {
-        parent::setUp();
+        parent::setUp();        
         $this->removeAllJobs();
+        $this->removeAllWebsites();
         $this->removeAllTasks();
         $this->removeAllWorkers();
         $this->removeAllUserAccountPlans();
+        $this->removeTestTaskTypes();
+        $this->removeTestTaskTypeClasses();
         $this->removeTestAccountPlanContraints();
         $this->removeTestAccountPlans();
+        $this->removeTestStates();
+        $this->removeTestJobTypes();
         $this->removeAllUserEmailChangeRequests();
         $this->removeAllStripeEvents();
         $this->rebuildDefaultDataState();
@@ -49,18 +54,39 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->getUserAccountPlanService()->subscribe($user, $plan);          
     }
     
+    protected function removeTestStates() {        
+        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\State', 'test');
+    }    
+    
     
     protected function removeTestAccountPlans() {        
-        $testPlanNames = array('foo-plan', 'bar-plan');
-        
-        foreach ($testPlanNames as $constraintName) {
-            $plans = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan')->findByName($constraintName);
-            if (is_array($plans) && count($plans) > 0) {
-                $this->getEntityManager()->remove($plans[0]);
-                $this->getEntityManager()->flush();
-            }
-        }
+        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan', 'test');
+    }     
+    
+    
+    protected function removeTestJobTypes() {        
+        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\Job\Type', 'test');
+    }
+    
+    
+    protected function removeTestTaskTypes() {        
+        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\Task\Type\Type', 'test');
     }    
+    
+    protected function removeTestTaskTypeClasses() {        
+        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass', 'test');
+    }     
+    
+    
+    private function removeAllOfEntityPrefixedWith($entityName, $prefix) {
+        $allEntities = $this->getEntityManager()->getRepository($entityName)->findAll();
+        foreach ($allEntities as $entity) {
+            if (substr($entity->getName(), 0, strlen($prefix)) == $prefix) {
+                $this->getEntityManager()->remove($entity);
+                $this->getEntityManager()->flush();                    
+            }
+        }        
+    }
     
     
     protected function removeTestAccountPlanContraints() {        
@@ -693,7 +719,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
             $this->getUserService()->deleteUser($user);
         }
     }
-    
+
+    protected function removeAllWebsites() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\WebSite');
+    }    
     
     protected function removeAllUserAccountPlans() {
         $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserAccountPlan');
@@ -806,7 +835,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function createAccountPlan($name = null) {
         if (is_null($name)) {
-            $name = 'foo-plan';
+            $name = 'test-foo-plan';
         }
         
         $plan = new \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;

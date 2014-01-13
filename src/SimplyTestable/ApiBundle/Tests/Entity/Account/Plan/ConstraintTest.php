@@ -19,5 +19,23 @@ class ConstraintTest extends BaseSimplyTestableTestCase {
         
         $this->assertNotNull($constraint->getId());
     }
+    
+    public function testUtf8Name() {
+        $name = 'foo-ɸ';
+        
+        $plan = $this->createAccountPlan();
+        
+        $constraint = new Constraint();
+        $constraint->setName($name);
+        $constraint->setPlan($plan);
+        
+        $this->getEntityManager()->persist($constraint);
+        $this->getEntityManager()->flush();
+        
+        $constraintId = $constraint->getId();
+        
+        $this->getEntityManager()->clear();        
+        $this->assertEquals($name, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint')->find($constraintId)->getName());
+    }    
 
 }

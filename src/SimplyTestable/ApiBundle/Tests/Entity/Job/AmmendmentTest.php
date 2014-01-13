@@ -1,11 +1,29 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Entity\Account\Plan;
+namespace SimplyTestable\ApiBundle\Tests\Entity\Job;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 
 class AmmendmentTest extends BaseSimplyTestableTestCase {
+    
+    public function testUtf8Reason() {
+        $reason = 'ɸ';        
+        $canonicalUrl = 'http://example.com/';        
+        
+        $ammendment = new Ammendment();
+        $ammendment->setJob($this->getJobService()->getById($this->createJobAndGetId($canonicalUrl)));
+        $ammendment->setReason($reason);
+      
+        $this->getEntityManager()->persist($ammendment);        
+        $this->getEntityManager()->flush();
+        
+        $ammendmentId = $ammendment->getId();
+        
+        $this->getEntityManager()->clear();
+        
+        $this->assertEquals($reason, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Ammendment')->find($ammendmentId)->getReason());         
+    }    
 
     public function testPersistWithNoConstraint() {
         $canonicalUrl = 'http://example.com/';        
