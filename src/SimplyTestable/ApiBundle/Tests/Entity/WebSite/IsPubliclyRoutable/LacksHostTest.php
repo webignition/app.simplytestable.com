@@ -3,7 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Entity\WebSite\IsPubliclyRoutable;
 
 
-class HostLacksDotTest extends AbstractIsPubliclyRoutableTest {    
+class LacksHostTest extends AbstractIsPubliclyRoutableTest {    
     
     public function testTest() {
         $this->assertIsNotRoutableForUrl('/');        
