@@ -156,48 +156,9 @@ class JobPreparationService {
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
             $this->jobService->addAmmendment($job, 'plan-url-limit-reached:discovered-url-count-' . count($urls), $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());            
             $urls = array_slice($urls, 0, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit());
-        }        
-        
-        $requestedTaskTypes = $job->getRequestedTaskTypes();
-        $newTaskState = $this->taskService->getQueuedState();
-        
-        foreach ($urls as $url) {
-            $comparatorUrl = new NormalisedUrl($url);
-            if (!$this->isProcessedUrl($comparatorUrl)) {
-                foreach ($requestedTaskTypes as $taskType) {
-                    $taskTypeOptions = $this->getTaskTypeOptions($job, $taskType);
-
-                    $task = new Task();
-                    $task->setJob($job);
-                    $task->setType($taskType);
-                    $task->setUrl($url);
-                    $task->setState($newTaskState);
-                    
-                    $job->addTask($task);
-                    
-                    $parameters = array();
-                    
-                    if ($taskTypeOptions->getOptionCount()) {
-                        $parameters = $taskTypeOptions->getOptions();                      
-                        
-                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $this->predefinedDomainsToIgnore);                                               
-                        if (count($domainsToIgnore)) {
-                            $parameters['domains-to-ignore'] = $domainsToIgnore;
-                        }
-                    }
-                    
-                    if ($job->hasParameters()) {
-                        $parameters = array_merge($parameters, json_decode($job->getParameters(), true));
-                    }
-                    
-                    $task->setParameters(json_encode($parameters));                    
-                    
-                    $this->taskService->persist($task);                    
-                }
-                
-                $this->processedUrls[] = (string)$comparatorUrl;
-            }
         }
+        
+        $this->prepareTasksFromCollectedUrls($job, $urls);
         
         $job->setState($this->jobService->getQueuedState());
         
@@ -211,24 +172,21 @@ class JobPreparationService {
     }
     
     
-    public function prepareFromCrawl(CrawlJobContainer $crawlJobContainer) {
+    public function prepareFromCrawl(CrawlJobContainer $crawlJobContainer) {        
         $this->processedUrls = array();
         $job = $crawlJobContainer->getParentJob();
         
         if (!$this->jobService->isFailedNoSitepmap($job)) {
-            return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
-        }  
+            throw new JobPreparationServiceException(
+                'Job is in wrong state, currently "'.$job->getState()->getName().'"',
+                JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
+            );
+        } 
         
         $job->setState($this->jobService->getPreparingState());         
         $this->jobService->persistAndFlush($job);
         
         $urls = $this->crawlJobContainerService->getDiscoveredUrls($crawlJobContainer, true);
-        
-        if ($urls === false || count($urls) == 0) {
-            $job->setState($this->jobService->getFailedNoSitemapState());
-            $this->jobService->persistAndFlush($job);
-            return self::RETURN_CODE_NO_URLS;
-        }
         
         if ($crawlJobContainer->getCrawlJob()->getAmmendments()->count()) {
             /* @var $ammendment \SimplyTestable\ApiBundle\Entity\Job\Ammendment */
@@ -243,16 +201,25 @@ class JobPreparationService {
             }          
         }
         
-        $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());        
-        if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
-            $this->jobService->addAmmendment($job, 'plan-url-limit-reached:discovered-url-count-' . count($urls), $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());            
-            $urls = array_slice($urls, 0, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit());
-        }
+        $this->prepareTasksFromCollectedUrls($job, $urls);
         
+        $job->setState($this->jobService->getQueuedState());
+        
+        $timePeriod = new TimePeriod();
+        $timePeriod->setStartDateTime(new \DateTime());
+        $job->setTimePeriod($timePeriod);   
+        
+        $this->jobService->persistAndFlush($job);
+        
+        return self::RETRUN_CODE_OK;
+    }
+    
+    
+    private function prepareTasksFromCollectedUrls(Job $job, $urls) {        
         $requestedTaskTypes = $job->getRequestedTaskTypes();
-        $newTaskState = $this->taskService->getQueuedState();
+        $newTaskState = $this->taskService->getQueuedState();        
         
-        foreach ($urls as $url) {
+        foreach ($urls as $url) {            
             $comparatorUrl = new NormalisedUrl($url);
             if (!$this->isProcessedUrl($comparatorUrl)) {                
                 foreach ($requestedTaskTypes as $taskType) {
@@ -263,6 +230,8 @@ class JobPreparationService {
                     $task->setType($taskType);
                     $task->setUrl($url);
                     $task->setState($newTaskState);
+                    
+                    $job->addTask($task);
                     
                     $parameters = array();
                     
@@ -281,23 +250,12 @@ class JobPreparationService {
                     
                     $task->setParameters(json_encode($parameters));
                     
-                    $this->taskService->persist($task);
-                    $job->addTask($task);
+                    $this->taskService->persist($task);                    
                 }
                 
                 $this->processedUrls[] = (string)$comparatorUrl;
             }
-        }
-        
-        $job->setState($this->jobService->getQueuedState());
-        
-        $timePeriod = new TimePeriod();
-        $timePeriod->setStartDateTime(new \DateTime());
-        $job->setTimePeriod($timePeriod);   
-        
-        $this->jobService->persistAndFlush($job);
-        
-        return self::RETRUN_CODE_OK;
+        }        
     }
     
     

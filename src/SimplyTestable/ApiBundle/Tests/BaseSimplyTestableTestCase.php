@@ -22,6 +22,9 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const STRIPE_WEBHOOK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Stripe\WebHookController';
     const USER_STRIPE_EVENT_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserStripeEventController';
     
+    const TEST_USER_EMAIL = 'user@example.com';
+    const TEST_USER_PASSWORD = 'password';
+    
     public function setUp() {
         parent::setUp();        
         $this->removeAllJobs();
@@ -427,7 +430,21 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->getUserCreationController('activateAction')->activateAction($user->getConfirmationToken());
         
         return $user;          
-    } 
+    }
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Entity\User
+     */
+    protected function getTestUser() {        
+        $user = $this->getUserService()->findUserByEmail(self::TEST_USER_EMAIL);
+        if (is_null($user)) {
+            $this->createAndActivateUser(self::TEST_USER_EMAIL, self::TEST_USER_PASSWORD);
+        }
+        
+        return $this->getUserService()->findUserByEmail(self::TEST_USER_EMAIL);
+    }
     
     
     /**
