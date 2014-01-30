@@ -126,11 +126,6 @@ class JobPreparationService {
         $job->setState($this->jobService->getPreparingState());         
         $this->jobService->persistAndFlush($job);
         
-        if (!$job->getWebsite()->isPubliclyRoutable()) {
-            $this->rejectAsUnroutable($job);
-            return self::RETURN_CODE_UNROUTABLE;
-        }
-        
         $this->processedUrls = array();        
         
         $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());        
