@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\HttpAuth;
+namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\HttpAuth;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 

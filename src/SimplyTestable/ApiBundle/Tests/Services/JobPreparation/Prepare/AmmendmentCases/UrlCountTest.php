@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\AmmendmentCases;
+namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\AmmendmentCases;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 

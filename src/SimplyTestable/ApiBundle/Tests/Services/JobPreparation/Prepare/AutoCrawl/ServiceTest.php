@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\AutoCrawl;
+namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\AutoCrawl;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 

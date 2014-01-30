@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\NoDiscoveredUrls;
+namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\NoDiscoveredUrls;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 

@@ -60,7 +60,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCas
         $this->createUser('user1@example.com', 'password');
         $user1 = $this->getUserService()->findUserByEmail('user1@example.com');
         
-        $fooPlan = $this->createAccountPlan('foo-plan');
+        $fooPlan = $this->createAccountPlan('test-foo-plan');
         
         $this->getUserAccountPlanService()->subscribe($user1, $fooPlan);        
         
@@ -92,7 +92,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCas
             $this->assertEquals('basic', $this->getUserAccountPlanService()->getForUser($user)->getPlan()->getName());
         }      
         
-        $this->assertEquals('foo-plan', $this->getUserAccountPlanService()->getForUser($user1)->getPlan()->getName());
+        $this->assertEquals('test-foo-plan', $this->getUserAccountPlanService()->getForUser($user1)->getPlan()->getName());
     }    
 
 

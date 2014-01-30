@@ -12,6 +12,8 @@ use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobP
 
 class JobPreparationService {
     
+    const RETRUN_CODE_OK = 0;
+    
     /**
      *
      * @var \SimplyTestable\ApiBundle\Services\JobService

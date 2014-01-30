@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\ExceptionCases;
+namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\ExceptionCases;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
