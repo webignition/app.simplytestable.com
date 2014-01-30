@@ -3,7 +3,6 @@ namespace SimplyTestable\ApiBundle\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class JobPrepareCommand extends BaseCommand
@@ -11,7 +10,6 @@ class JobPrepareCommand extends BaseCommand
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
-    const RETURN_CODE_NO_URLS = 3;
     
     protected function configure()
     {
@@ -48,34 +46,29 @@ class JobPrepareCommand extends BaseCommand
         }
         
         try {
-            $jobPreparationResult = $this->getJobPreparationService()->prepare($job);
+             $this->getJobPreparationService()->prepare($job);
+            
+            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
+                $this->getResqueQueueService()->add(
+                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                    'task-assignment-selection'
+                );             
+            }
+
+            $this->getLogger()->info("simplytestable:job:prepare: queued up [".$job->getTasks()->count()."] tasks covering [".$job->getUrlCount()."] urls and [".count($job->getRequestedTaskTypes())."] task types");
+            
+            return self::RETURN_CODE_OK;
+        } catch (\SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception $jobPreparationServiceException) {
+            if ($jobPreparationServiceException->isJobInWrongStateException()) {
+                $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
+                return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
+            }
+            
+            throw $jobPreparationServiceException;
         } catch (\Exception $e) {
             var_dump(get_class($e), $e);
             exit();
         }
-        
-        switch ($jobPreparationResult) {
-            case 0:
-                // ok
-                break;
-            
-            case self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE:
-                $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
-                return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
-                
-            case self::RETURN_CODE_NO_URLS:
-                $this->getLogger()->info("simplytestable:job:prepare: no sitemap found for [".(string)$job->getWebsite()."]");
-                return self::RETURN_CODE_OK;                
-        }
-        
-        if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-            $this->getResqueQueueService()->add(
-                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-                'task-assignment-selection'
-            );             
-        }
-        
-        $this->getLogger()->info("simplytestable:job:prepare: queued up [".$job->getTasks()->count()."] tasks covering [".$job->getUrlCount()."] urls and [".count($job->getRequestedTaskTypes())."] task types");
     }
     
     /**
