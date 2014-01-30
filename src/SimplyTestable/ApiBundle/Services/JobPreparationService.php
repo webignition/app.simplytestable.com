@@ -16,7 +16,6 @@ class JobPreparationService {
     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;    
     const RETURN_CODE_NO_URLS = 3;
-    const RETURN_CODE_UNROUTABLE = 4;
     
     /**
      *
