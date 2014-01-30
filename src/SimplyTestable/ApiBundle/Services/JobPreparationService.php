@@ -210,18 +210,6 @@ class JobPreparationService {
         return self::RETRUN_CODE_OK;
     }
     
-    private function rejectAsUnroutable(Job $job) {
-        $this->jobService->reject($job);
-
-        $rejectionReason = new JobRejectionReason();
-        $rejectionReason->setJob($job);
-        $rejectionReason->setReason('unroutable');
-        
-        $this->jobService->getEntityManager()->persist($rejectionReason);
-        $this->jobService->getEntityManager()->flush();       
-        $this->jobService->persistAndFlush($job);
-    }
-    
     
     public function prepareFromCrawl(CrawlJobContainer $crawlJobContainer) {
         $this->processedUrls = array();
