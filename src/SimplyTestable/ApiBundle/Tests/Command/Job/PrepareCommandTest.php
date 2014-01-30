@@ -16,23 +16,21 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
      * 
      * Potentially test that resque task-assignment-selection job is queued
      */ 
-class PrepareCommandTest extends BaseSimplyTestableTestCase {    
+class PrepareCommandTest extends BaseSimplyTestableTestCase {
     
-    const EXPECTED_TASK_TYPE_COUNT = 3;
-   
+    const CANONICAL_URL = 'http://example.com';
+    
     public function testSuccessfulPrepareReturnsStatusCode0() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         
-        $canonicalUrl = 'http://example.com'; 
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
+        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));        
         $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
             $job->getId() =>  true
         )));      
     }
     
     public function testJobInWrongStateReturnsStatusCode1() {
-        $canonicalUrl = 'http://example.com'; 
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL)); 
         $job->setState($this->getJobService()->getCancelledState());
         $this->getJobService()->persistAndFlush($job);       
         
@@ -50,9 +48,8 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase {
   
     public function testJobWithNoDiscoveredUrlsReturnsStatusCode3() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $canonicalUrl = 'http://example.com'; 
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));        
+
+        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));     
         $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
             $job->getId() =>  true
         )));         
