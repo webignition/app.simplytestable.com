@@ -177,8 +177,14 @@ abstract class BaseTestCase extends WebTestCase {
      * @param string $testName
      * @return string
      */
-    protected function getFixturesDataPath($testName) {
-        return __DIR__ . self::FIXTURES_DATA_RELATIVE_PATH . '/' . str_replace('\\', DIRECTORY_SEPARATOR, get_class($this)) . '/' . $testName;
+    protected function getFixturesDataPath($testName = null) {
+        $path = __DIR__ . self::FIXTURES_DATA_RELATIVE_PATH . '/' . str_replace('\\', DIRECTORY_SEPARATOR, get_class($this));
+        
+        if (!is_null($testName)) {
+            $path .= '/' . $testName;
+        }
+        
+        return $path;
     } 
     
     

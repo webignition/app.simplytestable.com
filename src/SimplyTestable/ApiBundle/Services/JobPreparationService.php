@@ -8,14 +8,9 @@ use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use webignition\NormalisedUrl\NormalisedUrl;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
-use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
+use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationServiceException;
 
 class JobPreparationService {
-    
-    const RETRUN_CODE_OK = 0;
-    const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
-    const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;    
-    const RETURN_CODE_NO_URLS = 3;
     
     /**
      *
@@ -119,7 +114,10 @@ class JobPreparationService {
     
     public function prepare(Job $job) {        
         if (!$this->jobService->isNew($job)) {
-            return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
+            throw new JobPreparationServiceException(
+                'Job is in wrong state, currently "'.$job->getState()->getName().'"',
+                JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
+            );
         }  
 
         $job->setState($this->jobService->getPreparingState());         
@@ -150,13 +148,13 @@ class JobPreparationService {
             }            
             
             $this->jobService->persistAndFlush($job);
-            return self::RETURN_CODE_NO_URLS;
+            return true;
         }
         
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
             $this->jobService->addAmmendment($job, 'plan-url-limit-reached:discovered-url-count-' . count($urls), $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());            
             $urls = array_slice($urls, 0, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit());
-        }
+        }        
         
         $requestedTaskTypes = $job->getRequestedTaskTypes();
         $newTaskState = $this->taskService->getQueuedState();
@@ -207,7 +205,7 @@ class JobPreparationService {
         
         $this->jobService->persistAndFlush($job);
         
-        return self::RETRUN_CODE_OK;
+        return true;
     }
     
     

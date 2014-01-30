@@ -198,10 +198,9 @@ class WebSiteService extends EntityService {
      * @return array 
      */
     private function getUrlsFromSitemap(WebSite $website, $parameters) {               
-        $sitemapFinder = $this->getSitemapFinder();
-        $sitemapFinder->getBaseRequest()->getClient()->setUserAgent('SimplyTestable Sitemap URL Retriever/0.1 (http://simplytestable.com/)');
+        $sitemapFinder = $this->getSitemapFinder();        
         $sitemapFinder->getSitemapRetriever()->reset();
-        $sitemapFinder->setRootUrl($website->getCanonicalUrl());
+        $sitemapFinder->setRootUrl($website->getCanonicalUrl());        
         
         if (isset($parameters['softLimit'])) {
             $sitemapFinder->getUrlLimitListener()->setSoftLimit($parameters['softLimit']);
@@ -242,6 +241,7 @@ class WebSiteService extends EntityService {
         if (is_null($this->sitemapFinder)) {
             $this->sitemapFinder = new WebsiteSitemapFinder();
             $this->sitemapFinder->setBaseRequest($this->httpClientService->get()->get());           
+            $this->sitemapFinder->getSitemapRetriever()->disableRetrieveChildSitemaps();
             
             if ($this->sitemapFinder->getSitemapRetriever()->getTotalTransferTimeout() == \webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever::DEFAULT_TOTAL_TRANSFER_TIMEOUT) {
                 $this->sitemapFinder->getSitemapRetriever()->setTotalTransferTimeout(self::DEFAULT_URL_RETRIEVER_TOTAL_TIMEOUT);

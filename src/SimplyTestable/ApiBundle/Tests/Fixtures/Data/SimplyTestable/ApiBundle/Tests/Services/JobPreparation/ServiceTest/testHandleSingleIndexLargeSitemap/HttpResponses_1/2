@@ -1,0 +1,257 @@
+HTTP/1.1 200 OK
+Content-Type: text/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.google.com/schemas/sitemap/0.84">
+<sitemap>
+<loc>http://example.com/sitemaps/forum/categories.xml</loc>
+<lastmod>2013-10-20T03:14:06+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_1.xml</loc>
+<lastmod>2013-10-20T03:10:19+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_10.xml</loc>
+<lastmod>2013-10-20T03:11:20+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_11.xml</loc>
+<lastmod>2013-10-20T03:11:27+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_12.xml</loc>
+<lastmod>2013-10-20T03:11:34+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_13.xml</loc>
+<lastmod>2013-10-20T03:11:41+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_14.xml</loc>
+<lastmod>2013-10-20T03:11:48+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_15.xml</loc>
+<lastmod>2013-10-20T03:11:55+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_16.xml</loc>
+<lastmod>2013-10-20T03:12:02+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_17.xml</loc>
+<lastmod>2013-10-20T03:12:09+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_18.xml</loc>
+<lastmod>2013-10-20T03:12:15+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_19.xml</loc>
+<lastmod>2013-10-20T03:12:22+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_2.xml</loc>
+<lastmod>2013-10-20T03:10:27+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_20.xml</loc>
+<lastmod>2013-10-20T03:12:29+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_21.xml</loc>
+<lastmod>2013-10-20T03:12:36+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_22.xml</loc>
+<lastmod>2013-10-20T03:12:43+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_23.xml</loc>
+<lastmod>2013-10-20T03:12:50+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_24.xml</loc>
+<lastmod>2013-10-20T03:12:57+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_25.xml</loc>
+<lastmod>2013-10-20T03:13:04+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_26.xml</loc>
+<lastmod>2013-10-20T03:13:10+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_27.xml</loc>
+<lastmod>2013-10-20T03:13:17+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_28.xml</loc>
+<lastmod>2013-10-20T03:13:25+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_29.xml</loc>
+<lastmod>2013-10-20T03:13:33+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_3.xml</loc>
+<lastmod>2013-10-20T03:10:36+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_30.xml</loc>
+<lastmod>2013-10-20T03:13:40+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_31.xml</loc>
+<lastmod>2013-10-20T03:13:48+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_32.xml</loc>
+<lastmod>2013-10-20T03:13:55+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_33.xml</loc>
+<lastmod>2013-10-20T03:14:02+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_34.xml</loc>
+<lastmod>2013-10-20T03:14:06+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_4.xml</loc>
+<lastmod>2013-10-20T03:10:43+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_5.xml</loc>
+<lastmod>2013-10-20T03:10:49+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_6.xml</loc>
+<lastmod>2013-10-20T03:10:55+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_7.xml</loc>
+<lastmod>2013-10-20T03:11:01+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_8.xml</loc>
+<lastmod>2013-10-20T03:11:08+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/forum/topics/topics_9.xml</loc>
+<lastmod>2013-10-20T03:11:14+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/studies/schools.xml</loc>
+<lastmod>2013-10-20T03:14:06+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/studies/types.xml</loc>
+<lastmod>2013-10-20T03:14:06+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/tags/tags_1.xml</loc>
+<lastmod>2013-10-20T03:14:07+02:00</lastmod>
+</sitemap>
+<sitemap>
+<loc>http://example.com/sitemaps/tags/tags_2.xml</loc>
+            <lastmod>2013-10-20T03:14:07+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_1.xml</loc>
+            <lastmod>2013-10-20T03:14:08+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_10.xml</loc>
+            <lastmod>2013-10-20T03:14:21+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_11.xml</loc>
+            <lastmod>2013-10-20T03:14:22+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_12.xml</loc>
+            <lastmod>2013-10-20T03:14:24+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_13.xml</loc>
+            <lastmod>2013-10-20T03:14:25+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_14.xml</loc>
+            <lastmod>2013-10-20T03:14:27+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_15.xml</loc>
+            <lastmod>2013-10-20T03:14:28+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_16.xml</loc>
+            <lastmod>2013-10-20T03:14:29+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_17.xml</loc>
+            <lastmod>2013-10-20T03:14:30+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_2.xml</loc>
+            <lastmod>2013-10-20T03:14:10+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_3.xml</loc>
+            <lastmod>2013-10-20T03:14:11+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_4.xml</loc>
+            <lastmod>2013-10-20T03:14:12+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_5.xml</loc>
+            <lastmod>2013-10-20T03:14:14+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_6.xml</loc>
+            <lastmod>2013-10-20T03:14:15+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_7.xml</loc>
+            <lastmod>2013-10-20T03:14:17+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_8.xml</loc>
+            <lastmod>2013-10-20T03:14:18+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/tutorial/tutorial_9.xml</loc>
+            <lastmod>2013-10-20T03:14:19+02:00</lastmod>
+            </sitemap>
+            
+            <sitemap>
+            <loc>http://example.com/sitemaps/universe/universe_1.xml</loc>
+            <lastmod>2013-10-20T03:14:07+02:00</lastmod>
+            </sitemap>
+            
+    <sitemap>
+        <loc>http://boutique.example.com/sitemap_index.php</loc>
+        <lastmod>2013-10-20T16:35:00+02:00</lastmod>
+    </sitemap>
+</sitemapindex>

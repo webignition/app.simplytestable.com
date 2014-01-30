@@ -11,7 +11,6 @@ class StartTest extends BaseControllerJsonTestCase {
     }       
 
     public function testStartAction() {
-        $this->createPublicUserIfMissing();
         $jobController = $this->getJobStartController('startAction');        
         
         $canonicalUrls = array(
@@ -285,5 +284,27 @@ class StartTest extends BaseControllerJsonTestCase {
         
         $this->assertEquals('{"http-auth-username":"user","http-auth-password":"pass"}', $job->getParameters());      
     }
+    
+    
+    public function testWithSingleUrlTestAndHttpAuthParameters() {
+        $canonicalUrl = 'http://example.com/';        
+        
+        $httpAuthUsernameKey = 'http-auth-username';
+        $httpAuthPasswordKey = 'http-auth-password';
+        $httpAuthUsernameValue = 'foo';
+        $httpAuthPasswordValue = 'bar';
+        
+        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url', array('html validation'), null, array(
+            $httpAuthUsernameKey => $httpAuthUsernameValue,
+            $httpAuthPasswordKey => $httpAuthPasswordValue            
+        )));
+
+        $decodedParameters = json_decode($job->getTasks()->first()->getParameters());
+        $this->assertTrue(isset($decodedParameters->$httpAuthUsernameKey));
+        $this->assertEquals($httpAuthUsernameValue, $decodedParameters->$httpAuthUsernameKey);
+        $this->assertTrue(isset($decodedParameters->$httpAuthPasswordKey));
+        $this->assertEquals($httpAuthPasswordValue, $decodedParameters->$httpAuthPasswordKey);
+           
+    }    
     
 }
