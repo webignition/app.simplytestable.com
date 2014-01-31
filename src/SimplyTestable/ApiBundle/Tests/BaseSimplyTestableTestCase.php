@@ -34,6 +34,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeTestTaskTypes();
         $this->removeTestTaskTypeClasses();
         $this->removeTestAccountPlanContraints();
+        $this->removeAllUserAccountPlans();
         $this->removeTestAccountPlans();
         $this->removeTestStates();
         $this->removeTestJobTypes();
@@ -44,8 +45,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     }
    
     
-    protected function rebuildDefaultDataState() {
-        $this->removeAllUserAccountPlans();
+    protected function rebuildDefaultDataState() {        
+        
         $this->removeAllUsers();        
         self::loadDataFixtures();
     }
