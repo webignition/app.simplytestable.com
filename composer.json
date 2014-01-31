@@ -38,7 +38,8 @@
         "stripe/stripe-php": "1.7.15",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "webignition/html-validation-error-normaliser":"dev-master",
-        "webignition/html-document-link-finder":">=0.5,<1.0"        
+        "webignition/html-document-link-finder":">=0.5,<1.0",
+        "webignition/url-resolver":">=0.1,<1.0"
     },
     "scripts": {
         "post-install-cmd": [
