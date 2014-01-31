@@ -237,8 +237,16 @@ abstract class BaseTestCase extends WebTestCase {
     } 
     
     public function tearDown() {
-        $this->container->get('doctrine')->getConnection()->close();
         parent::tearDown();
+        $this->container->get('doctrine')->getConnection()->close();
+        
+        $refl = new \ReflectionObject($this);
+        foreach ($refl->getProperties() as $prop) {
+            if (!$prop->isStatic() && 0 !== strpos($prop->getDeclaringClass()->getName(), 'PHPUnit_')) {
+                $prop->setAccessible(true);
+                $prop->setValue($this, null);
+            }
+        }
     }
     
     
