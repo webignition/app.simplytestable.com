@@ -41,8 +41,8 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());      
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $urlCountToDiscover = (int)round($this->getUserAccountPlanService()->getForUser($task->getJob()->getUser())->getPlan()->getConstraintNamed('urls_per_job')->getLimit() / 2);

@@ -105,9 +105,9 @@ class StatusTest extends AbstractAccessTest {
         $canonicalUrl = 'http://example.com/';
         $job_id = $this->createJobAndGetId($canonicalUrl);        
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:job:prepare', array(
-            $job_id =>  true
-        )));        
+        $this->executeCommand('simplytestable:job:prepare', array(
+            'id' => $job_id
+        ));       
         
         $jobObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $job_id)->getContent());
         

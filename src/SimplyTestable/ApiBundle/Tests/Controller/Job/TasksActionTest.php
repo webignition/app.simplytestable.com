@@ -47,9 +47,9 @@ class TasksActionTest extends AbstractAccessTest {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
-        )); 
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
+        ));        
         
         $tasksResponseObject = json_decode($this->getJobController('tasksAction')->tasksAction($canonicalUrl, $job->getId())->getContent());
         

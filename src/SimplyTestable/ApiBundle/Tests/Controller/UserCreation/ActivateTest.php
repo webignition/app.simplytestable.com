@@ -49,7 +49,7 @@ class ActivateTest extends BaseControllerJsonTestCase {
     } 
     
     public function testActivateInMaintenanceReadOnlyModeReturns503() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));                 
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');                 
         $this->assertEquals(503, $this->getUserCreationController('activateAction')->activateAction('')->getStatusCode());           
     }    
     

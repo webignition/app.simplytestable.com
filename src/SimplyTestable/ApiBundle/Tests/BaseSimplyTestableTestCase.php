@@ -42,6 +42,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->rebuildDefaultDataState();
         $this->clearRedis();
     }
+   
     
     protected function rebuildDefaultDataState() {
         $this->removeAllUserAccountPlans();

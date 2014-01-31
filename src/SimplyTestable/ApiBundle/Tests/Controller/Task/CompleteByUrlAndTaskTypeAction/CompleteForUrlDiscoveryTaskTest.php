@@ -24,8 +24,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());
@@ -55,8 +55,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());
@@ -87,8 +87,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());
@@ -121,8 +121,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());
@@ -156,8 +156,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());      
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());
@@ -174,8 +174,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
         $task = $this->getTaskService()->getById($taskIds[1]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));         
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
@@ -212,8 +212,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());
@@ -244,8 +244,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());
@@ -282,8 +282,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());
@@ -321,8 +321,8 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());

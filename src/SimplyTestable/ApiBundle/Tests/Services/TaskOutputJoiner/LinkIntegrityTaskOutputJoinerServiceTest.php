@@ -48,9 +48,9 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
-        ));    
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
+        ));        
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => $now->format('Y-m-d H:i:s'),
@@ -116,9 +116,9 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
-        ));    
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
+        ));        
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => $now->format('Y-m-d H:i:s'),

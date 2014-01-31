@@ -47,7 +47,7 @@ class WorkerControllerTest extends BaseControllerJsonTestCase {
     
     
     public function testActivateActionInMaintenanceReadOnlyModeReturns503() {    
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));          
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
         
         $this->assertEquals(503, $this->getWorkerController('activateAction', array(
             'hostname' => '',

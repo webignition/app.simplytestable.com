@@ -20,8 +20,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
      * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
      */
     protected function getAdditionalCommands() {        
-        return array(
-            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),            
+        return array(         
             new \SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand()
         );
     }

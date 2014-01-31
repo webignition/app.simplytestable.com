@@ -65,13 +65,13 @@ class StartTest extends BaseControllerJsonTestCase {
     
     
     public function testStartActionInMaintenanceReadOnlyModeReturns503() {            
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
         $this->assertEquals(503, $this->getJobStartController('startAction')->startAction('http://example.com')->getStatusCode());
     }    
     
     
     public function testStartActionInMaintenanceBackupReadOnlyModeReturns503() {            
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-backup-read-only'));
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
         $this->assertEquals(503, $this->getJobStartController('startAction')->startAction('http://example.com')->getStatusCode());
     } 
     

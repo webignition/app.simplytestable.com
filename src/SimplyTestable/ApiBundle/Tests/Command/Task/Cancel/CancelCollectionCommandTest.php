@@ -21,7 +21,6 @@ class CancelCollectionCommandTest extends ConsoleCommandTestCase {
      */
     protected function getAdditionalCommands() {        
         return array(
-            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
             new \SimplyTestable\ApiBundle\Command\TaskCancelCollectionCommand()
         );
     }

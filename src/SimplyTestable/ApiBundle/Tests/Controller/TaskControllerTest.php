@@ -20,9 +20,9 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $taskIds[0] =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $taskIds[0]
+        ));        
         
         $job = json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());        
         $this->assertEquals('in-progress', $job->state);
@@ -40,7 +40,7 @@ class TaskControllerTest extends BaseControllerJsonTestCase {
     }    
     
     public function testCompleteActionInMaintenanceReadOnlyModeReturns503() {                
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
         
         $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',

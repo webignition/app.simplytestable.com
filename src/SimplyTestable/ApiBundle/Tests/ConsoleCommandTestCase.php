@@ -12,7 +12,7 @@ abstract class ConsoleCommandTestCase extends BaseSimplyTestableTestCase {
     public function setUp() {
         parent::setUp();
         
-        foreach ($this->getCommands() as $command) {
+        foreach ($this->getAdditionalCommands() as $command) {
             $this->application->add($command);
         }
 

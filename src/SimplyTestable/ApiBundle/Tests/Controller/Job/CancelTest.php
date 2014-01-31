@@ -26,13 +26,13 @@ class CancelTest extends BaseControllerJsonTestCase {
     
     
     public function testCancelActionInMaintenanceReadOnlyModeReturns503() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));   
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
         $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction('http://example.com', 1)->getStatusCode());        
     }
     
     
     public function testCancelActionInMaintenanceBackupReadOnlyModeReturns503() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-backup-read-only'));   
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
         $this->assertEquals(503, $this->getJobController('cancelAction')->cancelAction('http://example.com', 1)->getStatusCode());        
     }
     

@@ -51,10 +51,10 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
             'errorCount' => 0,
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
-     
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
-        )));
+        
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
+        ));        
         
         $this->assertEquals('task-in-progress', $tasks[1]->getState()->getName());     
     }
@@ -100,9 +100,9 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
      
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
+        ));
         
         $this->assertEquals('task-in-progress', $tasks[1]->getState()->getName());     
     }    
@@ -147,9 +147,9 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
      
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
+        ));
         
         $this->assertEquals(array(
             array(
@@ -213,8 +213,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
         ));
         
         $this->assertEquals(0, $tasks[1]->getOutput()->getErrorCount());
@@ -268,7 +268,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
         $this->getTaskService()->getEntityManager()->flush();
         
         $this->createWorker();
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign-selected'));        
+        
+        $this->assertEquals(0, $this->executeCommand('simplytestable:task:assign-selected'));        
         $this->assertEquals(0, $task->getOutput()->getErrorCount());
     }  
     
@@ -316,8 +317,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
         $task = $tasks[1];
 
         $this->createWorker();
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assigncollection', array(
-            $task->getId() => true
+        $this->assertEquals(0, $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         )));
         
         $this->assertEquals(0, $task->getOutput()->getErrorCount());
@@ -343,9 +344,9 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
         $this->createWorker();
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
+        ));
         
         $this->assertEquals('task-in-progress', $tasks[1]->getState()->getName());
     }
@@ -388,8 +389,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
         ));
         
         $this->assertTrue($tasks[1]->hasOutput());
@@ -434,8 +435,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
         ));
         
         $this->assertTrue($tasks[1]->hasOutput());        
@@ -491,8 +492,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
-        $this->runConsole('simplytestable:task:assign', array(
-            $tasks[1]->getId() =>  true
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $tasks[1]->getId()
         ));
         
         $this->assertTrue($tasks[1]->hasOutput());        

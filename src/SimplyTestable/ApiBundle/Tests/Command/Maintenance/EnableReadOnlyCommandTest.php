@@ -15,17 +15,7 @@ class EnableReadOnlyCommandTest extends ConsoleCommandTestCase {
     protected function getCommandName() {
         return 'simplytestable:maintenance:enable-read-only';
     }
-    
-    
-    /**
-     * 
-     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
-     */
-    protected function getAdditionalCommands() {        
-        return array(
-            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand()
-        );
-    }     
+  
     
     public function testEnableReadOnly() {    
         $this->assertReturnCode(0);

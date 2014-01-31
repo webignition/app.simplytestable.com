@@ -23,9 +23,9 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
         $task = $this->getTaskService()->getById($taskIds[0]);
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
+        ));        
         
         $job = json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());        
         $this->assertEquals('in-progress', $job->state);
@@ -67,9 +67,9 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         }
         
         $task = $this->getTaskService()->getById($taskIds[$jobIds[0]][0]);        
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
+        ));
         
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
@@ -125,9 +125,9 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         
         $task = $this->getTaskService()->getById($taskIds[$jobIds[0]][0]);        
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
+        ));
         
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
@@ -207,9 +207,9 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         }
         
         $task = $this->getTaskService()->getById($taskIds[$jobIds[0]][0]);        
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
+        ));
         
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
@@ -301,9 +301,9 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         
         $task = $this->getTaskService()->getById($taskIds[$jobIds[$users[0]->getEmail()][0]][0]);        
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
+        ));
         
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
@@ -385,9 +385,9 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         }
         
         $task = $this->getTaskService()->getById($taskIds[$jobIds[0]][0]);        
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign', array(
-            $task->getId() =>  true
-        )));
+        $this->executeCommand('simplytestable:task:assign', array(
+            'id' => $task->getId()
+        ));
         
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',

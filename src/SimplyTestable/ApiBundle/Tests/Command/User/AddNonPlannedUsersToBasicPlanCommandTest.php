@@ -20,8 +20,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase {
      * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
      */
     protected function getAdditionalCommands() {        
-        return array(
-            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),            
+        return array(            
             new \SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand()
         );
     }    

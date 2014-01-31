@@ -41,6 +41,10 @@ abstract class BaseTestCase extends WebTestCase {
         $this->application = new Application(self::$kernel);
         $this->application->setAutoExit(false);
         self::setDefaultSystemState();
+        
+        foreach ($this->getCommands() as $command) {
+            $this->application->add($command);
+        }        
     }
     
     
@@ -50,7 +54,11 @@ abstract class BaseTestCase extends WebTestCase {
      */
     protected function getCommands() {
         return array_merge(array(
-            new \SimplyTestable\ApiBundle\Command\JobPrepareCommand()
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
+            new \SimplyTestable\ApiBundle\Command\JobPrepareCommand(),
+            new \SimplyTestable\ApiBundle\Command\TaskAssignCommand(),
+            new \SimplyTestable\ApiBundle\Command\Task\AssignSelectedCommand(),
+            new \SimplyTestable\ApiBundle\Command\TaskAssignCollectionCommand()
         ), $this->getAdditionalCommands());
     }    
     
