@@ -90,7 +90,7 @@ abstract class BaseTestCase extends WebTestCase {
         }
     } 
     
-    protected static function loadDataFixtures() {
+    protected static function loadDataFixtures() {        
         exec('php app/console doctrine:fixtures:load -e test --append');
     }
     

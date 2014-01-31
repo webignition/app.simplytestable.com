@@ -299,13 +299,11 @@ class WebSiteService extends EntityService {
      */    
     private function getUrlsFromRssFeed(WebSite $website, $parameters) {
         $feedFinder = $this->getWebsiteRssFeedFinder($website, $parameters);
-        $feedFinder->getBaseRequest()->getClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');
-
         $feedUrls = $feedFinder->getRssFeedUrls();               
         if (is_null($feedUrls)) {
             return array();
         }
-
+        
         $urlsFromFeed = array();
 
         foreach ($feedUrls as $feedUrl) {
@@ -321,6 +319,7 @@ class WebSiteService extends EntityService {
             $this->websiteRssFeedFinder = new WebsiteRssFeedFinder();
             $this->websiteRssFeedFinder->setBaseRequest($this->httpClientService->get()->get());
             $this->websiteRssFeedFinder->setRootUrl($website->getCanonicalUrl());
+            $this->websiteRssFeedFinder->getBaseRequest()->getClient()->setUserAgent('ST News Feed URL Retriever/0.1 (http://bit.ly/RlhKCL)');
             
             if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {
                 $this->websiteRssFeedFinder->getBaseRequest()->setAuth(
@@ -341,14 +340,13 @@ class WebSiteService extends EntityService {
      * @return array 
      */
     private function getUrlsFromAtomFeed(WebSite $website, $parameters) {
-        $feedFinder = $this->getWebsiteRssFeedFinder($website, $parameters);
-        $feedFinder->getBaseRequest()->getClient()->setUserAgent('SimplyTestable RSS URL Retriever/0.1 (http://simplytestable.com/)');      
+        $feedFinder = $this->getWebsiteRssFeedFinder($website, $parameters);    
 
         $feedUrls = $feedFinder->getAtomFeedUrls();                
         if (is_null($feedUrls)) {
             return array();
         }
-
+        
         $urlsFromFeed = array();
         
         try {
@@ -369,7 +367,7 @@ class WebSiteService extends EntityService {
      * @param string $feedUrl
      * @return array
      */
-    private function getUrlsFromNewsFeed($feedUrl, $parameters) {        
+    private function getUrlsFromNewsFeed($feedUrl, $parameters) {
         try {
             $request = $this->getHttpClientService()->getRequest($feedUrl);
             
@@ -382,7 +380,7 @@ class WebSiteService extends EntityService {
             }            
             
             $response = $request->send();
-        } catch (\Guzzle\Http\Exception\RequestException $requestException) {
+        } catch (\Guzzle\Http\Exception\RequestException $requestException) {            
             return array();
         } catch (\Guzzle\Common\Exception\InvalidArgumentException $e) {
             return array();

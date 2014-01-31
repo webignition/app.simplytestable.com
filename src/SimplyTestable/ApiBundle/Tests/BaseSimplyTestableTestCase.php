@@ -30,8 +30,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeAllJobs();
         $this->removeAllWebsites();
         $this->removeAllTasks();
-        $this->removeAllWorkers();
-        $this->removeAllUserAccountPlans();
+        $this->removeAllWorkers();        
         $this->removeTestTaskTypes();
         $this->removeTestTaskTypeClasses();
         $this->removeTestAccountPlanContraints();
@@ -45,7 +44,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     }
     
     protected function rebuildDefaultDataState() {
-        $this->removeAllUsers();
+//        $this->removeAllUserAccountPlans();
+//        $this->removeAllUsers();        
         self::loadDataFixtures();
     }
     
