@@ -50,7 +50,7 @@ class BeforeListener
                 /* @var $inputArgument InputArgument */
                 if ($inputArgument->isRequired()) {
                     if (!$methodArguments->has($inputArgument->getName())) {
-                        $this->logger->warn('BeforeListener' . get_class($controller) . '::' . $methodName.': missing required argument');
+                        $this->logger->warn('BeforeListener' . get_class($controller) . '::' . $methodName.': missing required argument ['.$inputArgument->getName().']');
                         throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
                     }
                 }
