@@ -2,14 +2,33 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Maintenance;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class EnableBackupReadOnlyCommandTest extends BaseSimplyTestableTestCase {        
+class EnableBackupReadOnlyCommandTest extends ConsoleCommandTestCase {        
     
     const STATE_FILE_RELATIVE_PATH = '/test';
     
-    public function testEnableBackupReadOnly() {    
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-backup-read-only'));
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:maintenance:enable-backup-read-only';
+    }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand()
+        );
+    }     
+    
+    public function testEnableBackupReadOnly() {            
+        $this->assertReturnCode(0);
         $this->assertEquals('maintenance-backup-read-only', $this->getApplicationStateService()->getState());
         $this->assertFalse($this->getApplicationStateService()->isInActiveState());
         $this->assertFalse($this->getApplicationStateService()->isInMaintenanceReadOnlyState());

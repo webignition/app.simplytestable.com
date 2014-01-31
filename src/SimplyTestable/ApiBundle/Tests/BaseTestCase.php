@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Guzzle\Http\Client as HttpClient;
+use Symfony\Component\Console\Tester\CommandTester;
 
 abstract class BaseTestCase extends WebTestCase {
     
@@ -31,7 +32,7 @@ abstract class BaseTestCase extends WebTestCase {
      *
      * @var Symfony\Bundle\FrameworkBundle\Console\Application
      */
-    private $application;
+    protected $application;
        
 
     public function setUp() {        
@@ -42,8 +43,29 @@ abstract class BaseTestCase extends WebTestCase {
         self::setDefaultSystemState();
     }
     
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getCommands() {
+        return array_merge(array(
+            new \SimplyTestable\ApiBundle\Command\JobPrepareCommand()
+        ), $this->getAdditionalCommands());
+    }    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */    
+    protected function getAdditionalCommands() {
+        return array();
+    }
+    
 
-    protected function runConsole($command, Array $options = array()) {
+    protected function runConsole($command, Array $options = array()) {      
+        $this->fail("Calling deprecated runConsole, use executeCommand");
+        
         $args = array(
             'app/console',
             $command,
@@ -64,6 +86,16 @@ abstract class BaseTestCase extends WebTestCase {
 
         $input = new ArgvInput($args); 
         return $response = $this->application->run($input);
+    }
+    
+    
+    protected function executeCommand($name, $arguments = array()) {
+        $command = $this->application->find($name);
+        $commandTester = new CommandTester($command);        
+        
+        $arguments['command'] = $command->getName();
+        
+        return $commandTester->execute($arguments);
     }
     
     

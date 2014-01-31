@@ -2,27 +2,43 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Job;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-use SimplyTestable\ApiBundle\Entity\Job\Job;
-
-class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTestCase {    
+class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase {    
     
     const RETURN_CODE_DONE = 0;
     const RETURN_CODE_IN_MAINTENANCE_MODE = 1;
     const RETURN_CODE_NO_MATCHING_JOBS = 2;
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
+    
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:job:complete-all-with-no-incomplete-tasks';
     }
     
-    public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1() {     
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
-        $this->assertEquals(self::RETURN_CODE_IN_MAINTENANCE_MODE, $this->runConsole('simplytestable:job:complete-all-with-no-incomplete-tasks'));  
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
+            new \SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand()
+        );
+    }
+    
+    public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1() {
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');        
+        $this->assertReturnCode(self::RETURN_CODE_IN_MAINTENANCE_MODE);
+        
     }     
     
     public function testWithNoJobs() {
-        $this->assertEquals(self::RETURN_CODE_NO_MATCHING_JOBS, $this->runConsole('simplytestable:job:complete-all-with-no-incomplete-tasks'));
+        $this->assertReturnCode(self::RETURN_CODE_NO_MATCHING_JOBS);
     }
     
     public function testWithOnlyCrawlJobs() {
@@ -35,7 +51,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
         
         $this->getJobService()->persistAndFlush($job);
         
-        $this->assertEquals(self::RETURN_CODE_NO_MATCHING_JOBS, $this->runConsole('simplytestable:job:complete-all-with-no-incomplete-tasks'));
+        $this->assertReturnCode(self::RETURN_CODE_NO_MATCHING_JOBS);
     }
     
     public function testWithSingleJobWithIncompleteTasks() {
@@ -45,7 +61,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
         $job->setState($this->getJobService()->getInProgressState());        
         $this->getJobService()->persistAndFlush($job);
         
-        $this->assertEquals(self::RETURN_CODE_NO_MATCHING_JOBS, $this->runConsole('simplytestable:job:complete-all-with-no-incomplete-tasks'));
+        $this->assertReturnCode(self::RETURN_CODE_NO_MATCHING_JOBS);
         $this->assertEquals($this->getJobService()->getInProgressState(), $job->getState());
     }
     
@@ -60,7 +76,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
         $job->setState($this->getJobService()->getInProgressState());        
         $this->getJobService()->persistAndFlush($job);
         
-        $this->assertEquals(self::RETURN_CODE_DONE, $this->runConsole('simplytestable:job:complete-all-with-no-incomplete-tasks'));
+        $this->assertReturnCode(self::RETURN_CODE_DONE);        
         $this->assertEquals($this->getJobService()->getCompletedState(), $job->getState());        
     }
     
@@ -81,7 +97,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
             $this->getJobService()->persistAndFlush($job);
         }
    
-        $this->assertEquals(self::RETURN_CODE_DONE, $this->runConsole('simplytestable:job:complete-all-with-no-incomplete-tasks'));
+        $this->assertReturnCode(self::RETURN_CODE_DONE);
         
         foreach ($jobs as $job) {
             $this->assertEquals($this->getJobService()->getCompletedState(), $job->getState());
@@ -109,7 +125,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
             $this->getJobService()->persistAndFlush($job);
         }
    
-        $this->assertEquals(self::RETURN_CODE_DONE, $this->runConsole('simplytestable:job:complete-all-with-no-incomplete-tasks'));
+        $this->assertReturnCode(self::RETURN_CODE_DONE);
         
         foreach ($jobs as $jobIndex => $job) {
             if ($jobIndex === 0) {

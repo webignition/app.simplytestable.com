@@ -2,13 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Task\Cancel;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class CancelCommandTest extends BaseSimplyTestableTestCase {    
+class CancelCommandTest extends ConsoleCommandTestCase {    
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }     
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:task:cancel';
+    }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),            
+            new \SimplyTestable\ApiBundle\Command\TaskCancelCommand()
+        );
+    }   
 
     public function testCancelValidTaskReturnsStatusCode0() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
@@ -35,19 +51,20 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
             $task->setState($state);
             $this->getTaskService()->getEntityManager()->persist($task);
             $this->getTaskService()->getEntityManager()->flush();
+            
+            $this->assertReturnCode(0, array(
+                'id' => $taskIds[0]
+            ));
 
-            $this->assertEquals(0, $this->runConsole('simplytestable:task:cancel', array(
-                $taskIds[0] =>  true
-            )));
             $this->assertEquals('task-cancelled', $task->getState()->getName());            
         }
     }
   
     
     public function testCancelTaskThatDoesNotExistReturnsStatusCodeMinus1() {
-        $this->assertEquals(-1, $this->runConsole('simplytestable:task:cancel', array(
-            -1 =>  true
-        )));
+        $this->assertReturnCode(-1, array(
+            'id' => -1
+        ));
     }
                
     
@@ -79,10 +96,11 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
             $task->setState($state);
             $this->getTaskService()->getEntityManager()->persist($task);
             $this->getTaskService()->getEntityManager()->flush();
+            
+            $this->assertReturnCode(-2, array(
+                'id' => $taskIds[0]
+            ));            
 
-            $this->assertEquals(-2, $this->runConsole('simplytestable:task:cancel', array(
-                $taskIds[0] =>  true
-            )));
             $this->assertEquals($task->getState()->getName(), $task->getState()->getName());            
         } 
     }
@@ -105,18 +123,19 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
         $task->setWorker($worker);
         $this->getTaskService()->getEntityManager()->persist($task);
         $this->getTaskService()->getEntityManager()->flush();
+        
+        $this->assertReturnCode(503, array(
+            'id' => $taskIds[0]
+        ));        
 
-        $this->assertEquals(503, $this->runConsole('simplytestable:task:cancel', array(
-            $taskIds[0] =>  true
-        )));
         $this->assertEquals('task-awaiting-cancellation', $task->getState()->getName());
     }
     
     public function testCancelInReadOnlyModeReturnsStatusCodeMinus3() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
-        $this->assertEquals(-3, $this->runConsole('simplytestable:task:cancel', array(
-            1 =>  true
-        )));
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');        
+        $this->assertReturnCode(-3, array(
+            'id' => 1
+        ));
     }    
     
     
@@ -145,10 +164,10 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
             $task->setState($state);
             $this->getTaskService()->getEntityManager()->persist($task);
             $this->getTaskService()->getEntityManager()->flush();
-
-            $this->assertEquals(404, $this->runConsole('simplytestable:task:cancel', array(
-                $taskIds[0] =>  true
-            )));
+            
+            $this->assertReturnCode(404, array(
+                'id' => $taskIds[0]
+            ));            
             $this->assertEquals('task-awaiting-cancellation', $task->getState()->getName());            
         }       
     } 
@@ -179,10 +198,11 @@ class CancelCommandTest extends BaseSimplyTestableTestCase {
             $task->setState($state);
             $this->getTaskService()->getEntityManager()->persist($task);
             $this->getTaskService()->getEntityManager()->flush();
-
-            $this->assertEquals(503, $this->runConsole('simplytestable:task:cancel', array(
-                $taskIds[0] =>  true
-            )));
+            
+            $this->assertReturnCode(503, array(
+                'id' => $taskIds[0]
+            ));            
+            
             $this->assertEquals('task-awaiting-cancellation', $task->getState()->getName());            
         }       
     }     

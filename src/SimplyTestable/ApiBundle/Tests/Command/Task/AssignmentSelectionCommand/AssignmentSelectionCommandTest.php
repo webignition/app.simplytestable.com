@@ -2,18 +2,31 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Task\AssignmentSelectionCommand;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {    
-    const WORKER_TASK_ASSIGNMENT_FACTOR = 2;   
+class AssignmentSelectionCommandTest extends ConsoleCommandTestCase {    
+    const WORKER_TASK_ASSIGNMENT_FACTOR = 2;
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }    
-    
-    public function setUp() {
-        parent::setUp();        
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:task:assign:select';
     }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
+            new \SimplyTestable\ApiBundle\Command\Task\AssignmentSelectionCommand()
+        );
+    }     
+
 
     public function testSelectTasksForAssignmentWithNoWorkers() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
@@ -72,8 +85,8 @@ class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testSelectTasksInMaintenanceReadOnlyModeReturnsStatusCode1() {        
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));
-        $this->assertEquals(1, $this->runConsole('simplytestable:task:assign:select'));      
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $this->assertReturnCode(1);  
     }
     
     
@@ -104,7 +117,7 @@ class AssignmentSelectionCommandTest extends BaseSimplyTestableTestCase {
             $expectedQueuedTaskCount = 0;
         }
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign:select'));
+        $this->assertReturnCode(0);
         
         $jobResponse = $this->fetchJob($canonicalUrl, $job_id);        
         $jobObject = json_decode($jobResponse->getContent());

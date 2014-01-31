@@ -2,13 +2,33 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Migrate;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class MigrateNormaliseJsLintOutputCommandTest extends BaseSimplyTestableTestCase {        
+class MigrateNormaliseJsLintOutputCommandTest extends ConsoleCommandTestCase {        
+    
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:normalise-jslint-output';
+    }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
+            new \SimplyTestable\ApiBundle\Command\MigrateNormaliseJsLintOutputCommand()
+        );
+    }     
     
     public function testRunCommandInMaintenanceReadOnlyModeReturnsStatusCode1() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
-        $this->assertEquals(1, $this->runConsole('simplytestable:normalise-jslint-output'));
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $this->assertReturnCode(1);
     }
 
 }

@@ -2,13 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Job;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class EnqueuePrepareAllCommandTest extends BaseSimplyTestableTestCase {    
+class EnqueuePrepareAllCommandTest extends ConsoleCommandTestCase {    
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:job:enqueue-prepare-all';
     }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
+            new \SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand()
+        );
+    }    
     
     public function testJobsAreEnqueued() {      
         $canonicalUrls = array(
@@ -21,7 +37,7 @@ class EnqueuePrepareAllCommandTest extends BaseSimplyTestableTestCase {
             $jobIds[] = $this->createJobAndGetId($canonicalUrl);
         }
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:job:enqueue-prepare-all'));         
+        $this->assertReturnCode(0);       
         
         foreach ($jobIds as $jobId) {
             $this->assertTrue($this->getResqueQueueService()->contains(
@@ -35,9 +51,9 @@ class EnqueuePrepareAllCommandTest extends BaseSimplyTestableTestCase {
     }
     
     
-    public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode2() {     
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
-        $this->assertEquals(1, $this->runConsole('simplytestable:job:enqueue-prepare-all'));  
-    } 
+    public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1() {     
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');        
+        $this->assertReturnCode(1);
+    }
 
 }

@@ -2,13 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Task\Cancel;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {    
+class CancelCollectionCommandTest extends ConsoleCommandTestCase {    
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }    
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:task:cancelcollection';
+    }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
+            new \SimplyTestable\ApiBundle\Command\TaskCancelCollectionCommand()
+        );
+    }
 
     public function testCancelCollectionWithOneWorkerReturnsStatusCode0() {        
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));      
@@ -33,9 +49,9 @@ class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {
         
         $this->getTaskService()->getEntityManager()->flush();
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:cancelcollection', array(
-            implode(',', $taskIds) =>  true
-        )));
+        $this->assertReturnCode(0, array(
+            'ids' => implode(',', $taskIds)
+        ));
         
         foreach ($tasks as $task) {
             $this->assertEquals('task-cancelled', $task->getState()->getName());
@@ -44,10 +60,10 @@ class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {
     
     
     public function testCancelInMaintenanceReadOnlyModeReturnsStatusCode1() {        
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
-        $this->assertEquals(1, $this->runConsole('simplytestable:task:cancelcollection', array(
-            implode(',', array(1,2,3)) =>  true
-        )));
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $this->assertReturnCode(1, array(
+            'ids' => implode(',', array(1,2,3))
+        ));
     } 
     
     
@@ -74,9 +90,9 @@ class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {
         
         $this->getTaskService()->getEntityManager()->flush();
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:cancelcollection', array(
-            implode(',', $taskIds) =>  true
-        )));
+        $this->assertReturnCode(0, array(
+            'ids' => implode(',', $taskIds)
+        ));        
         
         foreach ($tasks as $task) {
             $this->assertEquals('task-cancelled', $task->getState()->getName());
@@ -107,9 +123,9 @@ class CancelCollectionCommandTest extends BaseSimplyTestableTestCase {
         
         $this->getTaskService()->getEntityManager()->flush();
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:cancelcollection', array(
-            implode(',', $taskIds) =>  true
-        )));
+        $this->assertReturnCode(0, array(
+            'ids' => implode(',', $taskIds)
+        ));
         
         foreach ($tasks as $task) {
             $this->assertEquals('task-cancelled', $task->getState()->getName());

@@ -2,14 +2,33 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Maintenance;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class DisableReadOnlyCommandTest extends BaseSimplyTestableTestCase {        
+class DisableReadOnlyCommandTest extends ConsoleCommandTestCase {        
     
     const STATE_FILE_RELATIVE_PATH = '/test';
     
-    public function testEnableReadOnly() {    
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:disable-read-only'));
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:maintenance:disable-read-only';
+    }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand()
+        );
+    }     
+    
+    public function testDisableReadOnly() {    
+        $this->assertReturnCode(0);
         $this->assertEquals('active', $this->getApplicationStateService()->getState());
         $this->assertTrue($this->getApplicationStateService()->isInActiveState());
         $this->assertFalse($this->getApplicationStateService()->isInMaintenanceReadOnlyState());        

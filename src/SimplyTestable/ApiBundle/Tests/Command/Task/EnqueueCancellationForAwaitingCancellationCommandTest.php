@@ -2,13 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Task;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class EnqueueCancellationForAwaitingCancellationCommandTest extends BaseSimplyTestableTestCase {
+class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleCommandTestCase {
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    } 
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:task:enqueue-cancellation-for-awaiting-cancellation';
+    }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),            
+            new \SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand()
+        );
+    }
     
     
     public function testCancellationJobsAreEnqueued() {
@@ -30,7 +46,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends BaseSimplyTe
 
         $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:enqueue-cancellation-for-awaiting-cancellation'));          
+        $this->assertReturnCode(0);
         $this->assertTrue($this->getResqueQueueService()->contains(
             'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
             'task-cancel',
@@ -43,8 +59,8 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends BaseSimplyTe
      
     
     public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1() {        
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));                
-        $this->assertEquals(1, $this->runConsole('simplytestable:task:enqueue-cancellation-for-awaiting-cancellation'));      
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');        
+        $this->assertReturnCode(1);   
     }
 
 }

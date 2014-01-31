@@ -2,13 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
+class AssignSelectedCommandTest extends ConsoleCommandTestCase {
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }    
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:task:assign-selected';
+    }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
+            new \SimplyTestable\ApiBundle\Command\Task\AssignSelectedCommand()
+        );
+    } 
     
     public function testAssignValidTaskReturnsStatusCode0() {
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
@@ -33,7 +49,7 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(200, $preAssignJobResponse->getStatusCode());
         $this->assertEquals(1, $preAssignJobObject->task_count_by_state->{'queued-for-assignment'});
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign-selected'));
+        $this->assertReturnCode(0);        
         
         $postAssignJobResponse = $this->fetchJob($canonicalUrl, $job_id);        
         $postAssignJobObject = json_decode($postAssignJobResponse->getContent()); 
@@ -55,7 +71,7 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
         $this->getTaskService()->getEntityManager()->persist($task);
         $this->getTaskService()->getEntityManager()->flush();
         
-        $this->assertEquals(1, $this->runConsole('simplytestable:task:assign-selected'));       
+        $this->assertReturnCode(1);   
     }
 
     
@@ -74,16 +90,15 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
         $task = $this->getTaskService()->getById($taskIds[0]);
         $task->setState($this->getTaskService()->getQueuedForAssignmentState());
         $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();
+        $this->getTaskService()->getEntityManager()->flush();        
         
-        $this->assertEquals(2, $this->runConsole('simplytestable:task:assign-selected'));
-       
+        $this->assertReturnCode(2);        
     } 
      
     
     public function testExecutekInMaintenanceReadOnlyModeReturnsStatusCodeMinus1() {        
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));                
-        $this->assertEquals(-1, $this->runConsole('simplytestable:task:assign-selected'));      
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $this->assertReturnCode(-1);      
     }
     
     
@@ -147,8 +162,8 @@ class AssignSelectedCommandTest extends BaseSimplyTestableTestCase {
         $tasks[0]->setState($this->getTaskService()->getQueuedForAssignmentState());
         $this->getTaskService()->getEntityManager()->persist($tasks[0]);
         $this->getTaskService()->getEntityManager()->flush();
-    
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assign-selected'));
+
+        $this->assertReturnCode(0); 
      
         foreach ($tasks as $task) {
             $this->assertEquals('task-in-progress', $task->getState()->getName());

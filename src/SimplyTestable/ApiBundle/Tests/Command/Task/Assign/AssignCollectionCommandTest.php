@@ -2,13 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
+class AssignCollectionCommandTest extends ConsoleCommandTestCase {   
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }    
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:task:assigncollection';
+    }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
+            new \SimplyTestable\ApiBundle\Command\TaskAssignCollectionCommand()
+        );
+    }     
 
     public function testAssignValidTaskReturnsStatusCode0() {        
         $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));       
@@ -24,9 +40,9 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:task:assigncollection', array(
-            implode($taskIds, ',') =>  true
-        )));
+        $this->assertReturnCode(0, array(
+            'ids' => implode($taskIds, ',')
+        ));
         
         $tasks = json_decode($this->getJobController('tasksAction')->tasksAction($canonicalUrl, $job_id)->getContent());
         
@@ -45,11 +61,9 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
         $this->prepareJob($canonicalUrl, $job_id);
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
-        $result = $this->runConsole('simplytestable:task:assigncollection', array(
-            implode($taskIds, ',') =>  true
-        ));       
-        
-        $this->assertEquals(1, $result);    
+        $this->assertReturnCode(1, array(
+            'ids' => implode($taskIds, ',')
+        ));    
   
         $containsResult = $this->getResqueQueueService()->contains(
             'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
@@ -76,12 +90,10 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
         $this->prepareJob($canonicalUrl, $job_id);
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
-
-        $result = $this->runConsole('simplytestable:task:assigncollection', array(
-            implode($taskIds, ',') =>  true
-        ));
         
-        $this->assertEquals(2, $result);
+        $this->assertReturnCode(2, array(
+            'ids' => implode($taskIds, ',')
+        ));        
         
         $containsResult = $this->getResqueQueueService()->contains(
             'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
@@ -96,11 +108,11 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
      
     
     public function testAssignTaskInMaintenanceReadOnlyModeReturnsStatusCodeMinus1() {        
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));        
-        
-        $this->assertEquals(-1, $this->runConsole('simplytestable:task:assigncollection', array(
-            implode(array(1,2,3), ',') =>  true
-        )));      
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+
+        $this->assertReturnCode(-1, array(
+            'ids' => implode(array(1,2,3), ',')
+        ));
     }
     
     
@@ -116,11 +128,9 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
 
-        $result = $this->runConsole('simplytestable:task:assigncollection', array(
-            implode($taskIds, ',') =>  true
-        ));
-        
-        $this->assertEquals(2, $result);
+        $this->assertReturnCode(2, array(
+            'ids' => implode($taskIds, ',')
+        )); 
         
         $containsResult = $this->getResqueQueueService()->contains(
             'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
@@ -146,11 +156,9 @@ class AssignCollectionCommandTest extends BaseSimplyTestableTestCase {
 
         $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
 
-        $result = $this->runConsole('simplytestable:task:assigncollection', array(
-            implode($taskIds, ',') =>  true
-        ));
-        
-        $this->assertEquals(2, $result);
+        $this->assertReturnCode(2, array(
+            'ids' => implode($taskIds, ',')
+        )); 
         
         $containsResult = $this->getResqueQueueService()->contains(
             'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',

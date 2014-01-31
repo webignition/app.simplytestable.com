@@ -2,24 +2,44 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\User;
 
-use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCase {
+class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase {
+    
+    /**
+     * 
+     * @return string
+     */
+    protected function getCommandName() {
+        return 'simplytestable:user:add-non-planned-users-to-basic-plan';
+    }
+    
+    
+    /**
+     * 
+     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     */
+    protected function getAdditionalCommands() {        
+        return array(
+            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),            
+            new \SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand()
+        );
+    }    
 
     public function testAssignInMaintenanceReadOnlyModeReturnsStatusCode1() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:maintenance:enable-read-only'));         
-        $this->assertEquals(1, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');        
+        $this->assertReturnCode(1);
     }    
     
     public function testPublicUserIsNotAssignedBasicPlan() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
+        $this->assertReturnCode(0);
         
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->getPublicUser());
         $this->assertEquals('public', $userAccountPlan->getPlan()->getName());
     }    
     
     public function testAdminUserIsNotAssignedBasicPlan() {
-        $this->assertEquals(0, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
+        $this->assertReturnCode(0);
         $this->assertNull($this->getUserAccountPlanService()->getForUser($this->getUserService()->getAdminUser()));
     }
     
@@ -48,7 +68,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCas
             $this->assertNull($this->getUserAccountPlanService()->getForUser($user));        
         }
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
+        $this->assertReturnCode(0);
         
         foreach ($users as $user) {            
             $this->assertEquals('basic', $this->getUserAccountPlanService()->getForUser($user)->getPlan()->getName());
@@ -86,7 +106,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCas
             $this->assertNull($this->getUserAccountPlanService()->getForUser($user));        
         }
         
-        $this->assertEquals(0, $this->runConsole('simplytestable:user:add-non-planned-users-to-basic-plan'));
+        $this->assertReturnCode(0);
         
         foreach ($users as $user) {            
             $this->assertEquals('basic', $this->getUserAccountPlanService()->getForUser($user)->getPlan()->getName());

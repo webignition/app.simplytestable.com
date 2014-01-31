@@ -369,9 +369,9 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @return \stdClass
      */
     protected function prepareJob($canonicalUrl, $job_id) {
-        $this->runConsole('simplytestable:job:prepare', array(
-            $job_id =>  true
-        ));        
+        $this->executeCommand('simplytestable:job:prepare', array(
+            'id' => $job_id           
+        ));       
     
         return json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());
     }
