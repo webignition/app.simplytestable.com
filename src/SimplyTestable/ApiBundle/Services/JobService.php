@@ -25,6 +25,8 @@ class JobService extends EntityService {
     const QUEUED_STATE = 'job-queued';
     const FAILED_NO_SITEMAP_STATE = 'job-failed-no-sitemap';
     const REJECTED_STATE = 'job-rejected';
+    const RESOLVING_STATE = 'job-resolving';
+    const RESOLVED_STATE = 'job-resolved';
     
     private $incompleteStateNames = array(
         self::STARTING_STATE,
@@ -167,6 +169,23 @@ class JobService extends EntityService {
      */
     public function getRejectedState() {
         return $this->stateService->fetch(self::REJECTED_STATE);
+    }
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getResolvingState() {
+        return $this->stateService->fetch(self::RESOLVING_STATE);
+    }
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Entity\State
+     */
+    public function getResolvedState() {
+        return $this->stateService->fetch(self::RESOLVED_STATE);
     }    
 
     
@@ -224,7 +243,17 @@ class JobService extends EntityService {
      */
     public function isCompleted(Job $job) {
         return $job->getState()->equals($this->getCompletedState());
-    }    
+    } 
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return boolean
+     */
+    public function isResolved(Job $job) {
+        return $job->getState()->equals($this->getResolvedState());
+    } 
     
     
     /**

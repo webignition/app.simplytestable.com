@@ -50,7 +50,8 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
         'worker-offline' => null,
         'worker-unactivated' => null,    
         'job-rejected' => null,
-        'job-resolving' => null
+        'job-resolving' => null,
+        'job-resolved' => null
     );  
     
     /**
