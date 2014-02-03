@@ -58,7 +58,8 @@ abstract class BaseTestCase extends WebTestCase {
             new \SimplyTestable\ApiBundle\Command\JobPrepareCommand(),
             new \SimplyTestable\ApiBundle\Command\TaskAssignCommand(),
             new \SimplyTestable\ApiBundle\Command\Task\AssignSelectedCommand(),
-            new \SimplyTestable\ApiBundle\Command\TaskAssignCollectionCommand()
+            new \SimplyTestable\ApiBundle\Command\TaskAssignCollectionCommand(),
+            new \SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand()
         ), $this->getAdditionalCommands());
     }    
     

@@ -20,4 +20,28 @@ class ExceptionCasesTest extends CommandTest {
             'id' => 1
         ));      
     }
+    
+    
+    public function testHttpClientErrorPerformingResolution() {
+        $this->setHttpFixtures($this->buildHttpFixtureSet(array(
+            'HTTP/1.0 404',
+            'HTTP/1.0 404'
+        )));
+        
+        $this->job = $this->getJobService()->getById($this->createJobAndGetId(
+            self::CANONICAL_URL,
+            null,
+            'single url',
+            array('CSS Validation'),
+            array(
+                'CSS validation' => array(
+                    'ignore-common-cdns' => 1,
+                )
+            )                
+        ));
+        
+        $this->assertReturnCode(0, array(
+            'id' => $this->job->getId()
+        ));        
+    }
 }
