@@ -11,6 +11,13 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         httpClientService: "@simplytestable.services.httpClientService"
         
+  simplytestable.services.jobwebsiteresolutionservice:
+    class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
+    arguments:
+        jobService: "@simplytestable.services.jobservice" 
+        httpClientService: "@simplytestable.services.httpClientService"        
+        websiteService: "@simplytestable.services.websiteservice"
+        
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService
     arguments: 

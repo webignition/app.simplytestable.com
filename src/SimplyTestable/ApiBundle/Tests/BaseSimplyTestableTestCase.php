@@ -524,6 +524,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     /**
      *
+     * @return \SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
+     */
+    protected function getJobWebsiteResolutionService() {
+        return $this->container->get('simplytestable.services.jobwebsiteresolutionservice');
+    }    
+    
+    
+    /**
+     *
      * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
      */    
     protected function getJobPreparationService() {
