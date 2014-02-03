@@ -411,7 +411,27 @@ class Task
     public function getParameters()
     {
         return $this->parameters;
-    }  
+    }
+    
+    
+    /**
+     * 
+     * @param string $name
+     * @return mixed
+     */
+    public function getParameter($name) {
+        if (!$this->hasParameters()) {
+            return null;
+        }
+        
+        $decodedParameters = json_decode($this->getParameters());
+        if (!isset($decodedParameters->{$name})) {
+            return null;
+        }
+        
+        return $decodedParameters->{$name};
+    }
+    
     
     /**
      * 

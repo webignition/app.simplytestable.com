@@ -177,9 +177,13 @@ class ResqueQueueService {
             return false;
         }
         
+        if (is_null($job_details->args[0]) && is_null($args)) {
+            return true;
+        }      
+        
         if (!isset($job_details->args[0])) {
             return false;
-        }        
+        }
 
         foreach ($args as $key => $value) {            
             if (!isset($job_details->args[0]->$key)) {

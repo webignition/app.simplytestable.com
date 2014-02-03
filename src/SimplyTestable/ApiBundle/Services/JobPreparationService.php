@@ -108,14 +108,14 @@ class JobPreparationService {
      * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType
      * @param array $domainsToIgnore
      */
-    public function setPredefinedDomainsToIgnore(TaskType $taskType, $domainsToIgnore)  {
+    public function setPredefinedDomainsToIgnore(TaskType $taskType, $domainsToIgnore)  {        
         $this->predefinedDomainsToIgnore[$taskType->getName()] = $domainsToIgnore;
     }   
 
     
     
     public function prepare(Job $job) {        
-        if (!$this->jobService->isNew($job)) {
+        if (!$this->jobService->isResolved($job)) {
             throw new JobPreparationServiceException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
@@ -236,9 +236,10 @@ class JobPreparationService {
                     $parameters = array();
                     
                     if ($taskTypeOptions->getOptionCount()) {
-                        $parameters = $taskTypeOptions->getOptions();                      
+                        $parameters = $taskTypeOptions->getOptions();
                         
-                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $this->predefinedDomainsToIgnore);                                               
+                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $this->predefinedDomainsToIgnore);
+                        
                         if (count($domainsToIgnore)) {
                             $parameters['domains-to-ignore'] = $domainsToIgnore;
                         }

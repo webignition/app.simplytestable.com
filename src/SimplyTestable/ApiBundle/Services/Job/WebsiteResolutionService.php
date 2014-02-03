@@ -54,6 +54,9 @@ class WebsiteResolutionService {
             );
         }
         
+        $job->setState($this->jobService->getResolvingState());
+        $this->jobService->persistAndFlush($job);
+        
         $resolvedUrl = $this->getUrlResolver()->resolve($job->getWebsite()->getCanonicalUrl());
         
         if ($job->getWebsite()->getCanonicalUrl() != $resolvedUrl) {            
@@ -62,8 +65,10 @@ class WebsiteResolutionService {
             }
             
             $job->setWebsite($this->websiteService->fetch($resolvedUrl));
-            $this->jobService->persistAndFlush($job);
         }
+        
+        $job->setState($this->jobService->getResolvedState());
+        $this->jobService->persistAndFlush($job);        
     }
     
     
