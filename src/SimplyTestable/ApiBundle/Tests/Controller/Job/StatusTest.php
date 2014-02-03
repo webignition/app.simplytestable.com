@@ -46,7 +46,8 @@ class StatusTest extends AbstractAccessTest {
         $fullSiteJobsPerSiteLimit = $fullSiteJobsPerSiteConstraint->getLimit();
         
         for ($i = 0; $i < $fullSiteJobsPerSiteLimit; $i++) {
-            $this->cancelJob($canonicalUrl, $this->createJobAndGetId($canonicalUrl));            
+            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));            
+            $this->cancelJob($job);            
         }
         
         $rejectedJobId = $this->createJobAndGetId($canonicalUrl);        
@@ -71,8 +72,9 @@ class StatusTest extends AbstractAccessTest {
         $fullSiteJobsPerSiteConstraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');        
         $fullSiteJobsPerSiteLimit = $fullSiteJobsPerSiteConstraint->getLimit();
         
-        for ($i = 0; $i < $fullSiteJobsPerSiteLimit; $i++) {
-            $this->cancelJob($canonicalUrl, $this->createJobAndGetId($canonicalUrl, null, 'single url'));            
+        for ($i = 0; $i < $fullSiteJobsPerSiteLimit; $i++) {            
+            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));            
+            $this->cancelJob($job);  
         }
         
         $rejectedJobId = $this->createJobAndGetId($canonicalUrl, null, 'single url');        
@@ -83,33 +85,17 @@ class StatusTest extends AbstractAccessTest {
         
         $this->assertNotNull($jobStatusObject->rejection->constraint);
         $this->assertNotNull($jobStatusObject->rejection->constraint->name);
-        $this->assertEquals('single_url_jobs_per_url', $jobStatusObject->rejection->constraint->name);
-                
+        $this->assertEquals('single_url_jobs_per_url', $jobStatusObject->rejection->constraint->name);                
     } 
-    
-    
-    public function testStatusForInstantlyPreparedSingleUrlJob() {
-        $canonicalUrl = 'http://example.com/';
-        
-        $jobId = $this->createJobAndGetId($canonicalUrl, null, 'single url');        
-        $jobObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId)->getContent());
-        
-        $this->assertEquals(1, $jobObject->url_count);
-        $this->assertEquals(4, $jobObject->task_count);      
-    }
+
     
     
     public function testStatusForJobUrlLimitAmmendment() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
         
-        $canonicalUrl = 'http://example.com/';
-        $job_id = $this->createJobAndGetId($canonicalUrl);        
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL));
         
-        $this->executeCommand('simplytestable:job:prepare', array(
-            'id' => $job_id
-        ));       
-        
-        $jobObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $job_id)->getContent());
+        $jobObject = json_decode($this->fetchJobResponse($job)->getContent());
         
         $this->assertNotNull($jobObject->ammendments);
         $this->assertEquals(1, count($jobObject->ammendments));

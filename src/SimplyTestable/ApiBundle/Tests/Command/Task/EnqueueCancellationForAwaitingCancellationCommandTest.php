@@ -27,33 +27,25 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
     
     
     public function testCancellationJobsAreEnqueued() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         
-        $canonicalUrl = 'http://example.com/';
-        $jobId = $this->createAndPrepareJob($canonicalUrl);
-        
-        $taskIds = $this->getTaskIds($canonicalUrl, $jobId);        
-        foreach ($taskIds as $taskId) {
-            $task = $this->getTaskService()->getById($taskId);
+        foreach ($job->getTasks() as $task) {
             $task->setState($this->getTaskService()->getInProgressState());
-            $this->getTaskService()->getEntityManager()->persist($task);
-            $this->getTaskService()->getEntityManager()->flush();
+            $this->getTaskService()->getEntityManager()->persist($task);            
         }
         
-        $job = $this->getJobService()->getById($jobId);
-        $this->getJobService()->getEntityManager()->refresh($job);
-
-        $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
+        $this->getTaskService()->getEntityManager()->flush();        
+        $this->getJobService()->getEntityManager()->refresh($job);        
+        $this->cancelJob($job);
         
         $this->assertReturnCode(0);
         $this->assertTrue($this->getResqueQueueService()->contains(
             'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
             'task-cancel',
             array(
-                'ids' => implode(',', $taskIds)
+                'ids' => implode(',', $this->getTaskIds($job))
             )              
-        ));
-        
+        ));        
     }
      
     

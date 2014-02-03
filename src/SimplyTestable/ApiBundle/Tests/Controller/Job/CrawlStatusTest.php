@@ -11,15 +11,10 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
     }
     
     public function testWithQueuedCrawlJob() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
         $jobObject = json_decode($this->getJobController('statusAction', array(
-            'user' => $user->getEmail()
+            'user' => $this->getTestUser()->getEmail()
         ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals('queued', $jobObject->crawl->state);
@@ -27,31 +22,27 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
     } 
     
     public function testWithInProgressCrawlJob() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
-        
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
-        
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
+
+        $this->createWorker();
+       
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
-        $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
+        $this->getCrawlJobContainerService()->prepare($crawlJobContainer);    
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());      
-        $task = $this->getTaskService()->getById($taskIds[0]);
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         
-        $this->executeCommand('simplytestable:task:assign', array(
+        $this->assertEquals(0, $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
-        ));
+        )));
         
-        $urlCountToDiscover = (int)round($this->getUserAccountPlanService()->getForUser($task->getJob()->getUser())->getPlan()->getConstraintNamed('urls_per_job')->getLimit() / 2);
+        $this->assertEquals($this->getTaskService()->getInProgressState(), $task->getState());
         
-        $this->assertEquals('task-in-progress', $task->getState()->getName());
+        $urlCountToDiscover = (int)round($this->getUserAccountPlanService()->getForUser($task->getJob()->getUser())->getPlan()->getConstraintNamed('urls_per_job')->getLimit() / 2);        
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet($canonicalUrl, $urlCountToDiscover)),
+            'output' => json_encode($this->createUrlResultSet($job->getWebsite()->getCanonicalUrl(), $urlCountToDiscover)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
@@ -59,24 +50,20 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $jobObject = json_decode($this->getJobController('statusAction', array(
-            'user' => $user->getEmail()
+            'user' => $job->getUser()->getEmail()
         ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals('in-progress', $jobObject->crawl->state);
         $this->assertEquals(1, $jobObject->crawl->processed_url_count);
         $this->assertEquals(6, $jobObject->crawl->discovered_url_count);
-        $this->assertEquals(10, $jobObject->crawl->limit);
+        $this->assertEquals(10, $jobObject->crawl->limit);    
     }
     
-    public function testCrawlJobIdIsExposed() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $canonicalUrl = 'http://example.com/';        
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
-        
+    public function testCrawlJobIdIsExposed() {        
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
+                
         $jobObject = json_decode($this->getJobController('statusAction', array(
-            'user' => $user->getEmail()
+            'user' => $job->getUser()->getEmail()
         ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals('queued', $jobObject->crawl->state);
@@ -84,131 +71,113 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         $this->assertNotNull($jobObject->crawl->id);        
     }
     
-    public function testGetForPublicJobOwnedByNonPublicUserByPublicUser() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+    public function testGetForPublicJobOwnedByNonPublicUserByPublicUser() {        
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
         $this->getJobController('setPublicAction', array(
-            'user' => $user->getEmail()
-        ))->setPublicAction($canonicalUrl, $job->getId()); 
+            'user' => $this->getTestUser()->getEmail()
+        ))->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId()); 
         
-        $this->assertTrue($job->getIsPublic());       
+        $jobObject = json_decode($this->fetchJobResponse($job)->getContent());
         
-        $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
-        
+        $this->assertTrue($job->getIsPublic());
         $this->assertTrue(isset($jobObject->crawl));       
     }    
     
     public function testGetForPublicJobOwnedByNonPublicUserByNonPublicUser() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
         $this->getJobController('setPublicAction', array(
-            'user' => $user->getEmail()
-        ))->setPublicAction($canonicalUrl, $job->getId()); 
+            'user' => $this->getTestUser()->getEmail()
+        ))->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId()); 
         
-        $this->assertTrue($job->getIsPublic());       
+        $jobObject = json_decode($this->fetchJobResponse($job, array(
+            'user' => $this->getTestUser()->getEmail()
+        ))->getContent());
         
-        $jobObject = json_decode($this->getJobController('statusAction', array(
-            'user' => $user->getEmail()
-        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
-        
+        $this->assertTrue($job->getIsPublic());
         $this->assertTrue(isset($jobObject->crawl));       
     }
     
-    public function testGetForPublicJobOwnedByNonPublicUserByDifferenNonPublicUser() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
+    public function testGetForPublicJobOwnedByNonPublicUserByDifferentNonPublicUser() {
         $user1 = $this->createAndActivateUser('user1@example.com', 'password');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password');        
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user1->getEmail()));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
+            self::DEFAULT_CANONICAL_URL,
+            $user1->getEmail()
+        ));
         
         $this->getJobController('setPublicAction', array(
             'user' => $user1->getEmail()
-        ))->setPublicAction($canonicalUrl, $job->getId());        
+        ))->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
         
-        $this->assertTrue($job->getIsPublic());           
-        
-        $jobObject = json_decode($this->getJobController('statusAction', array(
+        $jobObject = json_decode($this->fetchJobResponse($job, array(
             'user' => $user2->getEmail()
-        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        ))->getContent());        
         
+        $this->assertTrue($job->getIsPublic());        
         $this->assertTrue(isset($jobObject->crawl));         
     }    
     
     public function testGetForPrivateJobOwnedByNonPublicUserByPublicUser() {                
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
+            self::DEFAULT_CANONICAL_URL,
+            $this->getTestUser()->getEmail()
+        )); 
         
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));       
-        
-        $this->assertEquals(403, $this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getStatusCode());
+        $this->assertEquals(403, $this->fetchJobResponse($job)->getStatusCode());
     }    
     
     public function testGetForPrivateJobOwnedByNonPublicUserByNonPublicUser() {      
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
+            self::DEFAULT_CANONICAL_URL,
+            $this->getTestUser()->getEmail()
+        ));
         
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));      
-        
-        $jobObject = json_decode($this->getJobController('statusAction', array(
-            'user' => $user->getEmail()
-        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        $jobObject = json_decode($this->fetchJobResponse($job, array(
+            'user' => $job->getUser()->getEmail()
+        ))->getContent());
         
         $this->assertTrue(isset($jobObject->crawl));            
     }
     
     public function testGetForPrivateJobOwnedByNonPublicUserByDifferentNonPublicUser() {        
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
         $user1 = $this->createAndActivateUser('user1@example.com', 'password');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password');        
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user1->getEmail()));    
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
+            self::DEFAULT_CANONICAL_URL,
+            $user1->getEmail()
+        ));        
         
-        $this->assertEquals(403, $this->getJobController('statusAction', array(
+        $this->assertEquals(403, $this->fetchJobResponse($job, array(
             'user' => $user2->getEmail()
-        ))->statusAction((string)$job->getWebsite(), $job->getId())->getStatusCode());        
+        ))->getStatusCode());              
     }   
     
     
     public function testGetJobOwnerCrawlLimitForPublicJobOwnedByPrivateUser() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->getTestUser();
         $this->getUserService()->setUser($user);
         
         $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($user->getEmail(), 'agency');
         
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
-        
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);        
         $accountPlanUrlLimit = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
+            self::DEFAULT_CANONICAL_URL,
+            $user->getEmail()
+        ));
         
         $this->getJobController('setPublicAction', array(
             'user' => $user->getEmail()
-        ))->setPublicAction($canonicalUrl, $job->getId());        
+        ))->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());        
         
-        $this->assertTrue($job->getIsPublic());        
+        $jobObject = json_decode($this->fetchJobResponse($job)->getContent()); 
         
-        $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());        
+        $this->assertTrue($job->getIsPublic());
         $this->assertEquals($accountPlanUrlLimit, $jobObject->crawl->limit);        
     }
     

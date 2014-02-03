@@ -5,10 +5,10 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\ListAction;
 class ExcludeCurrentTest extends AbstractListTest {      
     
     public function testExcludeCurrent() {
-        $jobs = array();
-        $jobs[] = $this->getJobService()->getById($this->createJobAndGetId('http://one.example.com', null, 'single url'));
-        $jobs[] = $this->getJobService()->getById($this->createJobAndGetId('http://two.example.com', null, 'single url'));
-        $jobs[] = $this->getJobService()->getById($this->createJobAndGetId('http://three.example.com', null, 'single url'));
+        $jobs = array();        
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://one.example.com', null, 'single url'));
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://two.example.com', null, 'single url'));
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://three.example.com', null, 'single url'));
         
         $jobs[0]->setState($this->getJobService()->getCompletedState());
         $this->getJobService()->persistAndFlush($jobs[0]);
@@ -23,15 +23,10 @@ class ExcludeCurrentTest extends AbstractListTest {
     
     
     public function testExcludesCrawlingJobs() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        $canonicalUrl = 'http://example.com';
-        
-        $this->createAndPrepareJob($canonicalUrl, $user->getEmail());
+        $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
         $list = json_decode($this->getJobController('listAction', array(
-            'user' => $user->getEmail()
+            'user' => $this->getTestUser()->getEmail()
         ), array(
             'exclude-current' => '1'
         ))->listAction()->getContent());

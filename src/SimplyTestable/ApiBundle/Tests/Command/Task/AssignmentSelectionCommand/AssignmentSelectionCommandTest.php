@@ -28,57 +28,46 @@ class AssignmentSelectionCommandTest extends ConsoleCommandTestCase {
 
 
     public function testSelectTasksForAssignmentWithNoWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(0);
     }     
     
     public function testSelectTasksForAssignmentWithOneWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(1);
     }    
     
     public function testSelectTasksForAssignmentWithTwoWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(2);
     }
     
     public function testSelectTasksForAssignmentWithThreeWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(3);
     }
     
     public function testSelectTasksForAssignmentWithFourWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(4);
     }
     
     public function testSelectTasksForAssignmentWithFiveWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(5);
     }    
 
     public function testSelectTasksForAssignmentWithSixWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(6);
     } 
     
     public function testSelectTasksForAssignmentWithSevenWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(7);
     } 
     
     public function testSelectTasksForAssignmentWithEightWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(8);
     } 
     
     public function testSelectTasksForAssignmentWithNineWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(9);
     } 
     
     public function testSelectTasksForAssignmentWithTenWorkers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
         $this->runForNWorkers(10);
     }
     
@@ -90,18 +79,9 @@ class AssignmentSelectionCommandTest extends ConsoleCommandTestCase {
     
     
     private function runForNWorkers($requestedWorkerCount) {        
-        $canonicalUrl = 'http://example.com/';   
-        
-        $jobCreateResponse = $this->createJob($canonicalUrl);        
-        $job_id = $this->getJobIdFromUrl($jobCreateResponse->getTargetUrl());
-        
-        $this->assertInternalType('integer', $job_id);
-        $this->assertGreaterThan(0, $job_id);        
-        
-        $this->prepareJob($canonicalUrl, $job_id);        
-        
-        $preSelectionJobResponse = $this->fetchJob($canonicalUrl, $job_id);
-        $taskCount = json_decode($preSelectionJobResponse->getContent())->task_count;
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+
+        $taskCount = $job->getTasks()->count();
         
         $this->createWorkers($requestedWorkerCount);   
         
@@ -118,14 +98,14 @@ class AssignmentSelectionCommandTest extends ConsoleCommandTestCase {
         
         $this->assertReturnCode(0);
         
-        $jobResponse = $this->fetchJob($canonicalUrl, $job_id);        
+        $jobResponse = $this->fetchJobResponse($job);
         $jobObject = json_decode($jobResponse->getContent());
         
         $this->assertEquals(200, $jobResponse->getStatusCode());
         $this->assertEquals($expectedQueuedTaskCount, $jobObject->task_count_by_state->{'queued'});
         $this->assertEquals($expectedSelectedTaskCount, $jobObject->task_count_by_state->{'queued-for-assignment'});
         
-        $taskIds = $this->getTaskIds($canonicalUrl, $job_id);
+        $taskIds = $this->getTaskIds($job);
         $taskIdGroups = $this->getTaskIdGroups($taskIds, $workerCount, $expectedSelectedTaskCount);
 
         foreach ($taskIdGroups as $taskIdGroup) {

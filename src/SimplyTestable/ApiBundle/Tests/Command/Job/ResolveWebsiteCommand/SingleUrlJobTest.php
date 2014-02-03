@@ -11,14 +11,11 @@ class SingleUrlJobTest extends CommandTest {
     private $job;
     
     public function setUp() {
-        parent::setUp();
-        
-        $this->setHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 200 OK'
-        )));
+        parent::setUp();        
+        $this->queueResolveHttpFixture();
         
         $this->job = $this->getJobService()->getById($this->createJobAndGetId(
-            self::CANONICAL_URL,
+            self::DEFAULT_CANONICAL_URL,
             null,
             'single url',
             array('CSS Validation'),

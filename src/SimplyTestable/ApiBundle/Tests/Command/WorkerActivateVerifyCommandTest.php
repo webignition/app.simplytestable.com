@@ -28,16 +28,12 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
     }         
 
     public function testSuccessfulActivateVerifyWorker() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
+            'HTTP/1.0 200',
+        )));  
         
-        $workerHostname = 'test.worker.simplytestable.com';
-        $activationRequestToken = 'token';
-        
-        $worker = $this->createWorker($workerHostname);
-        
-        $this->assertInternalType('integer', $worker->getId());
-        $this->assertGreaterThan(0, $worker->getId());
-        $this->assertEquals($workerHostname, $worker->getHostname());
+        $activationRequestToken = 'token';        
+        $worker = $this->createWorker();
         
         $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
         
@@ -51,15 +47,12 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
     
     
     public function testFailedActivateVerifyWorker() {        
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
+            'HTTP/1.0 400',
+        )));
         
-        $workerHostname = 'test.worker.simplytestable.com';
-        $activationRequestToken = 'invalid-token';
-        
-        $worker = $this->createWorker($workerHostname);
-        $this->assertInternalType('integer', $worker->getId());
-        $this->assertGreaterThan(0, $worker->getId());
-        $this->assertEquals($workerHostname, $worker->getHostname());
+        $activationRequestToken = 'invalid-token';        
+        $worker = $this->createWorker();
         
         $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
         
@@ -73,15 +66,12 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
     
     
     public function testActivateVerifyWhenWorkerIsInMaintenanceReadyOnlyMode() {        
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
+            'HTTP/1.0 503',
+        )));
         
-        $workerHostname = 'test.worker.simplytestable.com';
-        $activationRequestToken = 'token';
-        
-        $worker = $this->createWorker($workerHostname);
-        $this->assertInternalType('integer', $worker->getId());
-        $this->assertGreaterThan(0, $worker->getId());
-        $this->assertEquals($workerHostname, $worker->getHostname());
+        $activationRequestToken = 'token';        
+        $worker = $this->createWorker();
         
         $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
         
@@ -102,16 +92,12 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
     
     
     public function testActivateVerifyRaisesHttpClientError() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
+            'HTTP/1.0 404',
+        )));
         
-        $workerHostname = 'test.worker.simplytestable.com';
-        $activationRequestToken = 'token';
-        
-        $worker = $this->createWorker($workerHostname);
-        
-        $this->assertInternalType('integer', $worker->getId());
-        $this->assertGreaterThan(0, $worker->getId());
-        $this->assertEquals($workerHostname, $worker->getHostname());
+        $activationRequestToken = 'token';        
+        $worker = $this->createWorker();
         
         $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
         
@@ -125,16 +111,12 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
     
     
     public function testActivateVerifyRaisesHttpServerError() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
+            'HTTP/1.0 500',
+        )));
         
-        $workerHostname = 'test.worker.simplytestable.com';
-        $activationRequestToken = 'token';
-        
-        $worker = $this->createWorker($workerHostname);
-        
-        $this->assertInternalType('integer', $worker->getId());
-        $this->assertGreaterThan(0, $worker->getId());
-        $this->assertEquals($workerHostname, $worker->getHostname());
+        $activationRequestToken = 'token';        
+        $worker = $this->createWorker();
         
         $activationRequest = $this->createActivationRequest($worker, $activationRequestToken);
         

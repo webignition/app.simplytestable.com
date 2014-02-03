@@ -55,10 +55,10 @@ abstract class BaseTestCase extends WebTestCase {
     protected function getCommands() {
         return array_merge(array(
             new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
-            new \SimplyTestable\ApiBundle\Command\JobPrepareCommand(),
-            new \SimplyTestable\ApiBundle\Command\TaskAssignCommand(),
-            new \SimplyTestable\ApiBundle\Command\Task\AssignSelectedCommand(),
-            new \SimplyTestable\ApiBundle\Command\TaskAssignCollectionCommand(),
+            new \SimplyTestable\ApiBundle\Command\Job\PrepareCommand(),
+            new \SimplyTestable\ApiBundle\Command\Task\Assign\Command(),
+            new \SimplyTestable\ApiBundle\Command\Task\Assign\SelectedCommand(),
+            new \SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand(),
             new \SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand()
         ), $this->getAdditionalCommands());
     }    
@@ -248,118 +248,6 @@ abstract class BaseTestCase extends WebTestCase {
                 $prop->setValue($this, null);
             }
         }
-    }
-    
-    
-    protected function setHttpFixtures($fixtures) {
-        $this->getHttpClientService()->reset();
-        
-        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();        
-        
-        foreach ($fixtures as $fixture) {
-            if ($fixture instanceof \Exception) {
-                $plugin->addException($fixture);
-            } else {
-                $plugin->addResponse($fixture);
-            }            
-        }
-        
-        $this->getHttpClientService()->get()->addSubscriber($plugin);      
-    }
-    
-    
-    protected function getHttpFixtures($path) {
-        $fixtures = array();        
-        $fixturesDirectory = new \DirectoryIterator($path);
-        
-        $fixturePathnames = array();
-        
-        foreach ($fixturesDirectory as $directoryItem) {
-            if ($directoryItem->isFile()) { 
-                $fixturePathnames[] = $directoryItem->getPathname();
-            }
-        }
-        
-        sort($fixturePathnames);
-        
-        foreach ($fixturePathnames as $fixturePathname) {                        
-            $fixtureContent = trim(file_get_contents($fixturePathname));
-            
-            switch (substr($fixtureContent, 0, 4)) {
-                case 'CURL':
-                    $curlException = new \Guzzle\Http\Exception\CurlException();
-                    $curlException->setError('', (int)  str_replace('CURL/', '', $fixtureContent));
-                    $fixtures[] = $curlException;
-                    break;
-                
-                case 'HTTP':
-                    $fixtures[] = \Guzzle\Http\Message\Response::fromMessage($fixtureContent);            
-                    break;
-            }
-        }
-        
-        return $fixtures;
-    }
-    
-    protected function getFixture($path) {
-        return file_get_contents($path);
-    }
-    
-    
-    /**
-     * 
-     * @param array $items Collection of http messages and/or curl exceptions
-     * @return array
-     */
-    protected function buildHttpFixtureSet($items) {
-        $fixtures = array();
-        
-        foreach ($items as $item) {
-            switch ($this->getHttpFixtureItemType($item)) {
-                case 'httpMessage':
-                    $fixtures[] = \Guzzle\Http\Message\Response::fromMessage($item);
-                    break;
-                
-                case 'curlException':
-                    $fixtures[] = $this->getCurlExceptionFromCurlMessage($item);                    
-                    break;
-                
-                default:
-                    throw new \LogicException();
-            }
-        }
-        
-        return $fixtures;
     }    
-    
-    
-    /**
-     * 
-     * @param string $item
-     * @return string
-     */
-    private function getHttpFixtureItemType($item) {
-        if (substr($item, 0, strlen('HTTP')) == 'HTTP') {
-            return 'httpMessage';
-        }
-        
-        return 'curlException';
-    }  
-    
-    
-    /**
-     * 
-     * @param string $curlMessage
-     * @return \Guzzle\Http\Exception\CurlException
-     */
-    private function getCurlExceptionFromCurlMessage($curlMessage) {
-        $curlMessageParts = explode(' ', $curlMessage, 2);
-        
-        $curlException = new \Guzzle\Http\Exception\CurlException();
-        $curlException->setError($curlMessageParts[1], (int)  str_replace('CURL/', '', $curlMessageParts[0]));
-        
-        return $curlException;
-    }    
-    
 
 }

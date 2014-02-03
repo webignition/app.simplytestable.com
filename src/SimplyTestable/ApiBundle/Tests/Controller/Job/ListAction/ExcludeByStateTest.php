@@ -4,11 +4,11 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\ListAction;
 
 class ExcludeByStateTest extends AbstractListTest {      
     
-    public function testExcludeCrawlJobs() {
-        $jobs = array();
-        $jobs[] = $this->getJobService()->getById($this->createJobAndGetId('http://one.example.com', null, 'single url'));
-        $jobs[] = $this->getJobService()->getById($this->createJobAndGetId('http://two.example.com', null, 'single url'));
-        $jobs[] = $this->getJobService()->getById($this->createJobAndGetId('http://three.example.com', null, 'single url'));
+    public function testExcludeByState() {
+        $jobs = array();        
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://one.example.com', null, 'single url'));
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://two.example.com', null, 'single url'));
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://three.example.com', null, 'single url'));
         
         $jobs[0]->setState($this->getJobService()->getCompletedState());
         $this->getJobService()->persistAndFlush($jobs[0]);

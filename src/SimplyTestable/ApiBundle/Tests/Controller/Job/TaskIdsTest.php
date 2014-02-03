@@ -9,17 +9,13 @@ class TaskIdsTest extends AbstractAccessTest {
     }
     
     public function testTaskIdsAction() {        
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+        $jobStatus = $this->fetchJobStatusObject($job);
         
-        $canonicalUrl = 'http://example.com/';       
-        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
-        
-        $job = $this->prepareJob($canonicalUrl, $job_id);
-        
-        $response = $this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id);
+        $response = $this->getJobController('taskIdsAction')->taskIdsAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
         $taskIds = json_decode($response->getContent());
         
-        $expectedTaskIdCount = $job->url_count * count($job->task_types);
+        $expectedTaskIdCount = $jobStatus->url_count * count($jobStatus->task_types);
         
         $this->assertEquals($expectedTaskIdCount, count($taskIds));
         

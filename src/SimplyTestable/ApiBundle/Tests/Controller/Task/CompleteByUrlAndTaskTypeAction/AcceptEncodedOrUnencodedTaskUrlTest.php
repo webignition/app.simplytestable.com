@@ -10,21 +10,21 @@ class AcceptEncodedOrUnencodedTaskUrlTest extends BaseControllerJsonTestCase {
         self::setupDatabaseIfNotExists();
     }
     
-    public function testWithCoreAppUrlUnencodedAndCompletionReportUrlEncoded() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+    public function testWithCoreAppUrlUnencodedAndCompletionReportUrlEncoded() {        
+        $this->createWorker();
         
         $canonicalUrl = 'http://example.com/foo bar/';
         $encodedCanonicalUrl = 'http://example.com/foo%20bar/';
-        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl, null, 'single url', array('HTML validation'))->getTargetUrl());
-
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
-        $task = $this->getTaskService()->getById($taskIds[0]);
         
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob($canonicalUrl, null, 'single url', array('HTML validation')));
+        $this->getHttpClientService()->getMockPlugin()->clearQueue();
+        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
+
+        $task = $job->getTasks()->first();        
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
-        ));
+        ));    
         
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
@@ -40,20 +40,20 @@ class AcceptEncodedOrUnencodedTaskUrlTest extends BaseControllerJsonTestCase {
     }    
 
     public function testWithCoreAppUrlEncodedAndCompletionReportUrlUnencoded() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $this->createWorker();
         
         $canonicalUrl = 'http://example.com/foo bar/';
         $encodedCanonicalUrl = 'http://example.com/foo%20bar/';
-        $job_id = $this->getJobIdFromUrl($this->createJob($encodedCanonicalUrl, null, 'single url', array('HTML validation'))->getTargetUrl());
-
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
-        $task = $this->getTaskService()->getById($taskIds[0]);
         
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob($encodedCanonicalUrl, null, 'single url', array('HTML validation')));
+        $this->getHttpClientService()->getMockPlugin()->clearQueue();
+        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
+
+        $task = $job->getTasks()->first();        
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
-        ));        
+        ));    
         
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',

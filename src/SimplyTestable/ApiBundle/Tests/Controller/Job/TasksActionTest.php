@@ -10,11 +10,14 @@ class TasksActionTest extends AbstractAccessTest {
     }
     
     public function testNoOutputForIncompleteTasksWithPartialOutput() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity')));
-
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+                self::DEFAULT_CANONICAL_URL,
+                null,
+                'full site',
+                array('Link integrity')
+         ));
+        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
         $tasks = $job->getTasks();
 
         $now = new \DateTime();
@@ -51,7 +54,7 @@ class TasksActionTest extends AbstractAccessTest {
             'id' => $tasks[1]->getId()
         ));        
         
-        $tasksResponseObject = json_decode($this->getJobController('tasksAction')->tasksAction($canonicalUrl, $job->getId())->getContent());
+        $tasksResponseObject = json_decode($this->getJobController('tasksAction')->tasksAction($job->getWebsite()->getCanonicalUrl(), $job->getId())->getContent());
         
         foreach ($tasksResponseObject as $taskResponse) {            
             if ($taskResponse->id == $tasks[0]->getId()) {
@@ -59,7 +62,7 @@ class TasksActionTest extends AbstractAccessTest {
             } else {
                 $this->assertFalse(isset($taskResponse->output));
             }
-        }   
+        }
     }
     
 }

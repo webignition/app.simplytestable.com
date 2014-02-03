@@ -124,7 +124,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * @param Worker $worker
      * @return int|boolean
      */
-    private function assignToWorker(Task $task, Worker $worker) {
+    private function assignToWorker(Task $task, Worker $worker) {        
         $this->logger->info("WorkerTaskAssignmentService::assignToWorker: Trying worker with id [".$worker->getId()."] at host [".$worker->getHostname()."]");                    
         
         $postFields = array(

@@ -4,18 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Job;
 
 use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
 
-    /**
-     * Required tests:
-     *  - happy-path occurrences of the 4 return codes
-     *     const RETURN_CODE_OK = 0;
-     *     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
-     *     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
-     *     const RETURN_CODE_NO_URLS = 3;
-     * 
-     * Only need to be asserting the return code
-     * 
-     * Potentially test that resque task-assignment-selection job is queued
-     */ 
 class PrepareCommandTest extends ConsoleCommandTestCase {
     
     const CANONICAL_URL = 'http://example.com';
@@ -26,32 +14,19 @@ class PrepareCommandTest extends ConsoleCommandTestCase {
      */
     protected function getCommandName() {
         return 'simplytestable:job:prepare';
-    }
-    
-    
-    /**
-     * 
-     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
-     */
-    protected function getAdditionalCommands() {        
-        return array(
-            new \SimplyTestable\ApiBundle\Command\JobPrepareCommand()
-        );
     }     
     
     public function testSuccessfulPrepareReturnsStatusCode0() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        $this->queuePrepareHttpFixturesForJob($job->getWebsite()->getCanonicalUrl());
         
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));        
         $this->assertReturnCode(0, array(
             'id' => $job->getId()
         ));    
     }
     
     public function testJobInWrongStateReturnsStatusCode1() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL)); 
-        $job->setState($this->getJobService()->getCancelledState());
-        $this->getJobService()->persistAndFlush($job);       
+        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));   
         
         $this->assertReturnCode(1, array(
             'id' => $job->getId()
@@ -65,10 +40,16 @@ class PrepareCommandTest extends ConsoleCommandTestCase {
         ));      
     }
   
-    public function testJobWithNoDiscoveredUrlsReturnsStatusCode3() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+    public function testJobWithNoDiscoveredUrlsReturnsStatusCode0() {
+        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
 
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));     
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
+            'HTTP/1.0 404',
+            'HTTP/1.0 404',
+            'HTTP/1.0 404',
+            'HTTP/1.0 404',
+            'HTTP/1.0 404'
+        )));   
         
         $this->assertReturnCode(0, array(
             'id' => $job->getId()

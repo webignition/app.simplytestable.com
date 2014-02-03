@@ -32,8 +32,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     
     public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1() {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');        
-        $this->assertReturnCode(self::RETURN_CODE_IN_MAINTENANCE_MODE);
-        
+        $this->assertReturnCode(self::RETURN_CODE_IN_MAINTENANCE_MODE);        
     }     
     
     public function testWithNoJobs() {
@@ -41,8 +40,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     }
     
     public function testWithOnlyCrawlJobs() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
-        $job = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com'));        
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+      
         $job->setType($this->getJobTypeService()->getCrawlType());
         foreach ($job->getTasks() as $task) {
             $task->setState($this->getTaskService()->getCompletedState());
@@ -54,8 +53,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     }
     
     public function testWithSingleJobWithIncompleteTasks() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
-        $job = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         
         $job->setState($this->getJobService()->getInProgressState());        
         $this->getJobService()->persistAndFlush($job);
@@ -65,8 +63,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     }
     
     public function testWithSingleJobWithNoIncompleteTasks() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
-        $job = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         
         foreach ($job->getTasks() as $task) {
             $task->setState($this->getTaskService()->getCompletedState());
@@ -80,16 +77,15 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     }
     
     
-    public function testWithCollectionOfJobsWithNoIncompleteTasks() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
+    public function testWithCollectionOfJobsWithNoIncompleteTasks() {        
         $jobs = array();
         
-        $jobs[] = $this->getJobService()->getById($this->createAndPrepareJob('http://one.example.com'));
-        $jobs[] = $this->getJobService()->getById($this->createAndPrepareJob('http://two.example.com'));
-        $jobs[] = $this->getJobService()->getById($this->createAndPrepareJob('http://three.example.com'));
-        
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://one.example.com/'));
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://two.example.com/'));
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://three.example.com/'));        
+     
         foreach ($jobs as $job) {
-            foreach ($job->getTasks() as $task) {
+            foreach ($job->getTasks() as $task) {                
                 $task->setState($this->getTaskService()->getCompletedState());                
             }
             
@@ -105,12 +101,11 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     
     
     public function testWithCollectionOfJobsSomeWithIncompleteTasksAndSomeWithout() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));        
         $jobs = array();
         
-        $jobs[] = $this->getJobService()->getById($this->createAndPrepareJob('http://one.example.com'));
-        $jobs[] = $this->getJobService()->getById($this->createAndPrepareJob('http://two.example.com'));
-        $jobs[] = $this->getJobService()->getById($this->createAndPrepareJob('http://three.example.com'));
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://one.example.com/'));
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://two.example.com/'));
+        $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://three.example.com/'));    
         
         foreach ($jobs as $jobIndex => $job) {
             if ($jobIndex === 0) {

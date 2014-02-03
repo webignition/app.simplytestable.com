@@ -26,12 +26,8 @@ class UrlDiscoverySelectionTest extends ConsoleCommandTestCase {
     }
     
     public function testUrlDiscoveryTaskIsSelectedForAssigment() {
-        $this->createWorkers(1);
-        
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);

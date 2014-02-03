@@ -25,6 +25,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const TEST_USER_EMAIL = 'user@example.com';
     const TEST_USER_PASSWORD = 'password';
     
+    const DEFAULT_CANONICAL_URL = 'http://example.com/';
+    
     public function setUp() {
         parent::setUp();        
         $this->removeAllJobs();
@@ -312,12 +314,87 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     } 
     
     
-    protected function createAndPrepareJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null, $parameters = null) {
+    protected function createAndResolveJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null, $parameters = null) {
+        $this->queueResolveHttpFixture();
+        
         $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
-        $this->prepareJob($canonicalUrl, $job_id);
+        $this->resolveJob($canonicalUrl, $job_id);
         return $job_id;
     }
     
+    
+    protected function createAndResolveDefaultJob() {
+        return $this->createAndResolveJob(self::DEFAULT_CANONICAL_URL);
+    }
+    
+    
+    protected function createResolveAndPrepareJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null, $parameters = null) {        
+        $this->queueResolveHttpFixture();        
+        $this->queuePrepareHttpFixturesForJob($canonicalUrl);
+        
+        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
+        $this->resolveJob($canonicalUrl, $job_id);
+        $this->prepareJob($canonicalUrl, $job_id);        
+        
+        return $job_id;        
+    }
+    
+    
+    protected function createResolveAndPrepareCrawlJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null, $parameters = null) {        
+        $this->queueResolveHttpFixture();        
+        $this->queuePrepareHttpFixturesForCrawlJob($canonicalUrl);
+        
+        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
+        $this->resolveJob($canonicalUrl, $job_id);
+        $this->prepareJob($canonicalUrl, $job_id);        
+        
+        return $job_id;        
+    }    
+    
+    
+    protected function createResolveAndPrepareDefaultJob() {        
+        return $this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL);
+    }
+    
+   protected function createResolveAndPrepareDefaultCrawlJob() {        
+        return $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL);
+    }    
+    
+    
+    protected function queueResolveHttpFixture() {        
+        $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet(array(
+            'HTTP/1.0 200'
+        )));
+    }    
+    
+    protected function queuePrepareHttpFixturesForJob($url) {
+        $fixtureMessages = $this->getHttpFixtureMessagesFromPath($this->getCommonFixturesDataPath() . '/DefaultJob/Prepare/HttpResponses');
+        
+        foreach ($fixtureMessages as $index => $fixtureMessage) {            
+            if ($url != self::DEFAULT_CANONICAL_URL && substr_count($fixtureMessage, self::DEFAULT_CANONICAL_URL)) {
+                $fixtureMessage = str_replace(self::DEFAULT_CANONICAL_URL, $url, $fixtureMessage);
+                $fixtureMessages[$index] = $fixtureMessage;
+            }
+        }
+        
+        $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet($fixtureMessages));
+    } 
+    
+    
+    protected function queuePrepareHttpFixturesForCrawlJob($url) {
+        $fixtureMessages = $this->getHttpFixtureMessagesFromPath($this->getCommonFixturesDataPath() . '/DefaultCrawlJob/Prepare/HttpResponses');
+        
+        foreach ($fixtureMessages as $index => $fixtureMessage) {            
+            if ($url != self::DEFAULT_CANONICAL_URL && substr_count($fixtureMessage, self::DEFAULT_CANONICAL_URL)) {
+                $fixtureMessage = str_replace(self::DEFAULT_CANONICAL_URL, $url, $fixtureMessage);
+                $fixtureMessages[$index] = $fixtureMessage;
+            }
+        }
+        
+        $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet($fixtureMessages));
+    } 
+    
+   
     protected function setJobTasksCompleted(Job $job) {
         foreach ($job->getTasks() as $task) {
             /* @var $task Task */            
@@ -348,12 +425,11 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     /**
      * 
-     * @param string $canonicalUrl
-     * @param int $jobId
+     * @param Job $job
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function cancelJob($canonicalUrl, $jobId) {
-        return $this->getJobController('cancelAction')->cancelAction($canonicalUrl, $jobId);
+    protected function cancelJob(Job $job) {
+        return $this->getJobController('cancelAction')->cancelAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
     }
     
     
@@ -372,6 +448,21 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function prepareJob($canonicalUrl, $job_id) {
         $this->executeCommand('simplytestable:job:prepare', array(
+            'id' => $job_id           
+        ));       
+    
+        return json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());
+    }
+    
+    
+    /**
+     * 
+     * @param string $canonicalUrl
+     * @param int $job_id
+     * @return \stdClass
+     */    
+    protected function resolveJob($canonicalUrl, $job_id) {
+        $this->executeCommand('simplytestable:job:resolve', array(
             'id' => $job_id           
         ));       
     
@@ -479,21 +570,42 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      *
      * @param string $canonicalUrl
      * @param int $id
-     * @return Job
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function fetchJob($canonicalUrl, $id) {        
         return $this->getJobController('statusAction')->statusAction($canonicalUrl, $id);    
-    }    
+    }  
     
     
     /**
      * 
-     * @param string $canonicalUrl
-     * @param int $job_id
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param array $parameters
+     * @return \Symfony\Component\HttpFoundation\Response
+     */   
+    protected function fetchJobResponse(Job $job, $parameters = array()) {
+        return $this->getJobController('statusAction', $parameters)->statusAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+    }
+    
+    
+    /**
+     *
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param array $parameters
+     * @return \stdClass
+     */    
+    protected function fetchJobStatusObject(Job $job, $parameters = array()) {        
+        return json_decode($this->fetchJobResponse($job)->getContent());
+    }
+    
+    
+    /**
+     * 
+     * @param Job $job
      * @return array
      */
-    protected function getTaskIds($canonicalUrl, $job_id) {
-        return json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
+    protected function getTaskIds(Job $job) {
+        return json_decode($this->getJobController('taskIdsAction')->taskIdsAction($job->getWebsite()->getCanonicalUrl(), $job->getId())->getContent());        
     }
     
     /**
@@ -660,7 +772,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\HttpClientService
+     * @return \SimplyTestable\ApiBundle\Services\TestHttpClientService
      */
     protected function getHttpClientService() {
         return $this->container->get('simplytestable.services.httpclientservice');
@@ -909,5 +1021,130 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         }
         
         return $urlResultSet;
+    }
+    
+    
+//    protected function setHttpFixtures($fixtures) {
+//        
+//        
+////        $this->getHttpClientService()->reset();
+////        
+////        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();        
+//        
+//        foreach ($fixtures as $fixture) {
+//            $this->getHttpClientService()->addFixture($fixture);         
+//        }
+//        
+//        //$this->getHttpClientService()->get()->addSubscriber($plugin);      
+//    }
+    
+    
+    protected function queueHttpFixtures($fixtures) {
+        foreach ($fixtures as $fixture) {
+            $this->getHttpClientService()->queueFixture($fixture);         
+        }        
+    }
+    
+    
+//    protected function getHttpFixtures($path) {
+//        $messages = $this->getHttpFixtureMessagesFromPath($path);
+//        
+//        foreach ($messages as $message) {
+//            switch (substr($message, 0, 4)) {
+//                case 'CURL':
+//                    $curlException = new \Guzzle\Http\Exception\CurlException();
+//                    $curlException->setError('', (int)  str_replace('CURL/', '', $fixtureContent));
+//                    $fixtures[] = $curlException;
+//                    break;
+//                
+//                case 'HTTP':
+//                    $fixtures[] = \Guzzle\Http\Message\Response::fromMessage($fixtureContent);            
+//                    break;
+//            }
+//        }
+//        
+//        return $fixtures;
+//    }
+    
+    protected function getHttpFixtureMessagesFromPath($path) {
+        $messages = array();        
+        $fixturesDirectory = new \DirectoryIterator($path);
+        
+        $fixturePathnames = array();
+        
+        foreach ($fixturesDirectory as $directoryItem) {
+            if ($directoryItem->isFile()) { 
+                $fixturePathnames[] = $directoryItem->getPathname();
+            }
+        }
+        
+        sort($fixturePathnames);
+        
+        foreach ($fixturePathnames as $fixturePathname) {                        
+            $messages[] = trim(file_get_contents($fixturePathname));
+        }
+        
+        return $messages;        
+    }
+    
+    
+    protected function getFixture($path) {
+        return file_get_contents($path);
+    }
+    
+    
+    /**
+     * 
+     * @param array $items Collection of http messages and/or curl exceptions
+     * @return array
+     */
+    protected function buildHttpFixtureSet($items) {
+        $fixtures = array();
+        
+        foreach ($items as $item) {
+            switch ($this->getHttpFixtureItemType($item)) {
+                case 'httpMessage':
+                    $fixtures[] = \Guzzle\Http\Message\Response::fromMessage($item);
+                    break;
+                
+                case 'curlException':
+                    $fixtures[] = $this->getCurlExceptionFromCurlMessage($item);                    
+                    break;
+                
+                default:
+                    throw new \LogicException();
+            }
+        }
+        
+        return $fixtures;
     }    
+    
+    
+    /**
+     * 
+     * @param string $item
+     * @return string
+     */
+    private function getHttpFixtureItemType($item) {
+        if (substr($item, 0, strlen('HTTP')) == 'HTTP') {
+            return 'httpMessage';
+        }
+        
+        return 'curlException';
+    }  
+    
+    
+    /**
+     * 
+     * @param string $curlMessage
+     * @return \Guzzle\Http\Exception\CurlException
+     */
+    private function getCurlExceptionFromCurlMessage($curlMessage) {
+        $curlMessageParts = explode(' ', $curlMessage, 2);
+        
+        $curlException = new \Guzzle\Http\Exception\CurlException();
+        $curlException->setError($curlMessageParts[1], (int)  str_replace('CURL/', '', $curlMessageParts[0]));
+        
+        return $curlException;
+    }      
 }

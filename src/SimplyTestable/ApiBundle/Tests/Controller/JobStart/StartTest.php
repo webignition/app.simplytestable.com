@@ -86,7 +86,8 @@ class StartTest extends BaseControllerJsonTestCase {
         $constraintLimit = $constraint->getLimit();
         
         for ($i = 0; $i < $constraintLimit; $i++) {
-            $this->cancelJob($canonicalUrl, $this->createJobAndGetId($canonicalUrl));            
+            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));            
+            $this->cancelJob($job);            
         }
         
         $rejectedJobId = $this->createJobAndGetId($canonicalUrl);
@@ -105,7 +106,8 @@ class StartTest extends BaseControllerJsonTestCase {
         $constraintLimit = $constraint->getLimit();
         
         for ($i = 0; $i < $constraintLimit; $i++) {
-            $this->cancelJob($canonicalUrl, $this->createJobAndGetId($canonicalUrl, null, 'single url'));            
+            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));            
+            $this->cancelJob($job);
         }
         
         $rejectedJobId = $this->createJobAndGetId($canonicalUrl, null, 'single url');
@@ -125,11 +127,11 @@ class StartTest extends BaseControllerJsonTestCase {
         $constraintLimit = $constraint->getLimit();
         
         for ($i = 0; $i < $constraintLimit; $i++) {
-            $this->cancelJob($canonicalUrl, $this->createJobAndGetId($canonicalUrl));            
+            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));                    
         }
         
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));        
-        $this->assertTrue($job->getState()->equals($this->getJobService()->getQueuedState()));        
+        $this->assertTrue($job->getState()->equals($this->getJobService()->getStartingState()));        
     }
     
     
@@ -143,7 +145,8 @@ class StartTest extends BaseControllerJsonTestCase {
         $constraintLimit = $constraint->getLimit();
         
         for ($i = 0; $i < $constraintLimit; $i++) {
-            $this->cancelJob($canonicalUrl, $this->createJobAndGetId($canonicalUrl, null, 'single url'));            
+            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));            
+            $this->cancelJob($job);            
         }
         
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null));        
@@ -151,16 +154,8 @@ class StartTest extends BaseControllerJsonTestCase {
     }   
     
     
-    public function testSingleUrlJobIsInstantlyPrepared() {
-        $canonicalUrl = 'http://example.com/';        
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));                
-        
-        $this->assertTrue($job->getState()->equals($this->getJobService()->getQueuedState()));         
-    }
-    
-    
     public function testPrepareWithCreditLimitReached() {
-        $tasksPerJob = 30;
+        $tasksPerJob = 12;
         $creditsPerMonth = 50;
         $jobsRequiredToExhaustCredits = (int)ceil($creditsPerMonth/$tasksPerJob);
         
@@ -171,17 +166,14 @@ class StartTest extends BaseControllerJsonTestCase {
         
         $this->getAccountPlanService()->find('basic')->getConstraintNamed('credits_per_month')->setLimit($creditsPerMonth);
         
-        for ($jobIndex = 0; $jobIndex < $jobsRequiredToExhaustCredits; $jobIndex++) {
-            $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));           
-            $job = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com/', $email));
-            $this->getJobService()->getEntityManager()->refresh($job);
+        for ($jobIndex = 0; $jobIndex < $jobsRequiredToExhaustCredits; $jobIndex++) {            
+            $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));            
             $this->setJobTasksCompleted($job);
-            $this->completeJob($job);            
+            $this->completeJob($job);
         }
         
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-                
-        $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/', $email));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
+
         $rejectionReason = $this->getJobRejectionReasonService()->getForJob($job);
         
         $this->assertEquals('job-rejected', $job->getState()->getName());
@@ -190,55 +182,40 @@ class StartTest extends BaseControllerJsonTestCase {
     }
     
     public function testSingleUrlJobJsStaticAnalysisIgnoreCommonCdns() {
-        $canonicalUrl = 'http://example.com/';
-        
-        $jobId = $this->getJobIdFromUrl(
-            $this->createJob(
-                $canonicalUrl,
-                null,
-                'single url',
-                array(
-                    'JS static analysis'
-                ),
-                array(
-                    'JS static analysis' => array(
-                        'ignore-common-cdns' => 1
-                    )
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            null,
+            'single url',
+            array(
+                'JS static analysis'
+            ),
+            array(
+                'JS static analysis' => array(
+                    'ignore-common-cdns' => 1
                 )
-             )->getTargetUrl()
-        );
+            )
+        ));
         
-        $this->getJobService()->getEntityManager()->clear();
-        
-        $job = $this->getJobService()->getById($jobId);        
-        $task = $job->getTasks()->first();
-        
+
+        $task = $job->getTasks()->first();        
         $parametersObject = json_decode($task->getParameters());
         $this->assertTrue(count($parametersObject->{'domains-to-ignore'}) > 0);          
     }
     
     public function testStoreTaskTypeOptionsForTaskTypesThatHaveNotBeenSelected() {
-        $canonicalUrl = 'http://example.com/';
-        
-        $jobId = $this->getJobIdFromUrl(
-            $this->createJob(
-                $canonicalUrl,
-                null,
-                'single url',
-                array(
-                    'JS static analysis'
-                ),
-                array(
-                    'CSS validation' => array(
-                        'ignore-common-cdns' => 1
-                    )
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            null,
+            'single url',
+            array(
+                'JS static analysis'
+            ),
+            array(
+                'JS static analysis' => array(
+                    'ignore-common-cdns' => 1
                 )
-             )->getTargetUrl()
-        );
-        
-        $this->getJobService()->getEntityManager()->clear();
-        
-        $job = $this->getJobService()->getById($jobId);
+            )
+        ));
         
         $this->assertEquals(1, $job->getTaskTypeOptions()->count());
         
@@ -254,11 +231,10 @@ class StartTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://127.0.0.1/';
 
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
+        $jobObject = $this->fetchJobStatusObject($job);
         
-        $jobControllerResponse = json_decode($this->getJobController('statusAction')->statusAction($job->getWebsite(), $job->getId())->getContent());
-        
-        $this->assertEquals('rejected', $jobControllerResponse->state);
-        $this->assertEquals('unroutable', $jobControllerResponse->rejection->reason);    
+        $this->assertEquals('rejected', $jobObject->state);
+        $this->assertEquals('unroutable', $jobObject->rejection->reason);    
     }    
     
     
@@ -267,10 +243,10 @@ class StartTest extends BaseControllerJsonTestCase {
 
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
         
-        $jobControllerResponse = json_decode($this->getJobController('statusAction')->statusAction($job->getWebsite(), $job->getId())->getContent());
+        $jobObject = $this->fetchJobStatusObject($job);
         
-        $this->assertEquals('rejected', $jobControllerResponse->state);
-        $this->assertEquals('unroutable', $jobControllerResponse->rejection->reason);    
+        $this->assertEquals('rejected', $jobObject->state);
+        $this->assertEquals('unroutable', $jobObject->rejection->reason);    
     }
     
     
@@ -287,17 +263,22 @@ class StartTest extends BaseControllerJsonTestCase {
     
     
     public function testWithSingleUrlTestAndHttpAuthParameters() {
-        $canonicalUrl = 'http://example.com/';        
-        
         $httpAuthUsernameKey = 'http-auth-username';
         $httpAuthPasswordKey = 'http-auth-password';
         $httpAuthUsernameValue = 'foo';
-        $httpAuthPasswordValue = 'bar';
+        $httpAuthPasswordValue = 'bar';        
         
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url', array('html validation'), null, array(
-            $httpAuthUsernameKey => $httpAuthUsernameValue,
-            $httpAuthPasswordKey => $httpAuthPasswordValue            
-        )));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+                self::DEFAULT_CANONICAL_URL,
+                null,
+                'single url',
+                array('html validation'),
+                null,
+                array(
+                    $httpAuthUsernameKey => $httpAuthUsernameValue,
+                    $httpAuthPasswordKey => $httpAuthPasswordValue
+                )
+        ));
 
         $decodedParameters = json_decode($job->getTasks()->first()->getParameters());
         $this->assertTrue(isset($decodedParameters->$httpAuthUsernameKey));

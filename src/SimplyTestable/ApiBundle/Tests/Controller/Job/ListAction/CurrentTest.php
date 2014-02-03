@@ -120,16 +120,11 @@ class CurrentTest extends AbstractListTest {
     }
     
     
-    public function testIncludeFailedNoSitemapJobsThatHaveActiveCrawlJobs() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        $canonicalUrl = 'http://example.com';
-        
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+    public function testIncludeFailedNoSitemapJobsThatHaveActiveCrawlJobs() {        
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
         $list = json_decode($this->getJobController('listAction', array(
-            'user' => $user->getEmail()
+            'user' => $job->getUser()->getEmail()
         ), array(
             'exclude-finished' => '1'
         ))->listAction()->getContent());
@@ -146,15 +141,18 @@ class CurrentTest extends AbstractListTest {
     
     
     public function testListIsSortedByJobId() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $jobNotCrawling = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            'http://foo.example.com',
+            $this->getTestUser()->getEmail()
+        ));
         
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $jobNotCrawling = $this->getJobService()->getById($this->createAndPrepareJob('http://foo.example.com', $user->getEmail()));        
-        $jobIsCrawling = $this->getJobService()->getById($this->createAndPrepareJob('http://example.com', $user->getEmail()));
+        $jobIsCrawling = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
+            'http://example.com',
+            $this->getTestUser()->getEmail()
+        ));
         
         $list = json_decode($this->getJobController('listAction', array(
-            'user' => $user->getEmail(),
+            'user' => $this->getTestUser()->getEmail(),
             'exclude-finished' => '1'            
         ))->listAction(10)->getContent());
       
@@ -162,16 +160,11 @@ class CurrentTest extends AbstractListTest {
         $this->assertEquals($jobNotCrawling->getId(), $list->jobs[1]->id);
     }
     
-    public function testDoesNotIncludeCrawlJobs() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        $canonicalUrl = 'http://example.com';
-        
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, $user->getEmail()));
+    public function testDoesNotIncludeCrawlJobs() {        
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
         $list = json_decode($this->getJobController('listAction', array(
-            'user' => $user->getEmail(),
+            'user' => $this->getTestUser()->getEmail(),
             'exclude-finished' => '1'  
         ))->listAction(10)->getContent());
         

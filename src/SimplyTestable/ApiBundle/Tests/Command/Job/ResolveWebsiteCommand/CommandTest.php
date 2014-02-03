@@ -6,8 +6,6 @@ use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
  
 abstract class CommandTest extends ConsoleCommandTestCase {
     
-    const CANONICAL_URL = 'http://example.com';
-    
     /**
      * 
      * @return string

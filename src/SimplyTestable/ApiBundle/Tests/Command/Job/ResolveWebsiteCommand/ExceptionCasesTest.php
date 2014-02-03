@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Job\ResolveWebsiteCommand;
 class ExceptionCasesTest extends CommandTest {
     
     public function testJobInWrongStateReturnsStatusCode1() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL)); 
+        $job = $this->getJobService()->getById($this->createJobAndGetId(self::DEFAULT_CANONICAL_URL)); 
         $job->setState($this->getJobService()->getCancelledState());
         $this->getJobService()->persistAndFlush($job);       
         
@@ -22,14 +22,14 @@ class ExceptionCasesTest extends CommandTest {
     }
     
     
-    public function testHttpClientErrorPerformingResolution() {
-        $this->setHttpFixtures($this->buildHttpFixtureSet(array(
+    public function testHttpClientErrorPerformingResolution() {        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 404',
             'HTTP/1.0 404'
         )));
         
         $this->job = $this->getJobService()->getById($this->createJobAndGetId(
-            self::CANONICAL_URL,
+            self::DEFAULT_CANONICAL_URL,
             null,
             'single url',
             array('CSS Validation'),
