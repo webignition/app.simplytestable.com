@@ -15,15 +15,4 @@ abstract class CommandTest extends ConsoleCommandTestCase {
     protected function getCommandName() {
         return 'simplytestable:job:resolve';
     }
-    
-    
-    /**
-     * 
-     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
-     */
-    protected function getAdditionalCommands() {        
-        return array(
-            new \SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand()
-        );
-    }
 }
