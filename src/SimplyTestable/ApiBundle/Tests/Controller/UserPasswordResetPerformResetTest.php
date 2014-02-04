@@ -6,7 +6,25 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     
     public static function setUpBeforeClass() {
         self::setupDatabaseIfNotExists();
-    }     
+    }  
+    
+    
+    public function testPerformResetWithEncodedPassword() {
+        $email = 'user1@example.com';
+        $password = 'password1';
+        
+        $encodedNewPassword = rawurlencode('@password');
+        
+        $user = $this->createAndActivateUser($email, $password);        
+        $token = $this->getPasswordResetToken($user);
+        
+        $controller = $this->getUserPasswordResetController('resetPasswordAction', array(
+            'password' => $encodedNewPassword
+        ));
+        
+        $response = $controller->resetPasswordAction($token);
+        $this->assertEquals(200, $response->getStatusCode());
+    }    
     
     public function testPerformResetWithValidToken() {
         $email = 'user1@example.com';

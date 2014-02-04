@@ -36,7 +36,7 @@ class UserPasswordResetController extends UserController
             $this->getUserManipulator()->activate($user->getUsername());
         }
 
-        $user->setPlainPassword($this->getArguments('resetPasswordAction')->get('password'));
+        $user->setPlainPassword(rawurldecode($this->getArguments('resetPasswordAction')->get('password')));
         $user->setConfirmationToken(null);
         $user->setPasswordRequestedAt(null);
         
