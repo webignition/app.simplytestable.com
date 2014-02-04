@@ -12,17 +12,10 @@ class CompleteForHtmlValidationTaskWithHttpAuthParameters extends BaseController
 
 
     public function testReportCompletionWithHttpAuthParameters() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, null, array(
-            'html validation'
-        ), null, array(
-            'http-auth' => '1',
-            'http-auth-username' => 'example',
-            'http-auth-password' => 'password'
-        )));
+        $this->createWorker();
         
         $task = $job->getTasks()->first();
         $this->assertNull($task->getOutput());
@@ -42,7 +35,7 @@ class CompleteForHtmlValidationTaskWithHttpAuthParameters extends BaseController
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());             
         
-        $this->assertEquals('task-completed', $task->getState()->getName());
+        $this->assertEquals($this->getTaskService()->getCompletedState(), $task->getState());
         $this->assertNotNull($task->getOutput());
     }
 

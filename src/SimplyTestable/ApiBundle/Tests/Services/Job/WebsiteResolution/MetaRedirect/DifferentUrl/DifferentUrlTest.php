@@ -17,7 +17,7 @@ abstract class DifferentUrlTest extends BaseSimplyTestableTestCase {
     public function setUp() {
         parent::setUp();
         
-        $this->setHttpFixtures($this->buildHttpFixtureSet(array(
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             "HTTP/1.0 200 OK\nContent-Type:text/html\n\n<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url=" . $this->getRedirectUrl() . "\"></head></html>",
             "HTTP/1.0 200 OK"
         )));

@@ -5,8 +5,6 @@ namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class HappyPathTest extends BaseSimplyTestableTestCase {    
-    
-    const CANONICAL_URL = 'http://example.com';    
 
     /**
      *
@@ -16,8 +14,9 @@ class HappyPathTest extends BaseSimplyTestableTestCase {
     
     public function setUp() {
         parent::setUp();
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(). '/HttpResponses'));
-        $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));
+
+        $this->job = $this->getJobService()->getById($this->createAndResolveDefaultJob());        
+        $this->queuePrepareHttpFixturesForJob($this->job->getWebsite()->getCanonicalUrl());        
         $this->getJobPreparationService()->prepare($this->job);
     }
     
@@ -45,15 +44,13 @@ class HappyPathTest extends BaseSimplyTestableTestCase {
     }
     
     
-    public function testTaskUrls() {
-        $expectedTaskUrls = array(
-            'http://example.com/',
-            'http://example.com/articles/',
-            'http://example.com/articles/i-make-the-internet/'
-        );          
-        
-        foreach ($this->job->getTasks() as $task) {
-            $this->assertTrue(in_array($task->getUrl(), $expectedTaskUrls));
+    public function testTaskUrls() {        
+        foreach ($this->job->getTasks() as $task) {            
+            $this->assertTrue(in_array($task->getUrl(), array(
+                'http://example.com/0/',
+                'http://example.com/1/',
+                'http://example.com/2/'
+            )));
         }
     }
     

@@ -5,8 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\HttpAut
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class CrawlJobTest extends BaseSimplyTestableTestCase {    
-    
-    const CANONICAL_URL = 'http://example.com';     
+
     const HTTP_AUTH_USERNAME_KEY = 'http-auth-username';
     const HTTP_AUTH_PASSWORD_KEY = 'http-auth-password';
     const HTTP_AUTH_USERNAME = 'foo';
@@ -20,14 +19,13 @@ class CrawlJobTest extends BaseSimplyTestableTestCase {
     
     public function setUp() {
         parent::setUp();
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(). '/HttpResponses'));
         
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail(), 'full site', array('html validation'), null, array(
+        $this->job = $this->getJobService()->getById($this->createAndResolveJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail(), 'full site', array('html validation'), null, array(
             self::HTTP_AUTH_USERNAME_KEY => self::HTTP_AUTH_USERNAME,
             self::HTTP_AUTH_PASSWORD_KEY => self::HTTP_AUTH_PASSWORD
         )));         
+        
+        $this->queuePrepareHttpFixturesForCrawlJob($this->job->getWebsite()->getCanonicalUrl());
         
         $this->getJobPreparationService()->prepare($this->job);
     }

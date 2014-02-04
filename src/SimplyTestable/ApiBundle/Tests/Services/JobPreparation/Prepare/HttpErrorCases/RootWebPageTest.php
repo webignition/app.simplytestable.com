@@ -5,20 +5,19 @@ namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\HttpErrorCases;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class RootWebPageTest extends BaseSimplyTestableTestCase {   
-    
-    const CANONICAL_URL = 'http://example.com';     
-    
+
     public function setUp() {
         parent::setUp();
         
-        $this->setHttpFixtures($this->buildHttpFixtureSet(array(
+        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 404',
             'HTTP/1.0 404',
             'HTTP/1.0 404',            
             'HTTP/1.0 ' . $this->getTestStatusCode(),
-        )));        
+        )));
         
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));
         $this->getJobPreparationService()->prepare($job);
         
         $this->assertEquals($this->getJobService()->getFailedNoSitemapState(), $job->getState());

@@ -17,7 +17,7 @@ abstract class SameUrlTest extends BaseSimplyTestableTestCase {
     public function setUp() {
         parent::setUp();
         
-        $this->setHttpFixtures($this->getTestHttpFixtures());
+        $this->queueHttpFixtures($this->getTestHttpFixtures());
         
         $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::SOURCE_URL)); 
         $this->getJobWebsiteResolutionService()->resolve($this->job);

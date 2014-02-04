@@ -20,8 +20,12 @@ class UrlCountTest extends BaseSimplyTestableTestCase {
     
     public function setUp() {
         parent::setUp();
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(). '/HttpResponses'));
-        $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));
+        
+        $this->job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        
+        $this->setRequiredSitemapXmlUrlCount(11);        
+        $this->queuePrepareHttpFixturesForJob(self::DEFAULT_CANONICAL_URL);
+        
         $this->getJobPreparationService()->prepare($this->job);
     } 
     

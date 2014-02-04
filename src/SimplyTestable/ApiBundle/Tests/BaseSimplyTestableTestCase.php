@@ -26,6 +26,9 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const TEST_USER_PASSWORD = 'password';
     
     const DEFAULT_CANONICAL_URL = 'http://example.com/';
+    const DEFAULT_REQUIRED_SITEMAP_XML_URL_COUNT = 3;
+    
+    private $requiredSitemapXmlUrlCount = null;
     
     public function setUp() {
         parent::setUp();        
@@ -44,11 +47,11 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $this->removeAllStripeEvents();
         $this->rebuildDefaultDataState();
         $this->clearRedis();
+        $this->requiredSitemapXmlUrlCount = null;
     }
    
     
-    protected function rebuildDefaultDataState() {        
-        
+    protected function rebuildDefaultDataState() {
         $this->removeAllUsers();        
         self::loadDataFixtures();
     }
@@ -367,8 +370,11 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         )));
     }    
     
-    protected function queuePrepareHttpFixturesForJob($url) {
-        $fixtureMessages = $this->getHttpFixtureMessagesFromPath($this->getCommonFixturesDataPath() . '/DefaultJob/Prepare/HttpResponses');
+    protected function queuePrepareHttpFixturesForJob($url) {        
+        $fixtureMessages = array(
+            $this->getDefaultRobotsTxtFixtureContent(),
+            $this->getDefaultSitemapXmlFixtureContent()
+        );
         
         foreach ($fixtureMessages as $index => $fixtureMessage) {            
             if ($url != self::DEFAULT_CANONICAL_URL && substr_count($fixtureMessage, self::DEFAULT_CANONICAL_URL)) {
@@ -378,11 +384,62 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         }
         
         $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet($fixtureMessages));
-    } 
+    }
+    
+    protected function getDefaultRobotsTxtFixtureContent() {
+return <<<'EOD'
+HTTP/1.1 200 OK
+Content-Type: text/plain
+
+User-Agent: *
+Sitemap: http://example.com/sitemap.xml
+EOD;
+    }
     
     
-    protected function queuePrepareHttpFixturesForCrawlJob($url) {
-        $fixtureMessages = $this->getHttpFixtureMessagesFromPath($this->getCommonFixturesDataPath() . '/DefaultCrawlJob/Prepare/HttpResponses');
+    /**
+     * 
+     * @param int $count
+     */
+    protected function setRequiredSitemapXmlUrlCount($count) {
+        $this->requiredSitemapXmlUrlCount = $count;
+    }
+    
+    
+    /**
+     * @return int
+     */
+    protected function getRequiredSitemapXmlUrlCount() {
+        return (is_null($this->requiredSitemapXmlUrlCount)) ? self::DEFAULT_REQUIRED_SITEMAP_XML_URL_COUNT : $this->requiredSitemapXmlUrlCount;
+    }
+    
+
+    protected function getDefaultSitemapXmlFixtureContent() {
+        $urls = array();
+        for ($index = 0; $index < $this->getRequiredSitemapXmlUrlCount(); $index++) {
+            $urls[] = '<url><loc>' . self::DEFAULT_CANONICAL_URL . $index . '/</loc></url>';
+        }
+        
+        $urlsString = implode("\n", $urls);
+        
+return <<<EOD
+HTTP/1.1 200 OK
+Content-Type: text/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+$urlsString
+</urlset>
+EOD;
+    }    
+    
+    protected function queuePrepareHttpFixturesForCrawlJob($url) {       
+        $fixtureMessages = array(
+            "HTTP/1.0 200 OK\nContent-Type: text/plain\n\nUser-Agent: *",
+            'HTTP/1.0 404',
+            'HTTP/1.0 404',
+            'HTTP/1.0 404',
+        );
         
         foreach ($fixtureMessages as $index => $fixtureMessage) {            
             if ($url != self::DEFAULT_CANONICAL_URL && substr_count($fixtureMessage, self::DEFAULT_CANONICAL_URL)) {
@@ -1143,7 +1200,11 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $curlMessageParts = explode(' ', $curlMessage, 2);
         
         $curlException = new \Guzzle\Http\Exception\CurlException();
-        $curlException->setError($curlMessageParts[1], (int)  str_replace('CURL/', '', $curlMessageParts[0]));
+        if (isset($curlMessageParts[1])) {
+            $curlException->setError($curlMessageParts[1], (int)str_replace('CURL/', '', $curlMessageParts[0]));
+        } else {
+            $curlException->setError('Default Curl Message', (int)str_replace('CURL/', '', $curlMessageParts[0]));
+        }
         
         return $curlException;
     }      

@@ -11,7 +11,7 @@ class StateTest extends BaseSimplyTestableTestCase {
     public function setUp() {
         parent::setUp();
         
-        $this->setHttpFixtures($this->buildHttpFixtureSet(array(
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             "HTTP/1.0 200 OK"
         )));
     }

@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class HappyPathTest extends BaseSimplyTestableTestCase {    
     
     const EXPECTED_TASK_TYPE_COUNT = 4;
-    const CANONICAL_URL = 'http://example.com';
     
     /**
      *
@@ -18,20 +17,14 @@ class HappyPathTest extends BaseSimplyTestableTestCase {
     public function setUp() {
         parent::setUp(); 
         
-        $this->setHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 404',
-            'HTTP/1.0 404',
-            'HTTP/1.0 404',
-            'HTTP/1.0 404'
-        )));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
-        $job = $this->getJobService()->getById($this->createAndPrepareJob(self::CANONICAL_URL, $this->getTestUser()->getEmail()));             
         $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);                
         $urlDiscoveryTask = $this->crawlJobContainer->getCrawlJob()->getTasks()->first();
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet(self::CANONICAL_URL, 1)),
+            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, 1)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,

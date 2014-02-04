@@ -120,7 +120,7 @@ class JobPreparationService {
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
             );
-        }  
+        }
 
         $job->setState($this->jobService->getPreparingState());         
         $this->jobService->persistAndFlush($job);

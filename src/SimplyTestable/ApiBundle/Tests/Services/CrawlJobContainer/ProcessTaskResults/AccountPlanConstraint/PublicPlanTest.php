@@ -7,30 +7,23 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class PublicPlanTest extends BaseSimplyTestableTestCase {
     
     public function testWithConstraintHitOnFirstResultSet() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();        
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
         
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($job->getUser());
-
         $numberOfUrlsToDiscover = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit() * 2;
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet($canonicalUrl, $numberOfUrlsToDiscover)),
+            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, $numberOfUrlsToDiscover)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
@@ -42,46 +35,37 @@ class PublicPlanTest extends BaseSimplyTestableTestCase {
     
     
     public function testWithConstraintHitOnSecondResultSet() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();        
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
         
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($job->getUser());
-
         $numberOfUrlsToDiscover = (int)round($userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit() / 2);
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet($canonicalUrl, $numberOfUrlsToDiscover)),
+            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, $numberOfUrlsToDiscover)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());        
-        $task = $this->getTaskService()->getById($taskIds[1]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->get(1);
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));        
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet($canonicalUrl, $numberOfUrlsToDiscover, $numberOfUrlsToDiscover)),
+            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, $numberOfUrlsToDiscover, $numberOfUrlsToDiscover)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
@@ -93,19 +77,13 @@ class PublicPlanTest extends BaseSimplyTestableTestCase {
     
     
     public function testCrawlJobHasAmmendmentAddedIfDiscoveredUrlSetIsConstrainedByAccountPlan() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -116,7 +94,7 @@ class PublicPlanTest extends BaseSimplyTestableTestCase {
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet($canonicalUrl, $numberOfUrlsToDiscover)),
+            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, $numberOfUrlsToDiscover)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,

@@ -12,17 +12,15 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
 
 
     public function testCompleteForTaskDiscoveringUrlsDoesNotMarkJobAsComplete() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());        
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
-        
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
+
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
@@ -43,18 +41,15 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
     }
     
     public function testCompleteForTaskDiscoveringNoUrlsMarksJobAsComplete() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());        
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();        
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -75,18 +70,15 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
     
     
     public function testParentJobIsRestartedOnceCrawlJobCompletesForSingleUrl() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());        
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first(); 
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -109,18 +101,15 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
     }
     
     public function testParentJobIsRestartedOnceCrawlJobCompletesForMultipleUrls() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());        
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -129,13 +118,12 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet($canonicalUrl, 10)),
+            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, 10)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
-       
+        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());       
         
         $expectedTaskCount = count($this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer, true)) * $crawlJobContainer->getParentJob()->getRequestedTaskTypes()->count();
         
@@ -144,18 +132,15 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
     }
     
     public function testParentJobIsRestartedOnceCrawlJobReachesAccountPlanUrlConstraint() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());        
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());      
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -164,23 +149,21 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet($canonicalUrl, 7)),
+            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, 7)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[1]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->get(1);        
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));         
         
         $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet($canonicalUrl, 7, 7)),
+            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, 7, 7)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
@@ -196,22 +179,25 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
     
     
     public function testParentJobParametersArePassedToTasksWhenCrawlJobCompletes() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
+                self::DEFAULT_CANONICAL_URL,
+                null,
+                null,
+                array('HTML validation'),
+                null,
+                array(
+                    'http-auth-username' => 'example',
+                    'http-auth-password' => 'password'
+                )
+        ));
         
-        $canonicalUrl = 'http://example.com/';
-        
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, null, array('HTML validation'), null, array(
-            'http-auth-username' => 'example',
-            'http-auth-password' => 'password'
-        )));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();        
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -232,18 +218,15 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
     
     
     public function testUrlDiscoveryTaskErrorIsIgnoredWhenCollectingUrls() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());        
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -266,22 +249,25 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
     }
 
     public function testPostCrawlPrepareSetsPrefinedDomainsToIgnoreForCssValidation() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
+                self::DEFAULT_CANONICAL_URL,
+                null,
+                null,
+                array('CSS validation'),
+                array(
+                    'CSS validation' => array(
+                        'ignore-common-cdns' => 1
+                    )               
+                )
+        ));   
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('CSS validation'), array(
-            'CSS validation' => array(
-                'ignore-common-cdns' => 1
-            )               
-        )));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -305,22 +291,25 @@ class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
     
     
     public function testPostCrawlPrepareSetsPrefinedDomainsToIgnoreForJsStaticAnalysis() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
+                self::DEFAULT_CANONICAL_URL,
+                null,
+                null,
+                array('JS static analysis'),
+                array(
+                    'JS static analysis' => array(
+                        'ignore-common-cdns' => 1
+                    )               
+                )
+        ));   
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('JS static analysis'), array(
-            'JS static analysis' => array(
-                'ignore-common-cdns' => 1
-            )               
-        )));
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));

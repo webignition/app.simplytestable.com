@@ -3,23 +3,17 @@
 namespace SimplyTestable\ApiBundle\Tests\Services\CrawlJobContainer\GetProcessedUrls;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 class GetProcessedUrlsTest extends BaseSimplyTestableTestCase {
     
     public function testGetProcessedUrls() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
-        
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();        
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -35,9 +29,7 @@ class GetProcessedUrlsTest extends BaseSimplyTestableTestCase {
         
         $this->getCrawlJobContainerService()->processTaskResults($task);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[1]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->get(1);        
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));

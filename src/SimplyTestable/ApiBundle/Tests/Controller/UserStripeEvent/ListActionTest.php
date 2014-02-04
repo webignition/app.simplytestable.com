@@ -18,42 +18,30 @@ class ListActionTest extends BaseControllerJsonTestCase {
     }
     
     public function testWithWrongUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-        
-        $user = $this->createAndFindUser($email, $password);
-        $this->getUserService()->setUser($user);        
+        $this->getUserService()->setUser($this->getTestUser());        
         
         $response = $this->getUserStripeEventController('listAction')->listAction('user2@example.com', '');        
         $this->assertEquals(400, $response->getStatusCode());          
     }    
     
     public function testWithNoStripeEvents() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+        $this->getUserService()->setUser($this->getTestUser());        
         
-        $user = $this->createAndFindUser($email, $password);
-        $this->getUserService()->setUser($user);        
-        
-        $response = $this->getUserStripeEventController('listAction')->listAction('user1@example.com', '');        
+        $response = $this->getUserStripeEventController('listAction')->listAction($this->getTestUser()->getEmail(), '');        
         $this->assertEquals(200, $response->getStatusCode());          
         $this->assertEquals(array(), json_decode($response->getContent()));
     }
     
     public function testWithStripeEventsAndNoType() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+        $this->getUserService()->setUser($this->getTestUser());           
         
-        $user = $this->createAndFindUser($email, $password);
-        $this->getUserService()->setUser($user);         
-        
-        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($this->getTestUser(), $this->getAccountPlanService()->find('personal'));
         
         $this->loadStripeEventFixtures(__FUNCTION__, array(
             'customer' => $userAccountPlan->getStripeCustomer()
-        ), $user);        
+        ), $this->getTestUser());
         
-        $response = $this->getUserStripeEventController('listAction')->listAction('user1@example.com', '');        
+        $response = $this->getUserStripeEventController('listAction')->listAction($this->getTestUser()->getEmail(), '');        
         $this->assertEquals(200, $response->getStatusCode());          
         
         $responseObject = json_decode($response->getContent());
@@ -61,37 +49,29 @@ class ListActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(14, count($responseObject));       
     }
     public function testWithStripeEventsAndCustomerCreatedType() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+        $this->getUserService()->setUser($this->getTestUser());        
         
-        $user = $this->createAndFindUser($email, $password);
-        $this->getUserService()->setUser($user);         
-        
-        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($this->getTestUser(), $this->getAccountPlanService()->find('personal'));
         
         $this->loadStripeEventFixtures(__FUNCTION__, array(
             'customer' => $userAccountPlan->getStripeCustomer()
-        ), $user);        
+        ), $this->getTestUser());        
         
-        $responseObject = json_decode($this->getUserStripeEventController('listAction')->listAction('user1@example.com', 'customer.created')->getContent());
+        $responseObject = json_decode($this->getUserStripeEventController('listAction')->listAction($this->getTestUser()->getEmail(), 'customer.created')->getContent());
         $this->assertEquals(1, count($responseObject));       
     }  
     
     
     public function testWithStripeEventsAndCustomerSubscriptionUpdatedType() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+        $this->getUserService()->setUser($this->getTestUser());         
         
-        $user = $this->createAndFindUser($email, $password);
-        $this->getUserService()->setUser($user);         
-        
-        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($this->getTestUser(), $this->getAccountPlanService()->find('personal'));
         
         $this->loadStripeEventFixtures(__FUNCTION__, array(
             'customer' => $userAccountPlan->getStripeCustomer()
-        ), $user);        
+        ), $this->getTestUser());        
         
-        $responseObject = json_decode($this->getUserStripeEventController('listAction')->listAction('user1@example.com', 'customer.subscription.updated')->getContent());
+        $responseObject = json_decode($this->getUserStripeEventController('listAction')->listAction($this->getTestUser()->getEmail(), 'customer.subscription.updated')->getContent());
         $this->assertEquals(3, count($responseObject));       
     }    
     

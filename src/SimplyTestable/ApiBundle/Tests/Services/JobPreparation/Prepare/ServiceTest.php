@@ -6,17 +6,12 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class ServiceTest extends BaseSimplyTestableTestCase {    
     
-    const EXPECTED_TASK_TYPE_COUNT = 4;
-    const CANONICAL_URL = 'http://example.com';
-    
-    public function setUp() {
-        parent::setUp();        
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath($this->getName()). '/HttpResponses'));
-    }
-    
+    const EXPECTED_TASK_TYPE_COUNT = 4;    
     
     public function testHandleSitemapContainingSchemelessUrls() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));        
+        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
         $this->getJobPreparationService()->prepare($job);        
         
         $this->assertTrue($job->getTasks()->isEmpty());
@@ -25,9 +20,11 @@ class ServiceTest extends BaseSimplyTestableTestCase {
 
     
     public function testHandleSingleIndexLargeSitemap() {
+        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        
         $this->getWebSiteService()->getSitemapFinder()->getSitemapRetriever()->setTotalTransferTimeout(0.00001);
         
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));       
         $this->getJobPreparationService()->prepare($job);         
         
         $expectedUrlCount = $this->getUserAccountPlanService()->getForUser($this->getUserService()->getPublicUser())->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
@@ -37,7 +34,9 @@ class ServiceTest extends BaseSimplyTestableTestCase {
 
     
     public function testHandleLargeCollectionOfSitemaps() {        
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));        
+        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));       
         $this->getJobPreparationService()->prepare($job);         
         
         $expectedUrlCount = $this->getUserAccountPlanService()->getForUser($this->getUserService()->getPublicUser())->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
@@ -47,7 +46,9 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     
  
     public function testHandleMalformedRssUrl() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));        
+        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
         $this->getJobPreparationService()->prepare($job);         
         
         $this->assertTrue($job->getTasks()->isEmpty());
@@ -55,13 +56,20 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     }
     
     
-    public function testCrawlJobTakesParametersOfParentJob() {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail(), 'full site', array('HTML validation'), null, array(
-            'http-auth-username' => 'example',
-            'http-auth-password' => 'password'
-        )));        
-      
+    public function testCrawlJobTakesParametersOfParentJob() {        
+        $job = $this->getJobService()->getById($this->createAndResolveJob(
+                self::DEFAULT_CANONICAL_URL,
+                $this->getTestUser()->getEmail(),
+                'full site',
+                array('HTML validation'),
+                null,
+                array(
+                    'http-auth-username' => 'example',
+                    'http-auth-password' => 'password'
+                )
+        ));
+        
+        $this->queuePrepareHttpFixturesForCrawlJob($job->getWebsite()->getCanonicalUrl());
         $this->getJobPreparationService()->prepare($job);
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);

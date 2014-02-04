@@ -10,8 +10,6 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     
     public function testJobInWrongStateThrowsJobPreparationServiceException() {
         $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL)); 
-        $job->setState($this->getJobService()->getCancelledState());
-        $this->getJobService()->persistAndFlush($job);       
         
         try {
             $this->getJobPreparationService()->prepare($job);
@@ -19,20 +17,6 @@ class ServiceTest extends BaseSimplyTestableTestCase {
         } catch (\SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception $jobPreparationServiceException) {
             $this->assertTrue($jobPreparationServiceException->isJobInWrongStateException());
         }        
-    }
-    
-    
-    public function testSingleUrlJobThrowsJobPreparationServiceException() {        
-        try {
-            $this->getJobPreparationService()->prepare($this->getJobService()->getById($this->createJobAndGetId(
-                self::CANONICAL_URL,
-                null,
-                'single url'
-        )));
-            $this->fail('\SimplyTestable\ApiBundle\Exception\Services\JobPreparation not thrown');
-        } catch (\SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception $jobPreparationServiceException) {
-            $this->assertTrue($jobPreparationServiceException->isJobInWrongStateException());
-        }       
     }
 
 }

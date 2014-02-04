@@ -151,16 +151,14 @@ class CommandTest extends ConsoleCommandTestCase {
         
         $this->assertReturnCode(0, array(
             'id' => $job->getTasks()->first()->getId()
-        ));  
+        ));
         
-        $expectedTaskUrls = array(
-            'http://example.com/',
-            'http://example.com/one/',
-            'http://example.com/two/'            
-        );
-        
-        foreach ($job->getTasks() as $task) {
-            $this->assertTrue(in_array($task->getUrl(), $expectedTaskUrls));
+        foreach ($job->getTasks() as $task) {            
+            $this->assertTrue(in_array($task->getUrl(), array(
+                'http://example.com/0/',
+                'http://example.com/1/',
+                'http://example.com/2/'            
+            )));
         }   
     }
     

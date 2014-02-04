@@ -11,24 +11,18 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
     }   
 
     public function testWithSingleMatchingTask() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
         
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
-        
-        $canonicalUrl = 'http://example.com/';       
-        $job_id = $this->getJobIdFromUrl($this->createJob($canonicalUrl)->getTargetUrl());
-        
-        $this->prepareJob($canonicalUrl, $job_id);
+        $this->createWorker();
 
-        $taskIds = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());        
-        $task = $this->getTaskService()->getById($taskIds[0]);
+        $task = $job->getTasks()->first();
         
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
-        ));        
+        )); 
         
-        $job = json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());        
-        $this->assertEquals('in-progress', $job->state);
+        $this->assertEquals($this->getJobService()->getInProgressState(), $job->getState());
         
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
@@ -37,36 +31,31 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction($canonicalUrl, $task->getType()->getName(), $task->getParametersHash());
+        ))->completeByUrlAndTaskTypeAction($task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('task-completed', $task->getState()->getName());
+        $this->assertEquals($this->getTaskService()->getCompletedState(), $task->getState());
     }
     
     public function testWithMultipleMatchingTasksForSameUser() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            null,
+            'full site',
+            array('HTML validation')
+        ));
         
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');        
-        $canonicalUrl = 'http://example.com/'; 
+        $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            null,
+            'full site',
+            array('HTML validation', 'CSS validation')
+        ));   
         
-        $jobIds = array();
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
+        $this->createWorker();          
         
-        $jobIds[] = $this->getJobIdFromUrl(
-            $this->createJob($canonicalUrl, null, 'full site', array('HTML validation'))->getTargetUrl()
-        );
-        
-        $jobIds[] = $this->getJobIdFromUrl(
-            $this->createJob($canonicalUrl, null, 'full site', array('HTML validation', 'CSS validation'))->getTargetUrl()
-        );
-        
-        $taskIds = array();
-        
-        foreach ($jobIds as $job_id) {
-             $this->prepareJob($canonicalUrl, $job_id);
-             $taskIds[$job_id] = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
-        }
-        
-        $task = $this->getTaskService()->getById($taskIds[$jobIds[0]][0]);        
+        $task = $job->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -78,8 +67,7 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());        
-        
+        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());                
         
         $this->assertEquals(200, $response->getStatusCode());
         
@@ -91,39 +79,33 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(2, count($tasks));        
         
         foreach ($tasks as $task) {
-            $this->assertEquals($canonicalUrl, (string)$task->getUrl());
-            $this->assertEquals('task-completed', $task->getState()->getName());
+            $this->assertEquals('http://example.com/0/', (string)$task->getUrl());
+            $this->assertEquals($this->getTaskService()->getCompletedState(), $task->getState());
         }
     }  
     
     public function testWithMultipleMatchingTasksForDifferentUsers() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
         $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
-
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');        
-        $canonicalUrl = 'http://example.com/'; 
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');        
         
-        $jobIds = array();
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            $user1->getEmail(),
+            'full site',
+            array('HTML validation')
+        ));
         
-        $jobIds[] = $this->getJobIdFromUrl(
-            $this->createJob($canonicalUrl, $user1->getEmail(), 'full site', array('HTML validation'))->getTargetUrl()
-        );
+        $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            $user2->getEmail(),
+            'full site',
+            array('HTML validation', 'CSS validation')
+        ));   
         
-        $jobIds[] = $this->getJobIdFromUrl(
-            $this->createJob($canonicalUrl, $user2->getEmail(), 'full site', array('HTML validation', 'CSS validation'))->getTargetUrl()
-        );
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
+        $this->createWorker();
         
-        $taskIds = array();
-        
-        foreach ($jobIds as $index => $job_id) {
-             $this->prepareJob($canonicalUrl, $job_id);
-             $userEmail = ($index === 0) ? $user1->getEmail() : $user2->getEmail();
-             $taskIds[$job_id] = json_decode($this->getJobController('taskIdsAction', array('user' => $userEmail))->taskIdsAction($canonicalUrl, $job_id)->getContent());
-        }
-        
-        $task = $this->getTaskService()->getById($taskIds[$jobIds[0]][0]);        
+        $task = $job->getTasks()->first();
         
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
@@ -149,64 +131,49 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(2, count($tasks));        
         
         foreach ($tasks as $task) {
-            $this->assertEquals($canonicalUrl, (string)$task->getUrl());
-            $this->assertEquals('task-completed', $task->getState()->getName());
+            $this->assertEquals('http://example.com/0/', (string)$task->getUrl());
+            $this->assertEquals($this->getTaskService()->getCompletedState(), $task->getState());
         }
     }  
     
     public function testWithSingleMatchingTaskFromMultiplePossibleTasksByParameters() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');        
-        $canonicalUrl = 'http://example.com/'; 
-        
-        $jobIds = array();
-        
-        $jobIds[] = $this->getJobIdFromUrl(
-            $this->createJob(
-                $canonicalUrl,
-                null,
-                'full site',
-                array(
-                    'CSS validation'
-                ),
-                array(
-                    'CSS validation' => array(
-                        'ignore-warnings' => 1,
-                        'ignore-common-cdns' => 1,
-                        'vendor-extensions' => 'warn'
-                    )
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            null,
+            'full site',
+            array(
+                'CSS validation'
+            ),
+            array(
+                'CSS validation' => array(
+                    'ignore-warnings' => 1,
+                    'ignore-common-cdns' => 1,
+                    'vendor-extensions' => 'warn'
                 )
-             )->getTargetUrl()
-        );
+            )
+        ));
         
-        $jobIds[] = $this->getJobIdFromUrl(
-            $this->createJob(
-                $canonicalUrl,
-                null,
-                'full site',
-                array(
-                    'HTML validation',
-                    'CSS validation'
-                ),
-                array(
-                    'CSS validation' => array(
-                        'ignore-warnings' => 0,
-                        'ignore-common-cdns' => 1,
-                        'vendor-extensions' => 'warn'
-                    )
+        $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            null,
+            'full site',
+            array(
+                'HTML validation',
+                'CSS validation'
+            ),
+            array(
+                'CSS validation' => array(
+                    'ignore-warnings' => 0,
+                    'ignore-common-cdns' => 1,
+                    'vendor-extensions' => 'warn'
                 )
-             )->getTargetUrl()
-        );     
+            )
+        ));
         
-        $taskIds = array();
-        
-        foreach ($jobIds as $job_id) {
-             $this->prepareJob($canonicalUrl, $job_id);
-             $taskIds[$job_id] = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
-        }
-        
-        $task = $this->getTaskService()->getById($taskIds[$jobIds[0]][0]);        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
+        $this->createWorker();  
+    
+        $task = $job->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -230,25 +197,19 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(2, count($tasks));        
         
         foreach ($tasks as $taskIndex => $task) {
-            $this->assertEquals($canonicalUrl, (string)$task->getUrl());
-            $this->assertEquals(($taskIndex ===0 ? 'task-completed' : 'task-queued'), $task->getState()->getName());
+            $this->assertEquals('http://example.com/0/', (string)$task->getUrl());
+            $this->assertEquals(($taskIndex === 0 ? $this->getTaskService()->getCompletedState() : $this->getTaskService()->getQueuedState()), $task->getState());
         }        
     }
     
     public function testWithMultipleMatchingTaskFromMultiplePossibleTasksByParameters() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
         $users = $this->createAndActivateUserCollection(3);
-
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');        
-        $canonicalUrl = 'http://example.com/'; 
+        $this->createWorker();
         
-        $jobIds = array();
-
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
         
-        $jobPropertyCollection = array();        
-        
-        $jobPropertyCollection[] = array(
+        $jobPropertyCollection = array(
+            array(
             'test-types' => array(
                 'CSS validation'
             ),
@@ -258,10 +219,8 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
                     'ignore-common-cdns' => 1,
                     'vendor-extensions' => 'warn'
                 )                
-            )
-        );
-        
-        $jobPropertyCollection[] = array(
+            )),
+            array(
             'test-types' => array(
                     'HTML validation',
                     'CSS validation'
@@ -272,34 +231,26 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
                     'ignore-common-cdns' => 1,
                     'vendor-extensions' => 'warn'
                 )              
-            )
+            ))
         );
         
+        $jobs = array();
+        
         foreach ($users as $user) {
-            $jobIds[$user->getEmail()] = array();
+            $jobs[$user->getEmail()] = array();
             
             foreach ($jobPropertyCollection as $jobProperties) {
-                $jobIds[$user->getEmail()][] = $this->getJobIdFromUrl(
-                    $this->createJob(
-                        $canonicalUrl,
+                $jobs[$user->getEmail()][] = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+                        self::DEFAULT_CANONICAL_URL,
                         $user->getEmail(),
                         'full site',
                         $jobProperties['test-types'],
                         $jobProperties['test-type-options']
-                     )->getTargetUrl()
-                );                
+                 ));               
             }
         }
-        
-        $taskIds = array();
-        foreach ($jobIds as $userEmail => $jobIdSet) {
-            foreach ($jobIdSet as $job_id) {                
-                $this->prepareJob($canonicalUrl, $job_id);              
-                $taskIds[$job_id] = json_decode($this->getJobController('taskIdsAction', array('user' => $userEmail))->taskIdsAction($canonicalUrl, $job_id)->getContent());                
-            }
-        }        
-        
-        $task = $this->getTaskService()->getById($taskIds[$jobIds[$users[0]->getEmail()][0]][0]);        
+    
+        $task = $jobs[$users[0]->getEmail()][0]->getTasks()->first();
         
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
@@ -322,69 +273,54 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         ));
       
         foreach ($tasks as $taskIndex => $task) {            
-            $this->assertEquals($canonicalUrl, (string)$task->getUrl());
+            $this->assertEquals('http://example.com/0/', (string)$task->getUrl());
             
             if ($taskIndex % 2) {
-                $this->assertEquals('task-queued', $task->getState()->getName());
+                $this->assertEquals($this->getTaskService()->getQueuedState(), $task->getState());
             } else {
-                $this->assertEquals('task-completed', $task->getState()->getName());
+                $this->assertEquals($this->getTaskService()->getCompletedState(), $task->getState());
             }
         }       
     } 
     
     public function testWithNoMatchingTaskFromMultiplePossibleTasksByParameters() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');        
-        $canonicalUrl = 'http://example.com/'; 
-        
-        $jobIds = array();
-        
-        $jobIds[] = $this->getJobIdFromUrl(
-            $this->createJob(
-                $canonicalUrl,
-                null,
-                'full site',
-                array(
-                    'CSS validation'
-                ),
-                array(
-                    'CSS validation' => array(
-                        'ignore-warnings' => 1,
-                        'ignore-common-cdns' => 1,
-                        'vendor-extensions' => 'warn'
-                    )
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            null,
+            'full site',
+            array(
+                'CSS validation'
+            ),
+            array(
+                'CSS validation' => array(
+                    'ignore-warnings' => 1,
+                    'ignore-common-cdns' => 1,
+                    'vendor-extensions' => 'warn'
                 )
-             )->getTargetUrl()
-        );
+            )
+        ));
         
-        $jobIds[] = $this->getJobIdFromUrl(
-            $this->createJob(
-                $canonicalUrl,
-                null,
-                'full site',
-                array(
-                    'HTML validation',
-                    'CSS validation'
-                ),
-                array(
-                    'CSS validation' => array(
-                        'ignore-warnings' => 0,
-                        'ignore-common-cdns' => 1,
-                        'vendor-extensions' => 'warn'
-                    )
+        $this->getJobService()->getById($this->createResolveAndPrepareJob(
+            self::DEFAULT_CANONICAL_URL,
+            null,
+            'full site',
+            array(
+                'HTML validation',
+                'CSS validation'
+            ),
+            array(
+                'CSS validation' => array(
+                    'ignore-warnings' => 0,
+                    'ignore-common-cdns' => 1,
+                    'vendor-extensions' => 'warn'
                 )
-             )->getTargetUrl()
-        );     
+            )
+        ));
         
-        $taskIds = array();
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
+        $this->createWorker();
         
-        foreach ($jobIds as $job_id) {
-             $this->prepareJob($canonicalUrl, $job_id);
-             $taskIds[$job_id] = json_decode($this->getJobController('taskIdsAction')->taskIdsAction($canonicalUrl, $job_id)->getContent());
-        }
-        
-        $task = $this->getTaskService()->getById($taskIds[$jobIds[0]][0]);        
+        $task = $job->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -408,8 +344,8 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(2, count($tasks));        
         
         foreach ($tasks as $taskIndex => $task) {
-            $this->assertEquals($canonicalUrl, (string)$task->getUrl());
-            $this->assertEquals(($taskIndex ===0 ? 'task-in-progress' : 'task-queued'), $task->getState()->getName());
+            $this->assertEquals('http://example.com/0/', (string)$task->getUrl());
+            $this->assertEquals(($taskIndex === 0 ? $this->getTaskService()->getInProgressState() : $this->getTaskService()->getQueuedState()), $task->getState());
         }        
     }    
     

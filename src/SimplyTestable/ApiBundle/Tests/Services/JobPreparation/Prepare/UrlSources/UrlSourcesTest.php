@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 abstract class UrlSourcesTest extends BaseSimplyTestableTestCase {    
     
     const EXPECTED_TASK_TYPE_COUNT = 4;    
-    const CANONICAL_URL = 'http://example.com';    
 
     /**
      *
@@ -38,29 +37,13 @@ abstract class UrlSourcesTest extends BaseSimplyTestableTestCase {
     
     public function setUp() {
         parent::setUp();
+
+        $this->job = $this->getJobService()->getById($this->createAndResolveDefaultJob());        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureItems())); 
         
-        //$this->getHttpFixtureItems();
-        
-        $this->setHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureItems())); 
-        
-        $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));
         $this->getJobPreparationService()->prepare($this->job);
-        
-//        var_dump($this->job->getState()->getName());
-//        exit();
 
         $expectedUrls = $this->expectedUrls[$this->getResultSetKey()];
-        //var_dump($expectedUrls);
-////        exit();
-
-//        var_dump(self::EXPECTED_TASK_TYPE_COUNT * count($expectedUrls), $expectedUrls, $this->job->getTasks()->count());
-//        
-//        foreach ($this->job->getTasks() as $task) {
-//            var_dump($task->getId(), $task->getType()->getName(), $task->getUrl());
-//            echo "\n";
-//        }
-//        
-//        exit();
         
         $this->assertEquals($this->getExpectedJobState(), $this->job->getState());
         $this->assertEquals(self::EXPECTED_TASK_TYPE_COUNT * count($expectedUrls), $this->job->getTasks()->count());           
@@ -91,58 +74,15 @@ abstract class UrlSourcesTest extends BaseSimplyTestableTestCase {
     
     private function getHttpFixtureItems() {
         $testCaseValues = $this->getTestCaseValues();
-        //var_dump($testCaseValues);
-        
+
         $this->getSitemapResources($testCaseValues);
-        
-//        $httpFixtureSet = array_merge(array(
-//            ($testCaseValues['RobotsTxt']) ? $this->getRobotsTxtResource($testCaseValues) : 'HTTP/1.0 404',
-//            ($testCaseValues['SitemapXml']) ? 'sitemap.xml' : 'HTTP/1.0 404',
-//            ($testCaseValues['SitemapTxt']) ? $this->getSitemapTxtResource() : 'HTTP/1.0 404',
-//            $this->getRootWebPageResource($testCaseValues),            
-//        ), $this->getNewsFeedResources($testCaseValues));
         
         $httpFixtureSet = array_merge(array(
             ($testCaseValues['RobotsTxt']) ? $this->getRobotsTxtResource($testCaseValues) : 'HTTP/1.0 404',
         ), $this->getSitemapResources($testCaseValues), array(
             $this->getRootWebPageResource($testCaseValues)
-        ), $this->getNewsFeedResources($testCaseValues));
-        
-//        $httpFixtureSet = array(
-//            ($testCaseValues['RobotsTxt']) ? $this->getRobotsTxtResource($testCaseValues) : 'HTTP/1.0 404',
-//            ($testCaseValues['SitemapXml']) ? 'sitemap.xml' : 'HTTP/1.0 404',
-//            ($testCaseValues['SitemapTxt']) ? 'sitemap.txt' : 'HTTP/1.0 404',
-//            $this->getRootWebPageResource($testCaseValues),
-//            'feed1',
-//            'feed2'
-////            ($testCaseValues['Rss']) ? 'rss' : 'HTTP/1.0 404',
-////            ($testCaseValues['Atom']) ? $this->getAtomResource() : 'HTTP/1.0 404',
-//        );
-        
-//        foreach ($testCaseValues as $key => $isIncluded) {
-//            if ($isIncluded) {
-//                if ($key == 'RobotsTxt') {
-//                    $httpFixtureSet[] = $this->getRobotsTxtResource($testCaseValues);
-//                } else {
-//                    $httpFixtureSet[] = $this->getHttpResource($key);
-//                }                
-//            } else {
-//                $httpFixtureSet[] = 'HTTP/1.0 404';
-//            }
-//        }
-//        
+        ), $this->getNewsFeedResources($testCaseValues));      
         return $httpFixtureSet;
-//        
-        var_dump($this->getName(), $httpFixtureSet);        
-        exit();
-    }
-    
-    
-    private function getHttpResource($key) {
-        switch ($key) {
-            case 'Atom':
-                return $this->getAtomResource();
-        }
     }
     
     private function getTestCaseValues() {

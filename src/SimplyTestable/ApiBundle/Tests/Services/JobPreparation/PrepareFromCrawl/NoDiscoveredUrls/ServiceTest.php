@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class ServiceTest extends BaseSimplyTestableTestCase {    
     
     const EXPECTED_TASK_TYPE_COUNT = 4;
-    const CANONICAL_URL = 'http://example.com';
     
     /**
      *
@@ -18,14 +17,8 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     public function setUp() {
         parent::setUp(); 
         
-        $this->setHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 404',
-            'HTTP/1.0 404',
-            'HTTP/1.0 404',
-            'HTTP/1.0 404'
-        )));
+        $this->job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));        
         
-        $this->job = $this->getJobService()->getById($this->createAndPrepareJob(self::CANONICAL_URL, $this->getTestUser()->getEmail()));             
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($this->job);                
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         
@@ -61,15 +54,11 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     }
     
     
-    public function testTaskUrls() {
-        $expectedTaskUrls = array(
-            'http://example.com/',
-            'http://example.com/articles/',
-            'http://example.com/articles/i-make-the-internet/'
-        );          
-        
+    public function testTaskUrls() {               
         foreach ($this->job->getTasks() as $task) {
-            $this->assertTrue(in_array($task->getUrl(), $expectedTaskUrls));
+            $this->assertTrue(in_array($task->getUrl(), array(
+                'http://example.com/'
+            )));
         }
     }
     

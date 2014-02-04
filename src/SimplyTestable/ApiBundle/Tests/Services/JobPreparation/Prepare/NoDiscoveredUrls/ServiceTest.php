@@ -5,8 +5,6 @@ namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\NoDisco
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class ServiceTest extends BaseSimplyTestableTestCase {    
-    
-    const CANONICAL_URL = 'http://example.com';    
 
     /**
      *
@@ -16,8 +14,16 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     
     public function setUp() {
         parent::setUp();
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(). '/HttpResponses'));
-        $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));
+
+        $this->job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
+            'HTTP/1.0 404',
+            'HTTP/1.0 404',
+            'HTTP/1.0 404',
+            'HTTP/1.0 404',
+        )));        
+        
         $this->getJobPreparationService()->prepare($this->job);
     }
     

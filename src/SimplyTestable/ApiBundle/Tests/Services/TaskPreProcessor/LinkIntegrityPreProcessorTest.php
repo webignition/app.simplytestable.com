@@ -12,7 +12,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
 
     
     public function testWithCurlErrorRetrievingTestContent() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
         
         $taskOutputContent = array(
             array(
@@ -34,9 +35,6 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
                 'url' => 'http://example.com/three'
             )            
         );
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity')));
 
         $tasks = $job->getTasks();
 
@@ -60,7 +58,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
     }
     
     public function testWithHttpErrorRetrievingTestContent() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
         
         $taskOutputContent = array(
             array(
@@ -82,9 +81,6 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
                 'url' => 'http://example.com/three'
             )            
         );
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity')));
 
         $tasks = $job->getTasks();
 
@@ -108,6 +104,9 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
     }    
     
     public function testDetermineOutputFromPriorRecentTests() {
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));        
+        
         $taskOutputContent = array(
             array(
                 'context' => '<a href="http://example.com/one">Example One</a>',
@@ -128,11 +127,6 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
                 'url' => 'http://example.com/three'
             )            
         );
-
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity')));
 
         $tasks = $job->getTasks();
 
@@ -174,6 +168,9 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
     }    
 
     public function testDetermineCorrectErrorCount() {
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));        
+        
         $taskOutputContent = array(
             array(
                 'context' => '<a href="http://example.com/one">Example One</a>',
@@ -194,11 +191,6 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
                 'url' => 'http://example.com/three'
             )            
         );
-
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity')));
 
         $tasks = $job->getTasks();
 
@@ -221,7 +213,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
     }
     
     public function testWithAssignSelected() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
         
         $taskOutputContent = array(
             array(
@@ -243,9 +236,6 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
                 'url' => 'http://example.com/three'
             )            
         );
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity')));
 
         $tasks = $job->getTasks();
 
@@ -274,7 +264,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
     }  
     
     public function testWithAssignCollection() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
         
         $taskOutputContent = array(
             array(
@@ -296,9 +287,6 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
                 'url' => 'http://example.com/three'
             )            
         );
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity')));
 
         $tasks = $job->getTasks();
 
@@ -325,10 +313,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
     }  
     
     public function testPreprocessingUsesCorrectHistoricTaskType() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));      
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('CSS validation', 'Link integrity')));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('CSS validation', 'Link integrity')));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
 
         $tasks = $job->getTasks();
 
@@ -352,10 +338,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
     }
     
     public function testStorePartialTaskOutputBeforeAssign() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity')));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
 
         $tasks = $job->getTasks();
 
@@ -398,10 +382,8 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
     
     
     public function testSetExcludedUrlsParameterWhenStoringPartialOutput() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity')));
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
 
         $tasks = $job->getTasks();
 
@@ -451,14 +433,13 @@ class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
     
     
     public function testSetExcludedUrlsWhenExcludedDomainsParameterExists() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__) . '/HttpResponses'));
-
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl, null, 'full site', array('Link integrity'), array('Link integrity' => array(
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity'), array('Link integrity' => array(
             'excluded-domains' => array(
                 'instagram.com'
             )
-        ))));      
+        )))); 
+        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
 
         $tasks = $job->getTasks();
 

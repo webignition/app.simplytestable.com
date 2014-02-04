@@ -3,28 +3,24 @@
 namespace SimplyTestable\ApiBundle\Tests\Services\CrawlJobContainer\ProcessTaskResults;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 class ProcessTaskResultsTest extends BaseSimplyTestableTestCase {
     
     public function testWithUrlsNotYetProcessed() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
         
-        $this->assertEquals('task-in-progress', $task->getState()->getName());
+        $this->assertEquals($this->getTaskService()->getInProgressState(), $task->getState());
         
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
@@ -42,18 +38,15 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase {
     }
     
     public function testWithAllUrlsAlreadyProcessed() {
-        $this->setHttpFixtures($this->getHttpFixtures($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses'));
-        $this->createWorker('http://hydrogen.worker.simplytestable.com');
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
         
-        $canonicalUrl = 'http://example.com/';
-        $job = $this->getJobService()->getById($this->createAndPrepareJob($canonicalUrl));
+        $this->createWorker();
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[0]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
@@ -70,9 +63,7 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase {
         $this->getCrawlJobContainerService()->processTaskResults($task);
         $this->assertEquals(2, $crawlJobContainer->getCrawlJob()->getTasks()->count()); 
         
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($crawlJobContainer->getCrawlJob());
-        $task = $this->getTaskService()->getById($taskIds[1]);
-        
+        $task = $crawlJobContainer->getCrawlJob()->getTasks()->get(1);
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
