@@ -30,8 +30,8 @@ class UserCreationController extends AbstractUserController
             return $this->sendServiceUnavailableResponse();
         }          
         
-        $email = $this->getArguments('createAction')->get('email');
-        $password = $this->getArguments('createAction')->get('password');        
+        $email = rawurldecode($this->getArguments('createAction')->get('email'));
+        $password = rawurldecode($this->getArguments('createAction')->get('password'));        
         
         if ($this->getUserService()->exists($email)) {
             $user = $this->getUserService()->findUserByEmail($email);

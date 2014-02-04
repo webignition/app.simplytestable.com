@@ -222,5 +222,28 @@ class CreateTest extends BaseControllerJsonTestCase {
         $this->assertNotNull($userAccountPlan->getStripeCustomer());    
     }
     
+    
+    public function testEmailAndPasswordValuesAreUrldecodedBeforeBeingProcessed() {        
+        $email = 'user1@example.com';
+        $password = '@password1';
+        
+        $encodedEmail = rawurlencode($email);
+        $encodedPassword = rawurlencode($password);
+        
+        $this->assertNull($this->getUserService()->findUserByEmail($email));
+        
+        $controller = $this->getUserCreationController('createAction', array(
+            'email' => $encodedEmail,
+            'password' => $encodedPassword
+        ));
+        
+        $response = $controller->createAction();
+        
+        $this->assertEquals(200, $response->getStatusCode()); 
+        
+        $user = $this->getUserService()->findUserByEmail($email);
+        $this->assertInstanceOf('SimplyTestable\ApiBundle\Entity\User', $user);
+    }    
+    
 }
 
