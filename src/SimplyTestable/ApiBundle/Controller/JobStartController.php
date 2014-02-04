@@ -2,17 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
-use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\WebSite;
-use SimplyTestable\ApiBundle\Entity\State;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputDefinition;
 
 class JobStartController extends ApiController
 {
@@ -375,15 +368,7 @@ class JobStartController extends ApiController
      */
     private function getJobUserAccountPlanEnforcementService() {
         return $this->get('simplytestable.services.jobuseraccountplanenforcementservice');
-    }
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
-     */     
-    private function getJobPreparationService() {
-        return $this->get('simplytestable.services.jobpreparationservice');
-    }  
+    } 
     
     /**
      *
