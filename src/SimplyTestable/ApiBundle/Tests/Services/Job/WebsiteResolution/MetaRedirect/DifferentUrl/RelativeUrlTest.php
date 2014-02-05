@@ -5,11 +5,15 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\WebsiteResolution\MetaRedi
 class RelativeUrlTest extends DifferentUrlTest {
     
     protected function getRedirectUrl() {
-        return '/foo';
+        return '/foo/';
     }
 
     protected function getEffectiveUrl() {
-        return 'http://example.com/foo';
+        return 'http://example.com/foo/';
+    }  
+    
+    protected function getRootUrl() {
+        return 'http://example.com/';
     }    
 
     public function testWithRelativeUrl() {}

@@ -5,12 +5,16 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\WebsiteResolution\MetaRedi
 class AbsoluteUrlTest extends DifferentUrlTest {
     
     protected function getRedirectUrl() {
-        return 'http://foo.example.com/';
+        return 'http://foo.example.com/foo/';
     }
 
     protected function getEffectiveUrl() {
+        return 'http://foo.example.com/foo/';
+    }
+    
+    protected function getRootUrl() {
         return 'http://foo.example.com/';
-    }    
+    }
 
     public function testWithAbsoluteUrl() {}
 }
