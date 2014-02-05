@@ -30,6 +30,8 @@ class JobService extends EntityService {
     
     private $incompleteStateNames = array(
         self::STARTING_STATE,
+        self::RESOLVING_STATE,
+        self::RESOLVED_STATE,
         self::IN_PROGRESS_STATE,
         self::PREPARING_STATE,
         self::QUEUED_STATE

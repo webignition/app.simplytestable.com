@@ -92,31 +92,31 @@ class CurrentTest extends AbstractListTest {
     
     
     public function testForPublicUserWithIncompleteAndCompleteTests() {
-        $incompleteStates = $this->getJobService()->getIncompleteStates();
-        $finishedStates = $this->getJobService()->getFinishedStates();
-        
         $jobs = array();
-        foreach ($incompleteStates as $incompleteState) {
-            $jobs[$incompleteState->getName()] = $this->getJobService()->getById($this->createJobAndGetId('http://'.$incompleteState->getName().'.example.com/'));
+        
+        foreach ($this->getJobService()->getIncompleteStates() as $incompleteState) {
+            $job = $this->getJobService()->getById($this->createJobAndGetId('http://incomplete-' . $incompleteState->getName(). '.example.com/'));
+            $job->setState($incompleteState);
+            $this->getJobService()->persistAndFlush($job);
+            $jobs[] = $job;
         }
         
-        foreach ($finishedStates as $finishedState) {
-            $job = $this->getJobService()->getById($this->createJobAndGetId('http://'.$finishedState->getName().'.example.com/'));
+        foreach ($this->getJobService()->getFinishedStates() as $finishedState) {
+            $job = $this->getJobService()->getById($this->createJobAndGetId('http://finished-' . $finishedState->getName(). '.example.com/'));
             $job->setState($finishedState);
             $this->getJobService()->persistAndFlush($job);
-            
-            $jobs[$finishedState->getName()] = $job;
+            $jobs[] = $job;
         }
         
         $list = json_decode($this->getJobController('listAction', array(), array(
             'exclude-finished' => '1'
-        ))->listAction(count($jobs))->getContent());
+        ))->listAction(count($jobs))->getContent());        
         
-        $this->assertEquals(count($incompleteStates), count($list->jobs));
+        $this->assertEquals(count($this->getJobService()->getIncompleteStates()), count($list->jobs));    
         
-        foreach (array_reverse($incompleteStates) as $index => $incompleteState) {
-            $this->assertEquals('http://'.$incompleteState->getName().'.example.com/', $list->jobs[$index]->website);
-        }    
+        foreach ($list->jobs as $jobDetails) {
+            $this->assertTrue(substr_count($jobDetails->website, 'http://incomplete') === 1);
+        }   
     }
     
     
