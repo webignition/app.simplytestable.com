@@ -59,6 +59,10 @@ class WebsiteResolutionService {
         
         $resolvedUrl = $this->getUrlResolver()->resolve($job->getWebsite()->getCanonicalUrl());
         
+        if ($job->getType()->getName() == 'Full site') {
+            $resolvedUrl = $this->trimToRootUrl($resolvedUrl);
+        }        
+        
         if ($job->getWebsite()->getCanonicalUrl() != $resolvedUrl) {            
             if (!$this->websiteService->has($resolvedUrl)) {
                 $this->websiteService->create($resolvedUrl);
@@ -69,6 +73,17 @@ class WebsiteResolutionService {
         
         $job->setState($this->jobService->getResolvedState());
         $this->jobService->persistAndFlush($job);        
+    }
+    
+    
+    /**
+     * 
+     * @param string $url
+     * @return string
+     */
+    private function trimToRootUrl($url) {
+        $urlObject = new \webignition\Url\Url($url);
+        return $urlObject->getScheme() . '://' . $urlObject->getHost() . '/';
     }
     
     
