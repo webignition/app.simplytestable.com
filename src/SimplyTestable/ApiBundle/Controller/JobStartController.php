@@ -34,19 +34,19 @@ class JobStartController extends ApiController
         
         if ($requestedJobType->equals($this->getJobTypeService()->getFullSiteType())) {
             if ($this->getJobUserAccountPlanEnforcementService()->isFullSiteJobLimitReachedForWebSite($this->getWebsite())) {
-                return $this->rejectAndRedirect($this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint());
+                return $this->rejectAsPlanLimitReachedAndRedirect($this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint());
             }
         }
         
         
         if ($requestedJobType->equals($this->getJobTypeService()->getSingleUrlType())) { 
             if ($this->getJobUserAccountPlanEnforcementService()->isSingleUrlLimitReachedForWebsite($this->getWebsite())) {                
-                return $this->rejectAndRedirect($this->getJobUserAccountPlanEnforcementService()->getSingleUrlJobLimitConstraint());
+                return $this->rejectAsPlanLimitReachedAndRedirect($this->getJobUserAccountPlanEnforcementService()->getSingleUrlJobLimitConstraint());
             }
         }        
         
         if ($this->getJobUserAccountPlanEnforcementService()->isUserCreditLimitReached()) {
-            return $this->rejectAndRedirect($this->getJobUserAccountPlanEnforcementService()->getCreditsPerMonthConstraint());
+            return $this->rejectAsPlanLimitReachedAndRedirect($this->getJobUserAccountPlanEnforcementService()->getCreditsPerMonthConstraint());
         }
         
         $existingJobs = $this->getJobService()->getEntityRepository()->getAllByWebsiteAndStateAndUserAndType(
@@ -130,31 +130,15 @@ class JobStartController extends ApiController
     }      
     
     private function rejectAsUnroutableAndRedirect() {
-        $job = $this->getJobService()->create(
-            $this->getUser(),
-            $this->getWebsite(),
-            $this->getTaskTypes(),
-            $this->getTaskTypeOptions(),
-            $this->getRequestJobType(),
-            $this->getParameters()
-        );
-
-        $this->getJobService()->reject($job);
-
-        $rejectionReason = new JobRejectionReason();
-        $rejectionReason->setJob($job);
-        $rejectionReason->setReason('unroutable');
-
-        $this->getDoctrine()->getEntityManager()->persist($rejectionReason);
-        $this->getDoctrine()->getEntityManager()->flush();
-
-        return $this->redirect($this->generateUrl('job', array(
-            'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
-            'test_id' => $job->getId()
-        )));        
-    }    
+        return $this->rejectAndRedirect('unroutable');       
+    } 
     
-    private function rejectAndRedirect(AccountPlanConstraint $constraint) {
+    
+    private function rejectAsPlanLimitReachedAndRedirect(AccountPlanConstraint $constraint) {
+        return $this->rejectAndRedirect('plan-constraint-limit-reached', $constraint);
+    }
+    
+    private function rejectAndRedirect($reason, AccountPlanConstraint $constraint = null) {
         $job = $this->getJobService()->create(
             $this->getUser(),
             $this->getWebsite(),
@@ -163,16 +147,8 @@ class JobStartController extends ApiController
             $this->getRequestJobType(),
             $this->getParameters()
         );
-
-        $this->getJobService()->reject($job);
-
-        $rejectionReason = new JobRejectionReason();
-        $rejectionReason->setConstraint($constraint);
-        $rejectionReason->setJob($job);
-        $rejectionReason->setReason('plan-constraint-limit-reached');
-
-        $this->getDoctrine()->getEntityManager()->persist($rejectionReason);
-        $this->getDoctrine()->getEntityManager()->flush();
+        
+        $this->getJobRejectionService()->reject($job, $reason, $constraint);
 
         return $this->redirect($this->generateUrl('job', array(
             'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
@@ -376,7 +352,16 @@ class JobStartController extends ApiController
      */        
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
-    }    
+    } 
+    
+    
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Job\RejectionService
+     */
+    private function getJobRejectionService() {
+        return $this->get('simplytestable.services.job.rejectionservice');
+    }     
     
 
     
