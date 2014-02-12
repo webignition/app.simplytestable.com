@@ -38,6 +38,11 @@ services:
         taskService: "@simplytestable.services.taskservice"
         taskTypeService: "@simplytestable.services.tasktypeservice"
         
+  simplytestable.services.job.rejectionservice:
+    class:  SimplyTestable\ApiBundle\Services\Job\RejectionService  
+    arguments:
+        jobService: "@simplytestable.services.jobservice" 
+        
   simplytestable.services.joblistservice:
     class:  SimplyTestable\ApiBundle\Services\JobListService
     arguments: 
