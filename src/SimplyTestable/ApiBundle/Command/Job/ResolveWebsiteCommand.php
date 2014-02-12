@@ -31,77 +31,47 @@ class ResolveWebsiteCommand extends BaseCommand
         $job = $this->getJobService()->getById((int)$input->getArgument('id'));
         
         try {            
-            $this->getJobWebsiteResolutionService()->resolve($job);
-            
-            if ($job->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {             
-                
-                foreach ($job->getRequestedTaskTypes() as $taskType) {
-                    /* @var $taskType TaskType */
-                    $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
-
-                    if ($this->getContainer()->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
-                        $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->getContainer()->getParameter($taskTypeParameterDomainsToIgnoreKey));
-                    }
-                }
-
-                $this->getJobPreparationService()->prepare($job);
-
-                if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {                    
-                    $this->getResqueQueueService()->add(
-                        'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-                        'task-assignment-selection'
-                    );
-                }                
-            } else {
-                $this->getResqueQueueService()->add(
-                    'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
-                    'job-prepare',
-                    array(
-                        'id' => $job->getId()
-                    )                
-                );
-                
-                
-            }           
+            $this->getJobWebsiteResolutionService()->resolve($job);          
         } catch (\SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException $websiteResolutionException) {            
             if ($websiteResolutionException->isJobInWrongStateException()) {
                 return self::RETURN_CODE_CANNOT_RESOLVE_IN_WRONG_STATE;
             }
         }
         
+        if ($this->getJobService()->isFinished($job)) {
+            return self::RETURN_CODE_OK;
+        }
+        
+        if ($job->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {             
+
+            foreach ($job->getRequestedTaskTypes() as $taskType) {
+                /* @var $taskType TaskType */
+                $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
+
+                if ($this->getContainer()->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
+                    $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->getContainer()->getParameter($taskTypeParameterDomainsToIgnoreKey));
+                }
+            }
+
+            $this->getJobPreparationService()->prepare($job);
+
+            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {                    
+                $this->getResqueQueueService()->add(
+                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
+                    'task-assignment-selection'
+                );
+            }                
+        } else {
+            $this->getResqueQueueService()->add(
+                'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
+                'job-prepare',
+                array(
+                    'id' => $job->getId()
+                )                
+            );                
+        }         
+        
         return 0;
-        
-        var_dump("cp01");
-        exit();
-
-        
-        
-
-//        
-//        try {
-//             $this->getJobPreparationService()->prepare($job);
-//            
-//            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-//                $this->getResqueQueueService()->add(
-//                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-//                    'task-assignment-selection'
-//                );             
-//            }
-//
-//            $this->getLogger()->info("simplytestable:job:prepare: queued up [".$job->getTasks()->count()."] tasks covering [".$job->getUrlCount()."] urls and [".count($job->getRequestedTaskTypes())."] task types");
-//            
-//            return self::RETURN_CODE_OK;
-//        } catch (\SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception $jobPreparationServiceException) {
-//            if ($jobPreparationServiceException->isJobInWrongStateException()) {
-//                $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
-//                return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
-//            }
-//            
-//            throw $jobPreparationServiceException;
-//        } catch (\Exception $e) {
-//            var_dump(get_class($e), $e);
-//            exit();
-//        }
     }
     
     /**

@@ -255,6 +255,16 @@ class JobService extends EntityService {
      */
     public function isResolved(Job $job) {
         return $job->getState()->equals($this->getResolvedState());
+    }    
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return boolean
+     */
+    public function isResolving(Job $job) {
+        return $job->getState()->equals($this->getResolvingState());
     } 
     
     
@@ -376,7 +386,7 @@ class JobService extends EntityService {
      * @return \SimplyTestable\ApiBundle\Entity\Job\Job
      */
     public function reject(Job $job) {        
-        if (!$this->isNew($job) && !$this->isPreparing($job)) {
+        if (!$this->isNew($job) && !$this->isPreparing($job) && !$this->isResolving($job)) {
             return $job;
         }
         
@@ -392,6 +402,10 @@ class JobService extends EntityService {
      * @return boolean 
      */
     public function isFinished(Job $job) {
+        if ($this->isRejected($job)) {
+            return true;
+        }        
+        
         if ($this->isCancelled($job)) {
             return true;
         }
