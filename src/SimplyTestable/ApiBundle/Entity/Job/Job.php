@@ -628,4 +628,34 @@ class Job
     public function getParametersHash() {
         return md5($this->getParameters());
     }
+    
+    
+    /**
+     * 
+     * @param string $name
+     * @return boolean
+     */
+    public function hasParameter($name) {        
+        if (!$this->hasParameters()) {
+            return false;
+        }
+        
+        $parameters = json_decode($this->getParameters());
+        return isset($parameters->{$name});
+    }
+    
+    
+    /**
+     * 
+     * @param string $name
+     * @return mixed
+     */
+    public function getParameter($name) {
+        if (!$this->hasParameter($name)) {
+            return null;
+        }
+        
+        $parameters = json_decode($this->getParameters());
+        return $parameters->{$name};
+    }
 }

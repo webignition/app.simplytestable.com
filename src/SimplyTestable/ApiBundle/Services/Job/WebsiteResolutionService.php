@@ -67,7 +67,7 @@ class WebsiteResolutionService {
         $this->jobService->persistAndFlush($job);
         
         try {
-            $resolvedUrl = $this->getUrlResolver()->resolve($job->getWebsite()->getCanonicalUrl());
+            $resolvedUrl = $this->getUrlResolver($job)->resolve($job->getWebsite()->getCanonicalUrl());
 
             if ($job->getType()->getName() == 'Full site') {
                 $resolvedUrl = $this->trimToRootUrl($resolvedUrl);
@@ -105,17 +105,25 @@ class WebsiteResolutionService {
     /**
      * @return \webignition\Url\Resolver\Resolver
      */
-    public function getUrlResolver() {
+    public function getUrlResolver(Job $job) {
         if (is_null($this->urlResolver)) {
             $this->urlResolver = new \webignition\Url\Resolver\Resolver();
 
             $baseRequest = $this->httpClientService->get()->createRequest('GET', 'http://www.example.com/', null, null, array(
                 'timeout' => 10
-            ));              
+            ));
             
             $this->urlResolver->getConfiguration()->enableFollowMetaRedirects();
             $this->urlResolver->getConfiguration()->enableRetryWithUrlEncodingDisabled();
             $this->urlResolver->getConfiguration()->setBaseRequest($baseRequest);
+        }
+        
+        if ($job->hasParameter('http-auth-username') || $job->hasParameter('http-auth-password')) {            
+            $this->urlResolver->getConfiguration()->getBaseRequest()->setAuth(
+                $job->hasParameter('http-auth-username') ? $job->getParameter('http-auth-username') : '',
+                $job->hasParameter('http-auth-password') ? $job->getParameter('http-auth-password') : '',
+                'any'
+            );
         }
         
         return $this->urlResolver;
