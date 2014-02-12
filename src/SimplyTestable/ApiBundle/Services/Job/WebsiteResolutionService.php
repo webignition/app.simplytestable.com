@@ -27,6 +27,13 @@ class WebsiteResolutionService {
      */
     private $websiteService;
     
+  
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\Job\RejectionService
+     */
+    private $jobRejectionService;    
+    
     
     /**
      *
@@ -38,11 +45,13 @@ class WebsiteResolutionService {
     public function __construct(
         \SimplyTestable\ApiBundle\Services\JobService $jobService,
         \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService,
-        \SimplyTestable\ApiBundle\Services\WebSiteService $websiteService
+        \SimplyTestable\ApiBundle\Services\WebSiteService $websiteService,
+        \SimplyTestable\ApiBundle\Services\Job\RejectionService $jobRejectionService
     ) {
         $this->jobService = $jobService;
         $this->httpClientService = $httpClientService;
         $this->websiteService = $websiteService;
+        $this->jobRejectionService = $jobRejectionService;
     }
     
     
@@ -57,21 +66,27 @@ class WebsiteResolutionService {
         $job->setState($this->jobService->getResolvingState());
         $this->jobService->persistAndFlush($job);
         
-        $resolvedUrl = $this->getUrlResolver()->resolve($job->getWebsite()->getCanonicalUrl());
-        
-        if ($job->getType()->getName() == 'Full site') {
-            $resolvedUrl = $this->trimToRootUrl($resolvedUrl);
-        }        
-        
-        if ($job->getWebsite()->getCanonicalUrl() != $resolvedUrl) {            
-            if (!$this->websiteService->has($resolvedUrl)) {
-                $this->websiteService->create($resolvedUrl);
+        try {
+            $resolvedUrl = $this->getUrlResolver()->resolve($job->getWebsite()->getCanonicalUrl());
+
+            if ($job->getType()->getName() == 'Full site') {
+                $resolvedUrl = $this->trimToRootUrl($resolvedUrl);
+            }        
+
+            if ($job->getWebsite()->getCanonicalUrl() != $resolvedUrl) {            
+                if (!$this->websiteService->has($resolvedUrl)) {
+                    $this->websiteService->create($resolvedUrl);
+                }
+
+                $job->setWebsite($this->websiteService->fetch($resolvedUrl));
             }
-            
-            $job->setWebsite($this->websiteService->fetch($resolvedUrl));
+
+            $job->setState($this->jobService->getResolvedState());            
+        } catch (\Guzzle\Http\Exception\CurlException $curlException) {            
+            $this->jobRejectionService->reject($job, 'curl-' . $curlException->getErrorNo());
         }
         
-        $job->setState($this->jobService->getResolvedState());
+
         $this->jobService->persistAndFlush($job);        
     }
     
@@ -90,12 +105,17 @@ class WebsiteResolutionService {
     /**
      * @return \webignition\Url\Resolver\Resolver
      */
-    private function getUrlResolver() {
+    public function getUrlResolver() {
         if (is_null($this->urlResolver)) {
             $this->urlResolver = new \webignition\Url\Resolver\Resolver();
+
+            $baseRequest = $this->httpClientService->get()->createRequest('GET', 'http://www.example.com/', null, null, array(
+                'timeout' => 10
+            ));              
+            
             $this->urlResolver->getConfiguration()->enableFollowMetaRedirects();
             $this->urlResolver->getConfiguration()->enableRetryWithUrlEncodingDisabled();
-            $this->urlResolver->getConfiguration()->setBaseRequest($this->httpClientService->getRequest());
+            $this->urlResolver->getConfiguration()->setBaseRequest($baseRequest);
         }
         
         return $this->urlResolver;

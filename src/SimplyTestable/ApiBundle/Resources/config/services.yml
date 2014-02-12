@@ -17,6 +17,7 @@ services:
         jobService: "@simplytestable.services.jobservice" 
         httpClientService: "@simplytestable.services.httpClientService"        
         websiteService: "@simplytestable.services.websiteservice"
+        jobRejectionService: "@simplytestable.services.job.rejectionservice"
         
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService
