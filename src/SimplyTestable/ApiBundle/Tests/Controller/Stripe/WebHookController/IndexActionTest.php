@@ -33,8 +33,7 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         $responseObject = json_decode($response->getContent());
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
         
-        $this->assertEquals($responseObject->stripe_id, $stripeEvent->getStripeId());
-        
+        $this->assertEquals($responseObject->stripe_id, $stripeEvent->getStripeId());        
     }
     
     public function testWithStripeInvoicePaymentFailedEventForKnownUser() {
@@ -226,6 +225,27 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(json_encode($fixtureObject->data->object), $stripeEvent->getData());
         $this->assertEquals($fixtureObject->data->object, $stripeEvent->getDataObject());
     }
+    
+    
+    public function testValidEventCreatesProcessEventResqueJob() {
+        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.payment_failed.event.json');        
+        
+        $response = $this->getStripeWebHookController('indexAction', array(
+            'event' => $fixture
+        ))->indexAction();
+        
+        $responseObject = json_decode($response->getContent());
+        
+        $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
+        
+        $this->assertTrue($this->getResqueQueueService()->contains(
+            'SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventjob',
+            'stripe-event',
+            array(
+                'id' => $stripeEvent->getId()
+            )  
+        ));
+    }    
 
 }
 

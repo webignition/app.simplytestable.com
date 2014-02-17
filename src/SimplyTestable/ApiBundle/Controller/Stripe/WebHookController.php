@@ -3,8 +3,6 @@
 namespace SimplyTestable\ApiBundle\Controller\Stripe;
 
 use SimplyTestable\ApiBundle\Controller\ApiController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 
 class WebHookController extends ApiController {
 
@@ -22,6 +20,14 @@ class WebHookController extends ApiController {
         $user = $this->getUserAccountPlanService()->getUserByStripeCustomer($stripeCustomer);
         
         $stripeEvent = $this->getStripeEventService()->create($requestData->id, $requestData->type, $requestData->livemode, json_encode($requestData->data->object), $user);
+        
+        $this->getResqueQueueService()->add(
+            'SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventjob',
+            'stripe-event',
+            array(
+                'id' => $stripeEvent->getId()
+            )                
+        );        
         
         return $this->sendResponse($stripeEvent);
     }
@@ -139,5 +145,13 @@ class WebHookController extends ApiController {
     private function getStripeEventService() {
         return $this->container->get('simplytestable.services.stripeeventservice');
     }
+    
+    /**
+     *
+     * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
+     */        
+    private function getResqueQueueService() {
+        return $this->get('simplytestable.services.resqueQueueService');
+    }     
 
 }
