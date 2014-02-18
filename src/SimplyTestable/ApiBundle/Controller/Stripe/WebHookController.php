@@ -25,7 +25,7 @@ class WebHookController extends ApiController {
             'SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventjob',
             'stripe-event',
             array(
-                'id' => $stripeEvent->getId()
+                'id' => $stripeEvent->getStripeId()
             )                
         );        
         

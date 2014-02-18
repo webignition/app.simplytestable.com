@@ -242,8 +242,8 @@ class IndexActionTest extends BaseControllerJsonTestCase {
             'SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventjob',
             'stripe-event',
             array(
-                'id' => $stripeEvent->getId()
-            )  
+                'id' => $stripeEvent->getStripeId()
+            )
         ));
     }    
 
