@@ -83,6 +83,16 @@ class Event
     
     /**
      *
+     * @var boolean
+     * 
+     * @ORM\Column(type="boolean", options={"default" = 0})
+     * @SerializerAnnotation\Expose
+     */    
+    private $isProcessed = false;
+    
+    
+    /**
+     *
      * @return string
      */
     public function getPublicSerializedUser() {
@@ -230,5 +240,32 @@ class Event
     public function getUser()
     {
         return $this->user;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasUser() {
+        return !is_null($this->getUser());
+    }
+    
+    
+    /**
+     * 
+     * @param boolean $isProcessed
+     */
+    public function setIsProcessed($isProcessed) {
+        $this->isProcessed = $isProcessed;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function getIsProcessed() {
+        return $this->isProcessed;
     }
 }
