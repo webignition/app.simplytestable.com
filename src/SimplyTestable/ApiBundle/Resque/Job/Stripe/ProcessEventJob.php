@@ -15,7 +15,7 @@ class ProcessEventJob extends CommandLineJob {
     }
     
     protected function getArgumentOrder() {
-        return array('id');
+        return array('stripeId');
     }
     
     protected function getCommand() {
