@@ -40,6 +40,6 @@ parameters:
     application/json: webignition\WebResource\JsonDocument\JsonDocument      
   web_client:
     urls:
-      base: https://gears.simplytestable.com
+      base: http://ci.gears.simplytestable.com
       stripe_event_controller: /stripe/event/
   stripe_key: "stripe_key_value"
