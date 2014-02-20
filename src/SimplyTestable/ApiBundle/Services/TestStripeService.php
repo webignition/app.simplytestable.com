@@ -105,7 +105,7 @@ class TestStripeService extends StripeService {
             throw new Stripe_AuthenticationError();
         }
         
-        return md5(microtime(true));
+        return md5($user->getEmail());
     }
     
     
@@ -113,7 +113,7 @@ class TestStripeService extends StripeService {
      * 
      * @param array $responseData
      */
-    public function addResponseData($method, $responseData = array()) {        
+    public function addResponseData($method, $responseData = array()) {                
         if (!isset($this->responseData[$method])) {
             $this->responseData[$method] = array();
         }       
@@ -127,7 +127,7 @@ class TestStripeService extends StripeService {
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
      * @return array
      */
-    public function getCustomer(UserAccountPlan $userAccountPlan) {
+    public function getCustomer(UserAccountPlan $userAccountPlan) {                
         $responseData = $this->getResponseData(__FUNCTION__);
         
         if ($userAccountPlan->hasStripeCustomer()) {            

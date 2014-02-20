@@ -220,10 +220,10 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);        
         $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());         
-        $this->assertNotNull($stripeEvent->getData());
+        $this->assertNotNull($stripeEvent->getStripeEventData());
         
-        $this->assertEquals(json_encode($fixtureObject->data->object), $stripeEvent->getData());
-        $this->assertEquals($fixtureObject->data->object, $stripeEvent->getDataObject());
+        $this->assertEquals(json_encode($fixtureObject), $stripeEvent->getStripeEventData());
+        $this->assertEquals($fixtureObject, $stripeEvent->getStripeEventDataObject());
     }
     
     

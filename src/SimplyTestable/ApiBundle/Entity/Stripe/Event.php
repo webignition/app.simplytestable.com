@@ -62,10 +62,10 @@ class Event
      *
      * @var string
      * 
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text", nullable=true, name="data")
      * @SerializerAnnotation\Expose
      */
-    protected $data;
+    protected $stripeEventData;
     
     
     /**
@@ -184,26 +184,24 @@ class Event
     }
 
     /**
-     * Set data
      *
      * @param string $data
      * @return Event
      */
-    public function setData($data)
+    public function setStripeEventData($stripeEventData)
     {
-        $this->data = $data;
+        $this->stripeEventData = $stripeEventData;
     
         return $this;
     }
 
     /**
-     * Get data
      *
      * @return string 
      */
-    public function getData()
+    public function getStripeEventData()
     {
-        return $this->data;
+        return $this->stripeEventData;
     }
     
     
@@ -211,12 +209,10 @@ class Event
      * 
      * @return \stdClass
      */
-    public function getDataObject() {
-        if (is_null($this->getData())) {
-            return null;
-        }
+    public function getStripeEventDataObject() {         
+        $object = json_decode($this->getStripeEventData());
         
-        return json_decode($this->getData());
+        return $object;
     }
 
     /**

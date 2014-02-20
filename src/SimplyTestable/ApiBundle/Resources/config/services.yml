@@ -229,3 +229,21 @@ services:
     arguments:
         container: "@service_container"
         taskOutputJoiners: %task_output_joiners%          
+        
+  simplytestable.listener.stripeEventProcessor:
+    class:   SimplyTestable\ApiBundle\EventListener\Stripe\Listener
+    arguments:
+        logger: "@logger"
+        stripeService: "@simplytestable.services.stripeservice"
+        stripeEventService: "@simplytestable.services.stripeeventservice"
+        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        httpClientSercice: "@simplytestable.services.httpclientservice"
+        webClientProperties: %web_client%    
+    tags:
+
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }           
+      - { name: kernel.event_listener, event: stripe_process.invoice.created, method: onInvoiceCreated }           
+      - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }           
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }           
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }           
+      - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }   

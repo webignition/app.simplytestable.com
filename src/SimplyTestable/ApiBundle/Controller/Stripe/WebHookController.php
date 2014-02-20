@@ -12,14 +12,20 @@ class WebHookController extends ApiController {
         }
         
         $requestBody = $this->getEventContent();
-        $requestData = json_decode($this->getEventContent());
+        $requestData = json_decode($this->getEventContent());               
         
-        $this->sendDeveloperWebhookNotification($requestBody, $requestData->type);        
+        $stripeId = $requestData->id;
         
-        $stripeCustomer = $this->getStripeCustomerFromEventData($requestData->data);
+        if ($this->getStripeEventService()->has($stripeId)) {
+            return $this->sendResponse($this->getStripeEventService()->getByStripeId($stripeId));
+        }        
+        
+        $this->sendDeveloperWebhookNotification($requestBody, $requestData->type);
+        
+        $stripeCustomer = $this->getStripeCustomerFromEventData($requestData->data);        
         $user = $this->getUserAccountPlanService()->getUserByStripeCustomer($stripeCustomer);
         
-        $stripeEvent = $this->getStripeEventService()->create($requestData->id, $requestData->type, $requestData->livemode, json_encode($requestData->data->object), $user);
+        $stripeEvent = $this->getStripeEventService()->create($stripeId, $requestData->type, $requestData->livemode, $requestBody, $user);
         
         $this->getResqueQueueService()->add(
             'SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventjob',

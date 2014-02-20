@@ -47,7 +47,7 @@ class StripeEventService extends EntityService {
         $stripeEvent->setStripeId($stripeId);
         $stripeEvent->setType($type); 
         $stripeEvent->setIsLive($isLiveMode);
-        $stripeEvent->setData($data);
+        $stripeEvent->setStripeEventData($data);
         
         if (!is_null($user)) {
             $stripeEvent->setUser($user);

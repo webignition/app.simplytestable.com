@@ -2,16 +2,13 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Guzzle\Http\Client as HttpClient;
-use Guzzle\Plugin\Backoff\BackoffPlugin;
-use Doctrine\Common\Cache\MemcacheCache;
-use Guzzle\Cache\DoctrineCacheAdapter;
-use Guzzle\Plugin\Cache\CachePlugin;
 
 class TestHttpClientService extends HttpClientService {     
     
     public function get($baseUrl = '', $config = null) {
-        if (is_null($this->httpClient)) {
-            $this->httpClient = new HttpClient($baseUrl, $config);     
+        if (is_null($this->httpClient)) {            
+            $this->httpClient = new HttpClient($baseUrl, $config);
+            $this->httpClient->addSubscriber(new \Guzzle\Plugin\History\HistoryPlugin());            
         }
         
         return $this->httpClient;
@@ -68,6 +65,27 @@ class TestHttpClientService extends HttpClientService {
         }
         
         return false;     
+    }
+    
+    
+    /**
+     * 
+     * @return \Guzzle\Plugin\History\HistoryPlugin
+     */
+    public function getHistoryPlugin() {
+        return $this->getPluginByClassAndEvent('Guzzle\Plugin\History\HistoryPlugin', 'request.sent');
+    }
+    
+    
+    
+    private function getPluginByClassAndEvent($class, $event) {
+        $listeners = $this->get()->getEventDispatcher()->getListeners($event);
+        
+        foreach ($listeners as $listener) {            
+            if (get_class($listener[0]) == $class) {
+                return $listener[0];
+            }
+        }        
     }
     
 }

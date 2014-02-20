@@ -38,3 +38,8 @@ parameters:
     text/html: webignition\WebResource\WebPage\WebPage
     application/xhtml+xml: webignition\WebResource\WebPage\WebPage
     application/json: webignition\WebResource\JsonDocument\JsonDocument      
+  web_client:
+    urls:
+      base: https://gears.simplytestable.com
+      stripe_event_controller: /stripe/event/
+  stripe_key: "stripe_key_value"

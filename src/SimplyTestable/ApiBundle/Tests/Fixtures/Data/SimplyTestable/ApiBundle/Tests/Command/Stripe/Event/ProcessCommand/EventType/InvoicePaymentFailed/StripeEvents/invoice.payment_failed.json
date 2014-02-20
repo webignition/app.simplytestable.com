@@ -1,0 +1,67 @@
+{
+  "id": "evt_2nM539jUZHWMN1",
+  "created": 1382372280,
+  "livemode": true,
+  "type": "invoice.payment_failed",
+  "data": {
+    "object": {
+      "date": 1382368620,
+      "id": "in_2nL671LyaO5mbg",
+      "period_start": 1379776581,
+      "period_end": 1382368580,
+      "lines": {
+        "object": "list",
+        "count": 1,
+        "url": "/v1/invoices/in_2nL671LyaO5mbg/lines",
+        "data": [
+          {
+            "id": "su_2c6KOnlvestnGp",
+            "object": "line_item",
+            "type": "subscription",
+            "livemode": true,
+            "amount": 1900,
+            "currency": "gbp",
+            "proration": false,
+            "period": {
+              "start": 1382368580,
+              "end": 1385046980
+            },
+            "quantity": 1,
+            "plan": {
+              "interval": "month",
+              "name": "Agency",
+              "amount": 1900,
+              "currency": "gbp",
+              "id": "agency-19",
+              "object": "plan",
+              "livemode": true,
+              "interval_count": 1,
+              "trial_period_days": 30
+            },
+            "description": null
+          }
+        ]
+      },
+      "subtotal": 1900,
+      "total": 1900,
+      "customer": "{{stripe_customer}}",
+      "object": "invoice",
+      "attempted": true,
+      "closed": 0.1,
+      "paid": false,
+      "livemode": true,
+      "attempt_count": 0.2,
+      "amount_due": 1900,
+      "currency": "gbp",
+      "starting_balance": 0,
+      "ending_balance": 0,
+      "next_payment_attempt": 0.3,
+      "charge": null,
+      "discount": null,
+      "application_fee": null
+    }
+  },
+  "object": "event",
+  "pending_webhooks": 1,
+  "request": null
+}

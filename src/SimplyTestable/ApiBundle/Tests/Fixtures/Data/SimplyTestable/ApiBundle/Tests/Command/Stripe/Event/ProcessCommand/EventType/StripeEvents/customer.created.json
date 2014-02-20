@@ -1,0 +1,33 @@
+{
+  "id": "evt_2c6JUF5VPg9ch8",
+  "created": 1379776579,
+  "livemode": true,
+  "type": "customer.created",
+  "data": {
+    "object": {
+      "object": "customer",
+      "created": 1379776579,
+      "id": "cus_2c6Jpmvm1i9GsE",
+      "livemode": true,
+      "description": null,
+      "email": "support@sitevalidator.com",
+      "delinquent": false,
+      "subscription": null,
+      "discount": null,
+      "account_balance": 0,
+      "cards": {
+        "object": "list",
+        "count": 0,
+        "url": "/v1/customers/cus_2c6Jpmvm1i9GsE/cards",
+        "data": [
+
+        ]
+      },
+      "default_card": null,
+      "active_card": null
+    }
+  },
+  "object": "event",
+  "pending_webhooks": 1,
+  "request": "iar_2c6J5xu3k7lcVG"
+}
