@@ -8,7 +8,7 @@ abstract class TrialingTest extends CustomerSubscriptionCreatedTest {
     
     public function testWebClientEventBodyForNoActiveCard() {        
         $this->assertEquals(
-                'event=customer.subscription.created&status='.$this->getSubscriptionStatus().'&has_card='.((int)$this->getHasCard()).'&trial_start=1379776581&trial_end=1382368580',
+                'event=customer.subscription.created&user=user%40example.com&status='.$this->getSubscriptionStatus().'&has_card='.((int)$this->getHasCard()).'&trial_start=1379776581&trial_end=1382368580',
                 (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
         );
     }     

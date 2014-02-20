@@ -9,7 +9,7 @@ abstract class PlanChangeTest extends EventTypeTest {
     abstract protected function getSubscriptionStatus();
     
     protected function getExpectedWebClientEventBody() {
-        return 'event=customer.subscription.updated&is_plan_change=1&old_plan=Personal&new_plan=Agency&new_amount=1900&subscription_status=' . $this->getSubscriptionStatus();
+        return 'event=customer.subscription.updated&user=user%40example.com&is_plan_change=1&old_plan=Personal&new_plan=Agency&new_amount=1900&subscription_status=' . $this->getSubscriptionStatus();
     }
 
     public function testWebClientEventBody() {        

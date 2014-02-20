@@ -8,9 +8,9 @@ abstract class CustomerSubscriptionTrialWillEndTest extends EventTypeTest {
     
     abstract protected function getHasCard();
 
-    public function testWebClientEventBodyForActiveCard() {        
+    public function testWebClientEventBody() {        
         $this->assertEquals(
-                'event=customer.subscription.trial_will_end&trial_end=1382368580&has_card='.((int)$this->getHasCard()),
+                'event=customer.subscription.trial_will_end&user=user%40example.com&trial_end=1382368580&has_card='.((int)$this->getHasCard()),
                 (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
         );
     } 

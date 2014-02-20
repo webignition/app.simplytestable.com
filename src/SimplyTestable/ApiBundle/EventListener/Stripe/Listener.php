@@ -83,9 +83,10 @@ class Listener
         return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent($event));
     }
     
-    private function getDefaultWebClientData(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
+    private function getDefaultWebClientData(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
         return array(
-            'event' => $event->getEntity()->getType()
+            'event' => $event->getEntity()->getType(),
+            'user' => $event->getEntity()->getUser()->getEmail()
         );
     }
     
