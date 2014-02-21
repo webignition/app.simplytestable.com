@@ -216,7 +216,7 @@ class Listener
     }
         
     
-    public function onInvoiceCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {       
+    public function onInvoiceCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $total = $event->getEntity()->getStripeEventDataObject()->data->object->total;
         
         if ($total == 0) {
@@ -230,6 +230,7 @@ class Listener
         }
         
         $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData($event), array(
+            'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
             'next_payment_attempt' => $event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt
         )));
         
