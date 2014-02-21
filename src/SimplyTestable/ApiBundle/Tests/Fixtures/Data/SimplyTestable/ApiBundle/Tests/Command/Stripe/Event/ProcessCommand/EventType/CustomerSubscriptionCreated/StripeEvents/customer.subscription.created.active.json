@@ -12,7 +12,7 @@
         "interval": "month",
         "name": "Basic",
         "created": 1371118751,
-        "amount": 0,
+        "amount": 900,
         "currency": "gbp",
         "id": "basic_00000000000000",
         "object": "plan",

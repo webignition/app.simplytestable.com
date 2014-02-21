@@ -117,10 +117,11 @@ class Listener
             ));        
         }
         
-        if ($status == 'active') {
+        if ($status == 'active') {            
             $webClientData = array_merge($webClientData, array(
                 'current_period_start' => $event->getEntity()->getStripeEventDataObject()->data->object->current_period_start,
                 'current_period_end' => $event->getEntity()->getStripeEventDataObject()->data->object->current_period_end,
+                'amount' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->amount
             ));             
         }
         
