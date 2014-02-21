@@ -231,7 +231,8 @@ class Listener
         
         $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData($event), array(
             'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
-            'next_payment_attempt' => $event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt
+            'next_payment_attempt' => $event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt,
+            'invoice_id' => $event->getEntity()->getStripeEventDataObject()->data->object->id
         )));
         
         $this->markEntityProcessed($event);  

@@ -8,7 +8,7 @@ class WithoutCardTest extends InvoiceCreatedTest {
     
     public function testWebClientEventBody() {        
         $this->assertEquals(
-                'event=invoice.created&user=user%40example.com&plan_name=Agency&next_payment_attempt=1377442521',
+                'event=invoice.created&user=user%40example.com&plan_name=Agency&next_payment_attempt=1377442521&invoice_id=in_2c6Kz0tw4CBlOL',
                 (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
         );
     } 
