@@ -8,7 +8,7 @@ abstract class ActiveTest extends CustomerSubscriptionCreatedTest {
     
     public function testWebClientEventBody() {        
         $this->assertEquals(
-                'event=customer.subscription.created&user=user%40example.com&status='.$this->getSubscriptionStatus().'&has_card='.((int)$this->getHasCard()).'&current_period_start=1392757613&current_period_end=1395176813',
+                'event=customer.subscription.created&user=user%40example.com&status='.$this->getSubscriptionStatus().'&has_card='.((int)$this->getHasCard()).'&plan_name=Basic&current_period_start=1392757613&current_period_end=1395176813',
                 (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
         );
     } 

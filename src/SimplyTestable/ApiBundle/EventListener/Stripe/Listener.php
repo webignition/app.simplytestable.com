@@ -99,19 +99,21 @@ class Listener
         return isset($stripeCustomer['active_card']) && !is_null($stripeCustomer['active_card']);
     }
     
-    public function onCustomerSubscriptionCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {              
+    public function onCustomerSubscriptionCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $status = $event->getEntity()->getStripeEventDataObject()->data->object->status;        
         $stripeCustomer = $this->getStripeCustomerFromEvent($event);
         
         $webClientData = array_merge($this->getDefaultWebClientData($event), array(
             'status' => $status,
-            'has_card' => (int)$this->getStripeCustomerHasCard($stripeCustomer)
+            'has_card' => (int)$this->getStripeCustomerHasCard($stripeCustomer),
+            'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->name
         ));
         
         if ($status == 'trialing') {            
             $webClientData = array_merge($webClientData, array(
                 'trial_start' => $event->getEntity()->getStripeEventDataObject()->data->object->trial_start,
-                'trial_end' => $event->getEntity()->getStripeEventDataObject()->data->object->trial_end,                
+                'trial_end' => $event->getEntity()->getStripeEventDataObject()->data->object->trial_end,
+                'trial_period_days' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->trial_period_days
             ));        
         }
         
