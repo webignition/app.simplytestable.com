@@ -241,7 +241,8 @@ class Listener
         $webClientData = array_merge($this->getDefaultWebClientData($event), array(
             'has_card' => ((int)$this->getStripeCustomerHasCard($this->getStripeCustomerFromEvent($event))),
             'attempt_count' => $event->getEntity()->getStripeEventDataObject()->data->object->attempt_count,
-            'attempt_limit' => 4
+            'attempt_limit' => 4,
+            'invoice_id' => $event->getEntity()->getStripeEventDataObject()->data->object->id
         ));
         
         if (isset($event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt) && !is_null($event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt)) {
@@ -266,6 +267,7 @@ class Listener
             'invoice_total' => $total,
             'period_start' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->period->start,
             'period_end' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->period->end,
+            'invoice_id' => $event->getEntity()->getStripeEventDataObject()->data->object->id
         )));
 
         
