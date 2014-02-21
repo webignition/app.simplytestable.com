@@ -136,7 +136,8 @@ class Listener
         $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData($event), array(
             'trial_end' => $event->getEntity()->getStripeEventDataObject()->data->object->trial_end,
             'has_card' => (int)$this->getStripeCustomerHasCard($stripeCustomer),
-            'plan_amount' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->amount
+            'plan_amount' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->amount,
+            'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->name
         )));     
         
         $this->markEntityProcessed($event);
