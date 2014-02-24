@@ -10,7 +10,7 @@ class Customer extends Object {
             $this->setDataProperty('subscription', new Subscription(($this->getDataProperty('subscription'))));
         }
         
-        if ($this->hasDataProperty('active_card')) {
+        if ($this->hasDataProperty('active_card')) {            
             $this->setDataProperty('active_card', new Card(($this->getDataProperty('active_card'))));
         }
     }
@@ -45,10 +45,38 @@ class Customer extends Object {
     
     /**
      * 
+     * @return boolean
+     */
+    public function hasSubscription() {
+        return !is_null($this->getSubscription());
+    }
+    
+    
+    /**
+     * 
      * @return \SimplyTestable\ApiBundle\Model\Stripe\Card
      */
     public function getActiveCard() {
         return $this->getDataProperty('active_card');  
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    public function __toArray() {
+        $returnArray = (array)$this->getData();
+        
+        if ($this->getSubscription() instanceof Subscription) {
+            $returnArray['subscription'] = $this->getSubscription()->__toArray();
+        }
+        
+        if ($this->getActiveCard() instanceof Card) {
+            $returnArray['active_card'] = $this->getActiveCard()->__toArray();
+        }
+        
+        return $returnArray;
     }
     
 }

@@ -10,7 +10,12 @@ class WithCardTest extends TrialingToActiveTest {
     
     protected function getStripeServiceResponseData() {
         return array(
-            'active_card' => '123'
+            'active_card' => array(
+                'exp_month' => '01',
+                'exp_year' => '99',
+                'last4' => '1234',
+                'type' => 'Foo'
+            )
         );
     }
 

@@ -30,4 +30,13 @@ class Plan extends Object {
         return $this->getDataProperty('amount');
     }
     
+    
+    /**
+     * 
+     * @return array
+     */
+    public function __toArray() {
+        return (array)$this->getData();
+    }
+    
 }

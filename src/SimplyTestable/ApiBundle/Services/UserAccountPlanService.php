@@ -91,7 +91,7 @@ class UserAccountPlanService extends EntityService {
                 return $this->stripeService->subscribe($this->create(
                     $user,
                     $newPlan,
-                    $this->stripeService->createCustomer($user)
+                    $this->stripeService->createCustomer($user)->getId()
                 ));                
             } else {
                 return $this->create($user, $newPlan);

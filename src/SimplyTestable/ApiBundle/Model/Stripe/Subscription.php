@@ -83,4 +83,19 @@ class Subscription extends Object {
         return $this->getDataProperty('current_period_end');
     }    
     
+    
+    /**
+     * 
+     * @return array
+     */
+    public function __toArray() {
+        $returnArray = (array)$this->getData();
+        
+        if ($this->getPlan() instanceof Plan) {
+            $returnArray['plan'] = $this->getPlan()->__toArray();
+        }
+        
+        return $returnArray;
+    }
+    
 }
