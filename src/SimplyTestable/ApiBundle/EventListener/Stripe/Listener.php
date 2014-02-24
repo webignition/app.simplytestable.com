@@ -242,6 +242,7 @@ class Listener
     
     public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $webClientData = array_merge($this->getDefaultWebClientData($event), array(
+            'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
             'has_card' => ((int)$this->getStripeCustomerHasCard($this->getStripeCustomerFromEvent($event))),
             'attempt_count' => $event->getEntity()->getStripeEventDataObject()->data->object->attempt_count,
             'attempt_limit' => 4,

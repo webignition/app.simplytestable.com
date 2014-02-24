@@ -10,6 +10,7 @@ abstract class InvoicePaymentFailedTest extends EventTypeTest {
         $expectedWebClientBodyParts = array(
             'event=invoice.payment_failed',
             'user=user%40example.com',
+            'plan_name=Agency',
             'has_card='.((int)$this->getHasCard()),
             'attempt_count='.$this->getAttemptCount(),
             'attempt_limit=4',
