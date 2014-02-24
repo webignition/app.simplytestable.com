@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Stripe;
 use Stripe_Customer;
 use Stripe_AuthenticationError;  
+use SimplyTestable\ApiBundle\Model\Stripe\Customer as StripeCustomer;
 
 class TestStripeService extends StripeService {
     
@@ -131,7 +132,10 @@ class TestStripeService extends StripeService {
         $responseData = $this->getResponseData(__FUNCTION__);
         
         if ($userAccountPlan->hasStripeCustomer()) {            
-            return $this->populateCustomerTemplate($this->getCustomerTemplate($userAccountPlan), $responseData);           
+            $customerAsArray = $this->populateCustomerTemplate($this->getCustomerTemplate($userAccountPlan), $responseData);            
+            return new StripeCustomer(json_decode(json_encode($customerAsArray)));
+            
+            //return $this->populateCustomerTemplate($this->getCustomerTemplate($userAccountPlan), $responseData);           
         }        
     }
     

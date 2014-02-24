@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Stripe;
 use Stripe_Customer;
 use Stripe_Plan;
+use SimplyTestable\ApiBundle\Model\Stripe\Customer as StripeCustomer;
 
 class StripeService {    
     
@@ -31,10 +32,10 @@ class StripeService {
      * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @return string
      */
-    public function createCustomer(User $user) {
-        return Stripe_Customer::create(array(
+    public function createCustomer(User $user) {        
+        return new StripeCustomer(json_decode(Stripe_Customer::create(array(
             'email' => $user->getEmail()
-        ))->id; 
+        ))->__toJSON()));
     }
     
     
@@ -44,9 +45,13 @@ class StripeService {
      * @return array
      */
     public function getCustomer(UserAccountPlan $userAccountPlan) {
+        var_dump("cp03");
+        exit();
+        
         if ($userAccountPlan->hasStripeCustomer()) {
+            /* @var $customer \Stripe_Customer */            
             $customer = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
-            return $customer->__toArray(true);
+            return new StripeCustomer(json_decode($customer->__toJSON()));
         }        
     }
     
