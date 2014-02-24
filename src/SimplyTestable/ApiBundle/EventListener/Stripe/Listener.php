@@ -147,6 +147,9 @@ class Listener
     public function onCustomerSubscriptionUpdated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {      
         $eventData = $event->getEntity()->getStripeEventDataObject();
         
+//        var_dump($eventData);
+//        exit();
+        
         $isPlanChange = (isset($eventData->data->previous_attributes) && isset($eventData->data->previous_attributes->plan));
         
         $webClientEventData = $this->getDefaultWebClientData($event);
@@ -159,9 +162,13 @@ class Listener
                     'old_plan' => $eventData->data->previous_attributes->plan->name,
                     'new_plan' => $eventData->data->object->plan->name,
                     'new_amount' => $eventData->data->object->plan->amount,
-                    'subscription_status' => $eventData->data->object->status                    
+                    'subscription_status' => $eventData->data->object->status
                 )
             );
+            
+            if ($eventData->data->object->status == 'trialing') {
+                $webClientEventData['trial_end'] = $eventData->data->object->trial_end;
+            }
         }
         
         $isStatusChange = (isset($eventData->data->previous_attributes->status));
