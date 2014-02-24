@@ -6,12 +6,40 @@ use \SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\EventTyp
 
 class WithoutCardTest extends InvoiceCreatedTest {
     
-    public function testWebClientEventBody() {        
-        $this->assertEquals(
-                'event=invoice.created&user=user%40example.com&lines%5B0%5D%5Bproration%5D=&lines%5B0%5D%5Bplan_name%5D=Agency&next_payment_attempt=1377442521&invoice_id=in_2c6Kz0tw4CBlOL&total=2000&amount_due=2000',
-                (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
-        );
+    public function testNotificationBodyEvent() {        
+        $this->assertNotificationBodyField('event', 'invoice.created');
+    }
+    
+    public function testNotificationBodyUser() {
+        $this->assertNotificationBodyField('user', 'user@example.com');
+    }
+    
+    public function testNotificationBodyLines() {        
+        $this->assertNotificationBodyField('lines', array(
+            array(
+                'proration' => 0,
+                'plan_name' => 'Agency',
+                'period_start' => 1379776581,
+                'period_end' => 1382368580                
+            )
+        ));
+    }
+    
+    public function testNotificationBodyNextPaymentAttempt() {        
+        $this->assertNotificationBodyField('next_payment_attempt', '1377442521');
+    }    
+    
+    public function testNotificationBodyInvoiceId() {        
+        $this->assertNotificationBodyField('invoice_id', 'in_2c6Kz0tw4CBlOL');
     } 
+    
+    public function testNotificationBodyTotal() {        
+        $this->assertNotificationBodyField('total', '2000');
+    } 
+    
+    public function testNotificationBodyAmountDue() {        
+        $this->assertNotificationBodyField('amount_due', '2000');
+    }    
     
     public function testWebClientSubscriberResponseStatusCode() {        
         $this->assertEquals(

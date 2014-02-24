@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\EventType
 abstract class InvoicePaymentSucceededTest extends EventTypeTest {    
     
     abstract protected function getTotal();
+    abstract protected function getAmountDue();
     
     protected function getHttpFixtureItems() {
         return array(

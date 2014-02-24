@@ -6,27 +6,54 @@ use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\EventType
 
 abstract class InvoicePaymentFailedTest extends EventTypeTest {   
     
-    public function testWebClientEventBody() {   
-        $expectedWebClientBodyParts = array(
-            'event=invoice.payment_failed',
-            'user=user%40example.com',
-            'plan_name=Agency',
-            'has_card='.((int)$this->getHasCard()),
-            'attempt_count='.$this->getAttemptCount(),
-            'attempt_limit=4',
-            'invoice_id=in_2nL671LyaO5mbg',
-            'amount_due=1900'
-        );
-        
-        if (!is_null($this->getNextPaymentAttempt())) {
-            $expectedWebClientBodyParts[] = 'next_payment_attempt=' . $this->getNextPaymentAttempt();
-        }
-        
-        $this->assertEquals(
-                implode('&', $expectedWebClientBodyParts),
-                (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
-        );        
+    public function testNotificationBodyEvent() {        
+        $this->assertNotificationBodyField('event', 'invoice.payment_failed');
+    }
+    
+    public function testNotificationBodyUser() {
+        $this->assertNotificationBodyField('user', 'user@example.com');
+    }
+    
+    public function testNotificationBodyLines() {        
+        $this->assertNotificationBodyField('lines', array(
+            array(
+                'proration' => 0,
+                'plan_name' => 'Agency',
+                'period_start' => 1382368580,
+                'period_end' => 1385046980                
+            )
+        ));
+    }
+    
+    public function testNotificationBodyHasCard() {
+        $this->assertNotificationBodyField('has_card', (int)$this->getHasCard());
     }    
+    
+    public function testNotificationBodyNextPaymentAttempt() {        
+        if (!is_null($this->getNextPaymentAttempt())) {
+            $this->assertNotificationBodyField('next_payment_attempt', $this->getNextPaymentAttempt());
+        }
+    }    
+    
+    public function testNotificationBodyInvoiceId() {        
+        $this->assertNotificationBodyField('invoice_id', 'in_2nL671LyaO5mbg');
+    } 
+    
+    public function testNotificationBodyTotal() {        
+        $this->assertNotificationBodyField('total', '1900');
+    } 
+    
+    public function testNotificationBodyAmountDue() {        
+        $this->assertNotificationBodyField('amount_due', '1900');
+    } 
+    
+    public function testNotificationBodyAttemptCount() {        
+        $this->assertNotificationBodyField('attempt_count', $this->getAttemptCount());
+    }         
+    
+    public function testNotificationBodyAttemptLimit() {        
+        $this->assertNotificationBodyField('attempt_limit', 4);
+    }     
     
     public function testWebClientSubscriberResponseStatusCode() {        
         $this->assertEquals(

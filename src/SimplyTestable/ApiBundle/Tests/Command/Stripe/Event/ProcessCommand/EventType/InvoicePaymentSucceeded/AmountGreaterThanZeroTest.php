@@ -2,14 +2,38 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\EventType\InvoicePaymentSucceeded;
 
-class AmountGreaterThanZeroTest extends InvoicePaymentSucceededTest {   
+class AmountGreaterThanZeroTest extends InvoicePaymentSucceededTest {       
     
-    public function testWebClientEventBody() {        
-        $this->assertEquals(
-                'event=invoice.payment_succeeded&user=user%40example.com&plan_name=Agency&plan_amount=1900&invoice_total=2000&period_start=1379776581&period_end=1382368580&invoice_id=in_2c6Kz0tw4CBlOL',
-                (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
-        );
+    public function testNotificationBodyEvent() {        
+        $this->assertNotificationBodyField('event', 'invoice.payment_succeeded');
+    }
+    
+    public function testNotificationBodyUser() {
+        $this->assertNotificationBodyField('user', 'user@example.com');
+    }
+    
+    public function testNotificationBodyLines() {        
+        $this->assertNotificationBodyField('lines', array(
+            array(
+                'proration' => 0,
+                'plan_name' => 'Agency',
+                'period_start' => 1379776581,
+                'period_end' => 1382368580                
+            )
+        ));
+    }   
+    
+    public function testNotificationBodyInvoiceId() {        
+        $this->assertNotificationBodyField('invoice_id', 'in_2c6Kz0tw4CBlOL');
     } 
+    
+    public function testNotificationBodyTotal() {        
+        $this->assertNotificationBodyField('total', '2000');
+    } 
+    
+    public function testNotificationBodyAmountDue() {        
+        $this->assertNotificationBodyField('amount_due', '0');
+    }   
     
     public function testWebClientSubscriberResponseStatusCode() {        
         $this->assertEquals(
@@ -21,4 +45,8 @@ class AmountGreaterThanZeroTest extends InvoicePaymentSucceededTest {
     protected function getTotal() {
         return 2000;
     }
+    
+    protected function getAmountDue() {
+        return 2000;
+    }    
 }

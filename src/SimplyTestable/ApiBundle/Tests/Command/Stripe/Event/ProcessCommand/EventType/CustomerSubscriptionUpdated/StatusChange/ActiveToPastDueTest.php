@@ -4,10 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\Eve
 
 class ActiveToPastDueTest extends NoActionStatusTest {   
 
-    protected function getExpectedWebClientEventBody() {
-        return 'event=customer.subscription.updated&user=user%40example.com&is_status_change=1&previous_subscription_status='.$this->getPreviousSubscriptionStatus().'&subscription_status=' . $this->getCurrentSubscriptionStatus();
-    }        
-    
     protected function getCurrentSubscriptionStatus() {
         return 'past_due';
     }

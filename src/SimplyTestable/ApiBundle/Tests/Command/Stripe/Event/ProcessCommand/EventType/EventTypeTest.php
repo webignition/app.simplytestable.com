@@ -32,7 +32,22 @@ abstract class EventTypeTest extends ProcessCommandTest {
         ));
         
         $this->assertTrue($this->getStripeEventService()->getByStripeId($responseObject->stripe_id)->getIsProcessed());
-    }    
+    }  
+    
+    protected function assertNotificationBodyField($name, $expectedValue) {
+        /* @var $postFields \Guzzle\Http\QueryString */
+        $postFields = $this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields();
+        
+//        if ($name === 'lines') {
+//            echo (string)$postFields;
+//            exit();
+////            var_dump($postFields->get('lines'), (string)$postFields->get('lines'));
+////            exit();
+//        }
+        
+        $this->assertTrue($postFields->hasKey($name));
+        $this->assertEquals($expectedValue, $postFields->get($name));
+    }   
     
     abstract protected function getHttpFixtureItems();
     abstract protected function getStripeEventFixturePath();

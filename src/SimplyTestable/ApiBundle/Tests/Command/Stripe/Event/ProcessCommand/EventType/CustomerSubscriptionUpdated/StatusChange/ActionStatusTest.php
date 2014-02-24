@@ -4,14 +4,25 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\Eve
 
 abstract class ActionStatusTest extends StatusChangeTest {   
     
-    abstract protected function getExpectedWebClientEventBody();
+    public function testNotificationBodyEvent() {
+        $this->assertNotificationBodyField('event', 'customer.subscription.updated');
+    } 
     
-    public function testWebClientEventBody() {        
-        $this->assertEquals(
-                $this->getExpectedWebClientEventBody(),
-                (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
-        );
+    public function testNotificationBodyUser() {
+        $this->assertNotificationBodyField('user', 'user@example.com');
     }    
+    
+    public function testNotificationBodyIsStatusChange() {
+        $this->assertNotificationBodyField('is_status_change', '1');
+    } 
+
+    public function testNotificationBodyPreviousSubscriptionStatus() {
+        $this->assertNotificationBodyField('previous_subscription_status', $this->getPreviousSubscriptionStatus());
+    }      
+    
+    public function testNotificationBodyCurrentSubscriptionStatus() {        
+        $this->assertNotificationBodyField('subscription_status', $this->getCurrentSubscriptionStatus());
+    }     
     
     public function testWebClientSubscriberResponseStatusCode() {        
         $this->assertEquals(

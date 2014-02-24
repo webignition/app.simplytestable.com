@@ -8,34 +8,39 @@ abstract class PlanChangeTest extends EventTypeTest {
     
     abstract protected function getSubscriptionStatus();
     
-    protected function getExpectedWebClientEventBody() {
-        // &trial_end=1405427088
-        
-        //return '&&&&;
-        
-        $expectedWebClientBodyParts = array(
-            'event=customer.subscription.updated',
-            'user=user%40example.com',
-            'is_plan_change=1',
-            'old_plan=Personal',
-            'new_plan=Agency',
-            'new_amount=1900',
-            'subscription_status=' . $this->getSubscriptionStatus(),
-        );
-        
-        if ($this->getSubscriptionStatus() == 'trialing') {
-            $expectedWebClientBodyParts[] = 'trial_end=1405427088';
-        }
-        
-        return implode('&', $expectedWebClientBodyParts);       
+    public function testNotificationBodyEvent() {
+        $this->assertNotificationBodyField('event', 'customer.subscription.updated');
     }
-
-    public function testWebClientEventBody() {        
-        $this->assertEquals(
-                $this->getExpectedWebClientEventBody(),
-                (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
-        );
+    
+    public function testNotificationBodyUser() {
+        $this->assertNotificationBodyField('user', 'user@example.com');
     }    
+    
+    public function testNotificationBodyIsPlanChange() {
+        $this->assertNotificationBodyField('is_plan_change', '1');
+    }      
+    
+    public function testNotificationBodyOldPlan() {
+        $this->assertNotificationBodyField('old_plan', 'Personal');
+    }
+    
+    public function testNotificationBodyNewPlan() {
+        $this->assertNotificationBodyField('new_plan', 'Agency');
+    }
+    
+    public function testNotificationBodyNewAmount() {
+        $this->assertNotificationBodyField('new_amount', '1900');
+    }
+    
+    public function testNotificationBodySubscriptionStatus() {
+        $this->assertNotificationBodyField('subscription_status', $this->getSubscriptionStatus());
+    }
+    
+    public function testNotificationBodyTrialEnd() {
+        if ($this->getSubscriptionStatus() == 'trialing') {
+            $this->assertNotificationBodyField('trial_end', '1405427088');
+        }
+    }
     
     public function testWebClientSubscriberResponseStatusCode() {        
         $this->assertEquals(

@@ -7,13 +7,30 @@ use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\EventType
 abstract class CustomerSubscriptionTrialWillEndTest extends EventTypeTest {   
     
     abstract protected function getHasCard();
-
-    public function testWebClientEventBody() {        
-        $this->assertEquals(
-                'event=customer.subscription.trial_will_end&user=user%40example.com&trial_end=1382368580&has_card='.((int)$this->getHasCard()).'&plan_amount=1900&plan_name=Agency',
-                (string)$this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields()
-        );
-    } 
+    
+    public function testNotificationBodyEvent() {        
+        $this->assertNotificationBodyField('event', 'customer.subscription.trial_will_end');
+    }
+    
+    public function testNotificationBodyUser() {
+        $this->assertNotificationBodyField('user', 'user@example.com');
+    }
+    
+    public function testNotificationBodyHasCard() {
+        $this->assertNotificationBodyField('has_card', (int)$this->getHasCard());
+    }
+    
+    public function testNotificationBodyPlanName() {
+        $this->assertNotificationBodyField('plan_name', 'Agency');
+    }     
+    
+    public function testNotificationBodyTrialEnd() {
+        $this->assertNotificationBodyField('trial_end', '1382368580');
+    }     
+    
+    public function testNotificationBodyPlanAmount() {
+        $this->assertNotificationBodyField('plan_amount', '1900');
+    }     
     
     public function testWebClientSubscriberResponseStatusCode() {        
         $this->assertEquals(
