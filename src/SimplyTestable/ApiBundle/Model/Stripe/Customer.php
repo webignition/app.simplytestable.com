@@ -9,6 +9,10 @@ class Customer extends Object {
         if ($this->hasDataProperty('subscription')) {
             $this->setDataProperty('subscription', new Subscription(($this->getDataProperty('subscription'))));
         }
+        
+        if ($this->hasDataProperty('active_card')) {
+            $this->setDataProperty('active_card', new Card(($this->getDataProperty('active_card'))));
+        }
     }
     
     
@@ -36,6 +40,15 @@ class Customer extends Object {
      */
     public function getSubscription() {
         return $this->getDataProperty('subscription');
+    }
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Model\Stripe\Card
+     */
+    public function getActiveCard() {
+        return $this->getDataProperty('active_card');  
     }
     
 }

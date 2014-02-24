@@ -50,4 +50,13 @@ abstract class Object {
         return isset($this->data->{$name});
     }
     
+    
+    /**
+     * 
+     * @return \stdClass
+     */
+    protected function getData() {
+        return $this->data;
+    }
+    
 }

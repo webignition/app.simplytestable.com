@@ -41,12 +41,14 @@ class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertTrue(isset($responseObject->stripe_customer));
+        $this->assertTrue(isset($responseObject->stripe_customer->id));
         $this->assertTrue(isset($responseObject->stripe_customer->active_card));        
         $this->assertNotNull($responseObject->stripe_customer->active_card);
-    
-        foreach ($card as $key => $value) {
-            $this->assertEquals($value, $responseObject->stripe_customer->active_card->$key);
-        }
+        
+        $this->assertNotNull($responseObject->stripe_customer->active_card->exp_month);
+        $this->assertNotNull($responseObject->stripe_customer->active_card->exp_year);
+        $this->assertNotNull($responseObject->stripe_customer->active_card->last4);
+        $this->assertNotNull($responseObject->stripe_customer->active_card->type);
     }  
     
     

@@ -24,8 +24,8 @@ class UserController extends AbstractUserController
         );
         
         if ($userAccountPlan->hasStripeCustomer()) {
-            $userSummary['stripe_customer'] = $this->getStripeService()->getCustomer($userAccountPlan);
-        }  
+            $userSummary['stripe_customer'] = $this->getStripeCustomerSummary($this->getStripeService()->getCustomer($userAccountPlan));
+        }
         
         $planConstraints = array();
 
@@ -44,6 +44,18 @@ class UserController extends AbstractUserController
         $userSummary['plan_constraints'] = $planConstraints;
         
         return $userSummary;
+    }
+    
+    private function getStripeCustomerSummary(\SimplyTestable\ApiBundle\Model\Stripe\Customer $stripeCustomer) {
+        $summary = array(
+            'id' => $stripeCustomer->getId()
+        );
+        
+        if ($stripeCustomer->hasCard()) {
+            $summary['active_card'] = $stripeCustomer->getActiveCard()->__toArray();
+        }
+        
+        return $summary;
     }
     
     
