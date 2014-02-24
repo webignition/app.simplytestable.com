@@ -51,6 +51,13 @@ class Listener
     
     /**
      *
+     * @var \SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent 
+     */
+    private $event;
+    
+    
+    /**
+     *
      * @param Logger $logger
      */
     public function __construct(
@@ -72,21 +79,29 @@ class Listener
     
     /**
      * 
-     * @param \SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event
+     * @return \SimplyTestable\ApiBundle\Entity\Stripe\Event
+     */
+    private function getEventEntity() {
+        return $this->event->getEntity();
+    }
+    
+    
+    /**
+     * 
      * @return \SimplyTestable\ApiBundle\Entity\UserAccountPlan
      */
-    private function getUserAccountPlanFromEvent(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        return $this->userAccountPlanService->getForUser($event->getEntity()->getUser());   
+    private function getUserAccountPlanFromEvent() {
+        return $this->userAccountPlanService->getForUser($this->getEventEntity()->getUser());   
     }
     
-    private function getStripeCustomerFromEvent(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent($event));
+    private function getStripeCustomerFromEvent() {
+        return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent($this->event));
     }
     
-    private function getDefaultWebClientData(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
+    private function getDefaultWebClientData() {        
         return array(
-            'event' => $event->getEntity()->getType(),
-            'user' => $event->getEntity()->getUser()->getEmail()
+            'event' => $this->getEventEntity()->getType(),
+            'user' => $this->getEventEntity()->getUser()->getEmail()
         );
     }
     
@@ -100,59 +115,62 @@ class Listener
     }
     
     public function onCustomerSubscriptionCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        $status = $event->getEntity()->getStripeEventDataObject()->data->object->status;        
-        $stripeCustomer = $this->getStripeCustomerFromEvent($event);
+        $this->event = $event;
         
-        $webClientData = array_merge($this->getDefaultWebClientData($event), array(
+        $status = $this->getEventEntity()->getStripeEventDataObject()->data->object->status;        
+        $stripeCustomer = $this->getStripeCustomerFromEvent();
+        
+        $webClientData = array_merge($this->getDefaultWebClientData(), array(
             'status' => $status,
             'has_card' => (int)$this->getStripeCustomerHasCard($stripeCustomer),
-            'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->name
+            'plan_name' => $this->getEventEntity()->getStripeEventDataObject()->data->object->plan->name
         ));
         
         if ($status == 'trialing') {            
             $webClientData = array_merge($webClientData, array(
-                'trial_start' => $event->getEntity()->getStripeEventDataObject()->data->object->trial_start,
-                'trial_end' => $event->getEntity()->getStripeEventDataObject()->data->object->trial_end,
-                'trial_period_days' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->trial_period_days
+                'trial_start' => $this->getEventEntity()->getStripeEventDataObject()->data->object->trial_start,
+                'trial_end' => $this->getEventEntity()->getStripeEventDataObject()->data->object->trial_end,
+                'trial_period_days' => $this->getEventEntity()->getStripeEventDataObject()->data->object->plan->trial_period_days
             ));        
         }
         
         if ($status == 'active') {            
             $webClientData = array_merge($webClientData, array(
-                'current_period_start' => $event->getEntity()->getStripeEventDataObject()->data->object->current_period_start,
-                'current_period_end' => $event->getEntity()->getStripeEventDataObject()->data->object->current_period_end,
-                'amount' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->amount
+                'current_period_start' => $this->getEventEntity()->getStripeEventDataObject()->data->object->current_period_start,
+                'current_period_end' => $this->getEventEntity()->getStripeEventDataObject()->data->object->current_period_end,
+                'amount' => $this->getEventEntity()->getStripeEventDataObject()->data->object->plan->amount
             ));             
         }
         
         $this->issueWebClientEvent($webClientData);        
-        $this->markEntityProcessed($event);
+        $this->markEntityProcessed();
     }
     
     
     public function onCustomerSubscriptionTrialWillEnd(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
-        $stripeCustomer = $this->getStripeCustomerFromEvent($event);
+        $this->event = $event;
         
-        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData($event), array(
-            'trial_end' => $event->getEntity()->getStripeEventDataObject()->data->object->trial_end,
+        $stripeCustomer = $this->getStripeCustomerFromEvent();
+        
+        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
+            'trial_end' => $this->getEventEntity()->getStripeEventDataObject()->data->object->trial_end,
             'has_card' => (int)$this->getStripeCustomerHasCard($stripeCustomer),
-            'plan_amount' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->amount,
-            'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->plan->name
+            'plan_amount' => $this->getEventEntity()->getStripeEventDataObject()->data->object->plan->amount,
+            'plan_name' => $this->getEventEntity()->getStripeEventDataObject()->data->object->plan->name
         )));     
         
-        $this->markEntityProcessed($event);
+        $this->markEntityProcessed();
     }      
     
     
     public function onCustomerSubscriptionUpdated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {      
-        $eventData = $event->getEntity()->getStripeEventDataObject();
+        $this->event = $event;
         
-//        var_dump($eventData);
-//        exit();
+        $eventData = $this->getEventEntity()->getStripeEventDataObject();
         
         $isPlanChange = (isset($eventData->data->previous_attributes) && isset($eventData->data->previous_attributes->plan));
         
-        $webClientEventData = $this->getDefaultWebClientData($event);
+        $webClientEventData = $this->getDefaultWebClientData();
         
         if ($isPlanChange) {
             $webClientEventData = array_merge(
@@ -190,7 +208,7 @@ class Listener
                     break;
                 
                 case 'trialing-to-active':
-                    $stripeCustomer = $this->getStripeCustomerFromEvent($event);
+                    $stripeCustomer = $this->getStripeCustomerFromEvent();
                     $webClientEventData = array_merge(
                         $webClientEventData,
                         array(  
@@ -209,87 +227,93 @@ class Listener
                             'is_status_change' => 1,
                             'previous_subscription_status' => $eventData->data->previous_attributes->status,
                             'subscription_status' => $eventData->data->object->status,
-                            'trial_days_remaining' => $this->getUserAccountPlanFromEvent($event)->getStartTrialPeriod()
+                            'trial_days_remaining' => $this->getUserAccountPlanFromEvent()->getStartTrialPeriod()
                         )
                     );
                     break;                
                 
                 default:
-                    $this->markEntityProcessed($event);
+                    $this->markEntityProcessed();
                     return;
             }            
         }
         
         $this->issueWebClientEvent($webClientEventData);       
-        $this->markEntityProcessed($event);
+        $this->markEntityProcessed();
     }
         
     
     public function onInvoiceCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        $total = $event->getEntity()->getStripeEventDataObject()->data->object->total;
+        $this->event = $event;        
+        
+        $total = $this->getEventEntity()->getStripeEventDataObject()->data->object->total;
         
         if ($total == 0) {
-            $this->markEntityProcessed($event);
+            $this->markEntityProcessed();
             return;
         }
       
-        if ($this->getStripeCustomerHasCard($this->getStripeCustomerFromEvent($event))) {
-            $this->markEntityProcessed($event);
+        if ($this->getStripeCustomerHasCard($this->getStripeCustomerFromEvent())) {
+            $this->markEntityProcessed();
             return;            
         }
         
-        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData($event), array(
-            'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
-            'next_payment_attempt' => $event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt,
-            'invoice_id' => $event->getEntity()->getStripeEventDataObject()->data->object->id
+        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
+            'plan_name' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
+            'next_payment_attempt' => $this->getEventEntity()->getStripeEventDataObject()->data->object->next_payment_attempt,
+            'invoice_id' => $this->getEventEntity()->getStripeEventDataObject()->data->object->id
         )));
         
-        $this->markEntityProcessed($event);  
+        $this->markEntityProcessed();  
     }    
     
     public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        $webClientData = array_merge($this->getDefaultWebClientData($event), array(
-            'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
-            'has_card' => ((int)$this->getStripeCustomerHasCard($this->getStripeCustomerFromEvent($event))),
-            'attempt_count' => $event->getEntity()->getStripeEventDataObject()->data->object->attempt_count,
+        $this->event = $event;
+        
+        $webClientData = array_merge($this->getDefaultWebClientData(), array(
+            'plan_name' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
+            'has_card' => ((int)$this->getStripeCustomerHasCard($this->getStripeCustomerFromEvent())),
+            'attempt_count' => $this->getEventEntity()->getStripeEventDataObject()->data->object->attempt_count,
             'attempt_limit' => 4,
-            'invoice_id' => $event->getEntity()->getStripeEventDataObject()->data->object->id,
-            'amount_due' => $event->getEntity()->getStripeEventDataObject()->data->object->amount_due
+            'invoice_id' => $this->getEventEntity()->getStripeEventDataObject()->data->object->id,
+            'amount_due' => $this->getEventEntity()->getStripeEventDataObject()->data->object->amount_due
         ));
         
-        if (isset($event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt) && !is_null($event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt)) {
-            $webClientData['next_payment_attempt'] = $event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt;
+        if (isset($this->getEventEntity()->getStripeEventDataObject()->data->object->next_payment_attempt) && !is_null($this->getEventEntity()->getStripeEventDataObject()->data->object->next_payment_attempt)) {
+            $webClientData['next_payment_attempt'] = $this->getEventEntity()->getStripeEventDataObject()->data->object->next_payment_attempt;
         }
         
         $this->issueWebClientEvent($webClientData);       
-        $this->markEntityProcessed($event);
+        $this->markEntityProcessed();
     }
     
     public function onInvoicePaymentSucceeded(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
-        $total = $event->getEntity()->getStripeEventDataObject()->data->object->total;
+        $this->event = $event;
+        
+        $total = $this->getEventEntity()->getStripeEventDataObject()->data->object->total;
 
         if ($total == 0) {
-            $this->markEntityProcessed($event);
+            $this->markEntityProcessed();
             return;
         }        
         
-        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData($event), array(
-            'plan_name' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
-            'plan_amount' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->amount,
+        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
+            'plan_name' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
+            'plan_amount' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->amount,
             'invoice_total' => $total,
-            'period_start' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->period->start,
-            'period_end' => $event->getEntity()->getStripeEventDataObject()->data->object->lines->data[0]->period->end,
-            'invoice_id' => $event->getEntity()->getStripeEventDataObject()->data->object->id
+            'period_start' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->period->start,
+            'period_end' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->period->end,
+            'invoice_id' => $this->getEventEntity()->getStripeEventDataObject()->data->object->id
         )));
 
         
-        $this->markEntityProcessed($event);    
+        $this->markEntityProcessed();    
     }     
     
     
-    private function markEntityProcessed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        $event->getEntity()->setIsProcessed(true);
-        $this->stripeEventService->persistAndFlush($event->getEntity());
+    private function markEntityProcessed() {
+        $this->getEventEntity()->setIsProcessed(true);
+        $this->stripeEventService->persistAndFlush($this->getEventEntity());
     }
     
     private function issueWebClientEvent($data) {        
