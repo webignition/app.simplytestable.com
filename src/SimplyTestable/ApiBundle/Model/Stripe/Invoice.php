@@ -2,19 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Model\Stripe;
 
-class Invoice {
-    
-    
-    /**
-     *
-     * @var \stdClass
-     */
-    private $data;
-    
-    
-    public function __construct(\stdClass $data) {
-        $this->data = $data;
-    }
+class Invoice extends Object {
     
     
     /**
@@ -22,7 +10,7 @@ class Invoice {
      * @return string
      */
     public function getId() {
-        return $this->data->id;
+        return $this->getDataProperty('id');
     }
     
     
@@ -31,7 +19,7 @@ class Invoice {
      * @return int
      */
     public function getTotal() {
-        return $this->data->total;
+        return $this->getDataProperty('total');
     }
     
     
@@ -40,7 +28,7 @@ class Invoice {
      * @return int
      */
     public function getAmountDue() {
-        return $this->data->amount_due;
+        return $this->getDataProperty('amount_due');
     }
     
     
@@ -51,11 +39,14 @@ class Invoice {
     public function getLinesSummary() {
         $linesSummary = array();
         
-        foreach ($this->data->lines->data as $line) {
+        foreach ($this->getDataProperty('lines')->data as $line) {
+            $plan = new Plan($line->plan);
             
             $linesSummary[] = array(
-                'proration' => $line->proration,
-                'plan_name' => $line->plan->name
+                'proration' => (int)$line->proration,
+                'plan_name' => $plan->getName(),
+                'period_start' => $line->period->start,
+                'period_end' => $line->period->end,
             );
         }
         
@@ -68,7 +59,25 @@ class Invoice {
      * @return int
      */
     public function getNextPaymentAttempt() {
-        return $this->data->next_payment_attempt;
+        return $this->getDataProperty('next_payment_attempt');
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function hasNextPaymentAttempt() {
+        return !is_null($this->getNextPaymentAttempt());
+    }
+    
+    
+    /**
+     * 
+     * @return int
+     */
+    public function getAttemptCount() {
+        return $this->getDataProperty('attempt_count');
     }
     
 }
