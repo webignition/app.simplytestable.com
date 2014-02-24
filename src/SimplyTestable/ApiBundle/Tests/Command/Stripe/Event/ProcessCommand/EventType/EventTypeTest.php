@@ -38,13 +38,6 @@ abstract class EventTypeTest extends ProcessCommandTest {
         /* @var $postFields \Guzzle\Http\QueryString */
         $postFields = $this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields();
         
-//        if ($name === 'lines') {
-//            echo (string)$postFields;
-//            exit();
-////            var_dump($postFields->get('lines'), (string)$postFields->get('lines'));
-////            exit();
-//        }
-        
         $this->assertTrue($postFields->hasKey($name));
         $this->assertEquals($expectedValue, $postFields->get($name));
     }   
