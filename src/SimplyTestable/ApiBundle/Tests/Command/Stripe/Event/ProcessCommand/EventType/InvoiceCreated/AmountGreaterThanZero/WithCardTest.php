@@ -24,4 +24,7 @@ class WithCardTest extends InvoiceCreatedTest {
         return 2000;
     }
 
+    protected function getAmountDue() {
+        return 2000;
+    }    
 }

@@ -4,6 +4,9 @@ namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 
+use SimplyTestable\ApiBundle\Model\Stripe\Invoice as StripeInvoice;
+use SimplyTestable\ApiBundle\Model\Stripe\Customer as StripeCustomer;
+
 class Listener
 {
     
@@ -94,8 +97,22 @@ class Listener
         return $this->userAccountPlanService->getForUser($this->getEventEntity()->getUser());   
     }
     
-    private function getStripeCustomerFromEvent() {
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Model\Stripe\Customer
+     */
+    private function getStripeCustomer() {
         return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent($this->event));
+    }
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Model\Stripe\Invoice
+     */
+    private function getStripeInvoice() {
+        return new StripeInvoice($this->getEventEntity()->getStripeEventDataObject()->data->object);
     }
     
     private function getDefaultWebClientData() {        
@@ -105,20 +122,20 @@ class Listener
         );
     }
     
-    /**
-     * 
-     * @param array $stripeCustomer
-     * @return boolean
-     */
-    private function getStripeCustomerHasCard($stripeCustomer) {
-        return isset($stripeCustomer['active_card']) && !is_null($stripeCustomer['active_card']);
-    }
+//    /**
+//     * 
+//     * @param array $stripeCustomer
+//     * @return boolean
+//     */
+//    private function getStripeCustomerHasCard($stripeCustomer) {
+//        return isset($stripeCustomer['active_card']) && !is_null($stripeCustomer['active_card']);
+//    }
     
     public function onCustomerSubscriptionCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $this->event = $event;
         
         $status = $this->getEventEntity()->getStripeEventDataObject()->data->object->status;        
-        $stripeCustomer = $this->getStripeCustomerFromEvent();
+        $stripeCustomer = $this->getStripeCustomer();
         
         $webClientData = array_merge($this->getDefaultWebClientData(), array(
             'status' => $status,
@@ -150,7 +167,7 @@ class Listener
     public function onCustomerSubscriptionTrialWillEnd(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
         $this->event = $event;
         
-        $stripeCustomer = $this->getStripeCustomerFromEvent();
+        $stripeCustomer = $this->getStripeCustomer();
         
         $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
             'trial_end' => $this->getEventEntity()->getStripeEventDataObject()->data->object->trial_end,
@@ -208,7 +225,7 @@ class Listener
                     break;
                 
                 case 'trialing-to-active':
-                    $stripeCustomer = $this->getStripeCustomerFromEvent();
+                    $stripeCustomer = $this->getStripeCustomer();
                     $webClientEventData = array_merge(
                         $webClientEventData,
                         array(  
@@ -243,36 +260,38 @@ class Listener
     }
         
     
-    public function onInvoiceCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        $this->event = $event;        
+    public function onInvoiceCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
+        $this->event = $event; 
         
-        $total = $this->getEventEntity()->getStripeEventDataObject()->data->object->total;
+        $invoice = $this->getStripeInvoice();
         
-        if ($total == 0) {
+        if ($invoice->getTotal() === 0 && $invoice->getAmountDue() === 0) {
             $this->markEntityProcessed();
             return;
         }
       
-        if ($this->getStripeCustomerHasCard($this->getStripeCustomerFromEvent())) {
+        if ($this->getStripeCustomer()->hasCard()) {
             $this->markEntityProcessed();
             return;            
         }
         
         $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
-            'plan_name' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
-            'next_payment_attempt' => $this->getEventEntity()->getStripeEventDataObject()->data->object->next_payment_attempt,
-            'invoice_id' => $this->getEventEntity()->getStripeEventDataObject()->data->object->id
+            'lines' => $invoice->getLinesSummary(),
+            'next_payment_attempt' => $invoice->getNextPaymentAttempt(),
+            'invoice_id' => $invoice->getId(),
+            'total' => $invoice->getTotal(),
+            'amount_due' => $invoice->getAmountDue()
         )));
         
         $this->markEntityProcessed();  
-    }    
+    }
     
     public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $this->event = $event;
         
         $webClientData = array_merge($this->getDefaultWebClientData(), array(
             'plan_name' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->plan->name,
-            'has_card' => ((int)$this->getStripeCustomerHasCard($this->getStripeCustomerFromEvent())),
+            'has_card' => ((int)$this->getStripeCustomerHasCard($this->getStripeCustomer())),
             'attempt_count' => $this->getEventEntity()->getStripeEventDataObject()->data->object->attempt_count,
             'attempt_limit' => 4,
             'invoice_id' => $this->getEventEntity()->getStripeEventDataObject()->data->object->id,

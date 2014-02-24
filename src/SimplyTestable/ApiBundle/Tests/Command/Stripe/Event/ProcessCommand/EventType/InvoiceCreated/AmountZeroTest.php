@@ -14,5 +14,9 @@ class AmountZeroTest extends InvoiceCreatedTest {
     
     protected function getTotal() {
         return 0;
-    }  
+    } 
+    
+    protected function getAmountDue() {
+        return 0;
+    }
 }

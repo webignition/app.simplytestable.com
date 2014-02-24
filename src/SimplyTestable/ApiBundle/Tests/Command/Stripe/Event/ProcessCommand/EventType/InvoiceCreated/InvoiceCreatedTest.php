@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\EventType
 abstract class InvoiceCreatedTest extends EventTypeTest {   
     
     abstract protected function getTotal();
+    abstract protected function getAmountDue();
     
     protected function getHttpFixtureItems() {
         return array(
@@ -20,7 +21,8 @@ abstract class InvoiceCreatedTest extends EventTypeTest {
     
     protected function getFixtureReplacements() {
         $fixtureReplacements = parent::getFixtureReplacements();
-        $fixtureReplacements['99.99'] = $this->getTotal();
+        $fixtureReplacements['0.01'] = $this->getTotal();
+        $fixtureReplacements['0.02'] = $this->getAmountDue();
         
         return $fixtureReplacements;
     }     

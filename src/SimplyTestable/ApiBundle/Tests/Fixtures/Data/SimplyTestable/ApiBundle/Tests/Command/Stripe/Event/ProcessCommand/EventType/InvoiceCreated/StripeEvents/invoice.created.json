@@ -43,7 +43,7 @@
         ]
       },
       "subtotal": 0,
-      "total": 99.99,
+      "total": 0.01,
       "customer": "{{stripe_customer}}",
       "object": "invoice",
       "attempted": true,
@@ -51,7 +51,7 @@
       "paid": true,
       "livemode": true,
       "attempt_count": 0,
-      "amount_due": 0,
+      "amount_due": 0.02,
       "currency": "gbp",
       "starting_balance": 0,
       "ending_balance": null,
