@@ -42,12 +42,9 @@ class StripeService {
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
-     * @return array
+     * @return \SimplyTestable\ApiBundle\Model\Stripe\Customer
      */
-    public function getCustomer(UserAccountPlan $userAccountPlan) {
-        var_dump("cp03");
-        exit();
-        
+    public function getCustomer(UserAccountPlan $userAccountPlan) {        
         if ($userAccountPlan->hasStripeCustomer()) {
             /* @var $customer \Stripe_Customer */            
             $customer = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());

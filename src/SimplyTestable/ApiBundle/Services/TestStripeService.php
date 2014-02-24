@@ -106,7 +106,10 @@ class TestStripeService extends StripeService {
             throw new Stripe_AuthenticationError();
         }
         
-        return md5($user->getEmail());
+        $stripeCustomerData = new \stdClass();
+        $stripeCustomerData->id = md5($user->getEmail());
+        
+        return new StripeCustomer($stripeCustomerData);
     }
     
     

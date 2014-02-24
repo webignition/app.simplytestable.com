@@ -98,10 +98,8 @@ class UserAccountPlanService extends EntityService {
             }
         }
         
-        $currentUserAccountPlan = $this->getForUser($user);
+        $currentUserAccountPlan = $this->getForUser($user);        
         
-        $stripeCustomerRecord = $this->stripeService->getCustomer($currentUserAccountPlan);
-
         if ($this->isSameAccountPlan($currentUserAccountPlan->getPlan(), $newPlan)) {
             return $currentUserAccountPlan;
         }
@@ -110,32 +108,33 @@ class UserAccountPlanService extends EntityService {
             return $this->create($user, $newPlan);
         }
         
-        $stripeCustomer = $currentUserAccountPlan->hasStripeCustomer() ? $currentUserAccountPlan->getStripeCustomer() : $this->stripeService->createCustomer($user);
+        $stripeCustomer = $this->stripeService->getCustomer($currentUserAccountPlan);
+        $stripeCustomerId = $currentUserAccountPlan->hasStripeCustomer() ? $currentUserAccountPlan->getStripeCustomer() : $this->stripeService->createCustomer($user)->getId();
         
         if ($this->isNonPremiumToPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {                        
             return $this->stripeService->subscribe($this->create(
                 $user,
                 $newPlan,
-                $stripeCustomer,
+                $stripeCustomerId,
                 $currentUserAccountPlan->getStartTrialPeriod()
             ));
         }
         
-        if ($this->isPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
+        if ($this->isPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {            
             $this->stripeService->unsubscribe($currentUserAccountPlan);
             return $this->create(
                 $user,
                 $newPlan,
-                $stripeCustomer,
-                $this->getStartTrialPeriod($stripeCustomerRecord['subscription']['trial_end'])    
+                $stripeCustomerId,
+                $this->getStartTrialPeriod($stripeCustomer->getSubscription()->getTrialEnd())    
             );
         }        
 
         return $this->stripeService->subscribe($this->create(
             $user,
             $newPlan,
-            $stripeCustomer,
-            $this->getStartTrialPeriod($stripeCustomerRecord['subscription']['trial_end'])
+            $stripeCustomerId,
+            $this->getStartTrialPeriod($stripeCustomer->getSubscription()->getTrialEnd()) 
         ));
     }
     
