@@ -240,12 +240,13 @@ class Listener
         $this->markEntityProcessed($event);  
     }    
     
-    public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
+    public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $webClientData = array_merge($this->getDefaultWebClientData($event), array(
             'has_card' => ((int)$this->getStripeCustomerHasCard($this->getStripeCustomerFromEvent($event))),
             'attempt_count' => $event->getEntity()->getStripeEventDataObject()->data->object->attempt_count,
             'attempt_limit' => 4,
-            'invoice_id' => $event->getEntity()->getStripeEventDataObject()->data->object->id
+            'invoice_id' => $event->getEntity()->getStripeEventDataObject()->data->object->id,
+            'amount_due' => $event->getEntity()->getStripeEventDataObject()->data->object->amount_due
         ));
         
         if (isset($event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt) && !is_null($event->getEntity()->getStripeEventDataObject()->data->object->next_payment_attempt)) {

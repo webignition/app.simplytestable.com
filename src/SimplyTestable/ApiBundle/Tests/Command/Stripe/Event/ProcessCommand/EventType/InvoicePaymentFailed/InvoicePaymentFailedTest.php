@@ -13,7 +13,8 @@ abstract class InvoicePaymentFailedTest extends EventTypeTest {
             'has_card='.((int)$this->getHasCard()),
             'attempt_count='.$this->getAttemptCount(),
             'attempt_limit=4',
-            'invoice_id=in_2nL671LyaO5mbg'
+            'invoice_id=in_2nL671LyaO5mbg',
+            'amount_due=1900'
         );
         
         if (!is_null($this->getNextPaymentAttempt())) {
