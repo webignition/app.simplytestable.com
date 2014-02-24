@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 
-use SimplyTestable\ApiBundle\Model\Stripe\Invoice as StripeInvoice;
+use SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice as StripeInvoice;
 use SimplyTestable\ApiBundle\Model\Stripe\Customer as StripeCustomer;
 use SimplyTestable\ApiBundle\Model\Stripe\Subscription as StripeSubscription;
 use SimplyTestable\ApiBundle\Model\Stripe\Plan as StripePlan;
@@ -111,7 +111,7 @@ class Listener
     
     /**
      * 
-     * @return \SimplyTestable\ApiBundle\Model\Stripe\Invoice
+     * @return \SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice
      */
     private function getStripeInvoice() {
         return new StripeInvoice($this->getEventEntity()->getStripeEventDataObject()->data->object);
@@ -350,38 +350,11 @@ class Listener
             'lines' => $invoice->getLinesSummary(),
             'total' => $invoice->getTotal(),
             'amount_due' => $invoice->getAmountDue(),
-            //'period_start' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->period->start,
-            //'period_end' => $this->getEventEntity()->getStripeEventDataObject()->data->object->lines->data[0]->period->end,
             'invoice_id' => $this->getEventEntity()->getStripeEventDataObject()->data->object->id
         )));
 
         
-        $this->markEntityProcessed();  
-        
-        return;
-
-        
-        
-        
-        if ($invoice->getTotal() === 0 && $invoice->getAmountDue() === 0) {
-            $this->markEntityProcessed();
-            return;
-        }
-      
-        if ($this->getStripeCustomer()->hasCard()) {
-            $this->markEntityProcessed();
-            return;            
-        }
-        
-        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
-            'lines' => $invoice->getLinesSummary(),
-            'next_payment_attempt' => $invoice->getNextPaymentAttempt(),
-            'invoice_id' => $invoice->getId(),
-            'total' => $invoice->getTotal(),
-            'amount_due' => $invoice->getAmountDue()
-        )));
-        
-        $this->markEntityProcessed();         
+        $this->markEntityProcessed();        
     }     
     
     

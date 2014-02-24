@@ -20,7 +20,8 @@ class WithoutCardTest extends InvoiceCreatedTest {
                 'proration' => 0,
                 'plan_name' => 'Agency',
                 'period_start' => 1379776581,
-                'period_end' => 1382368580                
+                'period_end' => 1382368580,
+                'amount' => 1900
             )
         ));
     }

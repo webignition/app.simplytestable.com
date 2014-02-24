@@ -19,7 +19,7 @@
             "object": "line_item",
             "type": "subscription",
             "livemode": true,
-            "amount": 0,
+            "amount": 99.99,
             "currency": "gbp",
             "proration": false,
             "period": {

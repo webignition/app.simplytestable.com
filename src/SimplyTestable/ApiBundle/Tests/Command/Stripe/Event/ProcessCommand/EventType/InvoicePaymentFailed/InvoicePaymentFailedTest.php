@@ -20,7 +20,8 @@ abstract class InvoicePaymentFailedTest extends EventTypeTest {
                 'proration' => 0,
                 'plan_name' => 'Agency',
                 'period_start' => 1382368580,
-                'period_end' => 1385046980                
+                'period_end' => 1385046980,
+                'amount' => 1900
             )
         ));
     }
