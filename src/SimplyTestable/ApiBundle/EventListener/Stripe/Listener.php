@@ -325,7 +325,6 @@ class Listener
             'invoice_id' => $invoice->getId(),
             'total' => $invoice->getTotal(),            
             'amount_due' => $invoice->getAmountDue(),                        
-            'invoice_id' => $invoice->getId(),
             'amount_due' => $invoice->getAmountDue()
         ));
         
