@@ -232,7 +232,6 @@ class Listener
             
             switch ($statusTransition) {
                 case 'active-to-canceled':
-                case 'past_due-to-canceled':
                     $previousSubscription = new StripeSubscription($eventData->data->previous_attributes);                   
                     
                     $webClientEventData = array_merge(
