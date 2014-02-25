@@ -146,17 +146,17 @@ class Listener
     public function onCustomerSubscriptionCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $this->event = $event;        
      
-        $stripeCustomer = $this->getStripeCustomer();
+        
         $stripeSubscription = $this->getStripeSubscription();
         
         $webClientData = array_merge($this->getDefaultWebClientData(), array(
-            'status' => $stripeSubscription->getStatus(),
-            'has_card' => (int)$stripeCustomer->hasCard(),
+            'status' => $stripeSubscription->getStatus(),            
             'plan_name' => $stripeSubscription->getPlan()->getName()
         ));
         
-        if ($stripeSubscription->isTrialing()) {            
+        if ($stripeSubscription->isTrialing()) {
             $webClientData = array_merge($webClientData, array(
+                'has_card' => (int)$this->getStripeCustomer()->hasCard(),
                 'trial_start' => $stripeSubscription->getTrialStart(),
                 'trial_end' => $stripeSubscription->getTrialEnd(),
                 'trial_period_days' => $stripeSubscription->getPlan()->getTrialPeriodDays()

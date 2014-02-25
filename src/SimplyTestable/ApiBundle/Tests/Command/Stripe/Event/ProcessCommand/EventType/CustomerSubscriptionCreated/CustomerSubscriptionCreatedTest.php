@@ -28,10 +28,6 @@ abstract class CustomerSubscriptionCreatedTest extends EventTypeTest {
         $this->assertNotificationBodyField('status', $this->getSubscriptionStatus());
     }
     
-    public function testNotificationBodyHasCard() {
-        $this->assertNotificationBodyField('has_card', (int)$this->getHasCard());
-    }
-    
     public function testNotificationBodyPlanName() {
         $this->assertNotificationBodyField('plan_name', 'Basic');
     }    

@@ -16,7 +16,11 @@ abstract class TrialingTest extends CustomerSubscriptionCreatedTest {
     
     public function testNotificationBodyTrialPeriodDays() {
         $this->assertNotificationBodyField('trial_period_days', '30');
-    }     
+    }
+    
+    public function testNotificationBodyHasCard() {
+        $this->assertNotificationBodyField('has_card', (int)$this->getHasCard());
+    }    
     
     protected function getSubscriptionStatus() {
         return 'trialing';
