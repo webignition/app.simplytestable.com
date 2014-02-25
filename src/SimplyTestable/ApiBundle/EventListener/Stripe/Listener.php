@@ -291,23 +291,19 @@ class Listener
     public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $this->event = $event;
         
-        $stripeCustomer = $this->getStripeCustomer();
+        if ($this->getStripeCustomer()->hasCard() === false) {
+            $this->markEntityProcessed();
+            return;
+        }
+        
         $invoice = $this->getStripeInvoice();
         
         $webClientData = array_merge($this->getDefaultWebClientData(), array(
             'lines' => $invoice->getLinesSummary(),
-            'has_card' => (int)$stripeCustomer->hasCard(),
-            'attempt_count' => $invoice->getAttemptCount(),
-            'attempt_limit' => 4,
             'invoice_id' => $invoice->getId(),
             'total' => $invoice->getTotal(),            
-            'amount_due' => $invoice->getAmountDue(),                        
             'amount_due' => $invoice->getAmountDue()
         ));
-        
-        if ($invoice->hasNextPaymentAttempt()) {
-            $webClientData['next_payment_attempt'] = $invoice->getNextPaymentAttempt();
-        }
         
         $this->issueWebClientEvent($webClientData);       
         $this->markEntityProcessed();

@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\Eve
 
 use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\EventType\EventTypeTest;
 
-abstract class InvoicePaymentFailedTest extends EventTypeTest {   
+class InvoicePaymentFailedTest extends EventTypeTest {   
     
     public function testNotificationBodyEvent() {        
         $this->assertNotificationBodyField('event', 'invoice.payment_failed');
@@ -26,16 +26,6 @@ abstract class InvoicePaymentFailedTest extends EventTypeTest {
         ));
     }
     
-    public function testNotificationBodyHasCard() {
-        $this->assertNotificationBodyField('has_card', (int)$this->getHasCard());
-    }    
-    
-    public function testNotificationBodyNextPaymentAttempt() {        
-        if (!is_null($this->getNextPaymentAttempt())) {
-            $this->assertNotificationBodyField('next_payment_attempt', $this->getNextPaymentAttempt());
-        }
-    }    
-    
     public function testNotificationBodyInvoiceId() {        
         $this->assertNotificationBodyField('invoice_id', 'in_2nL671LyaO5mbg');
     } 
@@ -46,27 +36,14 @@ abstract class InvoicePaymentFailedTest extends EventTypeTest {
     
     public function testNotificationBodyAmountDue() {        
         $this->assertNotificationBodyField('amount_due', '1900');
-    } 
-    
-    public function testNotificationBodyAttemptCount() {        
-        $this->assertNotificationBodyField('attempt_count', $this->getAttemptCount());
-    }         
-    
-    public function testNotificationBodyAttemptLimit() {        
-        $this->assertNotificationBodyField('attempt_limit', 4);
-    }     
+    }   
     
     public function testWebClientSubscriberResponseStatusCode() {        
         $this->assertEquals(
                 200,
                 $this->getHttpClientService()->getHistoryPlugin()->getLastResponse()->getStatusCode()
         );
-    }     
-    
-    abstract protected function getAttemptCount();
-    abstract protected function getIsClosed();
-    abstract protected function getHasCard();
-    abstract protected function getNextPaymentAttempt();
+    }
     
     protected function getHttpFixtureItems() {
         return array(
@@ -75,15 +52,22 @@ abstract class InvoicePaymentFailedTest extends EventTypeTest {
     }
     
     protected function getStripeEventFixturePath() {
-        return $this->getFixturesDataPath() . '/../../StripeEvents/invoice.payment_failed.json';
-    }     
+        return $this->getFixturesDataPath() . '/../StripeEvents/invoice.payment_failed.json';
+    }
     
-    protected function getFixtureReplacements() {
-        $fixtureReplacements = parent::getFixtureReplacements();        
-        $fixtureReplacements['0.1'] = ($this->getIsClosed() ? 'true' : 'false');
-        $fixtureReplacements['0.2'] = $this->getAttemptCount();
-        $fixtureReplacements['0.3'] = (is_null($this->getNextPaymentAttempt()) ? 'null' : $this->getNextPaymentAttempt());
-        
-        return $fixtureReplacements;
-    }     
+    
+    protected function getStripeServiceResponseMethod() {
+        return 'getCustomer';
+    }
+    
+    protected function getStripeServiceResponseData() {
+        return array(
+            'active_card' => array(
+                'exp_month' => '01',
+                'exp_year' => '99',
+                'last4' => '1234',
+                'type' => 'Foo'
+            )
+        );
+    }  
 }
