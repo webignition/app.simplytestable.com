@@ -56,6 +56,13 @@ class Listener
     
     /**
      *
+     * @var \SimplyTestable\ApiBundle\Services\AccountPlanService 
+     */
+    private $accountPlanService;
+    
+    
+    /**
+     *
      * @var \SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent 
      */
     private $event;
@@ -71,6 +78,7 @@ class Listener
             \SimplyTestable\ApiBundle\Services\StripeEventService $stripeEventService,
             \SimplyTestable\ApiBundle\Services\UserAccountPlanService $userAccountPlanService,
             \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService,
+            \SimplyTestable\ApiBundle\Services\AccountPlanService $accountPLanService,
             $webClientProperties
     ) {        
         $this->logger = $logger;
@@ -78,6 +86,7 @@ class Listener
         $this->stripeEventService = $stripeEventService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->httpClientService = $httpClientService;
+        $this->accountPlanService = $accountPLanService;
         $this->webClientProperties = $webClientProperties;
     }
     
@@ -133,15 +142,6 @@ class Listener
             'user' => $this->getEventEntity()->getUser()->getEmail()
         );
     }
-    
-//    /**
-//     * 
-//     * @param array $stripeCustomer
-//     * @return boolean
-//     */
-//    private function getStripeCustomerHasCard($stripeCustomer) {
-//        return isset($stripeCustomer['active_card']) && !is_null($stripeCustomer['active_card']);
-//    }
     
     public function onCustomerSubscriptionCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $this->event = $event;        
@@ -258,6 +258,10 @@ class Listener
                             'has_card' => (int)$stripeCustomer->hasCard()
                         )
                     );
+                    
+                    if ($stripeCustomer->hasCard() === false) {
+                        $this->downgradeToBasicPlan();
+                    }
                     break;  
                 
                 case 'trialing-to-canceled':
@@ -398,6 +402,14 @@ class Listener
         }        
         
         return $this->webClientProperties['urls']['base'] . $this->webClientProperties['urls']['stripe_event_controller']; 
+    }
+    
+    
+    private function downgradeToBasicPlan() {
+        $this->userAccountPlanService->subscribe(
+                $this->event->getEntity()->getUser(),
+                $this->accountPlanService->find('basic')
+        );        
     }
 
 }

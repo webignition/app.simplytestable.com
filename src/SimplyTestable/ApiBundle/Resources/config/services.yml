@@ -237,7 +237,8 @@ services:
         stripeService: "@simplytestable.services.stripeservice"
         stripeEventService: "@simplytestable.services.stripeeventservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
-        httpClientSercice: "@simplytestable.services.httpclientservice"
+        httpClientService: "@simplytestable.services.httpclientservice"
+        accountPlanService: "@simplytestable.services.accountPlanService"
         webClientProperties: %web_client%    
     tags:
 
