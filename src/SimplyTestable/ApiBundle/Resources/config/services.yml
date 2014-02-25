@@ -241,9 +241,7 @@ services:
         accountPlanService: "@simplytestable.services.accountPlanService"
         webClientProperties: %web_client%    
     tags:
-
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }           
-      - { name: kernel.event_listener, event: stripe_process.invoice.created, method: onInvoiceCreated }           
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }           
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }           
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }           

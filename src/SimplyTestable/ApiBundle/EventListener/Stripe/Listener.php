@@ -287,33 +287,6 @@ class Listener
             $this->markEntityProcessed();            
         }
     }
-        
-    
-    public function onInvoiceCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
-        $this->event = $event; 
-        
-        $invoice = $this->getStripeInvoice();
-        
-        if ($invoice->getTotal() === 0 && $invoice->getAmountDue() === 0) {
-            $this->markEntityProcessed();
-            return;
-        }
-      
-        if ($this->getStripeCustomer()->hasCard()) {
-            $this->markEntityProcessed();
-            return;            
-        }
-        
-        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
-            'lines' => $invoice->getLinesSummary(),
-            'next_payment_attempt' => $invoice->getNextPaymentAttempt(),
-            'invoice_id' => $invoice->getId(),
-            'total' => $invoice->getTotal(),
-            'amount_due' => $invoice->getAmountDue()
-        )));
-        
-        $this->markEntityProcessed();  
-    }
     
     public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $this->event = $event;
