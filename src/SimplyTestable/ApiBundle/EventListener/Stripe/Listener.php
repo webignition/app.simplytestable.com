@@ -261,21 +261,7 @@ class Listener
                     if ($stripeCustomer->hasCard() === false) {
                         $this->downgradeToBasicPlan();
                     }
-                    break;  
-                
-                case 'trialing-to-canceled':
-                    $previousSubscription = new StripeSubscription($eventData->data->previous_attributes);
-                    
-                    $webClientEventData = array_merge(
-                        $webClientEventData,
-                        array(   
-                            'is_status_change' => 1,
-                            'previous_subscription_status' => $previousSubscription->getStatus(),
-                            'subscription_status' => $stripeSubscription->getStatus(),
-                            'trial_days_remaining' => $this->getUserAccountPlanFromEvent()->getStartTrialPeriod()
-                        )
-                    );
-                    break;                
+                    break;               
                 
                 default:
                     $this->markEntityProcessed();
