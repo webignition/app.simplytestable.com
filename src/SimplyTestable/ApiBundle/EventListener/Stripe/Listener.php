@@ -254,7 +254,8 @@ class Listener
                             'is_status_change' => 1,
                             'previous_subscription_status' => $previousSubscription->getStatus(),
                             'subscription_status' => $stripeSubscription->getStatus(),
-                            'has_card' => (int)$stripeCustomer->hasCard()
+                            'has_card' => (int)$stripeCustomer->hasCard(),
+                            'plan_name' => $stripeSubscription->getPlan()->getName()
                         )
                     );
                     

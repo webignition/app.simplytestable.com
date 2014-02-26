@@ -10,7 +10,11 @@ abstract class TrialingToActiveTest extends ActionStatusTest {
     
     public function testNotificationHasCard() {
         $this->assertNotificationBodyField('has_card', (int)$this->getHasCard());
-    }   
+    }
+    
+    public function testNotificationHasPlan() {
+        $this->assertNotificationBodyField('plan', 'agency');
+    }      
 
     protected function getCurrentSubscriptionStatus() {
         return 'active';
