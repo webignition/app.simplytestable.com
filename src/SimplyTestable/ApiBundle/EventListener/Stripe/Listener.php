@@ -230,44 +230,34 @@ class Listener
         if ($isStatusChange) {
             $statusTransition = $eventData->data->previous_attributes->status . '-to-' . $eventData->data->object->status;
             
-            switch ($statusTransition) {
-                case 'active-to-canceled':
-                    $previousSubscription = new StripeSubscription($eventData->data->previous_attributes);                   
-                    
-                    $webClientEventData = array_merge(
-                        $webClientEventData,
-                        array(
-                            'is_status_change' => 1,
-                            'previous_subscription_status' => $previousSubscription->getStatus(),
-                            'subscription_status' => $stripeSubscription->getStatus(),
-                            'plan_name' => $stripeSubscription->getPlan()->getName()
-                        )
-                    );
-                    break;
-                
-                case 'trialing-to-active':
-                    $stripeCustomer = $this->getStripeCustomer();
-                    $previousSubscription = new StripeSubscription($eventData->data->previous_attributes);
-                    
-                    $webClientEventData = array_merge(
-                        $webClientEventData,
-                        array(  
-                            'is_status_change' => 1,
-                            'previous_subscription_status' => $previousSubscription->getStatus(),
-                            'subscription_status' => $stripeSubscription->getStatus(),
-                            'has_card' => (int)$stripeCustomer->hasCard(),
-                            'plan_name' => $stripeSubscription->getPlan()->getName()
-                        )
-                    );
-                    
-                    if ($stripeCustomer->hasCard() === false) {
-                        $this->downgradeToBasicPlan();
-                    }
-                    break;               
-                
-                default:
-                    $this->markEntityProcessed();
-                    return;
+            if (!in_array($statusTransition, array(
+                'active-to-canceled',
+                'trialing-to-active'                   
+            ))) {
+                $this->markEntityProcessed();
+                return;
+            };
+            
+            $previousSubscription = new StripeSubscription($eventData->data->previous_attributes);
+            
+            $webClientEventData = array_merge($webClientEventData, array(
+                'is_status_change' => 1,
+                'previous_subscription_status' => $previousSubscription->getStatus(),
+                'subscription_status' => $stripeSubscription->getStatus(),
+                'plan_name' => $stripeSubscription->getPlan()->getName(),
+                'plan_amount' => $stripeSubscription->getPlan()->getAmount()                
+            ));
+            
+            if ($statusTransition == 'trialing-to-active') {
+                $stripeCustomer = $this->getStripeCustomer();
+
+                $webClientEventData = array_merge($webClientEventData, array(  
+                        'has_card' => (int)$stripeCustomer->hasCard()
+                ));
+
+                if ($stripeCustomer->hasCard() === false) {
+                    $this->downgradeToBasicPlan();
+                }                
             }            
             
             $this->issueWebClientEvent($webClientEventData);       

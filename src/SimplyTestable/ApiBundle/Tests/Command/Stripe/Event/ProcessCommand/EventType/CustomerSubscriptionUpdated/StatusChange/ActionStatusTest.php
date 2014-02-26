@@ -24,8 +24,12 @@ abstract class ActionStatusTest extends StatusChangeTest {
         $this->assertNotificationBodyField('subscription_status', $this->getCurrentSubscriptionStatus());
     }  
     
-    public function testNotificationHasPlan() {
+    public function testNotificationHasPlanName() {
         $this->assertNotificationBodyField('plan_name', 'Agency');
+    }   
+    
+    public function testNotificationHasPlanAmount() {
+        $this->assertNotificationBodyField('plan_amount', '1900');
     }       
     
     public function testWebClientSubscriberResponseStatusCode() {        
