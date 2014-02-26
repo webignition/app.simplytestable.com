@@ -4,40 +4,18 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\Sin
 
 use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\SingleEventTest;
 
-class CustomerSubscriptionDeletedTest extends SingleEventTest {
+class CustomerSubscriptionDeletedTest extends SingleEventTest {    
     
-    protected function getHttpFixtureItems() {
-        return array(
-            "HTTP/1.1 200 OK"
-        );
-    }
+    protected function getExpectedNotificationBodyFields() {
+        return array_merge(parent::getExpectedNotificationBodyFields(), array(
+            'plan_name' => 'Personal',
+            'actioned_by' => 'user',
+            'is_during_trial' => '1',
+        ));
+    }     
     
-    
-    public function testNotificationBodyEvent() {        
-        $this->assertNotificationBodyField('event', 'customer.subscription.deleted');
-    }
-    
-    public function testNotificationBodyUser() {
-        $this->assertNotificationBodyField('user', 'user@example.com');
-    }
-    
-    public function testNotificationBodyPlanName() {
-        $this->assertNotificationBodyField('plan_name', 'Personal');
-    }    
-    
-    public function testNotificationBodyActionedBy() {
-        $this->assertNotificationBodyField('actioned_by', 'user');
-    }   
-    
-    public function testNotificationBodyIsDuringTrial() {
-        $this->assertNotificationBodyField('is_during_trial', 1);
-    }       
-    
-    public function testWebClientSubscriberResponseStatusCode() {        
-        $this->assertEquals(
-                200,
-                $this->getHttpClientService()->getHistoryPlugin()->getLastResponse()->getStatusCode()
-        );
+    protected function getExpectedNotificationBodyEventName() {
+        return 'customer.subscription.deleted';
     }
 
     protected function getStripeEventFixturePath() {

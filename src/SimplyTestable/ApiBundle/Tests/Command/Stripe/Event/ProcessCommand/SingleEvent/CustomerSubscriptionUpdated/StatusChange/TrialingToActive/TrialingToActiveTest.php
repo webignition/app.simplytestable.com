@@ -2,16 +2,18 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\CustomerSubscriptionUpdated\StatusChange\TrialingToActive;
 
-use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\CustomerSubscriptionUpdated\StatusChange\ActionStatusTest;
+use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\CustomerSubscriptionUpdated\StatusChange\StatusChangeTest;
 
-abstract class TrialingToActiveTest extends ActionStatusTest {   
+abstract class TrialingToActiveTest extends StatusChangeTest {   
     
     abstract protected function getHasCard();
     
-    public function testNotificationHasCard() {
-        $this->assertNotificationBodyField('has_card', (int)$this->getHasCard());
+    protected function getExpectedNotificationBodyFields() {
+        return array_merge(parent::getExpectedNotificationBodyFields(), array(
+            'has_card' => (int)$this->getHasCard(),
+        ));
     }
-
+    
     protected function getCurrentSubscriptionStatus() {
         return 'active';
     }

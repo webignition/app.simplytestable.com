@@ -5,22 +5,15 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\Sin
 use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\CustomerSubscriptionCreated\CustomerSubscriptionCreatedTest;
 
 abstract class TrialingTest extends CustomerSubscriptionCreatedTest {   
-
-    public function testNotificationBodyTrialStart() {
-        $this->assertNotificationBodyField('trial_start', '1379776581');
-    }
     
-    public function testNotificationBodyTrialEnd() {
-        $this->assertNotificationBodyField('trial_end', '1382368580');
+    protected function getExpectedNotificationBodyFields() {
+        return array_merge(parent::getExpectedNotificationBodyFields(), array(
+            'trial_start' => '1379776581',
+            'trial_end' => '1382368580',
+            'trial_period_days' => '30',
+            'has_card' => (int)$this->getHasCard()
+        ));
     }
-    
-    public function testNotificationBodyTrialPeriodDays() {
-        $this->assertNotificationBodyField('trial_period_days', '30');
-    }
-    
-    public function testNotificationBodyHasCard() {
-        $this->assertNotificationBodyField('has_card', (int)$this->getHasCard());
-    }    
     
     protected function getSubscriptionStatus() {
         return 'trialing';

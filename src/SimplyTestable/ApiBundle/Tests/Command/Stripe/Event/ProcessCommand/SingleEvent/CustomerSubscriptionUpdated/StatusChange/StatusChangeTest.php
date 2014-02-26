@@ -2,12 +2,22 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\CustomerSubscriptionUpdated\StatusChange;
 
-use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\SingleEventTest;
+use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\CustomerSubscriptionUpdated\CustomerSubscriptionUpdatedTest;
 
-abstract class StatusChangeTest extends SingleEventTest {   
+abstract class StatusChangeTest extends CustomerSubscriptionUpdatedTest {   
     
     abstract protected function getCurrentSubscriptionStatus();
     abstract protected function getPreviousSubscriptionStatus();   
+    
+    protected function getExpectedNotificationBodyFields() {
+        return array_merge(parent::getExpectedNotificationBodyFields(), array(
+            'is_status_change' => '1',
+            'previous_subscription_status' => $this->getPreviousSubscriptionStatus(),
+            'subscription_status' => $this->getCurrentSubscriptionStatus(),
+            'plan_name' => 'Agency',
+            'plan_amount' => '1900',
+        ));
+    }     
 
     protected function getStripeEventFixturePath() {
         return $this->getFixturesDataPath() . '/../StripeEvents/customer.subscription.updated.statuschange.json';
@@ -19,11 +29,5 @@ abstract class StatusChangeTest extends SingleEventTest {
         $fixtureReplacements['{{previous_subscription_status}}'] = $this->getPreviousSubscriptionStatus();
         
         return $fixtureReplacements;
-    }  
-    
-    protected function getHttpFixtureItems() {
-        return array(
-            "HTTP/1.1 200 OK"
-        );
-    }     
+    }      
 }

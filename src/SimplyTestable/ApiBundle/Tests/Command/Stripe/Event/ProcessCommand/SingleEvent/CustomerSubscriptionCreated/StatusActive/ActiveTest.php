@@ -4,18 +4,14 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\Sin
 
 use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\CustomerSubscriptionCreated\CustomerSubscriptionCreatedTest;
 
-abstract class ActiveTest extends CustomerSubscriptionCreatedTest {
-
-    public function testNotificationBodyCurrentPeriodStart() {
-        $this->assertNotificationBodyField('current_period_start', '1392757613');
-    }
+class ActiveTest extends CustomerSubscriptionCreatedTest {
     
-    public function testNotificationBodyCurrentPeriodEnd() {
-        $this->assertNotificationBodyField('current_period_end', '1395176813');
-    }
-    
-    public function testNotificationBodyAmount() {
-        $this->assertNotificationBodyField('amount', '900');
+    protected function getExpectedNotificationBodyFields() {
+        return array_merge(parent::getExpectedNotificationBodyFields(), array(
+            'current_period_start' => '1392757613',
+            'current_period_end' => '1395176813',
+            'amount' => '900'
+        ));
     }  
     
     protected function getSubscriptionStatus() {
@@ -25,4 +21,23 @@ abstract class ActiveTest extends CustomerSubscriptionCreatedTest {
     protected function getStripeEventFixturePath() {
         return $this->getFixturesDataPath() . '/../../StripeEvents/customer.subscription.created.active.json';
     }
+    
+    protected function getStripeServiceResponseMethod() {
+        return 'getCustomer';
+    }
+    
+    protected function getStripeServiceResponseData() {
+        return array(
+            'active_card' => array(
+                'exp_month' => '01',
+                'exp_year' => '99',
+                'last4' => '1234',
+                'type' => 'Foo'
+            )
+        );
+    }
+
+    protected function getHasCard() {
+        return true;
+    }   
 }

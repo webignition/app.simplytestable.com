@@ -22,4 +22,5 @@ class WithCardTest extends CustomerSubscriptionTrialWillEndTest {
             )
         );
     }
+
 }

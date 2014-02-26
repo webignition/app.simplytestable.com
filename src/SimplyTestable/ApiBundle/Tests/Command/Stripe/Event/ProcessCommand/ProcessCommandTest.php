@@ -23,10 +23,5 @@ abstract class ProcessCommandTest extends ConsoleCommandTestCase {
             new \SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand()
         );
     }
-    
-    
-//    protected function getFixture($path) {
-//        return parent::getFixture($this->getFixturesDataPath() . '/StripeEvents' . $path);
-//    }
 
 }

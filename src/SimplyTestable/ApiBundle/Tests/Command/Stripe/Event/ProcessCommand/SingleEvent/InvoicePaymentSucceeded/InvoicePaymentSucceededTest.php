@@ -6,14 +6,11 @@ use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEve
 
 abstract class InvoicePaymentSucceededTest extends SingleEventTest {    
     
-    abstract protected function getTotal();
-    abstract protected function getAmountDue();
+    abstract protected function getTotal();   
     
-    protected function getHttpFixtureItems() {
-        return array(
-            "HTTP/1.1 200 OK"
-        );
-    }
+    protected function getExpectedNotificationBodyEventName() {
+        return 'invoice.payment_succeeded';
+    }    
     
     protected function getStripeEventFixturePath() {
         return $this->getFixturesDataPath() . '/../StripeEvents/invoice.payment_succeeded.json';

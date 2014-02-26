@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\SingleEvent\CustomerSubscriptionUpdated\StatusChange;
 
-class ActiveToCanceledTest extends ActionStatusTest {      
+class ActiveToCanceledTest extends StatusChangeTest {      
 
     protected function getCurrentSubscriptionStatus() {
         return 'canceled';
