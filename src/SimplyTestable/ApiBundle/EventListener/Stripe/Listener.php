@@ -280,35 +280,27 @@ class Listener
         if ($isStatusChange) {
             $statusTransition = $eventData->data->previous_attributes->status . '-to-' . $eventData->data->object->status;
             
-            if (!in_array($statusTransition, array(
-                'active-to-canceled',
-                'trialing-to-active'                   
-            ))) {
+            if ($statusTransition != 'trialing-to-active') {
                 $this->markEntityProcessed();
                 return;
             };
             
             $previousSubscription = new StripeSubscription($eventData->data->previous_attributes);
+            $stripeCustomer = $this->getStripeCustomer();
             
             $webClientEventData = array_merge($webClientEventData, array(
                 'is_status_change' => 1,
                 'previous_subscription_status' => $previousSubscription->getStatus(),
                 'subscription_status' => $stripeSubscription->getStatus(),
                 'plan_name' => $stripeSubscription->getPlan()->getName(),
-                'plan_amount' => $stripeSubscription->getPlan()->getAmount()                
-            ));
-            
-            if ($statusTransition == 'trialing-to-active') {
-                $stripeCustomer = $this->getStripeCustomer();
+                'plan_amount' => $stripeSubscription->getPlan()->getAmount(),
+                'has_card' => (int)$stripeCustomer->hasCard()
+            ));     
 
-                $webClientEventData = array_merge($webClientEventData, array(  
-                        'has_card' => (int)$stripeCustomer->hasCard()
-                ));
-
-                if ($stripeCustomer->hasCard() === false) {
-                    $this->downgradeToBasicPlan();
-                }                
-            }            
+            if ($stripeCustomer->hasCard() === false) {
+                $this->downgradeToBasicPlan();
+            }                
+           
             
             $this->issueWebClientEvent($webClientEventData);       
             $this->markEntityProcessed();            
