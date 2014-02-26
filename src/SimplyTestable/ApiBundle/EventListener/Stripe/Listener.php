@@ -239,7 +239,8 @@ class Listener
                         array(
                             'is_status_change' => 1,
                             'previous_subscription_status' => $previousSubscription->getStatus(),
-                            'subscription_status' => $stripeSubscription->getStatus()
+                            'subscription_status' => $stripeSubscription->getStatus(),
+                            'plan_name' => $stripeSubscription->getPlan()->getName()
                         )
                     );
                     break;
