@@ -187,7 +187,38 @@ class Listener
                 'actioned_by' => 'user',
                 'is_during_trial' => 1
             ));            
+        } else {
+            $paymentFailedEvents = $this->stripeEventService->getForUserAndType(
+                $this->event->getEntity()->getUser(),
+                'invoice.payment_failed'
+            );
+            
+            $hasInvoicePaymentFailedEventForSubscription = false;
+            
+            foreach ($paymentFailedEvents as $paymentFailedEvent) {
+                $paymentFailedInvoice = new StripeInvoice($paymentFailedEvent->getStripeEventDataObject()->data->object);
+                if ($paymentFailedInvoice->isForSubscription($stripeSubscription->getId())) {
+                    $hasInvoicePaymentFailedEventForSubscription = true;
+                }
+            }
+            
+            if ($hasInvoicePaymentFailedEventForSubscription === false) {
+                // User has canceled after trial
+                $webClientData = array_merge($this->getDefaultWebClientData(), array(           
+                    'plan_name' => $stripeSubscription->getPlan()->getName(),
+                    'actioned_by' => 'user',
+                    'is_during_trial' => 0
+                ));                  
+            } else {
+                // System has cancelled following payment failure
+                $webClientData = array_merge($this->getDefaultWebClientData(), array(           
+                    'plan_name' => $stripeSubscription->getPlan()->getName(),
+                    'actioned_by' => 'system'
+                ));                   
+            }          
         }
+        
+
 
         
         $this->issueWebClientEvent($webClientData);        

@@ -105,4 +105,23 @@ class Invoice extends Object {
         return $this->getDataProperty('lines');
     }
     
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getSubscriptionId() {
+        return $this->getDataProperty('subscription');
+    }
+    
+    
+    /**
+     * 
+     * @param string $subscriptionId
+     * @return boolean
+     */
+    public function isForSubscription($subscriptionId) {
+        return $this->getSubscriptionId() == $subscriptionId;
+    }
+    
 }

@@ -2,9 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\EventSequence\CustomerSubscriptionDeleted;
 
-use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\EventSequence\EventSequenceTest;
-
-abstract class CustomerSubscriptionDeletedTest extends EventSequenceTest {    
+class UserCancelsAfterTrialTest extends CustomerSubscriptionDeletedTest {    
     
     
     
@@ -28,11 +26,11 @@ abstract class CustomerSubscriptionDeletedTest extends EventSequenceTest {
 //        $this->assertNotificationBodyField('is_during_trial', 1);
 //    }
 
-    protected function getStripeEventFixturePath() {
-        return $this->getFixturesDataPath() . '/../StripeEvents/customer.subscription.deleted-during-trial.json';
-    }
-
-    protected function getExpectedNotificationBodyEventName() {
-        return 'customer.subscription.deleted';
-    }      
+//    protected function getStripeEventFixturePath() {
+//        return $this->getFixturesDataPath() . '/../StripeEvents/customer.subscription.deleted-during-trial.json';
+//    }
+//
+//    protected function getExpectedNotificationBodyEventName() {
+//        return 'customer.subscription.deleted';
+//    }      
 }

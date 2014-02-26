@@ -112,7 +112,16 @@ class Subscription extends Object {
      */
     public function getCurrentPeriodEnd() {
         return $this->getDataProperty('current_period_end');
-    }    
+    } 
+    
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getId() {
+        return $this->getDataProperty('id');
+    }
     
     
     /**

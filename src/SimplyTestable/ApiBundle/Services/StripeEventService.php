@@ -61,7 +61,7 @@ class StripeEventService extends EntityService {
      * 
      * @param \SimplyTestable\ApiBundle\Services\User $user
      * @param string $type
-     * @return array
+     * @return \SimplyTestable\ApiBundle\Entity\Stripe\Event[]
      */
     public function getForUserAndType(User $user, $type = null) {        
         $criteria = array(

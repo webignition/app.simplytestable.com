@@ -4,19 +4,17 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\Eve
 
 use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\NonErrorCasesTest;
 
-abstract class EventSequenceTest extends NonErrorCasesTest {      
+abstract class EventSequenceTest extends NonErrorCasesTest {
     
     public function setUp() {
         parent::setUp();
         
-        $user = $this->getTestUser();        
-        $this->getUserService()->setUser($user);
-//        
-//        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
-//            $user->getEmail(),
-//            'agency'
-//        );
-//        
+        foreach ($this->getStripeEventFixturePaths() as $fixturePath) {
+            $response = $this->getStripeWebHookController('indexAction', array(
+                'event' => $this->getFixtureContent($fixturePath)
+            ))->indexAction();           
+        }
+
 //        $response = $this->getStripeWebHookController('indexAction', array(
 //            'event' => $this->getFixtureContent()
 //        ))->indexAction();
@@ -34,14 +32,14 @@ abstract class EventSequenceTest extends NonErrorCasesTest {
 //        $this->assertTrue($this->getStripeEventService()->getByStripeId($responseObject->stripe_id)->getIsProcessed());
     }  
     
-    protected function assertNotificationBodyField($name, $expectedValue) {
-        /* @var $postFields \Guzzle\Http\QueryString */
-        $postFields = $this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields();
-        
-        $this->assertTrue($postFields->hasKey($name));
-        $this->assertEquals($expectedValue, $postFields->get($name));
-    }   
-    
+//    protected function assertNotificationBodyField($name, $expectedValue) {
+//        /* @var $postFields \Guzzle\Http\QueryString */
+//        $postFields = $this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields();
+//        
+//        $this->assertTrue($postFields->hasKey($name));
+//        $this->assertEquals($expectedValue, $postFields->get($name));
+//    }   
+//    
     abstract protected function getStripeEventFixturePath();
     
     protected function getStripeServiceResponseMethod() {
@@ -50,15 +48,5 @@ abstract class EventSequenceTest extends NonErrorCasesTest {
     
     protected function getStripeServiceResponseData() {
         return array();
-    }    
-    
-    private function getFixtureContent() {
-        $fixtureReplacements = $this->getFixtureReplacements();
-        
-        return str_replace(
-                array_keys($fixtureReplacements),
-                array_values($fixtureReplacements),
-                $this->getFixture($this->getStripeEventFixturePath())
-        );
     }
 }
