@@ -176,6 +176,25 @@ class Listener
     }
     
     
+    public function onCustomerSubscriptionDeleted(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
+        $this->event = $event;        
+        
+        $stripeSubscription = $this->getStripeSubscription();
+        
+        if ($stripeSubscription->wasCancelledDuringTrial()) {
+            $webClientData = array_merge($this->getDefaultWebClientData(), array(           
+                'plan_name' => $stripeSubscription->getPlan()->getName(),
+                'actioned_by' => 'user',
+                'is_during_trial' => 1
+            ));            
+        }
+
+        
+        $this->issueWebClientEvent($webClientData);        
+        $this->markEntityProcessed();
+    }    
+    
+    
     public function onCustomerSubscriptionTrialWillEnd(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
         $this->event = $event;
         

@@ -50,6 +50,15 @@ class Subscription extends Object {
     
     /**
      * 
+     * @return boolean
+     */
+    public function isCancelled() {
+        return $this->getStatus() == 'canceled';
+    }
+    
+    
+    /**
+     * 
      * @return int|null
      */
     public function getTrialStart() {
@@ -63,6 +72,28 @@ class Subscription extends Object {
      */
     public function getTrialEnd() {
         return $this->getDataProperty('trial_end');
+    }
+    
+    
+    /**
+     * 
+     * @return int|null
+     */
+    public function getCancelledAt() {
+        return $this->getDataProperty('canceled_at');
+    }    
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function wasCancelledDuringTrial() {
+        if (!$this->isCancelled()) {
+            return false;
+        }
+        
+        return $this->getCancelledAt() <= $this->getTrialEnd();
     }
     
     

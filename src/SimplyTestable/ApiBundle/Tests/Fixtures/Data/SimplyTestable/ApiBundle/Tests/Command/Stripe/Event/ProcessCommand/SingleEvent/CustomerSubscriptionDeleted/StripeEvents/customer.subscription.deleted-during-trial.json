@@ -24,7 +24,7 @@
       "object": "subscription",
       "start": 1393414985,
       "status": "canceled",
-      "customer": "cus_3ZEYV8dnMPOnCC",
+      "customer": "{{stripe_customer}}",
       "cancel_at_period_end": false,
       "current_period_start": 1393414985,
       "current_period_end": 1396006949,
