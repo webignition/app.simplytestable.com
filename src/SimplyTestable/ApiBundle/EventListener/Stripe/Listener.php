@@ -181,11 +181,12 @@ class Listener
         
         $stripeSubscription = $this->getStripeSubscription();
         
-        if ($stripeSubscription->wasCancelledDuringTrial()) {
+        if ($stripeSubscription->wasCancelledDuringTrial()) {                       
             $webClientData = array_merge($this->getDefaultWebClientData(), array(           
                 'plan_name' => $stripeSubscription->getPlan()->getName(),
                 'actioned_by' => 'user',
-                'is_during_trial' => 1
+                'is_during_trial' => 1,
+                'trial_days_remaining' => $this->getUserAccountPlanFromEvent()->getStartTrialPeriod()
             ));            
         } else {
             $paymentFailedEvents = $this->stripeEventService->getForUserAndType(

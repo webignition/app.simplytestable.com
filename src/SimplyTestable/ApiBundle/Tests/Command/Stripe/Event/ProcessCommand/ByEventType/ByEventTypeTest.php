@@ -9,7 +9,8 @@ abstract class ByEventTypeTest extends NonErrorCasesTest {
     public function setUp() {
         parent::setUp();
         
-        $this->getStripeService()->addResponseData($this->getStripeServiceResponseMethod(), $this->getStripeServiceResponseData());
+        $this->getStripeService()->addResponseData($this->getStripeServiceResponseMethod(), $this->getStripeServiceResponseData());        
+        $this->preCall();
         
         $this->assertReturnCode(0, array(
             'stripeId' => $this->stripeId
@@ -24,6 +25,9 @@ abstract class ByEventTypeTest extends NonErrorCasesTest {
     
     protected function getStripeServiceResponseData() {
         return array();
+    }
+    
+    protected function preCall() {        
     }
 
 }
