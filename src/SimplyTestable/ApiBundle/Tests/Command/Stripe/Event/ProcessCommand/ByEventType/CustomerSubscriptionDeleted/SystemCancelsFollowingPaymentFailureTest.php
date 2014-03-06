@@ -4,6 +4,13 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\ByE
 
 class SystemCancelsFollowingPaymentFailureTest extends CustomerSubscriptionDeletedTest {    
     
+    public function testUserIsDowngradedToBasicPlan() {
+        $this->assertEquals(
+            $this->getAccountPlanService()->find('basic'),
+            $this->getUserAccountPlanService()->getForUser($this->getUserService()->getUser())->getPlan()
+        );
+    }
+    
     protected function getExpectedNotificationBodyFields() {
         return array_merge(parent::getExpectedNotificationBodyFields(), array(
             'plan_name' => 'Agency',

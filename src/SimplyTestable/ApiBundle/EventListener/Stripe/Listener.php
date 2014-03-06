@@ -215,7 +215,9 @@ class Listener
                 $webClientData = array_merge($this->getDefaultWebClientData(), array(           
                     'plan_name' => $stripeSubscription->getPlan()->getName(),
                     'actioned_by' => 'system'
-                ));                   
+                )); 
+                
+                $this->downgradeToBasicPlan();
             }          
         }
         
