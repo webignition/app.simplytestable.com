@@ -6,11 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class GetActionUserPlanTest extends BaseControllerJsonTestCase {
     
-    const DEFAULT_TRIAL_PERIOD = 30;
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }    
+    const DEFAULT_TRIAL_PERIOD = 30;    
     
     public function testHasUserPlan() {
         $email = 'user1@example.com';

@@ -5,11 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Entity\User;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class UserTest extends BaseSimplyTestableTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();        
-    }          
+class UserTest extends BaseSimplyTestableTestCase {        
     
     public function testUtf8Email() {        
         $email = 'ɸ@example.com';

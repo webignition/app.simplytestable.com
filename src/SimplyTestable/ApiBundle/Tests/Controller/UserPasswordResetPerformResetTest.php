@@ -4,11 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }  
-    
-    
     public function testPerformResetWithEncodedPassword() {
         $email = 'user1@example.com';
         $password = 'password1';

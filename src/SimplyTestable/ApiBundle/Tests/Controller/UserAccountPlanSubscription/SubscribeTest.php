@@ -6,10 +6,6 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class SubscribeTest extends BaseControllerJsonTestCase {
 
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }
-    
     public function testWithPublicUser() {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         

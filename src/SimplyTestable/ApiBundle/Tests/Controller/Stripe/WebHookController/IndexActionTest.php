@@ -6,11 +6,6 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class IndexActionTest extends BaseControllerJsonTestCase {
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }  
-    
-    
     public function testWithNoRequestBody() {
         $this->assertEquals(400, $this->getStripeWebHookController('indexAction')->indexAction()->getStatusCode());
     }

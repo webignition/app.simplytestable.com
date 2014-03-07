@@ -4,11 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class SetPublicActionTest extends BaseControllerJsonTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();        
-    }      
+class SetPublicActionTest extends BaseControllerJsonTestCase {      
    
     public function testSetPublicByPublicUserForJobOwnedByPublicUser() {        
         $canonicalUrl = 'http://example.com/';

@@ -5,11 +5,6 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteByUrlAndTaskTyp
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class CompleteForUrlDiscoveryTaskTest extends BaseControllerJsonTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }   
-
 
     public function testCompleteForTaskDiscoveringUrlsDoesNotMarkJobAsComplete() {
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());        

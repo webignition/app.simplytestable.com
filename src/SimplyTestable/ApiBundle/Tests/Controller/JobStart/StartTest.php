@@ -4,11 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\JobStart;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class StartTest extends BaseControllerJsonTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }       
+class StartTest extends BaseControllerJsonTestCase {      
 
     public function testStartAction() {
         $jobController = $this->getJobStartController('startAction');        

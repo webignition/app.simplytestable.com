@@ -4,11 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Task;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class CompleteActionTest extends BaseControllerJsonTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }       
+class CompleteActionTest extends BaseControllerJsonTestCase {      
    
     public function testCompleteAction() {
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());

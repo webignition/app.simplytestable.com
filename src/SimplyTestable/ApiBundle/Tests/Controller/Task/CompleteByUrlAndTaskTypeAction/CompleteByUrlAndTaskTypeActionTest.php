@@ -5,11 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteByUrlAndTaskTyp
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }   
-
+ 
     public function testWithSingleMatchingTask() {
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));

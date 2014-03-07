@@ -5,10 +5,6 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\UserStripeEvent;
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class ListActionTest extends BaseControllerJsonTestCase {
-       
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }    
 
     public function testWithPublicUser() {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());

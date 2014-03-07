@@ -5,11 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Entity\WebSite\Persist;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 
-class CanonicalUrlTest extends BaseSimplyTestableTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();        
-    }       
+class CanonicalUrlTest extends BaseSimplyTestableTestCase {      
 
     public function testAscii() {
         $canonicalUrl = 'http://example.com/';        

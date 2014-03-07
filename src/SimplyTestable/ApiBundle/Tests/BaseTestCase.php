@@ -88,7 +88,7 @@ abstract class BaseTestCase extends WebTestCase {
     }
     
     
-    protected static function setupDatabase() {
+    protected static function setupDatabase() {        
         $commands = array(
             'php app/console doctrine:database:drop -e test --force',
             'php app/console doctrine:database:create -e test',
@@ -104,32 +104,9 @@ abstract class BaseTestCase extends WebTestCase {
         $this->executeCommand('doctrine:fixtures:load', array(
             '--append' => true
         ));
-    }
+    }    
     
-    protected static function setupDatabaseIfNotExists() {        
-        if (self::areDatabaseMigrationsNeeded()) {
-            self::setupDatabase();
-        }
-    }
-    
-    private static function areDatabaseMigrationsNeeded() {
-        $migrationStatusOutputLines = array();
-        exec('php app/console doctrine:migrations:status -e test', $migrationStatusOutputLines);
-        
-        foreach ($migrationStatusOutputLines as $migrationStatusOutputLine) {
-            if (substr_count($migrationStatusOutputLine, '>> New Migrations:')) {
-                //var_dump($migrationStatusOutputLine, (int)trim(str_replace('>> Available Migrations:', '', $migrationStatusOutputLine)));
-                if ((int)trim(str_replace('>> New Migrations:', '', $migrationStatusOutputLine)) > 0) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;      
-    }
-    
-    
-    protected function clearRedis() {
+    protected function clearRedis() {        
         exec('redis-cli -r 1 flushall');
     }
     

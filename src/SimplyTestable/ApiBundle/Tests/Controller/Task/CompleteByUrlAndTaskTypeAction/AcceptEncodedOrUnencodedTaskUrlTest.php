@@ -6,10 +6,6 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class AcceptEncodedOrUnencodedTaskUrlTest extends BaseControllerJsonTestCase {
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }
-    
     public function testWithCoreAppUrlUnencodedAndCompletionReportUrlEncoded() {        
         $this->createWorker();
         

@@ -5,11 +5,6 @@ namespace SimplyTestable\ApiBundle\Tests\Services\TaskPreProcessor;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class LinkIntegrityPreProcessorTest extends BaseSimplyTestableTestCase {
-
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }
-
     
     public function testWithCurlErrorRetrievingTestContent() {
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        

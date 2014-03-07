@@ -6,11 +6,7 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 
-class PlanTest extends BaseSimplyTestableTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();        
-    }          
+class PlanTest extends BaseSimplyTestableTestCase {         
     
     public function testUtf8Name() {
         $name = 'test-ɸ';

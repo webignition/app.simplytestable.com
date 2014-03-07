@@ -4,12 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\JobStart;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class RejectTest extends BaseControllerJsonTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }
-    
+class RejectTest extends BaseControllerJsonTestCase {   
     
     public function testRejectDueToPlanFullSiteConstraint() {
         $canonicalUrl = 'http://example.com/';

@@ -8,10 +8,6 @@ abstract class AbstractAccessTest extends BaseControllerJsonTestCase {
     
     const CANONICAL_URL = 'http://www.example.com/';
     
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();        
-    }
-    
     abstract protected function getActionName();
     
     public function testGetForPublicJobOwnedByPublicUserByPublicUser() {

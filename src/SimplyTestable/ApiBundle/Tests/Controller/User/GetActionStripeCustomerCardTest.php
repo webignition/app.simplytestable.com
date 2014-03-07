@@ -4,11 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }    
+class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {    
 
     public function testForUserWithBasicPlanAndNeverHadCard() {
         $email = 'user1@example.com';

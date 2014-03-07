@@ -18,11 +18,7 @@ class InvalidInputTest extends BaseControllerJsonTestCase {
         'state' => 'completed',
         'errorCount' => 0,
         'warningCount' => 0          
-    );
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }       
+    );      
     
     public function testWithInvalidTaskType() {        
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', $this->taskCompletionData)->completeByUrlAndTaskTypeAction('http://example.com', 'foo', '');        

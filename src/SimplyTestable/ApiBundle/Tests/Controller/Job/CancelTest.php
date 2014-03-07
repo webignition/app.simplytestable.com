@@ -4,11 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class CancelTest extends BaseControllerJsonTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();        
-    }    
+class CancelTest extends BaseControllerJsonTestCase { 
     
     public function testCancelAction() {        
         $canonicalUrl = 'http://example.com';        

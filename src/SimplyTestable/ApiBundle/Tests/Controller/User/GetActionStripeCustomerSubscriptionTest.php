@@ -7,11 +7,7 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 class GetActionStripeCustomerSubscriptionTest extends BaseControllerJsonTestCase {
     
     const DEFAULT_TRIAL_PERIOD = 30;
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }
-    
+
     public function testForUserWithPremiumPlan() {
         $email = 'user1@example.com';
         $password = 'password1';

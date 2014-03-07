@@ -6,11 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class IsPublicActionTest extends BaseControllerJsonTestCase {
     
-    const CANONICAL_URL = 'http://example.com';
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();        
-    }      
+    const CANONICAL_URL = 'http://example.com';    
     
     public function testFalseForNonNumericJobId() { 
         $this->assertEquals(404, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, 'foo')->getStatusCode());  

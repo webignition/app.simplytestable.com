@@ -4,11 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class CreateUserEmailChangeTest extends BaseControllerJsonTestCase {
-       
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }    
+class CreateUserEmailChangeTest extends BaseControllerJsonTestCase {   
     
     public function testWithNotEnabledUser() {
         $email = 'user1@example.com';

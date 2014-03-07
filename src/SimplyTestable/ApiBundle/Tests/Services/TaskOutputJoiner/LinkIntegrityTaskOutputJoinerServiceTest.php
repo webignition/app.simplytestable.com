@@ -5,10 +5,6 @@ namespace SimplyTestable\ApiBundle\Tests\Services\TaskOutputJoiner;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCase {
-
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }
    
     public function testJoinOnComplete() {;
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        

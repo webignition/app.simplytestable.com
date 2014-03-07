@@ -2,11 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller;
 
-class WorkerControllerTest extends BaseControllerJsonTestCase {
-    
-    public static function setUpBeforeClass() {
-        self::setupDatabaseIfNotExists();
-    }     
+class WorkerControllerTest extends BaseControllerJsonTestCase {  
 
     public function testActivateAction() {
         $this->removeAllWorkers();     
