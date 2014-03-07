@@ -40,11 +40,12 @@ abstract class BaseTestCase extends WebTestCase {
         $this->container = $this->client->getKernel()->getContainer();        
         $this->application = new Application(self::$kernel);
         $this->application->setAutoExit(false);
-        self::setDefaultSystemState();
         
         foreach ($this->getCommands() as $command) {
             $this->application->add($command);
         }        
+        
+        $this->setDefaultSystemState();
     }
     
     
@@ -55,6 +56,7 @@ abstract class BaseTestCase extends WebTestCase {
     protected function getCommands() {
         return array_merge(array(
             new \Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand(),
+            new \SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand(),
             new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
             new \SimplyTestable\ApiBundle\Command\Job\PrepareCommand(),
             new \SimplyTestable\ApiBundle\Command\Task\Assign\Command(),
@@ -88,8 +90,8 @@ abstract class BaseTestCase extends WebTestCase {
     }
     
     
-    protected static function setDefaultSystemState() {
-        exec('php app/console simplytestable:maintenance:disable-read-only -e test');
+    protected function setDefaultSystemState() {
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');        
     }
     
     
