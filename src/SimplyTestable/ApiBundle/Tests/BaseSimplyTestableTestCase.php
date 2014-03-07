@@ -53,7 +53,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     protected function rebuildDefaultDataState() {
         $this->removeAllUsers();        
-        self::loadDataFixtures();
+        $this->loadDataFixtures();
     }
     
     

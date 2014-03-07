@@ -54,6 +54,7 @@ abstract class BaseTestCase extends WebTestCase {
      */
     protected function getCommands() {
         return array_merge(array(
+            new \Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand(),
             new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
             new \SimplyTestable\ApiBundle\Command\Job\PrepareCommand(),
             new \SimplyTestable\ApiBundle\Command\Task\Assign\Command(),
@@ -131,8 +132,10 @@ abstract class BaseTestCase extends WebTestCase {
         }
     } 
     
-    protected static function loadDataFixtures() {        
-        exec('php app/console doctrine:fixtures:load -e test --append');
+    protected function loadDataFixtures() {
+        $this->executeCommand('doctrine:fixtures:load', array(
+            '--append' => true
+        ));
     }
     
     protected static function setupDatabaseIfNotExists() {        
