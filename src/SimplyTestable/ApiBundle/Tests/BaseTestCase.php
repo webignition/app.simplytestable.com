@@ -81,14 +81,7 @@ abstract class BaseTestCase extends WebTestCase {
         $arguments['command'] = $command->getName();
         
         return $commandTester->execute($arguments);
-    }
-    
-    
-    protected function resetSystemState() {
-        $this->setupDatabase();
-        $this->runConsole('simplytestable:maintenance:disable-read-only');        
-    }
-    
+    }    
     
     protected function setDefaultSystemState() {
         $this->executeCommand('simplytestable:maintenance:disable-read-only');        
