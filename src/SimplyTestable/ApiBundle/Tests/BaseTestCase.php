@@ -70,34 +70,7 @@ abstract class BaseTestCase extends WebTestCase {
      */    
     protected function getAdditionalCommands() {
         return array();
-    }
-    
-
-    protected function runConsole($command, Array $options = array()) {      
-        $this->fail("Calling deprecated runConsole, use executeCommand");
-        
-        $args = array(
-            'app/console',
-            $command,
-            '-e',
-            'test',
-            '-q',
-            '-n'
-        );        
-        
-        foreach ($options as $key => $value) {
-            $args[] = $key;
-            
-            if (!is_null($value) && !is_bool($value)) {
-                $args[] = $value;
-            }
-        }
-
-
-        $input = new ArgvInput($args); 
-        return $response = $this->application->run($input);
-    }
-    
+    }    
     
     protected function executeCommand($name, $arguments = array()) {
         $command = $this->application->find($name);
