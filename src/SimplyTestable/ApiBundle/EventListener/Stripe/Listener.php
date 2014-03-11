@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 
-class Listener
+abstract class Listener
 {
     
     /**
@@ -88,9 +88,27 @@ class Listener
     
     /**
      * 
+     * @param \SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event
+     */
+    protected function setEvent(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
+        $this->event = $event;
+    }
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Services\StripeEventService
+     */
+    protected function getStripeEventService() {
+        return $this->stripeEventService;
+    }
+    
+    
+    /**
+     * 
      * @return \SimplyTestable\ApiBundle\Entity\Stripe\Event
      */
-    private function getEventEntity() {
+    protected function getEventEntity() {
         return $this->event->getEntity();
     }
     
@@ -99,7 +117,7 @@ class Listener
      * 
      * @return \SimplyTestable\ApiBundle\Entity\UserAccountPlan
      */
-    private function getUserAccountPlanFromEvent() {
+    protected function getUserAccountPlanFromEvent() {
         return $this->userAccountPlanService->getForUser($this->getEventEntity()->getUser());   
     }
     
@@ -108,7 +126,7 @@ class Listener
      * 
      * @return \SimplyTestable\ApiBundle\Model\Stripe\Customer
      */
-    private function getStripeCustomer() {
+    protected function getStripeCustomer() {
         return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent($this->event));
     }
     
@@ -117,7 +135,7 @@ class Listener
      * 
      * @return \SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice
      */
-    private function getStripeInvoice() {
+    protected function getStripeInvoice() {
         return new \SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice(json_encode($this->getEventEntity()->getStripeEventObject()->getDataObject()->getObject()->__toArray()));
     }
     
@@ -126,231 +144,25 @@ class Listener
      * 
      * @return \webignition\Model\Stripe\Subscription
      */
-    private function getStripeSubscription() {
+    protected function getStripeSubscription() {
         return $this->getEventEntity()->getStripeEventObject()->getDataObject()->getObject();
     }
     
     
-    private function getDefaultWebClientData() {        
+    protected function getDefaultWebClientData() {        
         return array(
             'event' => $this->getEventEntity()->getType(),
             'user' => $this->getEventEntity()->getUser()->getEmail()
         );
-    }
-    
-    public function onCustomerSubscriptionCreated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        $this->event = $event;
-        
-        $stripeSubscription = $this->getStripeSubscription();
-        
-        $webClientData = array_merge($this->getDefaultWebClientData(), array(
-            'status' => $stripeSubscription->getStatus(),            
-            'plan_name' => $stripeSubscription->getPlan()->getName()
-        ));
-        
-        if ($stripeSubscription->isTrialing()) {
-            $webClientData = array_merge($webClientData, array(
-                'has_card' => (int)$this->getStripeCustomer()->hasCard(),
-                'trial_start' => $stripeSubscription->getTrialPeriod()->getStart(),
-                'trial_end' => $stripeSubscription->getTrialPeriod()->getEnd(),
-                'trial_period_days' => $stripeSubscription->getPlan()->getTrialPeriodDays()
-            ));        
-        }
-        
-        if ($stripeSubscription->isActive()) {            
-            $webClientData = array_merge($webClientData, array(
-                'current_period_start' => $stripeSubscription->getCurrentPeriod()->getStart(),
-                'current_period_end' => $stripeSubscription->getCurrentPeriod()->getEnd(),
-                'amount' => $stripeSubscription->getPlan()->getAmount()
-            ));             
-        }
-        
-        $this->issueWebClientEvent($webClientData);        
-        $this->markEntityProcessed();
-    }
-    
-    
-    public function onCustomerSubscriptionDeleted(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        $this->event = $event;        
-        
-        $stripeSubscription = $this->getStripeSubscription();
-        
-        if ($stripeSubscription->wasCancelledDuringTrial()) {                       
-            $webClientData = array_merge($this->getDefaultWebClientData(), array(           
-                'plan_name' => $stripeSubscription->getPlan()->getName(),
-                'actioned_by' => 'user',
-                'is_during_trial' => 1,
-                'trial_days_remaining' => $this->getUserAccountPlanFromEvent()->getStartTrialPeriod()
-            ));            
-        } else {
-            $paymentFailedEvents = $this->stripeEventService->getForUserAndType(
-                $this->event->getEntity()->getUser(),
-                'invoice.payment_failed'
-            );
-            
-            $hasInvoicePaymentFailedEventForSubscription = false;
-            
-            foreach ($paymentFailedEvents as $paymentFailedEvent) {
-                if ($paymentFailedEvent->getStripeEventObject()->getDataObject()->getObject()->isForSubscription($stripeSubscription->getId())) {
-                    $hasInvoicePaymentFailedEventForSubscription = true;
-                }
-            }
-            
-            if ($hasInvoicePaymentFailedEventForSubscription === false) {
-                // User has canceled after trial
-                $webClientData = array_merge($this->getDefaultWebClientData(), array(           
-                    'plan_name' => $stripeSubscription->getPlan()->getName(),
-                    'actioned_by' => 'user',
-                    'is_during_trial' => 0
-                ));                  
-            } else {
-                // System has cancelled following payment failure
-                $webClientData = array_merge($this->getDefaultWebClientData(), array(           
-                    'plan_name' => $stripeSubscription->getPlan()->getName(),
-                    'actioned_by' => 'system'
-                )); 
-                
-                $this->downgradeToBasicPlan();
-            }          
-        }
-        
-
-
-        
-        $this->issueWebClientEvent($webClientData);        
-        $this->markEntityProcessed();
     }    
     
     
-    public function onCustomerSubscriptionTrialWillEnd(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
-        $this->event = $event;
-        
-        $stripeCustomer = $this->getStripeCustomer();
-        $stripeSubscription = $this->getStripeSubscription();
-        
-        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
-            'trial_end' => $stripeSubscription->getTrialPeriod()->getEnd(),
-            'has_card' => (int)$stripeCustomer->hasCard(),
-            'plan_amount' => $stripeSubscription->getPlan()->getAmount(),
-            'plan_name' => $stripeSubscription->getPlan()->getName()
-        )));     
-        
-        $this->markEntityProcessed();
-    }      
-    
-    
-    public function onCustomerSubscriptionUpdated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {      
-        $this->event = $event;
-        
-        $stripeEventObject = $this->getEventEntity()->getStripeEventObject();
-        $webClientEventData = $this->getDefaultWebClientData();        
-        $stripeSubscription = $this->getStripeSubscription();
-        
-        $isPlanChange = $stripeEventObject->getDataObject()->hasPreviousAttributes() && $stripeEventObject->getDataObject()->getPreviousAttributes()->containsKey('plan');
-        
-        if ($isPlanChange) {
-            $oldPlan = $stripeEventObject->getDataObject()->getPreviousAttributes()->get('plan');
-            
-            $webClientEventData = array_merge(
-                $webClientEventData,
-                array(
-                    'is_plan_change' => 1,
-                    'old_plan' => $oldPlan->getName(),
-                    'new_plan' => $stripeSubscription->getPlan()->getName(),
-                    'new_amount' => $stripeSubscription->getPlan()->getAmount(),
-                    'subscription_status' => $stripeSubscription->getStatus()
-                )
-            );
-            
-            if ($stripeSubscription->isTrialing()) {
-                $webClientEventData['trial_end'] = $stripeSubscription->getTrialPeriod()->getEnd();
-            } 
-            
-            $this->issueWebClientEvent($webClientEventData);       
-            $this->markEntityProcessed();            
-        }
-        
-        $isStatusChange = $stripeEventObject->getDataObject()->hasPreviousAttributes() && $stripeEventObject->getDataObject()->getPreviousAttributes()->containsKey('status');
-        
-        if ($isStatusChange) {
-            $statusTransition = $stripeEventObject->getDataObject()->getPreviousAttributes()->get('status') . '-to-' . $stripeSubscription->getStatus();
-            
-            if ($statusTransition != 'trialing-to-active') {
-                $this->markEntityProcessed();
-                return;
-            };
-            
-            $previousSubscription = new \webignition\Model\Stripe\Subscription(json_encode($stripeEventObject->getDataObject()->getPreviousAttributes()->toArray()));
-            $stripeCustomer = $this->getStripeCustomer();
-            
-            $webClientEventData = array_merge($webClientEventData, array(
-                'is_status_change' => 1,
-                'previous_subscription_status' => $previousSubscription->getStatus(),
-                'subscription_status' => $stripeSubscription->getStatus(),
-                'plan_name' => $stripeSubscription->getPlan()->getName(),
-                'plan_amount' => $stripeSubscription->getPlan()->getAmount(),
-                'has_card' => (int)$stripeCustomer->hasCard()
-            ));     
-
-            if ($stripeCustomer->hasCard() === false) {
-                $this->downgradeToBasicPlan();
-            }                
-           
-            
-            $this->issueWebClientEvent($webClientEventData);       
-            $this->markEntityProcessed();            
-        }
-    }
-    
-    public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
-        $this->event = $event;
-        
-        if ($this->getStripeCustomer()->hasCard() === false) {
-            $this->markEntityProcessed();
-            return;
-        }
-        
-        $invoice = $this->getStripeInvoice();
-        
-        $webClientData = array_merge($this->getDefaultWebClientData(), array(
-            'lines' => $invoice->getLinesSummary(),
-            'invoice_id' => $invoice->getId(),
-            'total' => $invoice->getTotal(),            
-            'amount_due' => $invoice->getAmountDue()
-        ));
-        
-        $this->issueWebClientEvent($webClientData);       
-        $this->markEntityProcessed();
-    }
-    
-    public function onInvoicePaymentSucceeded(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
-        $this->event = $event;
-        
-        $invoice = $this->getStripeInvoice();
-        
-        if ($invoice->getTotal() === 0 && $invoice->getAmountDue() === 0) {
-            $this->markEntityProcessed();
-            return;
-        }
-        
-        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
-            'lines' => $invoice->getLinesSummary(),
-            'total' => $invoice->getTotal(),
-            'amount_due' => $invoice->getAmountDue(),
-            'invoice_id' => $invoice->getId()
-        )));
-
-        
-        $this->markEntityProcessed();        
-    }     
-    
-    
-    private function markEntityProcessed() {
+    protected function markEntityProcessed() {
         $this->getEventEntity()->setIsProcessed(true);
-        $this->stripeEventService->persistAndFlush($this->getEventEntity());
+        $this->getStripeEventService()->persistAndFlush($this->getEventEntity());
     }
     
-    private function issueWebClientEvent($data) {        
+    protected function issueWebClientEvent($data) {        
         $subscriberUrl = $this->getWebClientSubscriberUrl();
         if (is_null($subscriberUrl)) {
             return false;
@@ -388,7 +200,7 @@ class Listener
     }
     
     
-    private function downgradeToBasicPlan() {
+    protected function downgradeToBasicPlan() {
         $this->userAccountPlanService->subscribe(
                 $this->event->getEntity()->getUser(),
                 $this->accountPlanService->find('basic')

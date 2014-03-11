@@ -230,8 +230,21 @@ services:
         container: "@service_container"
         taskOutputJoiners: %task_output_joiners%          
         
-  simplytestable.listener.stripeEventProcessor:
-    class:   SimplyTestable\ApiBundle\EventListener\Stripe\Listener
+  simplytestable.listener.stripe.customer.subscription.deleted.eventProcessor:
+    class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener
+    arguments:
+        logger: "@logger"
+        stripeService: "@simplytestable.services.stripeservice"
+        stripeEventService: "@simplytestable.services.stripeeventservice"
+        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        httpClientService: "@simplytestable.services.httpclientservice"
+        accountPlanService: "@simplytestable.services.accountPlanService"
+        webClientProperties: %web_client%    
+    tags: 
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }                   
+        
+  simplytestable.listener.stripe.customer.subscription.created.eventProcessor:
+    class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener
     arguments:
         logger: "@logger"
         stripeService: "@simplytestable.services.stripeservice"
@@ -241,9 +254,56 @@ services:
         accountPlanService: "@simplytestable.services.accountPlanService"
         webClientProperties: %web_client%    
     tags:
-      - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }           
-      - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }           
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
+      
+  simplytestable.listener.stripe.customer.subscription.trial_will_end.eventProcessor:
+    class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener
+    arguments:
+        logger: "@logger"
+        stripeService: "@simplytestable.services.stripeservice"
+        stripeEventService: "@simplytestable.services.stripeeventservice"
+        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        httpClientService: "@simplytestable.services.httpclientservice"
+        accountPlanService: "@simplytestable.services.accountPlanService"
+        webClientProperties: %web_client%    
+    tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }           
-      - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }           
-      - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }   
-      - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }           
+      
+  simplytestable.listener.stripe.customer.subscription.updated.eventProcessor:
+    class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener
+    arguments:
+        logger: "@logger"
+        stripeService: "@simplytestable.services.stripeservice"
+        stripeEventService: "@simplytestable.services.stripeeventservice"
+        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        httpClientService: "@simplytestable.services.httpclientservice"
+        accountPlanService: "@simplytestable.services.accountPlanService"
+        webClientProperties: %web_client%    
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }                 
+      
+  simplytestable.listener.stripe.invoice.succeeded.eventProcessor:
+    class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener
+    arguments:
+        logger: "@logger"
+        stripeService: "@simplytestable.services.stripeservice"
+        stripeEventService: "@simplytestable.services.stripeeventservice"
+        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        httpClientService: "@simplytestable.services.httpclientservice"
+        accountPlanService: "@simplytestable.services.accountPlanService"
+        webClientProperties: %web_client%    
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }       
+      
+  simplytestable.listener.stripe.invoice.payment_failed.eventProcessor:
+    class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener
+    arguments:
+        logger: "@logger"
+        stripeService: "@simplytestable.services.stripeservice"
+        stripeEventService: "@simplytestable.services.stripeeventservice"
+        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        httpClientService: "@simplytestable.services.httpclientservice"
+        accountPlanService: "@simplytestable.services.accountPlanService"
+        webClientProperties: %web_client%    
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }      
