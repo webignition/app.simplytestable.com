@@ -2,16 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-class CustomerSubscriptionTrialWillEndListener extends Listener
+class CustomerSubscriptionTrialWillEndListener extends CustomerSubscriptionListener
 {
-    /**
-     * getStripeCustomer
-     * getStripeSubscription
-     * 
-     * getDefaultWebClientData
-     * issueWebClientEvent
-     * markEntityProcessed
-     */
     
     public function onCustomerSubscriptionTrialWillEnd(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {        
         $this->setEvent($event);

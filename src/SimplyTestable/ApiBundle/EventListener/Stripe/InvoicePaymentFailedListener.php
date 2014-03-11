@@ -2,17 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-class InvoicePaymentFailedListener extends Listener
+class InvoicePaymentFailedListener extends InvoiceListener
 {
-    /**
-     *
-     * getStripeCustomer
-     * getStripeInvoice
-     * 
-     * getDefaultWebClientData
-     * issueWebClientEvent
-     * markEntityProcessed
-     */    
 
     public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $this->setEvent($event);

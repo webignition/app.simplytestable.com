@@ -103,6 +103,22 @@ abstract class Listener
         return $this->stripeEventService;
     }
     
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
+     */
+    protected function getUserAccountPlanService() {
+        return $this->userAccountPlanService;
+    }
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Entity\UserAccountPlan
+     */
+    protected function getUserAccountPlanFromEvent() {
+        return $this->getUserAccountPlanService()->getForUser($this->getEventEntity()->getUser());   
+    }     
+    
     
     /**
      * 
@@ -115,37 +131,10 @@ abstract class Listener
     
     /**
      * 
-     * @return \SimplyTestable\ApiBundle\Entity\UserAccountPlan
-     */
-    protected function getUserAccountPlanFromEvent() {
-        return $this->userAccountPlanService->getForUser($this->getEventEntity()->getUser());   
-    }
-    
-    
-    /**
-     * 
      * @return \SimplyTestable\ApiBundle\Model\Stripe\Customer
      */
     protected function getStripeCustomer() {
         return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent($this->event));
-    }
-    
-    
-    /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice
-     */
-    protected function getStripeInvoice() {
-        return new \SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice(json_encode($this->getEventEntity()->getStripeEventObject()->getDataObject()->getObject()->__toArray()));
-    }
-    
-    
-    /**
-     * 
-     * @return \webignition\Model\Stripe\Subscription
-     */
-    protected function getStripeSubscription() {
-        return $this->getEventEntity()->getStripeEventObject()->getDataObject()->getObject();
     }
     
     
@@ -201,7 +190,7 @@ abstract class Listener
     
     
     protected function downgradeToBasicPlan() {
-        $this->userAccountPlanService->subscribe(
+        $this->getUserAccountPlanService()->subscribe(
                 $this->event->getEntity()->getUser(),
                 $this->accountPlanService->find('basic')
         );        

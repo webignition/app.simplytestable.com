@@ -2,21 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-class CustomerSubscriptionUpdatedListener extends Listener
+class CustomerSubscriptionUpdatedListener extends CustomerSubscriptionListener
 {
-    /**
-     * 
-     * getEventEntity
-     * downgradeToBasicPlan
-     * 
-     * getStripeSubscription
-     * getStripeCustomer
-     * 
-     * getDefaultWebClientData
-     * issueWebClientEvent
-     * markEntityProcessed
-     */
-    
+   
     public function onCustomerSubscriptionUpdated(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {      
         $this->setEvent($event);
         

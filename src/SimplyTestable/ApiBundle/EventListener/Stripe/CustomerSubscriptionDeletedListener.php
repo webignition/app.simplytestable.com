@@ -2,18 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-class CustomerSubscriptionDeletedListener extends Listener
+class CustomerSubscriptionDeletedListener extends CustomerSubscriptionListener
 {
-    /**
-     * 
-     * getStripeSubscription
-     * downgradeToBasicPlan
-     * getUserAccountPlanFromEvent
-     * 
-     * getDefaultWebClientData
-     * issueWebClientEvent
-     * markEntityProcessed
-     */
 
     public function onCustomerSubscriptionDeleted(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $this->setEvent($event);       
@@ -59,10 +49,9 @@ class CustomerSubscriptionDeletedListener extends Listener
             }          
         }
         
-
-
         
         $this->issueWebClientEvent($webClientData);        
         $this->markEntityProcessed();
-    }    
+    } 
+   
 }
