@@ -5,8 +5,6 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Stripe;
 use Stripe_Customer;
-use Stripe_Plan;
-use SimplyTestable\ApiBundle\Model\Stripe\Customer as StripeCustomer;
 use SimplyTestable\ApiBundle\Adapter\Stripe\Customer\StripeCustomerAdapter;
 
 class StripeService {    
@@ -30,7 +28,7 @@ class StripeService {
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return \SimplyTestable\ApiBundle\Model\Stripe\Customer
+     * @return \webignition\Model\Stripe\Customer
      */
     public function createCustomer(User $user) {
         $adapter = new StripeCustomerAdapter();
@@ -43,7 +41,7 @@ class StripeService {
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
-     * @return \SimplyTestable\ApiBundle\Model\Stripe\Customer
+     * @return \webignition\Model\Stripe\Customer
      */
     public function getCustomer(UserAccountPlan $userAccountPlan) {        
         if ($userAccountPlan->hasStripeCustomer()) {            

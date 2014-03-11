@@ -61,7 +61,7 @@ class UserAccountPlanService extends EntityService {
      * @return UserAccountPlan
      */
     private function create(User $user, AccountPlan $plan, $stripeCustomer = null, $startTrialPeriod = null) {
-        $this->deactivateAllForUser($user);
+        $this->deactivateAllForUser($user);        
         
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setUser($user);
@@ -85,8 +85,8 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
      * @return UserAccountPlan|false
      */
-    public function subscribe(User $user, AccountPlan $newPlan) {
-        if (!$this->hasForUser($user)) {
+    public function subscribe(User $user, AccountPlan $newPlan) {                
+        if (!$this->hasForUser($user)) {            
             if ($newPlan->getIsPremium()) {
                 return $this->stripeService->subscribe($this->create(
                     $user,
@@ -126,7 +126,7 @@ class UserAccountPlanService extends EntityService {
                 $user,
                 $newPlan,
                 $stripeCustomerId,
-                $this->getStartTrialPeriod($stripeCustomer->getSubscription()->getTrialEnd())    
+                $this->getStartTrialPeriod($stripeCustomer->getSubscription()->getTrialPeriod()->getEnd())    
             );
         }        
 
@@ -134,7 +134,7 @@ class UserAccountPlanService extends EntityService {
             $user,
             $newPlan,
             $stripeCustomerId,
-            $this->getStartTrialPeriod($stripeCustomer->getSubscription()->getTrialEnd()) 
+            $this->getStartTrialPeriod($stripeCustomer->getSubscription()->getTrialPeriod()->getEnd()) 
         ));
     }
     

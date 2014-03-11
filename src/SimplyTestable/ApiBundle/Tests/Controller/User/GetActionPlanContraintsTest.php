@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller;
+namespace SimplyTestable\ApiBundle\Tests\Controller\User;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 

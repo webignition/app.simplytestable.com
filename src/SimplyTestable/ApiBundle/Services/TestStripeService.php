@@ -3,10 +3,8 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
-use Stripe;
-use Stripe_Customer;
 use Stripe_AuthenticationError;  
-use SimplyTestable\ApiBundle\Model\Stripe\Customer as StripeCustomer;
+use webignition\Model\Stripe\Customer as StripeCustomer;
 
 class TestStripeService extends StripeService {
     
@@ -99,7 +97,7 @@ class TestStripeService extends StripeService {
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return string
+     * @return \webignition\Model\Stripe\Customer
      */
     public function createCustomer(User $user) {
         if ($this->hasInvalidApiKey === true) {
@@ -109,7 +107,7 @@ class TestStripeService extends StripeService {
         $stripeCustomerData = new \stdClass();
         $stripeCustomerData->id = md5($user->getEmail());
         
-        return new StripeCustomer($stripeCustomerData);
+        return new StripeCustomer(json_encode($stripeCustomerData));
     }
     
     
@@ -129,16 +127,14 @@ class TestStripeService extends StripeService {
     /**
      * 
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
-     * @return array
+     * @return \webignition\Model\Stripe\Customer
      */
     public function getCustomer(UserAccountPlan $userAccountPlan) {                
         $responseData = $this->getResponseData(__FUNCTION__);
         
         if ($userAccountPlan->hasStripeCustomer()) {            
             $customerAsArray = $this->populateCustomerTemplate($this->getCustomerTemplate($userAccountPlan), $responseData);            
-            return new StripeCustomer(json_decode(json_encode($customerAsArray)));
-            
-            //return $this->populateCustomerTemplate($this->getCustomerTemplate($userAccountPlan), $responseData);           
+            return new StripeCustomer(json_encode($customerAsArray));      
         }        
     }
     

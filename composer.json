@@ -39,7 +39,8 @@
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "webignition/html-validation-error-normaliser":"dev-master",
         "webignition/html-document-link-finder":">=0.5,<1.0",
-        "webignition/url-resolver":">=0.1.1,<1.0"
+        "webignition/url-resolver":">=0.1.1,<1.0",
+        "webignition/php-stripe-models":">=0.1.6,<1.0"
     },
     "scripts": {
         "post-install-cmd": [

@@ -199,10 +199,10 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));        
         
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.subscription.created.event.json');
-        $fixtureObject = json_decode($fixture);
+        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.subscription.created.event.json');       
+        $fixtureObject = json_decode($fixture);        
         
-        $fixtureObject->data->object->customer = $userAccountPlan->getStripeCustomer();
+        $fixtureObject->data->object->customer = $userAccountPlan->getStripeCustomer();    
 
         $response = $this->getStripeWebHookController('indexAction', array(
             'event' => json_encode($fixtureObject)
@@ -218,7 +218,7 @@ class IndexActionTest extends BaseControllerJsonTestCase {
         $this->assertNotNull($stripeEvent->getStripeEventData());
         
         $this->assertEquals(json_encode($fixtureObject), $stripeEvent->getStripeEventData());
-        $this->assertEquals($fixtureObject, $stripeEvent->getStripeEventDataObject());
+        $this->assertEquals(new \webignition\Model\Stripe\Event\Event(json_encode($fixtureObject)), $stripeEvent->getStripeEventObject());
     }
     
     

@@ -96,7 +96,7 @@ class EventTest extends BaseSimplyTestableTestCase {
         $event->setType('plan.created');
         
         $this->assertNull($event->getStripeEventData());
-        $this->assertNull($event->getStripeEventDataObject());
+        $this->assertNull($event->getStripeEventObject());
     }    
     
     public function testDataPropertyGetDataObject() {
@@ -105,22 +105,29 @@ class EventTest extends BaseSimplyTestableTestCase {
         $event->setStripeId('evt_1xzXoIFWYFbDCT');
         $event->setType('plan.created');
         
-        $testData = array(
+        $eventData = array(
             'key1' => 'value1',
             'key2' => array(
                 'key2key1' => 'key2value1',
                 'key2key2' => 'key2value2'
             ),
-            'key3' => 'value3'
+            'data' => array(
+                'object' => array(
+                    'object' => 'list'
+                )
+            )
         );
         
-        $event->setStripeEventData(json_encode($testData));
+        $encodedEventData = json_encode($eventData);
+        $expectedEventModel = new \webignition\Model\Stripe\Event\Event($encodedEventData);
+        
+        $event->setStripeEventData($encodedEventData);
         
         $this->assertInternalType('string', $event->getStripeEventData());
-        $this->assertEquals(json_encode($testData), $event->getStripeEventData());
-        $this->assertInstanceOf('\stdClass', $event->getStripeEventDataObject());
-        $this->assertEquals(json_decode(json_encode($testData)), $event->getStripeEventDataObject());
-        $this->assertEquals('key2value1', $event->getStripeEventDataObject()->key2->key2key1);
+        $this->assertEquals($encodedEventData, $event->getStripeEventData());
+        
+        $this->assertInstanceOf('webignition\Model\Stripe\Event\Event', $event->getStripeEventObject());
+        $this->assertEquals($expectedEventModel, $event->getStripeEventObject());
     }      
 
 }

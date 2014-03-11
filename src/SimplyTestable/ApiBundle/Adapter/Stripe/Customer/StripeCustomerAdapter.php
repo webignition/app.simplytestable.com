@@ -2,10 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Adapter\Stripe\Customer;
 
-use SimplyTestable\ApiBundle\Model\Stripe\Customer as StripeCustomer;
-
 /**
- * Translates Stripe-provided \Stripe_Customer into SimplyTestable\ApiBundle\Model\Stripe\Customer
+ * Translates Stripe-provided \Stripe_Customer into webignition\Model\Stripe\Customer
  */
 class StripeCustomerAdapter {
     
@@ -13,7 +11,7 @@ class StripeCustomerAdapter {
         $stripeCustomerStdObject = json_decode(json_encode($input->__toArray(true)));
         $stripeCustomerStdObject->id = $input->id;
         
-        return new StripeCustomer($stripeCustomerStdObject);      
+        return new \webignition\Model\Stripe\Customer(json_encode($stripeCustomerStdObject));
     }
     
 }
