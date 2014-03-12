@@ -15,4 +15,4 @@ services:
   simplytestable.services.stripeService:
     class:   SimplyTestable\ApiBundle\Services\TestStripeService
     arguments: 
-        apiKey: "%stripe_api_key%"         
+        apiKey: "%stripe_key%"         

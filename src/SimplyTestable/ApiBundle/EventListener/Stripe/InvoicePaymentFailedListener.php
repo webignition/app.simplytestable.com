@@ -24,5 +24,46 @@ class InvoicePaymentFailedListener extends InvoiceListener
         
         $this->issueWebClientEvent($webClientData);       
         $this->markEntityProcessed();
+        
+        if ($this->invoiceSubscriptionHasRelatedCustomerSubscriptionDeletedEvent($invoice)) {
+            $this->downgradeToBasicPlan();
+        }
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice
+     * @return boolean
+     */
+    private function invoiceSubscriptionHasRelatedCustomerSubscriptionDeletedEvent(\SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice) {
+        $subscriptionLineItems = $invoice->getSubscriptionLines();
+        if (count($subscriptionLineItems) == 0) {
+            return false;
+        }
+        
+        $subscriptionDeletedEvents = $this->getStripeEventService()->getForUserAndType(
+            $this->getEventEntity()->getUser(),
+            'customer.subscription.deleted'
+        );
+        
+        if (count($subscriptionDeletedEvents) == 0) {
+            return false;
+        }
+        
+        
+        foreach ($subscriptionDeletedEvents as $subscriptionDeletedEvent) {
+            /* @var $eventSubscription \webignition\Model\Stripe\Subscription */
+            $deletedEventSubscription = $subscriptionDeletedEvent->getStripeEventObject()->getDataObject()->getObject();
+            
+            foreach ($subscriptionLineItems as $lineItem) {
+                /* @var $lineItem \webignition\Model\Stripe\Invoice\LineItem\Subscription */
+                if ($deletedEventSubscription->getId() == $lineItem->getId()) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 }
