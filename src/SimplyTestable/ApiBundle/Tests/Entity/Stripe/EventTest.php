@@ -106,7 +106,8 @@ class EventTest extends BaseSimplyTestableTestCase {
         $event->setType('plan.created');
         
         $eventData = array(
-            'key1' => 'value1',
+            'object' => 'event',
+            'type' => 'customer.subscription.deleted',
             'key2' => array(
                 'key2key1' => 'key2value1',
                 'key2key2' => 'key2value2'
