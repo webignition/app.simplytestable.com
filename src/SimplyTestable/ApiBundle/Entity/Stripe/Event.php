@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Entity\Stripe;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use webignition\Model\Stripe\Event\Event as StripeEventModel;
+use webignition\Model\Stripe\Event\Factory as StripeEventFactory;
 
 /**
  * 
@@ -211,7 +212,9 @@ class Event
      * @return \webignition\Model\Stripe\Event\Event
      */
     public function getStripeEventObject() {        
-        return (is_null($this->getStripeEventData())) ? null : new StripeEventModel($this->getStripeEventData());
+        return (is_null($this->getStripeEventData()))
+            ? null 
+            : StripeEventFactory::create($this->getStripeEventData());
     }
 
     /**

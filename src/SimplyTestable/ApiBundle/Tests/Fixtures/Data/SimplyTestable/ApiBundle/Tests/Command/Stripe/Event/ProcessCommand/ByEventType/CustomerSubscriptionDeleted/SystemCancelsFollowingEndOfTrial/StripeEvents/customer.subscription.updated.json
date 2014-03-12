@@ -1,0 +1,47 @@
+{
+  "id": "evt_3eHmmdcQE2gsHo",
+  "created": 1394580158,
+  "livemode": false,
+  "type": "customer.subscription.updated",
+  "data": {
+    "object": {
+      "id": "sub_3eHecsvABZjAAN",
+      "plan": {
+        "interval": "month",
+        "name": "Agency",
+        "created": 1370600333,
+        "amount": 1900,
+        "currency": "gbp",
+        "id": "agency-19",
+        "object": "plan",
+        "livemode": false,
+        "interval_count": 1,
+        "trial_period_days": 30,
+        "metadata": {
+        }
+      },
+      "object": "subscription",
+      "start": 1394579924,
+      "status": "active",
+      "customer": "{{stripe_customer}}",
+      "cancel_at_period_end": false,
+      "current_period_start": 1394579990,
+      "current_period_end": 1397258390,
+      "ended_at": null,
+      "trial_start": 1394579705,
+      "trial_end": 1394579990,
+      "canceled_at": null,
+      "quantity": 1,
+      "application_fee_percent": null,
+      "discount": null
+    },
+    "previous_attributes": {
+      "status": "trialing",
+      "current_period_start": 1394579705,
+      "current_period_end": 1394579990
+    }
+  },
+  "object": "event",
+  "pending_webhooks": 1,
+  "request": null
+}

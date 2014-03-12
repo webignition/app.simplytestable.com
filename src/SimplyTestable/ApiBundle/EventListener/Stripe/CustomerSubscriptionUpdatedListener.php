@@ -10,11 +10,9 @@ class CustomerSubscriptionUpdatedListener extends CustomerSubscriptionListener
         
         $stripeEventObject = $this->getEventEntity()->getStripeEventObject();
         $webClientEventData = $this->getDefaultWebClientData();        
-        $stripeSubscription = $this->getStripeSubscription();
+        $stripeSubscription = $this->getStripeSubscription();        
         
-        $isPlanChange = $stripeEventObject->getDataObject()->hasPreviousAttributes() && $stripeEventObject->getDataObject()->getPreviousAttributes()->containsKey('plan');
-        
-        if ($isPlanChange) {
+        if ($stripeEventObject->isPlanChange()) {
             $oldPlan = $stripeEventObject->getDataObject()->getPreviousAttributes()->get('plan');
             
             $webClientEventData = array_merge(
@@ -36,9 +34,7 @@ class CustomerSubscriptionUpdatedListener extends CustomerSubscriptionListener
             $this->markEntityProcessed();            
         }
         
-        $isStatusChange = $stripeEventObject->getDataObject()->hasPreviousAttributes() && $stripeEventObject->getDataObject()->getPreviousAttributes()->containsKey('status');
-        
-        if ($isStatusChange) {
+        if ($stripeEventObject->isStatusChange()) {
             $statusTransition = $stripeEventObject->getDataObject()->getPreviousAttributes()->get('status') . '-to-' . $stripeSubscription->getStatus();
             
             if ($statusTransition != 'trialing-to-active') {

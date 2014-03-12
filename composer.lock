@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "1129c5cd3b41ed2390280b7ec170b551",
+    "hash": "da10dd939a0f3bfac35244065608cd1e",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2816,16 +2816,16 @@
         },
         {
             "name": "webignition/php-stripe-models",
-            "version": "0.1.6",
+            "version": "0.1.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/php-stripe-models.git",
-                "reference": "4460daa030d92af95e7c23ce8b0cf75b77043d13"
+                "reference": "1a259a1ffeb4e25228832807f31f5e6796441ec1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/php-stripe-models/zipball/4460daa030d92af95e7c23ce8b0cf75b77043d13",
-                "reference": "4460daa030d92af95e7c23ce8b0cf75b77043d13",
+                "url": "https://api.github.com/repos/webignition/php-stripe-models/zipball/1a259a1ffeb4e25228832807f31f5e6796441ec1",
+                "reference": "1a259a1ffeb4e25228832807f31f5e6796441ec1",
                 "shasum": ""
             },
             "require": {
@@ -2859,7 +2859,7 @@
                 "model",
                 "stripe"
             ],
-            "time": "2014-03-11 10:42:58"
+            "time": "2014-03-12 09:28:52"
         },
         {
             "name": "webignition/quoted-string",
