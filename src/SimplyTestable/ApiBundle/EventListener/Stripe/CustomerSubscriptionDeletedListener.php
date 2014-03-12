@@ -31,6 +31,7 @@ class CustomerSubscriptionDeletedListener extends CustomerSubscriptionListener
                 'actioned_by' => 'system'
             )));        
             $this->markEntityProcessed();             
+            return;            
         }
         
         if (!$this->hasTrialToActiveStatusChangeEvent()) {
@@ -41,6 +42,7 @@ class CustomerSubscriptionDeletedListener extends CustomerSubscriptionListener
                 'is_during_trial' => 0
             )));        
             $this->markEntityProcessed();              
+            return;            
         }
       
         $this->markEntityProcessed();
