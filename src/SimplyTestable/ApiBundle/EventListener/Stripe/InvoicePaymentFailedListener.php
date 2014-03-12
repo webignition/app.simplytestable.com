@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
+use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+
 class InvoicePaymentFailedListener extends InvoiceListener
 {
 
@@ -25,21 +27,20 @@ class InvoicePaymentFailedListener extends InvoiceListener
         $this->issueWebClientEvent($webClientData);       
         $this->markEntityProcessed();
         
-        if ($this->invoiceSubscriptionHasRelatedCustomerSubscriptionDeletedEvent($invoice)) {
-            $this->downgradeToBasicPlan();
+        if ($this->hasRelatedCustomerSubscriptionDeletedEvent($invoice)) {
+            $eventEntity = $this->getCustomerSubscriptionDeletedEvent($invoice);            
+            $this->dispatcher->dispatch(
+                    'stripe_process.' . $eventEntity->getType(),
+                    new DispatchableEvent($eventEntity)
+            );
         }
     }
     
     
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice
-     * @return boolean
-     */
-    private function invoiceSubscriptionHasRelatedCustomerSubscriptionDeletedEvent(\SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice) {
+    private function getCustomerSubscriptionDeletedEvent(\SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice) {
         $subscriptionLineItems = $invoice->getSubscriptionLines();
         if (count($subscriptionLineItems) == 0) {
-            return false;
+        return null;  
         }
         
         $subscriptionDeletedEvents = $this->getStripeEventService()->getForUserAndType(
@@ -48,7 +49,7 @@ class InvoicePaymentFailedListener extends InvoiceListener
         );
         
         if (count($subscriptionDeletedEvents) == 0) {
-            return false;
+        return null;  
         }
         
         
@@ -59,11 +60,21 @@ class InvoicePaymentFailedListener extends InvoiceListener
             foreach ($subscriptionLineItems as $lineItem) {
                 /* @var $lineItem \webignition\Model\Stripe\Invoice\LineItem\Subscription */
                 if ($deletedEventSubscription->getId() == $lineItem->getId()) {
-                    return true;
+                    return $subscriptionDeletedEvent;
                 }
             }
         }
         
-        return false;
+        return null;        
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice
+     * @return boolean
+     */
+    private function hasRelatedCustomerSubscriptionDeletedEvent(\SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice) {
+        return !is_null($this->getCustomerSubscriptionDeletedEvent($invoice));
     }
 }

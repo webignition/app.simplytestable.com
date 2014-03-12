@@ -16,6 +16,13 @@ abstract class Listener
     
     /**
      *
+     * @var \Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
+     */
+    protected $dispatcher;
+    
+    
+    /**
+     *
      * @var \SimplyTestable\ApiBundle\Services\StripeService 
      */
     private $stripeService;
@@ -69,14 +76,16 @@ abstract class Listener
      */
     public function __construct(
             Logger $logger,
+            \Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher $dispatcher,
             \SimplyTestable\ApiBundle\Services\StripeService $stripeService,
             \SimplyTestable\ApiBundle\Services\StripeEventService $stripeEventService,
             \SimplyTestable\ApiBundle\Services\UserAccountPlanService $userAccountPlanService,
             \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService,
             \SimplyTestable\ApiBundle\Services\AccountPlanService $accountPLanService,
             $webClientProperties
-    ) {        
+    ) {                
         $this->logger = $logger;
+        $this->dispatcher = $dispatcher;
         $this->stripeService = $stripeService;
         $this->stripeEventService = $stripeEventService;
         $this->userAccountPlanService = $userAccountPlanService;
@@ -151,7 +160,7 @@ abstract class Listener
         $this->getStripeEventService()->persistAndFlush($this->getEventEntity());
     }
     
-    protected function issueWebClientEvent($data) {        
+    protected function issueWebClientEvent($data) {                
         $subscriberUrl = $this->getWebClientSubscriberUrl();
         if (is_null($subscriberUrl)) {
             return false;

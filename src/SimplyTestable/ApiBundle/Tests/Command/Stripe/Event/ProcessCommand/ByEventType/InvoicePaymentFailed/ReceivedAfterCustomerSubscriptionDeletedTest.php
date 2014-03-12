@@ -6,12 +6,41 @@ use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\ByEventTy
 
 class ReceivedAfterCustomerSubscriptionDeletedTest extends ByEventTypeTest {
     
+    protected function getHttpFixtureSet() {
+        return array(
+            "HTTP/1.1 200 OK",
+            "HTTP/1.1 200 OK"
+        );
+    }    
+    
     public function testUserIsDowngradedToBasicPlan() {
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->getUser());
         $this->assertEquals($this->getAccountPlanService()->find('basic'), $userAccountPlan->getPlan());
     }    
     
     protected function getExpectedNotificationBodyFields() {
+        return array(
+            array_merge(parent::getExpectedNotificationBodyFields(), array(
+            'lines' => array(
+                array(
+                    'proration' => 0,
+                    'plan_name' => 'Agency',
+                    'period_start' => 1382368580,
+                    'period_end' => 1385046980,
+                    'amount' => 1900
+                )
+            ),
+            'invoice_id' => 'in_2nL671LyaO5mbg',
+            'total' => '1900',
+            'amount_due' => '1900',
+            )),
+            array(
+                'event' => 'customer.subscription.deleted',
+                'plan_name' => 'Agency',
+                'actioned_by' => 'system'                
+            )            
+        );
+        
         return array_merge(parent::getExpectedNotificationBodyFields(), array(
             'lines' => array(
                 array(

@@ -13,9 +13,7 @@ abstract class NonErrorCasesTest extends ProcessCommandTest {
     public function setUp() {
         parent::setUp();
         
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.1 200 OK"
-        )));        
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureSet()));        
         
         $user = $this->getTestUser();        
         $this->getUserService()->setUser($user);
@@ -35,15 +33,31 @@ abstract class NonErrorCasesTest extends ProcessCommandTest {
         $this->stripeId = $responseObject->stripe_id;       
     }
     
+    protected function getHttpFixtureSet() {
+        return array(
+            "HTTP/1.1 200 OK"
+        );
+    }
+    
     public function testEventIsProcessed() {
         $this->assertTrue($this->stripeEvent->getIsProcessed());        
     }
     
     
     public function testNotificationBodyFields() {
-        foreach ($this->getExpectedNotificationBodyFields() as $name => $expectedValue) {            
-            $this->assertNotificationBodyField($name, $expectedValue);
-        }        
+        $expectedNotificationBodyFields = $this->getExpectedNotificationBodyFields();
+        
+        if (key($expectedNotificationBodyFields) === 0) {
+            foreach ($expectedNotificationBodyFields as $index => $fieldSet) {
+                foreach ($fieldSet as $name => $expectedValue) {
+                    $this->assertNotificationBodyField($name, $expectedValue, $index);
+                }
+            }
+        } else {
+            foreach ($expectedNotificationBodyFields as $name => $expectedValue) {            
+                $this->assertNotificationBodyField($name, $expectedValue);
+            }              
+        }
     }    
     
     protected function getExpectedNotificationBodyFields() {
@@ -62,9 +76,10 @@ abstract class NonErrorCasesTest extends ProcessCommandTest {
     }
     
     
-    protected function assertNotificationBodyField($name, $expectedValue) {
+    protected function assertNotificationBodyField($name, $expectedValue, $index = 0) {        
         /* @var $postFields \Guzzle\Http\QueryString */
-        $postFields = $this->getHttpClientService()->getHistoryPlugin()->getLastRequest()->getPostFields();
+        $requests = $this->getHttpClientService()->getHistoryPlugin()->getAll();
+        $postFields = $requests[$index]['request']->getPostFields();
         
         $this->assertTrue($postFields->hasKey($name), 'Notification body field "'.$name.'" not set');
         $this->assertEquals($expectedValue, $postFields->get($name));
