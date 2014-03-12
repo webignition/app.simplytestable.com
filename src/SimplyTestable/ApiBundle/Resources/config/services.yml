@@ -200,7 +200,7 @@ services:
   simplytestable.services.stripeService:
     class:   SimplyTestable\ApiBundle\Services\StripeService
     arguments: 
-        apiKey: "%stripe_api_key%"          
+        apiKey: "%stripe_key%"          
         
   simplytestable.services.crawljobcontainerservice:
     class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
