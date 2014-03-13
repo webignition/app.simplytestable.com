@@ -126,7 +126,7 @@ class UserAccountPlanService extends EntityService {
                 $user,
                 $newPlan,
                 $stripeCustomerId,
-                $this->getStartTrialPeriod($stripeCustomer->getSubscription()->getTrialPeriod()->getEnd())    
+                $this->getStartTrialPeriod($stripeCustomer)    
             );
         }        
 
@@ -134,17 +134,22 @@ class UserAccountPlanService extends EntityService {
             $user,
             $newPlan,
             $stripeCustomerId,
-            $this->getStartTrialPeriod($stripeCustomer->getSubscription()->getTrialPeriod()->getEnd()) 
+            $this->getStartTrialPeriod($stripeCustomer) 
         ));
     }
     
     
     /**
      * 
-     * @param int $trialEndTimestamp
+     * @param \webignition\Model\Stripe\Customer $stripeCustomer
      * @return int
      */
-    private function getStartTrialPeriod($trialEndTimestamp) {        
+    private function getStartTrialPeriod(\webignition\Model\Stripe\Customer $stripeCustomer) {                    
+        if (!$stripeCustomer->hasSubscription()) {
+            return 0;
+        }
+        
+        $trialEndTimestamp = $stripeCustomer->getSubscription()->getTrialPeriod()->getEnd();        
         $difference = $trialEndTimestamp - time();
         return (int)ceil($difference / 86400);
     }
