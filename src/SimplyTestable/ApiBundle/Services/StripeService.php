@@ -96,9 +96,12 @@ class StripeService {
      * 
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
      */
-    public function unsubscribe(UserAccountPlan $userAccountPlan) {
+    public function unsubscribe(UserAccountPlan $userAccountPlan) {        
         $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
-        $stripeCustomerObject->cancelSubscription();        
+        
+        if (isset($stripeCustomerObject->subscription) && !is_null($stripeCustomerObject->subscription)) {
+            $stripeCustomerObject->cancelSubscription();
+        }      
     }
     
 }
