@@ -14,5 +14,4 @@ parameters:
     secret: SetThis!
     admin_user_email: test.ci.admin@example.com
     admin_user_password: password1
-    stripe_api_key: stripe_api_key_value
     default_trial_period: 30
