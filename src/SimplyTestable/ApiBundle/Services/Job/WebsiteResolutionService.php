@@ -55,7 +55,7 @@ class WebsiteResolutionService {
     }
     
     
-    public function resolve(Job $job) {
+    public function resolve(Job $job) {        
         if (!$this->jobService->isNew($job)) {
             throw new WebsiteResolutionException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
@@ -116,6 +116,10 @@ class WebsiteResolutionService {
             $this->urlResolver->getConfiguration()->enableFollowMetaRedirects();
             $this->urlResolver->getConfiguration()->enableRetryWithUrlEncodingDisabled();
             $this->urlResolver->getConfiguration()->setBaseRequest($baseRequest);
+            
+            if ($job->hasParameter('cookies')) {
+                $this->urlResolver->getConfiguration()->setCookies(json_decode($job->getParameter('cookies'), true));
+            }
         }
         
         if ($job->hasParameter('http-auth-username') || $job->hasParameter('http-auth-password')) {            
