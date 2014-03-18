@@ -222,12 +222,10 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
             }
         } 
         
-        if ($task->hasParameter('cookies')) {
-            var_dump($task->getParameter('cookies'));
-            
+        if ($task->hasParameter('cookies')) {            
             $cookieUrlMatcher = new \webignition\Cookie\UrlMatcher\UrlMatcher();
             
-            foreach ($parameters['cookies'] as $cookie) {
+            foreach (json_decode($task->getParameter('cookies'), true) as $cookie) {                
                 if ($cookieUrlMatcher->isMatch($cookie, $request->getUrl())) {
                     $request->addCookie($cookie['name'], $cookie['value']);
                 }

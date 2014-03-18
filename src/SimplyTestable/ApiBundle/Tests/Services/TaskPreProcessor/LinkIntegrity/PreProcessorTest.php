@@ -28,16 +28,20 @@ abstract class PreProcessorTest extends BaseSimplyTestableTestCase {
     }
     
     
+    /**
+     * 
+     * @return array
+     */
+    protected function getJobParameters() {
+        return array();
+    }    
+    
+    
     public function setUp() {
         parent::setUp();
         
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity'), $this->getTestTypeOptions()));        
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity'), $this->getTestTypeOptions(), $this->getJobParameters()));        
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));        
-        
-//        foreach ($this->getHttpClientService()->getMockPlugin()->getQueue() as $request) {
-//            echo $request . "\n\n";
-//        }
-//        exit();
 
         $this->tasks = $job->getTasks();
 
