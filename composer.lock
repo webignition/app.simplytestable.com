@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "a38bbb4d1ab63ae9aac60768a39f62e2",
+    "hash": "47e11f765f600f12b219b6bf827fb561",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3410,6 +3410,48 @@
                 "url"
             ],
             "time": "2014-03-17 14:00:47"
+        },
+        {
+            "name": "webignition/web-json-model",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/web-json-model.git",
+                "reference": "d6825b8ee0bdc58fdf34f2726d9be7968bdda7ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/web-json-model/zipball/d6825b8ee0bdc58fdf34f2726d9be7968bdda7ad",
+                "reference": "d6825b8ee0bdc58fdf34f2726d9be7968bdda7ad",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "webignition/web-resource-model": ">=0.1,<2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "PHP model of a web-based JSON resource, based on webignition/web-resource-model",
+            "homepage": "https://github.com/webignition/web-json-model",
+            "keywords": [
+                "json",
+                "model"
+            ],
+            "time": "2012-08-16 15:18:52"
         },
         {
             "name": "webignition/web-page-model",

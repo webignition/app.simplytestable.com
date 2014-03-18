@@ -416,25 +416,6 @@ class Task
     
     /**
      * 
-     * @param string $name
-     * @return mixed
-     */
-    public function getParameter($name) {
-        if (!$this->hasParameters()) {
-            return null;
-        }
-        
-        $decodedParameters = json_decode($this->getParameters());
-        if (!isset($decodedParameters->{$name})) {
-            return null;
-        }
-        
-        return $decodedParameters->{$name};
-    }
-    
-    
-    /**
-     * 
      * @return boolean
      */
     public function hasParameters() {
@@ -449,5 +430,42 @@ class Task
     public function getParametersHash() {
         return md5($this->getParameters());
     }
+    
+    
+    /**
+     * 
+     * @return \stdClass
+     */
+    public function getParametersObject() {
+        return json_decode($this->getParameters());
+    }
+    
+    
+    /**
+     * 
+     * @param string $name
+     * @return boolean
+     */
+    public function hasParameter($name) {
+        if (!$this->getParametersObject() instanceof \stdClass) {
+            return false;
+        }
+        
+        return isset($this->getParametersObject()->$name);
+    }
+    
+    
+    /**
+     * 
+     * @param string $name
+     * @return mixed
+     */
+    public function getParameter($name) {
+        if (!$this->hasParameter($name)) {
+            return null;
+        }
+        
+        return $this->getParametersObject()->$name;
+    }    
    
 }

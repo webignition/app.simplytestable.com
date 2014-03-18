@@ -178,6 +178,10 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     private function getWebResource(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {                        
         try {            
             $request = $this->getWebResourceService()->getHttpClientService()->getRequest($task->getUrl());
+            
+            $this->setRequestAuthentication($request, $task);
+            $this->setRequestCookies($request, $task);            
+            
             return $this->getWebResourceService()->get($request);            
         } catch (WebResourceException $webResourceException) {
             $this->getLogger()->err('LinkIntegrityTaskPreProcessor::getWebResource ['.$task->getUrl().'][http exception]['.$webResourceException->getResponse()->getStatusCode().']');           
@@ -186,6 +190,50 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
         } catch (\Guzzle\Http\Exception\TooManyRedirectsException $tooManyRedirectsException) {            
             $this->getLogger()->err('LinkIntegrityTaskPreProcessor::getWebResource ['.$task->getUrl().'][http exception][too many redirects]');
         }
+    }    
+    
+    
+    /**
+     * 
+     * @param \Guzzle\Http\Message\Request $request
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     */
+    private function setRequestAuthentication(\Guzzle\Http\Message\Request $request, \SimplyTestable\ApiBundle\Entity\Task\Task $task) {
+        if ($task->hasParameter('http-auth-username') || $task->hasParameter('http-auth-password')) {            
+            $request->setAuth(
+                ($task->hasParameter('http-auth-username')) ? $task->getParameter('http-auth-username') : '',
+                ($task->hasParameter('http-auth-password')) ? $task->getParameter('http-auth-password') : '',
+                'any'
+            );
+        }
+    }      
+    
+    
+    
+    /**
+     * 
+     * @param \Guzzle\Http\Message\Request $request
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     */
+    private function setRequestCookies(\Guzzle\Http\Message\Request $request, \SimplyTestable\ApiBundle\Entity\Task\Task $task) {
+        if (!is_null($request->getCookies())) {
+            foreach ($request->getCookies() as $name => $value) {
+                $request->removeCookie($name);
+            }
+        } 
+        
+        if ($task->hasParameter('cookies')) {
+            var_dump($task->getParameter('cookies'));
+            
+            $cookieUrlMatcher = new \webignition\Cookie\UrlMatcher\UrlMatcher();
+            
+            foreach ($parameters['cookies'] as $cookie) {
+                if ($cookieUrlMatcher->isMatch($cookie, $request->getUrl())) {
+                    $request->addCookie($cookie['name'], $cookie['value']);
+                }
+            }             
+        }
+
     }     
     
     

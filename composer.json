@@ -40,7 +40,10 @@
         "webignition/html-validation-error-normaliser":"dev-master",
         "webignition/html-document-link-finder":">=0.5,<1.0",
         "webignition/url-resolver":">=0.2,<1.0",
-        "webignition/php-stripe-models":">=0.1.14,<1.0"
+        "webignition/php-stripe-models":">=0.1.14,<1.0",
+        "webignition/cookie-url-matcher":">=0.1,<1",
+        "webignition/web-json-model":">=0.1,<1.0",
+        "webignition/web-page-model":">=0.6,<1.0"
     },
     "scripts": {
         "post-install-cmd": [
