@@ -47,24 +47,24 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     public function testWithUrlsCollectedViaSitemapViaRobotsTxt() {
         $this->assertGreaterThan(0, $this->job->getTasks()->count());
         
-        $this->assertEquals(self::HTTP_AUTH_USERNAME, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getUsername());
-        $this->assertEquals(self::HTTP_AUTH_PASSWORD, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getPassword());        
+        $this->assertEquals(self::HTTP_AUTH_USERNAME, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getConfiguration()->getBaseRequest()->getUsername());
+        $this->assertEquals(self::HTTP_AUTH_PASSWORD, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getConfiguration()->getBaseRequest()->getPassword());        
     }
     
     
     public function testWithUrlsCollectedSitemapViaGuessingPath() {
         $this->assertGreaterThan(0, $this->job->getTasks()->count());
         
-        $this->assertEquals(self::HTTP_AUTH_USERNAME, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getUsername());
-        $this->assertEquals(self::HTTP_AUTH_PASSWORD, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getPassword());        
+        $this->assertEquals(self::HTTP_AUTH_USERNAME, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getConfiguration()->getBaseRequest()->getUsername());
+        $this->assertEquals(self::HTTP_AUTH_PASSWORD, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getConfiguration()->getBaseRequest()->getPassword());        
     } 
     
     
     public function testWithUrlsCollectedViaRssFeed() {
         $this->assertGreaterThan(0, $this->job->getTasks()->count());
         
-        $this->assertEquals(self::HTTP_AUTH_USERNAME, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getUsername());
-        $this->assertEquals(self::HTTP_AUTH_PASSWORD, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getBaseRequest()->getPassword());        
+        $this->assertEquals(self::HTTP_AUTH_USERNAME, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getConfiguration()->getBaseRequest()->getUsername());
+        $this->assertEquals(self::HTTP_AUTH_PASSWORD, $this->getJobPreparationService()->getWebsiteService()->getSitemapFinder()->getConfiguration()->getBaseRequest()->getPassword());        
     }      
 
 }

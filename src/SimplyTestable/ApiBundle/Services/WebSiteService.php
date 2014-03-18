@@ -277,8 +277,8 @@ class WebSiteService extends EntityService {
             /* @var $childSitemap Sitemap */
             if (is_null($childSitemap->getContent())) {                
                 $sitemapRetriever = new \webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever();
-                $sitemapRetriever->setBaseRequest($this->getHttpClientService()->get()->get());
-                $sitemapRetriever->disableRetrieveChildSitemaps();
+                $sitemapRetriever->getConfiguration()->setBaseRequest($this->getHttpClientService()->get()->get());
+                $sitemapRetriever->getConfiguration()->disableRetrieveChildSitemaps();
                 $sitemapRetriever->retrieve($childSitemap);              
             }
             

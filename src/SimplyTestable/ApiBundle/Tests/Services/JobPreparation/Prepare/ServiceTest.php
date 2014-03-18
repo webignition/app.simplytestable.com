@@ -22,7 +22,7 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     public function testHandleSingleIndexLargeSitemap() {
         $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
         
-        $this->getWebSiteService()->getSitemapFinder()->getSitemapRetriever()->setTotalTransferTimeout(0.00001);
+        $this->getWebSiteService()->getSitemapFinder()->getSitemapRetriever()->getConfiguration()->setTotalTransferTimeout(0.00001);
         
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));       
         $this->getJobPreparationService()->prepare($job);         
