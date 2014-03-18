@@ -41,7 +41,6 @@ class WebSiteService extends EntityService {
      */
     private $sitemapFinder = null;
     
-    
     /**
      *
      * @param EntityManager $entityManager
@@ -200,19 +199,18 @@ class WebSiteService extends EntityService {
     private function getUrlsFromSitemap(WebSite $website, $parameters) {               
         $sitemapFinder = $this->getSitemapFinder();        
         $sitemapFinder->getSitemapRetriever()->reset();
-        $sitemapFinder->setRootUrl($website->getCanonicalUrl());        
+        $sitemapFinder->getConfiguration()->setRootUrl($website->getCanonicalUrl());        
         
         if (isset($parameters['softLimit'])) {
             $sitemapFinder->getUrlLimitListener()->setSoftLimit($parameters['softLimit']);
-        }        
-
-        if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {            
-            $sitemapFinder->getBaseRequest()->setAuth(
-                isset($parameters['http-auth-username']) ? $parameters['http-auth-username'] : '',
-                isset($parameters['http-auth-password']) ? $parameters['http-auth-password'] : '',
-                'any'
-            );
-        }        
+        }   
+        
+        $this->setRequestAuthentication($sitemapFinder->getConfiguration()->getBaseRequest(), $parameters);
+        
+        if (isset($parameters['cookies'])) {
+            $sitemapFinder->getConfiguration()->setCookies($parameters['cookies']);
+            $sitemapFinder->getSitemapRetriever()->getConfiguration()->setCookies($parameters['cookies']);
+        }
         
         $sitemaps = $sitemapFinder->getSitemaps();
         
@@ -240,11 +238,11 @@ class WebSiteService extends EntityService {
     public function getSitemapFinder() {
         if (is_null($this->sitemapFinder)) {
             $this->sitemapFinder = new WebsiteSitemapFinder();
-            $this->sitemapFinder->setBaseRequest($this->httpClientService->get()->get());           
-            $this->sitemapFinder->getSitemapRetriever()->disableRetrieveChildSitemaps();
+            $this->sitemapFinder->getConfiguration()->setBaseRequest($this->httpClientService->get()->get());           
+            $this->sitemapFinder->getSitemapRetriever()->getConfiguration()->disableRetrieveChildSitemaps();
             
-            if ($this->sitemapFinder->getSitemapRetriever()->getTotalTransferTimeout() == \webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever::DEFAULT_TOTAL_TRANSFER_TIMEOUT) {
-                $this->sitemapFinder->getSitemapRetriever()->setTotalTransferTimeout(self::DEFAULT_URL_RETRIEVER_TOTAL_TIMEOUT);
+            if ($this->sitemapFinder->getSitemapRetriever()->getConfiguration()->getTotalTransferTimeout() == \webignition\WebsiteSitemapRetriever\Configuration\Configuration::DEFAULT_TOTAL_TRANSFER_TIMEOUT) {
+                $this->sitemapFinder->getSitemapRetriever()->getConfiguration()->setTotalTransferTimeout(self::DEFAULT_URL_RETRIEVER_TOTAL_TIMEOUT);
             }
         }
         
@@ -317,21 +315,20 @@ class WebSiteService extends EntityService {
     public function getWebsiteRssFeedFinder(WebSite $website, $parameters) {
         if (is_null($this->websiteRssFeedFinder)) {
             $this->websiteRssFeedFinder = new WebsiteRssFeedFinder();
-            $this->websiteRssFeedFinder->setBaseRequest($this->httpClientService->get()->get());
-            $this->websiteRssFeedFinder->setRootUrl($website->getCanonicalUrl());
-            $this->websiteRssFeedFinder->getBaseRequest()->getClient()->setUserAgent('ST News Feed URL Retriever/0.1 (http://bit.ly/RlhKCL)');
+            $this->websiteRssFeedFinder->getConfiguration()->setBaseRequest($this->httpClientService->get()->get());
+            $this->websiteRssFeedFinder->getConfiguration()->setRootUrl($website->getCanonicalUrl());
+            $this->websiteRssFeedFinder->getConfiguration()->getBaseRequest()->getClient()->setUserAgent('ST News Feed URL Retriever/0.1 (http://bit.ly/RlhKCL)');
             
-            if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {
-                $this->websiteRssFeedFinder->getBaseRequest()->setAuth(
-                    isset($parameters['http-auth-username']) ? $parameters['http-auth-username'] : '',
-                    isset($parameters['http-auth-password']) ? $parameters['http-auth-password'] : '',
-                    'any'
-                );
-            }               
+            $this->setRequestAuthentication($this->websiteRssFeedFinder->getConfiguration()->getBaseRequest(), $parameters);
+            
+            if (isset($parameters['cookies'])) {
+                $this->websiteRssFeedFinder->getConfiguration()->setCookies($parameters['cookies']);
+            }            
         }
         
         return $this->websiteRssFeedFinder;
     }
+    
 
     
     /**
@@ -371,13 +368,8 @@ class WebSiteService extends EntityService {
         try {
             $request = $this->getHttpClientService()->getRequest($feedUrl);
             
-            if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {
-                $request->setAuth(
-                    isset($parameters['http-auth-username']) ? $parameters['http-auth-username'] : '',
-                    isset($parameters['http-auth-password']) ? $parameters['http-auth-password'] : '',
-                    'any'
-                );
-            }            
+            $this->setRequestAuthentication($request, $parameters);            
+            $this->setRequestCookies($request, $parameters);
             
             $response = $request->send();
         } catch (\Guzzle\Http\Exception\RequestException $requestException) {            
@@ -402,6 +394,46 @@ class WebSiteService extends EntityService {
         }
         
         return $urls;        
-    }    
+    } 
+    
+    
+    /**
+     * 
+     * @param \Guzzle\Http\Message\Request $request
+     */
+    private function setRequestAuthentication(\Guzzle\Http\Message\Request $request, $parameters) {
+        if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {            
+            $request->setAuth(
+                isset($parameters['http-auth-username']) ? $parameters['http-auth-username'] : '',
+                isset($parameters['http-auth-password']) ? $parameters['http-auth-password'] : '',
+                'any'
+            );
+        }
+    }      
+    
+    
+    
+    /**
+     * 
+     * @param \Guzzle\Http\Message\Request $request
+     */
+    private function setRequestCookies(\Guzzle\Http\Message\Request $request, $parameters) {
+        if (!is_null($request->getCookies())) {
+            foreach ($request->getCookies() as $name => $value) {
+                $request->removeCookie($name);
+            }
+        }   
+        
+        if (isset($parameters['cookies'])) {
+            $cookieUrlMatcher = new \webignition\Cookie\UrlMatcher\UrlMatcher();
+            
+            foreach ($parameters['cookies'] as $cookie) {
+                if ($cookieUrlMatcher->isMatch($cookie, $request->getUrl())) {
+                    $request->addCookie($cookie['name'], $cookie['value']);
+                }
+            }             
+        }
+
+    }     
     
 }

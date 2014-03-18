@@ -79,7 +79,7 @@ class JobPreparationService {
      *
      * @var \SimplyTestable\ApiBundle\Services\ResqueQueueService
      */
-    private $resqueService;      
+    private $resqueService;
     
     
     public function __construct(
@@ -280,6 +280,10 @@ class JobPreparationService {
     private function collectUrlsForJob(Job $job, $softLimit) {
         $parameters = ($job->hasParameters()) ? json_decode($job->getParameters(), true) : array();
         $parameters['softLimit'] = $softLimit;
+        
+        if (isset($parameters['cookies'])) {
+            $parameters['cookies'] = json_decode($parameters['cookies'], true);
+        }
         
         if ($this->isSingleUrlJob($job)) {        
             return array($job->getWebsite()->getCanonicalUrl());

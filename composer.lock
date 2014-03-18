@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "bc928dba5f3d8d3879f0d106e94c89cd",
+    "hash": "a38bbb4d1ab63ae9aac60768a39f62e2",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3499,21 +3499,22 @@
         },
         {
             "name": "webignition/website-rss-feed-finder",
-            "version": "dev-master",
+            "version": "0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "07b5914dc47d35fdea995a9a461c91105c414df1"
+                "reference": "b5d3078b01567cb214ac07891b9c3e9b87ed7bd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/07b5914dc47d35fdea995a9a461c91105c414df1",
-                "reference": "07b5914dc47d35fdea995a9a461c91105c414df1",
+                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/b5d3078b01567cb214ac07891b9c3e9b87ed7bd4",
+                "reference": "b5d3078b01567cb214ac07891b9c3e9b87ed7bd4",
                 "shasum": ""
             },
             "require": {
-                "guzzle/guzzle": ">=3.3.1",
+                "guzzle/guzzle": ">=3.8.1",
                 "php": ">=5.3.0",
+                "webignition/cookie-url-matcher": ">=0.1,<1.0",
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/url": ">=1.7.2,<2.0",
                 "webignition/web-page-model": ">=0.1,<2.0"
@@ -3521,6 +3522,7 @@
             "type": "library",
             "autoload": {
                 "psr-0": {
+                    "webignition\\Tests": "tests/",
                     "": "src/"
                 }
             },
@@ -3539,36 +3541,38 @@
             "keywords": [
                 "rss"
             ],
-            "time": "2013-12-30 15:49:36"
+            "time": "2014-03-18 11:26:10"
         },
         {
             "name": "webignition/website-sitemap-finder",
-            "version": "0.4",
+            "version": "0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "be5f64778e9e2a8840c216898e3fe8159f992815"
+                "reference": "c640b315f75e80e184e99b9c52d038bb55e796fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/be5f64778e9e2a8840c216898e3fe8159f992815",
-                "reference": "be5f64778e9e2a8840c216898e3fe8159f992815",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/c640b315f75e80e184e99b9c52d038bb55e796fd",
+                "reference": "c640b315f75e80e184e99b9c52d038bb55e796fd",
                 "shasum": ""
             },
             "require": {
-                "guzzle/guzzle": ">=3.3.1",
+                "guzzle/guzzle": ">=3.8.1",
                 "php": ">=5.3.0",
                 "symfony/event-dispatcher": ">=2.1",
                 "webignition/absolute-url-deriver": ">=1.3.3,<2.0",
+                "webignition/cookie-url-matcher": ">=0.1,<1.0",
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/robots-txt-parser": "dev-master",
                 "webignition/sitemap-model": ">=0.1",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/website-sitemap-retriever": ">=0.6,<1.0"
+                "webignition/website-sitemap-retriever": ">=0.7,<1.0"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
+                    "webignition\\Tests": "tests/",
                     "": "src/"
                 }
             },
@@ -3587,32 +3591,34 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-12-30 15:29:17"
+            "time": "2014-03-17 22:51:56"
         },
         {
             "name": "webignition/website-sitemap-retriever",
-            "version": "0.6",
+            "version": "0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-retriever.git",
-                "reference": "1bf64173bc4151e80e729ef14aaa681c64f23cfa"
+                "reference": "14a8935f27198290acaac493834a6b0f1d0377f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/1bf64173bc4151e80e729ef14aaa681c64f23cfa",
-                "reference": "1bf64173bc4151e80e729ef14aaa681c64f23cfa",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/14a8935f27198290acaac493834a6b0f1d0377f5",
+                "reference": "14a8935f27198290acaac493834a6b0f1d0377f5",
                 "shasum": ""
             },
             "require": {
                 "guzzle/guzzle": ">=3.3.1",
                 "php": ">=5.3.0",
                 "symfony/event-dispatcher": ">=2.1",
+                "webignition/cookie-url-matcher": ">=0.1,<1.0",
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/sitemap-model": ">=0.1"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
+                    "webignition\\Tests": "tests/",
                     "": "src/"
                 }
             },
@@ -3631,7 +3637,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-12-30 15:00:06"
+            "time": "2014-03-17 16:44:53"
         },
         {
             "name": "winzou/console-bundle",
@@ -3743,7 +3749,6 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "kriswallsmith/assetic": 20,
-        "webignition/website-rss-feed-finder": 20,
         "doctrine/doctrine-fixtures-bundle": 20,
         "webignition/html-validation-error-normaliser": 20
     },
