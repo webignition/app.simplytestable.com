@@ -117,13 +117,8 @@ class WebsiteResolutionService {
             $this->urlResolver->getConfiguration()->enableRetryWithUrlEncodingDisabled();
             $this->urlResolver->getConfiguration()->setBaseRequest($baseRequest);
             
-            if ($job->hasParameter('cookies')) {                
-                $cookies = $job->getParameter('cookies');
-                foreach ($cookies as $index => $cookie) {
-                    $cookies[$index] = (array)$cookie;
-                }
-                
-                $this->urlResolver->getConfiguration()->setCookies($cookies);
+            if ($job->hasParameter('cookies')) {
+                $this->urlResolver->getConfiguration()->setCookies($job->getParameter('cookies'));
             }
         }
         

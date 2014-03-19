@@ -13,14 +13,12 @@ class CrawlJobTest extends ServiceTest {
     
     
     public function testCrawlJobTaskTakesCookieParameters() {         
-        $crawlJob = $this->getCrawlJobContainerService()->getForJob($this->job)->getCrawlJob();
+        $crawlJob = $this->getCrawlJobContainerService()->getForJob($this->job)->getCrawlJob();        
         $task = $crawlJob->getTasks()->first();
         
-        $decodedParameters = json_decode($task->getParameters());            
-        $this->assertTrue(isset($decodedParameters->cookies));
-            
-        $decodedCookies = json_decode($decodedParameters->cookies, true);
-        $this->assertEquals($this->cookies, $decodedCookies);         
+        $decodedParameters = $task->getParametersArray();
+        $this->assertTrue(isset($decodedParameters['cookies']));
+        $this->assertEquals($this->cookies, $decodedParameters['cookies']);         
     }      
 
 }

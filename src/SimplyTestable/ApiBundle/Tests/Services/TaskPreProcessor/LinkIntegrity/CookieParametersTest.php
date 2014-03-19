@@ -14,13 +14,13 @@ class CookieParametersTest extends PreProcessorTest {
     
     protected function getJobParameters() {
         return array(
-            'cookies' => json_encode(array(
+            'cookies' => array(
                 array(
                     'domain' => '.example.com',
                     'name' => 'foo',
                     'value' => 'bar'
                 )
-            ))
+            )
         );
     }
     

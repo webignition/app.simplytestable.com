@@ -31,7 +31,7 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
         $this->queueResolveHttpFixture();
         
         $this->job = $this->getJobService()->getById($this->createAndResolveJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail(), null, array('html validation'), null, array(
-            'cookies' => json_encode($this->cookies)
+            'cookies' => $this->cookies
         )));
     }    
 

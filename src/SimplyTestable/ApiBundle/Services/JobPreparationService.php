@@ -282,7 +282,7 @@ class JobPreparationService {
         $parameters['softLimit'] = $softLimit;
         
         if (isset($parameters['cookies'])) {
-            $parameters['cookies'] = json_decode($parameters['cookies'], true);
+            $parameters['cookies'] = $parameters['cookies'];
         }
         
         if ($this->isSingleUrlJob($job)) {        

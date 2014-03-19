@@ -655,7 +655,7 @@ class Job
             return null;
         }
         
-        $parameters = json_decode($this->getParameters());
-        return $parameters->{$name};
+        $parameters = json_decode($this->getParameters(), true);
+        return $parameters[$name];
     }
 }

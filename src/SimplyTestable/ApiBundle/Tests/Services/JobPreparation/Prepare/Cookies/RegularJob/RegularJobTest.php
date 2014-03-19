@@ -17,11 +17,9 @@ abstract class RegularJobTest extends ServiceTest {
         $this->assertGreaterThan(0, $this->job->getTasks()->count());
         
         foreach ($this->job->getTasks() as $task) {            
-            $decodedParameters = json_decode($task->getParameters());            
-            $this->assertTrue(isset($decodedParameters->cookies));
-            
-            $decodedCookies = json_decode($decodedParameters->cookies, true);
-            $this->assertEquals($this->cookies, $decodedCookies);         
+            $decodedParameters = $task->getParametersArray();            
+            $this->assertTrue(isset($decodedParameters['cookies']));
+            $this->assertEquals($this->cookies, $decodedParameters['cookies']);         
         }            
     }
     
