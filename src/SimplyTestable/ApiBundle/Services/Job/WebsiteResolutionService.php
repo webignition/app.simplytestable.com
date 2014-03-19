@@ -105,7 +105,7 @@ class WebsiteResolutionService {
     /**
      * @return \webignition\Url\Resolver\Resolver
      */
-    public function getUrlResolver(Job $job) {
+    public function getUrlResolver(Job $job) {        
         if (is_null($this->urlResolver)) {
             $this->urlResolver = new \webignition\Url\Resolver\Resolver();
 
@@ -117,8 +117,13 @@ class WebsiteResolutionService {
             $this->urlResolver->getConfiguration()->enableRetryWithUrlEncodingDisabled();
             $this->urlResolver->getConfiguration()->setBaseRequest($baseRequest);
             
-            if ($job->hasParameter('cookies')) {
-                $this->urlResolver->getConfiguration()->setCookies(json_decode($job->getParameter('cookies'), true));
+            if ($job->hasParameter('cookies')) {                
+                $cookies = $job->getParameter('cookies');
+                foreach ($cookies as $index => $cookie) {
+                    $cookies[$index] = (array)$cookie;
+                }
+                
+                $this->urlResolver->getConfiguration()->setCookies($cookies);
             }
         }
         
