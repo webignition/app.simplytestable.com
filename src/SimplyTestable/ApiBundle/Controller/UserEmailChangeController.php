@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use SimplyTestable\ApiBundle\Entity\User;
+use Egulias\EmailValidator\EmailValidator;
 
 class UserEmailChangeController extends AbstractUserController
 {
@@ -147,18 +148,9 @@ class UserEmailChangeController extends AbstractUserController
      * @return boolean
      */
     private function isEmailValid($email) {        
-        if (strpos($email, '@') <= 0) {
-            return false;
-        }
-        
-        try {
-            $message = \Swift_Message::newInstance();
-            $message->setTo($email);            
-            return true;
-        } catch (\Exception $exception) {
-            return false;
-        }
-    }
+        $validator = new EmailValidator;
+        return $validator->isValid($email);
+    } 
     
     
     /**

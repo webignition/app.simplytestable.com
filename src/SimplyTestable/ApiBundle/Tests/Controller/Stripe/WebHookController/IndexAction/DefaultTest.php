@@ -1,21 +1,8 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Stripe\WebHookController;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Stripe\WebHookController\IndexAction;
 
-use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
-
-class IndexActionTest extends BaseControllerJsonTestCase {
-    
-    public function testWithNoRequestBody() {
-        $this->assertEquals(400, $this->getStripeWebHookController('indexAction')->indexAction()->getStatusCode());
-    }
-    
-    
-    public function testWithNoStripeEvent() {
-        $this->assertEquals(400, $this->getStripeWebHookController('indexAction', array(
-            'event' => 'eventdata but this is not a stripe JSON object by any means'
-        ))->indexAction()->getStatusCode());
-    }
+class DefaultTest extends IndexActionTest {
     
     public function testWithStripeInvoicePaymentFailedEventForUnknownUser() {
         $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.payment_failed.event.json');        
@@ -240,7 +227,7 @@ class IndexActionTest extends BaseControllerJsonTestCase {
                 'stripeId' => $stripeEvent->getStripeId()
             )
         ));
-    }    
+    }  
 
 }
 

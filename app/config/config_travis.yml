@@ -11,9 +11,6 @@ framework:
 web_profiler:
     toolbar: false
     intercept_redirects: false
-
-swiftmailer:
-    disable_delivery: true
     
 parameters:    
     database_driver: pdo_mysql

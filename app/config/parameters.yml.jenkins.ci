@@ -15,3 +15,8 @@ parameters:
     admin_user_email: ci.admin@example.com
     admin_user_password: password1
     default_trial_period: 30
+    postmark_api_key: null
+    postmark_from_email: null
+    postmark_from_name: null
+    postmark_use_ssl: true
+    postmark_timeout: 60   

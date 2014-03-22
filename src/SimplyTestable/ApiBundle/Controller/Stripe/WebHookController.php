@@ -125,14 +125,13 @@ class WebHookController extends ApiController {
     private function sendDeveloperWebhookNotification($rawWebhookData, $eventType) {
         $emailSettings = $this->container->getParameter('stripe_webhook_developer_notification');
 
-        $message = \Swift_Message::newInstance();
-
-        $message->setSubject(str_replace('{{ event-type }}', $eventType, $emailSettings['subject']));
+        $message = $this->getMailService()->getNewMessage();
         $message->setFrom($emailSettings['sender_email'], $emailSettings['sender_name']);
-        $message->setTo($emailSettings['recipient_email']);
-        $message->setBody($rawWebhookData);
-
-        $this->get('mailer')->send($message);
+        $message->addTo($emailSettings['recipient_email']);
+        $message->setSubject(str_replace('{{ event-type }}', $eventType, $emailSettings['subject']));
+        $message->setTextMessage($rawWebhookData);
+        
+        $this->getMailService()->getSender()->send($message);                
     }
     
 
@@ -158,6 +157,14 @@ class WebHookController extends ApiController {
      */        
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
-    }     
+    } 
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Services\Mail\Service
+     */
+    private function getMailService() {
+        return $this->get('simplytestable.services.mail.service');
+    }      
 
 }

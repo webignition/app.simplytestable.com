@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "47e11f765f600f12b219b6bf827fb561",
+    "hash": "7df1134f254386e05162213cbad71139",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -855,6 +855,53 @@
             "time": "2014-02-08 16:35:09"
         },
         {
+            "name": "egulias/email-validator",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/egulias/EmailValidator.git",
+                "reference": "f064a586114c9864da45508b1b09911643635e94"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/egulias/EmailValidator/zipball/f064a586114c9864da45508b1b09911643635e94",
+                "reference": "f064a586114c9864da45508b1b09911643635e94",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/lexer": "~1.0",
+                "php": ">= 5.3.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Egulias\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eduardo Gulias Davis"
+                }
+            ],
+            "description": "A library for validating emails",
+            "homepage": "https://github.com/egulias/EmailValidator",
+            "keywords": [
+                "email",
+                "validation",
+                "validator"
+            ],
+            "time": "2014-01-12 23:12:24"
+        },
+        {
             "name": "etechnika/idna-convert",
             "version": "1.0.3",
             "source": {
@@ -1677,6 +1724,99 @@
             "time": "2013-07-19 00:03:27"
         },
         {
+            "name": "kriswallsmith/buzz",
+            "version": "v0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kriswallsmith/Buzz.git",
+                "reference": "759432d66387e3433d3b06cb6f773b97225b9b17"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kriswallsmith/Buzz/zipball/759432d66387e3433d3b06cb6f773b97225b9b17",
+                "reference": "759432d66387e3433d3b06cb6f773b97225b9b17",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "suggest": {
+                "ext-curl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Buzz": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kris Wallsmith",
+                    "email": "kris.wallsmith@gmail.com",
+                    "homepage": "http://kriswallsmith.net/"
+                }
+            ],
+            "description": "Lightweight HTTP client",
+            "homepage": "https://github.com/kriswallsmith/Buzz",
+            "keywords": [
+                "curl",
+                "http client"
+            ],
+            "time": "2013-05-19 03:41:15"
+        },
+        {
+            "name": "mlpz/postmark-bundle",
+            "version": "v0.0.6",
+            "target-dir": "MZ/PostmarkBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/miguel250/PostmarkBundle.git",
+                "reference": "95a84ae0e48677e0f9da37e50bc93be624451d21"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/miguel250/PostmarkBundle/zipball/95a84ae0e48677e0f9da37e50bc93be624451d21",
+                "reference": "95a84ae0e48677e0f9da37e50bc93be624451d21",
+                "shasum": ""
+            },
+            "require": {
+                "kriswallsmith/buzz": ">=0.9",
+                "php": ">=5.3.2",
+                "symfony/framework-bundle": "2.*"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-0": {
+                    "MZ\\PostmarkBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Miguel Perez",
+                    "email": "miguel@miguelpz.com"
+                }
+            ],
+            "description": "postmark bundle",
+            "homepage": "http://www.mlpz.mp",
+            "keywords": [
+                "api",
+                "mailer",
+                "postmark"
+            ],
+            "time": "2013-09-12 14:29:07"
+        },
+        {
             "name": "monolog/monolog",
             "version": "1.7.0",
             "source": {
@@ -2119,55 +2259,6 @@
             "time": "2013-02-21 20:00:30"
         },
         {
-            "name": "swiftmailer/swiftmailer",
-            "version": "v5.0.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "32edc3b0de0fdc1b10f5c4912e8677b3f411a230"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/32edc3b0de0fdc1b10f5c4912e8677b3f411a230",
-                "reference": "32edc3b0de0fdc1b10f5c4912e8677b3f411a230",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.2.4"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "5.1-dev"
-                }
-            },
-            "autoload": {
-                "files": [
-                    "lib/swift_required.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                },
-                {
-                    "name": "Chris Corbyn"
-                }
-            ],
-            "description": "Swiftmailer, free feature-rich PHP mailer",
-            "homepage": "http://swiftmailer.org",
-            "keywords": [
-                "mail",
-                "mailer"
-            ],
-            "time": "2013-12-03 13:33:24"
-        },
-        {
             "name": "symfony/assetic-bundle",
             "version": "v2.1.3",
             "target-dir": "Symfony/Bundle/AsseticBundle",
@@ -2289,63 +2380,6 @@
                 "logging"
             ],
             "time": "2013-02-23 17:18:24"
-        },
-        {
-            "name": "symfony/swiftmailer-bundle",
-            "version": "v2.2.6",
-            "target-dir": "Symfony/Bundle/SwiftmailerBundle",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/SwiftmailerBundle.git",
-                "reference": "f5e5d12629c26a835c7aa1d74e2e041486b92d93"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/SwiftmailerBundle/zipball/f5e5d12629c26a835c7aa1d74e2e041486b92d93",
-                "reference": "f5e5d12629c26a835c7aa1d74e2e041486b92d93",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.2",
-                "swiftmailer/swiftmailer": ">=4.2.0,<5.1-dev",
-                "symfony/swiftmailer-bridge": "~2.1"
-            },
-            "require-dev": {
-                "symfony/config": "~2.1",
-                "symfony/dependency-injection": "~2.1",
-                "symfony/http-kernel": "~2.1",
-                "symfony/yaml": "~2.1"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Symfony\\Bundle\\SwiftmailerBundle": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony SwiftmailerBundle",
-            "homepage": "http://symfony.com",
-            "time": "2013-08-22 13:32:58"
         },
         {
             "name": "symfony/symfony",
