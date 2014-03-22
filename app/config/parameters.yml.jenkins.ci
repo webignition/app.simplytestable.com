@@ -5,11 +5,6 @@ parameters:
     database_name: ci_app_simplytestable_com
     database_user: root
     database_password: root
-    mailer_auth_mode: login
-    mailer_transport: smtp
-    mailer_host: localhost
-    mailer_user: null
-    mailer_password: null
     locale: en
     secret: SetThis!
     admin_user_email: ci.admin@example.com
