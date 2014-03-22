@@ -1,13 +1,7 @@
 glit_resque:
   prefix: "SimplyTestable\ApiBundle"
   
-parameters:  
-  resque-job-class-map:
-    "worker-activate-verify": "SimplyTestable\ApiBundle\Resque\Job\WorkerActivateVerifyJob"
-    "job-prepare": "SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob"
-    "job-mark-completed": "SimplyTestable\ApiBundle\Resque\Job\JobMarkCompletedJob"
-    "task-assign": "SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob"       
-    "task-cancel": "SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob"
+parameters:
   resque_pid: "simplytestable_apibundle"
   css-validation-domains-to-ignore:
    - cdnjs.cloudflare.com
