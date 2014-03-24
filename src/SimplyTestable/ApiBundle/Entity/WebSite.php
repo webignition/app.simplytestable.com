@@ -23,7 +23,7 @@ class WebSite
      *
      * @var string 
      * 
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="text", unique=true)
      */
     protected $canonicalUrl;
 

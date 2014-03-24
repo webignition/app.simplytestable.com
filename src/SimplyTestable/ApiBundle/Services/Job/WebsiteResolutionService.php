@@ -74,10 +74,6 @@ class WebsiteResolutionService {
             }        
 
             if ($job->getWebsite()->getCanonicalUrl() != $resolvedUrl) {            
-                if (!$this->websiteService->has($resolvedUrl)) {
-                    $this->websiteService->create($resolvedUrl);
-                }
-
                 $job->setWebsite($this->websiteService->fetch($resolvedUrl));
             }
 

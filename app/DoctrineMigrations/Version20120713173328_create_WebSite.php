@@ -17,7 +17,7 @@ class Version20120713173328_create_WebSite extends BaseMigration
         );
         
         $this->statements['sqlite'] = array(
-            "CREATE TABLE WebSite (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, canonicalUrl VARCHAR(255) NOT NULL)",
+            "CREATE TABLE WebSite (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, canonicalUrl LONGTEXT NOT NULL)",
             "CREATE UNIQUE INDEX UNIQ_28E0CB454A404188 ON WebSite (canonicalUrl)",
         );
         

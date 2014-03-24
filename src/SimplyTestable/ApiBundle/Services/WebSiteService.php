@@ -10,15 +10,6 @@ use webignition\WebResource\Sitemap\Sitemap;
 
 class WebSiteService extends EntityService {
     
-    const HTTP_AUTH_BASIC_NAME = 'Basic';
-    const HTTP_AUTH_DIGEST_NAME = 'Digest';
-    
-    
-    private $httpAuthNameToCurlAuthScheme = array(
-        self::HTTP_AUTH_BASIC_NAME => CURLAUTH_BASIC,
-        self::HTTP_AUTH_DIGEST_NAME => CURLAUTH_DIGEST
-    );     
-    
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WebSite';
     const DEFAULT_URL_RETRIEVER_TOTAL_TIMEOUT = 30;
     
@@ -91,7 +82,7 @@ class WebSiteService extends EntityService {
      * @param string $canonicalUrl
      * @return \SimplyTestable\ApiBundle\Entity\WebSite 
      */
-    public function find($canonicalUrl) {
+    private function find($canonicalUrl) {
         return $this->getEntityRepository()->findOneByCanonicalUrl($canonicalUrl);
     }    
     
@@ -101,7 +92,7 @@ class WebSiteService extends EntityService {
      * @param string $canonicalUrl
      * @return boolean
      */
-    public function has($canonicalUrl) {
+    private function has($canonicalUrl) {      
         return !is_null($this->find($canonicalUrl));
     }
     
@@ -111,7 +102,7 @@ class WebSiteService extends EntityService {
      * @param string $canonicalUrl 
      * @return \SimplyTestable\ApiBundle\Entity\WebSite
      */
-    public function create($canonicalUrl) {
+    private function create($canonicalUrl) {
         $website = new WebSite();
         $website->setCanonicalUrl($canonicalUrl);
         
@@ -122,7 +113,7 @@ class WebSiteService extends EntityService {
     
     /**
      *
-     * @param WebSite $job
+     * @param WebSite $website
      * @return WebSite
      */
     public function persistAndFlush(WebSite $website) {
@@ -135,9 +126,9 @@ class WebSiteService extends EntityService {
     /**
      * Get collection of URLs to be tested for a given website
      * 
-     * @param WebSite $website
-     * @param int $softLimit
-     * @return array
+     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
+     * @param array $parameters
+     * @return string[]
      */
     public function getUrls(WebSite $website, $parameters) {
         return $this->filterUrlsToWebsiteHost($website, $this->collectUrls($website, $parameters));

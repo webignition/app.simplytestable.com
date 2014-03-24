@@ -35,5 +35,22 @@ class CanonicalUrlTest extends BaseSimplyTestableTestCase {
         /* Last character of the URL will be incorrect if the DB collation is not storing UTF8 correctly */
         $this->assertEquals(184, ord($retrievedUrl[strlen($retrievedUrl) - 1]));
 
-    }      
+    }
+    
+    
+    public function testUrlGreaterThanVarcharLength() {
+        $canonicalUrl = str_repeat('+', 1280);
+        
+        $webSite = new WebSite();
+        $webSite->setCanonicalUrl($canonicalUrl);
+        
+        $this->getWebSiteService()->getEntityManager()->persist($webSite);
+        $this->getWebSiteService()->getEntityManager()->flush();        
+        
+        $preId = $webSite->getId();
+        
+        $this->getEntityManager()->clear();
+        
+        $this->assertEquals($preId, $this->getWebSiteService()->fetch($canonicalUrl)->getId());        
+    }
 }
