@@ -16,25 +16,18 @@ class TooManyRedirectsTest extends BaseSimplyTestableTestCase {
             "HTTP/1.0 301\nLocation: " . self::SOURCE_URL,
             "HTTP/1.0 301\nLocation: " . self::SOURCE_URL,
             "HTTP/1.0 301\nLocation: " . self::SOURCE_URL,
-            "HTTP/1.0 301\nLocation: " . self::SOURCE_URL,            
-            "HTTP/1.0 301\nLocation: " . self::EFFECTIVE_URL,            
-            "HTTP/1.0 200 OK",
+            "HTTP/1.0 301\nLocation: " . self::SOURCE_URL,
+            "HTTP/1.0 301\nLocation: " . self::EFFECTIVE_URL,
+            "HTTP/1.0 301\nLocation: " . self::EFFECTIVE_URL,
+            "HTTP/1.0 200 OK"
         )));  
     }
     
     public function testFullSiteTestResolvesToEffectiveUrl() {        
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::SOURCE_URL));
+        $job = $this->getJobService()->getById($this->createJobAndGetId('http://oneemco.ca/'));
         $this->resolveJob($job->getWebsite()->getCanonicalUrl(), $job->getId());
         
         $this->assertEquals(self::EFFECTIVE_URL, $job->getWebsite()->getCanonicalUrl());    
     } 
-    
-    
-    public function testSingleUrlTestResolvesToEffectiveUrl() {        
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::SOURCE_URL, null, 'single url'));
-        $this->resolveJob($job->getWebsite()->getCanonicalUrl(), $job->getId());
-        
-        $this->assertEquals(self::EFFECTIVE_URL, $job->getWebsite()->getCanonicalUrl());    
-    }    
 
 }

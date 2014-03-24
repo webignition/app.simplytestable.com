@@ -29,7 +29,9 @@ class HttpClientService {
             $this->httpClient->addSubscriber(BackoffPlugin::getExponentialBackoff(
                     3,
                     array(500, 503, 504)
-            ));          
+            ));
+            
+            $this->httpClient->addSubscriber(new \Guzzle\Plugin\History\HistoryPlugin());
         }
         
         return $this->httpClient;

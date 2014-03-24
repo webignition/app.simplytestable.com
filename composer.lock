@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "a6dcf4a3d5d03bd290ea73d9862f9b2d",
+    "hash": "b1bbb303ac0dddfc8da6f2f9f79a2a7f",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3396,16 +3396,16 @@
         },
         {
             "name": "webignition/url-resolver",
-            "version": "0.2.1",
+            "version": "0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url-resolver.git",
-                "reference": "7d38a6327c4631835a037db8a2880d7b49c29139"
+                "reference": "adc8143eda7eaf8cb0608d1fd54337db61f70055"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url-resolver/zipball/7d38a6327c4631835a037db8a2880d7b49c29139",
-                "reference": "7d38a6327c4631835a037db8a2880d7b49c29139",
+                "url": "https://api.github.com/repos/webignition/url-resolver/zipball/adc8143eda7eaf8cb0608d1fd54337db61f70055",
+                "reference": "adc8143eda7eaf8cb0608d1fd54337db61f70055",
                 "shasum": ""
             },
             "require": {
@@ -3443,7 +3443,7 @@
                 "resolver",
                 "url"
             ],
-            "time": "2014-03-22 16:02:08"
+            "time": "2014-03-24 09:41:56"
         },
         {
             "name": "webignition/web-json-model",
