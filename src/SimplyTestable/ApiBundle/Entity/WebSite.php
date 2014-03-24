@@ -6,6 +6,7 @@ use webignition\Url\Url;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="WebSite",indexes={@ORM\Index(name="canonicalUrl_idx", columns={"canonicalUrl"})})
  */
 class WebSite
 {
@@ -23,7 +24,7 @@ class WebSite
      *
      * @var string 
      * 
-     * @ORM\Column(type="text", unique=true)
+     * @ORM\Column(type="text")
      */
     protected $canonicalUrl;
 
