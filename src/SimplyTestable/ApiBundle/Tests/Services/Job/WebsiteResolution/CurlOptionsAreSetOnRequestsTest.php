@@ -19,13 +19,7 @@ class CUrlOptionsAreSetOnRequestsTest extends BaseSimplyTestableTestCase {
     }
     
     public function testCurlOptionsAreSetOnAllRequests() {
-        foreach ($this->getHttpClientService()->getHistoryPlugin()->getAll() as $httpTransaction) {
-            foreach ($this->container->getParameter('curl_options') as $curlOption) {                
-                $this->assertEquals($curlOption['value'], $httpTransaction['request']->getCurlOptions()->get(constant($curlOption['name'])));
-            }
-        }
+        $this->assertSystemCurlOptionsAreSetOnAllRequests();
     }
-    
-    
 
 }

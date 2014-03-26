@@ -1,10 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare;
+namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\HappyPath;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class HappyPathTest extends BaseSimplyTestableTestCase {    
+abstract class HappyPathTest extends BaseSimplyTestableTestCase {    
 
     /**
      *
@@ -16,9 +16,11 @@ class HappyPathTest extends BaseSimplyTestableTestCase {
         parent::setUp();
 
         $this->job = $this->getJobService()->getById($this->createAndResolveDefaultJob());        
-        $this->queuePrepareHttpFixturesForJob($this->job->getWebsite()->getCanonicalUrl());        
+        $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet($this->getFixtureMessages()));      
         $this->getJobPreparationService()->prepare($this->job);
-    }
+    }  
+    
+    abstract protected function getFixtureMessages(); 
     
     public function testPreparationThrowsNoExceptions() {}
     
@@ -44,15 +46,30 @@ class HappyPathTest extends BaseSimplyTestableTestCase {
     }
     
     
-    public function testTaskUrls() {        
-        foreach ($this->job->getTasks() as $task) {            
-            $this->assertTrue(in_array($task->getUrl(), array(
-                'http://example.com/0/',
-                'http://example.com/1/',
-                'http://example.com/2/'
-            )));
+    public function testTaskUrls() {
+        $expectedTaskUrls = array(
+            'http://example.com/0/',
+            'http://example.com/0/',
+            'http://example.com/0/',
+            'http://example.com/0/',
+            'http://example.com/1/',
+            'http://example.com/1/',
+            'http://example.com/1/',
+            'http://example.com/1/',
+            'http://example.com/2/',
+            'http://example.com/2/',
+            'http://example.com/2/',
+            'http://example.com/2/',
+        );
+        
+        foreach ($this->job->getTasks() as $index => $task) {                        
+            $this->assertEquals($expectedTaskUrls[$index], $task->getUrl(), 'Task at index ' . $index. ' does not have URL "'.$expectedTaskUrls[$index].'"');
         }
     }
+    
+    public function testCurlOptionsAreSetOnAllRequests() {
+        $this->assertSystemCurlOptionsAreSetOnAllRequests();
+    }    
     
     
     public function testTaskStates() {        

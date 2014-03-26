@@ -833,7 +833,30 @@ EOD;
      */
     protected function getHttpClientService() {
         return $this->container->get('simplytestable.services.httpclientservice');
-    }     
+    }  
+    
+    
+    protected function assertSystemCurlOptionsAreSetOnAllRequests() {
+        foreach ($this->getHttpClientService()->getHistoryPlugin()->getAll() as $httpTransaction) {
+            foreach ($this->container->getParameter('curl_options') as $curlOption) {                                
+                $expectedValueAsString = $curlOption['value'];
+                
+                if (is_string($expectedValueAsString)) {
+                    $expectedValueAsString = '"'.$expectedValueAsString.'"';
+                }                
+                
+                if (is_bool($curlOption['value'])) {
+                    $expectedValueAsString = ($curlOption['value']) ? 'true' : 'false';
+                }
+                
+                $this->assertEquals(
+                    $curlOption['value'],
+                    $httpTransaction['request']->getCurlOptions()->get(constant($curlOption['name'])),
+                    'Curl option "'.$curlOption['name'].'" not set to ' . $expectedValueAsString . ' for ' .$httpTransaction['request']->getMethod() . ' ' . $httpTransaction['request']->getUrl()
+                );
+            }
+        }
+    }    
 
     
     /**
@@ -1081,47 +1104,11 @@ EOD;
     }
     
     
-//    protected function setHttpFixtures($fixtures) {
-//        
-//        
-////        $this->getHttpClientService()->reset();
-////        
-////        $plugin = new \Guzzle\Plugin\Mock\MockPlugin();        
-//        
-//        foreach ($fixtures as $fixture) {
-//            $this->getHttpClientService()->addFixture($fixture);         
-//        }
-//        
-//        //$this->getHttpClientService()->get()->addSubscriber($plugin);      
-//    }
-    
-    
     protected function queueHttpFixtures($fixtures) {
         foreach ($fixtures as $fixture) {
             $this->getHttpClientService()->queueFixture($fixture);         
         }        
     }
-    
-    
-//    protected function getHttpFixtures($path) {
-//        $messages = $this->getHttpFixtureMessagesFromPath($path);
-//        
-//        foreach ($messages as $message) {
-//            switch (substr($message, 0, 4)) {
-//                case 'CURL':
-//                    $curlException = new \Guzzle\Http\Exception\CurlException();
-//                    $curlException->setError('', (int)  str_replace('CURL/', '', $fixtureContent));
-//                    $fixtures[] = $curlException;
-//                    break;
-//                
-//                case 'HTTP':
-//                    $fixtures[] = \Guzzle\Http\Message\Response::fromMessage($fixtureContent);            
-//                    break;
-//            }
-//        }
-//        
-//        return $fixtures;
-//    }
     
     protected function getHttpFixtureMessagesFromPath($path) {
         $messages = array();        

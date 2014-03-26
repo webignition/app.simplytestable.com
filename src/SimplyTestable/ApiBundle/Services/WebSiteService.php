@@ -229,7 +229,7 @@ class WebSiteService extends EntityService {
     public function getSitemapFinder() {
         if (is_null($this->sitemapFinder)) {
             $this->sitemapFinder = new WebsiteSitemapFinder();
-            $this->sitemapFinder->getConfiguration()->setBaseRequest($this->httpClientService->get()->get());           
+            $this->sitemapFinder->getConfiguration()->setBaseRequest($this->httpClientService->getRequest());           
             $this->sitemapFinder->getSitemapRetriever()->getConfiguration()->disableRetrieveChildSitemaps();
             
             if ($this->sitemapFinder->getSitemapRetriever()->getConfiguration()->getTotalTransferTimeout() == \webignition\WebsiteSitemapRetriever\Configuration\Configuration::DEFAULT_TOTAL_TRANSFER_TIMEOUT) {
@@ -268,7 +268,7 @@ class WebSiteService extends EntityService {
             /* @var $childSitemap Sitemap */
             if (is_null($childSitemap->getContent())) {                
                 $sitemapRetriever = new \webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever();
-                $sitemapRetriever->getConfiguration()->setBaseRequest($this->getHttpClientService()->get()->get());
+                $sitemapRetriever->getConfiguration()->setBaseRequest($this->getHttpClientService()->getRequest());
                 $sitemapRetriever->getConfiguration()->disableRetrieveChildSitemaps();
                 $sitemapRetriever->retrieve($childSitemap);              
             }
@@ -286,9 +286,10 @@ class WebSiteService extends EntityService {
      * @param WebSite $website
      * @return array 
      */    
-    private function getUrlsFromRssFeed(WebSite $website, $parameters) {
+    private function getUrlsFromRssFeed(WebSite $website, $parameters) {        
         $feedFinder = $this->getWebsiteRssFeedFinder($website, $parameters);
         $feedUrls = $feedFinder->getRssFeedUrls();               
+        
         if (is_null($feedUrls)) {
             return array();
         }
@@ -306,7 +307,7 @@ class WebSiteService extends EntityService {
     public function getWebsiteRssFeedFinder(WebSite $website, $parameters) {
         if (is_null($this->websiteRssFeedFinder)) {
             $this->websiteRssFeedFinder = new WebsiteRssFeedFinder();
-            $this->websiteRssFeedFinder->getConfiguration()->setBaseRequest($this->httpClientService->get()->get());
+            $this->websiteRssFeedFinder->getConfiguration()->setBaseRequest($this->httpClientService->getRequest());
             $this->websiteRssFeedFinder->getConfiguration()->setRootUrl($website->getCanonicalUrl());
             $this->websiteRssFeedFinder->getConfiguration()->getBaseRequest()->getClient()->setUserAgent('ST News Feed URL Retriever/0.1 (http://bit.ly/RlhKCL)');
             
