@@ -5,9 +5,9 @@ use Guzzle\Http\Client as HttpClient;
 
 class TestHttpClientService extends HttpClientService {     
     
-    public function get($baseUrl = '', $config = null) {
+    public function get() {
         if (is_null($this->httpClient)) {            
-            $this->httpClient = new HttpClient($baseUrl, $config);
+            $this->httpClient = new HttpClient();
             $this->httpClient->addSubscriber(new \Guzzle\Plugin\History\HistoryPlugin());            
         }
         

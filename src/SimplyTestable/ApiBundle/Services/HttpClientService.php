@@ -17,6 +17,10 @@ class HttpClientService {
     protected $httpClient = null;     
     
     
+    /**
+     *
+     * @var array
+     */
     private $curlOptions = array();
     
     
@@ -38,9 +42,9 @@ class HttpClientService {
     }
     
     
-    public function get($baseUrl = '', $config = null) {
-        if (is_null($this->httpClient)) {
-            $this->httpClient = new HttpClient($baseUrl, $config);
+    public function get() {
+        if (is_null($this->httpClient)) {            
+            $this->httpClient = new HttpClient();
             
             $this->httpClient->addSubscriber(BackoffPlugin::getExponentialBackoff(
                     3,
@@ -65,6 +69,10 @@ class HttpClientService {
         $request = $this->get()->get($uri, $headers, $body);        
         $request->setHeader('Accept-Encoding', 'gzip,deflate');
         
+        foreach ($this->curlOptions as $key => $value) {
+            $request->getCurlOptions()->set($key, $value);
+        }
+        
         return $request;
     }
     
@@ -78,6 +86,11 @@ class HttpClientService {
      */
     public function postRequest($uri = null, $headers = null, $postBody = null) {
         $request = $this->get()->post($uri, $headers, $postBody);        
+
+        foreach ($this->curlOptions as $key => $value) {
+            $request->getCurlOptions()->set($key, $value);
+        }        
+        
         return $request;        
     }
     

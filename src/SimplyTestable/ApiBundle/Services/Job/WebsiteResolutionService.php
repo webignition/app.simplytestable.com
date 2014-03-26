@@ -104,13 +104,9 @@ class WebsiteResolutionService {
     public function getUrlResolver(Job $job) {        
         if (is_null($this->urlResolver)) {
             $this->urlResolver = new \webignition\Url\Resolver\Resolver();
-
-            $baseRequest = $this->httpClientService->get()->createRequest('GET', 'http://www.example.com/', null, null, array(
-                'timeout' => 10
-            ));
             
-            $baseRequest->getCurlOptions()->set(CURLOPT_SSL_VERIFYPEER, false);
-            $baseRequest->getCurlOptions()->set(CURLOPT_SSL_VERIFYHOST, false);
+            $baseRequest = $this->httpClientService->getRequest();            
+            $baseRequest->getCurlOptions()->set(CURLOPT_TIMEOUT_MS, 10000);
             
             $this->urlResolver->getConfiguration()->enableFollowMetaRedirects();
             $this->urlResolver->getConfiguration()->enableRetryWithUrlEncodingDisabled();
