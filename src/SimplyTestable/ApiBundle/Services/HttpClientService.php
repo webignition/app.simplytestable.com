@@ -17,6 +17,22 @@ class HttpClientService {
     protected $httpClient = null;     
     
     
+    private $curlOptions = array();
+    
+    
+    /**
+     * 
+     * @param array $curlOptions
+     */
+    public function __construct($curlOptions) {
+        foreach ($curlOptions as $curlOption) {
+            if (defined($curlOption['name'])) {
+                $this->curlOptions[constant($curlOption['name'])] = $curlOption['value'];
+            }
+        }
+    }
+    
+    
     public function reset() {
         $this->httpClient = null;
     }

@@ -4,6 +4,8 @@ services:
   
   simplytestable.services.httpClientService:
     class:  SimplyTestable\ApiBundle\Services\HttpClientService
+    arguments: 
+        curlOptions: "%curl_options%"   
 
   simplytestable.services.websiteservice:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
