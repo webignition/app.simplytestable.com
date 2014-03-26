@@ -2,6 +2,9 @@ glit_resque:
   prefix: "SimplyTestable\ApiBundle"
   
 parameters:
+  curl_options:
+   - [{name: "CURLOPT_SSL_VERIFYPEER", value: false"}]
+   - [{name: "CURLOPT_SSL_VERIFYHOST", value: false"}]    
   resque_pid: "simplytestable_apibundle"
   css-validation-domains-to-ignore:
    - cdnjs.cloudflare.com
