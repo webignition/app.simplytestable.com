@@ -79,6 +79,9 @@ class WebsiteResolutionService {
 
             $job->setState($this->jobService->getResolvedState());            
         } catch (\Guzzle\Http\Exception\CurlException $curlException) {            
+            var_dump($curlException->getErrorNo());
+            exit();
+            
             $this->jobRejectionService->reject($job, 'curl-' . $curlException->getErrorNo());
         }
         
@@ -108,6 +111,9 @@ class WebsiteResolutionService {
             $baseRequest = $this->httpClientService->get()->createRequest('GET', 'http://www.example.com/', null, null, array(
                 'timeout' => 10
             ));
+            
+            $baseRequest->getCurlOptions()->set(CURLOPT_SSL_VERIFYPEER, false);
+            $baseRequest->getCurlOptions()->set(CURLOPT_SSL_VERIFYHOST, false);
             
             $this->urlResolver->getConfiguration()->enableFollowMetaRedirects();
             $this->urlResolver->getConfiguration()->enableRetryWithUrlEncodingDisabled();
