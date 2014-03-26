@@ -78,10 +78,7 @@ class WebsiteResolutionService {
             }
 
             $job->setState($this->jobService->getResolvedState());            
-        } catch (\Guzzle\Http\Exception\CurlException $curlException) {            
-            var_dump($curlException->getErrorNo());
-            exit();
-            
+        } catch (\Guzzle\Http\Exception\CurlException $curlException) {                        
             $this->jobRejectionService->reject($job, 'curl-' . $curlException->getErrorNo());
         }
         
