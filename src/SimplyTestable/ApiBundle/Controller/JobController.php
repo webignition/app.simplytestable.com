@@ -136,7 +136,9 @@ class JobController extends ApiController
             'task_type_options' => $this->getJobTaskTypeOptions($job),
             'type' => $job->getPublicSerializedType(),
             'is_public' => $this->getIsJobPublic($job),
-            'parameters' => $job->getParameters()
+            'parameters' => $job->getParameters(),
+            'error_count' => $this->getErrorCount($job),
+            'warning_count' => $this->getWarningCount($job)
         );
         
         if ($this->getJobService()->isRejected($job)) {            
@@ -164,6 +166,26 @@ class JobController extends ApiController
         }
         
         return $jobSummary;        
+    }
+    
+
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return int
+     */    
+    private function getErrorCount(Job $job) {
+        return $this->getTaskService()->getEntityRepository()->getErrorCountByJob($job);
+    }
+    
+    
+    /**
+     * 
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @return int
+     */
+    private function getWarningCount(Job $job) {
+        return $this->getTaskService()->getEntityRepository()->getWarningCountByJob($job);
     }
     
     

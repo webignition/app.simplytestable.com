@@ -294,7 +294,7 @@ class TaskRepository extends EntityRepository
      * @param Job $job
      * @return int
      */
-    public function getErrorCountByJob(Job $job, $excludeStates = null) {        
+    public function getErroredCountByJob(Job $job, $excludeStates = null) {        
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('count(Task.id)');
@@ -316,7 +316,30 @@ class TaskRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult();
         
         return (int)$result[0][1];
-    }    
+    }
+    
+
+    /**
+     *
+     * @param Job $job
+     * @return int
+     */    
+    public function getErrorCountByJob(Job $job) {        
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->join('Task.output', 'TaskOutput');
+        $queryBuilder->select('sum(TaskOutput.errorCount)');
+        
+        $where = 'Task.job = :Job AND TaskOutput.errorCount > :ErrorCount';
+        
+        $queryBuilder->where($where);
+
+        $queryBuilder->setParameter('Job', $job);        
+        $queryBuilder->setParameter('ErrorCount', 0);  
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return (int)$result[0][1];
+    }
     
     
     /**
@@ -324,7 +347,7 @@ class TaskRepository extends EntityRepository
      * @param Job $job
      * @return int
      */
-    public function getWarningCountByJob(Job $job, $excludeStates = null) {        
+    public function getWarningedCountByJob(Job $job, $excludeStates = null) {        
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('count(Task.id)');
@@ -347,6 +370,29 @@ class TaskRepository extends EntityRepository
         
         return (int)$result[0][1];
     }
+    
+    
+    /**
+     *
+     * @param Job $job
+     * @return int
+     */    
+    public function getWarningCountByJob(Job $job) {        
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->join('Task.output', 'TaskOutput');
+        $queryBuilder->select('sum(TaskOutput.warningCount)');
+        
+        $where = 'Task.job = :Job AND TaskOutput.warningCount > :WarningCount';
+        
+        $queryBuilder->where($where);
+
+        $queryBuilder->setParameter('Job', $job);        
+        $queryBuilder->setParameter('WarningCount', 0);  
+        
+        $result = $queryBuilder->getQuery()->getResult();
+        
+        return (int)$result[0][1];
+    }    
     
     
     

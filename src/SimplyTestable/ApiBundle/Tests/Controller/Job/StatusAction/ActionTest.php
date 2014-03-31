@@ -1,8 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\StatusAction;
 
-class StatusTest extends AbstractAccessTest {
+use SimplyTestable\ApiBundle\Tests\Controller\Job\AbstractAccessTest;
+
+class ActionTest extends AbstractAccessTest {
     
     protected function getActionName() {
         return 'statusAction';
@@ -149,5 +151,5 @@ class StatusTest extends AbstractAccessTest {
         
         $this->assertTrue(isset($responseJsonObject->parameters));
         $this->assertEquals('{"http-auth-username":"example","http-auth-password":"password"}', $responseJsonObject->parameters);
-    }   
+    }
 }

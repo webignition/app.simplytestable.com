@@ -604,7 +604,7 @@ class JobService extends EntityService {
             $this->taskService->getAwaitingCancellationState()
         );        
         
-        return $this->taskService->getEntityRepository()->getErrorCountByJob($job, $excludeStates);
+        return $this->taskService->getEntityRepository()->getErroredCountByJob($job, $excludeStates);
     }      
     
     
@@ -621,7 +621,7 @@ class JobService extends EntityService {
             $this->taskService->getAwaitingCancellationState()
         );        
         
-        return $this->taskService->getEntityRepository()->getWarningCountByJob($job, $excludeStates);
+        return $this->taskService->getEntityRepository()->getWarningedCountByJob($job, $excludeStates);
     }    
     
     
