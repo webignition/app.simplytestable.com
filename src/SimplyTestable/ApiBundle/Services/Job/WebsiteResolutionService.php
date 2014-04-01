@@ -107,6 +107,7 @@ class WebsiteResolutionService {
             
             $baseRequest = $this->httpClientService->getRequest();            
             $baseRequest->getCurlOptions()->set(CURLOPT_TIMEOUT_MS, 10000);
+            $baseRequest->setHeader('user-agent', 'ST url resolver (http://bit.ly/RlhKCL)');
             
             $this->urlResolver->getConfiguration()->enableFollowMetaRedirects();
             $this->urlResolver->getConfiguration()->enableRetryWithUrlEncodingDisabled();
