@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "b1bbb303ac0dddfc8da6f2f9f79a2a7f",
+    "hash": "a115441899894191cc291dd1eefd81b4",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1818,16 +1818,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "1.7.0",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "6225b22de9dcf36546be3a0b2fa8e3d986153f57"
+                "reference": "392ef35fd470638e08d0160d6b1cbab63cb23174"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/6225b22de9dcf36546be3a0b2fa8e3d986153f57",
-                "reference": "6225b22de9dcf36546be3a0b2fa8e3d986153f57",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/392ef35fd470638e08d0160d6b1cbab63cb23174",
+                "reference": "392ef35fd470638e08d0160d6b1cbab63cb23174",
                 "shasum": ""
             },
             "require": {
@@ -1835,11 +1835,11 @@
                 "psr/log": "~1.0"
             },
             "require-dev": {
-                "aws/aws-sdk-php": "~2.4.8",
-                "doctrine/couchdb": "dev-master",
-                "mlehner/gelf-php": "1.0.*",
+                "aws/aws-sdk-php": "~2.4, >2.4.8",
+                "doctrine/couchdb": "~1.0@dev",
+                "graylog2/gelf-php": "~1.0",
                 "phpunit/phpunit": "~3.7.0",
-                "raven/raven": "0.5.*",
+                "raven/raven": "~0.5",
                 "ruflin/elastica": "0.90.*"
             },
             "suggest": {
@@ -1847,19 +1847,20 @@
                 "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
                 "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
                 "ext-mongo": "Allow sending log messages to a MongoDB server",
-                "mlehner/gelf-php": "Allow sending log messages to a GrayLog2 server",
+                "graylog2/gelf-php": "Allow sending log messages to a GrayLog2 server",
                 "raven/raven": "Allow sending log messages to a Sentry server",
+                "rollbar/rollbar": "Allow sending log messages to Rollbar",
                 "ruflin/elastica": "Allow sending log messages to an Elastic Search server"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.7.x-dev"
+                    "dev-master": "1.8.x-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Monolog": "src/"
+                "psr-4": {
+                    "Monolog\\": "src/Monolog"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1881,7 +1882,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2013-11-14 19:48:31"
+            "time": "2014-03-23 19:50:26"
         },
         {
             "name": "phpoption/phpoption",
@@ -3354,16 +3355,16 @@
         },
         {
             "name": "webignition/url",
-            "version": "1.9.9",
+            "version": "1.9.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url.git",
-                "reference": "cc8c3d9a9d90edf735f0a70f690cca6124ee1136"
+                "reference": "7df6141958c65957d3c692791eb8e07ace0cf147"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url/zipball/cc8c3d9a9d90edf735f0a70f690cca6124ee1136",
-                "reference": "cc8c3d9a9d90edf735f0a70f690cca6124ee1136",
+                "url": "https://api.github.com/repos/webignition/url/zipball/7df6141958c65957d3c692791eb8e07ace0cf147",
+                "reference": "7df6141958c65957d3c692791eb8e07ace0cf147",
                 "shasum": ""
             },
             "require": {
@@ -3392,7 +3393,7 @@
             "keywords": [
                 "url"
             ],
-            "time": "2014-03-07 13:33:36"
+            "time": "2014-03-25 09:43:12"
         },
         {
             "name": "webignition/url-resolver",
@@ -3489,23 +3490,23 @@
         },
         {
             "name": "webignition/web-page-model",
-            "version": "0.6",
+            "version": "0.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-model.git",
-                "reference": "5ef875a2a4e2863aae7a26820d31ad5f2072afb1"
+                "reference": "3bfec9b6cd7e0fa6eefda3f3c4f19a3cb39facee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/5ef875a2a4e2863aae7a26820d31ad5f2072afb1",
-                "reference": "5ef875a2a4e2863aae7a26820d31ad5f2072afb1",
+                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/3bfec9b6cd7e0fa6eefda3f3c4f19a3cb39facee",
+                "reference": "3bfec9b6cd7e0fa6eefda3f3c4f19a3cb39facee",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
                 "querypath/querypath": ">=3.0.0",
                 "webignition/internet-media-type": ">=0.1,<1.0",
-                "webignition/web-resource-model": ">=0.1,<2.0"
+                "webignition/web-resource-model": ">=0.5,<2.0"
             },
             "type": "library",
             "autoload": {
@@ -3529,29 +3530,36 @@
                 "model",
                 "webpage"
             ],
-            "time": "2013-09-05 16:13:43"
+            "time": "2014-03-27 11:13:48"
         },
         {
             "name": "webignition/web-resource-model",
-            "version": "0.4",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-resource-model.git",
-                "reference": "7402619287aad787b0c5bf94b0ab209f5baf3a01"
+                "reference": "081f2900486478e0a871485dd2194a76c1164633"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-resource-model/zipball/7402619287aad787b0c5bf94b0ab209f5baf3a01",
-                "reference": "7402619287aad787b0c5bf94b0ab209f5baf3a01",
+                "url": "https://api.github.com/repos/webignition/web-resource-model/zipball/081f2900486478e0a871485dd2194a76c1164633",
+                "reference": "081f2900486478e0a871485dd2194a76c1164633",
                 "shasum": ""
             },
             "require": {
+                "doctrine/collections": "~1.0",
+                "guzzle/guzzle": ">=3.8.1,<4",
                 "php": ">=5.3.0",
                 "webignition/internet-media-type": ">=0.1,<2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*",
+                "symfony/class-loader": "*"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
+                    "webignition\\Tests": "tests/",
                     "": "src/"
                 }
             },
@@ -3571,7 +3579,7 @@
                 "modem",
                 "web"
             ],
-            "time": "2012-08-16 15:16:06"
+            "time": "2014-03-27 23:36:16"
         },
         {
             "name": "webignition/website-rss-feed-finder",
@@ -3817,7 +3825,56 @@
         }
     ],
     "packages-dev": [
-
+        {
+            "name": "icanboogie/inflector",
+            "version": "v1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ICanBoogie/Inflector.git",
+                "reference": "4da987927650acb4242d35b27223ec0d55977919"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ICanBoogie/Inflector/zipball/4da987927650acb4242d35b27223ec0d55977919",
+                "reference": "4da987927650acb4242d35b27223ec0d55977919",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib/"
+                ],
+                "files": [
+                    "lib/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Olivier Laviale",
+                    "email": "olivier.laviale@gmail.com",
+                    "homepage": "http://www.weirdog.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "The Inflector transforms words from singular to plural, underscore to camel case, titelize words and more.",
+            "homepage": "http://icanboogie.org/",
+            "keywords": [
+                "camelize",
+                "hyphenate",
+                "inflect",
+                "pluralize",
+                "singularize",
+                "underscore"
+            ],
+            "time": "2014-01-03 11:19:15"
+        }
     ],
     "aliases": [
 

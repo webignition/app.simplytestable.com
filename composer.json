@@ -5,7 +5,7 @@
         "psr-0": { "": "src/" }
     },
     "require": {
-        "php": ">=5.3.3",
+        "php": ">=5.4",
         "symfony/symfony": "2.2.*",
         "doctrine/orm": "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "1.2.*",
@@ -45,6 +45,9 @@
         "webignition/web-page-model":">=0.6,<1.0",
         "mlpz/postmark-bundle": "*",
         "egulias/email-validator":"1.1.1"
+    },
+    "require-dev": {
+        "icanboogie/inflector":">=1.0,<2"
     },
     "scripts": {
         "post-install-cmd": [
