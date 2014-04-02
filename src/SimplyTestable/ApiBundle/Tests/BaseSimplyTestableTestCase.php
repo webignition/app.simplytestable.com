@@ -266,7 +266,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * @param string $methodName
      * @return Symfony\Bundle\FrameworkBundle\Controller\Controller
      */
-    private function getController($controllerName, $methodName, array $postData = array(), array $queryData = array()) {        
+    protected function getController($controllerName, $methodName, array $postData = array(), array $queryData = array()) {        
         return $this->createController($controllerName, $methodName, $postData, $queryData);
     }  
     

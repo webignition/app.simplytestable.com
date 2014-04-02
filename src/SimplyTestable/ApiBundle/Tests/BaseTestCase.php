@@ -17,7 +17,7 @@ abstract class BaseTestCase extends WebTestCase {
 
     /**
      *
-     * @var Symfony\Bundle\FrameworkBundle\Client
+     * @var \Symfony\Bundle\FrameworkBundle\Client
      */
     protected $client;
 
@@ -30,7 +30,7 @@ abstract class BaseTestCase extends WebTestCase {
     
     /**
      *
-     * @var Symfony\Bundle\FrameworkBundle\Console\Application
+     * @var \Symfony\Bundle\FrameworkBundle\Console\Application
      */
     protected $application;
        
