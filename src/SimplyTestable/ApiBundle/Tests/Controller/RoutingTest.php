@@ -114,8 +114,8 @@ abstract class RoutingTest extends BaseSimplyTestableTestCase {
      * 
      * @return string
      */
-    private function getRouteFromTestNamespace() {        
-        return \ICanBoogie\Inflector::get()->underscore(implode('_', $this->getControllerRelatedNamespaceParts()));       
+    private function getRouteFromTestNamespace() {   
+        return strtolower(implode('_', $this->getControllerRelatedNamespaceParts()) . '_' . str_replace('Action', '', $this->getActionNameFromTestNamespace())); 
     }
     
     
