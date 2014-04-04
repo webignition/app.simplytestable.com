@@ -218,13 +218,12 @@ services:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService
     arguments:
         container: "@service_container"
-        taskPreProcessors: %task_pre_processors%              
-        
-  simplytestable.services.webresourceservice:
-    class:   SimplyTestable\ApiBundle\Services\WebResourceService
-    arguments:
-        httpClientService: "@simplytestable.services.httpClientService"
-        contentTypeWebResourceMap: %content_type_web_resource_map%        
+        taskPreProcessors: %task_pre_processors%
+
+  simplytestable.services.webResourceService:
+    class:  webignition\WebResource\Service\Service
+    calls:
+      - [createConfiguration, [{allow-uknown-resource-types: "true", retry-with-url-encoding-disabled: "true", content-type-web-resource-map: %content_type_web_resource_map% }]]     
         
   simplytestable.services.taskOutputJoinerServiceFactory:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\FactoryService

@@ -119,11 +119,7 @@ class WebsiteResolutionService {
         }
         
         if ($job->hasParameter('http-auth-username') || $job->hasParameter('http-auth-password')) {            
-            $this->urlResolver->getConfiguration()->getBaseRequest()->setAuth(
-                $job->hasParameter('http-auth-username') ? $job->getParameter('http-auth-username') : '',
-                $job->hasParameter('http-auth-password') ? $job->getParameter('http-auth-password') : '',
-                'any'
-            );
+            $this->httpClientService->prepareRequest($this->urlResolver->getConfiguration()->getBaseRequest(), $job->getParametersArray());
         }
         
         return $this->urlResolver;

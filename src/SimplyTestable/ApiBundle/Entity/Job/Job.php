@@ -632,6 +632,15 @@ class Job
     
     /**
      * 
+     * @return \stdClass
+     */
+    public function getParametersArray() {
+        return json_decode($this->getParameters(), true);
+    }    
+    
+    
+    /**
+     * 
      * @param string $name
      * @return boolean
      */

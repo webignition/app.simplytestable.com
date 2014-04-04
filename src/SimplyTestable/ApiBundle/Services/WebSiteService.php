@@ -196,7 +196,7 @@ class WebSiteService extends EntityService {
             $sitemapFinder->getUrlLimitListener()->setSoftLimit($parameters['softLimit']);
         }   
         
-        $this->setRequestAuthentication($sitemapFinder->getConfiguration()->getBaseRequest(), $parameters);
+        $this->getHttpClientService()->prepareRequest($sitemapFinder->getConfiguration()->getBaseRequest(), $parameters);
         
         if (isset($parameters['cookies'])) {
             $sitemapFinder->getConfiguration()->setCookies($parameters['cookies']);
@@ -311,8 +311,8 @@ class WebSiteService extends EntityService {
             $this->websiteRssFeedFinder->getConfiguration()->setRootUrl($website->getCanonicalUrl());
             $this->websiteRssFeedFinder->getConfiguration()->getBaseRequest()->getClient()->setUserAgent('ST News Feed URL Retriever/0.1 (http://bit.ly/RlhKCL)');
             
-            $this->setRequestAuthentication($this->websiteRssFeedFinder->getConfiguration()->getBaseRequest(), $parameters);
-            
+            $this->getHttpClientService()->prepareRequest($this->websiteRssFeedFinder->getConfiguration()->getBaseRequest(), $parameters);
+                                    
             if (isset($parameters['cookies'])) {
                 $this->websiteRssFeedFinder->getConfiguration()->setCookies($parameters['cookies']);
             }            
@@ -360,8 +360,7 @@ class WebSiteService extends EntityService {
         try {
             $request = $this->getHttpClientService()->getRequest($feedUrl);
             
-            $this->setRequestAuthentication($request, $parameters);            
-            $this->setRequestCookies($request, $parameters);
+            $this->getHttpClientService()->prepareRequest($request, $parameters);
             
             $response = $request->send();
         } catch (\Guzzle\Http\Exception\RequestException $requestException) {            
@@ -386,46 +385,6 @@ class WebSiteService extends EntityService {
         }
         
         return $urls;        
-    } 
-    
-    
-    /**
-     * 
-     * @param \Guzzle\Http\Message\Request $request
-     */
-    private function setRequestAuthentication(\Guzzle\Http\Message\Request $request, $parameters) {
-        if (isset($parameters['http-auth-username']) || isset($parameters['http-auth-password'])) {            
-            $request->setAuth(
-                isset($parameters['http-auth-username']) ? $parameters['http-auth-username'] : '',
-                isset($parameters['http-auth-password']) ? $parameters['http-auth-password'] : '',
-                'any'
-            );
-        }
-    }      
-    
-    
-    
-    /**
-     * 
-     * @param \Guzzle\Http\Message\Request $request
-     */
-    private function setRequestCookies(\Guzzle\Http\Message\Request $request, $parameters) {
-        if (!is_null($request->getCookies())) {
-            foreach ($request->getCookies() as $name => $value) {
-                $request->removeCookie($name);
-            }
-        }   
-        
-        if (isset($parameters['cookies'])) {
-            $cookieUrlMatcher = new \webignition\Cookie\UrlMatcher\UrlMatcher();
-            
-            foreach ($parameters['cookies'] as $cookie) {
-                if ($cookieUrlMatcher->isMatch($cookie, $request->getUrl())) {
-                    $request->addCookie($cookie['name'], $cookie['value']);
-                }
-            }             
-        }
-
-    }     
+    }    
     
 }

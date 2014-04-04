@@ -94,4 +94,54 @@ class HttpClientService {
         return $request;        
     }
     
+    
+    public function prepareRequest(\Guzzle\Http\Message\Request $request, $parameters = array()) {        
+        $parameterBag = new \Symfony\Component\HttpFoundation\ParameterBag($parameters);
+        
+        $this->setRequestAuthentication($request, $parameterBag);
+        $this->setRequestCookies($request, $parameterBag);
+    }
+    
+    
+    /**
+     * 
+     * @param \Guzzle\Http\Message\Request $request
+     * @param \Symfony\Component\HttpFoundation\ParameterBag $parameters
+     */
+    private function setRequestAuthentication(\Guzzle\Http\Message\Request $request, \Symfony\Component\HttpFoundation\ParameterBag $parameters) {
+        if ($parameters->has('http-auth-username') || $parameters->has('http-auth-password')) {            
+            $request->setAuth(
+                ($parameters->has('http-auth-username')) ? $parameters->get('http-auth-username') : '',
+                ($parameters->has('http-auth-password')) ? $parameters->get('http-auth-password') : '',
+                'any'
+            );
+        }
+    }      
+    
+    
+    
+    /**
+     * 
+     * @param \Guzzle\Http\Message\Request $request
+     * @param \Symfony\Component\HttpFoundation\ParameterBag $parameters
+     */
+    private function setRequestCookies(\Guzzle\Http\Message\Request $request, \Symfony\Component\HttpFoundation\ParameterBag $parameters) {
+        if (!is_null($request->getCookies())) {
+            foreach ($request->getCookies() as $name => $value) {
+                $request->removeCookie($name);
+            }
+        }
+        
+        if ($parameters->has('cookies')) {
+            $cookieUrlMatcher = new \webignition\Cookie\UrlMatcher\UrlMatcher();
+            
+            foreach ($parameters->get('cookies') as $cookie) {                
+                if ($cookieUrlMatcher->isMatch($cookie, $request->getUrl())) {
+                    $request->addCookie($cookie['name'], $cookie['value']);
+                }
+            }             
+        }
+
+    }   
+    
 }

@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "a115441899894191cc291dd1eefd81b4",
+    "hash": "ec92a489aaf9449d7e718cd2988e5d2a",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -465,7 +465,9 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
+                    "email": "fabien@symfony.com",
+                    "homepage": "http://fabien.potencier.org",
+                    "role": "Lead Developer"
                 },
                 {
                     "name": "Symfony Community",
@@ -2591,25 +2593,30 @@
         },
         {
             "name": "webignition/absolute-url-deriver",
-            "version": "1.4.1.2",
+            "version": "1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/absolute-url-deriver.git",
-                "reference": "a4095e6a6f72206041baf29db33083d88d78108a"
+                "reference": "19fcee7ddd7376977671ccdac392e01c387a4cd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/a4095e6a6f72206041baf29db33083d88d78108a",
-                "reference": "a4095e6a6f72206041baf29db33083d88d78108a",
+                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/19fcee7ddd7376977671ccdac392e01c387a4cd8",
+                "reference": "19fcee7ddd7376977671ccdac392e01c387a4cd8",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
+                "php": ">=5.4.0",
                 "webignition/url": ">=1.9.8"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*",
+                "symfony/class-loader": "*"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
+                    "webignition\\Tests": "tests/",
                     "": "src/"
                 }
             },
@@ -2629,7 +2636,54 @@
                 "absolute",
                 "url"
             ],
-            "time": "2014-01-13 18:13:07"
+            "time": "2014-04-04 13:29:41"
+        },
+        {
+            "name": "webignition/character-set-list",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/character-set-list.git",
+                "reference": "bb7b4b8626972fb3b7c66dcbe69c7a6849b9ce8c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/character-set-list/zipball/bb7b4b8626972fb3b7c66dcbe69c7a6849b9ce8c",
+                "reference": "bb7b4b8626972fb3b7c66dcbe69c7a6849b9ce8c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*",
+                "symfony/class-loader": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "webignition\\Tests": "tests/",
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jon Cram",
+                    "email": "jon@webignition.net"
+                }
+            ],
+            "description": "List of official names for character sets",
+            "homepage": "https://github.com/webignition/character-set-list",
+            "keywords": [
+                "character",
+                "list",
+                "set"
+            ],
+            "time": "2014-04-04 13:31:41"
         },
         {
             "name": "webignition/container-aware-migration",
@@ -3270,28 +3324,34 @@
         },
         {
             "name": "webignition/sitemap-model",
-            "version": "0.1",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/sitemap-model.git",
-                "reference": "a10055a161ca654c269bd38b809e6e2cc1da75af"
+                "reference": "9f0d6fce621703cdccef7e0037e81d9612392240"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/a10055a161ca654c269bd38b809e6e2cc1da75af",
-                "reference": "a10055a161ca654c269bd38b809e6e2cc1da75af",
+                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/9f0d6fce621703cdccef7e0037e81d9612392240",
+                "reference": "9f0d6fce621703cdccef7e0037e81d9612392240",
                 "shasum": ""
             },
             "require": {
                 "hobnob/xml-stream-reader": "1.0.3",
-                "php": ">=5.3.0",
+                "php": ">=5.4.0",
                 "simplepie/simplepie": "*",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/web-resource-model": ">=0.1,<2.0"
+                "webignition/web-resource-model": ">=1.1.7,<2.0"
+            },
+            "require-dev": {
+                "guzzle/guzzle": ">=3.8.1,<4",
+                "phpunit/phpunit": "3.7.*",
+                "symfony/class-loader": "*"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
+                    "webignition\\Tests": "tests/",
                     "": "src/"
                 }
             },
@@ -3306,11 +3366,11 @@
                 }
             ],
             "description": "Models a website sitemap",
-            "homepage": "https://github.com/webignition/website-sitemap-model",
+            "homepage": "https://github.com/webignition/sitemap-model",
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2013-10-21 15:14:23"
+            "time": "2014-04-03 07:15:43"
         },
         {
             "name": "webignition/string-parser",
@@ -3397,25 +3457,25 @@
         },
         {
             "name": "webignition/url-resolver",
-            "version": "0.2.2",
+            "version": "0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url-resolver.git",
-                "reference": "adc8143eda7eaf8cb0608d1fd54337db61f70055"
+                "reference": "4efe1aac9e126cf44ae27484d71842d3d63dc8cd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url-resolver/zipball/adc8143eda7eaf8cb0608d1fd54337db61f70055",
-                "reference": "adc8143eda7eaf8cb0608d1fd54337db61f70055",
+                "url": "https://api.github.com/repos/webignition/url-resolver/zipball/4efe1aac9e126cf44ae27484d71842d3d63dc8cd",
+                "reference": "4efe1aac9e126cf44ae27484d71842d3d63dc8cd",
                 "shasum": ""
             },
             "require": {
                 "guzzle/guzzle": ">=3.8.0,<4",
-                "php": ">=5.3.0",
+                "php": ">=5.4.0",
                 "webignition/absolute-url-deriver": ">=1.4.1.2,<2",
                 "webignition/cookie-url-matcher": ">=0.1,<1",
                 "webignition/url": ">=1.9.8,<2",
-                "webignition/web-page-model": ">=0.6,<1"
+                "webignition/web-page-model": ">=1.0.2,<2.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "3.7.*",
@@ -3444,29 +3504,35 @@
                 "resolver",
                 "url"
             ],
-            "time": "2014-03-24 09:41:56"
+            "time": "2014-04-03 10:12:56"
         },
         {
             "name": "webignition/web-json-model",
-            "version": "0.1.1",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-json-model.git",
-                "reference": "d6825b8ee0bdc58fdf34f2726d9be7968bdda7ad"
+                "reference": "b042dd446e8e9f186f857832baa6e6efa44fa6ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-json-model/zipball/d6825b8ee0bdc58fdf34f2726d9be7968bdda7ad",
-                "reference": "d6825b8ee0bdc58fdf34f2726d9be7968bdda7ad",
+                "url": "https://api.github.com/repos/webignition/web-json-model/zipball/b042dd446e8e9f186f857832baa6e6efa44fa6ad",
+                "reference": "b042dd446e8e9f186f857832baa6e6efa44fa6ad",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
-                "webignition/web-resource-model": ">=0.1,<2.0"
+                "webignition/web-resource-model": ">=1.1.1,<2.0"
+            },
+            "require-dev": {
+                "guzzle/guzzle": ">=3.8.1,<4",
+                "phpunit/phpunit": "3.7.*",
+                "symfony/class-loader": "*"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
+                    "webignition\\Tests": "tests/",
                     "": "src/"
                 }
             },
@@ -3486,31 +3552,38 @@
                 "json",
                 "model"
             ],
-            "time": "2012-08-16 15:18:52"
+            "time": "2014-03-27 23:05:53"
         },
         {
             "name": "webignition/web-page-model",
-            "version": "0.6.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-model.git",
-                "reference": "3bfec9b6cd7e0fa6eefda3f3c4f19a3cb39facee"
+                "reference": "e6c97344f61a02bf93ca9ca5401c09902bb0c0fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/3bfec9b6cd7e0fa6eefda3f3c4f19a3cb39facee",
-                "reference": "3bfec9b6cd7e0fa6eefda3f3c4f19a3cb39facee",
+                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/e6c97344f61a02bf93ca9ca5401c09902bb0c0fa",
+                "reference": "e6c97344f61a02bf93ca9ca5401c09902bb0c0fa",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
                 "querypath/querypath": ">=3.0.0",
+                "webignition/character-set-list": ">=0.2,<1.0",
                 "webignition/internet-media-type": ">=0.1,<1.0",
-                "webignition/web-resource-model": ">=0.5,<2.0"
+                "webignition/web-resource-model": ">=1.1.2,<2.0"
+            },
+            "require-dev": {
+                "guzzle/guzzle": ">=3.8.1,<4",
+                "phpunit/phpunit": "3.7.*",
+                "symfony/class-loader": "*"
             },
             "type": "library",
             "autoload": {
                 "psr-0": {
+                    "webignition\\Tests": "tests/",
                     "": "src/"
                 }
             },
@@ -3530,26 +3603,26 @@
                 "model",
                 "webpage"
             ],
-            "time": "2014-03-27 11:13:48"
+            "time": "2014-03-27 23:39:29"
         },
         {
             "name": "webignition/web-resource-model",
-            "version": "1.1.2",
+            "version": "1.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-resource-model.git",
-                "reference": "081f2900486478e0a871485dd2194a76c1164633"
+                "reference": "72d6dce1468f9003e97cee9d3323723e3c634142"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-resource-model/zipball/081f2900486478e0a871485dd2194a76c1164633",
-                "reference": "081f2900486478e0a871485dd2194a76c1164633",
+                "url": "https://api.github.com/repos/webignition/web-resource-model/zipball/72d6dce1468f9003e97cee9d3323723e3c634142",
+                "reference": "72d6dce1468f9003e97cee9d3323723e3c634142",
                 "shasum": ""
             },
             "require": {
                 "doctrine/collections": "~1.0",
                 "guzzle/guzzle": ">=3.8.1,<4",
-                "php": ">=5.3.0",
+                "php": ">=5.4.0",
                 "webignition/internet-media-type": ">=0.1,<2.0"
             },
             "require-dev": {
@@ -3579,29 +3652,75 @@
                 "modem",
                 "web"
             ],
-            "time": "2014-03-27 23:36:16"
+            "time": "2014-04-02 23:23:58"
         },
         {
-            "name": "webignition/website-rss-feed-finder",
-            "version": "0.1",
+            "name": "webignition/web-resource-service",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/webignition/website-rss-feed-finder.git",
-                "reference": "b5d3078b01567cb214ac07891b9c3e9b87ed7bd4"
+                "url": "https://github.com/webignition/web-resource-service.git",
+                "reference": "b90ade6ddeb20dfbcba1ec21be2e45517209a570"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/b5d3078b01567cb214ac07891b9c3e9b87ed7bd4",
-                "reference": "b5d3078b01567cb214ac07891b9c3e9b87ed7bd4",
+                "url": "https://api.github.com/repos/webignition/web-resource-service/zipball/b90ade6ddeb20dfbcba1ec21be2e45517209a570",
+                "reference": "b90ade6ddeb20dfbcba1ec21be2e45517209a570",
+                "shasum": ""
+            },
+            "require": {
+                "guzzle/guzzle": ">=3.8.0",
+                "php": ">=5.3.2",
+                "webignition/internet-media-type": ">=0.4.4,<2.0",
+                "webignition/web-json-model": ">=1.0.1,<2.0",
+                "webignition/web-page-model": ">=1.0.1,<2.0",
+                "webignition/web-resource-model": ">=1.1.1,<2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*",
+                "symfony/class-loader": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "webignition\\Tests": "tests/",
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Service to retrieve over HTTP a \\webignition\\WebResource\\WebResource",
+            "homepage": "https://github.com/webignition/web-resource-service",
+            "keywords": [
+                "resource",
+                "service",
+                "web"
+            ],
+            "time": "2014-03-27 23:12:03"
+        },
+        {
+            "name": "webignition/website-rss-feed-finder",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webignition/website-rss-feed-finder.git",
+                "reference": "4b4a6a433f83e789ccd5a6935bf3c4dfaedf54c1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webignition/website-rss-feed-finder/zipball/4b4a6a433f83e789ccd5a6935bf3c4dfaedf54c1",
+                "reference": "4b4a6a433f83e789ccd5a6935bf3c4dfaedf54c1",
                 "shasum": ""
             },
             "require": {
                 "guzzle/guzzle": ">=3.8.1",
                 "php": ">=5.3.0",
                 "webignition/cookie-url-matcher": ">=0.1,<1.0",
-                "webignition/internet-media-type": ">=0.1,<2.0",
+                "webignition/internet-media-type": ">=0.1,<1.0",
                 "webignition/url": ">=1.7.2,<2.0",
-                "webignition/web-page-model": ">=0.1,<2.0"
+                "webignition/web-page-model": ">=1.0.2,<2.0"
             },
             "type": "library",
             "autoload": {
@@ -3625,33 +3744,33 @@
             "keywords": [
                 "rss"
             ],
-            "time": "2014-03-18 11:26:10"
+            "time": "2014-04-04 13:28:53"
         },
         {
             "name": "webignition/website-sitemap-finder",
-            "version": "0.5",
+            "version": "1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "c640b315f75e80e184e99b9c52d038bb55e796fd"
+                "reference": "ddd7d1db9a3687542a3f89f4bb955ad5e39482a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/c640b315f75e80e184e99b9c52d038bb55e796fd",
-                "reference": "c640b315f75e80e184e99b9c52d038bb55e796fd",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/ddd7d1db9a3687542a3f89f4bb955ad5e39482a5",
+                "reference": "ddd7d1db9a3687542a3f89f4bb955ad5e39482a5",
                 "shasum": ""
             },
             "require": {
                 "guzzle/guzzle": ">=3.8.1",
-                "php": ">=5.3.0",
+                "php": ">=5.4.0",
                 "symfony/event-dispatcher": ">=2.1",
                 "webignition/absolute-url-deriver": ">=1.3.3,<2.0",
                 "webignition/cookie-url-matcher": ">=0.1,<1.0",
                 "webignition/internet-media-type": ">=0.1,<2.0",
                 "webignition/robots-txt-parser": "dev-master",
-                "webignition/sitemap-model": ">=0.1",
+                "webignition/sitemap-model": ">=1.0.4,<2.0",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/website-sitemap-retriever": ">=0.7,<1.0"
+                "webignition/website-sitemap-retriever": ">=1.0.1,<2.0"
             },
             "type": "library",
             "autoload": {
@@ -3675,29 +3794,29 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2014-03-17 22:51:56"
+            "time": "2014-04-03 08:45:48"
         },
         {
             "name": "webignition/website-sitemap-retriever",
-            "version": "0.7",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-retriever.git",
-                "reference": "14a8935f27198290acaac493834a6b0f1d0377f5"
+                "reference": "b4e948f6ac456bf0278babd5c88c2d35df7ff732"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/14a8935f27198290acaac493834a6b0f1d0377f5",
-                "reference": "14a8935f27198290acaac493834a6b0f1d0377f5",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/b4e948f6ac456bf0278babd5c88c2d35df7ff732",
+                "reference": "b4e948f6ac456bf0278babd5c88c2d35df7ff732",
                 "shasum": ""
             },
             "require": {
-                "guzzle/guzzle": ">=3.3.1",
-                "php": ">=5.3.0",
+                "guzzle/guzzle": ">=3.8.1",
+                "php": ">=5.4.0",
                 "symfony/event-dispatcher": ">=2.1",
                 "webignition/cookie-url-matcher": ">=0.1,<1.0",
                 "webignition/internet-media-type": ">=0.1,<2.0",
-                "webignition/sitemap-model": ">=0.1"
+                "webignition/sitemap-model": ">=1.0.4,<2.0"
             },
             "type": "library",
             "autoload": {
@@ -3721,7 +3840,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2014-03-17 16:44:53"
+            "time": "2014-04-03 07:29:42"
         },
         {
             "name": "winzou/console-bundle",
@@ -3886,7 +4005,7 @@
         "webignition/html-validation-error-normaliser": 20
     },
     "platform": {
-        "php": ">=5.3.3"
+        "php": ">=5.4"
     },
     "platform-dev": [
 

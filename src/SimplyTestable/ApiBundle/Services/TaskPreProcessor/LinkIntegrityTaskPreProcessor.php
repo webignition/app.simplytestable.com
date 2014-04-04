@@ -8,12 +8,12 @@ use webignition\InternetMediaType\InternetMediaType;
 class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     
     public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {        
-        $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndType($task);
+        $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndType($task);             
         if (count($rawTaskOutputs) === 0) {
             return;
         }
 
-        $webResource = $this->getWebResource($task);
+        $webResource = $this->getWebResource($task);        
         if (is_null($webResource)) {
             return false;
         }
@@ -146,7 +146,15 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     
     /**
      * 
-     * @return \SimplyTestable\ApiBundle\Services\WebResourceService
+     * @return \SimplyTestable\ApiBundle\Services\HttpClientService
+     */
+    private function getHttpClientService() {
+        return $this->container->get('simplytestable.services.httpclientservice');
+    }     
+    
+    /**
+     * 
+     * @return \webignition\WebResource\Service\Service
      */
     private function getWebResourceService() {
         return $this->container->get('simplytestable.services.webresourceservice');
@@ -175,12 +183,10 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
      * @param \SimplyTestable\ApiBundle\Entity\Task\Tas $task
      * @return WebResource 
      */
-    private function getWebResource(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {                        
-        try {            
-            $request = $this->getWebResourceService()->getHttpClientService()->getRequest($task->getUrl());
-            
-            $this->setRequestAuthentication($request, $task);
-            $this->setRequestCookies($request, $task);            
+    private function getWebResource(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {        
+        try {          
+            $request = $this->getHttpClientService()->getRequest($task->getUrl());
+            $this->getHttpClientService()->prepareRequest($request, $task->getParametersArray());            
             
             return $this->getWebResourceService()->get($request);            
         } catch (WebResourceException $webResourceException) {
@@ -191,48 +197,4 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
             $this->getLogger()->err('LinkIntegrityTaskPreProcessor::getWebResource ['.$task->getUrl().'][http exception][too many redirects]');
         }
     }    
-    
-    
-    /**
-     * 
-     * @param \Guzzle\Http\Message\Request $request
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
-     */
-    private function setRequestAuthentication(\Guzzle\Http\Message\Request $request, \SimplyTestable\ApiBundle\Entity\Task\Task $task) {
-        if ($task->hasParameter('http-auth-username') || $task->hasParameter('http-auth-password')) {            
-            $request->setAuth(
-                ($task->hasParameter('http-auth-username')) ? $task->getParameter('http-auth-username') : '',
-                ($task->hasParameter('http-auth-password')) ? $task->getParameter('http-auth-password') : '',
-                'any'
-            );
-        }
-    }      
-    
-    
-    
-    /**
-     * 
-     * @param \Guzzle\Http\Message\Request $request
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
-     */
-    private function setRequestCookies(\Guzzle\Http\Message\Request $request, \SimplyTestable\ApiBundle\Entity\Task\Task $task) {
-        if (!is_null($request->getCookies())) {
-            foreach ($request->getCookies() as $name => $value) {
-                $request->removeCookie($name);
-            }
-        }
-        
-        if ($task->hasParameter('cookies')) {            
-            $cookieUrlMatcher = new \webignition\Cookie\UrlMatcher\UrlMatcher();
-            
-            foreach ($task->getParameter('cookies') as $cookie) {                
-                if ($cookieUrlMatcher->isMatch($cookie, $request->getUrl())) {
-                    $request->addCookie($cookie['name'], $cookie['value']);
-                }
-            }             
-        }
-
-    }     
-    
-    
 }
