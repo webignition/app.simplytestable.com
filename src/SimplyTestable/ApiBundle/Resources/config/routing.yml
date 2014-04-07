@@ -1,4 +1,4 @@
-jobs_list:
+job_list:
     pattern: /jobs/list/{limit}/{offset}/
     defaults: { _controller: SimplyTestableApiBundle:Job:list, _format: json }           
 
