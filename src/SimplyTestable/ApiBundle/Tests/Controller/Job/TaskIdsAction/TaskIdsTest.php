@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
 
+use SimplyTestable\ApiBundle\Tests\Controller\Job\AbstractAccessTest;
+
 class TaskIdsTest extends AbstractAccessTest {
     
     protected function getActionName() {

@@ -20,7 +20,7 @@ job_tasks:
   requirements:
     site_root_url: ".+"   
     
-job_task_ids:
+job_taskids:
   pattern: /job/{site_root_url}/{test_id}/tasks/ids/
   defaults: { _controller: SimplyTestableApiBundle:Job:taskIds, _format: json } 
   requirements:
