@@ -15,6 +15,15 @@ before_install:
   - "mkdir -p ~/.composer"
   - cp .travis.composer.config.json ~/.composer/config.json   
   
+  - mkdir app/cache/test  
+  - mv app/config/parameters.yml.travis app/config/parameters.yml
+  - mv --force app/config/config_travis.yml app/config/config_test.yml
+  - cp src/SimplyTestable/ApiBundle/Resources/config/parameters.yml.dist.yml src/SimplyTestable/ApiBundle/Resources/config/parameters.yml
+  - echo | php composer.phar install
+  - php app/console doctrine:database:create
+  - php app/console doctrine:migrations:migrate --no-interaction
+  - php app/console doctrine:fixtures:load --append  
+  
 install:    
   - composer install    
   
@@ -32,14 +41,7 @@ before_script:
  
   
   # Build!
-  - mkdir app/cache/test  
-  - mv app/config/parameters.yml.travis app/config/parameters.yml
-  - mv --force app/config/config_travis.yml app/config/config_test.yml
-  - cp src/SimplyTestable/ApiBundle/Resources/config/parameters.yml.dist.yml src/SimplyTestable/ApiBundle/Resources/config/parameters.yml
-  - echo | php composer.phar install
-  - php app/console doctrine:database:create
-  - php app/console doctrine:migrations:migrate --no-interaction
-  - php app/console doctrine:fixtures:load --append
+
   
 script:
   - phpunit -c app
