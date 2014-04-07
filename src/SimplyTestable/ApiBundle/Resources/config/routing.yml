@@ -39,7 +39,7 @@ job_cancel:
         site_root_url: ".+"            
         
         
-job_set_public:
+job_setpublic:
     pattern: /job/{site_root_url}/{test_id}/set-public/
     defaults: { _controller: SimplyTestableApiBundle:Job:setPublic, _format: json }    
     requirements:
