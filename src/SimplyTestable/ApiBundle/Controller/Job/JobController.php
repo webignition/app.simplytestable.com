@@ -2,18 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\WebSite;
-use SimplyTestable\ApiBundle\Entity\State;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputDefinition;
 
-use SimplyTestable\ApiBundle\Controller\ApiController;
-
-class JobController extends ApiController
+class JobController extends BaseJobController
 {
     protected $testId = null;    
     
@@ -112,113 +103,6 @@ class JobController extends ApiController
         }
         
         return $this->sendResponse($this->getSummary($job));
-    }
-    
-    
-    /**
-     *
-     * @param Job $job
-     * @return array 
-     */
-    private function getSummary(Job $job) {
-        $jobSummary = array(
-            'id' => $job->getId(),
-            'user' => $job->getPublicSerializedUser(),
-            'website' => $job->getPublicSerializedWebsite(),
-            'state' => $job->getPublicSerializedState(),
-            'time_period' => $job->getTimePeriod(),
-            'url_count' => $job->getUrlCount(),
-            'task_count' => $this->getTaskService()->getCountByJob($job),
-            'task_count_by_state' => $this->getTaskCountByState($job),
-            'task_types' => $job->getRequestedTaskTypes(),
-            'errored_task_count' => $this->getJobService()->getErroredTaskCount($job),
-            'cancelled_task_count' => $this->getJobService()->getCancelledTaskCount($job),
-            'skipped_task_count' => $this->getJobService()->getSkippedTaskCount($job),
-            'warninged_task_count' => $this->getJobService()->getWarningedTaskCount($job),
-            'task_type_options' => $this->getJobTaskTypeOptions($job),
-            'type' => $job->getPublicSerializedType(),
-            'is_public' => $this->getIsJobPublic($job),
-            'parameters' => $job->getParameters(),
-            'error_count' => $this->getErrorCount($job),
-            'warning_count' => $this->getWarningCount($job)
-        );
-        
-        if ($this->getJobService()->isRejected($job)) {            
-            $jobSummary['rejection'] = $this->getJobRejectionReasonService()->getForJob($job);
-        }
-        
-        if (!is_null($job->getAmmendments()) && $job->getAmmendments()->count() > 0) {
-            $jobSummary['ammendments'] = $job->getAmmendments();
-        }
-        
-        if ($this->getCrawlJobContainerService()->hasForJob($job)) {
-            $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);            
-            $jobSummary['crawl'] = array(
-                'id' => $crawlJobContainer->getCrawlJob()->getId(),
-                'state' => $crawlJobContainer->getCrawlJob()->getPublicSerializedState(),
-                'processed_url_count' => count($this->getCrawlJobContainerService()->getProcessedUrls($crawlJobContainer)),
-                'discovered_url_count' => count($this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer, true)),                
-            );
-            
-            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($job->getUser())->getPlan();
-            
-            if ($userAccountPlan->hasConstraintNamed('urls_per_job')) {
-                $jobSummary['crawl']['limit'] = $userAccountPlan->getConstraintNamed('urls_per_job')->getLimit();
-            }
-        }
-        
-        return $jobSummary;        
-    }
-    
-
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return int
-     */    
-    private function getErrorCount(Job $job) {
-        return $this->getTaskService()->getEntityRepository()->getErrorCountByJob($job);
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return int
-     */
-    private function getWarningCount(Job $job) {
-        return $this->getTaskService()->getEntityRepository()->getWarningCountByJob($job);
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return boolean
-     */
-    private function getIsJobPublic(Job $job) {
-        if ($this->getUserService()->isPublicUser($this->getUser())) {
-            return true;
-        }
-        
-        return $job->getIsPublic();
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return array
-     */
-    private function getJobTaskTypeOptions(Job $job) {
-        $jobTaskTypeOptions = array();
-        
-        foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
-            /* @var $taskTypeOptions \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions */            
-            $jobTaskTypeOptions[$taskTypeOptions->getTaskType()->getName()] = $taskTypeOptions->getOptions();
-        }
-        
-        return $jobTaskTypeOptions;
     }
 
     
@@ -408,136 +292,7 @@ class JobController extends ApiController
         }
         
         return $this->getJobByUser();
-    }
-    
-    
-    private function populateJob(Job $job) {
-        $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());        
-        $job->setUrlCount($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
-        return $job;         
     }    
-    
-    
-    /**
-     *
-     * @param Job $job
-     * @return array 
-     */
-    private function getTaskCountByState(Job $job) {
-        $availableStateNames = $this->getTaskService()->getAvailableStateNames();
-        $taskCountByState = array();
-        
-        foreach ($availableStateNames as $stateName) {
-            $stateShortName = str_replace('task-', '', $stateName);            
-            $methodName = $this->stateNameToStateRetrievalMethodName($stateShortName);
-            $taskCountByState[$stateShortName] = $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->$methodName());         
-        }
-        
-        return $taskCountByState;
-    }
-    
-    
-    /**
-     *
-     * @param string $stateName
-     * @return string
-     */
-    private function stateNameToStateRetrievalMethodName($stateName) {
-        $methodName = $stateName;
-        
-        $methodName = str_replace('-', ' ', $methodName);
-        $methodName = ucwords($methodName);
-        $methodName = str_replace(' ', '', $methodName);
-        
-        return 'get' . $methodName . 'State';
-    }
-    
-    
-    /**
-     * 
-     * @return array
-     */
-    private function getTaskTypeOptions() {
-        $testTypeOptions = (is_array($this->getRequestValue('test-type-options'))) ? $this->getRequestValue('test-type-options') : array();
-        
-        foreach ($testTypeOptions as $taskTypeName => $options) {
-            unset($testTypeOptions[$taskTypeName]);
-            $testTypeOptions[strtolower($taskTypeName)] = $options;
-        }
-        
-        return $testTypeOptions;
-    }
-    
-    
-    /**
-     *
-     * @return boolean
-     */
-    private function isTestEnvironment() {
-        return $this->get('kernel')->getEnvironment() == 'test';
-    }
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\User 
-     */
-    public function getUser() {
-        if (!$this->isTestEnvironment()) {                        
-            return parent::getUser();
-        }
-        
-        if  (is_null($this->getRequestValue('user'))) {
-            return $this->get('simplytestable.services.userservice')->getPublicUser();
-        }
-        
-        return $this->get('simplytestable.services.userservice')->findUserByEmail($this->getRequestValue('user'));
-    }   
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobService 
-     */
-    protected function getJobService() {
-        return $this->get('simplytestable.services.jobservice');
-    }
-    
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\TaskService 
-     */
-    private function getTaskService() {
-        return $this->get('simplytestable.services.taskservice');
-    } 
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobRejectionReasonService 
-     */
-    private function getJobRejectionReasonService() {
-        return $this->get('simplytestable.services.jobrejectionreasonservice');
-    }    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
-     */
-    private function getJobUserAccountPlanEnforcementService() {
-        return $this->get('simplytestable.services.JobUserAccountPlanEnforcementService');
-    }      
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
-     */
-    private function getUserAccountPlanService() {
-        return $this->get('simplytestable.services.UserAccountPlanService');
-    }     
 
     
     /**
@@ -566,23 +321,7 @@ class JobController extends ApiController
         
         return (count($taskIds) > 0) ? $taskIds : null;
     }
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\CrawlJobContainerService 
-     */
-    protected function getCrawlJobContainerService() {
-        return $this->get('simplytestable.services.crawljobcontainerservice');
-    }        
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobTypeService
-     */
-    protected function getJobTypeService() {
-        return $this->get('simplytestable.services.JobTypeService');
-    }  
-    
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
@@ -597,23 +336,5 @@ class JobController extends ApiController
      */        
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
-    }
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\StateService
-     */        
-    private function getStateService() {
-        return $this->get('simplytestable.services.stateservice');
-    }    
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobListService
-     */        
-    private function getJobListService() {
-        return $this->get('simplytestable.services.joblistservice');
-    }        
+    }      
 }
