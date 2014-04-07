@@ -305,6 +305,59 @@ class JobListService  {
     }
     
     
+    /**
+     * 
+     * @return boolean
+     */
+    private function hasUser() {
+        return !is_null($this->user);
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    private function hasExcludeTypes() {
+        return is_array($this->excludeTypes) && count($this->excludeTypes) > 0;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    private function hasExcludeStates() {
+        return is_array($this->excludeStates) && count($this->excludeStates) > 0;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    private function hasIncludeIds() {
+        return is_array($this->includeIds) && count($this->includeIds) > 0;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    private function hasExcludeIds() {
+        return is_array($this->excludeIds) && count($this->excludeIds) > 0;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    private function hasUrlFilter() {
+        return !is_null($this->urlFilter);
+    }    
+    
     
     /**
      * 
@@ -313,67 +366,28 @@ class JobListService  {
     private function getDefaultQueryBuilder() {
         $queryBuilder = $this->getQueryBuilder();
         
-        $queryBuilder->where('1 = 1');
-        
-        if (!is_null($this->user)) {
-            $queryBuilder->andWhere('Job.user = :User');
-            $queryBuilder->setParameter('User', $this->user);            
+        if ($this->hasUser()) {
+            $this->setQueryUserFilter($queryBuilder);           
         }
         
-        if (is_array($this->excludeTypes) && count($this->excludeTypes) > 0) {            
-            $typeExclusionParts = array();
-            
-            foreach ($this->excludeTypes as $typeIndex => $type) {                
-                $typeExclusionParts[] = 'Job.type != :Type' .  $typeIndex;
-                $queryBuilder->setParameter('Type' .  $typeIndex, $type);
-            }
-            
-            $queryBuilder->andWhere('('.implode(' AND ', $typeExclusionParts).')');
+        if ($this->hasExcludeTypes()) {            
+            $this->setQueryTypeExclusion($queryBuilder);
         }
         
-        if (is_array($this->excludeStates) && count($this->excludeStates) > 0) {            
-            $stateExclusionParts = array();
-            
-            foreach ($this->excludeStates as $stateIndex => $state) {                
-                $stateExclusionParts[] = 'Job.state != :State' .  $stateIndex;
-                $queryBuilder->setParameter('State' .  $stateIndex, $state);
-            }
-            
-            $queryBuilder->andWhere('('.implode(' AND ', $stateExclusionParts).')');
+        if ($this->hasExcludeStates()) {            
+            $this->setQueryStateExclusion($queryBuilder);
         }
         
-        if (is_array($this->includeIds) && count($this->includeIds) > 0) {
-            $idWhereParts = array();
-            
-            foreach ($this->includeIds as $idIndex => $id) {
-                $idWhereParts[] = 'Job.id = :Id' . $idIndex;
-                $queryBuilder->setParameter('Id' .  $idIndex, $id);
-            }
-            
-            $queryBuilder->orWhere(implode(' OR ', $idWhereParts));
+        if ($this->hasIncludeIds()) {
+            $this->setQueryIncludeIds($queryBuilder);
         }
         
-        if (is_array($this->excludeIds) && count($this->excludeIds) > 0) {            
-            $idWhereParts = array();
-            
-            foreach ($this->excludeIds as $idIndex => $id) {
-                $idWhereParts[] = 'Job.id != :Id' . $idIndex;
-                $queryBuilder->setParameter('Id' .  $idIndex, $id);
-            }
-            
-            $queryBuilder->andWhere(implode(' AND ', $idWhereParts));
+        if ($this->hasExcludeIds()) {            
+            $this->setQueryExcludeIds($queryBuilder);
         }  
         
-        if (!is_null($this->urlFilter)) {
-            $queryBuilder->join('Job.website', 'Website');
-            
-            if (substr_count($this->urlFilter, '*')) {
-                $queryBuilder->andWhere('Website.canonicalUrl LIKE :Website');
-                $queryBuilder->setParameter('Website', str_replace('*', '%', $this->urlFilter));               
-            } else {
-                $queryBuilder->andWhere('Website.canonicalUrl = :Website');
-                $queryBuilder->setParameter('Website', $this->urlFilter);                
-            }
+        if ($this->hasUrlFilter()) {
+            $this->setQueryUrlFilter($queryBuilder);
         }
         
         $queryBuilder->orderBy($this->getOrderByField(), $this->getOrder());        
@@ -382,8 +396,95 @@ class JobListService  {
     }
     
     
+    /**
+     * 
+     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
+     */
+    private function setQueryUserFilter(\Doctrine\ORM\QueryBuilder $queryBuilder) { 
+        $queryBuilder->andWhere('Job.user = :User');
+        $queryBuilder->setParameter('User', $this->user);
+    }
+    
+
+    /**
+     * 
+     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
+     */
+    private function setQueryTypeExclusion(\Doctrine\ORM\QueryBuilder $queryBuilder) {
+        $typeExclusionParts = array();
+
+        foreach ($this->excludeTypes as $typeIndex => $type) {                
+            $typeExclusionParts[] = 'Job.type != :Type' .  $typeIndex;
+            $queryBuilder->setParameter('Type' .  $typeIndex, $type);
+        }
+
+        $queryBuilder->andWhere('('.implode(' AND ', $typeExclusionParts).')');        
+    }
     
     
+    /**
+     * 
+     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
+     */
+    private function setQueryStateExclusion(\Doctrine\ORM\QueryBuilder $queryBuilder) {
+        $stateExclusionParts = array();
+
+        foreach ($this->excludeStates as $stateIndex => $state) {                
+            $stateExclusionParts[] = 'Job.state != :State' .  $stateIndex;
+            $queryBuilder->setParameter('State' .  $stateIndex, $state);
+        }
+
+        $queryBuilder->andWhere('('.implode(' AND ', $stateExclusionParts).')');        
+    }
+    
+
+    /**
+     * 
+     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
+     */    
+    private function setQueryIncludeIds(\Doctrine\ORM\QueryBuilder $queryBuilder) {
+        $idWhereParts = array();
+
+        foreach ($this->includeIds as $idIndex => $id) {
+            $idWhereParts[] = 'Job.id = :Id' . $idIndex;
+            $queryBuilder->setParameter('Id' .  $idIndex, $id);
+        }
+
+        $queryBuilder->orWhere(implode(' OR ', $idWhereParts));        
+    }
+    
+  
+    /**
+     * 
+     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
+     */
+    private function setQueryExcludeIds(\Doctrine\ORM\QueryBuilder $queryBuilder) {
+        $idWhereParts = array();
+
+        foreach ($this->excludeIds as $idIndex => $id) {
+            $idWhereParts[] = 'Job.id != :Id' . $idIndex;
+            $queryBuilder->setParameter('Id' .  $idIndex, $id);
+        }
+
+        $queryBuilder->andWhere(implode(' AND ', $idWhereParts));        
+    }
+    
+    
+    /**
+     * 
+     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
+     */
+    private function setQueryUrlFilter(\Doctrine\ORM\QueryBuilder $queryBuilder) {
+        $queryBuilder->join('Job.website', 'Website');
+
+        if (substr_count($this->urlFilter, '*')) {
+            $queryBuilder->andWhere('Website.canonicalUrl LIKE :Website');
+            $queryBuilder->setParameter('Website', str_replace('*', '%', $this->urlFilter));               
+        } else {
+            $queryBuilder->andWhere('Website.canonicalUrl = :Website');
+            $queryBuilder->setParameter('Website', $this->urlFilter);                
+        }        
+    }
     
     /**
      * 
@@ -417,7 +518,10 @@ class JobListService  {
      * @return \Doctrine\ORM\QueryBuilder
      */
     private function getQueryBuilder() {
-        return $this->getJobService()->getEntityRepository()->createQueryBuilder('Job');
+        $queryBuilder = $this->getJobService()->getEntityRepository()->createQueryBuilder('Job');        
+        $queryBuilder->where('1 = 1');
+        
+        return $queryBuilder;
     }
     
     
