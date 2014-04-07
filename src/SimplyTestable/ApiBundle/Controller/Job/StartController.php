@@ -9,7 +9,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 
 use SimplyTestable\ApiBundle\Controller\ApiController;
 
-class JobStartController extends ApiController
+class StartController extends ApiController
 {
     private $siteRootUrl = null;   
     

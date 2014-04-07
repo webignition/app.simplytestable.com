@@ -11,7 +11,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     const JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Job\JobController';       
     const CRAWL_JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\CrawlJobController';    
-    const JOB_START_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Job\JobStartController';    
+    const JOB_START_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Job\StartController';    
     const USER_CREATION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserCreationController';
     const USER_PASSWORD_RESET_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserPasswordResetController';
     const USER_EMAIL_CHANGE_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserEmailChangeController';

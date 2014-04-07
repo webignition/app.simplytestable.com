@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobStart\RetestAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Start\RetestAction;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 

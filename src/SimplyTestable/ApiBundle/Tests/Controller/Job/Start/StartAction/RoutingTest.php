@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobStart\StartAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Start\StartAction;
 
 use SimplyTestable\ApiBundle\Tests\Controller\RoutingTest as BaseRoutingTest;
 

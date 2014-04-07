@@ -2,9 +2,9 @@ job_job_list:
     pattern: /jobs/list/{limit}/{offset}/
     defaults: { _controller: SimplyTestableApiBundle:Job\Job:list, _format: json }           
 
-job_jobstart_start:
+job_start_start:
     pattern: /job/{site_root_url}/start/
-    defaults: { _controller: SimplyTestableApiBundle:Job\JobStart:start, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:Job\Start:start, _format: json }
     requirements:
         site_root_url: ".+"
         
@@ -58,9 +58,9 @@ job_job_ispublic:
     requirements:
         site_root_url: ".+"        
         
-job_jobstart_retest:
+job_start_retest:
     pattern: /job/{site_root_url}/{test_id}/re-test/
-    defaults: { _controller: SimplyTestableApiBundle:Job\JobStart:retest, _format: json }    
+    defaults: { _controller: SimplyTestableApiBundle:Job\Start:retest, _format: json }    
     requirements:
         site_root_url: ".+"          
         
