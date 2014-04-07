@@ -64,7 +64,7 @@ job_retest:
     requirements:
         site_root_url: ".+"          
         
-job:
+job_status:
     pattern: /job/{site_root_url}/{test_id}/
     defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
     requirements:
