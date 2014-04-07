@@ -1,72 +1,72 @@
-job_list:
+job_job_list:
     pattern: /jobs/list/{limit}/{offset}/
-    defaults: { _controller: SimplyTestableApiBundle:Job:list, _format: json }           
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:list, _format: json }           
 
-jobstart_start:
+job_jobstart_start:
     pattern: /job/{site_root_url}/start/
-    defaults: { _controller: SimplyTestableApiBundle:JobStart:start, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:Job\JobStart:start, _format: json }
     requirements:
         site_root_url: ".+"
         
-job_latest:        
+job_job_latest:        
   pattern: /job/{site_root_url}/latest/
-  defaults: { _controller: SimplyTestableApiBundle:Job:latest, _format: json } 
+  defaults: { _controller: SimplyTestableApiBundle:Job\Job:latest, _format: json } 
   requirements:
     site_root_url: ".+"   
         
-job_tasks:
+job_job_tasks:
   pattern: /job/{site_root_url}/{test_id}/tasks/
-  defaults: { _controller: SimplyTestableApiBundle:Job:tasks, _format: json } 
+  defaults: { _controller: SimplyTestableApiBundle:Job\Job:tasks, _format: json } 
   requirements:
     site_root_url: ".+"   
     
-job_taskids:
+job_job_taskids:
   pattern: /job/{site_root_url}/{test_id}/tasks/ids/
-  defaults: { _controller: SimplyTestableApiBundle:Job:taskIds, _format: json } 
+  defaults: { _controller: SimplyTestableApiBundle:Job\Job:taskIds, _format: json } 
   requirements:
     site_root_url: ".+"     
 
-job_listurls:
+job_job_listurls:
     pattern: /job/{site_root_url}/{test_id}/urls/
-    defaults: { _controller: SimplyTestableApiBundle:Job:listUrls, _format: json }    
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:listUrls, _format: json }    
     requirements:
         site_root_url: ".+"  
         
-job_cancel:
+job_job_cancel:
     pattern: /job/{site_root_url}/{test_id}/cancel/
-    defaults: { _controller: SimplyTestableApiBundle:Job:cancel, _format: json }    
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:cancel, _format: json }    
     requirements:
         site_root_url: ".+"            
         
         
-job_setpublic:
+job_job_setpublic:
     pattern: /job/{site_root_url}/{test_id}/set-public/
-    defaults: { _controller: SimplyTestableApiBundle:Job:setPublic, _format: json }    
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:setPublic, _format: json }    
     requirements:
         site_root_url: ".+"           
         
-job_setprivate:
+job_job_setprivate:
     pattern: /job/{site_root_url}/{test_id}/set-private/
-    defaults: { _controller: SimplyTestableApiBundle:Job:setPrivate, _format: json }    
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:setPrivate, _format: json }    
     requirements:
         site_root_url: ".+"          
         
         
-job_ispublic:
+job_job_ispublic:
     pattern: /job/{site_root_url}/{test_id}/is_public/
-    defaults: { _controller: SimplyTestableApiBundle:Job:isPublic, _format: json }    
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:isPublic, _format: json }    
     requirements:
         site_root_url: ".+"        
         
-jobstart_retest:
+job_jobstart_retest:
     pattern: /job/{site_root_url}/{test_id}/re-test/
-    defaults: { _controller: SimplyTestableApiBundle:JobStart:retest, _format: json }    
+    defaults: { _controller: SimplyTestableApiBundle:Job\JobStart:retest, _format: json }    
     requirements:
         site_root_url: ".+"          
         
-job_status:
+job_job_status:
     pattern: /job/{site_root_url}/{test_id}/
-    defaults: { _controller: SimplyTestableApiBundle:Job:status, _format: json }    
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:status, _format: json }    
     requirements:
         site_root_url: ".+"
     
