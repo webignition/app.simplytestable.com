@@ -45,7 +45,7 @@ job_setpublic:
     requirements:
         site_root_url: ".+"           
         
-job_set_private:
+job_setprivate:
     pattern: /job/{site_root_url}/{test_id}/set-private/
     defaults: { _controller: SimplyTestableApiBundle:Job:setPrivate, _format: json }    
     requirements:
