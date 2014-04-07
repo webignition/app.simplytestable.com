@@ -58,7 +58,7 @@ job_ispublic:
     requirements:
         site_root_url: ".+"        
         
-job_retest:
+jobstart_retest:
     pattern: /job/{site_root_url}/{test_id}/re-test/
     defaults: { _controller: SimplyTestableApiBundle:JobStart:retest, _format: json }    
     requirements:
