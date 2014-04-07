@@ -1,8 +1,8 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\ListAction\ExcludeCurrent;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\ExcludeCurrent;
 
-use SimplyTestable\ApiBundle\Tests\Controller\Job\Job\ListAction\AbstractListTest;
+use SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\AbstractListTest;
 
 class ExcludeCurrentTest extends AbstractListTest {      
     
@@ -23,7 +23,7 @@ class ExcludeCurrentTest extends AbstractListTest {
             $jobs[] = $job;
         }
         
-        $list = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobListController('listAction', array(), array(
             'exclude-current' => '1'
         ))->listAction(count($jobs))->getContent());        
         

@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\ListAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 

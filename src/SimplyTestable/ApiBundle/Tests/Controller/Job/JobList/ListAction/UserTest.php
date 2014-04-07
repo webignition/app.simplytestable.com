@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\ListAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction;
 
 class UserTest extends AbstractListTest {      
     
@@ -24,7 +24,7 @@ class UserTest extends AbstractListTest {
         
         $lists = array();
         foreach ($users as $user) {
-            $lists[$user->getEmail()] = json_decode($this->getJobController('listAction', array(
+            $lists[$user->getEmail()] = json_decode($this->getJobListController('listAction', array(
                 'user' => $user->getEmail()
             ))->listAction(count($jobIds[$user->getEmail()]))->getContent()); 
         }

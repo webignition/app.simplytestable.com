@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\ListAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction;
 
 class MetadataTest extends AbstractListTest {       
     
@@ -13,7 +13,7 @@ class MetadataTest extends AbstractListTest {
             $jobIds[] = $this->createJobAndGetId($canonicalUrl);
         }
         
-        $list = json_decode($this->getJobController('listAction')->listAction()->getContent());        
+        $list = json_decode($this->getJobListController('listAction')->listAction()->getContent());        
         
         $this->assertEquals($jobTotal, $list->max_results);
         $this->assertEquals(1, count($list->jobs)); 
@@ -29,7 +29,7 @@ class MetadataTest extends AbstractListTest {
             $jobIds[] = $this->createJobAndGetId($canonicalUrl);
         }
         
-        $list = json_decode($this->getJobController('listAction')->listAction()->getContent());
+        $list = json_decode($this->getJobListController('listAction')->listAction()->getContent());
         $this->assertEquals(1, $list->limit);
     }    
     
@@ -42,7 +42,7 @@ class MetadataTest extends AbstractListTest {
             $jobIds[] = $this->createJobAndGetId($canonicalUrl);
         }
         
-        $list = json_decode($this->getJobController('listAction')->listAction()->getContent());        
+        $list = json_decode($this->getJobListController('listAction')->listAction()->getContent());        
         $this->assertEquals(0, $list->offset);
     }
 }

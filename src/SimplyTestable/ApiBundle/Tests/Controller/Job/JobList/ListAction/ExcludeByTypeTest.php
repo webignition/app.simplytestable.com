@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\ListAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction;
 
 class ExcludeByTypeTest extends AbstractListTest {      
     
@@ -16,7 +16,7 @@ class ExcludeByTypeTest extends AbstractListTest {
         $this->getJobService()->getEntityManager()->persist($excludedJob);
         $this->getJobService()->getEntityManager()->flush();         
         
-        $list = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobListController('listAction', array(), array(
             'exclude-types' => array(
                 $excludeType
             ))

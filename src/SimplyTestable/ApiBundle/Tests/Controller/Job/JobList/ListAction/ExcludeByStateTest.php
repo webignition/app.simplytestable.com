@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\ListAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction;
 
 class ExcludeByStateTest extends AbstractListTest {      
     
@@ -16,7 +16,7 @@ class ExcludeByStateTest extends AbstractListTest {
         $jobs[1]->setState($this->getJobService()->getRejectedState());
         $this->getJobService()->persistAndFlush($jobs[0]);        
 
-        $list = json_decode($this->getJobController('listAction', array(), array(
+        $list = json_decode($this->getJobListController('listAction', array(), array(
             'exclude-states' => array(
                 'rejected',
                 'queued'

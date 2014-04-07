@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Entity\TimePeriod;
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     const JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Job\JobController';       
+    const JOB_LIST_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Job\JobListController';       
     const CRAWL_JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\CrawlJobController';    
     const JOB_START_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Job\StartController';    
     const USER_CREATION_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserCreationController';
@@ -151,6 +152,17 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     protected function getJobController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::JOB_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }
+    
+    
+    /**
+     *
+     * @param string $methodName
+     * @param array $postData
+     * @return \SimplyTestable\ApiBundle\Controller\JobLisController
+     */
+    protected function getJobListController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::JOB_LIST_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }    
    
     
     /**
