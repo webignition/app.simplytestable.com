@@ -3,10 +3,20 @@ services:
   - memcache
 
 language: php
+
 php:
   - 5.4
   - 5.5
-  - hhvm  
+  - 5.6
+  - hhvm
+  
+before_install:
+  # Set the GitHub OAuth token to make use of the 6000 per hour rate limit
+  - "mkdir -p ~/.composer"
+  - cp .travis.composer.config.json ~/.composer/config.json   
+  
+install:    
+  - composer install    
   
 before_script:
   # Additional PHP config  
@@ -14,14 +24,12 @@ before_script:
   #- phpenv config-add travis.php.ini
   
   # Install code quality tools
-  - wget https://phar.phpunit.de/phpcpd.phar
+  #- wget https://phar.phpunit.de/phpcpd.phar
   
   # Install composer for dependency management
-  - wget http://getcomposer.org/composer.phar 
+  #- wget http://getcomposer.org/composer.phar 
   
-  # Set the GitHub OAuth token to make use of the 6000 per hour rate limit
-  - "mkdir -p ~/.composer"
-  - cp .travis.composer.config.json ~/.composer/config.json    
+ 
   
   # Build!
   - mkdir app/cache/test  
@@ -37,6 +45,7 @@ script:
   - phpunit -c app
   
 after_script:
+  - wget https://phar.phpunit.de/phpcpd.phar
   - php phpcpd.phar --exclude src/SimplyTestable/ApiBundle/Tests/ src/SimplyTestable/ApiBundle/   
   
 notifications:
