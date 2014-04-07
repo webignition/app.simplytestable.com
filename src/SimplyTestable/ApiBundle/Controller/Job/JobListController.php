@@ -13,7 +13,8 @@ class JobListController extends BaseJobController
         $this->getJobListService()->setOffset($offset);
         $this->getJobListService()->setOrderBy($this->get('request')->query->get('order-by'));     
         $this->getJobListService()->setExcludeTypes($this->getExcludeTypes());        
-        $this->getJobListService()->setExcludeStates($this->getExcludeStates());        
+        $this->getJobListService()->setExcludeStates($this->getExcludeStates());
+        $this->getJobListService()->setUrlFilter($this->get('request')->query->get('url-filter'));        
         
         if ($this->shouldExcludeCurrent()) {
             $this->getJobListService()->setExcludeIds($this->getCrawlJobParentIds());

@@ -98,6 +98,13 @@ class JobListService  {
     
     /**
      *
+     * @var string
+     */
+    private $urlFilter = null;
+    
+    
+    /**
+     *
      * @param \SimplyTestable\ApiBundle\Services\JobService $jobService
      */
     public function __construct(
@@ -239,6 +246,15 @@ class JobListService  {
     }
     
     
+    /**
+     * 
+     * @param string $filter
+     */
+    public function setUrlFilter($filter) {
+        $this->urlFilter = $filter;
+    }
+    
+    
     private function isExcluded(Job $job) {
 //        foreach ($this->excludeStates as $state) {
 //            if ($job->getState()->equals($state)) {
@@ -346,7 +362,19 @@ class JobListService  {
             }
             
             $queryBuilder->andWhere(implode(' AND ', $idWhereParts));
-        }        
+        }  
+        
+        if (!is_null($this->urlFilter)) {
+            $queryBuilder->join('Job.website', 'Website');
+            
+            if (substr_count($this->urlFilter, '*')) {
+                $queryBuilder->andWhere('Website.canonicalUrl LIKE :Website');
+                $queryBuilder->setParameter('Website', str_replace('*', '%', $this->urlFilter));               
+            } else {
+                $queryBuilder->andWhere('Website.canonicalUrl = :Website');
+                $queryBuilder->setParameter('Website', $this->urlFilter);                
+            }
+        }
         
         $queryBuilder->orderBy($this->getOrderByField(), $this->getOrder());        
         
