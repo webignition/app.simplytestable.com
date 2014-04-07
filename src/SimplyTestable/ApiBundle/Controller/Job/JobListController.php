@@ -11,38 +11,107 @@ class JobListController extends BaseJobController
         
         $this->getJobListService()->setLimit($limit);
         $this->getJobListService()->setOffset($offset);
-        $this->getJobListService()->setOrderBy($this->get('request')->query->get('order-by'));
+        $this->getJobListService()->setOrderBy($this->get('request')->query->get('order-by'));     
+        $this->getJobListService()->setExcludeTypes($this->getExcludeTypes());        
+        $this->getJobListService()->setExcludeStates($this->getExcludeStates());        
         
+        if ($this->shouldExcludeCurrent()) {
+            $this->getJobListService()->setExcludeIds($this->getCrawlJobParentIds());
+        } else {
+            $this->getJobListService()->setIncludeIds($this->getCrawlJobParentIds());
+        }
+        
+        return $this->sendResponse(array(
+            'max_results' => $this->getJobListService()->getMaxResults(),
+            'limit' => $this->getJobListService()->getLimit(),
+            'offset' => $this->getJobListService()->getOffset(),
+            'jobs' => $this->getJobSummaries()
+        )); 
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    private function getJobSummaries() {
+        $jobs = $this->getJobListService()->get();        
+        $summaries = array();
+        
+        foreach ($jobs as $job) {      
+            $summaries[] = $this->getSummary($this->populateJob($job));
+        }
+        
+        return $jobs;
+    }
+    
+    
+    /**
+     * @return int[]
+     */
+    private function getCrawlJobParentIds() {
+        $crawlJobParentIds = array();
+        $crawlJobContainers = $this->getCrawlJobContainerService()->getAllActiveForUser($this->getUser());
+        foreach ($crawlJobContainers as $crawlJobContainer) {
+            $crawlJobParentIds[] = $crawlJobContainer->getParentJob()->getId();
+        }   
+        
+        return $crawlJobParentIds;
+    }
+    
+    
+    /**
+     * 
+     * @return string[]
+     */
+    private function getExcludeTypeNames() {
         $excludeTypeNames = (is_null($this->get('request')->query->get('exclude-types'))) ? array('crawl') : $this->get('request')->query->get('exclude-types');
         if (!in_array('crawl', $excludeTypeNames)) {
             $excludeTypeNames[] = 'crawl';
-        }        
-
+        }   
+        
+        return $excludeTypeNames;
+    }
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Type[]
+     */
+    private function getExcludeTypes() {
         $excludeTypes = array();
 
-        foreach ($excludeTypeNames as $typeName) {
+        foreach ($this->getExcludeTypeNames() as $typeName) {
             if ($this->getJobTypeService()->has($typeName)) {
                 $excludeTypes[] = $this->getJobTypeService()->getByName($typeName);
             }
         }
-
-        $this->getJobListService()->setExcludeTypes($excludeTypes);
-
+        
+        return $excludeTypes;
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    private function shouldExcludeCurrent() {
+        return !is_null($this->get('request')->query->get('exclude-current'));
+    }
+    
+    
+    /**
+     * 
+     * @return string[]
+     */
+    private function getExcludeStateNames() {
         $excludeStateNames = array();
-        if (!is_null($this->get('request')->query->get('exclude-current'))) {            
-            foreach ($this->getJobService()->getIncompleteStates() as $state) {
-                if (!in_array($state->getName(), $excludeStateNames)) {
-                    $excludeStateNames[] = $state->getName();
-                }
-            }
+        if ($this->shouldExcludeCurrent()) {            
+            $excludeStateNames = array_merge($excludeStateNames, $this->getStateNames($this->getJobService()->getIncompleteStates()));
         }
         
         if (!is_null($this->get('request')->query->get('exclude-finished'))) {            
-            foreach ($this->getJobService()->getFinishedStates() as $state) {
-                if (!in_array($state->getName(), $excludeStateNames)) {
-                    $excludeStateNames[] = $state->getName();
-                }
-            }
+            $excludeStateNames = array_merge($excludeStateNames, $this->getStateNames($this->getJobService()->getFinishedStates()));
         }        
         
         if (!is_null($this->get('request')->query->get('exclude-states'))) {
@@ -53,43 +122,43 @@ class JobListController extends BaseJobController
                     $excludeStateNames[] = $stateName;
                 }
             }
-        }        
+        }  
         
+        return $excludeStateNames;
+    }
+    
+    
+    /**
+     * 
+     * @return \SimplyTestable\ApiBundle\Entity\State[]
+     */
+    private function getExcludeStates() {
         $excludeStates = array();
-        foreach ($excludeStateNames as $stateName) {
+        foreach ($this->getExcludeStateNames() as $stateName) {
             if ($this->getStateService()->has($stateName)) {
                 $excludeStates[] = $this->getStateService()->fetch($stateName);
             }
-        } 
-        
-        $this->getJobListService()->setExcludeStates($excludeStates);        
-
-        $crawlJobParentIds = array();
-        $crawlJobContainers = $this->getCrawlJobContainerService()->getAllActiveForUser($this->getUser());
-        foreach ($crawlJobContainers as $crawlJobContainer) {
-            $crawlJobParentIds[] = $crawlJobContainer->getParentJob()->getId();
         }
         
-        if (is_null($this->get('request')->query->get('exclude-current'))) { 
-            $this->getJobListService()->setIncludeIds($crawlJobParentIds);
-        } else {
-            $this->getJobListService()->setExcludeIds($crawlJobParentIds);
-        }
+        return $excludeStates;
+    }
+    
+    
+    /**
+     * 
+     * @param array $states
+     * @return string[]
+     */
+    private function getStateNames($states) {
+        $stateNames = array();
         
-        $jobs = $this->getJobListService()->get();        
-        $summaries = array();
+        foreach ($states as $state) {
+            if (!in_array($state->getName(), $stateNames)) {
+                $stateNames[] = $state->getName();
+            }
+        }          
         
-        foreach ($jobs as $job) {
-            $this->populateJob($job);            
-            $summaries[] = $this->getSummary($job);
-        }
-        
-        return $this->sendResponse(array(
-            'max_results' => $this->getJobListService()->getMaxResults(),
-            'limit' => $this->getJobListService()->getLimit(),
-            'offset' => $this->getJobListService()->getOffset(),
-            'jobs' => $summaries
-        )); 
+        return $stateNames;
     }
     
     
