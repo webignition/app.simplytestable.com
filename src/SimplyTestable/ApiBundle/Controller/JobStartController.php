@@ -93,7 +93,7 @@ class JobStartController extends ApiController
             $job = $this->getJobService()->getById($existingJobId);
         }
         
-        return $this->redirect($this->generateUrl('job', array(
+        return $this->redirect($this->generateUrl('job_status', array(
             'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             'test_id' => $job->getId()
         )));
@@ -150,7 +150,7 @@ class JobStartController extends ApiController
         
         $this->getJobRejectionService()->reject($job, $reason, $constraint);
 
-        return $this->redirect($this->generateUrl('job', array(
+        return $this->redirect($this->generateUrl('job_status', array(
             'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             'test_id' => $job->getId()
         )));        

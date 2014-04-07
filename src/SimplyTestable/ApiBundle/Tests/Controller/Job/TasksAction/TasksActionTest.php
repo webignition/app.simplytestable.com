@@ -1,7 +1,8 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\TasksAction;
 
+use SimplyTestable\ApiBundle\Tests\Controller\Job\AbstractAccessTest;
 
 class TasksActionTest extends AbstractAccessTest {
     

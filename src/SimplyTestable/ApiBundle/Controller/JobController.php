@@ -43,7 +43,7 @@ class JobController extends ApiController
             return $response;              
         }
         
-        return $this->redirect($this->generateUrl('job', array(
+        return $this->redirect($this->generateUrl('job_status', array(
             'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
             'test_id' => $latestJob->getId()
         ), true));
@@ -78,7 +78,7 @@ class JobController extends ApiController
         }
         
         if ($this->getUserService()->isPublicUser($this->getUser())) {
-            return $this->redirect($this->generateUrl('job', array(
+            return $this->redirect($this->generateUrl('job_status', array(
                 'site_root_url' => $site_root_url,
                 'test_id' => $job->getId()
             ), true));               
@@ -91,7 +91,7 @@ class JobController extends ApiController
         }
 
         
-        return $this->redirect($this->generateUrl('job', array(
+        return $this->redirect($this->generateUrl('job_status', array(
             'site_root_url' => $site_root_url,
             'test_id' => $job->getId()
         ), true));         
