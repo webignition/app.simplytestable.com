@@ -11,6 +11,13 @@ class IgnoreSchemeTest extends FilterByUrlTest {
     protected function getFilter() {
         return '*://example.com/';
     }
+    
+    protected function getExpectedJobListUrls() {
+        return array(            
+            'https://example.com/',
+            'http://example.com/',            
+        );
+    }    
 
 }
 

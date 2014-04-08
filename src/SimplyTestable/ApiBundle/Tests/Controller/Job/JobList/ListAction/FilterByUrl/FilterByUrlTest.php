@@ -2,11 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\FilterByUrl;
 
-use SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\AbstractListTest;
+use SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\ListContentTest;
 
-abstract class FilterByUrlTest extends AbstractListTest {       
-    
-    const JOB_LIMIT = 10;
+abstract class FilterByUrlTest extends ListContentTest {       
     
     private $canonicalUrls = array(
         'http://example.com/',
@@ -14,34 +12,18 @@ abstract class FilterByUrlTest extends AbstractListTest {
         'https://example.com/',
         'https://example.com/foo',
         'http://foo.example.com/',
-        'https://foo.example.com/'
+        'https://foo.example.com/'        
     );
     
-    
-    private $list;
-    
-    
-    public function setUp() {
-        parent::setUp();
-        
-        foreach ($this->canonicalUrls as $canonicalUrl) {                        
-            $this->createJobAndGetId($canonicalUrl, null, 'single url');
-        }        
-        
-        $this->list = json_decode($this->getJobListController('listAction', array(), array(
+    protected function getQueryParameters() {
+        return array(
             'url-filter' => $this->getFilter()
-        ))->listAction(self::JOB_LIMIT)->getContent());         
+        );
+    }   
+    
+    protected function getCanonicalUrls() {
+        return $this->canonicalUrls;
     }
-    
-    
-    abstract protected function getExpectedListLength();
-    abstract protected function getFilter();
-    
-    
-    public function testListLength() {        
-        $this->assertEquals($this->getExpectedListLength(), count($this->list->jobs));         
-    }
-    
     
     public function testListJobsMatchFilter() {        
         foreach ($this->list->jobs as $job) {
@@ -56,10 +38,7 @@ abstract class FilterByUrlTest extends AbstractListTest {
         $regexp = str_replace('\*', '.?', $regexp);
         
         $this->assertRegExp('/' . $regexp . '/', $website, 'Website "' . $website . '" does not match filter "' . $this->getFilter() . '"');
-    }    
-    
-    
-   
+    }
     
 }
 

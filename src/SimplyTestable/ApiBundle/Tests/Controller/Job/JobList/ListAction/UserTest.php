@@ -2,44 +2,57 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction;
 
-class UserTest extends AbstractListTest {      
+class UserTest extends ListTest {      
     
-    public function testListIsConstrainedToCurrentUser() {
-        $userEmailAddresses = array(
-            'user1@example.com',
-            'user2@example.com'
-        );
+    const JOB_TOTAL = 10;
+    
+    private $userEmailAddresses = array(
+        'user1@example.com',
+        'user2@example.com'        
+    );
+    
+    private $users = array();
+    private $lists = array();
+    private $jobIds = array();
+    
+    public function setUp() {
+        parent::setUp();
         
-        $users = array();
-        $jobIds = array();        
-        
-        foreach ($userEmailAddresses as $emailAddress) {
-            $users[] = $this->createAndActivateUser($emailAddress, 'password');
-            $jobIds[$emailAddress] = array();
+        foreach ($this->userEmailAddresses as $emailAddress) {
+            $this->users[] = $this->createAndActivateUser($emailAddress, 'password');
+            $this->jobIds[$emailAddress] = array();
         }
         
         foreach ($this->getCanonicalUrlCollection(10) as $index => $canonicalUrl) {                                    
-            $jobIds[$users[$index % 2]->getEmail()][] = $this->createJobAndGetId($canonicalUrl, $users[$index % 2]->getEmail());
-        }
+            $this->jobIds[$this->users[$index % 2]->getEmail()][] = $this->createJobAndGetId($canonicalUrl, $this->users[$index % 2]->getEmail());
+        }    
         
-        $lists = array();
-        foreach ($users as $user) {
-            $lists[$user->getEmail()] = json_decode($this->getJobListController('listAction', array(
+        foreach ($this->users as $user) {
+            $this->lists[$user->getEmail()] = json_decode($this->getJobListController('listAction', array(
                 'user' => $user->getEmail()
-            ))->listAction(count($jobIds[$user->getEmail()]))->getContent()); 
-        }
-        
-        foreach ($lists as $user => $list) {
-            $listJobIds = array();
-            
-            foreach ($list->jobs as $job) {
-                $listJobIds[] = $job->id;
-            }
-            
-            $this->assertEquals($jobIds[$user], array_reverse($listJobIds));
-        }
-    }    
+            ))->listAction(count($this->jobIds[$user->getEmail()]))->getContent()); 
+        }       
+    }
     
+    public function testListZeroIsConstraintedToUserZero() {
+        $list = $this->lists[$this->users[0]->getEmail()];
+        foreach ($list->jobs as $job) {
+            $this->assertEquals($this->users[0]->getEmail(), $job->user);
+        }
+    }
+    
+    public function testListOneIsConstraintedToUserOne() {
+        $list = $this->lists[$this->users[1]->getEmail()];
+        foreach ($list->jobs as $job) {
+            $this->assertEquals($this->users[1]->getEmail(), $job->user);
+        }
+    }
+    
+    
+    protected function getCanonicalUrls() {
+        return $this->getCanonicalUrlCollection(self::JOB_TOTAL);
+    }
+
 }
 
 

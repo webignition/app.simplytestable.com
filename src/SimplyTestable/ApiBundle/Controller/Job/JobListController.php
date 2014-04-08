@@ -31,6 +31,24 @@ class JobListController extends BaseJobController
     }
     
     
+    public function countAction() {
+        $this->getJobListService()->setUser($this->getUser());        
+
+        $this->getJobListService()->setOrderBy($this->get('request')->query->get('order-by'));     
+        $this->getJobListService()->setExcludeTypes($this->getExcludeTypes());        
+        $this->getJobListService()->setExcludeStates($this->getExcludeStates());
+        $this->getJobListService()->setUrlFilter($this->get('request')->query->get('url-filter'));        
+        
+        if ($this->shouldExcludeCurrent()) {
+            $this->getJobListService()->setExcludeIds($this->getCrawlJobParentIds());
+        } else {
+            $this->getJobListService()->setIncludeIds($this->getCrawlJobParentIds());
+        }
+        
+        return $this->sendResponse($this->getJobListService()->getMaxResults());         
+    }
+    
+    
     /**
      * 
      * @return array

@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\FilterByUrl;
 
-class ExactMatchTest extends FilterByUrlTest {
+class ExactMatchTest extends FilterByUrlTest {    
    
     protected function getExpectedListLength() {
         return 1;
@@ -10,6 +10,12 @@ class ExactMatchTest extends FilterByUrlTest {
 
     protected function getFilter() {
         return 'http://example.com/foo';
+    }
+
+    protected function getExpectedJobListUrls() {
+        return array(
+            'http://example.com/foo'
+        );
     }
 
 }

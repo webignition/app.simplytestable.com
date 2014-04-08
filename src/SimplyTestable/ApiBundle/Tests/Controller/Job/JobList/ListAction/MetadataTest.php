@@ -2,49 +2,25 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction;
 
-class MetadataTest extends AbstractListTest {       
+class MetadataTest extends SingleListTest {       
     
-    public function testMaxResults() {
-        $jobTotal = 10;
-        
-        $jobIds = array();
-        
-        foreach ($this->getCanonicalUrlCollection($jobTotal) as $canonicalUrl) {                        
-            $jobIds[] = $this->createJobAndGetId($canonicalUrl);
-        }
-        
-        $list = json_decode($this->getJobListController('listAction')->listAction()->getContent());        
-        
-        $this->assertEquals($jobTotal, $list->max_results);
-        $this->assertEquals(1, count($list->jobs)); 
+    const JOB_TOTAL = 10;
+
+    
+    public function testMaxResultsIsSet() {
+        $this->assertEquals(self::JOB_TOTAL, $this->list->max_results);
+    }   
+    
+    public function testOffsetIsSet() {      
+        $this->assertEquals(0, $this->list->offset);
     }
-    
-    
-    public function testLimit() {
-        $jobTotal = 10;
-        
-        $jobIds = array();
-        
-        foreach ($this->getCanonicalUrlCollection($jobTotal) as $canonicalUrl) {                        
-            $jobIds[] = $this->createJobAndGetId($canonicalUrl);
-        }
-        
-        $list = json_decode($this->getJobListController('listAction')->listAction()->getContent());
-        $this->assertEquals(1, $list->limit);
-    }    
-    
-    public function testOffset() {
-        $jobTotal = 10;
-        
-        $jobIds = array();
-        
-        foreach ($this->getCanonicalUrlCollection($jobTotal) as $canonicalUrl) {                        
-            $jobIds[] = $this->createJobAndGetId($canonicalUrl);
-        }
-        
-        $list = json_decode($this->getJobListController('listAction')->listAction()->getContent());        
-        $this->assertEquals(0, $list->offset);
+
+    protected function getCanonicalUrls() {
+        return $this->getCanonicalUrlCollection(self::JOB_TOTAL);
     }
+
+    protected function getQueryParameters() {
+        return array();
+    }
+
 }
-
-

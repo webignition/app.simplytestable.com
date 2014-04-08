@@ -11,6 +11,13 @@ class IgnorePathTest extends FilterByUrlTest {
     protected function getFilter() {
         return 'http://example.com/*';
     }
+    
+    protected function getExpectedJobListUrls() {
+        return array(            
+            'http://example.com/foo',
+            'http://example.com/',
+        );
+    }    
 
 }
 
