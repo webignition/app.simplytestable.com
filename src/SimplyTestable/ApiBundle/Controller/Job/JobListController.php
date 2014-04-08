@@ -7,20 +7,11 @@ class JobListController extends BaseJobController
     
     public function listAction($limit = null, $offset = null)
     {
-        $this->getJobListService()->setUser($this->getUser());
+        $this->prepareCommonJobListService();
         
         $this->getJobListService()->setLimit($limit);
         $this->getJobListService()->setOffset($offset);
         $this->getJobListService()->setOrderBy($this->get('request')->query->get('order-by'));     
-        $this->getJobListService()->setExcludeTypes($this->getExcludeTypes());        
-        $this->getJobListService()->setExcludeStates($this->getExcludeStates());
-        $this->getJobListService()->setUrlFilter($this->get('request')->query->get('url-filter'));        
-        
-        if ($this->shouldExcludeCurrent()) {
-            $this->getJobListService()->setExcludeIds($this->getCrawlJobParentIds());
-        } else {
-            $this->getJobListService()->setIncludeIds($this->getCrawlJobParentIds());
-        }
         
         return $this->sendResponse(array(
             'max_results' => $this->getJobListService()->getMaxResults(),
@@ -32,9 +23,15 @@ class JobListController extends BaseJobController
     
     
     public function countAction() {
-        $this->getJobListService()->setUser($this->getUser());        
-
-        $this->getJobListService()->setOrderBy($this->get('request')->query->get('order-by'));     
+        $this->prepareCommonJobListService();
+        
+        return $this->sendResponse($this->getJobListService()->getMaxResults());         
+    }
+    
+    
+    private function prepareCommonJobListService() {
+        $this->getJobListService()->setUser($this->getUser());
+    
         $this->getJobListService()->setExcludeTypes($this->getExcludeTypes());        
         $this->getJobListService()->setExcludeStates($this->getExcludeStates());
         $this->getJobListService()->setUrlFilter($this->get('request')->query->get('url-filter'));        
@@ -43,9 +40,7 @@ class JobListController extends BaseJobController
             $this->getJobListService()->setExcludeIds($this->getCrawlJobParentIds());
         } else {
             $this->getJobListService()->setIncludeIds($this->getCrawlJobParentIds());
-        }
-        
-        return $this->sendResponse($this->getJobListService()->getMaxResults());         
+        }        
     }
     
     
