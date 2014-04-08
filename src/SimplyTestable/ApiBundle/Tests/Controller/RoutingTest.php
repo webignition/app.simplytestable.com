@@ -10,7 +10,7 @@ abstract class RoutingTest extends BaseSimplyTestableTestCase {
     
     abstract protected function getRouteParameters();
     
-    public function testRouteExists() {
+    public function testRouteExists() {        
         try {
             $this->getCurrentRequestUrl($this->getRouteParameters());
         } catch (\Symfony\Component\Routing\Exception\RouteNotFoundException $routeNotFoundException) {
