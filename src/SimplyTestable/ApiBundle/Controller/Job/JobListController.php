@@ -49,14 +49,14 @@ class JobListController extends BaseJobController
      * @return array
      */
     private function getJobSummaries() {
-        $jobs = $this->getJobListService()->get();        
+        $jobs = $this->getJobListService()->get();
         $summaries = array();
         
         foreach ($jobs as $job) {      
             $summaries[] = $this->getSummary($this->populateJob($job));
         }
         
-        return $jobs;
+        return $summaries;
     }
     
     

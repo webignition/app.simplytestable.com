@@ -17,21 +17,12 @@ abstract class ListTest extends BaseControllerJsonTestCase {
         
         $this->createJobs();        
         $this->applyPreListChanges();                 
-    }
-    
-    //abstract protected function getQueryParameters();    
+    }    
+   
     abstract protected function getCanonicalUrls();  
     
     protected function applyPreListChanges() {        
-    }
-    
-//    protected function getPostParameters() {
-//        return array();
-//    }
-    
-//    protected function getLimit() {
-//        return max(1, count($this->getCanonicalUrls()));
-//    }    
+    }   
     
     protected function createJobs() {        
         foreach ($this->getCanonicalUrls() as $canonicalUrl) {

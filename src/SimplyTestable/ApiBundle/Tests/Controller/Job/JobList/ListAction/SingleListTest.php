@@ -15,9 +15,6 @@ abstract class SingleListTest extends ListTest {
     public function setUp() {
         parent::setUp();
         
-//        $this->createJobs();        
-//        $this->applyPreListChanges();
-        
         $this->list = json_decode($this->getJobListController(
             'listAction',
             $this->getPostParameters(),
@@ -29,10 +26,6 @@ abstract class SingleListTest extends ListTest {
     }
     
     abstract protected function getQueryParameters();    
-    //abstract protected function getCanonicalUrls();  
-    
-//    protected function applyPreListChanges() {        
-//    }
     
     protected function getPostParameters() {
         return array();
@@ -40,22 +33,6 @@ abstract class SingleListTest extends ListTest {
     
     protected function getLimit() {
         return max(1, count($this->getCanonicalUrls()));
-    }    
-    
-//    protected function createJobs() {        
-//        foreach ($this->getCanonicalUrls() as $canonicalUrl) {
-//            $this->jobs[] = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
-//        }         
-//    }    
-    
-//    protected function getCanonicalUrlCollection($count = 1) {
-//        $canonicalUrlCollection = array();
-//        
-//        for ($index = 0; $index < $count; $index++) {
-//            $canonicalUrlCollection[] = 'http://' . ($index + 1) . '.example.com/';
-//        }
-//        
-//        return $canonicalUrlCollection;
-//    }      
+    }     
     
 }
