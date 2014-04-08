@@ -294,6 +294,10 @@ class JobListService  {
     }
     
     
+    /**
+     * 
+     * @return int
+     */
     public function getMaxResults() {
         $queryBuilder = $this->getDefaultQueryBuilder();
         
@@ -302,6 +306,31 @@ class JobListService  {
         $result = $queryBuilder->getQuery()->getResult();
         
         return (int)$result[0][1];    
+    }
+    
+    
+    /**
+     * @return string[]
+     */
+    public function getWebsiteUrls() {
+        $queryBuilder = $this->getDefaultQueryBuilder();        
+        
+        if (!substr_count($queryBuilder->getDQL(), 'JOIN Job.website Website')) {
+            $queryBuilder->join('Job.website', 'Website');
+        }        
+        
+        $queryBuilder->orderBy('Website.canonicalUrl');        
+        $queryBuilder->select('DISTINCT Website.canonicalUrl');
+        
+        $results = $queryBuilder->getQuery()->getResult();
+        
+        $urls = array();
+        
+        foreach ($results as $result) {
+            $urls[] = $result['canonicalUrl'];
+        }
+        
+        return $urls;         
     }
     
     

@@ -28,6 +28,11 @@ class JobListController extends BaseJobController
         return $this->sendResponse($this->getJobListService()->getMaxResults());         
     }
     
+    public function websitesAction() {
+        $this->prepareCommonJobListService();
+        return $this->sendResponse($this->getJobListService()->getWebsiteUrls());         
+    }    
+    
     
     private function prepareCommonJobListService() {
         $this->getJobListService()->setUser($this->getUser());

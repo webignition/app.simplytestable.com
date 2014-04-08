@@ -5,6 +5,10 @@ job_joblist_list:
 job_joblist_count:
     pattern: /jobs/list/count/
     defaults: { _controller: SimplyTestableApiBundle:Job\JobList:count, _format: json }      
+    
+job_joblist_websites:
+    pattern: /jobs/list/websites/
+    defaults: { _controller: SimplyTestableApiBundle:Job\JobList:websites, _format: json }          
 
 job_start_start:
     pattern: /job/{site_root_url}/start/
