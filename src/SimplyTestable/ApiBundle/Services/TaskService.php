@@ -311,6 +311,16 @@ class TaskService extends EntityService {
      * @param Task $task
      * @return boolean
      */
+    public function isFailedRetryAvailable(Task $task) {
+        return $task->getState()->equals($this->getFailedRetryAvailableState());
+    }    
+    
+    
+    /**
+     *
+     * @param Task $task
+     * @return boolean
+     */
     public function isFailedNoRetryAvailable(Task $task) {
         return $task->getState()->equals($this->getFailedNoRetryAvailableState());
     }
@@ -359,6 +369,10 @@ class TaskService extends EntityService {
         if ($this->isCancelled($task)) {
             return true;
         }
+        
+        if ($this->isFailedRetryAvailable($task)) {
+            return true;
+        }        
         
         if ($this->isFailedNoRetryAvailable($task)) {
             return true;
