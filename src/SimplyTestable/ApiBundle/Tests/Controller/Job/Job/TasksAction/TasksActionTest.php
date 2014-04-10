@@ -66,4 +66,31 @@ class TasksActionTest extends AbstractAccessTest {
         }
     }
     
+    
+    public function testFailedNoRetryAvailableTaskOutputIsReturned() {
+        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
+                self::DEFAULT_CANONICAL_URL,
+                null,
+                'full site',
+                array('HTML validation')
+        ));
+        
+        foreach ($job->getTasks() as $task) {
+            $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+                'end_date_time' => '2012-03-08 17:03:00',
+                'output' => '{"messages":[]}',
+                'contentType' => 'application/json',
+                'state' => 'task-failed-no-retry-available',
+                'errorCount' => 1,
+                'warningCount' => 0
+            ))->completeByUrlAndTaskTypeAction((string) $task->getUrl(), $task->getType()->getName(), $task->getParametersHash());            
+        }
+        
+        $tasksResponseObject = json_decode($this->getJobController('tasksAction')->tasksAction($job->getWebsite()->getCanonicalUrl(), $job->getId())->getContent());
+        
+        foreach ($tasksResponseObject as $taskResponse) {
+            $this->assertTrue(isset($taskResponse->output));
+        }        
+    }    
+    
 }
