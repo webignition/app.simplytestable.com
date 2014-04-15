@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "ec92a489aaf9449d7e718cd2988e5d2a",
+    "hash": "29b31493525f782157f5b3ae6da7138c",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -118,7 +118,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan Wage",
+                    "name": "Jonathan H. Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -185,7 +185,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan Wage",
+                    "name": "Jonathan H. Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -2366,7 +2366,7 @@
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
+                    "name": "Fabien Potencier2",
                     "email": "fabien@symfony.com",
                     "homepage": "http://fabien.potencier.org",
                     "role": "Lead Developer"
@@ -3748,16 +3748,16 @@
         },
         {
             "name": "webignition/website-sitemap-finder",
-            "version": "1.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "ddd7d1db9a3687542a3f89f4bb955ad5e39482a5"
+                "reference": "15ffe7494d6bdf8ad96370378a33ec77494bc050"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/ddd7d1db9a3687542a3f89f4bb955ad5e39482a5",
-                "reference": "ddd7d1db9a3687542a3f89f4bb955ad5e39482a5",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/15ffe7494d6bdf8ad96370378a33ec77494bc050",
+                "reference": "15ffe7494d6bdf8ad96370378a33ec77494bc050",
                 "shasum": ""
             },
             "require": {
@@ -3794,7 +3794,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2014-04-03 08:45:48"
+            "time": "2014-04-15 15:17:12"
         },
         {
             "name": "webignition/website-sitemap-retriever",
