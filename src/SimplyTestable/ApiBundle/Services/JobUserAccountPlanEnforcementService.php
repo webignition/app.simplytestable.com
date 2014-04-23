@@ -120,7 +120,7 @@ class JobUserAccountPlanEnforcementService {
             return false;
         }
         
-        return $currentCount >= $userAccountPlan->getPlan()->getConstraintNamed(self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME)->getLimit();
+        return $currentCount >= $userAccountPlan->getPlan()->getConstraintNamed(self::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME)->getLimit();
     }
     
     
