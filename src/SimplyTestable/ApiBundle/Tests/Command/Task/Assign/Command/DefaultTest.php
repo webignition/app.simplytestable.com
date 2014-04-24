@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign\CommandTest;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign\Command;
 
 class DefaultTest extends CommandTest {
 

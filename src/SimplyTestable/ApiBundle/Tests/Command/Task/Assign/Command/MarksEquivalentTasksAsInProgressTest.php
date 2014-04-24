@@ -1,8 +1,8 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign\CommandTest;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign\Command;
 
-class TaskWithInProgressEquivalentDoesNotAssignAndInsteadMarksAsInProgressTest extends CommandTest {
+class MarksEquivalentTasksAsInProgressTest extends CommandTest {
     
     private $job1;
     private $job2;
