@@ -1,25 +1,14 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign;
+namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign\CommandTest;
 
-use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
-
-class CommandTest extends ConsoleCommandTestCase {
-    
-    /**
-     * 
-     * @return string
-     */
-    protected function getCommandName() {
-        return 'simplytestable:task:assign';
-    }  
+class DefaultTest extends CommandTest {
 
     public function testAssignValidTaskReturnsStatusCode0() {        
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->createWorker();
         
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
-        
+        $this->queueTaskAssignResponseHttpFixture();        
         $this->assertReturnCode(0, array(
             'id' => $job->getTasks()->first()->getId()
         ));
@@ -100,55 +89,12 @@ class CommandTest extends ConsoleCommandTestCase {
         ));
     }
     
-    public function testAssignTaskWithInProgressEquivalentDoesNotAssignAndInsteadMarksAsInProgress() {
-        $this->createWorker();        
-        
-        $job1 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site',
-            array(
-                'CSS validation'
-            ),
-            array(
-                'CSS validation' => array(
-                    'ignore-warnings' => 1,
-                    'ignore-common-cdns' => 1,
-                    'vendor-extensions' => 'warn'
-            )
-        )));
-        
-        $job2 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site',
-            array(
-                'HTML validation',
-                'CSS validation'
-            ),
-            array(
-                'CSS validation' => array(
-                    'ignore-warnings' => 1,
-                    'ignore-common-cdns' => 1,
-                    'vendor-extensions' => 'warn'
-            )
-        )));        
-        
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
-        
-        $this->assertReturnCode(0, array(
-            'id' => $job1->getTasks()->get(0)->getId()
-        ));    
-        
-        $this->assertReturnCode(1, array(
-            'id' => $job2->getTasks()->get(1)->getId()
-        )); 
-        
-        $this->assertEquals($this->getTaskService()->getInProgressState(), $job1->getTasks()->get(0)->getState());
-        $this->assertEquals($this->getTaskService()->getInProgressState(), $job2->getTasks()->get(1)->getState());      
-    }
-    
     
     public function testAssignFirstTaskOfJobDoesNotBreakRemainingTaskUrls() {
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->createWorker();
         
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));     
-        
+        $this->queueTaskAssignResponseHttpFixture();
         $this->assertReturnCode(0, array(
             'id' => $job->getTasks()->first()->getId()
         ));

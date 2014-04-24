@@ -409,6 +409,13 @@ EOD;
     }
     
     
+    protected function queueTaskAssignResponseHttpFixture() {
+        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
+            "HTTP/1.1 200 OK\nContent-Type: application/json\n\n" . '{"id":1,"url":"http:\/\/example.com\/","state":"queued","type":"HTML validation","parameters":""}'            
+        )));        
+    }
+    
+    
     /**
      * 
      * @param int $count
