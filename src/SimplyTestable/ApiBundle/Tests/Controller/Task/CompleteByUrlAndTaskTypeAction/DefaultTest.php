@@ -4,11 +4,11 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteByUrlAndTaskTyp
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
+class DefaultTest extends BaseControllerJsonTestCase {
  
     public function testWithSingleMatchingTask() {
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
+        $this->queueTaskAssignResponseHttpFixture();
         
         $this->createWorker();
 
@@ -34,6 +34,8 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
     }
     
     public function testWithMultipleMatchingTasksForSameUser() {
+        $this->setJobTypeConstraintLimits();
+        
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
             self::DEFAULT_CANONICAL_URL,
             null,
@@ -48,7 +50,7 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
             array('HTML validation', 'CSS validation')
         ));   
         
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
+        $this->queueTaskAssignResponseHttpFixture();
         $this->createWorker();          
         
         $task = $job->getTasks()->first();
@@ -98,7 +100,8 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
             array('HTML validation', 'CSS validation')
         ));   
         
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
+        
+        $this->queueTaskAssignResponseHttpFixture();
         $this->createWorker();
         
         $task = $job->getTasks()->first();
@@ -133,6 +136,8 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
     }  
     
     public function testWithSingleMatchingTaskFromMultiplePossibleTasksByParameters() {
+        $this->setJobTypeConstraintLimits();
+        
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
             self::DEFAULT_CANONICAL_URL,
             null,
@@ -166,7 +171,7 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
             )
         ));
         
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
+        $this->queueTaskAssignResponseHttpFixture();
         $this->createWorker();  
     
         $task = $job->getTasks()->first();
@@ -202,7 +207,7 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
         $users = $this->createAndActivateUserCollection(3);
         $this->createWorker();
         
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
+        $this->queueTaskAssignResponseHttpFixture();
         
         $jobPropertyCollection = array(
             array(
@@ -280,6 +285,8 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
     } 
     
     public function testWithNoMatchingTaskFromMultiplePossibleTasksByParameters() {
+        $this->setJobTypeConstraintLimits();
+        
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
             self::DEFAULT_CANONICAL_URL,
             null,
@@ -311,9 +318,9 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
                     'vendor-extensions' => 'warn'
                 )
             )
-        ));
+        ));        
         
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));        
+        $this->queueTaskAssignResponseHttpFixture();
         $this->createWorker();
         
         $task = $job->getTasks()->first();
@@ -343,7 +350,21 @@ class CompleteByUrlAndTaskTypeActionTest extends BaseControllerJsonTestCase {
             $this->assertEquals('http://example.com/0/', (string)$task->getUrl());
             $this->assertEquals(($taskIndex === 0 ? $this->getTaskService()->getInProgressState() : $this->getTaskService()->getQueuedState()), $task->getState());
         }        
-    }    
+    }  
+    
+    
+    private function setJobTypeConstraintLimits() {
+        $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUserService()->getPublicUser());
+        
+        $fullSiteJobsPerSiteConstraint = $this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint();
+        $singleUrlJobsPerUrlConstraint = $this->getJobUserAccountPlanEnforcementService()->getSingleUrlJobLimitConstraint();
+        
+        $fullSiteJobsPerSiteConstraint->setLimit(2);
+        $singleUrlJobsPerUrlConstraint->setLimit(2);
+        
+        $this->getJobService()->getEntityManager()->persist($fullSiteJobsPerSiteConstraint);
+        $this->getJobService()->getEntityManager()->persist($singleUrlJobsPerUrlConstraint);          
+    }      
     
 }
 
