@@ -207,8 +207,6 @@ class DefaultTest extends BaseControllerJsonTestCase {
         $users = $this->createAndActivateUserCollection(3);
         $this->createWorker();
         
-        $this->queueTaskAssignResponseHttpFixture();
-        
         $jobPropertyCollection = array(
             array(
             'test-types' => array(
@@ -253,6 +251,7 @@ class DefaultTest extends BaseControllerJsonTestCase {
     
         $task = $jobs[$users[0]->getEmail()][0]->getTasks()->first();
         
+        $this->queueTaskAssignResponseHttpFixture();
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
