@@ -3,11 +3,17 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends AbstractUserController
 {       
     public function getAction() {        
         return $this->sendResponse($this->getUserSummary($this->getUser()));
+    }
+
+
+    public function authenticateAction() {
+        return new Response('');
     }
     
     

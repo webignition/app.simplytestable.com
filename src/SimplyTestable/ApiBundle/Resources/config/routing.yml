@@ -111,7 +111,11 @@ user_activate_failure:
 
 user:
   pattern: /user/{email_canonical}/
-  defaults: { _controller: SimplyTestableApiBundle:User:get, _format: json }                   
+  defaults: { _controller: SimplyTestableApiBundle:User:get, _format: json }
+
+user_authenticate:
+  pattern: /user/{email_canonical}/authenticate/
+  defaults: { _controller: SimplyTestableApiBundle:User:get, _format: json }
   
 user_card_associate:
   pattern: /user/{email_canonical}/card/{stripe_card_token}/associate/
