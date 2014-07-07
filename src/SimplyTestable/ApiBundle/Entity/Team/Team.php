@@ -1,5 +1,5 @@
 <?php
-namespace SimplyTestable\ApiBundle\Entity;
+namespace SimplyTestable\ApiBundle\Entity\Team;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
@@ -30,9 +30,6 @@ class Team {
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="leader_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
-     * @SerializerAnnotation\Expose
      */
     protected $leader;
 

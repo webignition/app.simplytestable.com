@@ -3,7 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Entity\Task;
 
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
-use SimplyTestable\ApiBundle\Entity\Team;
+use SimplyTestable\ApiBundle\Entity\Team\Team;
 
 class TeamTest extends BaseSimplyTestableTestCase {
 

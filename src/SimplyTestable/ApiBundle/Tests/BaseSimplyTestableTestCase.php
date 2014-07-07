@@ -967,7 +967,7 @@ EOD;
     }
 
     protected function removeAllTeams() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Team');
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Team\Team');
     }
 
     protected function removeAllWebsites() {
