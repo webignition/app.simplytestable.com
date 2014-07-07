@@ -957,12 +957,17 @@ EOD;
     }
     
     protected function removeAllUsers() {
+        $this->removeAllTeams();
         $this->removeAllJobs();
         
         $users = $this->getUserService()->findUsers();
         foreach ($users as $user) {
             $this->getUserService()->deleteUser($user);
         }
+    }
+
+    protected function removeAllTeams() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Team');
     }
 
     protected function removeAllWebsites() {
