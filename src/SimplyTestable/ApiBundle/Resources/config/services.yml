@@ -325,6 +325,6 @@ services:
         postmarkSender: "@simplytestable.services.postmark.sender"
 
   simplytestable.services.teamservice:
-    class:  SimplyTestable\ApiBundle\Services\TeamService
+    class:  SimplyTestable\ApiBundle\Services\Team\Service
     arguments:
         entityManager: "@doctrine.orm.entity_manager"

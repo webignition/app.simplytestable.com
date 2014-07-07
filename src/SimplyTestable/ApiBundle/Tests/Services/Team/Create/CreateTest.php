@@ -62,4 +62,11 @@ class CreateTest extends ServiceTest {
         );
     }
 
+
+    public function testUserAlreadyOnTeamThrowsTeamMemberServiceException() {
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
 }

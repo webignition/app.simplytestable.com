@@ -8,7 +8,7 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
 
 
     /**
-     * @return \SimplyTestable\ApiBundle\Services\TeamService
+     * @return \SimplyTestable\ApiBundle\Services\Team\Service
      */
     protected function getTeamService() {
         return $this->container->get('simplytestable.services.teamservice');

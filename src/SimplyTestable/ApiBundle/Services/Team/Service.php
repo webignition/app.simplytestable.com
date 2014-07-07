@@ -1,12 +1,13 @@
 <?php
-namespace SimplyTestable\ApiBundle\Services;
+namespace SimplyTestable\ApiBundle\Services\Team;
 
 use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
 
-class TeamService extends EntityService {
+class Service extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Team\Team';
     
