@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Entity\User;
  *     name="Team"
  * )
  * @SerializerAnnotation\ExclusionPolicy("all")
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TeamRepository")
  */
 class Team {
     /**
