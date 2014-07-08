@@ -111,5 +111,19 @@ class MemberService extends EntityService {
     public function contains(Team $team, User $user) {
         return $this->getEntityRepository()->getTeamContainsUser($team, $user);
     }
+
+
+    /**
+     * @param User $user
+     * @return null|Team
+     */
+    public function getTeamByUser(User $user) {
+        if (!$this->belongsToTeam($user)) {
+            return null;
+        }
+
+        $member = $this->getEntityRepository()->getMemberByUser($user);
+        return $member->getTeam();
+    }
     
 }

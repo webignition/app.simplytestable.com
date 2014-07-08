@@ -129,5 +129,22 @@ class Service extends EntityService {
     public function getMemberService() {
         return $this->memberService;
     }
+
+
+    /**
+     * @param User $user
+     * @return null|User
+     */
+    public function getLeaderFor(User $user) {
+        if ($this->hasTeam($user)) {
+            return $user;
+        }
+
+        if ($this->getMemberService()->belongsToTeam($user)) {
+            return $this->getMemberService()->getTeamByUser($user)->getLeader();
+        }
+
+        return null;
+    }
     
 }

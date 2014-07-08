@@ -773,7 +773,7 @@ EOD;
     
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\UserService
+     * @return \SimplyTestable\ApiBundle\Services\TestUserService
      */
     protected function getUserService() {
         return $this->container->get('simplytestable.services.userservice');

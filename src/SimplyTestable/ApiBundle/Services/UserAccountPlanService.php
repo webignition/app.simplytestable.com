@@ -240,14 +240,18 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @return UserAccountPlan
      */
-    public function getForUser(User $user) {        
+    public function getForUser(User $user) {
+        $targetUser = $this->teamService->getMemberService()->belongsToTeam($user)
+            ? $this->teamService->getLeaderFor($user)
+            : $user;
+
         $isActiveValues = array(
             true, false, null
         );
         
         foreach ($isActiveValues as $isActiveValue) {
             $userAccountPlans = $this->getEntityRepository()->findBy(array(
-                'user' => $user,
+                'user' => $targetUser,
                 'isActive' => $isActiveValue                
             ), array(
                 'id' => 'DESC'
