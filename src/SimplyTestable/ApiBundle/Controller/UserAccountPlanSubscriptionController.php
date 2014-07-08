@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
+
 class UserAccountPlanSubscriptionController extends AbstractUserController
 {
     
@@ -40,7 +42,16 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
                 'X-Stripe-Error-Param' => $stripeCardError->param,
                 'X-Stripe-Error-Code' => $stripeCardError->getCode()
             ));           
-        }        
+        } catch (UserAccountPlanServiceException $userAccountPlanServiceException) {
+            if ($userAccountPlanServiceException->isUserIsTeamMemberException()) {
+                return $this->sendFailureResponse(array(
+                    'X-Error-Message' => 'User is a team member',
+                    'X-Error-Code' => $userAccountPlanServiceException->getCode()
+                ));
+            }
+
+            throw $userAccountPlanServiceException;
+        }
         
         return $this->sendSuccessResponse();
     }
