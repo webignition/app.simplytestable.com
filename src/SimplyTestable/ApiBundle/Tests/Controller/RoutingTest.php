@@ -23,7 +23,7 @@ abstract class RoutingTest extends BaseSimplyTestableTestCase {
     /**
      * @depends testRouteExists
      */
-    public function testControllerExistsForRoute() {        
+    public function testControllerExistsForRoute() {
         $this->assertArrayHasKey(
                 self::ROUTER_MATCH_CONTROLLER_KEY,
                 $this->getRouter()->match($this->getCurrentRequestUrl($this->getRouteParameters())),

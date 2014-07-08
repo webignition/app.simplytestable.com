@@ -183,4 +183,8 @@ enable_backup_readonly:
     
 stripe_webhook_receiver:
     pattern: /stripe/webhook/receiver/
-    defaults: { _controller: SimplyTestableApiBundle:Stripe\WebHook:index, _format: json }    
+    defaults: { _controller: SimplyTestableApiBundle:Stripe\WebHook:index, _format: json }
+
+team_create:
+    pattern: /team/create/
+    defaults: { _controller: SimplyTestableApiBundle:Team:create }
