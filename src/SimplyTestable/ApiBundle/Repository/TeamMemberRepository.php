@@ -25,4 +25,40 @@ class TeamMemberRepository extends EntityRepository {
         return (int)($result[0]['total']);
     }
 
+
+    /**
+     * @param User $user
+     * @return null|Member
+     */
+    public function getMemberByUser(User $user) {
+        $queryBuilder = $this->createQueryBuilder('TeamMember');
+        $queryBuilder->setMaxResults(1);
+        $queryBuilder->select('TeamMember');
+        $queryBuilder->where('TeamMember.user = :User');
+        $queryBuilder->setParameter('User', $user);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return ($result[0] instanceof Member) ? $result[0] : null;
+    }
+
+
+    /**
+     * @param Team $team
+     * @param User $user
+     * @return bool
+     */
+    public function getTeamContainsUser(Team $team, User $user) {
+        $queryBuilder = $this->createQueryBuilder('TeamMember');
+        $queryBuilder->setMaxResults(1);
+        $queryBuilder->select('count(TeamMember.id) as total');
+        $queryBuilder->where('TeamMember.user = :User AND TeamMember.team = :Team');
+        $queryBuilder->setParameter('User', $user);
+        $queryBuilder->setParameter('Team', $team);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return (int)($result[0]['total']) === 1;
+    }
+
 }

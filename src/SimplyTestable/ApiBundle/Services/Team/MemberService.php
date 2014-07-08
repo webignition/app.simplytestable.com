@@ -64,6 +64,26 @@ class MemberService extends EntityService {
 
 
     /**
+     * @param User $user
+     * @return bool
+     */
+    public function remove(User $user) {
+        if (!$this->belongsToTeam($user)) {
+            return true;
+        }
+
+        $member = $this->getEntityRepository()->getMemberByUser($user);
+
+        $this->getEntityManager()->remove($member);
+        $this->getEntityManager()->flush($member);
+
+        $member->clear();
+
+        return true;
+    }
+
+
+    /**
      * @param Member $member
      * @return Member
      */
@@ -80,6 +100,16 @@ class MemberService extends EntityService {
      */
     public function getEntityRepository() {
         return parent::getEntityRepository();
+    }
+
+
+    /**
+     * @param Team $team
+     * @param User $user
+     * @return bool
+     */
+    public function contains(Team $team, User $user) {
+        return $this->getEntityRepository()->getTeamContainsUser($team, $user);
     }
     
 }

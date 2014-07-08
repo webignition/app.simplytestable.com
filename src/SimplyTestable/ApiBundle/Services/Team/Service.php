@@ -89,10 +89,8 @@ class Service extends EntityService {
      * @param User $leader
      * @return bool
      */
-    private function hasTeam(User $leader) {
+    public function hasTeam(User $leader) {
         return $this->getEntityRepository()->getTeamCountByLeader($leader) > 0;
-
-        return true;
     }
 
 

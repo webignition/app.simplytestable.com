@@ -65,6 +65,14 @@ class Member {
         return $this;
     }
 
+
+
+    public function clear() {
+        $this->team = null;
+        $this->user = null;
+    }
+
+
     /**
      * Get team
      *
