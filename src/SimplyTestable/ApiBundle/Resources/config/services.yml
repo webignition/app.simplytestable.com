@@ -160,7 +160,8 @@ services:
     arguments: 
         entityManager: "@doctrine.orm.entity_manager" 
         userService: "@simplytestable.services.userservice" 
-        stripeService: "@simplytestable.services.stripeservice" 
+        stripeService: "@simplytestable.services.stripeservice"
+        teamService: "@simplytestable.services.teamservice"
         defaultTrialPeriod: "%default_trial_period%"
         
   simplytestable.services.useremailchangerequestservice:

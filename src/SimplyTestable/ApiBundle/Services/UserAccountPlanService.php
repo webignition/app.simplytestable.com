@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\StripeService;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 
 
 class UserAccountPlanService extends EntityService {
@@ -25,23 +27,39 @@ class UserAccountPlanService extends EntityService {
      * @var \SimplyTestable\ApiBundle\Services\StripeService 
      */
     private $stripeService;
+
+
+    /**
+     * @var TeamService
+     */
+    private $teamService;
     
     
     /**
      *
      * @var int 
      */
-    private $defaultTrialPeriod = null;    
-    
+    private $defaultTrialPeriod = null;
+
+
     /**
-     *
-     * @param \Doctrine\ORM\EntityManager $entityManager
-     * @param \SimplyTestable\ApiBundle\Services\UserService $userService 
+     * @param EntityManager $entityManager
+     * @param UserService $userService
+     * @param StripeService $stripeService
+     * @param TeamService $teamService
+     * @param $defaultTrialPeriod
      */
-    public function __construct(EntityManager $entityManager, UserService $userService, StripeService $stripeService, $defaultTrialPeriod) {
+    public function __construct(
+        EntityManager $entityManager,
+        UserService $userService,
+        StripeService $stripeService,
+        TeamService $teamService,
+        $defaultTrialPeriod
+    ) {
         $this->entityManager = $entityManager;      
         $this->userService = $userService;
         $this->stripeService = $stripeService;
+        $this->teamService = $teamService;
         $this->defaultTrialPeriod = $defaultTrialPeriod;
     }     
     
@@ -85,7 +103,14 @@ class UserAccountPlanService extends EntityService {
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
      * @return UserAccountPlan|false
      */
-    public function subscribe(User $user, AccountPlan $newPlan) {                
+    public function subscribe(User $user, AccountPlan $newPlan) {
+        if ($this->teamService->getMemberService()->belongsToTeam($user)) {
+            throw new UserAccountPlanServiceException(
+                '',
+                UserAccountPlanServiceException::CODE_USER_IS_TEAM_MEMBER
+            );
+        }
+
         if (!$this->hasForUser($user)) {            
             if ($newPlan->getIsPremium()) {
                 return $this->stripeService->subscribe($this->create(

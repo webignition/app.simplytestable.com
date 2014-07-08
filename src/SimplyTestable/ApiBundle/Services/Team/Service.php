@@ -126,7 +126,7 @@ class Service extends EntityService {
     /**
      * @return MemberService
      */
-    private function getMemberService() {
+    public function getMemberService() {
         return $this->memberService;
     }
     

@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\UserAccountPlanService\Subscribe;
+namespace SimplyTestable\ApiBundle\Tests\Services\UserAccountPlanService\Subscribe\Success;
 
 use SimplyTestable\ApiBundle\Tests\Services\UserAccountPlanService\ServiceTest;
 
