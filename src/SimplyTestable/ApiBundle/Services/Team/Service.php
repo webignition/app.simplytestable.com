@@ -5,11 +5,19 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
 
 class Service extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Team\Team';
+
+
+    /**
+     * @var MemberService
+     */
+    private $memberService;
+
     
     /**
      *
@@ -17,6 +25,17 @@ class Service extends EntityService {
      */
     protected function getEntityName() {
         return self::ENTITY_NAME;
+    }
+
+
+    /**
+     * @param MemberService $memberService
+     * @param EntityManager $entityManager
+     */
+    public function __construct(MemberService $memberService, EntityManager $entityManager) {
+        $this->memberService = $memberService;
+
+        parent::__construct($entityManager);
     }
 
 
@@ -46,6 +65,13 @@ class Service extends EntityService {
             throw new TeamServiceException(
                 'User already leads a team',
                 TeamServiceException::USER_ALREADY_LEADS_TEAM
+            );
+        }
+
+        if ($this->getMemberService()->belongsToTeam($leader)) {
+            throw new TeamServiceException(
+                'User already on a team',
+                TeamServiceException::USER_ALREADY_ON_TEAM
             );
         }
 
@@ -96,6 +122,14 @@ class Service extends EntityService {
      */
     public function getEntityRepository() {
         return parent::getEntityRepository();
+    }
+
+
+    /**
+     * @return MemberService
+     */
+    private function getMemberService() {
+        return $this->memberService;
     }
     
 }

@@ -8,6 +8,15 @@ class Exception extends BaseException {
     const CODE_NAME_EMPTY = 1;
     const CODE_NAME_TAKEN = 2;
     const USER_ALREADY_LEADS_TEAM = 3;
+    const USER_ALREADY_ON_TEAM = 4;
+
+    /**
+     * @param Exception $exception
+     * @return bool
+     */
+    public function isNameEmptyException(Exception $exception) {
+        return $exception->getCode() === self::CODE_NAME_EMPTY;
+    }
 
 
     /**
@@ -25,5 +34,14 @@ class Exception extends BaseException {
      */
     public function isUserAlreadyLeadsTeamException(Exception $exception) {
         return $exception->getCode() === self::USER_ALREADY_LEADS_TEAM;
+    }
+
+
+    /**
+     * @param Exception $exception
+     * @return bool
+     */
+    public function isUserAlreadyOnTeamException(Exception $exception) {
+        return $exception->getCode() === self::USER_ALREADY_ON_TEAM;
     }
 }

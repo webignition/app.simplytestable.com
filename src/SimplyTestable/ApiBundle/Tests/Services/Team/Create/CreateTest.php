@@ -64,8 +64,26 @@ class CreateTest extends ServiceTest {
 
 
     public function testUserAlreadyOnTeamThrowsTeamMemberServiceException() {
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
+        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+
+        $team = $this->getTeamService()->create(
+            'Foo',
+            $leader
+        );
+
+        $user = $this->createAndActivateUser('user@example.com', 'password');
+
+        $this->getTeamMemberService()->add($team, $user);
+
+        $this->setExpectedException(
+            'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
+            '',
+            TeamServiceException::USER_ALREADY_ON_TEAM
+        );
+
+        $this->getTeamService()->create(
+            'Bar',
+            $user
         );
     }
 
