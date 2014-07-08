@@ -11,6 +11,12 @@ use SimplyTestable\ApiBundle\Exception\Services\TeamMember\Exception as TeamMemb
 class MemberService extends EntityService {
     
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Team\Member';
+
+
+    /**
+     * @var Team
+     */
+    private $team;
     
     /**
      *
@@ -18,6 +24,16 @@ class MemberService extends EntityService {
      */
     protected function getEntityName() {
         return self::ENTITY_NAME;
+    }
+
+
+    /**
+     * @param Team $team
+     * @return MemberService
+     */
+    public function setTeam(Team $team) {
+        $this->team = $team;
+        return $this;
     }
 
 
@@ -31,12 +47,18 @@ class MemberService extends EntityService {
 
 
     /**
-     * @param Team $team
      * @param User $user
      * @return Member
      * @throws \SimplyTestable\ApiBundle\Exception\Services\TeamMember\Exception
      */
-    public function add(Team $team, User $user) {
+    public function add(User $user) {
+        if (!$this->hasTeam()) {
+            throw new TeamMemberServiceException(
+                'MemberService has no Team set',
+                TeamMemberServiceException::NO_TEAM_SET
+            );
+        }
+
         if ($this->belongsToTeam($user)) {
             throw new TeamMemberServiceException(
                 'User is already on a team',
@@ -45,7 +67,7 @@ class MemberService extends EntityService {
         }
 
         $member = new Member();
-        $member->setTeam($team);
+        $member->setTeam($this->team);
         $member->setUser($user);
 
         return $this->persistAndFlush($member);
@@ -69,6 +91,14 @@ class MemberService extends EntityService {
      */
     public function getEntityRepository() {
         return parent::getEntityRepository();
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function hasTeam() {
+        return $this->team instanceof Team;
     }
     
 }

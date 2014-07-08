@@ -73,7 +73,8 @@ class CreateTest extends ServiceTest {
 
         $user = $this->createAndActivateUser('user@example.com', 'password');
 
-        $this->getTeamMemberService()->add($team, $user);
+        $this->getTeamMemberService()->setTeam($team);
+        $this->getTeamMemberService()->add($user);
 
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
