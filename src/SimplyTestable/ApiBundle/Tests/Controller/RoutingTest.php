@@ -5,9 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 abstract class RoutingTest extends BaseSimplyTestableTestCase {
-    
-    abstract protected function getRouteParameters();
-    
+
     public function testRouteExists() {        
         try {
             $this->getCurrentRequestUrl($this->getRouteParameters());
