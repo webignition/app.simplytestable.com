@@ -8,6 +8,8 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
+
+    const ROUTER_MATCH_CONTROLLER_KEY = '_controller';
     
     const JOB_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Job\JobController';       
     const JOB_LIST_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Job\JobListController';       
@@ -276,7 +278,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * 
      * @param string $controllerName
      * @param string $methodName
-     * @return Symfony\Bundle\FrameworkBundle\Controller\Controller
+     * @return \Symfony\Bundle\FrameworkBundle\Controller\Controller
      */
     protected function getController($controllerName, $methodName, array $postData = array(), array $queryData = array()) {        
         return $this->createController($controllerName, $methodName, $postData, $queryData);
@@ -1245,5 +1247,160 @@ EOD;
      */
     protected function getTeamService() {
         return $this->container->get('simplytestable.services.teamservice');
+    }
+
+
+
+    /**
+     *
+     * @return string
+     */
+    protected function getControllerNameFromRouter() {
+        return explode('::', $this->getRouteController())[0];
+    }
+
+
+    /**
+     *
+     * @return string
+     */
+    protected function getActionNameFromRouter() {
+        return explode('::', $this->getRouteController())[1];
+    }
+
+
+
+    protected function getRouteController() {
+        return $this->getRouter()->match($this->getCurrentRequestUrl($this->getRouteParameters()))[self::ROUTER_MATCH_CONTROLLER_KEY];
+    }
+
+
+    protected function getCurrentRequestUrl() {
+        return $this->getCurrentController()->generateUrl($this->getRouteFromTestNamespace(), $this->getRouteParameters());
+    }
+
+    protected function getCurrentController($postData = null, $queryData = null) {
+        $postData = (is_array($postData)) ? $postData : array();
+        $queryData = (is_array($queryData)) ? $queryData : array();
+
+        return $this->getController(
+            $this->getControllerNameFromTestNamespace(),
+            $this->getActionNameFromTestNamespace(),
+            $postData,
+            $queryData
+        );
+    }
+
+
+    /**
+     * Get route name for current test
+     *
+     * Is extracted from the class namespace as follows:
+     * \Acme\FooBundle\Tests\Controller\Foo => 'foo'
+     * \Acme\FooBundle\Tests\Controller\FooBar => 'foo_bar'
+     * \Acme\FooBundle\Tests\Controller\FooBar\Bar => 'foobar_bar'
+     *
+     * @return string
+     */
+    protected function getRouteFromTestNamespace() {
+        return strtolower(implode('_', $this->getControllerRelatedNamespaceParts()) . '_' . str_replace('Action', '', $this->getActionNameFromTestNamespace()));
+    }
+
+
+    /**
+     *
+     * @return string
+     */
+    protected function getExpectedRouteController() {
+        return $this->getControllerNameFromTestNamespace() . '::' . $this->getActionNameFromTestNamespace();
+    }
+
+
+    /**
+     * Get controller name from current test namespace
+     *
+     * @return string
+     */
+    private function getControllerNameFromTestNamespace() {
+        return implode('\\', $this->getControllerNamespaceParts()) . 'Controller';
+    }
+
+
+
+    /**
+     * Get controller action from current test namespace
+     *
+     * @return string
+     */
+    private function getActionNameFromTestNamespace() {
+        foreach ($this->getNamespaceParts() as $part) {
+            if (preg_match('/.+Action$/', $part)) {
+                return lcfirst($part);
+            }
+        }
+    }
+
+
+    /**
+     *
+     * @return string[]
+     */
+    private function getControllerNamespaceParts() {
+        $relevantParts = array();
+
+        foreach ($this->getNamespaceParts() as $part) {
+            if (preg_match('/.+Action$/', $part)) {
+                return $relevantParts;
+            }
+
+            if ($part != 'Tests') {
+                $relevantParts[] = $part;
+            }
+        }
+
+        return $relevantParts;
+    }
+
+
+    /**
+     *
+     * @return string[]
+     */
+    private function getControllerRelatedNamespaceParts() {
+        $parts = $this->getControllerNamespaceParts();
+
+        foreach ($parts as $index => $part) {
+            if ($part === 'Controller') {
+                return array_slice($parts, $index + 1);
+            }
+        }
+
+        return $parts;
+    }
+
+
+    /**
+     *
+     * @return string[]
+     */
+    private function getNamespaceParts() {
+        $parts = explode('\\', get_class($this));
+        array_pop($parts);
+
+        return $parts;
+    }
+
+
+    /**
+     *
+     * @return \Symfony\Bundle\FrameworkBundle\Routing\Router
+     */
+    protected function getRouter() {
+        return $this->client->getContainer()->get('router');
+    }
+
+
+    protected function getRouteParameters() {
+        return [];
     }
 }

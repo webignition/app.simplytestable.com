@@ -14,8 +14,8 @@ class Exception extends BaseException {
      * @param Exception $exception
      * @return bool
      */
-    public function isNameEmptyException(Exception $exception) {
-        return $exception->getCode() === self::CODE_NAME_EMPTY;
+    public function isNameEmptyException() {
+        return $this->getCode() === self::CODE_NAME_EMPTY;
     }
 
 
@@ -23,8 +23,8 @@ class Exception extends BaseException {
      * @param Exception $exception
      * @return bool
      */
-    public function isNameTakenException(Exception $exception) {
-        return $exception->getCode() === self::CODE_NAME_TAKEN;
+    public function isNameTakenException() {
+        return $this->getCode() === self::CODE_NAME_TAKEN;
     }
 
 
@@ -32,8 +32,8 @@ class Exception extends BaseException {
      * @param Exception $exception
      * @return bool
      */
-    public function isUserAlreadyLeadsTeamException(Exception $exception) {
-        return $exception->getCode() === self::USER_ALREADY_LEADS_TEAM;
+    public function isUserAlreadyLeadsTeamException() {
+        return $this->getCode() === self::USER_ALREADY_LEADS_TEAM;
     }
 
 
@@ -41,7 +41,7 @@ class Exception extends BaseException {
      * @param Exception $exception
      * @return bool
      */
-    public function isUserAlreadyOnTeamException(Exception $exception) {
-        return $exception->getCode() === self::USER_ALREADY_ON_TEAM;
+    public function isUserAlreadyOnTeamException() {
+        return $this->getCode() === self::USER_ALREADY_ON_TEAM;
     }
 }

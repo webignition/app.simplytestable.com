@@ -188,3 +188,7 @@ stripe_webhook_receiver:
 team_create:
     pattern: /team/create/
     defaults: { _controller: SimplyTestableApiBundle:Team:create }
+
+team_get:
+    pattern: /team/
+    defaults: { _controller: SimplyTestableApiBundle:Team:get}

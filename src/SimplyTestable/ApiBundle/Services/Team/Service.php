@@ -46,6 +46,20 @@ class Service extends EntityService {
      * @throws \SimplyTestable\ApiBundle\Exception\Services\Team\Exception
      */
     public function create($name, User $leader) {
+        if ($this->hasTeam($leader)) {
+            throw new TeamServiceException(
+                'User already leads a team',
+                TeamServiceException::USER_ALREADY_LEADS_TEAM
+            );
+        }
+
+        if ($this->getMemberService()->belongsToTeam($leader)) {
+            throw new TeamServiceException(
+                'User already on a team',
+                TeamServiceException::USER_ALREADY_ON_TEAM
+            );
+        }
+
         $name = trim($name);
         if ($name == '') {
             throw new TeamServiceException(
@@ -58,20 +72,6 @@ class Service extends EntityService {
             throw new TeamServiceException(
                 'Team name is already taken',
                 TeamServiceException::CODE_NAME_TAKEN
-            );
-        }
-
-        if ($this->hasTeam($leader)) {
-            throw new TeamServiceException(
-                'User already leads a team',
-                TeamServiceException::USER_ALREADY_LEADS_TEAM
-            );
-        }
-
-        if ($this->getMemberService()->belongsToTeam($leader)) {
-            throw new TeamServiceException(
-                'User already on a team',
-                TeamServiceException::USER_ALREADY_ON_TEAM
             );
         }
 
@@ -142,6 +142,23 @@ class Service extends EntityService {
 
         if ($this->getMemberService()->belongsToTeam($user)) {
             return $this->getMemberService()->getTeamByUser($user)->getLeader();
+        }
+
+        return null;
+    }
+
+
+    /**
+     * @param User $user
+     * @return null|Team
+     */
+    public function getForUser(User $user) {
+        if ($this->hasTeam($user)) {
+            return $this->getEntityRepository()->getTeamByLeader($user);
+        }
+
+        if ($this->getMemberService()->belongsToTeam($user)) {
+            return $this->getMemberService()->getEntityRepository()->getMemberByUser($user)->getTeam();
         }
 
         return null;
