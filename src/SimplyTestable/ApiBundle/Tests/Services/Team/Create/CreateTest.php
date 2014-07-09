@@ -22,11 +22,9 @@ class CreateTest extends ServiceTest {
 
 
     public function testTakenNameThrowsTeamServiceException() {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
-
         $this->getTeamService()->create(
             'Foo',
-            $user
+            $this->createAndActivateUser('user1@example.com', 'password')
         );
 
         $this->setExpectedException(
@@ -37,7 +35,7 @@ class CreateTest extends ServiceTest {
 
         $this->getTeamService()->create(
             'Foo',
-            $user
+            $this->createAndActivateUser('user2@example.com', 'password')
         );
     }
 

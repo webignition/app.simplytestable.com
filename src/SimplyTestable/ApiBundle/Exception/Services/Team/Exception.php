@@ -11,7 +11,6 @@ class Exception extends BaseException {
     const USER_ALREADY_ON_TEAM = 4;
 
     /**
-     * @param Exception $exception
      * @return bool
      */
     public function isNameEmptyException() {
@@ -20,7 +19,6 @@ class Exception extends BaseException {
 
 
     /**
-     * @param Exception $exception
      * @return bool
      */
     public function isNameTakenException() {
@@ -29,7 +27,6 @@ class Exception extends BaseException {
 
 
     /**
-     * @param Exception $exception
      * @return bool
      */
     public function isUserAlreadyLeadsTeamException() {
@@ -38,7 +35,6 @@ class Exception extends BaseException {
 
 
     /**
-     * @param Exception $exception
      * @return bool
      */
     public function isUserAlreadyOnTeamException() {
