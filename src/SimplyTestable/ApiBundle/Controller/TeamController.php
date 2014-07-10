@@ -7,7 +7,23 @@ use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceExc
 class TeamController extends ApiController {
 
     public function getAction() {
-        return $this->sendResponse($this->getTeamService()->getTeamForUser($this->getUser()));
+        if (!$this->getTeamService()->hasForUser($this->getUser())) {
+            return $this->sendNotFoundResponse();
+        }
+
+        $team = $this->getTeamService()->getForUser($this->getUser());
+        $members = $this->getTeamService()->getMemberService()->getMembers($team);
+
+        $serializedMembers = [];
+
+        foreach ($members as $member) {
+            $serializedMembers[] = $member->getUser()->getUsername();
+        }
+
+        return $this->sendResponse([
+            'team' => $team,
+            'members' => $serializedMembers
+        ]);
     }
     
     public function createAction() {

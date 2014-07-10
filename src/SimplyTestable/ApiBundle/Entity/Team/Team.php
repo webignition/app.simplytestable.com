@@ -31,6 +31,8 @@ class Team {
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="leader_id", referencedColumnName="id", nullable=false)
+     * @SerializerAnnotation\Expose
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedLeader")
      */
     protected $leader;
 
@@ -39,6 +41,7 @@ class Team {
      * @var string
      *
      * @ORM\Column(type="string", unique=true, nullable=false)
+     * @SerializerAnnotation\Expose
      */
     protected $name;
 
@@ -96,5 +99,13 @@ class Team {
     public function getName()
     {
         return $this->name;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getPublicSerializedLeader() {
+        return $this->getLeader()->getUsername();
     }
 }

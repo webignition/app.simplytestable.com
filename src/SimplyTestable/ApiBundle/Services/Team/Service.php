@@ -163,5 +163,14 @@ class Service extends EntityService {
 
         return null;
     }
+
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function hasForUser(User $user) {
+        return !is_null($this->getForUser($user));
+    }
     
 }
