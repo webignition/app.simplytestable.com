@@ -18,7 +18,7 @@ class Version20140709141300_create_TeamInvite extends BaseMigration
                 team_id INT NOT NULL,
                 user_id INT NOT NULL,
                 token VARCHAR(255) NOT NULL,
-                UNIQUE INDEX UNIQ_C22DB3ED5F37A13B (token),
+                INDEX token_idx (token),
                 INDEX IDX_C22DB3ED296CD8AE (team_id),
                 INDEX IDX_C22DB3EDA76ED395 (user_id),
                 UNIQUE INDEX teamInvite_idx (team_id, user_id),
@@ -37,10 +37,10 @@ class Version20140709141300_create_TeamInvite extends BaseMigration
                 FOREIGN KEY(team_id) REFERENCES Team (id),
                 FOREIGN KEY(user_id) REFERENCES fos_user (id)
             )",
-            "CREATE UNIQUE INDEX UNIQ_C22DB3ED5F37A13B ON TeamInvite (token)",
             "CREATE INDEX IDX_C22DB3ED296CD8AE ON TeamInvite (team_id)",
             "CREATE INDEX IDX_C22DB3EDA76ED395 ON TeamInvite (user_id)",
-            "CREATE UNIQUE INDEX teamInvite_idx ON TeamInvite (team_id, user_id)"
+            "CREATE UNIQUE INDEX teamInvite_idx ON TeamInvite (team_id, user_id)",
+            "CREATE INDEX token_idx ON TeamInvite (token)"
         );
 
         parent::up($schema);
