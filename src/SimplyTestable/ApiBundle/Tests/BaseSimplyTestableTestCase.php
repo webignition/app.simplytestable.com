@@ -959,6 +959,7 @@ EOD;
     }
     
     protected function removeAllUsers() {
+        $this->removeAllTeamInvites();
         $this->removeAllTeamMembers();
         $this->removeAllTeams();
         $this->removeAllJobs();
@@ -967,6 +968,10 @@ EOD;
         foreach ($users as $user) {
             $this->getUserService()->deleteUser($user);
         }
+    }
+
+    protected function removeAllTeamInvites() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Team\Invite');
     }
 
     protected function removeAllTeamMembers() {

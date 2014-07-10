@@ -335,3 +335,9 @@ services:
     arguments:
         teamMemberService: "@simplytestable.services.teammemberservice"
         entityManager: "@doctrine.orm.entity_manager"
+
+  simplytestable.services.teaminviteservice:
+    class:  SimplyTestable\ApiBundle\Services\Team\InviteService
+    arguments:
+        teamService: "@simplytestable.services.teamservice"
+        entityManager: "@doctrine.orm.entity_manager"
