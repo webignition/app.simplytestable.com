@@ -125,5 +125,16 @@ class MemberService extends EntityService {
         $member = $this->getEntityRepository()->getMemberByUser($user);
         return $member->getTeam();
     }
+
+
+    /**
+     * @param Team $team
+     * @return Member[]
+     */
+    public function getMembers(Team $team) {
+        return $this->getEntityRepository()->findBy([
+            'team' => $team
+        ]);
+    }
     
 }
