@@ -192,3 +192,7 @@ team_create:
 team_get:
     pattern: /team/
     defaults: { _controller: SimplyTestableApiBundle:Team:get}
+
+teaminvite_get:
+    pattern: /team/invite/{invitee_email}/
+    defaults: { _controller: SimplyTestableApiBundle:TeamInvite:get}

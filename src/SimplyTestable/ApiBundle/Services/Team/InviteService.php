@@ -76,7 +76,7 @@ class InviteService extends EntityService {
 
         if($this->teamService->getMemberService()->belongsToTeam($invitee)) {
             throw new TeamInviteServiceException(
-                'Invitee is a team leader',
+                'Invitee is on a team',
                 TeamInviteServiceException::INVITEE_IS_ON_A_TEAM
             );
         }
