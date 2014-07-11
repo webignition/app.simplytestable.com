@@ -35,6 +35,47 @@ class TeamInviteController extends ApiController {
         }
     }
 
+
+    public function acceptAction() {
+        if (!$this->getTeamInviteService()->hasForUser($this->getUser())) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteAccept-Error-Code' => 1,
+                'X-TeamInviteAccept-Error-Message' => 'User has no invite',
+            ]);
+        }
+
+        $invite = $this->getTeamInviteService()->getForUser($this->getUser());
+
+        if ($invite->getToken() != $this->getRequestToken()) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteAccept-Error-Code' => 2,
+                'X-TeamInviteAccept-Error-Message' => 'Invalid token',
+            ]);
+        }
+
+        $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
+        $this->getTeamInviteService()->remove($invite);
+
+        return $this->sendResponse();
+    }
+
+
+    /**
+     * @return string
+     */
+    private function getRequestToken() {
+        return trim($this->getRequest()->request->get('token'));
+    }
+
+
+    /**
+     * @return \SimplyTestable\ApiBundle\Services\Team\Service
+     */
+    private function getTeamService() {
+        return $this->container->get('simplytestable.services.teamservice');
+    }
+
+
     /**
      * @return \SimplyTestable\ApiBundle\Services\Team\InviteService
      */

@@ -1255,6 +1255,14 @@ EOD;
     }
 
 
+    /**
+     * @return \SimplyTestable\ApiBundle\Services\Team\InviteService
+     */
+    protected function getTeamInviteService() {
+        return $this->container->get('simplytestable.services.teaminviteservice');
+    }
+
+
 
     /**
      *

@@ -119,6 +119,18 @@ class InviteService extends EntityService {
     }
 
 
+    /**
+     * @param Invite $invite
+     * @return Invite
+     */
+    public function remove(Invite $invite) {
+        $this->getEntityManager()->remove($invite);
+        $this->getEntityManager()->flush($invite);
+
+        return $invite;
+    }
+
+
 
     /**
      * @param $inviter
