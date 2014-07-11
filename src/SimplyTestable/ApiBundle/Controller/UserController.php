@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 
 class UserController extends AbstractUserController
 {       
@@ -26,12 +27,15 @@ class UserController extends AbstractUserController
         $userSummary = array(
             'email' => $user->getEmailCanonical(),
             'user_plan' => $userAccountPlan
-                
         );
-        
-        if ($userAccountPlan->hasStripeCustomer()) {            
+
+        if ($this->includeStripeCustomerInUserSummary($user, $userAccountPlan)) {
             $userSummary['stripe_customer'] = $this->getStripeService()->getCustomer($userAccountPlan)->__toArray();
         }
+        
+//        if ($userAccountPlan->hasStripeCustomer()) {
+//            $userSummary['stripe_customer'] = $this->getStripeService()->getCustomer($userAccountPlan)->__toArray();
+//        }
         
         $planConstraints = array();
 
@@ -50,6 +54,16 @@ class UserController extends AbstractUserController
         $userSummary['plan_constraints'] = $planConstraints;
         
         return $userSummary;
+    }
+
+
+    /**
+     * @param User $user
+     * @param UserAccountPlan $userAccountPlan
+     * @return bool
+     */
+    private function includeStripeCustomerInUserSummary(User $user, UserAccountPlan $userAccountPlan) {
+        return $userAccountPlan->hasStripeCustomer() &&  $user->getId() == $userAccountPlan->getUser()->getId();
     }
     
     
