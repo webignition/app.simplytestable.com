@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Team\CreateAction;
 
+use SimplyTestable\ApiBundle\Tests\Controller\Team\ActionTest;
+
 class CreateTest extends ActionTest {
 
     public function testRequestAsTeamLeaderReturnsExistingTeam() {
@@ -68,6 +70,36 @@ class CreateTest extends ActionTest {
         $this->assertEquals('Foo', $response->headers->get('X-Team-Name'));
 
         $this->assertNotNull($this->getTeamService()->getForUser($user));
+    }
+
+
+    public function testPublicUserCannotCreateTeam() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
+        $methodName = $this->getActionNameFromRouter();
+
+        $response = $this->getCurrentController([
+            'name' => 'Foo'
+        ])->$methodName();
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(9, $response->headers->get('X-TeamCreate-Error-Code'));
+        $this->assertEquals('Special users cannot create teams', $response->headers->get('X-TeamCreate-Error-Message'));
+    }
+
+
+    public function testAdminUserCannotCreateTeam() {
+        $this->getUserService()->setUser($this->getUserService()->getAdminUser());
+
+        $methodName = $this->getActionNameFromRouter();
+
+        $response = $this->getCurrentController([
+            'name' => 'Foo'
+        ])->$methodName();
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(9, $response->headers->get('X-TeamCreate-Error-Code'));
+        $this->assertEquals('Special users cannot create teams', $response->headers->get('X-TeamCreate-Error-Message'));
     }
     
 }

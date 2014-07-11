@@ -27,6 +27,13 @@ class TeamController extends ApiController {
     }
     
     public function createAction() {
+        if ($this->getUserService()->isSpecialUser($this->getUser())) {
+            return $this->sendFailureResponse([
+                'X-TeamCreate-Error-Code' => 9,
+                'X-TeamCreate-Error-Message' => 'Special users cannot create teams',
+            ]);
+        }
+
         try {
             $this->getTeamService()->create($this->getRequest()->request->get('name'), $this->getUser());
         } catch (TeamServiceException $teamServiceException) {
