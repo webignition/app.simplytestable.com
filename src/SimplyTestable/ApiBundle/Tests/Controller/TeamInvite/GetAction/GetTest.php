@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\TeamInvite\GetAction;
 
+use SimplyTestable\ApiBundle\Tests\Controller\TeamInvite\ActionTest;
+
 class GetTest extends ActionTest {
 
     public function testInviterIsNotTeamLeaderReturnsBadResponse() {

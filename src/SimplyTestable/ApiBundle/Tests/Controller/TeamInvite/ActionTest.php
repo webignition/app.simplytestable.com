@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\TeamInvite\GetAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\TeamInvite;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
