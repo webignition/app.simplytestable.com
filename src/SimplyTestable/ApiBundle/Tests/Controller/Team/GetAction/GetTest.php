@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Team\GetAction;
 
+use SimplyTestable\ApiBundle\Tests\Controller\Team\ActionTest;
+
 class GetTest extends ActionTest {
 
     public function testUserWithNoTeamReturnsNotFoundResponse() {

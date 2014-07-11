@@ -69,6 +69,19 @@ class TeamController extends ApiController {
     }
 
 
+    public function leaveAction() {
+        if ($this->getTeamService()->hasTeam($this->getUser())) {
+            return $this->sendFailureResponse([
+                'X-TeamLeave-Error-Code' => 9,
+                'X-TeamLeave-Error-Message' => 'Leader cannot leave team',
+            ]);
+        }
+
+        $this->getTeamService()->getMemberService()->remove($this->getUser());
+        return $this->sendResponse();
+    }
+
+
     /**
      * @return \SimplyTestable\ApiBundle\Services\Team\Service
      */
