@@ -36,22 +36,22 @@ abstract class RoutingTest extends BaseSimplyTestableTestCase {
                 $this->getExpectedRouteController(),
                 $this->getRouteController(),
                 'Incorrect controller found for route [' . $this->getRouteFromTestNamespace() . '].' . "\n" . 'Expected ' . $this->getExpectedRouteController() . ' got ' . $this->getRouteController() . '.' .  "\n" . 'Check routing.yml default controller for this route.'
-        );       
+        );
 
     }
-    
-    
+
+
     /**
      * @depends testRouteHasExpectedController
-     */    
+     */
     public function testRouteControllerExists() {
-        $this->assertTrue(class_exists($this->getControllerNameFromRouter()));      
+        $this->assertTrue(class_exists($this->getControllerNameFromRouter()));
     }
-    
-    
+
+
     /**
      * @depends testRouteControllerExists
-     */        
+     */
     public function testRouteControllerActionMethodExists() {
         $className = $this->getControllerNameFromRouter();
 

@@ -202,5 +202,5 @@ team_remove:
     defaults: { _controller: SimplyTestableApiBundle:Team:remove }
 
 team_leave:
-    pattern: /team/leave/
+    pattern: /team/leave}
     defaults: { _controller: SimplyTestableApiBundle:Team:leave }
