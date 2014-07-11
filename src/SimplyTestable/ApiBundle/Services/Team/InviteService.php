@@ -110,6 +110,15 @@ class InviteService extends EntityService {
     }
 
 
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function hasForUser(User $user) {
+        return !is_null($this->getForUser($user));
+    }
+
+
 
     /**
      * @param $inviter
