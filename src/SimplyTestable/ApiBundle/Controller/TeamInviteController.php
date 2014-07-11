@@ -18,6 +18,13 @@ class TeamInviteController extends ApiController {
             'email' => $invitee_email
         ]);
 
+        if ($this->getUserService()->isSpecialUser($invitee)) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteGet-Error-Code' => 10,
+                'X-TeamInviteGet-Error-Message' => 'Special users cannot be invited',
+            ]);
+        }
+
         try {
             return $this->sendResponse($this->getTeamInviteService()->get($this->getUser(), $invitee));
         } catch (TeamInviteServiceException $teamInviteServiceException) {

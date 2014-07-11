@@ -131,6 +131,46 @@ class GetTest extends ActionTest {
     }
 
 
+    public function testInvitePublicUserReturnsBadRequest() {
+        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
+
+        $this->getTeamService()->create(
+            'Foo',
+            $inviter
+        );
+
+        $this->getUserService()->setUser($inviter);
+
+        $methodName = $this->getActionNameFromRouter();
+
+        $response = $this->getCurrentController()->$methodName($this->getUserService()->getPublicUser()->getEmail());
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(10, $response->headers->get('X-TeamInviteGet-Error-Code'));
+        $this->assertEquals('Special users cannot be invited', $response->headers->get('X-TeamInviteGet-Error-Message'));
+    }
+
+
+    public function testInviteAdminUserReturnsBadRequest() {
+        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
+
+        $this->getTeamService()->create(
+            'Foo',
+            $inviter
+        );
+
+        $this->getUserService()->setUser($inviter);
+
+        $methodName = $this->getActionNameFromRouter();
+
+        $response = $this->getCurrentController()->$methodName($this->getUserService()->getAdminUser()->getEmail());
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(10, $response->headers->get('X-TeamInviteGet-Error-Code'));
+        $this->assertEquals('Special users cannot be invited', $response->headers->get('X-TeamInviteGet-Error-Message'));
+    }
+
+
     /**
      *
      * @return array
