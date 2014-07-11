@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Team\TeamInvite;
+namespace SimplyTestable\ApiBundle\Tests\Services\Team\TeamInvite\Get;
 
 use SimplyTestable\ApiBundle\Tests\Services\TeamInvite\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
