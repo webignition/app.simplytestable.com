@@ -16,7 +16,7 @@ before_script:
   #- phpenv config-add travis.php.ini
   
   # Install code quality tools
-  - wget https://phar.phpunit.de/phpcpd.phar
+  #- wget https://phar.phpunit.de/phpcpd.phar
   
   # Install composer for dependency management
   - wget http://getcomposer.org/composer.phar 
@@ -39,7 +39,7 @@ script:
   - phpunit -c app
   
 after_script:
-  - php phpcpd.phar --exclude src/SimplyTestable/ApiBundle/Tests/ src/SimplyTestable/ApiBundle/   
+  #- php phpcpd.phar --exclude src/SimplyTestable/ApiBundle/Tests/ src/SimplyTestable/ApiBundle/
   
 notifications:
   irc:
