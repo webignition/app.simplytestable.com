@@ -9,6 +9,8 @@ class Exception extends BaseException {
     const CODE_NAME_TAKEN = 2;
     const USER_ALREADY_LEADS_TEAM = 3;
     const USER_ALREADY_ON_TEAM = 4;
+    const IS_NOT_LEADER = 5;
+    const USER_IS_NOT_ON_LEADERS_TEAM = 6;
 
     /**
      * @return bool

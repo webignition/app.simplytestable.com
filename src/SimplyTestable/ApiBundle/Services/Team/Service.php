@@ -172,5 +172,31 @@ class Service extends EntityService {
     public function hasForUser(User $user) {
         return !is_null($this->getForUser($user));
     }
+
+
+    /**
+     * @param User $leader
+     * @param User $member
+     * @return bool
+     * @throws \SimplyTestable\ApiBundle\Exception\Services\Team\Exception
+     */
+    public function remove(User $leader, User $member) {
+        if (!$this->hasTeam($leader)) {
+            throw new TeamServiceException(
+                'User is not a leader',
+                TeamServiceException::IS_NOT_LEADER
+            );
+        }
+
+        $team = $this->getForUser($member);
+        if ($team->getLeader()->getId() != $leader->getId()) {
+            throw new TeamServiceException(
+                'User is not on leader\'s team',
+                TeamServiceException::USER_IS_NOT_ON_LEADERS_TEAM
+            );
+        }
+
+        return $this->getMemberService()->remove($member);
+    }
     
 }
