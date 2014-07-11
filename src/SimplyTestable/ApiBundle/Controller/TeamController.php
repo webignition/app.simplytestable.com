@@ -45,6 +45,30 @@ class TeamController extends ApiController {
     }
 
 
+    public function removeAction($member_email) {
+        if (!$this->getUserService()->exists($member_email)) {
+            return $this->sendFailureResponse([
+                'X-TeamRemove-Error-Code' => 9,
+                'X-TeamRemove-Error-Message' => 'Member is not a user',
+            ]);
+        }
+
+        $member = $this->getUserService()->findUserBy([
+            'email' => $member_email
+        ]);
+
+        try {
+            $this->getTeamService()->remove($this->getUser(), $member);
+            return $this->sendResponse();
+        } catch (TeamServiceException $teamServiceException) {
+            return $this->sendFailureResponse([
+                'X-TeamRemove-Error-Code' => $teamServiceException->getCode(),
+                'X-TeamRemove-Error-Message' => $teamServiceException->getMessage(),
+            ]);
+        }
+    }
+
+
     /**
      * @return \SimplyTestable\ApiBundle\Services\Team\Service
      */
