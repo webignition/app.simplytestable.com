@@ -90,6 +90,16 @@ class InviteService extends EntityService {
 
 
     /**
+     * @param User $user
+     * @param Invite $invite
+     * @return bool
+     */
+    public function validate(User $user, Invite $invite) {
+        return $user->getId() == $invite->getUser()->getId();
+    }
+
+
+    /**
      * @param $inviter
      * @param $invitee
      * @return Invite
