@@ -1284,10 +1284,13 @@ EOD;
         return $this->getCurrentController()->generateUrl($this->getRouteFromTestNamespace(), $this->getRouteParameters());
     }
 
-    protected function getCurrentController($postData = null, $queryData = null) {
-        $postData = (is_array($postData)) ? $postData : array();
-        $queryData = (is_array($queryData)) ? $queryData : array();
 
+    /**
+     * @param array $postData
+     * @param array $queryData
+     * @return \Symfony\Bundle\FrameworkBundle\Controller\Controller
+     */
+    protected function getCurrentController(array $postData = [], array $queryData = []) {
         return $this->getController(
             $this->getControllerNameFromTestNamespace(),
             $this->getActionNameFromTestNamespace(),
