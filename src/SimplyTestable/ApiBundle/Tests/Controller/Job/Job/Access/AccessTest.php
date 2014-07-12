@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\Access;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-abstract class AbstractAccessTest extends BaseControllerJsonTestCase {
+abstract class AccessTest extends BaseControllerJsonTestCase {
     
     const CANONICAL_URL = 'http://www.example.com/';
     

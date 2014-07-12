@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\ListUrlsAction;
 
-use SimplyTestable\ApiBundle\Tests\Controller\Job\Job\Access\AbstractAccessTest;
+use SimplyTestable\ApiBundle\Tests\Controller\Job\Job\Access\AccessTest as BaseAccessTest;
 
-class ListUrlsActionTest extends AbstractAccessTest {
+class AccessTest extends BaseAccessTest {
     
     protected function getActionName() {
         return 'listUrlsAction';
