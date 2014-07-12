@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\TasksAction;
 
-use SimplyTestable\ApiBundle\Tests\Controller\Job\Job\AbstractAccessTest;
+use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class TasksActionTest extends AbstractAccessTest {
+class TasksActionTest extends BaseControllerJsonTestCase {
     
     protected function getActionName() {
         return 'tasksAction';
