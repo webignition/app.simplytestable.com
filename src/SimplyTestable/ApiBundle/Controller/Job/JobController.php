@@ -137,16 +137,19 @@ class JobController extends BaseJobController
         if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
-        
-        $this->testId = $test_id;
-        
-        $job = $this->getJobByUser();
-        if ($job === false) {
+
+        $this->getJobRetrievalService()->setUser($this->getUser());
+
+        try {
+            $job = $this->getJobRetrievalService()->retrieve($test_id);
+        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
-            return $response;  
+            return $response;
         }
         
+        $this->testId = $test_id;
+
         if ($job->getState()->equals($this->getJobService()->getFailedNoSitemapState())) {
             $crawlJob = $this->getCrawlJobContainerService()->getForJob($job)->getCrawlJob();            
             $this->cancelAction($site_root_url, $crawlJob->getId());
