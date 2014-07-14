@@ -215,7 +215,7 @@ class Job
 
     /**
      * 
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getPublicSerializedTasks() {
         $tasks = clone $this->getTasks();        
@@ -253,7 +253,7 @@ class Job
     /**
      * Get user
      *
-     * @return SimplyTestable\ApiBundle\Entity\User 
+     * @return \SimplyTestable\ApiBundle\Entity\User
      */
     public function getUser()
     {
@@ -275,7 +275,7 @@ class Job
     /**
      * Get website
      *
-     * @return SimplyTestable\ApiBundle\Entity\Website 
+     * @return \SimplyTestable\ApiBundle\Entity\Website
      */
     public function getWebsite()
     {
@@ -285,7 +285,7 @@ class Job
     /**
      * Set state
      *
-     * @param use SimplyTestable\ApiBundle\Entity\State $state
+     * @param \SimplyTestable\ApiBundle\Entity\State $state
      * @return Job
      */
     public function setState(State $state)
@@ -321,7 +321,7 @@ class Job
     /**
      * Add tasks
      *
-     * @param SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
      * @return Job
      */
     public function addTask(\SimplyTestable\ApiBundle\Entity\Task\Task $task)
@@ -333,7 +333,7 @@ class Job
     /**
      * Remove tasks
      *
-     * @param <SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
      */
     public function removeTask(\SimplyTestable\ApiBundle\Entity\Task\Task $task)
     {
@@ -343,7 +343,7 @@ class Job
     /**
      * Get tasks
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getTasks()
     {        
@@ -376,7 +376,7 @@ class Job
     /**
      * Add requestedTaskTypeClasses
      *
-     * @param SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType
      * @return Job
      */
     public function addRequestedTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType)
@@ -391,7 +391,7 @@ class Job
     /**
      * Remove requestedTaskTypeClasses
      *
-     * @param <variableType$requestedTaskTypeClasses
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskTypeClasses
      */
     public function removeRequestedTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType)
     {
@@ -401,7 +401,7 @@ class Job
     /**
      * Get requestedTaskTypeClasses
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getRequestedTaskTypes()
     {
@@ -477,7 +477,7 @@ class Job
     /**
      * Add taskTypeOptions
      *
-     * @param SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
+     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
      * @return Job
      */
     public function addTaskTypeOption(\SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions)
@@ -490,7 +490,7 @@ class Job
     /**
      * Remove taskTypeOptions
      *
-     * @param SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
+     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
      */
     public function removeTaskTypeOption(\SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions)
     {
@@ -500,7 +500,7 @@ class Job
     /**
      * Get taskTypeOptions
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getTaskTypeOptions()
     {
@@ -510,7 +510,7 @@ class Job
     /**
      * Set type
      *
-     * @param use SimplyTestable\ApiBundle\Entity\Job\Type $type
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $type
      * @return Job
      */
     public function setType(JobType $type)
@@ -522,7 +522,7 @@ class Job
     /**
      * Get type
      *
-     * @return use SimplyTestable\ApiBundle\Entity\Job\Type
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Type
      */
     public function getType()
     {
@@ -555,7 +555,7 @@ class Job
     /**
      * Get tasks
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getAmmendments()
     {        
