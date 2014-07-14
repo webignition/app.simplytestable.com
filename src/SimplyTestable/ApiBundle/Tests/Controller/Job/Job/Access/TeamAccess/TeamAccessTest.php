@@ -46,7 +46,7 @@ abstract class TeamAccessTest extends BaseControllerJsonTestCase {
         ));
     }
 
-    public function testGetStatus() {
+    public function testHasAccess() {
         $this->getUserService()->setUser($this->getJobAccessor());
 
         $actionName = $this->getActionNameFromRouter();
