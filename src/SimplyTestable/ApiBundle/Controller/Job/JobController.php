@@ -12,24 +12,46 @@ class JobController extends BaseJobController
     public function latestAction($site_root_url) {
         $website = $this->get('simplytestable.services.websiteservice')->fetch($site_root_url);        
         $latestJob = null;
-        
+
+        if ($this->getTeamService()->hasTeam($this->getUser()) || $this->getTeamService()->getMemberService()->belongsToTeam($this->getUser())) {
+            $team = $this->getTeamService()->getForUser($this->getUser());
+
+            $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+                $website,
+                $this->getTeamService()->getPeople($team)
+            );
+
+            if (!is_null($latestJob)) {
+                return $this->redirect($this->generateUrl('job_job_status', array(
+                    'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
+                    'test_id' => $latestJob->getId()
+                ), true));
+            }
+        }
+
         if (!$this->getUserService()->isPublicUser($this->getUser())) {
             $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
                 $website,
                 array(
                     $this->getUser()
                 )
-            );            
+            );
+
+            if (!is_null($latestJob)) {
+                return $this->redirect($this->generateUrl('job_job_status', array(
+                    'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
+                    'test_id' => $latestJob->getId()
+                ), true));
+            }
         }
-        
-        if (is_null($latestJob)) {
-            $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
-                $website,
-                array(   
-                    $this->getUserService()->getPublicUser()
-                )
-            );            
-        }
+
+        $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+            $website,
+            array(
+                $this->getUserService()->getPublicUser()
+            )
+        );
+
         
         if (is_null($latestJob)) {
             $response = new Response();
@@ -337,5 +359,13 @@ class JobController extends BaseJobController
      */        
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
-    }      
+    }
+
+
+    /**
+     * @return \SimplyTestable\ApiBundle\Services\Team\Service
+     */
+    private function getTeamService() {
+        return $this->get('simplytestable.services.teamservice');
+    }
 }

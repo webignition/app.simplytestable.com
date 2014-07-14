@@ -198,5 +198,22 @@ class Service extends EntityService {
 
         return $this->getMemberService()->remove($member);
     }
+
+
+    /**
+     * @param Team $team
+     * @return User[]
+     */
+    public function getPeople(Team $team) {
+        $people = [$team->getLeader()];
+
+        $members = $this->getMemberService()->getMembers($team);
+
+        foreach ($members as $member) {
+            $people[] = $member->getUser();
+        }
+
+        return $people;
+    }
     
 }
