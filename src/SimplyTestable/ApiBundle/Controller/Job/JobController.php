@@ -333,7 +333,7 @@ class JobController extends BaseJobController
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
+     * @return \SimplyTestable\ApiBundle\Services\ResqueQueueService
      */        
     private function getResqueQueueService() {
         return $this->get('simplytestable.services.resqueQueueService');
