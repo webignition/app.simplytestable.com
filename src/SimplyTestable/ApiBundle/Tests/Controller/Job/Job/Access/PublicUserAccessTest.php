@@ -8,8 +8,6 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 abstract class PublicUserAccessTest extends BaseControllerJsonTestCase {
     
     const CANONICAL_URL = 'http://www.example.com/';
-    
-    abstract protected function getActionName();
 
     /**
      * @var Job
@@ -25,8 +23,8 @@ abstract class PublicUserAccessTest extends BaseControllerJsonTestCase {
         $this->assertTrue($this->job->getIsPublic());
         $this->assertEquals($this->getUserService()->getPublicUser()->getId(), $this->job->getUser()->getId());
         
-        $actionName = $this->getActionName();
-        $this->assertEquals(200, $this->getJobController($actionName)->$actionName(self::CANONICAL_URL, $this->job->getId())->getStatusCode());
+        $actionName = $this->getActionNameFromRouter();
+        $this->assertEquals(200, $this->getCurrentController()->$actionName(self::CANONICAL_URL, $this->job->getId())->getStatusCode());
     }
     
     public function testGetForPublicJobOwnedByPublicUserByNonPublicUser() {
@@ -34,13 +32,19 @@ abstract class PublicUserAccessTest extends BaseControllerJsonTestCase {
         $this->assertEquals($this->getUserService()->getPublicUser()->getId(), $this->job->getUser()->getId());
         
         $user = $this->createAndActivateUser('user@example.com', 'password');
-        $actionName = $this->getActionName();
+        $actionName = $this->getActionNameFromRouter();
 
-        $this->assertEquals(200, $this->getJobController($actionName, array(
-            'user' => $user->getEmail()            
-        ))->$actionName(self::CANONICAL_URL, $this->job->getId())->getStatusCode());
-    } 
-    
+        $this->assertEquals(200, $this->getCurrentController([
+            'user' => $user->getEmail()
+        ])->$actionName(self::CANONICAL_URL, $this->job->getId())->getStatusCode());
+    }
+
+    protected function getRouteParameters() {
+        return [
+            'site_root_url' => self::CANONICAL_URL,
+            'test_id' => $this->job->getId()
+        ];
+    }
 
 }
 
