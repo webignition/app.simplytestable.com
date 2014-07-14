@@ -341,3 +341,9 @@ services:
     arguments:
         teamService: "@simplytestable.services.teamservice"
         entityManager: "@doctrine.orm.entity_manager"
+
+  simplytestable.services.job.retrievalservice:
+    class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
+    arguments:
+        jobService: "@simplytestable.services.jobservice"
+        teamService: "@simplytestable.services.teamservice"
