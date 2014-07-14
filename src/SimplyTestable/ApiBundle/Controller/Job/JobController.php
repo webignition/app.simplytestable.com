@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use Symfony\Component\HttpFoundation\Response;
+use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
 
 class JobController extends BaseJobController
 {
@@ -91,18 +92,18 @@ class JobController extends BaseJobController
     }
     
     
-    public function statusAction($site_root_url, $test_id)
-    {                    
-        $this->testId = $test_id;
-        
-        $job = $this->getJobByVisibilityOrUser();
-        if ($job === false) {
+    public function statusAction($site_root_url, $test_id) {
+        $this->getJobRetrievalService()->setUser($this->getUser());
+
+        try {
+            return $this->sendResponse($this->getSummary(
+                $this->getJobRetrievalService()->retrieve($test_id)
+            ));
+        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
-            return $response;  
+            return $response;
         }
-        
-        return $this->sendResponse($this->getSummary($job));
     }
 
     
