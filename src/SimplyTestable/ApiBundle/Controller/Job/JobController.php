@@ -267,14 +267,15 @@ class JobController extends BaseJobController
     }    
     
     
-    public function listUrlsAction($site_root_url, $test_id) {      
-        $this->testId = $test_id;
-        
-        $job = $this->getJobByVisibilityOrUser();
-        if ($job === false) {
+    public function listUrlsAction($site_root_url, $test_id) {
+        $this->getJobRetrievalService()->setUser($this->getUser());
+
+        try {
+            $job = ($this->getJobRetrievalService()->retrieve($test_id));
+        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
-            return $response;  
+            return $response;
         }
         
         return $this->sendResponse($this->getTaskService()->getUrlsByJob($job));                
