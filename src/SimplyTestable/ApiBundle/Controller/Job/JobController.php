@@ -84,28 +84,27 @@ class JobController extends BaseJobController
     }
     
     private function setIsPublic($site_root_url, $test_id, $isPublic) {
-        $this->testId = $test_id;
-        
-        $job = $this->getJobByUser();
-        if ($job === false) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;  
-        }
-        
         if ($this->getUserService()->isPublicUser($this->getUser())) {
             return $this->redirect($this->generateUrl('job_job_status', array(
                 'site_root_url' => $site_root_url,
-                'test_id' => $job->getId()
-            ), true));               
-        }        
+                'test_id' => $test_id
+            ), true));
+        }
+
+        $this->getJobRetrievalService()->setUser($this->getUser());
+
+        try {
+            $job = $this->getJobRetrievalService()->retrieve($test_id);
+        } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
+            $response = new Response();
+            $response->setStatusCode(403);
+            return $response;
+        }
 
         if ($job->getIsPublic() !== $isPublic) {
             $job->setIsPublic(filter_var($isPublic, FILTER_VALIDATE_BOOLEAN));
-            $this->getJobService()->getEntityManager()->persist($job);
-            $this->getJobService()->getEntityManager()->flush();                
+            $this->getJobService()->persistAndFlush($job);
         }
-
         
         return $this->redirect($this->generateUrl('job_job_status', array(
             'site_root_url' => $site_root_url,
@@ -287,15 +286,15 @@ class JobController extends BaseJobController
             'id' => $this->testId,
             'user' => array(
                 $this->getUser(),
-                $this->getUserService()->getPublicUser()                
+                $this->getUserService()->getPublicUser()
             )
         ));
 
         if (is_null($job)) {
-            return false;           
+            return false;
         }
-     
-        return $this->populateJob($job);     
+
+        return $this->populateJob($job);
     }
     
     

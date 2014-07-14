@@ -1,38 +1,40 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\SetPublicAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\SetPrivateAction;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
-class SetPublicActionTest extends BaseControllerJsonTestCase {
+class SetPrivateActionTest extends BaseControllerJsonTestCase {
 
     const CANONICAL_URL = 'http://example.com/';
-   
-    public function testSetPublicByPublicUserForJobOwnedByPublicUser() {
+
+    public function testSetPrivateByPublicUserForJobOwnedByPublicUser() {
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL);
-        
-        $response = $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $jobId);
+
+        $response = $this->getJobController('setPrivateAction')->setPrivateAction(self::CANONICAL_URL, $jobId);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertTrue($this->getJobService()->getById($jobId)->getIsPublic());
     }
 
-    public function testSetPublicByNonPublicUserForJobOwnedBySameNonPublicUser() {
+
+    public function testSetPrivateByNonPublicUserForJobOwnedBySameNonPublicUser() {
         $user = $this->createAndActivateUser('user@example.com', 'password1');
-        
+
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());
 
-        $response = $this->getJobController('setPublicAction', array(
+        $response = $this->getJobController('setPrivateAction', array(
             'user' => $user->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $jobId);
+        ))->setPrivateAction(self::CANONICAL_URL, $jobId);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertTrue($this->getJobService()->getById($jobId)->getIsPublic());
-    }    
+        $this->assertFalse($this->getJobService()->getById($jobId)->getIsPublic());
+    }
 
-    public function testSetPublicByNonPublicUserForJobOwnedByPublicUser() {
+
+    public function testSetPrivateByNonPublicUserForJobOwnedByPublicUser() {
         $user = $this->createAndActivateUser('user@example.com', 'password1');
-        
+
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL);
 
         $response = $this->getJobController('setPublicAction', array(
@@ -41,23 +43,24 @@ class SetPublicActionTest extends BaseControllerJsonTestCase {
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertTrue($this->getJobService()->getById($jobId)->getIsPublic());
-    }   
+    }
 
-    public function testSetPublicByNonPublicUserForJobOwnedByDifferentNonPublicUser() {
+    public function testSetPrivateByNonPublicUserForJobOwnedByDifferentNonPublicUser() {
         $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
         $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
-        
+
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user1->getEmail());
 
-        $response = $this->getJobController('setPublicAction', array(
+        $response = $this->getJobController('setPrivateAction', array(
             'user' => $user2->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $jobId);
+        ))->setPrivateAction(self::CANONICAL_URL, $jobId);
 
         $this->assertEquals(403, $response->getStatusCode());
         $this->assertFalse($this->getJobService()->getById($jobId)->getIsPublic());
-    }  
-    
-    public function testSetPublicByTeamLeaderForJobOwnedByTeamMember() {
+    }
+
+
+    public function testSetPrivateByTeamLeaderForJobOwnedByTeamMember() {
         $leader = $this->createAndActivateUser('leader@example.com');
         $member = $this->createAndActivateUser('member@example.com');
 
@@ -70,16 +73,16 @@ class SetPublicActionTest extends BaseControllerJsonTestCase {
 
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $member->getEmail());
 
-        $response = $this->getJobController('setPublicAction', array(
+        $response = $this->getJobController('setPrivateAction', array(
             'user' => $leader->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $jobId);
+        ))->setPrivateAction(self::CANONICAL_URL, $jobId);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertTrue($this->getJobService()->getById($jobId)->getIsPublic());
+        $this->assertFalse($this->getJobService()->getById($jobId)->getIsPublic());
     }
 
 
-    public function testSetPublicByTeamMemberForJobOwnedByTeamLeader() {
+    public function testSetPrivateByTeamMemberForJobOwnedByTeamLeader() {
         $leader = $this->createAndActivateUser('leader@example.com');
         $member = $this->createAndActivateUser('member@example.com');
 
@@ -92,16 +95,16 @@ class SetPublicActionTest extends BaseControllerJsonTestCase {
 
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $leader->getEmail());
 
-        $response = $this->getJobController('setPublicAction', array(
+        $response = $this->getJobController('setPrivateAction', array(
             'user' => $member->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $jobId);
+        ))->setPrivateAction(self::CANONICAL_URL, $jobId);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertTrue($this->getJobService()->getById($jobId)->getIsPublic());
+        $this->assertFalse($this->getJobService()->getById($jobId)->getIsPublic());
     }
 
 
-    public function testSetPublicByTeamMemberForJobOwnedByDifferentTeamMember() {
+    public function testSetPrivateByTeamMemberForJobOwnedByDifferentTeamMember() {
         $leader = $this->createAndActivateUser('leader@example.com');
         $member1 = $this->createAndActivateUser('member1@example.com');
         $member2 = $this->createAndActivateUser('member2@example.com');
@@ -116,14 +119,14 @@ class SetPublicActionTest extends BaseControllerJsonTestCase {
 
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $member1->getEmail());
 
-        $response = $this->getJobController('setPublicAction', array(
+        $response = $this->getJobController('setPrivateAction', array(
             'user' => $member2->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $jobId);
+        ))->setPrivateAction(self::CANONICAL_URL, $jobId);
 
         $this->assertEquals(302, $response->getStatusCode());
-        $this->assertTrue($this->getJobService()->getById($jobId)->getIsPublic());
+        $this->assertFalse($this->getJobService()->getById($jobId)->getIsPublic());
     }
-
+    
     
 }
 
