@@ -119,7 +119,7 @@ class JobController extends BaseJobController
 
         try {
             return $this->sendResponse($this->getSummary(
-                $this->getJobRetrievalService()->retrieve($test_id)
+                $this->populateJob($this->getJobRetrievalService()->retrieve($test_id))
             ));
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
