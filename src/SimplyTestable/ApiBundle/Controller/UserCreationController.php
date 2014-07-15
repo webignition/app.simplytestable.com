@@ -37,7 +37,7 @@ class UserCreationController extends AbstractUserController
             $user = $this->getUserService()->findUserByEmail($email);
             
             if ($user->isEnabled()) {
-                return $this->redirect($this->generateUrl('user', array(
+                return $this->redirect($this->generateUrl('user_get', array(
                     'email_canonical' => $email
                 ), true));                
             }           

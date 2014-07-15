@@ -109,7 +109,7 @@ user_activate_failure:
   pattern: /user/activate/
   defaults: { _controller: SimplyTestableApiBundle:UserCreation:activate, _format: json }  
 
-user:
+user_get:
   pattern: /user/{email_canonical}/
   defaults: { _controller: SimplyTestableApiBundle:User:get, _format: json }
 

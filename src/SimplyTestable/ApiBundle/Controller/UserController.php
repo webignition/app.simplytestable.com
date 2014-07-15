@@ -8,7 +8,7 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 
 class UserController extends AbstractUserController
 {       
-    public function getAction() {        
+    public function getAction() {
         return $this->sendResponse($this->getUserSummary($this->getUser()));
     }
 
@@ -32,11 +32,7 @@ class UserController extends AbstractUserController
         if ($this->includeStripeCustomerInUserSummary($user, $userAccountPlan)) {
             $userSummary['stripe_customer'] = $this->getStripeService()->getCustomer($userAccountPlan)->__toArray();
         }
-        
-//        if ($userAccountPlan->hasStripeCustomer()) {
-//            $userSummary['stripe_customer'] = $this->getStripeService()->getCustomer($userAccountPlan)->__toArray();
-//        }
-        
+
         $planConstraints = array();
 
         if ($userAccountPlan->getPlan()->hasConstraintNamed('credits_per_month')) {
@@ -52,7 +48,8 @@ class UserController extends AbstractUserController
         }
         
         $userSummary['plan_constraints'] = $planConstraints;
-        
+        $userSummary['in_team'] = $this->getTeamService()->hasForUser($this->getUser());
+
         return $userSummary;
     }
 
@@ -151,5 +148,13 @@ class UserController extends AbstractUserController
      */
     private function getJobUserAccountPlanEnforcementService() {
         return $this->get('simplytestable.services.jobuseraccountplanenforcementservice');
-    }        
+    }
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Team\Service
+     */
+    private function getTeamService() {
+        return $this->get('simplytestable.services.teamservice');
+    }
 }
