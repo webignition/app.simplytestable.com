@@ -15,7 +15,7 @@ class TeamRepository extends EntityRepository {
         $queryBuilder = $this->createQueryBuilder('Team');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(Team.id) as total');
-        $queryBuilder->where('Team.name = :TeamName');
+        $queryBuilder->where('LOWER(Team.name) = :TeamName');
         $queryBuilder->setParameter('TeamName', strtolower($name));
 
         $result = $queryBuilder->getQuery()->getResult();
