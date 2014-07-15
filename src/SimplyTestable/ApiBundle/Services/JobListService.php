@@ -6,6 +6,9 @@ use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\State;
 
+use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+
 class JobListService  {
     
     const DEFAULT_LIMIT = 1;
@@ -24,9 +27,16 @@ class JobListService  {
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\JobService
+     * @var JobService
      */
     private $jobService;
+
+
+    /**
+     *
+     * @var TeamService
+     */
+    private $teamService;
     
     
     /**
@@ -101,16 +111,16 @@ class JobListService  {
      * @var string
      */
     private $urlFilter = null;
-    
-    
+
+
     /**
-     *
-     * @param \SimplyTestable\ApiBundle\Services\JobService $jobService
+     * @param JobService $jobService
+     * @param TeamService $teamService
      */
-    public function __construct(
-            \SimplyTestable\ApiBundle\Services\JobService $jobService)
+    public function __construct(JobService $jobService, TeamService $teamService)
     {
         $this->jobService = $jobService;
+        $this->teamService = $teamService;
     }
     
     
@@ -429,9 +439,17 @@ class JobListService  {
      * 
      * @param \Doctrine\ORM\QueryBuilder $queryBuilder
      */
-    private function setQueryUserFilter(\Doctrine\ORM\QueryBuilder $queryBuilder) { 
-        $queryBuilder->andWhere('Job.user = :User');
-        $queryBuilder->setParameter('User', $this->user);
+    private function setQueryUserFilter(\Doctrine\ORM\QueryBuilder $queryBuilder) {
+        $users = ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeople($this->teamService->getForUser($this->user)) : [$this->user];
+
+        $userWhereParts = array();
+
+        foreach ($users as $userIndex => $user) {
+            $userWhereParts[] = 'Job.user = :User' . $userIndex;
+            $queryBuilder->setParameter('User' .  $userIndex, $user);
+        }
+
+        $queryBuilder->andWhere(implode(' OR ', $userWhereParts));
     }
     
 

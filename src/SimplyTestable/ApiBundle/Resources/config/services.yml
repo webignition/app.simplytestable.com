@@ -49,7 +49,8 @@ services:
   simplytestable.services.joblistservice:
     class:  SimplyTestable\ApiBundle\Services\JobListService
     arguments: 
-        jobService: "@simplytestable.services.jobservice"        
+        jobService: "@simplytestable.services.jobservice"
+        teamService: "@simplytestable.services.teamservice"
         
   simplytestable.services.userservice:
     class:  SimplyTestable\ApiBundle\Services\UserService
