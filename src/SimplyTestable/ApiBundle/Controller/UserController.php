@@ -48,7 +48,11 @@ class UserController extends AbstractUserController
         }
         
         $userSummary['plan_constraints'] = $planConstraints;
-        $userSummary['in_team'] = $this->getTeamService()->hasForUser($this->getUser());
+
+        $userSummary['team_summary'] = [
+            'in' => $this->getTeamService()->hasForUser($this->getUser()),
+            'has_invite' => $this->getTeamInviteService()->hasForUser($this->getUser())
+        ];
 
         return $userSummary;
     }
@@ -156,5 +160,14 @@ class UserController extends AbstractUserController
      */
     private function getTeamService() {
         return $this->get('simplytestable.services.teamservice');
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Team\InviteService
+     */
+    private function getTeamInviteService() {
+        return $this->get('simplytestable.services.teaminviteservice');
     }
 }

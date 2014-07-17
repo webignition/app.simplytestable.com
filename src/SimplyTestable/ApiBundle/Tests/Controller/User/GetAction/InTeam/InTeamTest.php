@@ -55,7 +55,7 @@ abstract class InTeamTest extends BaseControllerJsonTestCase {
 
 
     public function testUserInTeam() {
-        $this->assertEquals($this->getExpectedUserInTeam(), $this->summary->in_team);
+        $this->assertEquals($this->getExpectedUserInTeam(), $this->summary->team_summary->in);
     }
 
 
