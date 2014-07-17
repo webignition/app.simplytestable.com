@@ -72,6 +72,7 @@ abstract class ApiController extends Controller
         
         $response = new Response($output); 
         $response->setStatusCode($statusCode);
+        $response->headers->set('Content-Type', 'application/json');
         
         return $response;
     }    
