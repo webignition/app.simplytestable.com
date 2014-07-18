@@ -226,5 +226,16 @@ class InviteService extends EntityService {
         ]);
     }
 
+
+    /**
+     * @param User $user
+     * @return Invite[]
+     */
+    public function getForUser(User $user) {
+        return $this->getEntityRepository()->findBy([
+            'user' => $user
+        ]);
+    }
+
     
 }
