@@ -51,7 +51,7 @@ class UserController extends AbstractUserController
 
         $userSummary['team_summary'] = [
             'in' => $this->getTeamService()->hasForUser($this->getUser()),
-            'has_invite' => $this->getTeamInviteService()->hasForUser($this->getUser())
+            'has_invite' => $this->getTeamInviteService()->hasAnyForUser($this->getUser())
         ];
 
         return $userSummary;

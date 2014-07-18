@@ -143,6 +143,19 @@ class InviteService extends EntityService {
 
 
     /**
+     * @param User $user
+     * @return bool
+     */
+    public function hasAnyForUser(User $user) {
+        $invite = $this->getEntityRepository()->findOneBy([
+            'user' => $user
+        ]);
+
+        return $invite instanceof Invite;
+    }
+
+
+    /**
      * @param Invite $invite
      * @return Invite
      */
