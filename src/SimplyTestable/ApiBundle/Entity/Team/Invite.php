@@ -7,7 +7,7 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 /**
  *
  * @ORM\Entity
- * @ORM\Table(name="TeamInvite",uniqueConstraints={@ORM\UniqueConstraint(name="teamInvite_idx", columns={"team_id", "user_id"})},indexes={@ORM\Index(name="token_idx", columns={"token"})})
+ * @ORM\Table(name="TeamInvite",uniqueConstraints={@ORM\UniqueConstraint(name="teamInvite_idx", columns={"team_id", "user_id"})})
  * @SerializerAnnotation\ExclusionPolicy("all")
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TeamInviteRepository")
  */
@@ -48,7 +48,7 @@ class Invite {
      *
      * @var string
      *
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="string", unique=true, nullable=false)
      * @SerializerAnnotation\Expose
      */
     protected $token;
