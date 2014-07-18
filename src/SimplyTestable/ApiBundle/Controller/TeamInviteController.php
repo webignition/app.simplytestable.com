@@ -72,6 +72,41 @@ class TeamInviteController extends ApiController {
     }
 
 
+    public function removeAction($invitee_email) {
+        if (!$this->getTeamService()->hasTeam($this->getUser())) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteRemove-Error-Code' => 1,
+                'X-TeamInviteRemove-Error-Message' => 'User is not a team leader',
+            ]);
+        }
+
+
+        if (!$this->getUserService()->exists($invitee_email)) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteRemove-Error-Code' => 2,
+                'X-TeamInviteRemove-Error-Message' => 'Invitee is not a user',
+            ]);
+        }
+
+        $team = $this->getTeamService()->getForUser($this->getUser());
+
+        $invitee = $this->getUserService()->findUserBy([
+            'email' => $invitee_email
+        ]);
+
+        if (!$this->getTeamInviteService()->hasForTeamAndUser($team, $invitee)) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteRemove-Error-Code' => 3,
+                'X-TeamInviteRemove-Error-Message' => 'Invitee does not have an invite for this team',
+            ]);
+        }
+
+        $this->getTeamInviteService()->remove($this->getTeamInviteService()->getForTeamAndUser($team, $invitee));
+
+        return $this->sendResponse();
+    }
+
+
     /**
      * @return string
      */

@@ -212,3 +212,7 @@ team_leave:
 teaminvite_list:
     pattern: /team/invites/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:list }
+
+teaminvite_remove:
+    pattern: /team/invite/{invitee_email}/remove
+    defaults: { _controller: SimplyTestableApiBundle:TeamInvite:remove }
