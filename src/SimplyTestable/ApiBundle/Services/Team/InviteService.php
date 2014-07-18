@@ -169,5 +169,16 @@ class InviteService extends EntityService {
         return $this->fetch($inviter, $invitee) instanceof Invite;
     }
 
+
+    /**
+     * @param Team $team
+     * @return Team[]
+     */
+    public function getForTeam(Team $team) {
+        return $this->getEntityRepository()->findBy([
+            'team' => $team
+        ]);
+    }
+
     
 }
