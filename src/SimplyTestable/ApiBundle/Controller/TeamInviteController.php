@@ -60,6 +60,18 @@ class TeamInviteController extends ApiController {
     }
 
 
+    public function listAction() {
+        if (!$this->getTeamService()->hasTeam($this->getUser())) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteList-Error-Code' => 1,
+                'X-TeamInviteList-Error-Message' => 'User is not a team leader',
+            ]);
+        }
+
+        return $this->sendResponse($this->getTeamInviteService()->getForTeam($this->getTeamService()->getForUser($this->getUser())));
+    }
+
+
     /**
      * @return string
      */

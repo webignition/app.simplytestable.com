@@ -37,6 +37,9 @@ class Invite {
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     *
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
+     * @SerializerAnnotation\Expose
      */
     protected $user;
 
@@ -127,5 +130,14 @@ class Invite {
     public function getUser()
     {
         return $this->user;
+    }
+
+
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedUser() {
+        return $this->getUser()->getUsername();
     }
 }
