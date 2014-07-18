@@ -37,21 +37,14 @@ class TeamInviteController extends ApiController {
 
 
     public function acceptAction() {
-        if (!$this->getTeamInviteService()->hasForUser($this->getUser())) {
-            return $this->sendFailureResponse([
-                'X-TeamInviteAccept-Error-Code' => 1,
-                'X-TeamInviteAccept-Error-Message' => 'User has no invite',
-            ]);
-        }
-
-        $invite = $this->getTeamInviteService()->getForUser($this->getUser());
-
-        if ($invite->getToken() != $this->getRequestToken()) {
+        if (!$this->getTeamInviteService()->hasForToken($this->getRequestToken())) {
             return $this->sendFailureResponse([
                 'X-TeamInviteAccept-Error-Code' => 2,
                 'X-TeamInviteAccept-Error-Message' => 'Invalid token',
             ]);
         }
+
+        $invite = $this->getTeamInviteService()->getForToken($this->getRequestToken());
 
         $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
         $this->getTeamInviteService()->remove($invite);

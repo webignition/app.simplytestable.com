@@ -14,8 +14,8 @@ class AcceptTest extends ActionTest {
         $response = $this->getCurrentController()->$methodName();
 
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals(1, $response->headers->get('X-TeamInviteAccept-Error-Code'));
-        $this->assertEquals('User has no invite', $response->headers->get('X-TeamInviteAccept-Error-Message'));
+        $this->assertEquals(2, $response->headers->get('X-TeamInviteAccept-Error-Code'));
+        $this->assertEquals('Invalid token', $response->headers->get('X-TeamInviteAccept-Error-Message'));
     }
 
 
