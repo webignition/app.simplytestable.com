@@ -65,6 +65,11 @@ class TeamInviteController extends ApiController {
     }
 
 
+    public function userListAction() {
+        return $this->sendResponse($this->getTeamInviteService()->getForUser($this->getUser()));
+    }
+
+
     public function removeAction($invitee_email) {
         if (!$this->getTeamService()->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
