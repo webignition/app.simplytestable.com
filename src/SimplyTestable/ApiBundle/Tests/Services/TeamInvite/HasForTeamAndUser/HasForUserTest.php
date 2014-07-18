@@ -1,16 +1,22 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Team\TeamInvite\GetForUser;
+namespace SimplyTestable\ApiBundle\Tests\Services\Team\TeamInvite\HasForTeamAndUser;
 
 use SimplyTestable\ApiBundle\Tests\Services\TeamInvite\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 
-class HasForUserTest extends ServiceTest {
+class HasForTeamAndUserTest extends ServiceTest {
 
 
     public function testReturnsNullIfNoInvite() {
+        $leader = $this->createAndActivateUser('leader@example.com');
+        $team = $this->getTeamService()->create(
+            'Foo1',
+            $leader
+        );
+
         $user = $this->createAndActivateUser('user@example.com', 'password');
-        $this->assertFalse($this->getTeamInviteService()->hasForUser($user));
+        $this->assertFalse($this->getTeamInviteService()->hasForTeamAndUser($team, $user));
     }
 
 
@@ -18,7 +24,7 @@ class HasForUserTest extends ServiceTest {
         $leader = $this->createAndActivateUser('leader@example.com', 'password');
         $user = $this->createAndActivateUser('user@example.com', 'password');
 
-        $this->getTeamService()->create(
+        $team = $this->getTeamService()->create(
             'Foo1',
             $leader
         );
@@ -28,7 +34,7 @@ class HasForUserTest extends ServiceTest {
             $user
         );
 
-        $this->assertTrue($this->getTeamInviteService()->hasForUser($user));
+        $this->assertTrue($this->getTeamInviteService()->hasForTeamAndUser($team, $user));
     }
 
 }
