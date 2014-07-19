@@ -64,5 +64,39 @@ class AcceptTest extends ActionTest {
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNull($invite->getId());
     }
+
+
+    public function testAcceptedInviteRemovesAllInvites() {
+        $leader1 = $this->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->createAndActivateUser('leader2@example.com');
+        $user = $this->createAndActivateUser('user@example.com');
+
+        $this->getTeamService()->create(
+            'Foo1',
+            $leader1
+        );
+
+        $this->getTeamService()->create(
+            'Foo2',
+            $leader2
+        );
+
+        $invite1 = $this->getTeamInviteService()->get($leader1, $user);
+        $invite2 = $this->getTeamInviteService()->get($leader2, $user);
+
+        $this->assertTrue($this->getTeamInviteService()->hasAnyForUser($user));
+
+        $this->getUserService()->setUser($user);
+
+        $methodName = $this->getActionNameFromRouter();
+        $response = $this->getCurrentController([
+            'token' => $invite1->getToken()
+        ])->$methodName();
+
+        $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
+        $this->assertNull($invite1->getId());
+        $this->assertNull($invite2->getId());
+
+    }
     
 }

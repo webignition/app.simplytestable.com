@@ -47,7 +47,12 @@ class TeamInviteController extends ApiController {
         $invite = $this->getTeamInviteService()->getForToken($this->getRequestToken());
 
         $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
-        $this->getTeamInviteService()->remove($invite);
+
+        $invites = $this->getTeamInviteService()->getForUser($this->getUser());
+
+        foreach ($invites as $invite) {
+            $this->getTeamInviteService()->remove($invite);
+        }
 
         return $this->sendResponse();
     }
