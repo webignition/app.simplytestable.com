@@ -19,7 +19,6 @@ class InviteTest extends BaseSimplyTestableTestCase {
         $invite = new Invite();
         $invite->setTeam($team);
         $invite->setUser($this->createAndActivateUser('team-member@example.com', 'password'));
-        $invite->setToken('foo');
 
         $this->getEntityManager()->persist($invite);
         $this->getEntityManager()->flush();

@@ -48,15 +48,6 @@ class Invite {
 
 
     /**
-     *
-     * @var string
-     *
-     * @ORM\Column(type="string", unique=true, nullable=false)
-     * @SerializerAnnotation\Expose
-     */
-    protected $token;
-
-    /**
      * Get id
      *
      * @return integer 
@@ -66,28 +57,6 @@ class Invite {
         return $this->id;
     }
 
-    /**
-     * Set token
-     *
-     * @param string $token
-     * @return Invite
-     */
-    public function setToken($token)
-    {
-        $this->token = $token;
-
-        return $this;
-    }
-
-    /**
-     * Get token
-     *
-     * @return string 
-     */
-    public function getToken()
-    {
-        return $this->token;
-    }
 
     /**
      * Set team
