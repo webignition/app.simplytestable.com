@@ -25,14 +25,14 @@ class UserCreationController extends AbstractUserController
     }
     
     public function createAction()            
-    {        
+    {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }          
         
         $email = rawurldecode($this->getArguments('createAction')->get('email'));
-        $password = rawurldecode($this->getArguments('createAction')->get('password'));        
-        
+        $password = rawurldecode($this->getArguments('createAction')->get('password'));
+
         if ($this->getUserService()->exists($email)) {
             $user = $this->getUserService()->findUserByEmail($email);
             
@@ -40,10 +40,13 @@ class UserCreationController extends AbstractUserController
                 return $this->redirect($this->generateUrl('user_get', array(
                     'email_canonical' => $email
                 ), true));                
-            }           
+            }
+
+            $user->setPlainPassword($password);
+            $this->getUserService()->updatePassword($user);
+        } else {
+            $user = $this->getUserService()->create($email, $password);
         }
-        
-        $user = $this->getUserService()->create($email, $password);
         
         if ($user instanceof User) {    
             $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan());            

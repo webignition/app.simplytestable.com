@@ -24,6 +24,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     const TASK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TaskController';
     const STRIPE_WEBHOOK_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\Stripe\WebHookController';
     const USER_STRIPE_EVENT_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\UserStripeEventController';
+    const TEAM_INVITE_CONTROLLER_NAME = 'SimplyTestable\ApiBundle\Controller\TeamInviteController';
     
     const TEST_USER_EMAIL = 'user@example.com';
     const TEST_USER_PASSWORD = 'password';
@@ -176,9 +177,21 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getUserCreationController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::USER_CREATION_CONTROLLER_NAME, $methodName, $postData, $queryData);
-    }    
-    
-    
+    }
+
+
+    /**
+     *
+     * @param string $methodName
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\TeamInviteController
+     */
+    protected function getTeamInviteController($methodName, $postData = array(), $queryData = array()) {
+        return $this->getController(self::TEAM_INVITE_CONTROLLER_NAME, $methodName, $postData, $queryData);
+    }
+
+
     /**
      * 
      * @param string $methodName
