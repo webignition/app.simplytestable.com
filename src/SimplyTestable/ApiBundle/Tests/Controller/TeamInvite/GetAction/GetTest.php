@@ -22,18 +22,32 @@ class GetTest extends ActionTest {
     }
 
 
-    public function testInviteeIsNotAUserReturnsBadResponse() {
-        $inviter = $this->createAndActivateUser('user1@example.com', 'password');
+    public function testInviteeIsNotAUserCreatesUserAndCreatesInvite() {
+        $inviter = $this->createAndActivateUser('leader@example.com', 'password');
+        $team = $this->getTeamService()->create(
+            'Foo',
+            $inviter
+        );
+
 
         $this->getUserService()->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 
-        $response = $this->getCurrentController()->$methodName('user2@example.com');
+        $response = $this->getCurrentController()->$methodName('user@example.com');
+        $this->assertEquals(200, $response->getStatusCode());
 
-        $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals(9, $response->headers->get('X-TeamInviteGet-Error-Code'));
-        $this->assertEquals('Invitee is not a user', $response->headers->get('X-TeamInviteGet-Error-Message'));
+        $this->assertTrue($this->getUserService()->exists('user@example.com'));
+        $user = $this->getUserService()->findUserByEmail('user@example.com');
+
+        $this->assertTrue($this->getTeamInviteService()->hasForTeamAnduser($team, $user));
+
+        $invite = $this->getTeamInviteService()->getForTeamAndUser($team, $user);
+
+        $responseObject = json_decode($response->getContent());
+
+        $this->assertEquals($invite->getToken(), $responseObject->token);
+        $this->assertEquals($invite->getUser()->getEmail(), $responseObject->user);
     }
 
 
