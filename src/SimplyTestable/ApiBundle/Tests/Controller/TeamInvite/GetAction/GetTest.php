@@ -124,6 +124,7 @@ class GetTest extends ActionTest {
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertArrayHasKey('token', json_decode($response->getContent(), true));
         $this->assertNotNull(json_decode($response->getContent(), true)['token']);
+        $this->assertNotNull(json_decode($response->getContent(), true)['team']);
     }
 
 

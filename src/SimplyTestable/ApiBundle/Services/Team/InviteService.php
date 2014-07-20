@@ -59,6 +59,12 @@ class InviteService extends EntityService {
     }
 
 
+    /**
+     * @param User $inviter
+     * @param User $invitee
+     * @return null|Invite
+     * @throws \SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception
+     */
     public function get(User $inviter, User $invitee) {
         if (!$this->teamService->hasTeam($inviter)) {
             throw new TeamInviteServiceException(

@@ -28,6 +28,9 @@ class Invite {
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Team\Team")
      * @ORM\JoinColumn(name="team_id", referencedColumnName="id", nullable=false)
+     *
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedTeam")
+     * @SerializerAnnotation\Expose
      */
     protected $team;
 
@@ -139,5 +142,14 @@ class Invite {
      */
     public function getPublicSerializedUser() {
         return $this->getUser()->getUsername();
+    }
+
+
+    /**
+     *
+     * @return string
+     */
+    public function getPublicSerializedTeam() {
+        return $this->getTeam()->getName();
     }
 }
