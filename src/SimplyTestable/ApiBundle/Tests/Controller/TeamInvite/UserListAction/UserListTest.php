@@ -50,11 +50,11 @@ class UserListTest extends ActionTest {
         $this->assertEquals([
             [
                 'user' => $invite1->getUser()->getUsername(),
-                'token' => $invite1->getToken()
+                'team' => $invite1->getTeam()->getName()
             ],
             [
                 'user' => $invite2->getUser()->getUsername(),
-                'token' => $invite2->getToken()
+                'team' => $invite2->getTeam()->getName()
             ]
         ], json_decode($response->getContent(), true));
     }

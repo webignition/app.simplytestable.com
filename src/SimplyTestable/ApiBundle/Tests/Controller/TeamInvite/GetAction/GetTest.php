@@ -46,8 +46,8 @@ class GetTest extends ActionTest {
 
         $responseObject = json_decode($response->getContent());
 
-        $this->assertEquals($invite->getToken(), $responseObject->token);
         $this->assertEquals($invite->getUser()->getEmail(), $responseObject->user);
+        $this->assertEquals($invite->getTeam()->getName(), $responseObject->team);
     }
 
 
@@ -122,8 +122,7 @@ class GetTest extends ActionTest {
         $response = $this->getCurrentController()->$methodName($invitee->getEmail());
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertArrayHasKey('token', json_decode($response->getContent(), true));
-        $this->assertNotNull(json_decode($response->getContent(), true)['token']);
+        $this->assertNotNull(json_decode($response->getContent(), true)['user']);
         $this->assertNotNull(json_decode($response->getContent(), true)['team']);
     }
 
@@ -144,7 +143,7 @@ class GetTest extends ActionTest {
         $response1 = $this->getCurrentController()->$methodName($invitee->getEmail());
         $response2 = $this->getCurrentController()->$methodName($invitee->getEmail());
 
-        $this->assertEquals(json_decode($response1->getContent(), true)['token'], json_decode($response2->getContent(), true)['token']);
+        $this->assertEquals(json_decode($response1->getContent(), true)['team'], json_decode($response2->getContent(), true)['team']);
     }
 
 

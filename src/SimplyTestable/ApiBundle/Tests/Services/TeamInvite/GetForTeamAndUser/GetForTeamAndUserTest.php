@@ -39,7 +39,6 @@ class GetForTeamAndUserTest extends ServiceTest {
         $this->assertNotNull($invite->getId());
         $this->assertEquals($team->getId(), $invite->getTeam()->getId());
         $this->assertEquals($user->getId(), $invite->getUser()->getId());
-        $this->assertNotNull($invite->getToken());
     }
 
 }

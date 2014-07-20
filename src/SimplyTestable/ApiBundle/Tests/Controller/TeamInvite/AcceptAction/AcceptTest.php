@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Controller\TeamInvite\ActionTest;
 
 class AcceptTest extends ActionTest {
 
-    public function testUserHasNoInviteReturnsBadResponse() {
+    public function testUserAcceptsForNonexistentTeamReturnsBadResponse() {
         $user = $this->createAndActivateUser('user@example.com');
         $this->getUserService()->setUser($user);
 
@@ -14,32 +14,28 @@ class AcceptTest extends ActionTest {
         $response = $this->getCurrentController()->$methodName();
 
         $this->assertEquals(400, $response->getStatusCode());
-        $this->assertEquals(2, $response->headers->get('X-TeamInviteAccept-Error-Code'));
-        $this->assertEquals('Invalid token', $response->headers->get('X-TeamInviteAccept-Error-Message'));
+        $this->assertEquals(1, $response->headers->get('X-TeamInviteAccept-Error-Code'));
+        $this->assertEquals('Invalid team', $response->headers->get('X-TeamInviteAccept-Error-Message'));
     }
 
-
-    public function testUserWithInvalidTokenReturnsBadResponse() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
-
+    public function testUserHasNoInviteReturnsBadResponse() {
+        $leader = $this->createAndActivateUser('leader@example.com');
         $this->getTeamService()->create(
             'Foo',
-            $inviter
+            $leader
         );
 
-        $this->getTeamInviteService()->get($inviter, $invitee);
-
-        $this->getUserService()->setUser($invitee);
+        $user = $this->createAndActivateUser('user@example.com');
+        $this->getUserService()->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
-            'token' => 'foobar'
+            'team' => 'Foo'
         ])->$methodName();
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(2, $response->headers->get('X-TeamInviteAccept-Error-Code'));
-        $this->assertEquals('Invalid token', $response->headers->get('X-TeamInviteAccept-Error-Message'));
+        $this->assertEquals('User has not been invited to join this team', $response->headers->get('X-TeamInviteAccept-Error-Message'));
     }
 
 
@@ -58,7 +54,7 @@ class AcceptTest extends ActionTest {
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
-            'token' => $invite->getToken()
+            'team' => 'Foo'
         ])->$methodName();
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -90,7 +86,7 @@ class AcceptTest extends ActionTest {
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
-            'token' => $invite1->getToken()
+            'team' => $invite1->getTeam()->getName()
         ])->$methodName();
 
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));

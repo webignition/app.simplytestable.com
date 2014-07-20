@@ -42,14 +42,25 @@ class TeamInviteController extends ApiController {
 
 
     public function acceptAction() {
-        if (!$this->getTeamInviteService()->hasForToken($this->getRequestToken())) {
+        $team = $this->getTeamService()->getEntityRepository()->findOneBy([
+            'name' => $this->getRequestTeam()
+        ]);
+
+        if (is_null($team)) {
             return $this->sendFailureResponse([
-                'X-TeamInviteAccept-Error-Code' => 2,
-                'X-TeamInviteAccept-Error-Message' => 'Invalid token',
+                'X-TeamInviteAccept-Error-Code' => 1,
+                'X-TeamInviteAccept-Error-Message' => 'Invalid team',
             ]);
         }
 
-        $invite = $this->getTeamInviteService()->getForToken($this->getRequestToken());
+        if (!$this->getTeamInviteService()->hasForTeamAndUser($team, $this->getUser())) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteAccept-Error-Code' => 2,
+                'X-TeamInviteAccept-Error-Message' => 'User has not been invited to join this team',
+            ]);
+        }
+
+        $invite = $this->getTeamInviteService()->getForTeamAndUser($team, $this->getUser());
 
         $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
 
@@ -118,8 +129,8 @@ class TeamInviteController extends ApiController {
     /**
      * @return string
      */
-    private function getRequestToken() {
-        return trim($this->getRequest()->request->get('token'));
+    private function getRequestTeam() {
+        return trim($this->getRequest()->request->get('team'));
     }
 
 

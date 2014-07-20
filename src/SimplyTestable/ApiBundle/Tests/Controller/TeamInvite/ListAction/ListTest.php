@@ -56,7 +56,7 @@ class ListTest extends ActionTest {
         $this->assertEquals([
             [
                 'user' => $invite->getUser()->getUsername(),
-                'token' => $invite->getToken()
+                'team' => $invite->getTeam()->getName()
             ]
         ], json_decode($response->getContent(), true));
     }
