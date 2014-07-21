@@ -36,6 +36,12 @@ class TeamController extends ApiController {
 
         try {
             $this->getTeamService()->create($this->getRequest()->request->get('name'), $this->getUser());
+
+            $invites = $this->getTeamInviteService()->getForUser($this->getUser());
+            foreach ($invites as $invite) {
+                $this->getTeamInviteService()->remove($invite);
+            }
+
         } catch (TeamServiceException $teamServiceException) {
 
             if ($teamServiceException->isUserAlreadyLeadsTeamException() || $teamServiceException->isUserAlreadyOnTeamException()) {
@@ -95,6 +101,15 @@ class TeamController extends ApiController {
     private function getTeamService() {
         return $this->container->get('simplytestable.services.teamservice');
     }
+
+
+    /**
+     * @return \SimplyTestable\ApiBundle\Services\Team\InviteService
+     */
+    private function getTeamInviteService() {
+        return $this->container->get('simplytestable.services.teaminviteservice');
+    }
+
 
 
     /**

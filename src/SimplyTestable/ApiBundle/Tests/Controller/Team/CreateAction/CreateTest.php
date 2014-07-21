@@ -101,5 +101,28 @@ class CreateTest extends ActionTest {
         $this->assertEquals(9, $response->headers->get('X-TeamCreate-Error-Code'));
         $this->assertEquals('Special users cannot create teams', $response->headers->get('X-TeamCreate-Error-Message'));
     }
+
+
+    public function testUserInvitesDeletedOnTeamCreate() {
+        $leader = $this->createAndActivateUser('leader@example.com');
+        $user = $this->createAndActivateUser('user@example.com');
+
+        $this->getTeamService()->create('Foo1', $leader);
+
+        $this->getTeamInviteService()->get($leader, $user);
+
+        $this->assertTrue($this->getTeamInviteService()->hasAnyForUser($user));
+
+        $this->getUserService()->setUser($user);
+
+        $methodName = $this->getActionNameFromRouter();
+
+        $this->getCurrentController([
+            'name' => 'Foo2'
+        ])->$methodName();
+
+        $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
+
+    }
     
 }
