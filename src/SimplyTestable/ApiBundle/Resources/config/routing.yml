@@ -197,6 +197,10 @@ teaminvite_accept:
     pattern: /team/invite/accept/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:accept}
 
+teaminvite_decline:
+    pattern: /team/invite/decline/
+    defaults: { _controller: SimplyTestableApiBundle:TeamInvite:decline}
+
 teaminvite_get:
     pattern: /team/invite/{invitee_email}/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:get}

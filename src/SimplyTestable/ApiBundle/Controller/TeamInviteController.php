@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+use SimplyTestable\ApiBundle\Entity\Team\Team;
 
 class TeamInviteController extends ApiController {
 
@@ -121,6 +122,20 @@ class TeamInviteController extends ApiController {
         }
 
         $this->getTeamInviteService()->remove($this->getTeamInviteService()->getForTeamAndUser($team, $invitee));
+
+        return $this->sendResponse();
+    }
+
+
+    public function declineAction() {
+        $team = $this->getTeamService()->getEntityRepository()->findOneBy([
+            'name' => trim($this->getRequest()->request->get('team'))
+        ]);
+
+        if ($team instanceof Team && $this->getTeamInviteService()->hasForTeamAndUser($team, $this->getUser())) {
+            $invite = $this->getTeamInviteService()->getForTeamAndUser($team, $this->getUser());
+            $this->getTeamInviteService()->remove($invite);
+        }
 
         return $this->sendResponse();
     }
