@@ -94,5 +94,32 @@ class AcceptTest extends ActionTest {
         $this->assertNull($invite2->getId());
 
     }
+
+
+    public function testUserWithPremiumPlanCannotAcceptInvite() {
+        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
+        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+
+        $this->getTeamService()->create(
+            'Foo',
+            $inviter
+        );
+
+        $invite = $this->getTeamInviteService()->get($inviter, $invitee);
+
+        $this->getUserAccountPlanService()->subscribe($invitee, $this->getAccountPlanService()->find('personal'));
+
+        $this->getUserService()->setUser($invitee);
+
+        $methodName = $this->getActionNameFromRouter();
+        $response = $this->getCurrentController([
+            'team' => 'Foo'
+        ])->$methodName();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertNotNull($invite->getId());
+
+        $this->assertFalse($this->getTeamMemberService()->belongsToTeam($invitee));
+    }
     
 }

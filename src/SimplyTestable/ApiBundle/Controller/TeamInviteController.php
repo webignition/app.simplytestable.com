@@ -68,6 +68,10 @@ class TeamInviteController extends ApiController {
             ]);
         }
 
+        if ($this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan()->getIsPremium()) {
+            return $this->sendResponse();
+        }
+
         $invite = $this->getTeamInviteService()->getForTeamAndUser($team, $this->getUser());
 
         $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
