@@ -60,6 +60,36 @@ class UserListTest extends ActionTest {
     }
 
 
+    public function testUserOnPremiumPlanListsNoInvites() {
+        $leader1 = $this->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->createAndActivateUser('leader2@example.com');
+        $user = $this->createAndActivateUser('user@example.com');
+
+        $this->getUserService()->setUser($user);
+
+        $this->getTeamService()->create(
+            'Foo1',
+            $leader1
+        );
+
+        $this->getTeamService()->create(
+            'Foo2',
+            $leader2
+        );
+
+        $this->getTeamInviteService()->get($leader1, $user);
+        $this->getTeamInviteService()->get($leader2, $user);
+
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+
+        $methodName = $this->getActionNameFromRouter();
+        $response = $this->getCurrentController()->$methodName();
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals([], json_decode($response->getContent(), true));
+    }
+
+
     /**
      *
      * @return array

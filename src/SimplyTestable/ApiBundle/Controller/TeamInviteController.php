@@ -95,6 +95,10 @@ class TeamInviteController extends ApiController {
 
 
     public function userListAction() {
+        if ($this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan()->getIsPremium()) {
+            return $this->sendResponse([]);
+        }
+
         return $this->sendResponse($this->getTeamInviteService()->getForUser($this->getUser()));
     }
 
