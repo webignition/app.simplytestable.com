@@ -47,6 +47,35 @@ class ActivateTest extends BaseControllerJsonTestCase {
     public function testActivateInMaintenanceReadOnlyModeReturns503() {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');                 
         $this->assertEquals(503, $this->getUserCreationController('activateAction')->activateAction('')->getStatusCode());           
-    }    
+    }
+
+    public function testPasswordInRequestChangesPasswordAtActivationTime() {
+        $email = 'user1@example.com';
+        $initialPassword = 'password1';
+        $updatedPassword = 'password2';
+
+        $user = $this->createAndFindUser($email, $initialPassword);
+        $initialEncodedPassword = $user->getPassword();
+
+        $this->getUserCreationController('activateAction', [
+            'password' => $updatedPassword
+        ])->activateAction($user->getConfirmationToken());
+
+        $updatedEncodedPassword = $user->getPassword();
+
+        $this->assertFalse($initialEncodedPassword == $updatedEncodedPassword);
+    }
+
+
+    public function testNoPasswordInRequestDoesNotChangePasswordAtActivationTime() {
+        $user = $this->createAndFindUser('user1@example.com');
+        $initialEncodedPassword = $user->getPassword();
+
+        $this->getUserCreationController('activateAction')->activateAction($user->getConfirmationToken());
+
+        $updatedEncodedPassword = $user->getPassword();
+
+        $this->assertTrue($initialEncodedPassword == $updatedEncodedPassword);
+    }
     
 }

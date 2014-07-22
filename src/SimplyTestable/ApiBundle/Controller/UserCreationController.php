@@ -86,6 +86,14 @@ class UserCreationController extends AbstractUserController
         }
         
         $this->getUserManipulator()->activate($user->getUsername());
+
+        if ($this->getRequest()->request->has('password')) {
+            $password = trim(rawurldecode($this->getRequest()->request->get('password')));
+            if ($password != '') {
+                $user->setPlainPassword($password);
+                $this->getUserService()->updateUser($user);
+            }
+        }
         
         return new \Symfony\Component\HttpFoundation\Response();
     } 
