@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Controller\ApiController;
 
@@ -33,7 +34,8 @@ abstract class BaseJobController extends ApiController
             'is_public' => $this->getIsJobPublic($job),
             'parameters' => $job->getParameters(),
             'error_count' => $this->getErrorCount($job),
-            'warning_count' => $this->getWarningCount($job)
+            'warning_count' => $this->getWarningCount($job),
+            'owners' => $this->getSerializedOwners($job)
         );
         
         if ($this->getJobService()->isRejected($job)) {            
@@ -185,7 +187,67 @@ abstract class BaseJobController extends ApiController
         }
         
         return $this->get('simplytestable.services.userservice')->findUserByEmail($this->getRequestValue('user'));
-    }   
+    }
+
+
+    /**
+     * @param Job $job
+     * @return string[]
+     */
+    private function getSerializedOwners(Job $job) {
+        $owners = $this->getOwners($job);
+        $serializedOwners = [];
+
+        foreach ($owners as $owner) {
+            $serializedOwners[] = $owner->getUsername();
+        }
+
+        return $serializedOwners;
+    }
+
+
+    /**
+     * @param Job $job
+     * @return User[]
+     */
+    private function getOwners(Job $job) {
+        if (!$this->getTeamService()->hasForUser($this->getUser())) {
+            return [
+                $job->getUser()
+            ];
+        }
+
+        $team = $this->getTeamService()->getForUser($job->getUser());
+        $members = $this->getTeamService()->getMemberService()->getMembers($team);
+
+        $owners = [
+            $team->getLeader()
+        ];
+
+        foreach ($members as $member) {
+            if (!$this->userCollectionContainsUser($owners, $member->getUser())) {
+                $owners[] = $member->getUser();
+            }
+        }
+
+        return $owners;
+    }
+
+
+    /**
+     * @param User[] $users
+     * @param User $user
+     * @return bool
+     */
+    private function userCollectionContainsUser(array $users, User $user) {
+        foreach ($users as $currentUser) {
+            if ($user->equals($currentUser)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
     
     
     /**
@@ -262,5 +324,13 @@ abstract class BaseJobController extends ApiController
      */
     protected function getJobRetrievalService() {
         return $this->get('simplytestable.services.job.retrievalservice');
+    }
+
+
+    /**
+     * @return \SimplyTestable\ApiBundle\Services\Team\Service
+     */
+    private function getTeamService() {
+        return $this->container->get('simplytestable.services.teamservice');
     }
 }
