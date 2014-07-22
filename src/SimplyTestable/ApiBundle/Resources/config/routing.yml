@@ -206,7 +206,7 @@ teaminvite_get:
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:get}
 
 team_remove:
-    pattern: /team/remove/{member_email}
+    pattern: /team/remove/{member_email}/
     defaults: { _controller: SimplyTestableApiBundle:Team:remove }
 
 team_leave:
@@ -218,7 +218,7 @@ teaminvite_list:
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:list }
 
 teaminvite_remove:
-    pattern: /team/invite/{invitee_email}/remove
+    pattern: /team/invite/{invitee_email}/remove/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:remove }
 
 teaminvite_userlist:
