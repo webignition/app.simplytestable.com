@@ -31,6 +31,13 @@ class TeamInviteController extends ApiController {
             ]);
         }
 
+        if ($this->getUserAccountPlanService()->getForUser($invitee)->getPlan()->getIsPremium()) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteGet-Error-Code' => 11,
+                'X-TeamInviteGet-Error-Message' => 'Invitee has a premium plan',
+            ]);
+        }
+
         try {
             return $this->sendResponse($this->getTeamInviteService()->get($this->getUser(), $invitee));
         } catch (TeamInviteServiceException $teamInviteServiceException) {

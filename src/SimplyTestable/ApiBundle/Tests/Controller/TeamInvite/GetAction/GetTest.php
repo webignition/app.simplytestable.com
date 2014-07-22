@@ -187,6 +187,29 @@ class GetTest extends ActionTest {
     }
 
 
+    public function testInviteUserOnPremiumPlanReturnsBadRequest() {
+        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
+        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+
+        $this->getUserAccountPlanService()->subscribe($invitee, $this->getAccountPlanService()->find('personal'));
+
+        $this->getTeamService()->create(
+            'Foo',
+            $inviter
+        );
+
+        $this->getUserService()->setUser($inviter);
+
+        $methodName = $this->getActionNameFromRouter();
+
+        $response = $this->getCurrentController()->$methodName($invitee->getEmail());
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertEquals(11, $response->headers->get('X-TeamInviteGet-Error-Code'));
+        $this->assertEquals('Invitee has a premium plan', $response->headers->get('X-TeamInviteGet-Error-Message'));
+    }
+
+
     /**
      *
      * @return array
