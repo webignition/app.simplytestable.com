@@ -143,7 +143,11 @@ user_reset_password:
   
 user_exists:
   pattern: /user/{email_canonical}/exists/
-  defaults: { _controller: SimplyTestableApiBundle:User:exists, _format: json }     
+  defaults: { _controller: SimplyTestableApiBundle:User:exists, _format: json }
+
+user_hasinvites:
+  pattern: /user/{email_canonical}/has-invites/
+  defaults: { _controller: SimplyTestableApiBundle:User:hasInvites, _format: json }
   
 user_is_enabled:
   pattern: /user/{email_canonical}/enabled/

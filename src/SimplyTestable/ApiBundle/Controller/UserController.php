@@ -170,4 +170,22 @@ class UserController extends AbstractUserController
     private function getTeamInviteService() {
         return $this->get('simplytestable.services.teaminviteservice');
     }
+
+
+    /**
+     * @param $email_canonical
+     * @return Response
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     */
+    public function hasInvitesAction($email_canonical) {
+        if (!$this->getUserService()->exists($email_canonical)) {
+            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        }
+
+        if ($this->getTeamInviteService()->hasAnyForUser($this->getUserService()->findUserByEmail($email_canonical))) {
+            return new \Symfony\Component\HttpFoundation\Response('', 200);
+        }
+
+        throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+    }
 }

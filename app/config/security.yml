@@ -37,6 +37,7 @@ security:
         - { path: ^/user/.+/token/$, role: ROLE_ADMIN } 
         - { path: ^/user/.+/exists/$, role: ROLE_ADMIN } 
         - { path: ^/user/.+/email-change-request/$, role: ROLE_ADMIN }
+        - { path: ^/user/.+/has-invites/$, role: ROLE_ADMIN }
         - { path: ^/user/.+/$, role: ROLE_USER } 
         - { path: ^/maintenance/, role: ROLE_ADMIN }
         - { path: ^/team/$, role: ROLE_USER }
