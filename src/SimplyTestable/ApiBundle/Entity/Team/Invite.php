@@ -48,6 +48,15 @@ class Invite {
 
 
     /**
+     *
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    protected $token;
+
+
+    /**
      * Get id
      *
      * @return integer 
@@ -120,5 +129,23 @@ class Invite {
      */
     public function getPublicSerializedTeam() {
         return $this->getTeam()->getName();
+    }
+
+
+    /**
+     * @param $token
+     * @return Invite
+     */
+    public function setToken($token) {
+        $this->token = $token;
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getToken() {
+        return $this->token;
     }
 }

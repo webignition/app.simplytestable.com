@@ -17,6 +17,7 @@ class Version20140709141300_create_TeamInvite extends BaseMigration
                 id INT AUTO_INCREMENT NOT NULL,
                 team_id INT NOT NULL,
                 user_id INT NOT NULL,
+                token VARCHAR(255) DEFAULT NULL,
                 INDEX IDX_C22DB3ED296CD8AE (team_id),
                 INDEX IDX_C22DB3EDA76ED395 (user_id),
                 UNIQUE INDEX teamInvite_idx (team_id, user_id),
@@ -31,6 +32,7 @@ class Version20140709141300_create_TeamInvite extends BaseMigration
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 team_id INT NOT NULL,
                 user_id INT NOT NULL,
+                token VARCHAR(255) DEFAULT NULL,
                 FOREIGN KEY(team_id) REFERENCES Team (id),
                 FOREIGN KEY(user_id) REFERENCES fos_user (id)
             )",

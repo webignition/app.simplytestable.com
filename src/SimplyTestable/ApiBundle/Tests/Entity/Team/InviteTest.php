@@ -8,10 +8,13 @@ use SimplyTestable\ApiBundle\Entity\Team\Invite;
 
 class InviteTest extends BaseSimplyTestableTestCase {
 
-    public function testPersist() {
+    const TEAM_NAME = 'Foo';
+    const TOKEN = 'token';
+
+    public function testPersistWithoutToken() {
         $team = new Team();
         $team->setLeader($this->createAndActivateUser('team-leader@example.com', 'password'));
-        $team->setName('Foo');
+        $team->setName(self::TEAM_NAME);
 
         $this->getEntityManager()->persist($team);
         $this->getEntityManager()->flush();
@@ -22,6 +25,39 @@ class InviteTest extends BaseSimplyTestableTestCase {
 
         $this->getEntityManager()->persist($invite);
         $this->getEntityManager()->flush();
+
+        $this->assertNotNull($invite->getId());
+
+        $inviteId = $invite->getId();
+
+        $retrievedInvite = $this->getTeamInviteService()->getEntityRepository()->find($inviteId);
+
+        $this->assertEquals($inviteId, $retrievedInvite->getId());
+    }
+
+
+    public function testPersistWithToken() {
+        $team = new Team();
+        $team->setLeader($this->createAndActivateUser('team-leader@example.com', 'password'));
+        $team->setName('Foo');
+
+        $this->getEntityManager()->persist($team);
+        $this->getEntityManager()->flush();
+
+        $invite = new Invite();
+        $invite->setTeam($team);
+        $invite->setUser($this->createAndActivateUser('team-member@example.com', 'password'));
+        $invite->setToken(self::TOKEN);
+
+        $this->getEntityManager()->persist($invite);
+        $this->getEntityManager()->flush();
+
+        $inviteId = $invite->getId();
+
+        $retrievedInvite = $this->getTeamInviteService()->getEntityRepository()->find($inviteId);
+
+        $this->assertEquals($inviteId, $retrievedInvite->getId());
+        $this->assertEquals(self::TOKEN, $retrievedInvite->getToken());
     }
 
 }
