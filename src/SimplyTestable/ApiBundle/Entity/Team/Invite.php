@@ -51,7 +51,7 @@ class Invite {
      *
      * @var string
      *
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="string", unique=true, nullable=false)
      */
     protected $token;
 

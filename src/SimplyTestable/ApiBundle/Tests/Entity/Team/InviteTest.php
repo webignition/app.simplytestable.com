@@ -11,32 +11,7 @@ class InviteTest extends BaseSimplyTestableTestCase {
     const TEAM_NAME = 'Foo';
     const TOKEN = 'token';
 
-    public function testPersistWithoutToken() {
-        $team = new Team();
-        $team->setLeader($this->createAndActivateUser('team-leader@example.com', 'password'));
-        $team->setName(self::TEAM_NAME);
-
-        $this->getEntityManager()->persist($team);
-        $this->getEntityManager()->flush();
-
-        $invite = new Invite();
-        $invite->setTeam($team);
-        $invite->setUser($this->createAndActivateUser('team-member@example.com', 'password'));
-
-        $this->getEntityManager()->persist($invite);
-        $this->getEntityManager()->flush();
-
-        $this->assertNotNull($invite->getId());
-
-        $inviteId = $invite->getId();
-
-        $retrievedInvite = $this->getTeamInviteService()->getEntityRepository()->find($inviteId);
-
-        $this->assertEquals($inviteId, $retrievedInvite->getId());
-    }
-
-
-    public function testPersistWithToken() {
+    public function testPersist() {
         $team = new Team();
         $team->setLeader($this->createAndActivateUser('team-leader@example.com', 'password'));
         $team->setName('Foo');
