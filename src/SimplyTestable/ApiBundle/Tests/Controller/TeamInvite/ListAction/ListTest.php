@@ -53,12 +53,15 @@ class ListTest extends ActionTest {
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $this->assertEquals([
-            [
-                'user' => $invite->getUser()->getUsername(),
-                'team' => $invite->getTeam()->getName()
-            ]
-        ], json_decode($response->getContent(), true));
+        $responseObject = json_decode($response->getContent(), true);
+
+        $this->assertEquals(1, count($responseObject));
+
+        $responseInvite = $responseObject[0];
+
+        $this->assertEquals($invite->getUser()->getUsername(), $responseInvite['user']);
+        $this->assertEquals($invite->getTeam()->getName(), $responseInvite['team']);
+        $this->assertNotNull($responseInvite['token']);
     }
 
 
