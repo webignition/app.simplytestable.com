@@ -41,6 +41,7 @@ security:
         - { path: ^/user/.+/$, role: ROLE_USER } 
         - { path: ^/maintenance/, role: ROLE_ADMIN }
         - { path: ^/team/$, role: ROLE_USER }
+        - { path: ^/user/invite/bytoken/.+/$, role: ROLE_ADMIN }
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
         #- { path: ^/_internal/secure, roles: IS_AUTHENTICATED_ANONYMOUSLY, ip: 127.0.0.1 }
 

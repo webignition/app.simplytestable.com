@@ -156,6 +156,15 @@ class TeamInviteController extends ApiController {
     }
 
 
+    public function getByTokenAction($token) {
+        if (!$this->getTeamInviteService()->hasForToken(trim($token))) {
+            return $this->sendNotFoundResponse();
+        }
+
+        return $this->sendResponse($this->getTeamInviteService()->getForToken($token));
+    }
+
+
     /**
      * @return string
      */

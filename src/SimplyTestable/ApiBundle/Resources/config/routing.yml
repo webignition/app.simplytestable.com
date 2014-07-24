@@ -209,6 +209,10 @@ teaminvite_get:
     pattern: /team/invite/{invitee_email}/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:get}
 
+teaminvite_getbytoken:
+    pattern: /team/invite/bytoken/{token}/
+    defaults: { _controller: SimplyTestableApiBundle:TeamInvite:getByToken}
+
 team_remove:
     pattern: /team/remove/{member_email}/
     defaults: { _controller: SimplyTestableApiBundle:Team:remove }

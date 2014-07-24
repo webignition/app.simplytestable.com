@@ -177,7 +177,7 @@ class InviteService extends EntityService {
      * @param $token
      * @return bool
      */
-    private function hasForToken($token) {
+    public function hasForToken($token) {
         return !is_null($this->getForToken($token));
     }
 
