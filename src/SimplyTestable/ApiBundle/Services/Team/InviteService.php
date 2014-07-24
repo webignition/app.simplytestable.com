@@ -153,8 +153,43 @@ class InviteService extends EntityService {
         $invite = new Invite();
         $invite->setTeam($this->teamService->getForUser($inviter));
         $invite->setUser($invitee);
+        $invite->setToken($this->generateToken());
 
         return $this->persistAndFlush($invite);
+    }
+
+
+    /**
+     * @return string
+     */
+    private function generateToken() {
+        $token = md5(rand());
+
+        if ($this->hasForToken($token)) {
+            return $this->generateToken();
+        }
+
+        return $token;
+    }
+
+
+    /**
+     * @param $token
+     * @return bool
+     */
+    private function hasForToken($token) {
+        return !is_null($this->getForToken($token));
+    }
+
+
+    /**
+     * @param $token
+     * @return null|Invite
+     */
+    private function getForToken($token) {
+        return $this->getEntityRepository()->findOneBy([
+            'token' => $token
+        ]);
     }
 
 
