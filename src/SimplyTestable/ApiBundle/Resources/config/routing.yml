@@ -132,7 +132,7 @@ user_list_stripe_events:
 user_activate:
   pattern: /user/activate/{token}/
   defaults: { _controller: SimplyTestableApiBundle:UserCreation:activate, _format: json }
-  
+
 user_get_token:
   pattern: /user/{email_canonical}/token/
   defaults: { _controller: SimplyTestableApiBundle:User:getToken, _format: json }    
@@ -200,6 +200,10 @@ team_get:
 teaminvite_accept:
     pattern: /team/invite/accept/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:accept}
+
+teaminvite_activateandaccept:
+    pattern: /team/invite/activate/accept/
+    defaults: { _controller: SimplyTestableApiBundle:TeamInvite:activateAndAccept}
 
 teaminvite_decline:
     pattern: /team/invite/decline/

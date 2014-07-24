@@ -165,6 +165,35 @@ class TeamInviteController extends ApiController {
     }
 
 
+    public function activateAndAcceptAction() {
+        $token = trim($this->getRequest()->request->get('token'));
+
+        if (!$this->getTeamInviteService()->hasForToken($token)) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteActivateAndAccept-Error-Code' => 1,
+                'X-TeamInviteActivateAndAccept-Error-Message' => 'No invite for token',
+            ]);
+        }
+
+        $invite = $this->getTeamInviteService()->getForToken($token);
+
+        $this->getUserManipulator()->activate($invite->getUser()->getUsername());
+
+        $invite->getUser()->setPlainPassword(rawurldecode(trim($this->getRequest()->request->get('password'))));
+        $this->getUserService()->updateUser($invite->getUser());
+
+        $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
+
+        $invites = $this->getTeamInviteService()->getForUser($invite->getUser());
+
+        foreach ($invites as $invite) {
+            $this->getTeamInviteService()->remove($invite);
+        }
+
+        return $this->sendResponse();
+    }
+
+
     /**
      * @return string
      */
@@ -218,6 +247,15 @@ class TeamInviteController extends ApiController {
         }
 
         return $this->getAccountPlanService()->find($planName);
+    }
+
+
+    /**
+     *
+     * @return \FOS\UserBundle\Util\UserManipulator
+     */
+    protected function getUserManipulator() {
+        return $this->get('fos_user.util.user_manipulator');
     }
 
 }
