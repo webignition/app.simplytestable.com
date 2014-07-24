@@ -52,6 +52,7 @@ class Invite {
      * @var string
      *
      * @ORM\Column(type="string", unique=true, nullable=false)
+     * @SerializerAnnotation\Expose
      */
     protected $token;
 

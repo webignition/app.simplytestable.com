@@ -210,6 +210,26 @@ class GetTest extends ActionTest {
     }
 
 
+    public function testTokenIsExposed() {
+        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
+        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+
+        $this->getTeamService()->create(
+            'Foo',
+            $inviter
+        );
+
+        $this->getUserService()->setUser($inviter);
+
+        $methodName = $this->getActionNameFromRouter();
+
+        $response = $this->getCurrentController()->$methodName($invitee->getEmail());
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertNotNull(json_decode($response->getContent(), true)['token']);
+    }
+
+
     /**
      *
      * @return array
