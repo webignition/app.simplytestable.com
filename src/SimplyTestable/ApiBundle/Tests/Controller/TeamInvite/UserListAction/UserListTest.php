@@ -47,16 +47,17 @@ class UserListTest extends ActionTest {
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $this->assertEquals([
-            [
-                'user' => $invite1->getUser()->getUsername(),
-                'team' => $invite1->getTeam()->getName()
-            ],
-            [
-                'user' => $invite2->getUser()->getUsername(),
-                'team' => $invite2->getTeam()->getName()
-            ]
-        ], json_decode($response->getContent(), true));
+        $responseObject = json_decode($response->getContent(), true);
+
+        $this->assertEquals(2, count($responseObject));
+
+        $this->assertEquals($invite1->getUser()->getUsername(), $responseObject[0]['user']);
+        $this->assertEquals($invite1->getTeam()->getName(), $responseObject[0]['team']);
+        $this->assertNotNull($responseObject[0]['token']);
+
+        $this->assertEquals($invite2->getUser()->getUsername(), $responseObject[1]['user']);
+        $this->assertEquals($invite2->getTeam()->getName(), $responseObject[1]['team']);
+        $this->assertNotNull($responseObject[1]['token']);
     }
 
 
