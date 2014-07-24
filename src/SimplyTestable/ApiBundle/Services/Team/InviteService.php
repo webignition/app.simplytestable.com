@@ -186,7 +186,7 @@ class InviteService extends EntityService {
      * @param $token
      * @return null|Invite
      */
-    private function getForToken($token) {
+    public function getForToken($token) {
         return $this->getEntityRepository()->findOneBy([
             'token' => $token
         ]);
