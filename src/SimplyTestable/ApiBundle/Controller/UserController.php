@@ -36,11 +36,11 @@ class UserController extends AbstractUserController
         $planConstraints = array();
 
         if ($userAccountPlan->getPlan()->hasConstraintNamed('credits_per_month')) {
-            $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
+            $this->getJobUserAccountPlanEnforcementService()->setUser($userAccountPlan->getUser());
             $planConstraints['credits'] = array(
                 'limit' => $userAccountPlan->getPlan()->getConstraintNamed('credits_per_month')->getLimit(),
                 'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()
-            );            
+            );
         }
         
         if ($userAccountPlan->getPlan()->hasConstraintNamed('urls_per_job')) {
