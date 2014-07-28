@@ -167,6 +167,20 @@ class Service extends EntityService {
 
     /**
      * @param User $user
+     * @return User[]
+     */
+    public function getPeopleForUser(User $user) {
+        if (!$this->hasForUser($user)) {
+            return [$user];
+        }
+
+        return $this->getPeople($this->getForUser($user));
+    }
+
+
+
+    /**
+     * @param User $user
      * @return bool
      */
     public function hasForUser(User $user) {

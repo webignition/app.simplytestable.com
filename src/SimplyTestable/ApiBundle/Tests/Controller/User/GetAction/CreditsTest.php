@@ -7,8 +7,6 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class CreditsTest extends BaseControllerJsonTestCase {
 
-    const EXPECTED_CREDITS_USED = 12;
-
     /**
      * @var User
      */
@@ -26,6 +24,12 @@ class CreditsTest extends BaseControllerJsonTestCase {
      */
     private $member2;
 
+
+    /**
+     * @var int
+     */
+    private $expectedCreditsUsed = 0;
+
     public function setUp() {
         parent::setUp();
 
@@ -37,9 +41,19 @@ class CreditsTest extends BaseControllerJsonTestCase {
         $this->getTeamMemberService()->add($team, $this->member1);
         $this->getTeamMemberService()->add($team, $this->member2);
 
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->leader->getEmail()));
-        $this->setJobTasksCompleted($job);
-        $this->completeJob($job);
+        $job1 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->leader->getEmail()));
+        $this->setJobTasksCompleted($job1);
+        $this->completeJob($job1);
+
+        $job2 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->member1->getEmail()));
+        $this->setJobTasksCompleted($job2);
+        $this->completeJob($job2);
+
+        $job3 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->member2->getEmail()));
+        $this->setJobTasksCompleted($job3);
+        $this->completeJob($job3);
+
+        $this->expectedCreditsUsed = $job1->getTasks()->count() + $job2->getTasks()->count()  + $job3->getTasks()->count();
     }
 
 
@@ -47,7 +61,7 @@ class CreditsTest extends BaseControllerJsonTestCase {
         $this->getUserService()->setUser($this->leader);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
-        $this->assertEquals(self::EXPECTED_CREDITS_USED, $responseObject->plan_constraints->credits->used);
+        $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
     }
 
 
@@ -55,7 +69,7 @@ class CreditsTest extends BaseControllerJsonTestCase {
         $this->getUserService()->setUser($this->member1);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
-        $this->assertEquals(self::EXPECTED_CREDITS_USED, $responseObject->plan_constraints->credits->used);
+        $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
     }
 
 
@@ -63,7 +77,7 @@ class CreditsTest extends BaseControllerJsonTestCase {
         $this->getUserService()->setUser($this->member2);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
-        $this->assertEquals(self::EXPECTED_CREDITS_USED, $responseObject->plan_constraints->credits->used);
+        $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
     }
 }
 
