@@ -94,7 +94,18 @@ class TeamInviteController extends ApiController {
             ]);
         }
 
-        return $this->sendResponse($this->getTeamInviteService()->getForTeam($this->getTeamService()->getForUser($this->getUser())));
+        $allInvites = $this->getTeamInviteService()->getForTeam($this->getTeamService()->getForUser($this->getUser()));
+        $invites = [];
+
+        foreach ($allInvites as $invite) {
+            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($invite->getUser());
+
+            if (!$userAccountPlan->getPlan()->getIsPremium()) {
+                $invites[] = $invite;
+            }
+        }
+
+        return $this->sendResponse($invites);
     }
 
 

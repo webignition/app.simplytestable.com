@@ -218,7 +218,7 @@ class InviteService extends EntityService {
 
     /**
      * @param Team $team
-     * @return Team[]
+     * @return Invite[]
      */
     public function getForTeam(Team $team) {
         return $this->getEntityRepository()->findBy([
