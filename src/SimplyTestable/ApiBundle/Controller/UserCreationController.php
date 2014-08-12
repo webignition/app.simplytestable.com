@@ -16,7 +16,8 @@ class UserCreationController extends AbstractUserController
             'createAction' => new InputDefinition(array(
                 new InputArgument('email', InputArgument::REQUIRED, 'User email address'),
                 new InputArgument('password', InputArgument::REQUIRED, 'User password'),
-                new InputArgument('plan', InputArgument::OPTIONAL, 'Plan for user')
+                new InputArgument('plan', InputArgument::OPTIONAL, 'Plan for user'),
+                new InputArgument('coupon', InputArgument::OPTIONAL, 'Coupon for user')
             ))
         ));
         
