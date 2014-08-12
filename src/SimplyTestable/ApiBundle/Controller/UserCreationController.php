@@ -52,6 +52,10 @@ class UserCreationController extends AbstractUserController
         
         if ($user instanceof User) {
             $coupon = trim(rawurldecode($this->getArguments('createAction')->get('coupon')));
+            if ($coupon == '') {
+                $coupon = null;
+            }
+
             $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan(), $coupon);
         }
         
