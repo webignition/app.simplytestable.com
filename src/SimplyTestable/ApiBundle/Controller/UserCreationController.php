@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 
 class UserCreationController extends AbstractUserController
 {
@@ -48,8 +49,9 @@ class UserCreationController extends AbstractUserController
             $user = $this->getUserService()->create($email, $password);
         }
         
-        if ($user instanceof User) {    
-            $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan());            
+        if ($user instanceof User) {
+            $coupon = trim(rawurldecode($this->getArguments('createAction')->get('coupon')));
+            $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan(), $coupon);
         }
         
         return new \Symfony\Component\HttpFoundation\Response();
@@ -58,7 +60,7 @@ class UserCreationController extends AbstractUserController
     
     /**
      * 
-     * @return string
+     * @return AccountPlan
      */
     private function getNewUserPlan() {
         $planName = $this->getArguments('createAction')->get('plan');

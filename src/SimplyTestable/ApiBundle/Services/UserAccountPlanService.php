@@ -95,15 +95,16 @@ class UserAccountPlanService extends EntityService {
         
         return $this->persistAndFlush($userAccountPlan);
     }
-    
-    
+
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $newPlan
-     * @return UserAccountPlan|false
+     * @param User $user
+     * @param AccountPlan $newPlan
+     * @param string|null $coupon
+     * @return UserAccountPlan
+     * @throws \SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception
      */
-    public function subscribe(User $user, AccountPlan $newPlan) {
+    public function subscribe(User $user, AccountPlan $newPlan, $coupon = null) {
         if ($this->teamService->getMemberService()->belongsToTeam($user)) {
             throw new UserAccountPlanServiceException(
                 '',
@@ -134,7 +135,7 @@ class UserAccountPlanService extends EntityService {
         }
         
         $stripeCustomer = $this->stripeService->getCustomer($currentUserAccountPlan);
-        $stripeCustomerId = $currentUserAccountPlan->hasStripeCustomer() ? $currentUserAccountPlan->getStripeCustomer() : $this->stripeService->createCustomer($user)->getId();
+        $stripeCustomerId = $currentUserAccountPlan->hasStripeCustomer() ? $currentUserAccountPlan->getStripeCustomer() : $this->stripeService->createCustomer($user, $coupon)->getId();
         
         if ($this->isNonPremiumToPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {                        
             return $this->stripeService->subscribe($this->create(
