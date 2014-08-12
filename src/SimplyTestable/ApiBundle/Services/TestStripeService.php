@@ -92,14 +92,15 @@ class TestStripeService extends StripeService {
     public function setNextStripeCardErrorCode($code) {
         $this->nextStripeCardErrorCode = $code;
     }
-    
-    
+
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return \webignition\Model\Stripe\Customer
+     * @param User $user
+     * @param string|null $coupon
+     * @return StripeCustomer
+     * @throws \Stripe_AuthenticationError
      */
-    public function createCustomer(User $user) {
+    public function createCustomer(User $user, $coupon = null) {
         if ($this->hasInvalidApiKey === true) {
             throw new Stripe_AuthenticationError();
         }
@@ -110,9 +111,9 @@ class TestStripeService extends StripeService {
         return new StripeCustomer(json_encode($stripeCustomerData));
     }
     
-    
+
     /**
-     * 
+     * @param $method
      * @param array $responseData
      */
     public function addResponseData($method, $responseData = array()) {                
@@ -137,12 +138,13 @@ class TestStripeService extends StripeService {
             return new StripeCustomer(json_encode($customerAsArray));      
         }        
     }
-    
-    
+
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @param UserAccountPlan $userAccountPlan
      * @param array $updatedProperties
+     * @return null|void
+     * @throws \Stripe_CardError
      */
     public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties) {
         if ($this->issueStripeCardError === true) {
