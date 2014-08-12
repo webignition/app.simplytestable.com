@@ -22,19 +22,27 @@ class StripeService {
      * @return string
      */
     public function getApiKey() {
-        return $this->apiKey;
+        return Stripe::getApiKey();
     }
-    
+
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param User $user
+     * @param string|null $coupon
      * @return \webignition\Model\Stripe\Customer
      */
-    public function createCustomer(User $user) {
+    public function createCustomer(User $user, $coupon = null) {
         $adapter = new StripeCustomerAdapter();
-        return $adapter->getStripeCustomer(Stripe_Customer::create(array(
+
+        $customerProperties = [
             'email' => $user->getEmail()
-        )));
+        ];
+
+        if (!is_null($coupon)) {
+            $customerProperties['coupon'] = $coupon;
+        }
+
+        return $adapter->getStripeCustomer(Stripe_Customer::create($customerProperties));
     }
     
     
@@ -65,12 +73,11 @@ class StripeService {
 
         $customer->save();        
     }
-    
-    
+
 
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @param UserAccountPlan $userAccountPlan
+     * @return UserAccountPlan
      */
     public function subscribe(UserAccountPlan $userAccountPlan) {
         $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
