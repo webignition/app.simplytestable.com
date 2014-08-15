@@ -17,6 +17,7 @@ class InvoicePaymentSucceededListener extends InvoiceListener
 
         $webClientEventData = [
             'lines' => $invoice->getLinesSummary(),
+            'subtotal' => $invoice->getSubtotal(),
             'total' => $invoice->getTotal(),
             'amount_due' => $invoice->getAmountDue(),
             'invoice_id' => $invoice->getId(),

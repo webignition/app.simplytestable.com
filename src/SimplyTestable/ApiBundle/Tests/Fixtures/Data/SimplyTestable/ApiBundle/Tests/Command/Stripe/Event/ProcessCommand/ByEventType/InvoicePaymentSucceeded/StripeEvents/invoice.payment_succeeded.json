@@ -42,7 +42,7 @@
           }
         ]
       },
-      "subtotal": 0,
+      "subtotal": 99.99,
       "total": 99.99,
       "customer": "{{stripe_customer}}",
       "object": "invoice",

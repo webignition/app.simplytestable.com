@@ -16,6 +16,7 @@ class WithDiscountTest extends InvoicePaymentSucceededTest {
                 )
             ),
             'invoice_id' => 'in_4abfD1nt0ael6N',
+            'subtotal' => '900',
             'total' => '720',
             'amount_due' => '720',
             'discount' => [
