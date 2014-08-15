@@ -22,7 +22,8 @@ class WithDiscountTest extends InvoicePaymentSucceededTest {
                 'coupon' => 'TMS',
                 'percent_off' => '20',
                 'discount' => 180
-            ]
+            ],
+            'has_discount' => 1
         ));
     }
 

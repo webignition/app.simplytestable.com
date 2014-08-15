@@ -18,6 +18,7 @@ class AmountGreaterThanZeroTest extends InvoicePaymentSucceededTest {
             'invoice_id' => 'in_2c6Kz0tw4CBlOL',
             'total' => '2000',
             'amount_due' => '0',
+            'has_discount' => 0
         ));
     }
     

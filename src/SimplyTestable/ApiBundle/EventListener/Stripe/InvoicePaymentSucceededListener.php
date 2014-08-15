@@ -19,7 +19,8 @@ class InvoicePaymentSucceededListener extends InvoiceListener
             'lines' => $invoice->getLinesSummary(),
             'total' => $invoice->getTotal(),
             'amount_due' => $invoice->getAmountDue(),
-            'invoice_id' => $invoice->getId()
+            'invoice_id' => $invoice->getId(),
+            'has_discount' => (int)$invoice->hasDiscount()
         ];
 
         if ($invoice->hasDiscount()) {
