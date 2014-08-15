@@ -14,13 +14,25 @@ class InvoicePaymentSucceededListener extends InvoiceListener
             $this->markEntityProcessed();
             return;
         }
-        
-        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
+
+        $webClientEventData = [
             'lines' => $invoice->getLinesSummary(),
             'total' => $invoice->getTotal(),
             'amount_due' => $invoice->getAmountDue(),
             'invoice_id' => $invoice->getId()
-        )));
+        ];
+
+        if ($invoice->hasDiscount()) {
+            $discount = $invoice->getSubtotal() * ($invoice->getDiscount()->getCoupon()->getPercentOff() / 100);
+
+            $webClientEventData['discount'] = [
+                'coupon' => $invoice->getDiscount()->getCoupon()->getId(),
+                'percent_off' => $invoice->getDiscount()->getCoupon()->getPercentOff(),
+                'discount' => $discount
+            ];
+        }
+
+        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), $webClientEventData));
         
         $this->markEntityProcessed();        
     }  
