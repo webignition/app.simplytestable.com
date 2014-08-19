@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "47fa26c23d4bc099b581693aa20c0375",
+    "hash": "05976afe9cf1d75dfd30fe48b4197182",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3060,16 +3060,16 @@
         },
         {
             "name": "webignition/php-stripe-models",
-            "version": "0.2.3",
+            "version": "0.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/php-stripe-models.git",
-                "reference": "ea0693994d69a23eafec25c1c9341bb8f5cc262f"
+                "reference": "4eaa1b972d067c4b0dd4ca3fb608edcd75add636"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/php-stripe-models/zipball/ea0693994d69a23eafec25c1c9341bb8f5cc262f",
-                "reference": "ea0693994d69a23eafec25c1c9341bb8f5cc262f",
+                "url": "https://api.github.com/repos/webignition/php-stripe-models/zipball/4eaa1b972d067c4b0dd4ca3fb608edcd75add636",
+                "reference": "4eaa1b972d067c4b0dd4ca3fb608edcd75add636",
                 "shasum": ""
             },
             "require": {
@@ -3103,7 +3103,7 @@
                 "model",
                 "stripe"
             ],
-            "time": "2014-08-14 16:59:21"
+            "time": "2014-08-19 16:49:41"
         },
         {
             "name": "webignition/quoted-string",
