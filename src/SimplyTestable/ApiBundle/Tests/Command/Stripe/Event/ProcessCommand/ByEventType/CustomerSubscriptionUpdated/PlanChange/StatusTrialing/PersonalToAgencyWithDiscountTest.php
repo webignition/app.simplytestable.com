@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\ByEventType\CustomerSubscriptionUpdated\PlanChange\StatusTrialing;
 
-use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\ByEventType\CustomerSubscriptionUpdated\PlanChange\PlanChangeTest;
+use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\ByEventType\CustomerSubscriptionUpdated\PlanChange\WithDiscountTest;
 
-class PersonalToAgencyTest extends PlanChangeTest {   
+class PersonalToAgencyWithDiscountTest extends WithDiscountTest {
     
     protected function getSubscriptionStatus() {
         return 'trialing';

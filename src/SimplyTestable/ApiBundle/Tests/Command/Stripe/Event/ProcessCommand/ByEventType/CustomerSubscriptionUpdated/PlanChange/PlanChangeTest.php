@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\ByEventTy
 abstract class PlanChangeTest extends CustomerSubscriptionUpdatedTest {   
     
     abstract protected function getSubscriptionStatus();
+    abstract protected function getHasDiscount();
     
     protected function getExpectedNotificationBodyFields() {
         $fields = array(
@@ -24,11 +25,11 @@ abstract class PlanChangeTest extends CustomerSubscriptionUpdatedTest {
         return array_merge(parent::getExpectedNotificationBodyFields(), $fields);
     }
     
-    protected function getStripeEventFixturePaths() {
-        return array(
-            $this->getFixturesDataPath() . '/../../StripeEvents/customer.subscription.updated.planchange.json'
-        );
-    }     
+//    protected function getStripeEventFixturePaths() {
+//        return array(
+//            $this->getFixturesDataPath() . '/../../StripeEvents/customer.subscription.updated.planchange.json'
+//        );
+//    }
     
     protected function getFixtureReplacements() {
         $fixtureReplacements = parent::getFixtureReplacements();
