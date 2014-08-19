@@ -1,8 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\ByEventType\CustomerSubscriptionTrialWillEnd;
+namespace SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\ByEventType\CustomerSubscriptionTrialWillEnd\WithoutDiscount;
 
-class WithCardTest extends CustomerSubscriptionTrialWillEndTest {
+use SimplyTestable\ApiBundle\Tests\Command\Stripe\Event\ProcessCommand\ByEventType\CustomerSubscriptionTrialWillEnd\WithoutDiscountTest;
+
+class WithCardTest extends WithoutDiscountTest {
     
     protected function getHasCard() {
         return true;
