@@ -73,7 +73,8 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     }    
     
     
-    protected function removeTestAccountPlans() {        
+    protected function removeTestAccountPlans() {
+        $this->removeAllUserPostActivationProperties();
         $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan', 'test');
     }     
     
@@ -1001,6 +1002,10 @@ EOD;
     
     protected function removeAllUserAccountPlans() {
         $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserAccountPlan');
+    }
+
+    protected function removeAllUserPostActivationProperties() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserPostActivationProperties');
     }
     
     
