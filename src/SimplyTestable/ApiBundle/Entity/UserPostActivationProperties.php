@@ -44,7 +44,7 @@ class UserPostActivationProperties
      * @var AccountPlan
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Plan")
-     * @ORM\JoinColumn(name="accountplan_id", referencedColumnName="id", nullable=true)
+     * @ORM\JoinColumn(name="accountplan_id", referencedColumnName="id", nullable=false)
      * 
      */
     protected $accountPlan;
