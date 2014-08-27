@@ -16,7 +16,7 @@ class Version20140827120051_create_UserPostActivationProperties extends BaseMigr
             "CREATE TABLE UserPostActivationProperties (
                 id INT AUTO_INCREMENT NOT NULL,
                 user_id INT NOT NULL,
-                accountplan_id INT NOT NULL,
+                accountplan_id INT DEFAULT NULL,
                 coupon VARCHAR(255) DEFAULT NULL,
                 INDEX IDX_B1AF6847A76ED395 (user_id),
                 INDEX IDX_B1AF6847369E2B6B (accountplan_id),
@@ -29,7 +29,7 @@ class Version20140827120051_create_UserPostActivationProperties extends BaseMigr
             "CREATE TABLE UserPostActivationProperties (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 user_id INT NOT NULL,
-                accountplan_id INT NOT NULL,
+                accountplan_id INT DEFAULT NULL,
                 coupon VARCHAR(255) DEFAULT NULL,
                 FOREIGN KEY(user_id) REFERENCES fos_user (id),
                 FOREIGN KEY(accountplan_id) REFERENCES AccountPlan (id)",
