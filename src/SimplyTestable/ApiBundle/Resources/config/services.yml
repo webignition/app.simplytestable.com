@@ -349,3 +349,8 @@ services:
     arguments:
         jobService: "@simplytestable.services.jobservice"
         teamService: "@simplytestable.services.teamservice"
+
+  simplytestable.services.job.UserPostActivationPropertiesService:
+    class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
