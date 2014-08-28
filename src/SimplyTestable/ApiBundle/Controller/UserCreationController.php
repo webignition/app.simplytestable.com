@@ -103,6 +103,19 @@ class UserCreationController extends AbstractUserController
         }
         
         $this->getUserManipulator()->activate($user->getUsername());
+
+        if ($this->getUserPostActivationPropertiesService()->hasForUser($user)) {
+            $postActivationProperties = $this->getUserPostActivationPropertiesService()->getForUser($user);
+
+            $this->getUserAccountPlanService()->subscribe(
+                $user,
+                $postActivationProperties->getAccountPlan(),
+                $postActivationProperties->getCoupon()
+            );
+
+            $this->getUserPostActivationPropertiesService()->getEntityManager()->remove($postActivationProperties);
+            $this->getUserPostActivationPropertiesService()->getEntityManager()->flush($postActivationProperties);
+        }
         
         return new \Symfony\Component\HttpFoundation\Response();
     } 
