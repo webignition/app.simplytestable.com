@@ -32,7 +32,8 @@ class Version20140827120051_create_UserPostActivationProperties extends BaseMigr
                 accountplan_id INT NOT NULL,
                 coupon VARCHAR(255) DEFAULT NULL,
                 FOREIGN KEY(user_id) REFERENCES fos_user (id),
-                FOREIGN KEY(accountplan_id) REFERENCES AccountPlan (id)",
+                FOREIGN KEY(accountplan_id) REFERENCES AccountPlan (id)
+            )",
             "CREATE INDEX IDX_B1AF6847A76ED395 ON UserPostActivationProperties (user_id)",
             "CREATE INDEX IDX_B1AF6847369E2B6B ON UserPostActivationProperties (accountplan_id)",
         );
