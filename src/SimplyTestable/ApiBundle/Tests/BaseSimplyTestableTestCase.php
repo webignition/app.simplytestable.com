@@ -1317,12 +1317,31 @@ EOD;
      * @return \Symfony\Bundle\FrameworkBundle\Controller\Controller
      */
     protected function getCurrentController(array $postData = [], array $queryData = []) {
+//        $postData = [
+//            'email' => 'user@example.com',
+//            'password' => 'password'
+//        ];
+
         return $this->getController(
             $this->getControllerNameFromTestNamespace(),
             $this->getActionNameFromTestNamespace(),
-            $postData,
+            $this->getControllerPostData($postData),
             $queryData
         );
+    }
+
+
+    private function getControllerPostData(array $postData = []) {
+        if (empty($postData)) {
+            return $this->getRequestPostData();
+        }
+
+        return $postData;
+    }
+
+
+    protected function getRequestPostData() {
+        return [];
     }
 
 

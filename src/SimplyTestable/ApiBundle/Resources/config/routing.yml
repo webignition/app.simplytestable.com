@@ -101,7 +101,7 @@ status:
   pattern: /
   defaults: { _controller: SimplyTestableApiBundle:Status:index, _format: json }     
   
-user_create:
+usercreation_create:
   pattern: /user/create/
   defaults: { _controller: SimplyTestableApiBundle:UserCreation:create, _format: json }   
   

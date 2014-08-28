@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
+use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
 
 class UserCreationController extends AbstractUserController
 {
@@ -56,7 +57,16 @@ class UserCreationController extends AbstractUserController
                 $coupon = null;
             }
 
-            $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan(), $coupon);
+            $plan = $this->getNewUserPlan();
+            if ($plan->getIsPremium()) {
+                $this->getUserPostActivationPropertiesService()->create(
+                    $user,
+                    $plan,
+                    $coupon
+                );
+            } else {
+                $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan());
+            }
         }
         
         return new \Symfony\Component\HttpFoundation\Response();
@@ -113,6 +123,15 @@ class UserCreationController extends AbstractUserController
      */
     private function getUserAccountPlanService() {
         return $this->get('simplytestable.services.useraccountplanservice');
-    }    
+    }
+
+
+
+    /**
+     * @return UserPostActivationPropertiesService
+     */
+    protected function getUserPostActivationPropertiesService() {
+        return $this->get('simplytestable.services.job.UserPostActivationPropertiesService');
+    }
 
 }
