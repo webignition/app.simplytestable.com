@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4acb3dcbaf979195eb3ecf33893011b3",
+    "hash": "4e5c9e7f80765d9f190dfea25c16d1fd",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2918,20 +2918,20 @@
         },
         {
             "name": "webignition/html-document-link-finder",
-            "version": "0.6",
+            "version": "0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/html-document-link-url-finder.git",
-                "reference": "1be05e5dcc0fd8543584ef33b6c1b6e164bf247b"
+                "reference": "a36f9c26d52b4c0c1e7fc4d362a8d9b386a0b42a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/html-document-link-url-finder/zipball/1be05e5dcc0fd8543584ef33b6c1b6e164bf247b",
-                "reference": "1be05e5dcc0fd8543584ef33b6c1b6e164bf247b",
+                "url": "https://api.github.com/repos/webignition/html-document-link-url-finder/zipball/a36f9c26d52b4c0c1e7fc4d362a8d9b386a0b42a",
+                "reference": "a36f9c26d52b4c0c1e7fc4d362a8d9b386a0b42a",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0",
+                "php": ">=5.4.0",
                 "webignition/absolute-url-deriver": ">=1.4",
                 "webignition/url": "*"
             },
@@ -2960,7 +2960,7 @@
                 "linkifier",
                 "validation"
             ],
-            "time": "2014-01-14 12:46:50"
+            "time": "2014-08-28 16:04:19"
         },
         {
             "name": "webignition/html-validation-error-normaliser",
