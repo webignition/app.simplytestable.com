@@ -22,9 +22,9 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
         $linkFinder->setSourceUrl($task->getUrl());
         $linkFinder->setSourceContent($webResource->getContent());
         
-        $links = $linkFinder->getAll();        
+        $links = $linkFinder->getAll();
         $existingLinkIntegrityResults = $this->getLinkIntegrityResultsFromRawTaskOutputs($rawTaskOutputs);
-        
+
         $linkIntegrityResults = array();
         
         foreach ($links as $link) {
@@ -115,12 +115,17 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     private function getLinkIntegrityResultsFromRawTaskOutputs($rawTaskOutputs) {        
         $linkIntegrityResults = array();
         
-        foreach ($rawTaskOutputs as $rawTaskOutput) {            
+        foreach ($rawTaskOutputs as $rawTaskOutput) {
             $decodedTaskOutput = json_decode($rawTaskOutput);
+
+            if (!is_array($decodedTaskOutput)) {
+                continue;
+            }
+
             foreach ($decodedTaskOutput as $linkIntegrityResult) {
                 if (!$this->isLinkIntegrityError($linkIntegrityResult)) {
                     $linkIntegrityResults[] = $linkIntegrityResult;
-                }                
+                }
             }
         }        
         
