@@ -1,8 +1,8 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\UserCreation\CreateAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\UserCreation\CreateAction\Failure;
 
-use SimplyTestable\ApiBundle\Tests\Controller\UserCreation\CreateAction\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Controller\UserCreation\ActionTest;
 
 abstract class FailureTest extends ActionTest {
 

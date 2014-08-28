@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\UserCreation\CreateAction;
 
-use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Controller\UserCreation\ActionTest;
 
-class MaintenanceModeTest extends BaseControllerJsonTestCase {
+class MaintenanceModeTest extends ActionTest {
 
     const DEFAULT_EMAIL = 'user@example.com';
     const DEFAULT_PASSWORD = 'password';

@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\UserCreation\CreateAction\Success;
 
-use SimplyTestable\ApiBundle\Tests\Controller\UserCreation\CreateAction\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Controller\UserCreation\ActionTest;
 use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
 
 abstract class SuccessTest extends ActionTest {

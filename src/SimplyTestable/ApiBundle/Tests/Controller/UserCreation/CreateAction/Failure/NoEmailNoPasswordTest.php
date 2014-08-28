@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\UserCreation\CreateAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\UserCreation\CreateAction\Failure;
 
 class NoEmailNoPasswordTest extends FailureTest {
 
