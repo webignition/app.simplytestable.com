@@ -505,13 +505,15 @@ class TaskService extends EntityService {
         $task->clearWorker();
         $task->clearRemoteId();
 
-        $this->getEntityManager()->persist($task);
+        return $this->persistAndFlush($task);
 
-        if ($flush) {
-            $this->getEntityManager()->flush($task);
-        }
-
-        return $task;
+//        $this->getEntityManager()->persist($task);
+//
+//        if ($flush) {
+//            $this->getEntityManager()->flush($task);
+//        }
+//
+//        return $task;
     }
     
     

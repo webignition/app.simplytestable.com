@@ -72,9 +72,9 @@ class TaskRepository extends EntityRepository
         $queryBuilder->setParameter('Job', $job);
         $queryBuilder->setParameter('Url', $url);
 
-        $result = $queryBuilder->getQuery()->getResult();        
-        
-        return $result[0][1] == 1;
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return $result[0][1] > 0;
     }
     
     

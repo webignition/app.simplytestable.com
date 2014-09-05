@@ -93,14 +93,11 @@ class TaskController extends ApiController
                     $output
                 ));
             }
-//
+
             $this->getTaskService()->complete($task, $endDateTime, $output, $state, false);
 
             if ($task->getType()->equals($urlDiscoveryTaskType)) {
-                $this->get('logger')->error($this->getCrawlJobContainerService()->processTaskResults($task));
-                $this->get('logger')->error($processedTaskCount);
-
-                //$this->getCrawlJobContainerService()->processTaskResults($task);
+                $this->getCrawlJobContainerService()->processTaskResults($task);
             }
 
             if (!$this->getJobService()->hasIncompleteTasks($task->getJob())) {
@@ -122,8 +119,6 @@ class TaskController extends ApiController
                 $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
             }
         }
-
-        return $this->sendFailureResponse();
         
         if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
             $this->getResqueQueueService()->add(
@@ -186,7 +181,7 @@ class TaskController extends ApiController
     /**
      *
      * @param string $stateFromRequest
-     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     * @return \SimplyTestable\ApiBundle\Entity\State
      */
     private function getTaskEndState($stateFromRequest) {        
         if ($stateFromRequest == $this->getTaskService()->getFailedNoRetryAvailableState()->getName()) {

@@ -209,8 +209,6 @@ class CrawlJobContainerService extends EntityService {
         
         $this->jobUserAccountPlanEnforcementService->setUser($crawlJobContainer->getCrawlJob()->getUser());
         $crawlDiscoveredUrlCount = count($this->getDiscoveredUrls($crawlJobContainer));
-
-        return $crawlDiscoveredUrlCount;
         
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($crawlDiscoveredUrlCount)) {            
             if ($crawlJobContainer->getCrawlJob()->getAmmendments()->isEmpty()) {
@@ -227,9 +225,9 @@ class CrawlJobContainerService extends EntityService {
         }
         
         $isFlushRequired = false;
-        
+
         foreach ($taskDiscoveredUrlSet as $url) {            
-            if (!$this->isTaskUrl($crawlJobContainer, $url)) {
+            if (!$this->isTaskUrl($task->getJob(), $url)) {
                 $task = $this->createUrlDiscoveryTask($crawlJobContainer, $url);
                 $this->getEntityManager()->persist($task);
                 $crawlJobContainer->getCrawlJob()->addTask($task);
@@ -336,10 +334,10 @@ class CrawlJobContainerService extends EntityService {
         return $discoveredUrls; 
     }    
     
-    private function isTaskUrl(CrawlJobContainer $crawlJobContainer, $url) {
+    private function isTaskUrl(Job $job, $url) {
         $url = (string)new \webignition\NormalisedUrl\NormalisedUrl($url);
         return $this->taskService->getEntityRepository()->findUrlExistsByJobAndUrl(
-            $crawlJobContainer->getCrawlJob(),
+            $job,
             $url
         );      
     }
