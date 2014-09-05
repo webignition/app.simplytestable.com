@@ -80,7 +80,7 @@ class CrawlJobContainer
 
     /**
      *
-     * @return SimplyTestable\ApiBundle\Entity\Job\Job
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
      */
     public function getCrawlJob()
     {

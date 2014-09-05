@@ -161,7 +161,7 @@ class TaskService extends EntityService {
     
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State
+     * @return \SimplyTestable\ApiBundle\Entity\State
      */
     public function getCompletedState() {
         return $this->stateService->fetch(self::COMPLETED_STATE);
@@ -474,7 +474,7 @@ class TaskService extends EntityService {
      * @param \SimlpyTestable\ApiBundle\Entity\State $state
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
-    public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state) {
+    public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state, $flush = true) {
         $taskIsInCorrectState = false;
         foreach ($this->getIncompleteStates() as $incompleteState) {
             if ($task->getState()->equals($incompleteState)) {
@@ -505,7 +505,13 @@ class TaskService extends EntityService {
         $task->clearWorker();
         $task->clearRemoteId();
 
-        return $this->persistAndFlush($task);
+        $this->getEntityManager()->persist($task);
+
+        if ($flush) {
+            $this->getEntityManager()->flush($task);
+        }
+
+        return $task;
     }
     
     

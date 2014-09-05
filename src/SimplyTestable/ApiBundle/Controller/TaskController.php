@@ -46,7 +46,7 @@ class TaskController extends ApiController
     }  
     
     
-    public function completeByUrlAndTaskTypeAction($canonical_url, $task_type, $parameter_hash) {        
+    public function completeByUrlAndTaskTypeAction($canonical_url, $task_type, $parameter_hash) {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
@@ -77,42 +77,53 @@ class TaskController extends ApiController
         $output->setWarningCount($this->getArguments('completeByUrlAndTaskTypeAction')->get('warningCount'));
                 
         $state = $this->getTaskEndState($this->getArguments('completeByUrlAndTaskTypeAction')->get('state'));
+
+        $urlDiscoveryTaskType = $this->getTaskTypeService()->getByName('URL discovery');
+
+        $processedTaskCount = 0;
         
         foreach ($tasks as $task) {
+            $processedTaskCount++;
+
             /* @var $task Task */
-            
+
             if ($task->hasOutput() && $this->getTaskOutputJoinerFactoryService()->hasTaskOutputJoiner($task)) {
                 $output = $this->getTaskOutputJoinerFactoryService()->getTaskOutputJoiner($task)->join(array(
                     $task->getOutput(),
                     $output
                 ));
             }
-            
-            $this->getTaskService()->complete($task, $endDateTime, $output, $state);
-            
-            if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery'))) {
-                $this->getCrawlJobContainerService()->processTaskResults($task);
+//
+            $this->getTaskService()->complete($task, $endDateTime, $output, $state, false);
+
+            if ($task->getType()->equals($urlDiscoveryTaskType)) {
+                $this->get('logger')->error($this->getCrawlJobContainerService()->processTaskResults($task));
+                $this->get('logger')->error($processedTaskCount);
+
+                //$this->getCrawlJobContainerService()->processTaskResults($task);
             }
-            
+
             if (!$this->getJobService()->hasIncompleteTasks($task->getJob())) {
                 $this->getJobService()->complete($task->getJob());
             }
-            
+
             if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery')) && $this->getJobService()->isCompleted($task->getJob())) {
-                $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($task->getJob());                
-                
-                foreach ($crawlJobContainer->getParentJob()->getRequestedTaskTypes() as $taskType) {                                     
+                $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($task->getJob());
+
+                foreach ($crawlJobContainer->getParentJob()->getRequestedTaskTypes() as $taskType) {
                     /* @var $taskType TaskType */
-                    $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';            
+                    $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
 
                     if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
                         $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey));
                     }
-                }                 
-                
-                $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);                 
-            }            
+                }
+
+                $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
+            }
         }
+
+        return $this->sendFailureResponse();
         
         if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
             $this->getResqueQueueService()->add(

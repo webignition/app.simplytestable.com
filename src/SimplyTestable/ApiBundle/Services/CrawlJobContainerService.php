@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
 use SimplyTestable\ApiBundle\Entity\User;
 
 class CrawlJobContainerService extends EntityService {
@@ -175,14 +176,14 @@ class CrawlJobContainerService extends EntityService {
         if (is_null($task->getType())) {
             return false;
         }
-        
+
         if (!$task->getType()->equals($this->taskTypeService->getByName('URL discovery'))) {
             return false;
         }
         
         if (is_null($task->getState())) {
             return false;
-        } 
+        }
         
         if (!$task->getState()->equals($this->taskService->getCompletedState())) {
             return false;
@@ -201,13 +202,15 @@ class CrawlJobContainerService extends EntityService {
             'crawlJob' => $task->getJob()
         ));
         
-        $taskDiscoveredUrlSet = $this->getDiscoveredUrlsFromTask($task);       
+        $taskDiscoveredUrlSet = $this->getDiscoveredUrlsFromTask($task);
         if (!count($taskDiscoveredUrlSet) === 0) {
             return true;
         }
         
         $this->jobUserAccountPlanEnforcementService->setUser($crawlJobContainer->getCrawlJob()->getUser());
         $crawlDiscoveredUrlCount = count($this->getDiscoveredUrls($crawlJobContainer));
+
+        return $crawlDiscoveredUrlCount;
         
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($crawlDiscoveredUrlCount)) {            
             if ($crawlJobContainer->getCrawlJob()->getAmmendments()->isEmpty()) {
@@ -252,6 +255,26 @@ class CrawlJobContainerService extends EntityService {
         $taskDiscoveredUrlSet = json_decode($task->getOutput()->getOutput());
         return (is_array($taskDiscoveredUrlSet)) ? $taskDiscoveredUrlSet : array();
     }
+
+
+    /**
+     * @param TaskOutput $taskOutput
+     * @return array
+     */
+    private function getDiscoveredUrlsFromTaskOutput(TaskOutput $taskOutput) {
+        $taskDiscoveredUrlSet = json_decode($taskOutput->getOutput());
+        return (is_array($taskDiscoveredUrlSet)) ? $taskDiscoveredUrlSet : array();
+    }
+
+
+    /**
+     * @param string $taskOutput
+     * @return array
+     */
+    private function getDiscoveredUrlsFromRawTaskOutput($taskOutput) {
+        $taskDiscoveredUrlSet = json_decode($taskOutput);
+        return (is_array($taskDiscoveredUrlSet)) ? $taskDiscoveredUrlSet : array();
+    }
     
     
     /**
@@ -276,32 +299,38 @@ class CrawlJobContainerService extends EntityService {
         $discoveredUrls = array(
             $crawlJobContainer->getParentJob()->getWebsite()->getCanonicalUrl()
         );
-        
-        $completedTasks = $this->taskService->getEntityRepository()->findBy(array(
-            'job' => $crawlJobContainer->getCrawlJob(),
-            'state' => $this->taskService->getCompletedState()
-        ));
-        
-        foreach ($completedTasks as $task) {            
-            if ($task->getOutput()->getErrorCount() === 0) {
-                if (!in_array($task->getUrl(), $discoveredUrls)) {
-                    $discoveredUrls[] = $task->getUrl();
-                } 
-                
-                $urlSet = $this->getDiscoveredUrlsFromTask($task);                   
-                foreach ($urlSet as $url) {
-                    if (!in_array($url, $discoveredUrls)) {
-                        $discoveredUrls[] = $url;
-                    }
+
+        $completedTaskUrls = $this->taskService->getEntityRepository()->findUrlsByJobAndState(
+            $crawlJobContainer->getCrawlJob(),
+            $this->taskService->getCompletedState()
+        );
+
+        foreach ($completedTaskUrls as $taskUrl) {
+            if (!in_array($taskUrl, $discoveredUrls)) {
+                $discoveredUrls[] = $taskUrl;
+            }
+        }
+
+        $completedTaskOutputs = $this->taskService->getEntityRepository()->getOutputCollectionByJobAndState(
+            $crawlJobContainer->getCrawlJob(),
+            $this->taskService->getCompletedState()
+        );
+
+        foreach ($completedTaskOutputs as $taskOutput) {
+            $urlSet = $this->getDiscoveredUrlsFromRawTaskOutput($taskOutput);
+
+            foreach ($urlSet as $url) {
+                if (!in_array($url, $discoveredUrls)) {
+                    $discoveredUrls[] = $url;
                 }
             }
         }
-        
+
         if ($constrainToAccountPlan) {
             $accountPlan = $this->jobUserAccountPlanEnforcementService->getUserAccountPlanService()->getForUser($crawlJobContainer->getCrawlJob()->getUser())->getPlan();
-            if ($accountPlan->hasConstraintNamed('urls_per_job')) {                     
+            if ($accountPlan->hasConstraintNamed('urls_per_job')) {
                 return array_slice($discoveredUrls, 0, $accountPlan->getConstraintNamed('urls_per_job')->getLimit());
-            }            
+            }
         }
         
         return $discoveredUrls; 

@@ -234,6 +234,27 @@ class TaskRepository extends EntityRepository
         
         return $queryBuilder->getQuery()->getResult();      
     }
+
+
+    public function getOutputCollectionByJobAndState(Job $job, State $state) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->join('Task.output', 'TaskOutput');
+
+        $queryBuilder->select('TaskOutput.output');
+        $queryBuilder->where('Task.job = :Job AND Task.state = :State and TaskOutput.errorCount = 0');
+
+        $queryBuilder->setParameter('Job', $job);
+        $queryBuilder->setParameter('State', $state);
+
+        $result = $queryBuilder->getQuery()->getResult();
+        $rawTaskOutputs = array();
+
+        foreach ($result as $item) {
+            $rawTaskOutputs[] = $item['output'];
+        }
+
+        return $rawTaskOutputs;
+    }
     
     
     /**
