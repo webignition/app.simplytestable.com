@@ -1,19 +1,20 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\TaskPreProcessor;
 
-use SimplyTestable\ApiBundle\Exception\WebResourceException;
+use webignition\WebResource\Exception\Exception as WebResourceException;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use webignition\InternetMediaType\InternetMediaType;
+use webignition\WebResource\WebResource;
 
 class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     
-    public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {        
-        $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndType($task);             
+    public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {
+        $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndType($task);
         if (count($rawTaskOutputs) === 0) {
             return;
         }
 
-        $webResource = $this->getWebResource($task);        
+        $webResource = $this->getWebResource($task);
         if (is_null($webResource)) {
             return false;
         }
@@ -185,13 +186,17 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     
     /**
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Tas $task
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
      * @return WebResource 
      */
     private function getWebResource(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {        
-        try {          
+        try {
+            $this->getHttpClientService()->get()->setUserAgent('ST Link integrity task pre-processor');
+
             $request = $this->getHttpClientService()->getRequest($task->getUrl());
-            $this->getHttpClientService()->prepareRequest($request, $task->getParametersArray());            
+            $this->getHttpClientService()->prepareRequest($request, $task->getParametersArray());
+
+            $this->getHttpClientService()->get()->setUserAgent(null);
             
             return $this->getWebResourceService()->get($request);            
         } catch (WebResourceException $webResourceException) {
