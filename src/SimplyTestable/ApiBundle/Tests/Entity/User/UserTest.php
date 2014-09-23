@@ -13,7 +13,7 @@ class UserTest extends BaseSimplyTestableTestCase {
         $user = $this->getUserService()->create($email, 'password');
         $userId = $user->getId();
        
-        $this->getEntityManager()->clear();
-        $this->assertEquals($email, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\User')->find($userId)->getEmail());
+        $this->getManager()->clear();
+        $this->assertEquals($email, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\User')->find($userId)->getEmail());
     } 
 }

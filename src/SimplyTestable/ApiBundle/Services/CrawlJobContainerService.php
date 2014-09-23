@@ -127,9 +127,9 @@ class CrawlJobContainerService extends EntityService {
         $timePeriod->setStartDateTime(new \DateTime());
         $crawlJobContainer->getCrawlJob()->setTimePeriod($timePeriod);          
         
-        $this->getEntityManager()->persist($task);
-        $this->getEntityManager()->persist($crawlJobContainer->getCrawlJob());
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($task);
+        $this->getManager()->persist($crawlJobContainer->getCrawlJob());
+        $this->getManager()->flush();
         
         return true;
     }
@@ -218,7 +218,7 @@ class CrawlJobContainerService extends EntityService {
             
             if (!$this->jobService->isCompleted($crawlJobContainer->getCrawlJob())) {
                 $this->jobService->cancelIncompleteTasks($crawlJobContainer->getCrawlJob());
-                $this->taskService->getEntityManager()->flush();
+                $this->taskService->getManager()->flush();
             }
      
             return true;
@@ -229,15 +229,15 @@ class CrawlJobContainerService extends EntityService {
         foreach ($taskDiscoveredUrlSet as $url) {            
             if (!$this->isTaskUrl($task->getJob(), $url)) {
                 $task = $this->createUrlDiscoveryTask($crawlJobContainer, $url);
-                $this->getEntityManager()->persist($task);
+                $this->getManager()->persist($task);
                 $crawlJobContainer->getCrawlJob()->addTask($task);
                 $isFlushRequired = true;
             }
         }
         
         if ($isFlushRequired) {
-            $this->getEntityManager()->persist($crawlJobContainer->getCrawlJob());
-            $this->getEntityManager()->flush();            
+            $this->getManager()->persist($crawlJobContainer->getCrawlJob());
+            $this->getManager()->flush();
         }
         
         return true;
@@ -356,7 +356,7 @@ class CrawlJobContainerService extends EntityService {
         $crawlJob->setWebsite($job->getWebsite());
         $crawlJob->setParameters($job->getParameters());
         
-        $this->getEntityManager()->persist($crawlJob); 
+        $this->getManager()->persist($crawlJob);
         
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setParentJob($job);
@@ -372,8 +372,8 @@ class CrawlJobContainerService extends EntityService {
      * @return CrawlJobContainer
      */
     public function persistAndFlush(CrawlJobContainer $crawlJobContainer) {
-        $this->getEntityManager()->persist($crawlJobContainer);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($crawlJobContainer);
+        $this->getManager()->flush();
         return $crawlJobContainer;
     }
 

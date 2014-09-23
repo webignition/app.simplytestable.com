@@ -361,8 +361,8 @@ class DefaultTest extends BaseControllerJsonTestCase {
         $fullSiteJobsPerSiteConstraint->setLimit(2);
         $singleUrlJobsPerUrlConstraint->setLimit(2);
         
-        $this->getJobService()->getEntityManager()->persist($fullSiteJobsPerSiteConstraint);
-        $this->getJobService()->getEntityManager()->persist($singleUrlJobsPerUrlConstraint);          
+        $this->getJobService()->getManager()->persist($fullSiteJobsPerSiteConstraint);
+        $this->getJobService()->getManager()->persist($singleUrlJobsPerUrlConstraint);
     }      
     
 }

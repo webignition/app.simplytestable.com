@@ -13,8 +13,8 @@ class CanonicalUrlTest extends BaseSimplyTestableTestCase {
         $webSite = new WebSite();
         $webSite->setCanonicalUrl($canonicalUrl);
         
-        $this->getWebSiteService()->getEntityManager()->persist($webSite);
-        $this->getWebSiteService()->getEntityManager()->flush();
+        $this->getWebSiteService()->getManager()->persist($webSite);
+        $this->getWebSiteService()->getManager()->flush();
     }   
     
     public function testUtf8() {        
@@ -23,12 +23,12 @@ class CanonicalUrlTest extends BaseSimplyTestableTestCase {
         $webSite = new WebSite();
         $webSite->setCanonicalUrl($sourceUrl);        
         
-        $this->getWebSiteService()->getEntityManager()->persist($webSite);
-        $this->getWebSiteService()->getEntityManager()->flush();
+        $this->getWebSiteService()->getManager()->persist($webSite);
+        $this->getWebSiteService()->getManager()->flush();
         
         $websiteId = $webSite->getId();
         
-        $this->getWebSiteService()->getEntityManager()->clear();
+        $this->getWebSiteService()->getManager()->clear();
         
         $retrievedUrl = $this->getWebSiteService()->getEntityRepository()->find($websiteId)->getCanonicalUrl();
         
@@ -44,12 +44,12 @@ class CanonicalUrlTest extends BaseSimplyTestableTestCase {
         $webSite = new WebSite();
         $webSite->setCanonicalUrl($canonicalUrl);
         
-        $this->getWebSiteService()->getEntityManager()->persist($webSite);
-        $this->getWebSiteService()->getEntityManager()->flush();        
+        $this->getWebSiteService()->getManager()->persist($webSite);
+        $this->getWebSiteService()->getManager()->flush();
         
         $preId = $webSite->getId();
         
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
         
         $this->assertEquals($preId, $this->getWebSiteService()->fetch($canonicalUrl)->getId());        
     }

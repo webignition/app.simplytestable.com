@@ -14,14 +14,14 @@ class TaskTest extends BaseSimplyTestableTestCase {
         $output = new Output();
         $output->setOutput($outputValue);
         
-        $this->getEntityManager()->persist($output);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($output);
+        $this->getManager()->flush();
       
         $outputId = $output->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($outputValue, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output')->find($outputId)->getOutput());                 
+        $this->assertEquals($outputValue, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output')->find($outputId)->getOutput());
     }
     
     public function testUtf8ContentType() {
@@ -36,13 +36,13 @@ class TaskTest extends BaseSimplyTestableTestCase {
         $output->setContentType($contentType);
 
         
-        $this->getEntityManager()->persist($output);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($output);
+        $this->getManager()->flush();
       
         $outputId = $output->getId();
    
-        $this->getEntityManager()->clear();  
-        $this->assertEquals($typeValue . '/' . $typeValue, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output')->find($outputId)->getContentType());                         
+        $this->getManager()->clear();
+        $this->assertEquals($typeValue . '/' . $typeValue, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output')->find($outputId)->getContentType());
     }
     
     public function testUtf8Hash() {
@@ -52,13 +52,13 @@ class TaskTest extends BaseSimplyTestableTestCase {
         $output->setOutput('');
         $output->setHash($hash);
         
-        $this->getEntityManager()->persist($output);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($output);
+        $this->getManager()->flush();
       
         $outputId = $output->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($hash, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output')->find($outputId)->getHash());                         
+        $this->assertEquals($hash, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output')->find($outputId)->getHash());
     }     
 }

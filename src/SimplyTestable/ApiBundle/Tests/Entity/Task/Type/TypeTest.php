@@ -13,16 +13,16 @@ class TypeTest extends BaseSimplyTestableTestCase {
         $type = new Type();
         $type->setName($name);
         $type->setDescription('foo');
-        $type->setClass($this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find(1));
+        $type->setClass($this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find(1));
       
-        $this->getEntityManager()->persist($type);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($type);
+        $this->getManager()->flush();
       
         $typeId = $type->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($name, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->find($typeId)->getName());                 
+        $this->assertEquals($name, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->find($typeId)->getName());
     }    
     
     
@@ -32,15 +32,15 @@ class TypeTest extends BaseSimplyTestableTestCase {
         $type = new Type();
         $type->setName('test-foo');
         $type->setDescription($description);
-        $type->setClass($this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find(1));
+        $type->setClass($this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find(1));
       
-        $this->getEntityManager()->persist($type);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($type);
+        $this->getManager()->flush();
       
         $typeId = $type->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($description, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->find($typeId)->getDescription());                 
+        $this->assertEquals($description, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->find($typeId)->getDescription());
     }     
 }

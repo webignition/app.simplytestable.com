@@ -13,15 +13,15 @@ class MemberTest extends BaseSimplyTestableTestCase {
         $team->setLeader($this->createAndActivateUser('team-leader@example.com', 'password'));
         $team->setName('Foo');
 
-        $this->getEntityManager()->persist($team);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($team);
+        $this->getManager()->flush();
 
         $member = new Member();
         $member->setTeam($team);
         $member->setUser($this->createAndActivateUser('team-member@example.com', 'password'));
 
-        $this->getEntityManager()->persist($member);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($member);
+        $this->getManager()->flush();
     }
 
 }

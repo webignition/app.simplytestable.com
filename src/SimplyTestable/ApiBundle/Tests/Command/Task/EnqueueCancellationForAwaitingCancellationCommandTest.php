@@ -31,11 +31,11 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
         
         foreach ($job->getTasks() as $task) {
             $task->setState($this->getTaskService()->getInProgressState());
-            $this->getTaskService()->getEntityManager()->persist($task);            
+            $this->getTaskService()->getManager()->persist($task);
         }
         
-        $this->getTaskService()->getEntityManager()->flush();        
-        $this->getJobService()->getEntityManager()->refresh($job);        
+        $this->getTaskService()->getManager()->flush();
+        $this->getJobService()->getManager()->refresh($job);
         $this->cancelJob($job);
         
         $this->assertReturnCode(0);

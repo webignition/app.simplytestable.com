@@ -16,14 +16,14 @@ class TaskTest extends BaseSimplyTestableTestCase {
         $task->setState($this->getTaskService()->getQueuedState());
         $task->setType($this->getTaskTypeService()->getByName('HTML Validation'));
 
-        $this->getEntityManager()->persist($task);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($task);
+        $this->getManager()->flush();
       
         $taskId = $task->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($taskUrl, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task')->find($taskId)->getUrl());         
+        $this->assertEquals($taskUrl, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task')->find($taskId)->getUrl());
     }     
     
     public function testUtf8Parameters() {                
@@ -39,12 +39,12 @@ class TaskTest extends BaseSimplyTestableTestCase {
             $key => $value
         )));        
 
-        $this->getEntityManager()->persist($task);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($task);
+        $this->getManager()->flush();
       
         $taskId = $task->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
         
         $this->assertEquals('{"key-\u0278":"value-\u0278"}', $this->getTaskService()->getById($taskId)->getParameters());
     }     

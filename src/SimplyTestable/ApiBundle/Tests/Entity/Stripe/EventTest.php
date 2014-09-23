@@ -13,8 +13,8 @@ class EventTest extends BaseSimplyTestableTestCase {
         $event->setStripeId('evt_1xzXoIFWYFbDCT');
         $event->setType('plan.created');
    
-        $this->getEntityManager()->persist($event);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($event);
+        $this->getManager()->flush();
         
         $this->assertNotNull($event->getId());
     }
@@ -83,8 +83,8 @@ class EventTest extends BaseSimplyTestableTestCase {
             }
           }');
    
-        $this->getEntityManager()->persist($event);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($event);
+        $this->getManager()->flush();
         
         $this->assertNotNull($event->getId());        
     }

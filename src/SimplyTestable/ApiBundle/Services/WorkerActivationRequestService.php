@@ -118,8 +118,8 @@ class WorkerActivationRequestService extends EntityService {
 
         $worker->setState($this->stateService->fetch('worker-active'));
 
-        $this->getEntityManager()->persist($worker);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($worker);
+        $this->getManager()->flush();
 
         return 0;           
   
@@ -170,8 +170,8 @@ class WorkerActivationRequestService extends EntityService {
      * @return WorkerActivationRequest
      */
     public function persistAndFlush(WorkerActivationRequest $workerActivationRequest) {
-        $this->getEntityManager()->persist($workerActivationRequest);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($workerActivationRequest);
+        $this->getManager()->flush();
         return $workerActivationRequest;
     }
     

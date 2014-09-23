@@ -51,7 +51,7 @@ class MigrateNormaliseJsLintOutputCommand extends BaseCommand
         $output->writeln('Finding jslint output ...');        
         // "statusLine":"\/tmp\/d64dc5dca841a048946621b935e540a3:13060:1358494120.1354"
         
-        $jsStaticAnalysisType = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->findOneBy(array(
+        $jsStaticAnalysisType = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->findOneBy(array(
             'name' => 'JS static analysis'
         ));
         
@@ -210,7 +210,7 @@ class MigrateNormaliseJsLintOutputCommand extends BaseCommand
      * 
      * @return \Doctrine\ORM\EntityManager
      */
-    private function getEntityManager() {
+    private function getManager() {
         if (is_null($this->entityManager)) {
             $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
         }
@@ -225,7 +225,7 @@ class MigrateNormaliseJsLintOutputCommand extends BaseCommand
      */
     private function getTaskRepository() {
         if (is_null($this->taskRepository)) {
-            $this->taskRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task');
+            $this->taskRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task');
         }
         
         return $this->taskRepository;
@@ -238,7 +238,7 @@ class MigrateNormaliseJsLintOutputCommand extends BaseCommand
      */
     private function getTaskOutputRepository() {
         if (is_null($this->taskOutputRepository)) {
-            $this->taskOutputRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
+            $this->taskOutputRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
         }
         
         return $this->taskOutputRepository;

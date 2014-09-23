@@ -15,14 +15,14 @@ class UserEmailChangeRequestTest extends BaseSimplyTestableTestCase {
         $userEmailChangeRequest->setNewEmail($newEmail);
         $userEmailChangeRequest->setToken('foo-token');
 
-        $this->getEntityManager()->persist($userEmailChangeRequest);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($userEmailChangeRequest);
+        $this->getManager()->flush();
         
         $userEmailChangeRequestId = $userEmailChangeRequest->getId();
         
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($newEmail, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest')->find($userEmailChangeRequestId)->getNewEmail());
+        $this->assertEquals($newEmail, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest')->find($userEmailChangeRequestId)->getNewEmail());
     }
     
     
@@ -35,14 +35,14 @@ class UserEmailChangeRequestTest extends BaseSimplyTestableTestCase {
         $userEmailChangeRequest->setNewEmail('user1@example.com');
         $userEmailChangeRequest->setToken($token);
 
-        $this->getEntityManager()->persist($userEmailChangeRequest);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($userEmailChangeRequest);
+        $this->getManager()->flush();
         
         $userEmailChangeRequestId = $userEmailChangeRequest->getId();
         
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($token, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest')->find($userEmailChangeRequestId)->getToken());
+        $this->assertEquals($token, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest')->find($userEmailChangeRequestId)->getToken());
     }    
 
 }

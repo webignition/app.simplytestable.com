@@ -127,8 +127,8 @@ class WorkerService extends EntityService {
      * @return Worker
      */
     public function persistAndFlush(Worker $worker) {
-        $this->getEntityManager()->persist($worker);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($worker);
+        $this->getManager()->flush();
         return $worker;
     }  
     

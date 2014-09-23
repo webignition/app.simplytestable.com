@@ -117,8 +117,8 @@ class WebSiteService extends EntityService {
      * @return WebSite
      */
     public function persistAndFlush(WebSite $website) {
-        $this->getEntityManager()->persist($website);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($website);
+        $this->getManager()->flush();
         return $website;
     }     
     

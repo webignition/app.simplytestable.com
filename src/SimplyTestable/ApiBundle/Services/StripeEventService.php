@@ -111,8 +111,8 @@ class StripeEventService extends EntityService {
      * @return StripeEvent
      */
     public function persistAndFlush(StripeEvent $stripeEvent) {
-        $this->getEntityManager()->persist($stripeEvent);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($stripeEvent);
+        $this->getManager()->flush();
         return $stripeEvent;
     }    
 }

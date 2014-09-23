@@ -16,7 +16,7 @@ class ParametersTest extends BaseSimplyTestableTestCase {
         )));
         
         $this->getJobService()->persistAndFlush($job);
-        $this->getJobService()->getEntityManager()->clear();
+        $this->getJobService()->getManager()->clear();
 
         $this->assertEquals('{"foo":"bar"}', $this->getJobService()->getById($jobId)->getParameters());
     } 
@@ -34,7 +34,7 @@ class ParametersTest extends BaseSimplyTestableTestCase {
         )));
         
         $this->getJobService()->persistAndFlush($job);
-        $this->getJobService()->getEntityManager()->clear();
+        $this->getJobService()->getManager()->clear();
 
         $this->assertEquals('{"key-\u0278":"value-\u0278"}', $this->getJobService()->getById($jobId)->getParameters());
     }     

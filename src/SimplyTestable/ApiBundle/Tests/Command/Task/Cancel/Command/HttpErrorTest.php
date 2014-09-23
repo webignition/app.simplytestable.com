@@ -28,8 +28,8 @@ class HttpErrorTest extends BaseTest {
         foreach ($cancellableStates as $state) {
             $task->setWorker($worker);
             $task->setState($state);
-            $this->getTaskService()->getEntityManager()->persist($task);
-            $this->getTaskService()->getEntityManager()->flush();
+            $this->getTaskService()->getManager()->persist($task);
+            $this->getTaskService()->getManager()->flush();
             
             $this->assertReturnCode($this->getStatusCode(), array(
                 'id' => $task->getId()

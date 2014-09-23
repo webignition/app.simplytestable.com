@@ -94,11 +94,11 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     
     private function removeAllOfEntityPrefixedWith($entityName, $prefix) {
-        $allEntities = $this->getEntityManager()->getRepository($entityName)->findAll();
+        $allEntities = $this->getManager()->getRepository($entityName)->findAll();
         foreach ($allEntities as $entity) {
             if (substr($entity->getName(), 0, strlen($prefix)) == $prefix) {
-                $this->getEntityManager()->remove($entity);
-                $this->getEntityManager()->flush();                    
+                $this->getManager()->remove($entity);
+                $this->getManager()->flush();
             }
         }        
     }
@@ -108,10 +108,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $testPlanConstraintNames = array('foo', 'bar');
         
         foreach ($testPlanConstraintNames as $constraintName) {
-            $constraints = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint')->findByName($constraintName);
+            $constraints = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint')->findByName($constraintName);
             if (is_array($constraints) && count($constraints) > 0) {
-                $this->getEntityManager()->remove($constraints[0]);
-                $this->getEntityManager()->flush();
+                $this->getManager()->remove($constraints[0]);
+                $this->getManager()->flush();
             }
         }
     }
@@ -121,7 +121,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      * 
      * @return \Doctrine\ORM\EntityManager
      */
-    protected function getEntityManager() {
+    protected function getManager() {
         return $this->container->get('doctrine')->getManager();
     }
     
@@ -503,8 +503,8 @@ EOD;
             $timePeriod->setEndDateTime(new \DateTime());
             $task->setTimePeriod($timePeriod);
             
-            $this->getTaskService()->getEntityManager()->persist($task);
-            $this->getTaskService()->getEntityManager()->flush($task);
+            $this->getTaskService()->getManager()->persist($task);
+            $this->getTaskService()->getManager()->flush($task);
         }        
     }
     
@@ -950,10 +950,10 @@ EOD;
         
         $workers = $this->getWorkerService()->getEntityRepository()->findAll();
         foreach ($workers as $worker) {
-            $this->getWorkerService()->getEntityManager()->remove($worker);
+            $this->getWorkerService()->getManager()->remove($worker);
         }
         
-        $this->getWorkerService()->getEntityManager()->flush();
+        $this->getWorkerService()->getManager()->flush();
     }
     
     protected function removeAllJobs() {
@@ -966,10 +966,10 @@ EOD;
         
         $jobs = $this->getJobService()->getEntityRepository()->findAll();
         foreach ($jobs as $job) {
-            $this->getJobService()->getEntityManager()->remove($job);
+            $this->getJobService()->getManager()->remove($job);
         }
         
-        $this->getJobService()->getEntityManager()->flush();
+        $this->getJobService()->getManager()->flush();
     }
     
     protected function removeAllUsers() {
@@ -1028,11 +1028,11 @@ EOD;
     
     
     private function removeAllForEntity($entityName) {
-        $entities = $this->getEntityManager()->getRepository($entityName)->findAll();
+        $entities = $this->getManager()->getRepository($entityName)->findAll();
         if (is_array($entities) && count($entities) > 0) {
             foreach ($entities as $entity) {
-                $this->getEntityManager()->remove($entity);
-                $this->getEntityManager()->flush();                
+                $this->getManager()->remove($entity);
+                $this->getManager()->flush();
             }
         }        
     }    
@@ -1074,19 +1074,19 @@ EOD;
     protected function removeAllTasks() {
         $tasks = $this->getTaskService()->getEntityRepository()->findAll();
         foreach ($tasks as $task) {
-            $this->getTaskService()->getEntityManager()->remove($task);
+            $this->getTaskService()->getManager()->remove($task);
         }
         
-        $this->getTaskService()->getEntityManager()->flush();        
+        $this->getTaskService()->getManager()->flush();
     }
     
     protected function removeAllWorkerActivationRequests() {
         $requests = $this->getWorkerActivationRequestService()->getEntityRepository()->findAll();
         foreach ($requests as $request) {
-            $this->getWorkerActivationRequestService()->getEntityManager()->remove($request);
+            $this->getWorkerActivationRequestService()->getManager()->remove($request);
         }
         
-        $this->getWorkerActivationRequestService()->getEntityManager()->flush();        
+        $this->getWorkerActivationRequestService()->getManager()->flush();
     }
     
     
@@ -1121,8 +1121,8 @@ EOD;
         $plan = new \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
         $plan->setName($name); 
         
-        $this->getEntityManager()->persist($plan);
-        $this->getEntityManager()->flush();         
+        $this->getManager()->persist($plan);
+        $this->getManager()->flush();
         
         return $plan;
     }
@@ -1140,8 +1140,8 @@ EOD;
         $constraint->setName('bar');
         $constraint->setPlan($plan);
         
-        $this->getEntityManager()->persist($constraint);
-        $this->getEntityManager()->flush();         
+        $this->getManager()->persist($constraint);
+        $this->getManager()->flush();
         
         return $constraint;
     }

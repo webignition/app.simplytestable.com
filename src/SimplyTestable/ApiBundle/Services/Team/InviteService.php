@@ -44,8 +44,8 @@ class InviteService extends EntityService {
      * @return Invite
      */
     public function persistAndFlush(Invite $invite) {
-        $this->getEntityManager()->persist($invite);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($invite);
+        $this->getManager()->flush();
         return $invite;
     }
 
@@ -136,8 +136,8 @@ class InviteService extends EntityService {
      * @return Invite
      */
     public function remove(Invite $invite) {
-        $this->getEntityManager()->remove($invite);
-        $this->getEntityManager()->flush($invite);
+        $this->getManager()->remove($invite);
+        $this->getManager()->flush($invite);
 
         return $invite;
     }

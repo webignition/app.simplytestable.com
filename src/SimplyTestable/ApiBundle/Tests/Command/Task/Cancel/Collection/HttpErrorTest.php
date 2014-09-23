@@ -17,10 +17,10 @@ class HttpErrorTest extends BaseTest {
         foreach ($job->getTasks() as $task) {
             $task->setState($this->getTaskService()->getQueuedState());
             $task->setWorker($worker);
-            $this->getTaskService()->getEntityManager()->persist($task);              
+            $this->getTaskService()->getManager()->persist($task);
         }
         
-        $this->getTaskService()->getEntityManager()->flush();
+        $this->getTaskService()->getManager()->flush();
         
         $this->assertReturnCode(0, array(
             'ids' => implode(',', $this->getTaskIds($job))

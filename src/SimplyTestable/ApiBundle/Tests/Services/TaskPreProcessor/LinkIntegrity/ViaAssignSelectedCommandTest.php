@@ -10,8 +10,8 @@ class ViaAssignSelectedCommandTest extends PreProcessorTest {
         $task = $this->tasks->get(1);
         
         $task->setState($this->getTaskService()->getQueuedForAssignmentState());
-        $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();
+        $this->getTaskService()->getManager()->persist($task);
+        $this->getTaskService()->getManager()->flush();
         
         $this->createWorker();
         

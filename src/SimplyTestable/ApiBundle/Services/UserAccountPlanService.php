@@ -305,8 +305,8 @@ class UserAccountPlanService extends EntityService {
         ), 1);
         
         if (count($userAccountPlans) === 1) {        
-            $this->getEntityManager()->remove($userAccountPlans[0]);
-            $this->getEntityManager()->flush();
+            $this->getManager()->remove($userAccountPlans[0]);
+            $this->getManager()->flush();
         }
     }    
     
@@ -323,11 +323,11 @@ class UserAccountPlanService extends EntityService {
         foreach ($userAccountPlans as $userAccountPlan) {
             /* @var $userAccountPlan UserAccountPlan */
             $userAccountPlan->setIsActive(false);
-            $this->getEntityManager()->persist($userAccountPlan);
+            $this->getManager()->persist($userAccountPlan);
         }
         
         if (count($userAccountPlans)) {
-            $this->getEntityManager()->flush();
+            $this->getManager()->flush();
         }
     }
     
@@ -353,8 +353,8 @@ class UserAccountPlanService extends EntityService {
      * @return UserAccountPlan
      */
     private function persistAndFlush(UserAccountPlan $userAccountPlan) {
-        $this->getEntityManager()->persist($userAccountPlan);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($userAccountPlan);
+        $this->getManager()->flush();
         return $userAccountPlan;
     }
     

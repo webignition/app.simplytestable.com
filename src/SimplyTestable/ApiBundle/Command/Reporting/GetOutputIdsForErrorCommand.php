@@ -137,7 +137,7 @@ EOF
                 }
             }
             
-            $this->getEntityManager()->detach($taskOutput);
+            $this->getManager()->detach($taskOutput);
         }
         
         $output->writeln('');
@@ -245,7 +245,7 @@ EOF
      * 
      * @return \Doctrine\ORM\EntityManager
      */
-    private function getEntityManager() {
+    private function getManager() {
         if (is_null($this->entityManager)) {
             $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
         }
@@ -260,7 +260,7 @@ EOF
      */
     private function getTaskOutputRepository() {
         if (is_null($this->taskOutputRepository)) {
-            $this->taskOutputRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
+            $this->taskOutputRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
         }
         
         return $this->taskOutputRepository;

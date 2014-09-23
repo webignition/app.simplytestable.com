@@ -109,7 +109,7 @@ class TaskService extends EntityService {
             $task->getTimePeriod()->setEndDateTime(new \DateTime());            
         }        
         
-        $this->getEntityManager()->persist($task);    
+        $this->getManager()->persist($task);
         
         return $task;
     }
@@ -408,7 +408,7 @@ class TaskService extends EntityService {
      * @return Task
      */
     public function persist(Task $task) {
-        $this->getEntityManager()->persist($task);
+        $this->getManager()->persist($task);
         return $task;
     }     
     
@@ -419,8 +419,8 @@ class TaskService extends EntityService {
      * @return Task
      */
     public function persistAndFlush(Task $task) {
-        $this->getEntityManager()->persist($task);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($task);
+        $this->getManager()->flush();
         return $task;
     } 
     
@@ -449,7 +449,7 @@ class TaskService extends EntityService {
      */
     public function reQueue(Task $task) {
         $task->setState($this->getQueuedState());
-        $this->getEntityManager()->persist($task);
+        $this->getManager()->persist($task);
         return $task;
     }
     
@@ -506,14 +506,6 @@ class TaskService extends EntityService {
         $task->clearRemoteId();
 
         return $this->persistAndFlush($task);
-
-//        $this->getEntityManager()->persist($task);
-//
-//        if ($flush) {
-//            $this->getEntityManager()->flush($task);
-//        }
-//
-//        return $task;
     }
     
     

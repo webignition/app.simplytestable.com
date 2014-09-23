@@ -13,8 +13,8 @@ class DefaultTest extends CommandTest {
 
         $task = $job->getTasks()->first();
         $task->setState($this->getTaskService()->getQueuedForAssignmentState());
-        $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();        
+        $this->getTaskService()->getManager()->persist($task);
+        $this->getTaskService()->getManager()->flush();
         
         $this->assertEquals(1, json_decode($this->fetchJobResponse($job)->getContent())->task_count_by_state->{'queued-for-assignment'});
         
@@ -32,8 +32,8 @@ class DefaultTest extends CommandTest {
         
         $task = $job->getTasks()->first();
         $task->setState($this->getTaskService()->getQueuedForAssignmentState());
-        $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();
+        $this->getTaskService()->getManager()->persist($task);
+        $this->getTaskService()->getManager()->flush();
         
         $this->assertReturnCode(1);   
     }
@@ -52,8 +52,8 @@ class DefaultTest extends CommandTest {
 
         $task = $job->getTasks()->first();
         $task->setState($this->getTaskService()->getQueuedForAssignmentState());
-        $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();        
+        $this->getTaskService()->getManager()->persist($task);
+        $this->getTaskService()->getManager()->flush();
         
         $this->assertReturnCode(2);        
     } 

@@ -66,8 +66,8 @@ class UserPostActivationPropertiesService extends EntityService {
         $userPostActivationProperties->setAccountPlan($accountPlan);
         $userPostActivationProperties->setCoupon($coupon);
 
-        $this->getEntityManager()->persist($userPostActivationProperties);
-        $this->getEntityManager()->flush($userPostActivationProperties);
+        $this->getManager()->persist($userPostActivationProperties);
+        $this->getManager()->flush($userPostActivationProperties);
 
         return $userPostActivationProperties;
     }

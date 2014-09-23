@@ -13,13 +13,13 @@ class StateTest extends BaseSimplyTestableTestCase {
         $state = new State();
         $state->setName($name); 
       
-        $this->getEntityManager()->persist($state);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($state);
+        $this->getManager()->flush();
       
         $stateId = $state->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($name, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\State')->find($stateId)->getName());         
+        $this->assertEquals($name, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\State')->find($stateId)->getName());
     }     
 }

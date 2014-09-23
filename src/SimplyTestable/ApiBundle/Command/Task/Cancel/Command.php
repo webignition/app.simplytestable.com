@@ -54,8 +54,8 @@ EOF
         }
         
         $task->setState($this->getTaskService()->getAwaitingCancellationState());
-        $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();
+        $this->getTaskService()->getManager()->persist($task);
+        $this->getTaskService()->getManager()->flush();
         
         if ($this->isHttpStatusCode($cancellationResult)) {
             $output->writeln('Cancellation request failed, HTTP response '.$cancellationResult);

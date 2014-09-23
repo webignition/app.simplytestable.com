@@ -41,8 +41,8 @@ class CancelCommandTest extends BaseTest {
         foreach ($cancellableStates as $state) {
             $task->setWorker($worker);
             $task->setState($state);
-            $this->getTaskService()->getEntityManager()->persist($task);
-            $this->getTaskService()->getEntityManager()->flush();
+            $this->getTaskService()->getManager()->persist($task);
+            $this->getTaskService()->getManager()->flush();
             
             $this->assertReturnCode(0, array(
                 'id' => $task->getId()
@@ -71,8 +71,8 @@ class CancelCommandTest extends BaseTest {
         foreach ($uncancellableStates as $state) {
             $task->setWorker($worker);
             $task->setState($state);
-            $this->getTaskService()->getEntityManager()->persist($task);
-            $this->getTaskService()->getEntityManager()->flush();
+            $this->getTaskService()->getManager()->persist($task);
+            $this->getTaskService()->getManager()->flush();
             
             $this->assertReturnCode(-2, array(
                 'id' => $task->getId()
@@ -94,8 +94,8 @@ class CancelCommandTest extends BaseTest {
         $task = $job->getTasks()->first();
         $task->setState($this->getTaskService()->getQueuedState());
         $task->setWorker($worker);
-        $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();
+        $this->getTaskService()->getManager()->persist($task);
+        $this->getTaskService()->getManager()->flush();
         
         $this->assertReturnCode(503, array(
             'id' => $task->getId()

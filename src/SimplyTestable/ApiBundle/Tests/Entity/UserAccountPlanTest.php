@@ -19,14 +19,14 @@ class UserAccountPlanTest extends BaseSimplyTestableTestCase {
         $userAccountPlan->setPlan($plan);
         $userAccountPlan->setStripeCustomer($stripeCustomer);
     
-        $this->getEntityManager()->persist($userAccountPlan);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($userAccountPlan);
+        $this->getManager()->flush();
         
         $userAccountPlanId = $userAccountPlan->getId();
         
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($stripeCustomer, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserAccountPlan')->find($userAccountPlanId)->getStripeCustomer());
+        $this->assertEquals($stripeCustomer, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserAccountPlan')->find($userAccountPlanId)->getStripeCustomer());
     }
     
 
@@ -39,8 +39,8 @@ class UserAccountPlanTest extends BaseSimplyTestableTestCase {
         $userAccountPlan->setUser($user);
         $userAccountPlan->setPlan($plan);
     
-        $this->getEntityManager()->persist($userAccountPlan);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($userAccountPlan);
+        $this->getManager()->flush();
         
         $this->assertNotNull($userAccountPlan->getId());
     }
@@ -59,9 +59,9 @@ class UserAccountPlanTest extends BaseSimplyTestableTestCase {
         $userAccountPlan2->setUser($user2);
         $userAccountPlan2->setPlan($plan);        
     
-        $this->getEntityManager()->persist($userAccountPlan1);
-        $this->getEntityManager()->persist($userAccountPlan2);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($userAccountPlan1);
+        $this->getManager()->persist($userAccountPlan2);
+        $this->getManager()->flush();
         
         $this->assertNotNull($userAccountPlan1->getId());
         $this->assertNotNull($userAccountPlan2->getId());
@@ -81,10 +81,10 @@ class UserAccountPlanTest extends BaseSimplyTestableTestCase {
         
         $this->assertEquals($defaultStartTrialPeriod, $userAccountPlan->getStartTrialPeriod());
     
-        $this->getEntityManager()->persist($userAccountPlan);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($userAccountPlan);
+        $this->getManager()->flush();
         
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
         $this->assertEquals($defaultStartTrialPeriod, $this->getUserAccountPlanService()->getForUser($user)->getStartTrialPeriod());
     }
 

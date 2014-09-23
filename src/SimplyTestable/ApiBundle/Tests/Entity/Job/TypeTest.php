@@ -14,14 +14,14 @@ class TypeTest extends BaseSimplyTestableTestCase {
         $type->setDescription('foo');
         $type->setName($name);
       
-        $this->getEntityManager()->persist($type);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($type);
+        $this->getManager()->flush();
       
         $typeId = $type->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($name, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Type')->find($typeId)->getName());         
+        $this->assertEquals($name, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Type')->find($typeId)->getName());
     }   
     
     public function testUtf8Description() {
@@ -31,13 +31,13 @@ class TypeTest extends BaseSimplyTestableTestCase {
         $type->setDescription($description);
         $type->setName('test-foo');
       
-        $this->getEntityManager()->persist($type);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($type);
+        $this->getManager()->flush();
       
         $typeId = $type->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($description, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Type')->find($typeId)->getDescription());         
+        $this->assertEquals($description, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Type')->find($typeId)->getDescription());
     }     
 }

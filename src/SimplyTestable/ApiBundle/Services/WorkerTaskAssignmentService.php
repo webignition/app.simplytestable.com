@@ -105,10 +105,10 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                         $task->getRemoteId()
                     );
 
-                    $this->taskService->getEntityManager()->persist($task);
+                    $this->taskService->getManager()->persist($task);
                 }
 
-                $this->taskService->getEntityManager()->flush();
+                $this->taskService->getManager()->flush();
 
                 return self::ASSIGN_COLLECTION_OK_STATUS_CODE;
             }     

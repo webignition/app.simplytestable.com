@@ -36,8 +36,8 @@ class RejectionService {
         $rejectionReason->setJob($job);
         $rejectionReason->setReason($reason);
 
-        $this->jobService->getEntityManager()->persist($rejectionReason);
-        $this->jobService->getEntityManager()->flush();        
+        $this->jobService->getManager()->persist($rejectionReason);
+        $this->jobService->getManager()->flush();
     }
   
 }

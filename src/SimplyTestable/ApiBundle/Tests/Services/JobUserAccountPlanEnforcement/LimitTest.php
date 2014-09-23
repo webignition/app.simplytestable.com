@@ -73,8 +73,8 @@ abstract class LimitTest extends ServiceTest {
         $fullSiteJobsPerSiteConstraint->setLimit(self::FULL_SITE_JOBS_PER_SITE_LIMIT);
         $singleUrlJobsPerUrlConstraint->setLimit(self::SINGLE_URL_JOBS_PER_URL_LIMIT);
         
-        $this->getJobService()->getEntityManager()->persist($fullSiteJobsPerSiteConstraint);
-        $this->getJobService()->getEntityManager()->persist($singleUrlJobsPerUrlConstraint);        
+        $this->getJobService()->getManager()->persist($fullSiteJobsPerSiteConstraint);
+        $this->getJobService()->getManager()->persist($singleUrlJobsPerUrlConstraint);
     }
     
     

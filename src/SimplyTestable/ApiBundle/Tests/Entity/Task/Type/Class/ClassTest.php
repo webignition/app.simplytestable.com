@@ -14,14 +14,14 @@ class ClassTest extends BaseSimplyTestableTestCase {
         $taskTypeClass->setName($name);
         $taskTypeClass->setDescription('foo');
       
-        $this->getEntityManager()->persist($taskTypeClass);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($taskTypeClass);
+        $this->getManager()->flush();
       
         $taskTypeClassId = $taskTypeClass->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($name, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find($taskTypeClassId)->getName());
+        $this->assertEquals($name, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find($taskTypeClassId)->getName());
     }    
     
     
@@ -32,13 +32,13 @@ class ClassTest extends BaseSimplyTestableTestCase {
         $taskTypeClass->setName('test-foo');
         $taskTypeClass->setDescription($description);
       
-        $this->getEntityManager()->persist($taskTypeClass);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($taskTypeClass);
+        $this->getManager()->flush();
       
         $taskTypeClassId = $taskTypeClass->getId();
    
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
   
-        $this->assertEquals($description, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find($taskTypeClassId)->getDescription());
+        $this->assertEquals($description, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find($taskTypeClassId)->getDescription());
     }     
 }

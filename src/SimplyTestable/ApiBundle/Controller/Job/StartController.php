@@ -271,7 +271,7 @@ class StartController extends ApiController
      * @return array
      */
     private function getAllSelectableTaskTypes() {
-        return $this->getDoctrine()->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->findBy(array(
+        return $this->getDoctrine()->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->findBy(array(
             'selectable' => true
         ));
     }

@@ -108,8 +108,8 @@ class Service extends EntityService {
      * @return Team
      */
     public function persistAndFlush(Team $team) {
-        $this->getEntityManager()->persist($team);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($team);
+        $this->getManager()->flush();
         return $team;
     } 
 

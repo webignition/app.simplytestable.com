@@ -16,14 +16,14 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase {
         $rejectionReason->setJob($job);
         $rejectionReason->setReason($reason);
       
-        $this->getEntityManager()->persist($rejectionReason);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($rejectionReason);
+        $this->getManager()->flush();
         
         $rejectionReasonId = $rejectionReason->getId();
         
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
         
-        $this->assertEquals($reason, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\RejectionReason')->find($rejectionReasonId)->getReason());         
+        $this->assertEquals($reason, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\RejectionReason')->find($rejectionReasonId)->getReason());
     }     
 
     public function testPersistWithNoConstraint() {
@@ -34,8 +34,8 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase {
         $rejectionReason->setJob($job);
         $rejectionReason->setReason('insufficient-credit');
       
-        $this->getEntityManager()->persist($rejectionReason);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($rejectionReason);
+        $this->getManager()->flush();
         
         $this->assertNotNull($rejectionReason->getId());
     }
@@ -50,8 +50,8 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase {
         $rejectionReason->setReason('insufficient-credit');
         $rejectionReason->setConstraint($this->createAccountPlanConstraint());
        
-        $this->getEntityManager()->persist($rejectionReason);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($rejectionReason);
+        $this->getManager()->flush();
         
         $this->assertNotNull($rejectionReason->getId());
     }    

@@ -97,8 +97,8 @@ class MigrateCanonicaliseTaskOutputCommand extends BaseCommand
 
                             if (!$this->isDryRun($input)) {
                                 $task->setOutput($sourceOutput);
-                                $this->getEntityManager()->persist($task);
-                                $this->getEntityManager()->flush($task);                        
+                                $this->getManager()->persist($task);
+                                $this->getManager()->flush($task);
                             }                             
                         }
                     }                  
@@ -151,7 +151,7 @@ class MigrateCanonicaliseTaskOutputCommand extends BaseCommand
      * 
      * @return \Doctrine\ORM\EntityManager
      */
-    private function getEntityManager() {
+    private function getManager() {
         if (is_null($this->entityManager)) {
             $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
         }
@@ -167,7 +167,7 @@ class MigrateCanonicaliseTaskOutputCommand extends BaseCommand
      */
     private function getTaskRepository() {
         if (is_null($this->taskRepository)) {
-            $this->taskRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task');
+            $this->taskRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task');
         }
         
         return $this->taskRepository;
@@ -180,7 +180,7 @@ class MigrateCanonicaliseTaskOutputCommand extends BaseCommand
      */
     private function getTaskOutputRepository() {
         if (is_null($this->taskOutputRepository)) {
-            $this->taskOutputRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
+            $this->taskOutputRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
         }
         
         return $this->taskOutputRepository;

@@ -57,8 +57,8 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase {
             $user = $this->getUserService()->findUserByEmail($userEmailAddress);
             
             $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);            
-            $this->getEntityManager()->remove($userAccountPlan);
-            $this->getEntityManager()->flush();
+            $this->getManager()->remove($userAccountPlan);
+            $this->getManager()->flush();
             
             $users[] = $user;
         }
@@ -95,8 +95,8 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase {
             $user = $this->getUserService()->findUserByEmail($userEmailAddress);
             
             $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);            
-            $this->getEntityManager()->remove($userAccountPlan);
-            $this->getEntityManager()->flush();
+            $this->getManager()->remove($userAccountPlan);
+            $this->getManager()->flush();
             
             $users[] = $user;
         }

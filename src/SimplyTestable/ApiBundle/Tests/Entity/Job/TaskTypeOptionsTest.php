@@ -20,13 +20,13 @@ class TaskTypeOptionsTest extends BaseSimplyTestableTestCase {
         $options->setTaskType($taskType);
         $options->setOptions($optionsValue);
       
-        $this->getEntityManager()->persist($options);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($options);
+        $this->getManager()->flush();
         
         $optionsId = $options->getId();
         
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
         
-        $this->assertEquals($optionsValue, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions')->find($optionsId)->getOptions());         
+        $this->assertEquals($optionsValue, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions')->find($optionsId)->getOptions());
     }   
 }

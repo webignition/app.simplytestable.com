@@ -44,7 +44,7 @@ abstract class EntityService {
      *
      * @return \Doctrine\ORM\EntityManager 
      */
-    public function getEntityManager() {
+    public function getManager() {
         return $this->entityManager;
     }
     

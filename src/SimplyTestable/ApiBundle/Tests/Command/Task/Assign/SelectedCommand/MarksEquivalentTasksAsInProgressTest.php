@@ -20,8 +20,8 @@ class MarksEquivalentTasksAsInProgressTest extends CommandTest {
         
         $task = $this->job1->getTasks()->first();
         $task->setState($this->getTaskService()->getQueuedForAssignmentState());
-        $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();        
+        $this->getTaskService()->getManager()->persist($task);
+        $this->getTaskService()->getManager()->flush();
         
         $this->assignReturnCode = $this->execute();
     }
@@ -57,8 +57,8 @@ class MarksEquivalentTasksAsInProgressTest extends CommandTest {
         $fullSiteJobsPerSiteConstraint->setLimit(2);
         $singleUrlJobsPerUrlConstraint->setLimit(2);
         
-        $this->getJobService()->getEntityManager()->persist($fullSiteJobsPerSiteConstraint);
-        $this->getJobService()->getEntityManager()->persist($singleUrlJobsPerUrlConstraint);          
+        $this->getJobService()->getManager()->persist($fullSiteJobsPerSiteConstraint);
+        $this->getJobService()->getManager()->persist($singleUrlJobsPerUrlConstraint);
     }    
     
     

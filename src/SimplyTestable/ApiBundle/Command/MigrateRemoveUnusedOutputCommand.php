@@ -72,7 +72,7 @@ class MigrateRemoveUnusedOutputCommand extends BaseCommand
             $processedTaskOutputCount++;
             $output->writeln('Removing output ['.$unusedTaskOutputId.'] ('.(count($unusedTaskOutputIds) - $processedTaskOutputCount).' remaining)');
             
-            $this->getEntityManager()->remove($taskOutputToRemove);
+            $this->getManager()->remove($taskOutputToRemove);
             $persistCount++; 
             
             if ($persistCount == $flushThreshold) {
@@ -80,7 +80,7 @@ class MigrateRemoveUnusedOutputCommand extends BaseCommand
                 $persistCount = 0;
                 
                 if (!$this->isDryRun($input)) {
-                    $this->getEntityManager()->flush();                    
+                    $this->getManager()->flush();
                 } 
             }
         }
@@ -88,7 +88,7 @@ class MigrateRemoveUnusedOutputCommand extends BaseCommand
             if ($persistCount > 0) {
                 $output->writeln('***** Flushing *****');                
                 if (!$this->isDryRun($input)) {
-                    $this->getEntityManager()->flush();                    
+                    $this->getManager()->flush();
                 } 
             }        
         
@@ -151,7 +151,7 @@ class MigrateRemoveUnusedOutputCommand extends BaseCommand
      * 
      * @return \Doctrine\ORM\EntityManager
      */
-    private function getEntityManager() {
+    private function getManager() {
         if (is_null($this->entityManager)) {
             $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
         }
@@ -167,7 +167,7 @@ class MigrateRemoveUnusedOutputCommand extends BaseCommand
      */
     private function getTaskRepository() {
         if (is_null($this->taskRepository)) {
-            $this->taskRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task');
+            $this->taskRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task');
         }
         
         return $this->taskRepository;
@@ -180,7 +180,7 @@ class MigrateRemoveUnusedOutputCommand extends BaseCommand
      */
     private function getTaskOutputRepository() {
         if (is_null($this->taskOutputRepository)) {
-            $this->taskOutputRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
+            $this->taskOutputRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
         }
         
         return $this->taskOutputRepository;

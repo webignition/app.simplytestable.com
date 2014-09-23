@@ -75,14 +75,14 @@ EOF
             
             if ($urlCount <= $urlLimit) {
                 $output->writeln('ok');
-                $this->getJobService()->getEntityManager()->detach($job);
+                $this->getJobService()->getManager()->detach($job);
                 continue;
             }
             
             if (!$this->hasPlanUrlLimitReachedAmmendment($job)) {
                 $this->getJobUserAccountPlanEnforcementService()->setUser($publicUser);
                 $this->getJobService()->addAmmendment($job, 'plan-url-limit-reached:discovered-url-count-' . $urlCount, $this->getJobUserAccountPlanEnforcementService()->getJobUrlLimitConstraint());                
-                $this->getJobService()->getEntityManager()->flush();
+                $this->getJobService()->getManager()->flush();
             }
 
             $taskCount = $this->getTaskService()->getEntityRepository()->getCountByJob($job);
@@ -100,12 +100,12 @@ EOF
                 foreach ($taskIdGroup as $taskId) {
                     /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */ 
                     $task = $this->getTaskService()->getById($taskId);
-                    $this->getTaskService()->getEntityManager()->remove($task);
-                    $this->getTaskService()->getEntityManager()->detach($task);                    
+                    $this->getTaskService()->getManager()->remove($task);
+                    $this->getTaskService()->getManager()->detach($task);
                 }
                 
                 if (!$this->isDryRun()) {                        
-                    $this->getTaskService()->getEntityManager()->flush();
+                    $this->getTaskService()->getManager()->flush();
                 }                  
                 
                 $ratioCompleted = ($taskIdGroupIndex + 1) / count($taskRemovalGroups);                

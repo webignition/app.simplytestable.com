@@ -16,16 +16,16 @@ class InviteTest extends BaseSimplyTestableTestCase {
         $team->setLeader($this->createAndActivateUser('team-leader@example.com', 'password'));
         $team->setName('Foo');
 
-        $this->getEntityManager()->persist($team);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($team);
+        $this->getManager()->flush();
 
         $invite = new Invite();
         $invite->setTeam($team);
         $invite->setUser($this->createAndActivateUser('team-member@example.com', 'password'));
         $invite->setToken(self::TOKEN);
 
-        $this->getEntityManager()->persist($invite);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($invite);
+        $this->getManager()->flush();
 
         $inviteId = $invite->getId();
 

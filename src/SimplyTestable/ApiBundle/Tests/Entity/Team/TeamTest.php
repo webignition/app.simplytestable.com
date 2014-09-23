@@ -12,8 +12,8 @@ class TeamTest extends BaseSimplyTestableTestCase {
         $team->setLeader($this->createAndActivateUser('user@example.com', 'password'));
         $team->setName('Foo');
 
-        $this->getEntityManager()->persist($team);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($team);
+        $this->getManager()->flush();
     }
 
 }

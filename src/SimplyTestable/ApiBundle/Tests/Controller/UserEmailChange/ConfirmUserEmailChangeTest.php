@@ -107,7 +107,7 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase {
         $response = $this->getUserEmailChangeController('confirmAction')->confirmAction($user->getEmail(), $emailChangeRequest->getToken());
         $this->assertEquals(200, $response->getStatusCode());
         
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
         
         $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
         $this->assertNull($this->getUserService()->findUserByEmail($email));      

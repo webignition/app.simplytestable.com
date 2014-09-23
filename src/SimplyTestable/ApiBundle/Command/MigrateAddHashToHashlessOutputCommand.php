@@ -62,11 +62,11 @@ class MigrateAddHashToHashlessOutputCommand extends BaseCommand
             $taskOutput->generateHash();
             
             if (!$this->isDryRun($input)) {                
-                $this->getEntityManager()->persist($taskOutput);
-                $this->getEntityManager()->flush();
+                $this->getManager()->persist($taskOutput);
+                $this->getManager()->flush();
             }           
             
-            $this->getEntityManager()->detach($taskOutput);            
+            $this->getManager()->detach($taskOutput);
         }
         
         return true;
@@ -103,7 +103,7 @@ class MigrateAddHashToHashlessOutputCommand extends BaseCommand
      * 
      * @return \Doctrine\ORM\EntityManager
      */
-    private function getEntityManager() {
+    private function getManager() {
         if (is_null($this->entityManager)) {
             $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
         }
@@ -118,7 +118,7 @@ class MigrateAddHashToHashlessOutputCommand extends BaseCommand
      */
     private function getTaskOutputRepository() {
         if (is_null($this->taskOutputRepository)) {
-            $this->taskOutputRepository = $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
+            $this->taskOutputRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
         }
         
         return $this->taskOutputRepository;

@@ -57,8 +57,8 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
             $task->setParameters(json_encode($parameters));
             
             $task->setOutput($output);
-            $this->getTaskService()->getEntityManager()->persist($task);
-            $this->getTaskService()->getEntityManager()->flush();
+            $this->getTaskService()->getManager()->persist($task);
+            $this->getTaskService()->getManager()->flush();
         }
         
         return false;        

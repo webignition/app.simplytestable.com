@@ -74,8 +74,8 @@ class MemberService extends EntityService {
 
         $member = $this->getEntityRepository()->getMemberByUser($user);
 
-        $this->getEntityManager()->remove($member);
-        $this->getEntityManager()->flush($member);
+        $this->getManager()->remove($member);
+        $this->getManager()->flush($member);
 
         $member->clear();
 
@@ -88,8 +88,8 @@ class MemberService extends EntityService {
      * @return Member
      */
     public function persistAndFlush(Member $member) {
-        $this->getEntityManager()->persist($member);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($member);
+        $this->getManager()->flush();
         return $member;
     }
 

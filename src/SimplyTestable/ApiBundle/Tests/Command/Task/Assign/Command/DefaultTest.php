@@ -24,8 +24,8 @@ class DefaultTest extends CommandTest {
         $task = $job->getTasks()->first();
         
         $task->setState($this->getTaskService()->getCompletedState());
-        $this->getTaskService()->getEntityManager()->persist($task);
-        $this->getTaskService()->getEntityManager()->flush();
+        $this->getTaskService()->getManager()->persist($task);
+        $this->getTaskService()->getManager()->flush();
         
         $this->assertReturnCode(1, array(
             'id' => $task->getId()

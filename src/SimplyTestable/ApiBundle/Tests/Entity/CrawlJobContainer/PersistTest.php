@@ -17,14 +17,14 @@ class PersistTest extends BaseSimplyTestableTestCase {
         $crawlJob->setUser($parentJob->getUser());
         $crawlJob->setWebsite($parentJob->getWebsite());
         
-        $this->getEntityManager()->persist($crawlJob);
+        $this->getManager()->persist($crawlJob);
         
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setParentJob($parentJob);
         $crawlJobContainer->setCrawlJob($crawlJob);
      
-        $this->getEntityManager()->persist($crawlJobContainer);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($crawlJobContainer);
+        $this->getManager()->flush();
         
         $this->assertNotNull($crawlJobContainer->getId());               
     }

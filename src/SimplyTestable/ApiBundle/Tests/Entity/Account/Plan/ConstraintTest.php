@@ -14,8 +14,8 @@ class ConstraintTest extends BaseSimplyTestableTestCase {
         $constraint->setName('foo');
         $constraint->setPlan($plan);
         
-        $this->getEntityManager()->persist($constraint);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($constraint);
+        $this->getManager()->flush();
         
         $this->assertNotNull($constraint->getId());
     }
@@ -29,13 +29,13 @@ class ConstraintTest extends BaseSimplyTestableTestCase {
         $constraint->setName($name);
         $constraint->setPlan($plan);
         
-        $this->getEntityManager()->persist($constraint);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($constraint);
+        $this->getManager()->flush();
         
         $constraintId = $constraint->getId();
         
-        $this->getEntityManager()->clear();        
-        $this->assertEquals($name, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint')->find($constraintId)->getName());
+        $this->getManager()->clear();
+        $this->assertEquals($name, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint')->find($constraintId)->getName());
     }    
 
 }

@@ -15,14 +15,14 @@ class AmmendmentTest extends BaseSimplyTestableTestCase {
         $ammendment->setJob($this->getJobService()->getById($this->createJobAndGetId($canonicalUrl)));
         $ammendment->setReason($reason);
       
-        $this->getEntityManager()->persist($ammendment);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($ammendment);
+        $this->getManager()->flush();
         
         $ammendmentId = $ammendment->getId();
         
-        $this->getEntityManager()->clear();
+        $this->getManager()->clear();
         
-        $this->assertEquals($reason, $this->getEntityManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Ammendment')->find($ammendmentId)->getReason());         
+        $this->assertEquals($reason, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Ammendment')->find($ammendmentId)->getReason());
     }    
 
     public function testPersistWithNoConstraint() {
@@ -32,8 +32,8 @@ class AmmendmentTest extends BaseSimplyTestableTestCase {
         $ammendment->setJob($this->getJobService()->getById($this->createJobAndGetId($canonicalUrl)));
         $ammendment->setReason('url-count-limited');
       
-        $this->getEntityManager()->persist($ammendment);        
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($ammendment);
+        $this->getManager()->flush();
         
         $this->assertNotNull($ammendment->getId());               
     }
@@ -49,8 +49,8 @@ class AmmendmentTest extends BaseSimplyTestableTestCase {
         $ammendment->setReason('url-count-limited');
         $ammendment->setConstraint($this->createAccountPlanConstraint());        
        
-        $this->getEntityManager()->persist($ammendment);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($ammendment);
+        $this->getManager()->flush();
         
         $this->assertNotNull($ammendment->getId());        
     }
@@ -64,8 +64,8 @@ class AmmendmentTest extends BaseSimplyTestableTestCase {
         $ammendment->setJob($this->getJobService()->getById($job_id));
         $ammendment->setReason('url-count-limited');
       
-        $this->getEntityManager()->persist($ammendment);        
-        $this->getEntityManager()->flush();   
+        $this->getManager()->persist($ammendment);
+        $this->getManager()->flush();
         
         $this->assertEquals(1, $this->getJobService()->getById($job_id)->getAmmendments()->count());
     }
@@ -81,11 +81,11 @@ class AmmendmentTest extends BaseSimplyTestableTestCase {
             $ammendment = new Ammendment();
             $ammendment->setJob($this->getJobService()->getById($job_id));
             $ammendment->setReason('url-count-limited-' . $ammendmentIndex);            
-            $this->getEntityManager()->persist($ammendment); 
+            $this->getManager()->persist($ammendment);
             $ammendments[] = $ammendment;
         }      
                
-        $this->getEntityManager()->flush();   
+        $this->getManager()->flush();
         
         $this->assertEquals(count($ammendments), $this->getJobService()->getById($job_id)->getAmmendments()->count());
     }    

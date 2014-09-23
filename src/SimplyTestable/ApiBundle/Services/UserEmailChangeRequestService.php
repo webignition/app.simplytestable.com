@@ -117,8 +117,8 @@ class UserEmailChangeRequestService extends EntityService {
      */
     public function removeForUser(User $user) {
         if ($this->hasForUser($user)) {
-            $this->getEntityManager()->remove($this->findByUser($user));
-            $this->getEntityManager()->flush();
+            $this->getManager()->remove($this->findByUser($user));
+            $this->getManager()->flush();
         }
 
         return true;
@@ -222,8 +222,8 @@ class UserEmailChangeRequestService extends EntityService {
      * @return WebSite
      */
     private function persistAndFlush(UserEmailChangeRequest $emailChangeRequest) {
-        $this->getEntityManager()->persist($emailChangeRequest);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($emailChangeRequest);
+        $this->getManager()->flush();
         return $emailChangeRequest;
     }      
     

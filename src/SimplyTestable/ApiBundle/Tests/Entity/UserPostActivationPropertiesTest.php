@@ -15,8 +15,8 @@ class UserPostActivationPropertiesTest extends BaseSimplyTestableTestCase {
         $userPostActivationProperties->setUser($user);
         $userPostActivationProperties->setAccountPlan($plan);
 
-        $this->getEntityManager()->persist($userPostActivationProperties);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($userPostActivationProperties);
+        $this->getManager()->flush();
 
         $this->assertNotNull($userPostActivationProperties->getId());
     }
@@ -31,8 +31,8 @@ class UserPostActivationPropertiesTest extends BaseSimplyTestableTestCase {
         $userPostActivationProperties->setAccountPlan($plan);
         $userPostActivationProperties->setCoupon('FOO');
 
-        $this->getEntityManager()->persist($userPostActivationProperties);
-        $this->getEntityManager()->flush();
+        $this->getManager()->persist($userPostActivationProperties);
+        $this->getManager()->flush();
 
         $this->assertNotNull($userPostActivationProperties->getId());
     }

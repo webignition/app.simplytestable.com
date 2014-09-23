@@ -113,8 +113,8 @@ class UserCreationController extends AbstractUserController
                 $postActivationProperties->getCoupon()
             );
 
-            $this->getUserPostActivationPropertiesService()->getEntityManager()->remove($postActivationProperties);
-            $this->getUserPostActivationPropertiesService()->getEntityManager()->flush($postActivationProperties);
+            $this->getUserPostActivationPropertiesService()->getManager()->remove($postActivationProperties);
+            $this->getUserPostActivationPropertiesService()->getManager()->flush($postActivationProperties);
         }
         
         return new \Symfony\Component\HttpFoundation\Response();

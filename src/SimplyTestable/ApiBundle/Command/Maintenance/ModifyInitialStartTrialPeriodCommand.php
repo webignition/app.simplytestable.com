@@ -84,8 +84,8 @@ EOF
             }
             
             if (!$this->isDryRun()) {
-                $this->getUserAccountPlanService()->getEntityManager()->persist($userAccountPlan);
-                $this->getUserAccountPlanService()->getEntityManager()->flush($userAccountPlan);
+                $this->getUserAccountPlanService()->getManager()->persist($userAccountPlan);
+                $this->getUserAccountPlanService()->getManager()->flush($userAccountPlan);
             }
         }
         
