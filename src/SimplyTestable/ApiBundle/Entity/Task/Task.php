@@ -33,7 +33,7 @@ class Task
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\Job\Job 
+     * @var \SimplyTestable\ApiBundle\Entity\Job\Job
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="tasks")
      * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)     
@@ -52,7 +52,7 @@ class Task
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\State
+     * @var \SimplyTestable\ApiBundle\Entity\State
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
@@ -65,7 +65,7 @@ class Task
     
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\Worker 
+     * @var \SimplyTestable\ApiBundle\Entity\Worker
      * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Worker", inversedBy="tasks")
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedWorker")
@@ -185,7 +185,7 @@ class Task
     /**
      * Set job
      *
-     * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
      * @return Task
      */
     public function setJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
@@ -207,7 +207,7 @@ class Task
     /**
      * Set state
      *
-     * @param SimplyTestable\ApiBundle\Entity\State $state
+     * @param \SimplyTestable\ApiBundle\Entity\State $state
      * @return Task
      */
     public function setState(\SimplyTestable\ApiBundle\Entity\State $state)
@@ -231,7 +231,7 @@ class Task
     /**
      * Get state
      *
-     * @return SimplyTestable\ApiBundle\Entity\State 
+     * @return \SimplyTestable\ApiBundle\Entity\State
      */
     public function getState()
     {
@@ -241,7 +241,7 @@ class Task
     /**
      * Set worker
      *
-     * @param SimplyTestable\ApiBundle\Entity\Worker $worker
+     * @param \SimplyTestable\ApiBundle\Entity\Worker $worker
      * @return Task
      */
     public function setWorker(\SimplyTestable\ApiBundle\Entity\Worker $worker = null)
@@ -272,7 +272,7 @@ class Task
     /**
      * Get worker
      *
-     * @return SimplyTestable\ApiBundle\Entity\Worker 
+     * @return \SimplyTestable\ApiBundle\Entity\Worker
      */
     public function getWorker()
     {
@@ -282,7 +282,7 @@ class Task
     /**
      * Set type
      *
-     * @param SimplyTestable\ApiBundle\Entity\Task\Type\Type $type
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $type
      * @return Task
      */
     public function setType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $type)
@@ -294,7 +294,7 @@ class Task
     /**
      * Get type
      *
-     * @return SimplyTestable\ApiBundle\Entity\Task\Type\Type 
+     * @return \SimplyTestable\ApiBundle\Entity\Task\Type\Type
      */
     public function getType()
     {
@@ -327,7 +327,7 @@ class Task
     /**
      * Set timePeriod
      *
-     * @param SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod
+     * @param \SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod
      * @return Task
      */
     public function setTimePeriod(\SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod = null)
@@ -340,7 +340,7 @@ class Task
     /**
      * Get timePeriod
      *
-     * @return SimplyTestable\ApiBundle\Entity\TimePeriod 
+     * @return \SimplyTestable\ApiBundle\Entity\TimePeriod
      */
     public function getTimePeriod()
     {
@@ -364,7 +364,7 @@ class Task
     /**
      * Get output
      *
-     * @return SimplyTestable\ApiBundle\Entity\Task\Output 
+     * @return \SimplyTestable\ApiBundle\Entity\Task\Output
      */
     public function getOutput()
     {

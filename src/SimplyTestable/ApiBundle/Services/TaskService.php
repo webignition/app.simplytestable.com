@@ -144,7 +144,7 @@ class TaskService extends EntityService {
     
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State
+     * @return \SimplyTestable\ApiBundle\Entity\State
      */
     public function getQueuedState() {
         return $this->stateService->fetch(self::QUEUED_STATE);
@@ -152,7 +152,7 @@ class TaskService extends EntityService {
     
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State
+     * @return \SimplyTestable\ApiBundle\Entity\State
      */
     public function getInProgressState() {
         return $this->stateService->fetch(self::IN_PROGRESS_STATE);
@@ -170,7 +170,7 @@ class TaskService extends EntityService {
     
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State
+     * @return \SimplyTestable\ApiBundle\Entity\State
      */
     public function getCancelledState() {
         return $this->stateService->fetch(self::CANCELLED_STATE);
@@ -179,7 +179,7 @@ class TaskService extends EntityService {
     
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State
+     * @return \SimplyTestable\ApiBundle\Entity\State
      */
     public function getQueuedForAssignmentState() {
         return $this->stateService->fetch(self::QUEUED_FOR_ASSIGNMENT_STATE);
@@ -188,7 +188,7 @@ class TaskService extends EntityService {
 
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State
+     * @return \SimplyTestable\ApiBundle\Entity\State
      */
     public function getAwaitingCancellationState() {
         return $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
@@ -197,7 +197,7 @@ class TaskService extends EntityService {
     
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     * @return \SimplyTestable\ApiBundle\Entity\State 
      */
     public function getFailedNoRetryAvailableState() {
         return $this->stateService->fetch(self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE);
@@ -206,7 +206,7 @@ class TaskService extends EntityService {
     
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     * @return \SimplyTestable\ApiBundle\Entity\State 
      */
     public function getFailedRetryAvailableState() {
         return $this->stateService->fetch(self::TASK_FAILED_RETRY_AVAILABLE_STATE);
@@ -215,7 +215,7 @@ class TaskService extends EntityService {
     
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     * @return \SimplyTestable\ApiBundle\Entity\State 
      */
     public function getFailedRetryLimitReachedState() {
         return $this->stateService->fetch(self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE);
@@ -224,7 +224,7 @@ class TaskService extends EntityService {
 
     /**
      *
-     * @return \SimlpyTestable\ApiBundle\Entity\State 
+     * @return \SimplyTestable\ApiBundle\Entity\State 
      */
     public function getSkippedState() {
         return $this->stateService->fetch(self::TASK_SKIPPED_STATE);
@@ -471,7 +471,7 @@ class TaskService extends EntityService {
      * @param Task $task
      * @param \DateTime $endDateTime
      * @param \SimplyTestable\ApiBundle\Entity\Task\Output $output
-     * @param \SimlpyTestable\ApiBundle\Entity\State $state
+     * @param \SimplyTestable\ApiBundle\Entity\State $state
      * @return \SimplyTestable\ApiBundle\Entity\Task\Task 
      */
     public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state, $flush = true) {
