@@ -41,7 +41,6 @@ class FullSiteJobTest extends CommandTest {
   
     public function testResqueQueueContainsJobPreparationJob() {            
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
             'job-prepare',
             array(
                 'id' => $this->job->getId()

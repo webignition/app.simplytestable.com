@@ -49,7 +49,6 @@ class SingleUrlJobTest extends CommandTest {
     
     public function testResqueQueueContainsTaskAssignmentSelectionJob() {            
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
             'task-assignment-selection'
         ));         
     }
