@@ -53,7 +53,7 @@ class WorkerController extends ApiController
         
         $this->getWorkerRequestActivationService()->persistAndFlush($activationRequest);
         
-        $this->container->get('simplytestable.services.resqueQueueService')->add(
+        $this->getResqueQueueService()->add(
             'SimplyTestable\ApiBundle\Resque\Job\WorkerActivateVerifyJob',
             'worker-activate-verify',
             array(
@@ -95,6 +95,24 @@ class WorkerController extends ApiController
      */
     private function getWorkerRequestActivationService() {
         return $this->container->get('simplytestable.services.workeractivationrequestservice');        
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
+     */
+    private function getResqueQueueService() {
+        return $this->container->get('simplytestable.services.resque.queueService');
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
+     */
+    private function getResqueJobFactoryService() {
+        return $this->container->get('simplytestable.services.resque.jobFactoryService');
     }
     
     

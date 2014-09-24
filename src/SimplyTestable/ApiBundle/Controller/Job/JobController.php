@@ -182,7 +182,7 @@ class JobController extends BaseJobController
         $this->getJobService()->cancel($job);        
         
         if ($preCancellationState->equals($this->getJobService()->getStartingState())) {            
-            $this->get('simplytestable.services.resqueQueueService')->remove(
+            $this->getResqueQueueService()->remove(
                 'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
                 'job-prepare',
                 array(
@@ -199,7 +199,7 @@ class JobController extends BaseJobController
             );            
         }      
         
-        $this->get('simplytestable.services.resqueQueueService')->removeCollection(
+        $this->getResqueQueueService()->removeCollection(
             'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
             'task-assign',
             $tasksToDeAssign
@@ -213,7 +213,7 @@ class JobController extends BaseJobController
         }
         
         if (count($taskIdsToCancel) > 0) {
-            $this->get('simplytestable.services.resqueQueueService')->add(
+            $this->getResqueQueueService()->add(
                 'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
                 'task-cancel',
                 array(
@@ -356,14 +356,23 @@ class JobController extends BaseJobController
      */
     private function getJobPreparationService() {
         return $this->container->get('simplytestable.services.jobpreparationservice');
-    } 
-    
+    }
+
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\ResqueQueueService
-     */        
+     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
+     */
     private function getResqueQueueService() {
-        return $this->get('simplytestable.services.resqueQueueService');
+        return $this->container->get('simplytestable.services.resque.queueService');
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
+     */
+    private function getResqueJobFactoryService() {
+        return $this->container->get('simplytestable.services.resque.jobFactoryService');
     }
 
 

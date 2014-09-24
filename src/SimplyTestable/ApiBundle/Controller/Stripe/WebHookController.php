@@ -150,14 +150,25 @@ class WebHookController extends ApiController {
     private function getStripeEventService() {
         return $this->container->get('simplytestable.services.stripeeventservice');
     }
-    
+
+
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
-     */        
+     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
+     */
     private function getResqueQueueService() {
-        return $this->get('simplytestable.services.resqueQueueService');
-    } 
+        return $this->container->get('simplytestable.services.resque.queueService');
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
+     */
+    private function getResqueJobFactoryService() {
+        return $this->container->get('simplytestable.services.resque.jobFactoryService');
+    }
+
     
     /**
      * 

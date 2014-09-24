@@ -64,7 +64,7 @@ EOF
         $workers = $this->getWorkerService()->getActiveCollection();        
         if (count($workers) === 0) {            
             $this->getLogger()->err("TaskAssignCollectionCommand::execute: Cannot assign, no workers.");                       
-            $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
+            $this->getResqueQueueService()->add(
                 'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
                 'task-assign-collection',
                 array(
@@ -87,7 +87,7 @@ EOF
 
             $entityManager->flush();            
         } else {
-            $this->getContainer()->get('simplytestable.services.resqueQueueService')->add(
+            $this->getResqueQueueService()->add(
                 'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
                 'task-assign-collection',
                 array(
@@ -139,5 +139,23 @@ EOF
      */    
     private function getTaskPreprocessorFactoryService() {
         return $this->getContainer()->get('simplytestable.services.TaskPreProcessorServiceFactory');
-    }     
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
+     */
+    private function getResqueQueueService() {
+        return $this->getContainer()->get('simplytestable.services.resque.queueService');
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
+     */
+    private function getResqueJobFactoryService() {
+        return $this->getContainer()->get('simplytestable.services.resque.jobFactoryService');
+    }
 }

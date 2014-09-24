@@ -57,13 +57,22 @@ EOF
      */
     private function getTaskService() {
         return $this->getContainer()->get('simplytestable.services.taskservice');
-    } 
-    
+    }
+
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\ResqueQueueService
-     */        
+     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
+     */
     private function getResqueQueueService() {
-        return $this->getContainer()->get('simplytestable.services.resqueQueueService');
-    }        
+        return $this->getContainer()->get('simplytestable.services.resque.queueService');
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
+     */
+    private function getResqueJobFactoryService() {
+        return $this->getContainer()->get('simplytestable.services.resque.jobFactoryService');
+    }
 }

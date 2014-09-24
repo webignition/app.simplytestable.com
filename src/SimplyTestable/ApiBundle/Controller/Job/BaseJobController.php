@@ -309,14 +309,6 @@ abstract class BaseJobController extends ApiController
     private function getJobPreparationService() {
         return $this->container->get('simplytestable.services.jobpreparationservice');
     } 
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\ResqueQueueService
-     */        
-    private function getResqueQueueService() {
-        return $this->get('simplytestable.services.resqueQueueService');
-    }
 
 
     /**
