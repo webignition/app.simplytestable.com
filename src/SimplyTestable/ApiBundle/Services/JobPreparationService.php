@@ -77,7 +77,7 @@ class JobPreparationService {
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\ResqueQueueService
+     * @var \SimplyTestable\ApiBundle\Services\Resque\QueueService
      */
     private $resqueService;
     
@@ -90,7 +90,7 @@ class JobPreparationService {
         \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         \SimplyTestable\ApiBundle\Services\CrawlJobContainerService $crawlJobContainerService,
         \SimplyTestable\ApiBundle\Services\UserService $userService,
-        \SimplyTestable\ApiBundle\Services\ResqueQueueService $resqueQueueService
+        \SimplyTestable\ApiBundle\Services\Resque\QueueService $resqueQueueService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;

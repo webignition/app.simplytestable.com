@@ -1,7 +1,5 @@
-glit_resque:
-  prefix: "SimplyTestable\ApiBundle"
-  
 parameters:
+  bcc_resque_prefix: app.simplytestable.com
   curl_options:
    - {name: "CURLOPT_SSL_VERIFYPEER", value: false}
    - {name: "CURLOPT_SSL_VERIFYHOST", value: false} 

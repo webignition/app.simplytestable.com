@@ -2,27 +2,24 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job\Stripe;
 
-use SimplyTestable\ApiBundle\Exception\TaskAssignException;
-use SimplyTestable\ApiBundle\Resque\Job\CommandLineJob;
+use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
+use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
 
-class ProcessEventJob extends CommandLineJob {    
-    
+class ProcessEventJob extends CommandJob {
+
     const QUEUE_NAME = 'stripe-event';
-    const COMMAND = 'php app/console simplytestable:stripe:event:process';
-    
+
     protected function getQueueName() {
         return self::QUEUE_NAME;
     }
-    
-    protected function getArgumentOrder() {
-        return array('stripeId');
-    }
-    
+
     protected function getCommand() {
-        return self::COMMAND;
+        return new ProcessCommand();
     }
-    
-    protected function failureHandler($output, $returnValue) {
-        throw new TaskAssignException(implode("\n", $output), $returnValue);
-    }   
+
+    protected function getCommandArgs() {
+        return [
+            'stripeId' => $this->args['stripeId']
+        ];
+    }
 }

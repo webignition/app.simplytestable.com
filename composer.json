@@ -23,8 +23,6 @@
         "jms/serializer-bundle": "0.9",
         "doctrine/migrations": "dev-master",
         "doctrine/doctrine-migrations-bundle": "dev-master",
-        "glit/resque": "dev-master",
-        "webignition/resque-bundle":"dev-master",
         "doctrine/doctrine-fixtures-bundle": "dev-master",
         "winzou/console-bundle":"1.0.0",
         "mlpz/postmark-bundle": "*",
@@ -43,8 +41,10 @@
         "webignition/php-stripe-models":">=0.2.4,<1.0",
         "webignition/cookie-url-matcher":">=0.1,<1",        
         "egulias/email-validator":"1.1.1",
-        "webignition/web-resource-service":">=1.0.1,<2.0"
-        
+        "webignition/web-resource-service":">=1.0.1,<2.0",
+        "chrisboulton/php-resque": "dev-master",
+        "chrisboulton/php-resque-scheduler": "dev-master",
+        "bcc/resque-bundle": "dev-master"
     },
     "require-dev": {
         "icanboogie/inflector":">=1.0,<2",

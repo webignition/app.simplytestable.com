@@ -22,9 +22,9 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new JMS\SerializerBundle\JMSSerializerBundle($this),
-            new Glit\ResqueBundle\GlitResqueBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new MZ\PostmarkBundle\MZPostmarkBundle(),
+            new BCC\ResqueBundle\BCCResqueBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

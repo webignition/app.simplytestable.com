@@ -53,7 +53,7 @@ class TaskService extends EntityService {
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\ResqueQueueService 
+     * @var \SimplyTestable\ApiBundle\Services\Resque\QueueService
      */
     private $resqueQueueService;
     
@@ -71,7 +71,7 @@ class TaskService extends EntityService {
     public function __construct(
             EntityManager $entityManager,
             \SimplyTestable\ApiBundle\Services\StateService $stateService,
-            \SimplyTestable\ApiBundle\Services\ResqueQueueService $resqueQueueService)
+            \SimplyTestable\ApiBundle\Services\Resque\QueueService $resqueQueueService)
     {
         parent::__construct($entityManager);        
         $this->stateService = $stateService;

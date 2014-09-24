@@ -72,4 +72,17 @@ jms_serializer:
         directories:
             FOSUB:
                 namespace_prefix: "FOS\\UserBundle"
-                path: "%kernel.root_dir%/config/serializer/FOSUB"    
+                path: "%kernel.root_dir%/config/serializer/FOSUB"
+
+# BCCResqueBundle Configuration
+bcc_resque:
+    #class: BCC\ResqueBundle\Resque           # the resque class if different from default
+    #vendor_dir: %kernel.root_dir%/../vendor  # the vendor dir if different from default
+    prefix: %bcc_resque_prefix%                # optional prefix to separate Resque data per site/app
+    #redis:
+    #    host: localhost                      # the redis host
+    #    port: 6379                           # the redis port
+    #    database: 1                          # the redis database
+    #auto_retry: [0, 10, 60]                  # auto retry failed jobs
+    #worker:
+    #    root_dir: path/to/worker/root        # the root dir of app that run workers (optional)
