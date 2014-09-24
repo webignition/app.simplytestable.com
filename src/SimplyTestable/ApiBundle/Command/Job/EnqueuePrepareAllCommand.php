@@ -41,13 +41,13 @@ class EnqueuePrepareAllCommand extends BaseCommand
         
         foreach ($jobIds as $jobId) {
             $output->writeln('Enqueuing prepare for job '.$jobId);
-            $this->getResqueQueueService()->add(
-                'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
-                'job-prepare',
-                array(
-                    'id' => $jobId
-                )                
-            );             
+
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'job-prepare',
+                    ['id' => $jobId]
+                )
+            );
         }
         
         return 0;

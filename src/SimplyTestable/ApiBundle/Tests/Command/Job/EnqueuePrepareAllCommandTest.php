@@ -40,11 +40,8 @@ class EnqueuePrepareAllCommandTest extends ConsoleCommandTestCase {
         
         foreach ($jobIds as $jobId) {
             $this->assertTrue($this->getResqueQueueService()->contains(
-                'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
                 'job-prepare',
-                array(
-                    'id' => $jobId
-                )
+                ['id' => $jobId]
             ));            
         }      
     }
