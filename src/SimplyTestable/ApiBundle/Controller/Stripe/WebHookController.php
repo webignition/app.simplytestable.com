@@ -26,14 +26,13 @@ class WebHookController extends ApiController {
         $user = $this->getUserAccountPlanService()->getUserByStripeCustomer($stripeCustomer);
         
         $stripeEvent = $this->getStripeEventService()->create($stripeId, $requestData->type, $requestData->livemode, $requestBody, $user);
-        
-        $this->getResqueQueueService()->add(
-            'SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob',
-            'stripe-event',
-            array(
-                'stripeId' => $stripeEvent->getStripeId()
-            )                
-        );        
+
+        $this->getResqueQueueService()->enqueue(
+            $this->getResqueJobFactoryService()->create(
+                'stripe-event',
+                ['stripeId' => $stripeEvent->getStripeId()]
+            )
+        );
         
         return $this->sendResponse($stripeEvent);
     }
