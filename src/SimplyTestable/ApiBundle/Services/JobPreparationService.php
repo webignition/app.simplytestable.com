@@ -80,8 +80,16 @@ class JobPreparationService {
      * @var \SimplyTestable\ApiBundle\Services\Resque\QueueService
      */
     private $resqueService;
-    
-    
+
+
+    /**
+     *
+     * @var \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
+     */
+    private $resqueJobFactoryService;
+
+
+
     public function __construct(
         \SimplyTestable\ApiBundle\Services\JobService $jobService,
         \SimplyTestable\ApiBundle\Services\TaskService $taskService,
@@ -90,7 +98,8 @@ class JobPreparationService {
         \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         \SimplyTestable\ApiBundle\Services\CrawlJobContainerService $crawlJobContainerService,
         \SimplyTestable\ApiBundle\Services\UserService $userService,
-        \SimplyTestable\ApiBundle\Services\Resque\QueueService $resqueQueueService
+        \SimplyTestable\ApiBundle\Services\Resque\QueueService $resqueQueueService,
+        \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService $resqueJobFactoryService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
@@ -100,6 +109,7 @@ class JobPreparationService {
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->userService = $userService;
         $this->resqueService = $resqueQueueService;
+        $this->resqueJobFactoryService = $resqueJobFactoryService;
     }
     
     
@@ -141,10 +151,11 @@ class JobPreparationService {
                     $this->crawlJobContainerService->prepare($crawlJobContainer);                                                
                     
                     if ($this->resqueService->isEmpty('task-assignment-selection')) {
-                        $this->resqueService->add(
-                            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-                            'task-assignment-selection'
-                        );             
+                        $this->resqueService->enqueue(
+                            $this->resqueJobFactoryService->create(
+                                'task-assignment-selection'
+                            )
+                        );
                     }                     
                 }
             }            

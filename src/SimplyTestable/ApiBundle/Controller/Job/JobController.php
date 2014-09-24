@@ -170,10 +170,11 @@ class JobController extends BaseJobController
             $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));          
             
             if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                $this->getResqueQueueService()->add(
-                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-                    'task-assignment-selection'
-                );             
+                $this->getResqueQueueService()->enqueue(
+                    $this->getResqueJobFactoryService()->create(
+                        'task-assignment-selection'
+                    )
+                );
             }             
         }
         
@@ -181,13 +182,12 @@ class JobController extends BaseJobController
 
         $this->getJobService()->cancel($job);        
         
-        if ($preCancellationState->equals($this->getJobService()->getStartingState())) {            
-            $this->getResqueQueueService()->remove(
-                'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
-                'job-prepare',
-                array(
-                    'id' => $job->getId()
-                )                
+        if ($preCancellationState->equals($this->getJobService()->getStartingState())) {
+            $this->getResqueQueueService()->dequeue(
+                $this->getResqueJobFactoryService()->create(
+                    'job-prepare',
+                    ['id' => $job->getId()]
+                )
             );
         }
         

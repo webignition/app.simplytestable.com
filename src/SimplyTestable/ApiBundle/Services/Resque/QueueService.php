@@ -202,5 +202,21 @@ class QueueService {
 
         return $values;
     }
+
+
+    /**
+     *
+     * @param string $queue
+     * @param array $args
+     * @return boolean
+     */
+    public function dequeue($queue, $args = null) {
+        try {
+            return \Resque::redis()->lrem(self::QUEUE_KEY . ':' . $queue, 1, $this->findRedisValue($queue, $args)) == 1;
+        } catch (\Exception $exception) {
+            $this->logger->warning('ResqueQueueService::dequeue: Redis error ['.$exception->getMessage().']');
+            return false;
+        }
+    }
     
 }

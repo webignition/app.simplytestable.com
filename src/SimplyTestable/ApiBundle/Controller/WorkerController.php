@@ -52,13 +52,13 @@ class WorkerController extends ApiController
         }        
         
         $this->getWorkerRequestActivationService()->persistAndFlush($activationRequest);
-        
-        $this->getResqueQueueService()->add(
-            'SimplyTestable\ApiBundle\Resque\Job\WorkerActivateVerifyJob',
-            'worker-activate-verify',
-            array(
-                'id' => $activationRequest->getWorker()->getId()
-            )                
+
+
+        $this->getResqueQueueService()->enqueue(
+            $this->getResqueJobFactoryService()->create(
+                'worker-activate-verify',
+                ['id' => $activationRequest->getWorker()->getId()]
+            )
         );
         
         return $this->sendSuccessResponse();
@@ -69,7 +69,7 @@ class WorkerController extends ApiController
      *
      * @param Worker $worker
      * @param string $token
-     * @return SimplyTestable\ApiBundle\Entity\WorkerActivationRequest 
+     * @return \SimplyTestable\ApiBundle\Entity\WorkerActivationRequest
      */
     private function getActivationRequest(Worker $worker, $token = null) {
         if ($this->getWorkerRequestActivationService()->has($worker)) {
@@ -91,7 +91,7 @@ class WorkerController extends ApiController
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\WorkerActivationRequestService 
+     * @return \SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
      */
     private function getWorkerRequestActivationService() {
         return $this->container->get('simplytestable.services.workeractivationrequestservice');        

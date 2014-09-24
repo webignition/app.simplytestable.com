@@ -202,6 +202,7 @@ services:
         crawlJobContainerService: "@simplytestable.services.crawljobcontainerservice"
         userService: "@simplytestable.services.userservice" 
         resqueQueueService: "@simplytestable.services.resque.queueService"
+        resqueJobFactoryService: "@simplytestable.services.resque.jobFactoryService"
         
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
