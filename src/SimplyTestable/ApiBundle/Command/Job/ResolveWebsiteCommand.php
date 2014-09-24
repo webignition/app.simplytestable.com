@@ -62,13 +62,12 @@ class ResolveWebsiteCommand extends BaseCommand
                 );
             }                
         } else {
-            $this->getResqueQueueService()->add(
-                'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
-                'job-prepare',
-                array(
-                    'id' => $job->getId()
-                )                
-            );                
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'job-prepare',
+                    ['id' => $job->getId()]
+                )
+            );
         }         
         
         return 0;

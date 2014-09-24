@@ -83,14 +83,14 @@ class StartController extends ApiController
                 $job->setIsPublic(true);
                 $this->getJobService()->persistAndFlush($job);
             }
-            
-            $this->getResqueQueueService()->add(
-                'SimplyTestable\ApiBundle\Resque\Job\JobResolveJob',
-                'job-prepare',
-                array(
-                    'id' => $job->getId()
-                )                
+
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'job-prepare',
+                    ['id' => $job->getId()]
+                )
             );
+
         } else {
             $job = $this->getJobService()->getById($existingJobId);
         }

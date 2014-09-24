@@ -155,5 +155,15 @@ class QueueService {
             $this->logger->warn('ResqueQueueService::enqueue: Redis error ['.$credisException->getMessage().']');
         }
     }
+
+
+    /**
+     *
+     * @param string $queue
+     * @return boolean
+     */
+    public function isEmpty($queue) {
+        return $this->getQueueLength($queue) == 0;
+    }
     
 }

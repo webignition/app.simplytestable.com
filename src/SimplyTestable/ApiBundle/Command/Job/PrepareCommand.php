@@ -51,10 +51,11 @@ class PrepareCommand extends BaseCommand
              $this->getJobPreparationService()->prepare($job);
             
             if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                $this->getResqueQueueService()->add(
-                    'SimplyTestable\ApiBundle\Resque\Job\TaskAssignmentSelectionJob',
-                    'task-assignment-selection'
-                );             
+                $this->getResqueQueueService()->enqueue(
+                    $this->getResqueJobFactoryService()->create(
+                        'task-assignment-selection'
+                    )
+                );
             }
 
             $this->getLogger()->info("simplytestable:job:prepare: queued up [".$job->getTasks()->count()."] tasks covering [".$job->getUrlCount()."] urls and [".count($job->getRequestedTaskTypes())."] task types");
