@@ -2,24 +2,42 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
+use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
 
-/**
- * Auto-generated Migration: Please modify to your need!
- */
-class Version20130621132138_add_StripeEvent_type_idx extends BaseMigration
-{    
+class Version20130621132138_add_StripeEvent_type_idx extends AbstractMigration {
+
+    private $statements = [
+        'mysql' => [
+            'up' => [
+                "CREATE INDEX type_idx ON StripeEvent (type)"
+            ],
+            'down' => [
+                "DROP INDEX type_idx ON StripeEvent"
+            ]
+        ],
+        'sqlite' => [
+            'up' => [
+                "CREATE INDEX type_idx ON StripeEvent (type)"
+            ],
+            'down' => [
+                "DROP INDEX type_idx ON StripeEvent"
+            ]
+        ]
+    ];
+
     public function up(Schema $schema)
-    {  
-        $this->addCommonStatement("CREATE INDEX type_idx ON StripeEvent (type)");
-        parent::up($schema);
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['up'] as $statement) {
+            $this->addSql($statement);
+        }
     }
-   
 
     public function down(Schema $schema)
-    {   
-        $this->addCommonStatement("DROP INDEX type_idx ON StripeEvent");        
-        parent::down($schema);
-    }      
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['down'] as $statement) {
+            $this->addSql($statement);
+        }
+    }
+
 }

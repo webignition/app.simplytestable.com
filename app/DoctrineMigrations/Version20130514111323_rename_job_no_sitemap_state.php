@@ -2,13 +2,17 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\EntityModificationMigration,
-    Doctrine\DBAL\Schema\Schema,
-    SimplyTestable\ApiBundle\Entity\State;
+use Doctrine\DBAL\Migrations\AbstractMigration,
+    Doctrine\DBAL\Schema\Schema;
 
-/**
- * Auto-generated Migration: Please modify to your need!
- */
-class Version20130514111323_rename_job_no_sitemap_state extends EntityModificationMigration
-{
+class Version20130514111323_rename_job_no_sitemap_state extends AbstractMigration {
+
+    public function up(Schema $schema) {
+        $this->addSql("SELECT 1 + 1");
+    }
+
+    public function down(Schema $schema) {
+        $this->addSql("SELECT 1 + 1");
+    }
+
 }

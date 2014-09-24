@@ -2,32 +2,42 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
+use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
-class Version20131016144353_add_Job_isPublic extends BaseMigration
-{
+class Version20131016144353_add_Job_isPublic extends AbstractMigration {
+
+    private $statements = [
+        'mysql' => [
+            'up' => [
+                "ALTER TABLE Job ADD isPublic TINYINT(1) NOT NULL"
+            ],
+            'down' => [
+                "ALTER TABLE Job DROP isPublic"
+            ]
+        ],
+        'sqlite' => [
+            'up' => [
+                "ALTER TABLE Job ADD isPublic TINYINT(1) NOT NULL DEFAULT 0"
+            ],
+            'down' => [
+                "ALTER TABLE Job DROP isPublic"
+            ]
+        ]
+    ];
+
     public function up(Schema $schema)
-    {        
-        $this->statements['mysql'] = array(
-            "ALTER TABLE Job ADD isPublic TINYINT(1) NOT NULL"
-        );
-        
-        $this->statements['sqlite'] = array(
-            "ALTER TABLE Job ADD isPublic TINYINT(1) NOT NULL DEFAULT 0"
-        );     
-        
-        parent::up($schema);
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['up'] as $statement) {
+            $this->addSql($statement);
+        }
     }
-   
 
     public function down(Schema $schema)
-    {           
-        $this->addCommonStatement("ALTER TABLE Job DROP isPublic");       
-        
-        parent::down($schema);
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['down'] as $statement) {
+            $this->addSql($statement);
+        }
     }
+
 }

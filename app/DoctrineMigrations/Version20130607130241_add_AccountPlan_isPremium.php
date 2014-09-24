@@ -2,33 +2,42 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
+use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
 
-/**
- * Auto-generated Migration: Please modify to your need!
- */
-class Version20130607130241_add_AccountPlan_isPremium extends BaseMigration
-{    
-    public function up(Schema $schema)
-    {        
-        $this->statements['mysql'] = array(
-            "ALTER TABLE AccountPlan ADD isPremium TINYINT(1) DEFAULT NULL"
-        );
-        
-        $this->statements['sqlite'] = array(
-            "ALTER TABLE AccountPlan ADD isPremium TINYINT(1) DEFAULT NULL",
+class Version20130607130241_add_AccountPlan_isPremium extends AbstractMigration {
 
-        );     
-        
-        parent::up($schema);
+    private $statements = [
+        'mysql' => [
+            'up' => [
+                "ALTER TABLE AccountPlan ADD isPremium TINYINT(1) DEFAULT NULL"
+            ],
+            'down' => [
+                "ALTER TABLE AccountPlan DROP isPremium"
+            ]
+        ],
+        'sqlite' => [
+            'up' => [
+                "ALTER TABLE AccountPlan ADD isPremium TINYINT(1) DEFAULT NULL",
+            ],
+            'down' => [
+                "ALTER TABLE AccountPlan DROP isPremium"
+            ]
+        ]
+    ];
+
+    public function up(Schema $schema)
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['up'] as $statement) {
+            $this->addSql($statement);
+        }
     }
-   
 
     public function down(Schema $schema)
-    {           
-        $this->addCommonStatement("ALTER TABLE AccountPlan DROP isPremium");      
-        
-        parent::down($schema);
-    }     
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['down'] as $statement) {
+            $this->addSql($statement);
+        }
+    }
+
 }

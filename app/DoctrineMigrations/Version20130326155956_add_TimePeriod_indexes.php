@@ -2,41 +2,46 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
+use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
 
-/**
- * Auto-generated Migration: Please modify to your need!
- */
-class Version20130326155956_add_TimePeriod_indexes extends BaseMigration
-{
+class Version20130326155956_add_TimePeriod_indexes extends AbstractMigration {
+
+    private $statements = [
+        'mysql' => [
+            'up' => [
+                "CREATE INDEX start_idx ON TimePeriod (startDateTime)",
+                "CREATE INDEX end_idx ON TimePeriod (endDateTime)"
+            ],
+            'down' => [
+                "DROP INDEX start_idx ON TimePeriod",
+                "DROP INDEX end_idx ON TimePeriod"
+            ]
+        ],
+        'sqlite' => [
+            'up' => [
+                "CREATE INDEX start_idx ON TimePeriod (startDateTime)",
+                "CREATE INDEX end_idx ON TimePeriod (endDateTime)"
+            ],
+            'down' => [
+                "DROP INDEX start_idx ON TimePeriod",
+                "DROP INDEX end_idx ON TimePeriod"
+            ]
+        ]
+    ];
+
     public function up(Schema $schema)
-    {        
-        $this->statements['mysql'] = array(
-            "CREATE INDEX start_idx ON TimePeriod (startDateTime)",
-            "CREATE INDEX end_idx ON TimePeriod (endDateTime)"
-        );
-        
-        $this->statements['sqlite'] = array(
-            "CREATE INDEX start_idx ON TimePeriod (startDateTime)",
-            "CREATE INDEX end_idx ON TimePeriod (endDateTime)"         
-        );         
-        
-        parent::up($schema);
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['up'] as $statement) {
+            $this->addSql($statement);
+        }
     }
 
     public function down(Schema $schema)
-    {        
-        $this->statements['mysql'] = array(
-            "DROP INDEX start_idx ON TimePeriod",
-            "DROP INDEX end_idx ON TimePeriod"
-        );
-        
-        $this->statements['sqlite'] = array(
-            "DROP INDEX start_idx ON TimePeriod",
-            "DROP INDEX end_idx ON TimePeriod"            
-        ); 
-        
-        parent::up($schema);        
-    }  
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['down'] as $statement) {
+            $this->addSql($statement);
+        }
+    }
+
 }

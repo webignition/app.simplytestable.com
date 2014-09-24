@@ -2,14 +2,17 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\EntityModificationMigration,
- SimplyTestable\ApiBundle\Entity\Task\Type\Type,
- SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass,
- Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Migrations\AbstractMigration,
+    Doctrine\DBAL\Schema\Schema;
 
-/**
- * Auto-generated Migration: Please modify to your need!
- */
-class Version20120724132955_add_TaskTypes extends EntityModificationMigration
-{
+class Version20120724132955_add_TaskTypes extends AbstractMigration {
+
+    public function up(Schema $schema) {
+        $this->addSql("SELECT 1 + 1");
+    }
+
+    public function down(Schema $schema) {
+        $this->addSql("SELECT 1 + 1");
+    }
+
 }

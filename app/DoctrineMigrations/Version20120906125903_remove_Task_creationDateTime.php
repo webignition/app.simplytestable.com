@@ -2,39 +2,44 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
+use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
 
-/**
- * Auto-generated Migration: Please modify to your need!
- */
-class Version20120906125903_remove_Task_creationDateTime extends BaseMigration
-{
+class Version20120906125903_remove_Task_creationDateTime extends AbstractMigration {
+
+    private $statements = [
+        'mysql' => [
+            'up' => [
+                "DROP INDEX creationDateTime_idx ON Task",
+                "ALTER TABLE Task DROP creationDateTime"
+            ],
+            'down' => [
+                "ALTER TABLE Task ADD creationDateTime DATETIME NOT NULL",
+                "CREATE INDEX creationDateTime_idx ON Task (creationDateTime)"
+            ]
+        ],
+        'sqlite' => [
+            'up' => [
+                "SELECT 1 + 1"
+            ],
+            'down' => [
+                "SELECT 1 + 1"
+            ]
+        ]
+    ];
+
     public function up(Schema $schema)
     {
-        $this->statements['mysql'] = array(
-            "DROP INDEX creationDateTime_idx ON Task",
-            "ALTER TABLE Task DROP creationDateTime"
-        );
-        
-        $this->statements['sqlite'] = array(
-            "SELECT 1 + 1"
-        );
-        
-        parent::up($schema);
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['up'] as $statement) {
+            $this->addSql($statement);
+        }
     }
 
     public function down(Schema $schema)
     {
-        $this->statements['mysql'] = array(
-            "ALTER TABLE Task ADD creationDateTime DATETIME NOT NULL",
-            "CREATE INDEX creationDateTime_idx ON Task (creationDateTime)"
-        );
-        
-        $this->statements['sqlite'] = array(
-            "SELECT 1 + 1"
-        );
-        
-        parent::down($schema);
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['down'] as $statement) {
+            $this->addSql($statement);
+        }
     }
+
 }

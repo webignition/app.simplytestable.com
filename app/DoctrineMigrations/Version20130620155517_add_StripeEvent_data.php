@@ -2,28 +2,42 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
+use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
 
+class Version20130620155517_add_StripeEvent_data extends AbstractMigration {
 
-/**
- * Auto-generated Migration: Please modify to your need!
- */
-class Version20130620155517_add_StripeEvent_data extends BaseMigration
-{
-    
+    private $statements = [
+        'mysql' => [
+            'up' => [
+                "ALTER TABLE StripeEvent ADD data LONGTEXT DEFAULT NULL"
+            ],
+            'down' => [
+                "ALTER TABLE StripeEvent DROP data"
+            ]
+        ],
+        'sqlite' => [
+            'up' => [
+                "ALTER TABLE StripeEvent ADD data LONGTEXT DEFAULT NULL"
+            ],
+            'down' => [
+                "ALTER TABLE StripeEvent DROP data"
+            ]
+        ]
+    ];
+
     public function up(Schema $schema)
-    {        
-        $this->addCommonStatement("ALTER TABLE StripeEvent ADD data LONGTEXT DEFAULT NULL");  
-        
-        parent::up($schema);
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['up'] as $statement) {
+            $this->addSql($statement);
+        }
     }
-   
 
     public function down(Schema $schema)
-    {           
-        $this->addCommonStatement("ALTER TABLE StripeEvent DROP data");      
-        
-        parent::down($schema);
-    }      
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['down'] as $statement) {
+            $this->addSql($statement);
+        }
+    }
+
 }

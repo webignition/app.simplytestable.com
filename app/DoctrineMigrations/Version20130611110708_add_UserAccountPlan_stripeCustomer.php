@@ -2,33 +2,42 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
+use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
 
-/**
- * Auto-generated Migration: Please modify to your need!
- */
-class Version20130611110708_add_UserAccountPlan_stripeCustomer extends BaseMigration
-{    
-    public function up(Schema $schema)
-    {        
-        $this->statements['mysql'] = array(
-            "ALTER TABLE UserAccountPlan ADD stripeCustomer VARCHAR(255) DEFAULT NULL"
-        );
-        
-        $this->statements['sqlite'] = array(
-            "ALTER TABLE UserAccountPlan ADD stripeCustomer VARCHAR(255) DEFAULT NULL",
+class Version20130611110708_add_UserAccountPlan_stripeCustomer extends AbstractMigration {
 
-        );     
-        
-        parent::up($schema);
+    private $statements = [
+        'mysql' => [
+            'up' => [
+                "ALTER TABLE UserAccountPlan ADD stripeCustomer VARCHAR(255) DEFAULT NULL"
+            ],
+            'down' => [
+                "ALTER TABLE UserAccountPlan DROP stripeCustomer"
+            ]
+        ],
+        'sqlite' => [
+            'up' => [
+                "ALTER TABLE UserAccountPlan ADD stripeCustomer VARCHAR(255) DEFAULT NULL",
+            ],
+            'down' => [
+                "ALTER TABLE UserAccountPlan DROP stripeCustomer"
+            ]
+        ]
+    ];
+
+    public function up(Schema $schema)
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['up'] as $statement) {
+            $this->addSql($statement);
+        }
     }
-   
 
     public function down(Schema $schema)
-    {           
-        $this->addCommonStatement("ALTER TABLE UserAccountPlan DROP stripeCustomer");      
-        
-        parent::down($schema);
-    }     
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['down'] as $statement) {
+            $this->addSql($statement);
+        }
+    }
+
 }

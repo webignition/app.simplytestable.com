@@ -2,32 +2,42 @@
 
 namespace Application\Migrations;
 
-use SimplyTestable\BaseMigrationsBundle\Migration\BaseMigration,
+use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
-class Version20131211155715_add_Job_parameters extends BaseMigration
-{   
+class Version20131211155715_add_Job_parameters extends AbstractMigration {
+
+    private $statements = [
+        'mysql' => [
+            'up' => [
+                "ALTER TABLE Job ADD parameters LONGTEXT DEFAULT NULL"
+            ],
+            'down' => [
+                "ALTER TABLE Job DROP parameters"
+            ]
+        ],
+        'sqlite' => [
+            'up' => [
+                "ALTER TABLE Job ADD parameters LONGTEXT DEFAULT NULL"
+            ],
+            'down' => [
+                "ALTER TABLE Job DROP parameters"
+            ]
+        ]
+    ];
+
     public function up(Schema $schema)
-    {        
-        $this->statements['mysql'] = array(
-            "ALTER TABLE Job ADD parameters LONGTEXT DEFAULT NULL"
-        );
-        
-        $this->statements['sqlite'] = array(
-            "ALTER TABLE Job ADD parameters LONGTEXT DEFAULT NULL"
-        );     
-        
-        parent::up($schema);
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['up'] as $statement) {
+            $this->addSql($statement);
+        }
     }
-   
 
     public function down(Schema $schema)
-    {           
-        $this->addCommonStatement("ALTER TABLE Job DROP parameters");       
-        
-        parent::down($schema);
-    }    
+    {
+        foreach ($this->statements[$this->connection->getDatabasePlatform()->getName()]['down'] as $statement) {
+            $this->addSql($statement);
+        }
+    }
+
 }
