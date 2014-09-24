@@ -18,6 +18,8 @@ class RejectionTest extends CommandTest {
         )));
         
         $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::DEFAULT_CANONICAL_URL));
+
+        $this->clearRedis();
         
         $this->assertReturnCode(0, array(
             'id' => $this->job->getId()
@@ -32,7 +34,7 @@ class RejectionTest extends CommandTest {
         $this->assertEquals(0, $this->job->getTasks()->count());
     }    
   
-    public function testResqueQueueDoesNotContainJobPreparationJob() {            
+    public function testResqueQueueDoesNotContainJobPreparationJob() {
         $this->assertFalse($this->getResqueQueueService()->contains(
             'job-prepare',
             array(
