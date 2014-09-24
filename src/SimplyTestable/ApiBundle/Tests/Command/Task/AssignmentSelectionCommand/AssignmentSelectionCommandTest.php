@@ -110,7 +110,6 @@ class AssignmentSelectionCommandTest extends ConsoleCommandTestCase {
 
         foreach ($taskIdGroups as $taskIdGroup) {
             $this->assertTrue($this->getResqueQueueService()->contains(
-                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
                 'task-assign-collection',
                 array(
                     'ids' => implode(',', $taskIdGroup)

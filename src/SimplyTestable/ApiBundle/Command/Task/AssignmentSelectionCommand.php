@@ -72,14 +72,13 @@ EOF
             }
             
             $output->writeln('Enqueuing for assignment tasks: '.  implode(',', $taskIds));            
-            
-            $this->getResqueQueueService()->add(
-                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
-                'task-assign-collection',
-                array(
-                    'ids' => implode(',', $taskIds)
+
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'task-assign-collection',
+                    ['ids' => implode(',', $taskIds)]
                 )
-            );            
+            );
 
             $entityManager->flush();            
         }
@@ -94,7 +93,7 @@ EOF
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\TaskAssignmentSelectionService
+     * @return \SimplyTestable\ApiBundle\Services\TaskAssignmentSelectionService
      */    
     private function getTaskAssignmentSelectionService() {
         return $this->getContainer()->get('simplytestable.services.taskassignmentselectionservice');
