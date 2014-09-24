@@ -34,7 +34,6 @@ class RejectionTest extends CommandTest {
   
     public function testResqueQueueDoesNotContainJobPreparationJob() {            
         $this->assertFalse($this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\JobPrepareJob',
             'job-prepare',
             array(
                 'id' => $this->job->getId()

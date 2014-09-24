@@ -40,7 +40,6 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
         
         $this->assertReturnCode(0);
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
             'task-cancel',
             array(
                 'ids' => implode(',', $this->getTaskIds($job))

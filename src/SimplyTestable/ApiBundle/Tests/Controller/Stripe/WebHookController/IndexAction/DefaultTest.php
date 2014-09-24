@@ -221,7 +221,6 @@ class DefaultTest extends IndexActionTest {
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
         
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob',
             'stripe-event',
             array(
                 'stripeId' => $stripeEvent->getStripeId()
