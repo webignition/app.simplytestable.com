@@ -152,7 +152,7 @@ class QueueService {
         try {
             return $this->resque->enqueue($job, $trackStatus);
         } catch (\CredisException $credisException) {
-            $this->logger->warn('ResqueQueueService::enqueue: Redis error ['.$credisException->getMessage().']');
+            $this->logger->warning('ResqueQueueService::enqueue: Redis error ['.$credisException->getMessage().']');
         }
     }
 
@@ -164,6 +164,43 @@ class QueueService {
      */
     public function isEmpty($queue) {
         return $this->getQueueLength($queue) == 0;
+    }
+
+
+    /**
+     *
+     * @param string $queue
+     * @param array $argCollection
+     */
+    public function removeCollection($queue, $argCollection) {
+        $values = $this->findRedisValues($queue, $argCollection);
+
+        foreach ($values as $redisValue) {
+            \Resque::redis()->lrem(self::QUEUE_KEY . ':' . $queue, 1, $redisValue);
+        }
+    }
+
+
+    /**
+     * @param $queue
+     * @param $argCollection
+     * @return array
+     */
+    private function findRedisValues($queue, $argCollection) {
+        $queueLength = $this->getQueueLength($queue);
+        $values = array();
+
+        for ($queueIndex = 0; $queueIndex < $queueLength; $queueIndex++) {
+            $job_details = json_decode(@\Resque::redis()->lindex(self::QUEUE_KEY . ':' . $queue, $queueIndex));
+
+            foreach ($argCollection as $args) {
+                if ($this->match($job_details, $queue, $args)) {
+                    $values[] = json_encode($job_details);
+                }
+            }
+        }
+
+        return $values;
     }
     
 }

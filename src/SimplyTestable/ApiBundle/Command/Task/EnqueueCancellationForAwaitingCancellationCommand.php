@@ -39,14 +39,15 @@ EOF
             return self::RETURN_CODE_OK;
         } 
         
-        $output->writeln('Enqueuing for cancellation tasks '.  implode(',', $taskIds));        
-        $this->getResqueQueueService()->add(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
-            'task-cancel',
-            array(
-                'ids' => implode(',', $taskIds)
-            )              
-        );        
+        $output->writeln('Enqueuing for cancellation tasks '.  implode(',', $taskIds));
+
+        $this->getResqueQueueService()->enqueue(
+            $this->getResqueJobFactoryService()->create(
+                'task-cancel-collection',
+                ['ids' => implode(',', $taskIds)]
+            )
+        );
+
         
         return self::RETURN_CODE_OK;
     }    

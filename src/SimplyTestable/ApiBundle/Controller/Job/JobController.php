@@ -200,7 +200,6 @@ class JobController extends BaseJobController
         }      
         
         $this->getResqueQueueService()->removeCollection(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
             'task-assign',
             $tasksToDeAssign
         );
@@ -213,13 +212,12 @@ class JobController extends BaseJobController
         }
         
         if (count($taskIdsToCancel) > 0) {
-            $this->getResqueQueueService()->add(
-                'SimplyTestable\ApiBundle\Resque\Job\TaskCancelCollectionJob',
-                'task-cancel',
-                array(
-                    'ids' => implode(',', $taskIdsToCancel)
-                )              
-            );               
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'task-cancel-collection',
+                    ['ids' => implode(',', $taskIdsToCancel)]
+                )
+            );
         }    
         
         return $this->sendSuccessResponse();
