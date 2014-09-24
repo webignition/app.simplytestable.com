@@ -200,7 +200,7 @@ class JobController extends BaseJobController
         }      
         
         $this->getResqueQueueService()->removeCollection(
-            'task-assign',
+            'task-assign-collection',
             $tasksToDeAssign
         );
 

@@ -65,7 +65,7 @@ class ResolveWebsiteCommand extends BaseCommand
         } else {
             $this->getResqueQueueService()->enqueue(
                 $this->getResqueJobFactoryService()->create(
-                    'job-prepare',
+                    'job-resolve',
                     ['id' => $job->getId()]
                 )
             );
