@@ -63,12 +63,12 @@ EOF
         
         $workers = $this->getWorkerService()->getActiveCollection();        
         if (count($workers) === 0) {            
-            $this->getLogger()->err("TaskAssignCollectionCommand::execute: Cannot assign, no workers.");                       
-            $this->getResqueQueueService()->add(
-                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
-                'task-assign-collection',
-                array(
-                    'ids' => implode(',', $taskIds)
+            $this->getLogger()->error("TaskAssignCollectionCommand::execute: Cannot assign, no workers.");
+
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'task-assign-collection',
+                    ['ids' => implode(',', $taskIds)]
                 )
             );
             
@@ -87,13 +87,12 @@ EOF
 
             $entityManager->flush();            
         } else {
-            $this->getResqueQueueService()->add(
-                'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
-                'task-assign-collection',
-                array(
-                    'ids' => implode(',', $taskIds)
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'task-assign-collection',
+                    ['ids' => implode(',', $taskIds)]
                 )
-            );             
+            );
         }
         
         return $response;

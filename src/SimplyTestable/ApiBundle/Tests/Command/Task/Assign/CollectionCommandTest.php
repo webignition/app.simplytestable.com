@@ -43,7 +43,6 @@ class CollectionCommandTest extends ConsoleCommandTestCase {
         ));        
 
         $containsResult = $this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
             'task-assign-collection',
             array(
                 'ids' => implode(',', $taskIds)
@@ -74,7 +73,6 @@ class CollectionCommandTest extends ConsoleCommandTestCase {
         ));        
         
         $containsResult = $this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignCollectionJob',
             'task-assign-collection',
             array(
                 'ids' => implode(',', $taskIds)

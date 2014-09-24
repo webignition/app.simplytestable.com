@@ -40,7 +40,6 @@ class DefaultTest extends CommandTest {
         ));
         
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
             'task-assign',
             array(
                 'id' => $job->getTasks()->first()->getId()
@@ -66,7 +65,6 @@ class DefaultTest extends CommandTest {
         ));        
         
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'SimplyTestable\ApiBundle\Resque\Job\TaskAssignJob',
             'task-assign',
             array(
                 'id' => $job->getTasks()->first()->getId()
