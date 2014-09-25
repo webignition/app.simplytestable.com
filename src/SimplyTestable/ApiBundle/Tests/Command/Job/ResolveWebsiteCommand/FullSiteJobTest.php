@@ -3,12 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Command\Job\ResolveWebsiteCommand;
  
 class FullSiteJobTest extends CommandTest {
-    
-    /**
-     * domains to ignore are set
-     * resque job is queued?
-     */
-    
+
     /**
      *
      * @var \SimplyTestable\ApiBundle\Entity\Job\Job
@@ -41,7 +36,7 @@ class FullSiteJobTest extends CommandTest {
   
     public function testResqueQueueContainsJobPreparationJob() {            
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'job-prepare',
+            'job-resolve',
             array(
                 'id' => $this->job->getId()
             )  
