@@ -25,6 +25,12 @@ abstract class CommandJob extends Job {
     abstract protected function getCommandArgs();
 
 
+    /**
+     * @return string
+     */
+    abstract protected function getIdentifier();
+
+
     public function run($args) {
         $command = $this->getCommand();
         $command->setContainer($this->getContainer());
@@ -38,8 +44,8 @@ abstract class CommandJob extends Job {
             return true;
         }
 
-        $this->getContainer()->get('logger')->error(get_class($this) . ': task [' . $args['id'] . '] returned ' . $returnCode);
-        $this->getContainer()->get('logger')->error(get_class($this) . ': task [' . $args['id'] . '] output ' . trim($output->getBuffer()));
+        $this->getContainer()->get('logger')->error(get_class($this) . ': [' . $this->getIdentifier() . '] returned ' . $returnCode);
+        $this->getContainer()->get('logger')->error(get_class($this) . ': [' . $this->getIdentifier() . '] output ' . trim($output->getBuffer()));
     }
 
 

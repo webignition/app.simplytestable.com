@@ -20,4 +20,8 @@ class AssignmentSelectionJob extends CommandJob {
     protected function getCommandArgs() {
         return [];
     }
+
+    protected function getIdentifier() {
+        return '';
+    }
 }

@@ -22,4 +22,8 @@ class ProcessEventJob extends CommandJob {
             'stripeId' => $this->args['stripeId']
         ];
     }
+
+    protected function getIdentifier() {
+        return $this->args['stripeId'];
+    }
 }

@@ -22,4 +22,8 @@ class CancelJob extends CommandJob {
             'id' => $this->args['id']
         ];
     }
+
+    protected function getIdentifier() {
+        return $this->args['id'];
+    }
 }
