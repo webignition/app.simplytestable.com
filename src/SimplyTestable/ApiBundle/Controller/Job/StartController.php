@@ -86,7 +86,7 @@ class StartController extends ApiController
 
             $this->getResqueQueueService()->enqueue(
                 $this->getResqueJobFactoryService()->create(
-                    'job-prepare',
+                    'job-resolve',
                     ['id' => $job->getId()]
                 )
             );
