@@ -20,6 +20,8 @@ class FullSiteJobTest extends CommandTest {
             'full site',
             array('CSS Validation')
         ));
+
+        $this->clearRedis();
         
         $this->assertReturnCode(0, array(
             'id' => $this->job->getId()
@@ -36,7 +38,7 @@ class FullSiteJobTest extends CommandTest {
   
     public function testResqueQueueContainsJobPreparationJob() {            
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'job-resolve',
+            'job-prepare',
             array(
                 'id' => $this->job->getId()
             )  
