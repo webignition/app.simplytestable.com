@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Task\Service\IsFinished;
+namespace SimplyTestable\ApiBundle\Tests\Services\Task\TaskService\IsFinished;
 
 class QueuedTest extends isFinishedTest {    
     
