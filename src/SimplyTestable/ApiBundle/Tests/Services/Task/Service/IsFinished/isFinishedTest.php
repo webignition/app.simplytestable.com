@@ -1,8 +1,8 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Task\IsFinished;
+namespace SimplyTestable\ApiBundle\Tests\Services\Task\Service\IsFinished;
 
-use SimplyTestable\ApiBundle\Tests\Services\Task\ServiceTest;
+use SimplyTestable\ApiBundle\Tests\Services\Task\Service\ServiceTest;
 
 abstract class isFinishedTest extends ServiceTest {
     
