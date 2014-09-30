@@ -42,7 +42,7 @@ services:
         taskTypeService: "@simplytestable.services.tasktypeservice"
         
   simplytestable.services.job.rejectionservice:
-    class:  SimplyTestable\ApiBundle\Services\Job\RejectionService  
+    class:  SimplyTestable\ApiBundle\Services\Job\RejectionService
     arguments:
         jobService: "@simplytestable.services.jobservice" 
         
@@ -71,7 +71,7 @@ services:
         stateService: "@simplytestable.services.stateservice"
     
   simplytestable.controller.action_listener:
-    class: SimplyTestable\ApiBundle\EventListener\BeforeListener    
+    class: SimplyTestable\ApiBundle\EventListener\BeforeListener
     arguments:
         logger: "@logger"
     tags:
@@ -150,7 +150,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"              
         
   simplytestable.services.applicationStateService:
-    class:  SimplyTestable\ApiBundle\Services\ApplicationStateService  
+    class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
     
   simplytestable.services.commandService:
     class:   SimplyTestable\ApiBundle\Services\CommandService
@@ -361,3 +361,10 @@ services:
     class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
+
+
+  simplytestable.services.task.queueService:
+    class:  SimplyTestable\ApiBundle\Services\Task\QueueService
+    arguments:
+        jobService: "@simplytestable.services.jobservice"
+        taskService: "@simplytestable.services.taskservice"

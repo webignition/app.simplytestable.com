@@ -142,6 +142,31 @@ class JobRepository extends EntityRepository
         $queryBuilder->setParameter('TaskState', $taskState);                
         return $queryBuilder->getQuery()->getResult();
     }
+
+
+    /**
+     * @param State[] $jobStates
+     * @param State[] $taskStates
+     * @return Job[]
+     */
+    public function getByStatesAndTaskStates($jobStates = [], $taskStates = []) {
+        $queryBuilder = $this->createQueryBuilder('Job');
+        $queryBuilder->join('Job.tasks', 'Tasks');
+        $queryBuilder->select('DISTINCT Job');
+
+        if (count($jobStates)) {
+            $queryBuilder->andWhere('Job.state IN (:JobStates)')
+                ->setParameter('JobStates', $jobStates);
+        }
+
+        if (count($jobStates)) {
+            $queryBuilder->andWhere('Tasks.state IN (:TaskStates)')
+                ->setParameter('TaskStates', $taskStates);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
     
     
     /**

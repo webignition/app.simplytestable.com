@@ -260,18 +260,23 @@ class TaskRepository extends EntityRepository
     /**
      *
      * @param Job $job
+     * @param int $limit
      * @return array 
      */
-    public function getIdsByJob(Job $job) {
+    public function getIdsByJob(Job $job, $limit = 0) {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task.id');
         $queryBuilder->where('Task.job = :Job');        
         $queryBuilder->setParameter('Job', $job);
+
+        if ($limit > 0) {
+            $queryBuilder->setMaxResults($limit);
+        }
         
-        $repostitoryResult = $queryBuilder->getQuery()->getResult();
+        $result = $queryBuilder->getQuery()->getResult();
         
         $taskIds = array();
-        foreach ($repostitoryResult as $taskId) {
+        foreach ($result as $taskId) {
             $taskIds[] = $taskId['id'];
         }
         
