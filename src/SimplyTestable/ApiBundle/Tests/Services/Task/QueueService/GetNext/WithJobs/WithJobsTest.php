@@ -27,7 +27,9 @@ abstract class WithJobsTest extends ServiceTest {
      * @return int
      */
     private function getJobLimit() {
-        $localClassName = array_pop(explode('\\', get_class($this)));
+        $classNameParts = explode('\\', get_class($this));
+
+        $localClassName = array_pop($classNameParts);
 
         $matches = [];
         preg_match('/Job[0-9]+/', $localClassName, $matches);
