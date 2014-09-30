@@ -47,7 +47,16 @@ class Worker
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
      * @SerializerAnnotation\Expose 
      */
-    protected $state; 
+    protected $state;
+
+
+    /**
+     *
+     * @var string
+     *
+     * @ORM\Column(type="string", unique=false, nullable=true)
+     */
+    private $token;
     
     
     /**
@@ -71,7 +80,7 @@ class Worker
     /**
      * Set state
      *
-     * @param use SimplyTestable\ApiBundle\Entity\State $state
+     * @param \SimplyTestable\ApiBundle\Entity\State $state
      * @return Job
      */
     public function setState(State $state)
@@ -127,7 +136,7 @@ class Worker
     /**
      * Add tasks
      *
-     * @param SimplyTestable\ApiBundle\Entity\Task\Task $tasks
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $tasks
      * @return Worker
      */
     public function addTask(\SimplyTestable\ApiBundle\Entity\Task\Task $tasks)
@@ -140,7 +149,7 @@ class Worker
     /**
      * Remove tasks
      *
-     * @param SimplyTestable\ApiBundle\Entity\Task\Task $tasks
+     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $tasks
      */
     public function removeTask(\SimplyTestable\ApiBundle\Entity\Task\Task $tasks)
     {
@@ -150,7 +159,7 @@ class Worker
     /**
      * Get tasks
      *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getTasks()
     {
@@ -165,5 +174,23 @@ class Worker
      */
     public function equals(Worker $worker) {
         return $this->getHostname() == $worker->getHostname();
+    }
+
+
+    /**
+     * @param string $token
+     * @return Worker
+     */
+    public function setToken($token) {
+        $this->token = $token;
+        return $this;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getToken() {
+        return $this->token;
     }
 }
