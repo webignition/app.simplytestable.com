@@ -193,4 +193,12 @@ class Worker
     public function getToken() {
         return $this->token;
     }
+
+
+    /**
+     * @return bool
+     */
+    public function hasToken() {
+        return !is_null($this->getToken());
+    }
 }
