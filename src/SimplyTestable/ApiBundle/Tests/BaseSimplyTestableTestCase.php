@@ -821,8 +821,17 @@ EOD;
      */
     protected function getTaskService() {
         return $this->container->get('simplytestable.services.taskservice');
-    }      
-    
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Task\QueueService
+     */
+    protected function getTaskQueueService() {
+        return $this->container->get('simplytestable.services.task.queueService');
+    }
+
     
     /**
      *
@@ -938,15 +947,19 @@ EOD;
     
     /**
      * 
-     * @param string hostnanme
+     * @param string $hostname
+     * @param string $token
      * @return \SimplyTestable\ApiBundle\Entity\Worker
      */
-    protected function createWorker($hostname = null) {
+    protected function createWorker($hostname = null, $token = null) {
         if (is_null($hostname)) {
             $hostname = md5(time()) . '.worker.simplytestable.com';
         }   
         
         $worker = $this->getWorkerService()->get($hostname);
+        $worker->setToken($token);
+        $this->getWorkerService()->persistAndFlush($worker);
+
         $worker->setState($this->getStateService()->fetch('worker-active'));
         
         $this->getWorkerService()->persistAndFlush($worker);

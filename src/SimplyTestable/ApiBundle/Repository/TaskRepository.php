@@ -282,6 +282,66 @@ class TaskRepository extends EntityRepository
         
         return $taskIds;
     }
+
+
+    /**
+     * @param Job $job
+     * @param State[] $taskStates
+     * @param int $limit
+     * @return int[]
+     */
+    public function getIdsByJobAndTaskStates(Job $job, $taskStates = [], $limit = 0) {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->select('Task.id');
+        $queryBuilder->where('Task.job = :Job');
+        $queryBuilder->setParameter('Job', $job);
+
+        if (count($taskStates)) {
+            $queryBuilder->andWhere('Task.state IN (:TaskStates)')
+                ->setParameter('TaskStates', $taskStates);
+        }
+
+        if ($limit > 0) {
+            $queryBuilder->setMaxResults($limit);
+        }
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        $taskIds = array();
+        foreach ($result as $taskId) {
+            $taskIds[] = $taskId['id'];
+        }
+
+        return $taskIds;
+
+
+//        $queryBuilder = $this->createQueryBuilder('Job');
+//        $queryBuilder->join('Job.tasks', 'Tasks');
+//        $queryBuilder->select('DISTINCT Job');
+//
+//        $where = 'Tasks.state = :TaskState';
+//
+//        if (is_array($jobStates)) {
+//            $stateWhere = '';
+//            $stateCount = count($jobStates);
+//
+//            foreach ($jobStates as $stateIndex => $jobState) {
+//                $stateWhere .= 'Job.state = :JobState' . $stateIndex;
+//                if ($stateIndex < $stateCount - 1) {
+//                    $stateWhere .= ' OR ';
+//                }
+//                $queryBuilder->setParameter('JobState'.$stateIndex, $jobState);
+//            }
+//
+//            $where .= ' AND ('.$stateWhere.')';
+//        }
+//
+//        $queryBuilder->where($where);
+//
+//        $queryBuilder->setParameter('TaskState', $taskState);
+//        return $queryBuilder->getQuery()->getResult();
+    }
+
     
     /**
      *

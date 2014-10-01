@@ -1,16 +1,22 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Task\QueueService\GetNext\WithJobs;
+namespace SimplyTestable\ApiBundle\Tests\Services\Task\QueueService\GetNext\Sequence;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Tests\Services\Task\QueueService\ServiceTest;
 
-abstract class WithJobsTest extends ServiceTest {
+abstract class SequenceTest extends ServiceTest {
 
     /**
      * @var Job[]
      */
     private $jobs;
+
+
+    /**
+     * @var int[]
+     */
+    private $firstSetTaskIds = [];
 
     public function setUp() {
         parent::setUp();
@@ -19,6 +25,14 @@ abstract class WithJobsTest extends ServiceTest {
             $this->jobs[] = $this->getJobService()->getById(
                 $this->createResolveAndPrepareJob('http://' . $jobLimitIndex . '.example.com/')
             );
+        }
+
+        $this->firstSetTaskIds = $this->getService()->getNext($this->getTaskLimit());
+
+        foreach ($this->firstSetTaskIds as $taskId) {
+            $task = $this->getTaskService()->getById($taskId);
+            $task->setState($this->getTaskService()->getQueuedForAssignmentState());
+            $this->getTaskService()->persistAndFlush($task);
         }
     }
 
@@ -51,20 +65,34 @@ abstract class WithJobsTest extends ServiceTest {
     }
 
     private function getExpectedTaskIds() {
-        $jobTaskIds = [];
+        $allJobTaskIds = [];
         foreach ($this->jobs as $job) {
-            $jobTaskIds[$job->getId()] =  $this->getTaskService()->getEntityRepository()->getIdsByJob($job, $this->getTaskLimit());
+            $allJobTaskIds[$job->getId()] =  $this->getTaskService()->getEntityRepository()->getIdsByJob($job);
+        }
+
+        $jobTaskIds = [];
+        foreach ($allJobTaskIds as $jobId => $taskIdSet) {
+            $jobTaskIds[$jobId] = [];
+
+            foreach ($taskIdSet as $taskId) {
+                if (!in_array($taskId, $this->firstSetTaskIds)) {
+                    $jobTaskIds[$jobId][] = $taskId;
+                }
+            }
+        }
+
+        $maxJobTaskIds = 0;
+        foreach ($allJobTaskIds as $taskIdSet) {
+            if (count($taskIdSet) > $maxJobTaskIds) {
+                $maxJobTaskIds = count($taskIdSet);
+            }
         }
 
         $taskIds = [];
-        while (count($taskIds) < ($this->getTaskLimit()) && count($jobTaskIds) > 0) {
-            foreach ($jobTaskIds as $jobId => $taskIdSet) {
-                $taskIds[] = array_shift($taskIdSet);
-
-                if (count($taskIdSet) === 0) {
-                    unset($jobTaskIds[$jobId]);
-                } else {
-                    $jobTaskIds[$jobId] = $taskIdSet;
+        for ($taskIdIndex = 0; $taskIdIndex < $maxJobTaskIds; $taskIdIndex++) {
+            foreach ($jobTaskIds as $taskIdSet) {
+                if (isset($taskIdSet[$taskIdIndex])) {
+                    $taskIds[] = $taskIdSet[$taskIdIndex];
                 }
             }
         }
@@ -77,6 +105,7 @@ abstract class WithJobsTest extends ServiceTest {
     }
 
     public function testGetsExpectedTaskIds() {
+        //var_dump($this->getExpectedTaskIds(), $this->getService()->getNext($this->getTaskLimit()));
         $this->assertEquals($this->getExpectedTaskIds(), $this->getService()->getNext($this->getTaskLimit()));
     }
 

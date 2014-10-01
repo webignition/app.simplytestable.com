@@ -48,7 +48,11 @@ class QueueService {
 
         $jobTaskIds = [];
         foreach ($incompleteJobs as $job) {
-            $jobTaskIds[$job->getId()] =  $this->taskService->getEntityRepository()->getIdsByJob($job, $limit);
+            $this->taskService->getIncompleteStates();
+
+            $jobTaskIds[$job->getId()] =  $this->taskService->getEntityRepository()->getIdsByJobAndTaskStates($job, [
+                $this->taskService->getQueuedState()
+            ], $limit);
         }
 
         $taskIds = [];
@@ -62,6 +66,10 @@ class QueueService {
                     $jobTaskIds[$jobId] = $taskIdSet;
                 }
             }
+        }
+
+        if (count($taskIds) > $limit) {
+            $taskIds = array_slice($taskIds, 0, $limit);
         }
 
         return $taskIds;

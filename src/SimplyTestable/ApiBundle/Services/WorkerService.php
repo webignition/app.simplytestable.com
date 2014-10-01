@@ -82,7 +82,7 @@ class WorkerService extends EntityService {
      *
      * @return boolean
      */
-    private function has($hostname) {
+    public function has($hostname) {
         return !is_null($this->fetch($hostname));
     }
     
@@ -160,7 +160,7 @@ class WorkerService extends EntityService {
     /**
      * Get collection of active workers
      * 
-     * @return array
+     * @return Worker[]
      */
     public function getActiveCollection() {
         $workers = $this->getEntityRepository()->findAll();

@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 
 class CollectionCommand extends BaseCommand
@@ -23,6 +24,7 @@ class CollectionCommand extends BaseCommand
             ->setName('simplytestable:task:assigncollection')
             ->setDescription('Assign a collection of tasks to workers')
             ->addArgument('ids', InputArgument::REQUIRED, 'ids of tasks to assign')
+            ->addArgument('worker', InputArgument::OPTIONAL, 'hostname of worker to which to assign tasks')
             ->setHelp(<<<EOF
 Assign a collection of tasks to workers
 EOF
@@ -60,8 +62,18 @@ EOF
         if (count($tasks) === 0) {
             return self::RETURN_CODE_OK;
         }
-        
-        $workers = $this->getWorkerService()->getActiveCollection();        
+
+        $workers = $this->getWorkerService()->getActiveCollection();
+        if (!is_null($input->getArgument('worker'))) {
+            $selectedWorker = trim($input->getArgument('worker'));
+
+            foreach ($workers as $workerIndex => $worker) {
+                if ($worker->getHostname() != $selectedWorker) {
+                    unset($workers[$workerIndex]);
+                }
+            }
+        }
+
         if (count($workers) === 0) {            
             $this->getLogger()->error("TaskAssignCollectionCommand::execute: Cannot assign, no workers.");
 
@@ -96,7 +108,8 @@ EOF
         }
         
         return $response;
-    }    
+    }
+
     
     /**
      *

@@ -239,4 +239,4 @@ teaminvite_userlist:
 
 tasks_request:
     pattern: /tasks/request/
-    defaults: { _controller: SimplyTestableApiBundle:Tasks:request }
+    defaults: { _controller: SimplyTestableApiBundle:Tasks:request, _format: json }
