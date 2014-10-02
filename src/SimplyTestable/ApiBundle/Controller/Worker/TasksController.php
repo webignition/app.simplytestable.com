@@ -69,6 +69,10 @@ class TasksController extends ApiController {
         }
 
         $taskIds = $this->getTaskQueueService()->getNext($limit);
+        if (count($taskIds) == 0) {
+            return $this->sendResponse();
+        }
+
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
 
         foreach ($tasks as $task) {
