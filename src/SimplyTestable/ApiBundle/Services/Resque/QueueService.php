@@ -163,7 +163,12 @@ class QueueService {
      * @return boolean
      */
     public function isEmpty($queue) {
-        return $this->getQueueLength($queue) == 0;
+        try {
+            return $this->getQueueLength($queue) == 0;
+        } catch (\Exception $exception) {
+            $this->logger->warning('ResqueQueueService::isEmpty: Redis error ['.$exception->getMessage().']');
+            return false;
+        }
     }
 
 
@@ -173,10 +178,14 @@ class QueueService {
      * @param array $argCollection
      */
     public function removeCollection($queue, $argCollection) {
-        $values = $this->findRedisValues($queue, $argCollection);
+        try {
+            $values = $this->findRedisValues($queue, $argCollection);
 
-        foreach ($values as $redisValue) {
-            \Resque::redis()->lrem(self::QUEUE_KEY . ':' . $queue, 1, $redisValue);
+            foreach ($values as $redisValue) {
+                \Resque::redis()->lrem(self::QUEUE_KEY . ':' . $queue, 1, $redisValue);
+            }
+        } catch (\Exception $exception) {
+            $this->logger->warning('ResqueQueueService::removeCollection: Redis error ['.$exception->getMessage().']');
         }
     }
 
