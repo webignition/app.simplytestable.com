@@ -38,7 +38,7 @@ class WorkerActivateVerifyCommand extends BaseCommand
     
     /**
      *
-     * @return SimplyTestable\ApiBundle\Services\WorkerService
+     * @return \SimplyTestable\ApiBundle\Services\WorkerService
      */
     private function getWorkerService() {
         return $this->getContainer()->get('simplytestable.services.workerservice');
