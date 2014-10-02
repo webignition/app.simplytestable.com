@@ -76,7 +76,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
     /**
      * 
      * @param array $tasks
-     * @param array $workers
+     * @param Worker[] $workers
      * @return int
      * 
      * return codes:
@@ -87,6 +87,13 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
     public function assignCollection($tasks, $workers) {        
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: Initialising");        
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: [".count($workers)."] workers selected");
+
+        $workerNames = [];
+        foreach ($workers as $worker) {
+            $workerNames[] = $worker->getHostname();
+        }
+
+        $this->logger->info("WorkerTaskAssignmentService::assignCollection: workers [" . implode(',', $workerNames) . "]");
         
         if (count($workers) == 0) {
             $this->logger->err("WorkerTaskAssignmentService::assignCollection: Cannot assign, no active workers.");
