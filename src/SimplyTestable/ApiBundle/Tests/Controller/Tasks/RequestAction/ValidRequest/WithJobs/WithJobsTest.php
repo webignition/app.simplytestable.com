@@ -75,7 +75,7 @@ abstract class WithJobsTest extends ValidRequestTest {
     /**
      * @return array
      */
-    protected function getRequestQueryData() {
+    protected function getRequestPostData() {
         return [
             'worker_hostname' => self::WORKER_HOSTNAME,
             'worker_token' => self::WORKER_TOKEN,

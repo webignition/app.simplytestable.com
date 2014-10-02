@@ -7,7 +7,7 @@ class LackingWorkerHostnameTest extends MissingQueryDataTest {
     /**
      * @return array
      */
-    protected function getRequestQueryData() {
+    protected function getRequestPostData() {
         return [
             //'worker_hostname' => 'worker.example.com',
             'worker_token' => 'foo'

@@ -27,7 +27,7 @@ class TasksController extends ApiController {
         ]);
 
         $this->setRequestTypes(array(
-            'requestAction' => \Guzzle\Http\Message\Request::GET
+            'requestAction' => \Guzzle\Http\Message\Request::POST
         ));
     }  
     
