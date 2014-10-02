@@ -29,9 +29,6 @@ abstract class ValidRequestTest extends RequestTest {
         $this->responseObject = json_decode($this->response->getContent(), true);
     }
 
-//    abstract protected function getExpectedTaskCount();
-//    abstract protected function getExpectedTaskCollection();
-
     protected function preCall() {
         $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
     }
@@ -39,16 +36,4 @@ abstract class ValidRequestTest extends RequestTest {
     public function testResponseStatusCode() {
         $this->assertEquals(200, $this->response->getStatusCode());
     }
-
-//    public function testResponseObjectType() {
-//        $this->assertTrue(is_array($this->responseObject));
-//    }
-//
-//    public function testGetResponseTaskCount() {
-//        $this->assertEquals($this->getExpectedTaskCount(), count($this->responseObject));
-//    }
-//
-//    public function testResponseTaskCollection() {
-//        $this->assertEquals($this->getExpectedTaskCollection(), $this->responseObject);
-//    }
 }
