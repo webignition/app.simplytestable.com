@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Resque\Job\Task\AssignCollection;
 
 use SimplyTestable\ApiBundle\Tests\Resque\Job\JobTest as BaseJobTest;
 
-class JobTest extends BaseJobTest {
+class WithoutWorkerTest extends BaseJobTest {
 
     protected function getArgs() {
         return [

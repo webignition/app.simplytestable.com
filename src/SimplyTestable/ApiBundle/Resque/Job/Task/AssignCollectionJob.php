@@ -18,6 +18,13 @@ class AssignCollectionJob extends CommandJob {
     }
 
     protected function getCommandArgs() {
+        if (isset($this->args['worker'])) {
+            return [
+                'ids' => $this->args['ids'],
+                'worker' => $this->args['worker']
+            ];
+        }
+
         return [
             'ids' => $this->args['ids']
         ];
