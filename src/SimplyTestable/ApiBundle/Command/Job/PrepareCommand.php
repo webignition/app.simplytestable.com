@@ -31,6 +31,13 @@ class PrepareCommand extends BaseCommand
         /* @var $entityManager \Doctrine\ORM\EntityManager */
         
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'job-prepare',
+                    ['id' => (int)$input->getArgument('id')]
+                )
+            );
+
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }           
         

@@ -22,14 +22,7 @@ class PrepareCommandTest extends CommandTest {
             'id' => $job->getId()
         ));
     }
-    
-    public function testSystemInMaintenanceModeReturnsStatusCode2() {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
-        $this->assertReturnCode(2, array(
-            'id' => 1
-        ));      
-    }
-  
+
     public function testJobWithNoDiscoveredUrlsReturnsStatusCode0() {
         $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
 
