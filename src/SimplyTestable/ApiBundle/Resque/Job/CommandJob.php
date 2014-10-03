@@ -11,7 +11,7 @@ abstract class CommandJob extends Job {
     /**
      * @return ContainerAwareCommand
      */
-    abstract protected function getCommand();
+    abstract public function getCommand();
 
 
     /**

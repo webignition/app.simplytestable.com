@@ -24,7 +24,7 @@ abstract class JobTest extends BaseSimplyTestableTestCase {
     /**
      * @return Job
      */
-    private function getJob() {
+    protected function getJob() {
         $classNameParts = explode('\\', str_replace('\\Tests', '', get_class($this)));
         array_pop($classNameParts);
         $classNameParts[count($classNameParts) - 1] .= 'Job';

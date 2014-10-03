@@ -2,9 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Resque\Job\Task\AssignCollection;
 
-use SimplyTestable\ApiBundle\Tests\Resque\Job\JobTest as BaseJobTest;
-
-class WithWorkerTest extends BaseJobTest {
+class WithWorkerTest extends JobTest {
 
     protected function getArgs() {
         return [
@@ -16,6 +14,11 @@ class WithWorkerTest extends BaseJobTest {
 
     protected function getExpectedQueue() {
         return 'task-assign-collection';
+    }
+
+
+    protected function getJobCommandClass() {
+        return 'SimplyTestable\\ApiBundle\\Command\\Task\\Assign\\CollectionCommand';
     }
 
 }

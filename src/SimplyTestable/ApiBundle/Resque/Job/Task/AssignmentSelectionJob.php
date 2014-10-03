@@ -13,7 +13,7 @@ class AssignmentSelectionJob extends CommandJob {
         return self::QUEUE_NAME;
     }
 
-    protected function getCommand() {
+    public function getCommand() {
         return new AssignmentSelectionCommand();
     }
 
