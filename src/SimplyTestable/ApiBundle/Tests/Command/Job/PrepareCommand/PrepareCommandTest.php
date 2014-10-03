@@ -2,8 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand;
 
-use SimplyTestable\ApiBundle\Tests\Command\CommandTest;
-
 class PrepareCommandTest extends CommandTest {
     
     const CANONICAL_URL = 'http://example.com';
