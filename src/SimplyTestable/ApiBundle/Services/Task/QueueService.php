@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Services\Task;
 
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 
 class QueueService {
 
@@ -24,6 +25,12 @@ class QueueService {
      * @var int
      */
     private $limit = 1;
+
+
+    /**
+     * @var Job
+     */
+    private $job = null;
 
 
     /**
@@ -52,6 +59,34 @@ class QueueService {
     public function getLimit() {
         return $this->limit;
     }
+
+
+    /**
+     * @param Job $job
+     * @return $this
+     */
+    public function setJob(Job $job) {
+        $this->job = $job;
+        return $this;
+    }
+
+
+    /**
+     * @return Job
+     */
+    public function getJob() {
+        return $this->job;
+    }
+
+
+    /**
+     * @return $this
+     */
+    public function clearJob() {
+        $this->job = null;
+        return $this;
+    }
+
 
 
     /**
