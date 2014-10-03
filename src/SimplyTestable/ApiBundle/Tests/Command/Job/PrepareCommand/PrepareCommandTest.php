@@ -1,21 +1,13 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Job;
+namespace SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand;
 
-use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
+use SimplyTestable\ApiBundle\Tests\Command\CommandTest;
 
-class PrepareCommandTest extends ConsoleCommandTestCase {
+class PrepareCommandTest extends CommandTest {
     
     const CANONICAL_URL = 'http://example.com';
-    
-    /**
-     * 
-     * @return string
-     */
-    protected function getCommandName() {
-        return 'simplytestable:job:prepare';
-    }     
-    
+
     public function testSuccessfulPrepareReturnsStatusCode0() {
         $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
         $this->queuePrepareHttpFixturesForJob($job->getWebsite()->getCanonicalUrl());
