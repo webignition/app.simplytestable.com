@@ -27,7 +27,9 @@ abstract class SequenceTest extends ServiceTest {
             );
         }
 
-        $this->firstSetTaskIds = $this->getService()->getNext($this->getTaskLimit());
+        $this->getService()->setLimit($this->getTaskLimit());
+
+        $this->firstSetTaskIds = $this->getService()->getNext();
 
         foreach ($this->firstSetTaskIds as $taskId) {
             $task = $this->getTaskService()->getById($taskId);
@@ -105,7 +107,7 @@ abstract class SequenceTest extends ServiceTest {
     }
 
     public function testGetsExpectedTaskIds() {
-        $this->assertEquals($this->getExpectedTaskIds(), $this->getService()->getNext($this->getTaskLimit()));
+        $this->assertEquals($this->getExpectedTaskIds(), $this->getService()->getNext());
     }
 
 }

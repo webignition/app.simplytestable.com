@@ -68,7 +68,8 @@ class TasksController extends ApiController {
             return $this->sendResponse();
         }
 
-        $taskIds = $this->getTaskQueueService()->getNext($limit);
+        $this->getTaskQueueService()->setLimit($limit);
+        $taskIds = $this->getTaskQueueService()->getNext();
         if (count($taskIds) == 0) {
             return $this->sendResponse();
         }

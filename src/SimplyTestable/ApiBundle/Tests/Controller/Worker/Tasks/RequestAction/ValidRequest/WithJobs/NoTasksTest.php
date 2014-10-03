@@ -30,7 +30,8 @@ class NoTasksTest extends ValidRequestTest {
             $this->getTaskService()->persistAndFlush($task);
         }
 
-        $this->taskIds = $this->getTaskQueueService()->getNext($this->getTaskLimit());
+        $this->getTaskQueueService()->setLimit($this->getTaskLimit());
+        $this->taskIds = $this->getTaskQueueService()->getNext();
     }
 
 

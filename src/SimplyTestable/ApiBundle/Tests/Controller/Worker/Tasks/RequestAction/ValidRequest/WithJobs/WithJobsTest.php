@@ -29,7 +29,8 @@ abstract class WithJobsTest extends ValidRequestTest {
             );
         }
 
-        $this->taskIds = $this->getTaskQueueService()->getNext($this->getTaskLimit());
+        $this->getTaskQueueService()->setLimit($this->getTaskLimit());
+        $this->taskIds = $this->getTaskQueueService()->getNext();
     }
 
 

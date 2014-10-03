@@ -10,14 +10,20 @@ class QueueService {
      *
      * @var JobService
      */
-    protected $jobService;
+    private $jobService;
 
 
     /**
      *
      * @var TaskService
      */
-    protected $taskService;
+    private $taskService;
+
+
+    /**
+     * @var int
+     */
+    private $limit = 1;
 
 
     /**
@@ -29,11 +35,29 @@ class QueueService {
         $this->taskService = $taskService;
     }
 
+
     /**
      * @param int $limit
+     * @return $this
+     */
+    public function setLimit($limit) {
+        $this->limit = $limit;
+        return $this;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getLimit() {
+        return $this->limit;
+    }
+
+
+    /**
      * @return int[]
      */
-    public function getNext($limit = 1) {
+    public function getNext() {
         $incompleteJobs = $this->jobService->getEntityRepository()->getByStatesAndTaskStates(
             $this->jobService->getIncompleteStates(),
             [
@@ -51,7 +75,7 @@ class QueueService {
             $taskIdsForJob = $this->taskService->getEntityRepository()->getIdsByJobAndTaskStates($job, [
                 $this->taskService->getQueuedState(),
                 $this->taskService->getQueuedForAssignmentState()
-            ], $limit);
+            ], $this->getLimit());
 
             if (count($taskIdsForJob)) {
                 $jobTaskIds[$job->getId()] =  $taskIdsForJob;
@@ -60,7 +84,7 @@ class QueueService {
 
 
         $taskIds = [];
-        while (count($taskIds) < ($limit) && count($jobTaskIds) > 0) {
+        while (count($taskIds) < ($this->getLimit()) && count($jobTaskIds) > 0) {
             foreach ($jobTaskIds as $jobId => $taskIdSet) {
                 $taskIds[] = array_shift($taskIdSet);
 
@@ -72,8 +96,8 @@ class QueueService {
             }
         }
 
-        if (count($taskIds) > $limit) {
-            $taskIds = array_slice($taskIds, 0, $limit);
+        if (count($taskIds) > $this->getLimit()) {
+            $taskIds = array_slice($taskIds, 0, $this->getLimit());
         }
 
         return $taskIds;

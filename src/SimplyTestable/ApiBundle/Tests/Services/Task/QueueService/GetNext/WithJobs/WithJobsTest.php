@@ -20,6 +20,8 @@ abstract class WithJobsTest extends ServiceTest {
                 $this->createResolveAndPrepareJob('http://' . $jobLimitIndex . '.example.com/')
             );
         }
+
+        $this->getTaskQueueService()->setLimit($this->getTaskLimit());
     }
 
 
@@ -77,7 +79,7 @@ abstract class WithJobsTest extends ServiceTest {
     }
 
     public function testGetsExpectedTaskIds() {
-        $this->assertEquals($this->getExpectedTaskIds(), $this->getService()->getNext($this->getTaskLimit()));
+        $this->assertEquals($this->getExpectedTaskIds(), $this->getService()->getNext());
     }
 
 }
