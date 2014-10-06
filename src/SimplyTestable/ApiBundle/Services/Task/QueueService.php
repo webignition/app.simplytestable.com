@@ -93,14 +93,7 @@ class QueueService {
      * @return int[]
      */
     public function getNext() {
-        $incompleteJobs = $this->jobService->getEntityRepository()->getByStatesAndTaskStates(
-            $this->jobService->getIncompleteStates(),
-            [
-                $this->taskService->getQueuedState(),
-                $this->taskService->getQueuedForAssignmentState(),
-            ]
-        );
-
+        $incompleteJobs = $this->getIncompleteJobSet();
         if (count($incompleteJobs) === 0) {
             return [];
         }
@@ -136,6 +129,27 @@ class QueueService {
         }
 
         return $taskIds;
+    }
+
+
+    private function getIncompleteJobSet() {
+        $incompleteJobs =  $this->jobService->getEntityRepository()->getByStatesAndTaskStates(
+            $this->jobService->getIncompleteStates(),
+            [
+                $this->taskService->getQueuedState(),
+                $this->taskService->getQueuedForAssignmentState(),
+            ]
+        );
+
+        if (!is_null($this->job)) {
+            foreach ($incompleteJobs as $jobIndex => $job) {
+                if ($job->getId() !== $this->job->getId()) {
+                    unset($incompleteJobs[$jobIndex]);
+                }
+            }
+        }
+
+        return $incompleteJobs;
     }
 
 }
