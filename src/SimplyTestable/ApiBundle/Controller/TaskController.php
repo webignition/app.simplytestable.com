@@ -50,7 +50,7 @@ class TaskController extends ApiController
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
-        
+
         $task_type = urldecode($task_type);
         if (!$this->getTaskTypeService()->exists($task_type)) {
             return $this->sendFailureResponse();
@@ -59,7 +59,7 @@ class TaskController extends ApiController
         $taskType = $this->getTaskTypeService()->getByName($task_type);        
         
         $tasks = $this->getTaskService()->getEquivalentTasks($canonical_url, $taskType, $parameter_hash, $this->getTaskService()->getIncompleteStates());
-        
+
         if (count($tasks) === 0) {
             return $this->sendGoneResponse();
         }
@@ -80,11 +80,7 @@ class TaskController extends ApiController
 
         $urlDiscoveryTaskType = $this->getTaskTypeService()->getByName('URL discovery');
 
-        $processedTaskCount = 0;
-        
         foreach ($tasks as $task) {
-            $processedTaskCount++;
-
             /* @var $task Task */
 
             if ($task->hasOutput() && $this->getTaskOutputJoinerFactoryService()->hasTaskOutputJoiner($task)) {
@@ -117,17 +113,21 @@ class TaskController extends ApiController
                 }
 
                 $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
+
+                $limit = $this->container->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
+
+                $this->getTaskQueueService()->setLimit($limit);
+                $this->getTaskQueueService()->setJob($crawlJobContainer->getParentJob());
+
+                $this->getResqueQueueService()->enqueue(
+                    $this->getResqueJobFactoryService()->create(
+                        'task-assign-collection',
+                        ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
+                    )
+                );
             }
         }
-        
-        if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
-                    'task-assignment-selection'
-                )
-            );
-        }          
-        
+
         return $this->sendSuccessResponse();
     }
     
@@ -229,7 +229,16 @@ class TaskController extends ApiController
      * @return Worker
      */
     private function getWorker() {
-        return $this->get('simplytestable.services.workerservice')->fetch($this->workerHostname);
+        return $this->getWorkerService()->fetch($this->workerHostname);
+    }
+
+
+    /**
+     *
+     * @return WorkerService
+     */
+    private function getWorkerService() {
+        return $this->container->get('simplytestable.services.workerservice');
     }
     
     
@@ -307,6 +316,15 @@ class TaskController extends ApiController
      */    
     private function getTaskOutputJoinerFactoryService() {
         return $this->container->get('simplytestable.services.TaskOutputJoinerServiceFactory');
-    }        
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Task\QueueService
+     */
+    private function getTaskQueueService() {
+        return $this->container->get('simplytestable.services.task.queueservice');
+    }
 }
 

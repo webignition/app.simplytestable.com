@@ -68,7 +68,7 @@ class CrawlJobContainer
     
     /**
      *
-     * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
      * @return CrawlJobContainer
      */
     public function setCrawlJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
@@ -90,7 +90,7 @@ class CrawlJobContainer
 
     /**
      *
-     * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
      * @return CrawlJobContainer
      */
     public function setParentJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
@@ -102,7 +102,7 @@ class CrawlJobContainer
 
     /**
      *
-     * @return SimplyTestable\ApiBundle\Entity\Job\Job
+     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
      */
     public function getParentJob()
     {

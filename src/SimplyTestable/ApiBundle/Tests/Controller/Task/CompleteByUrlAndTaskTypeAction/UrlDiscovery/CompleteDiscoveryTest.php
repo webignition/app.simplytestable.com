@@ -108,7 +108,6 @@ abstract class CompleteDiscoveryTest extends BaseControllerJsonTestCase {
         }
     }
 
-
     public function testParentJobCssTaskParametersDomainsToIgnore() {
         $this->assertTrue(isset($this->jobCssTaskParametersObject->{'domains-to-ignore'}));
     }
@@ -123,6 +122,18 @@ abstract class CompleteDiscoveryTest extends BaseControllerJsonTestCase {
 
     public function testJsStaticAnalysisDomainsToIgnoreArePassedToParentJobTasks() {
         $this->assertEquals($this->container->getParameter('js-static-analysis-domains-to-ignore'), $this->jobJsTaskParametersObject->{'domains-to-ignore'});
+    }
+
+    public function testTaskAssignmentResqueJobIsQueued() {
+        $limit = $this->container->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
+
+        $this->getTaskQueueService()->setLimit($limit);
+        $this->getTaskQueueService()->setJob($this->parentJob);
+
+        $this->assertTrue($this->getResqueQueueService()->contains(
+            'task-assign-collection',
+            ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
+        ));
     }
 
 }
