@@ -17,6 +17,7 @@ abstract class PublicUserAccessTest extends BaseControllerJsonTestCase {
     public function setUp() {
         parent::setUp();
         $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
     }
     
     public function testGetForPublicJobOwnedByPublicUserByPublicUser() {

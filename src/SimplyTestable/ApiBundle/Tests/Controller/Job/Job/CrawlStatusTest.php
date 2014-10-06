@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 class CrawlStatusTest extends BaseControllerJsonTestCase {
     
     public function testWithQueuedCrawlJob() {
+        $this->getUserService()->setUser($this->getTestUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
         $jobObject = json_decode($this->getJobController('statusAction', array(
@@ -18,6 +20,8 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
     } 
     
     public function testWithInProgressCrawlJob() {
+        $this->getUserService()->setUser($this->getTestUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
 
@@ -45,9 +49,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
             'warningCount' => 0
         ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
-        $jobObject = json_decode($this->getJobController('statusAction', array(
-            'user' => $job->getUser()->getEmail()
-        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals('in-progress', $jobObject->crawl->state);
         $this->assertEquals(1, $jobObject->crawl->processed_url_count);
@@ -55,25 +57,25 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         $this->assertEquals(10, $jobObject->crawl->limit);    
     }
     
-    public function testCrawlJobIdIsExposed() {        
+    public function testCrawlJobIdIsExposed() {
+        $this->getUserService()->setUser($this->getTestUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
                 
-        $jobObject = json_decode($this->getJobController('statusAction', array(
-            'user' => $job->getUser()->getEmail()
-        ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
+        $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         
         $this->assertEquals('queued', $jobObject->crawl->state);
         $this->assertEquals(10, $jobObject->crawl->limit);
         $this->assertNotNull($jobObject->crawl->id);        
     }
     
-    public function testGetForPublicJobOwnedByNonPublicUserByPublicUser() {        
+    public function testGetForPublicJobOwnedByNonPublicUserByPublicUser() {
+        $this->getUserService()->setUser($this->getTestUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
-        $this->getJobController('setPublicAction', array(
-            'user' => $this->getTestUser()->getEmail()
-        ))->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId()); 
-        
+        $this->getJobController('setPublicAction')->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $jobObject = json_decode($this->fetchJobResponse($job)->getContent());
         
         $this->assertTrue($job->getIsPublic());
@@ -81,15 +83,12 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
     }    
     
     public function testGetForPublicJobOwnedByNonPublicUserByNonPublicUser() {
+        $this->getUserService()->setUser($this->getTestUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
-        $this->getJobController('setPublicAction', array(
-            'user' => $this->getTestUser()->getEmail()
-        ))->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId()); 
+        $this->getJobController('setPublicAction')->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
         
-        $jobObject = json_decode($this->fetchJobResponse($job, array(
-            'user' => $this->getTestUser()->getEmail()
-        ))->getContent());
+        $jobObject = json_decode($this->fetchJobResponse($job)->getContent());
         
         $this->assertTrue($job->getIsPublic());
         $this->assertTrue(isset($jobObject->crawl));       
@@ -97,59 +96,58 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
     
     public function testGetForPublicJobOwnedByNonPublicUserByDifferentNonPublicUser() {
         $user1 = $this->createAndActivateUser('user1@example.com', 'password');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password');        
-        
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+
+        $this->getUserService()->setUser($user1);
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
             self::DEFAULT_CANONICAL_URL,
             $user1->getEmail()
         ));
         
-        $this->getJobController('setPublicAction', array(
-            'user' => $user1->getEmail()
-        ))->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
-        
-        $jobObject = json_decode($this->fetchJobResponse($job, array(
-            'user' => $user2->getEmail()
-        ))->getContent());        
+        $this->getJobController('setPublicAction')->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+
+        $this->getUserService()->setUser($user2);
+        $jobObject = json_decode($this->fetchJobResponse($job)->getContent());
         
         $this->assertTrue($job->getIsPublic());        
         $this->assertTrue(isset($jobObject->crawl));         
     }    
     
-    public function testGetForPrivateJobOwnedByNonPublicUserByPublicUser() {                
+    public function testGetForPrivateJobOwnedByNonPublicUserByPublicUser() {
+        $this->getUserService()->setUser($this->getTestUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
             self::DEFAULT_CANONICAL_URL,
             $this->getTestUser()->getEmail()
-        )); 
-        
+        ));
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->assertEquals(403, $this->fetchJobResponse($job)->getStatusCode());
     }    
     
-    public function testGetForPrivateJobOwnedByNonPublicUserByNonPublicUser() {      
+    public function testGetForPrivateJobOwnedByNonPublicUserByNonPublicUser() {
+        $this->getUserService()->setUser($this->getTestUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
             self::DEFAULT_CANONICAL_URL,
             $this->getTestUser()->getEmail()
         ));
         
-        $jobObject = json_decode($this->fetchJobResponse($job, array(
-            'user' => $job->getUser()->getEmail()
-        ))->getContent());
+        $jobObject = json_decode($this->fetchJobResponse($job)->getContent());
         
         $this->assertTrue(isset($jobObject->crawl));            
     }
     
     public function testGetForPrivateJobOwnedByNonPublicUserByDifferentNonPublicUser() {        
         $user1 = $this->createAndActivateUser('user1@example.com', 'password');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password');        
-        
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+
+        $this->getUserService()->setUser($user1);
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
             self::DEFAULT_CANONICAL_URL,
             $user1->getEmail()
-        ));        
-        
-        $this->assertEquals(403, $this->fetchJobResponse($job, array(
-            'user' => $user2->getEmail()
-        ))->getStatusCode());              
+        ));
+
+        $this->getUserService()->setUser($user2);
+        $this->assertEquals(403, $this->fetchJobResponse($job)->getStatusCode());
     }   
     
     
@@ -162,15 +160,15 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);        
         $accountPlanUrlLimit = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
 
+        $this->getUserService()->setUser($user);
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
             self::DEFAULT_CANONICAL_URL,
             $user->getEmail()
         ));
         
-        $this->getJobController('setPublicAction', array(
-            'user' => $user->getEmail()
-        ))->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());        
-        
+        $this->getJobController('setPublicAction')->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $jobObject = json_decode($this->fetchJobResponse($job)->getContent()); 
         
         $this->assertTrue($job->getIsPublic());

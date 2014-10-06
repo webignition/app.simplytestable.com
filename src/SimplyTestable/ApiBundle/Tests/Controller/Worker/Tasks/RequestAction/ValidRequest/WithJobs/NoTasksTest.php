@@ -23,6 +23,7 @@ class NoTasksTest extends ValidRequestTest {
     public function preCall() {
         $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->job = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://example.com/'));
 
         foreach ($this->job->getTasks() as $task) {

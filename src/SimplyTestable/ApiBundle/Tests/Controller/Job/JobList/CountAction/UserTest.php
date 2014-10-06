@@ -27,10 +27,16 @@ class UserTest extends CountTest {
         }    
         
         foreach ($this->users as $user) {
+            $this->getUserService()->setUser($user);
+
             $this->counts[$user->getEmail()] = json_decode($this->getJobListController('countAction', array(
                 'user' => $user->getEmail()
             ))->countAction()->getContent()); 
         }
+    }
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
     }
     
     public function testCountZeroIsConstraintedToUserZero() {

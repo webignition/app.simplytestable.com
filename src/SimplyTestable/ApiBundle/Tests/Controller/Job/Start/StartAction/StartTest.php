@@ -94,6 +94,7 @@ class StartTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com/';
         
         $user = $this->getUserService()->getPublicUser();
+        $this->getUserService()->setUser($user);
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
         
         $constraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');        
@@ -110,6 +111,8 @@ class StartTest extends BaseControllerJsonTestCase {
 
     
     public function testSingleUrlJobJsStaticAnalysisIgnoreCommonCdns() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
             self::DEFAULT_CANONICAL_URL,
             null,
@@ -131,6 +134,8 @@ class StartTest extends BaseControllerJsonTestCase {
     }
     
     public function testStoreTaskTypeOptionsForTaskTypesThatHaveNotBeenSelected() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
             self::DEFAULT_CANONICAL_URL,
             null,
@@ -168,6 +173,8 @@ class StartTest extends BaseControllerJsonTestCase {
     
     
     public function testWithSingleUrlTestAndHttpAuthParameters() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $httpAuthUsernameKey = 'http-auth-username';
         $httpAuthPasswordKey = 'http-auth-password';
         $httpAuthUsernameValue = 'foo';

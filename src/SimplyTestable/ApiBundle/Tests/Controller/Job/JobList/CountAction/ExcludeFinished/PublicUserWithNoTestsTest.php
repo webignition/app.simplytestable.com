@@ -4,6 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\CountAction\Excl
 
 class PublicUserWithNoTestsTest extends ExcludeFinishedTest {
 
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
+
     protected function getExpectedCountValue() {
         return 0;
     }

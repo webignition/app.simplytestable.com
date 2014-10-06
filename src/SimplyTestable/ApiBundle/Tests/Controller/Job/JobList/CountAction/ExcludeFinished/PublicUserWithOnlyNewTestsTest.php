@@ -10,6 +10,10 @@ class PublicUserWithOnlyNewTestsTest extends ExcludeFinishedTest {
         'http://three.example.com/'          
     );
 
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
+
     protected function getExpectedCountValue() {
         return 3;
     }

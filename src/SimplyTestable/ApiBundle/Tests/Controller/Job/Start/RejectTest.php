@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 class RejectTest extends BaseControllerJsonTestCase {   
     
     public function testRejectDueToPlanFullSiteConstraint() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $canonicalUrl = 'http://example.com/';
         
         $user = $this->getUserService()->getPublicUser();
@@ -27,6 +29,8 @@ class RejectTest extends BaseControllerJsonTestCase {
     }
     
     public function testRejectDueToPlanSingleUrlConstraint() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $canonicalUrl = 'http://example.com/';
         
         $user = $this->getUserService()->getPublicUser();
@@ -48,6 +52,8 @@ class RejectTest extends BaseControllerJsonTestCase {
     
     
     public function testRejectForUnroutableIpHost() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $canonicalUrl = 'http://127.0.0.1/';
 
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
@@ -59,6 +65,8 @@ class RejectTest extends BaseControllerJsonTestCase {
     
     
     public function testRejectForUnroutableDomainHost() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $canonicalUrl = 'http://example/';
 
         $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
@@ -79,6 +87,8 @@ class RejectTest extends BaseControllerJsonTestCase {
         $password = 'password1';
         
         $this->createUser($email, $password);
+
+        $this->getUserService()->setUser($this->getUserService()->findUserByEmail($email));
         
         $this->getAccountPlanService()->find('basic')->getConstraintNamed('credits_per_month')->setLimit($creditsPerMonth);
         

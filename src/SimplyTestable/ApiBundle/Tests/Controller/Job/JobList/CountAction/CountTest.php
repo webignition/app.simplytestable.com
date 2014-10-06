@@ -14,17 +14,20 @@ abstract class CountTest extends BaseControllerJsonTestCase {
     
     public function setUp() {
         parent::setUp();
-        
+
+        $this->getUserService()->setUser($this->getRequestingUser());
+
         $this->createJobs();        
         $this->applyPreListChanges();                 
     }    
  
-    abstract protected function getCanonicalUrls();  
+    abstract protected function getCanonicalUrls();
+    abstract protected function getRequestingUser();
     
     protected function applyPreListChanges() {        
     }    
     
-    protected function createJobs() {        
+    protected function createJobs() {
         foreach ($this->getCanonicalUrls() as $canonicalUrl) {
             $this->jobs[] = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
         }         

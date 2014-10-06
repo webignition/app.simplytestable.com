@@ -23,71 +23,68 @@ class IsPublicActionTest extends BaseControllerJsonTestCase {
     
     public function testTrueForPublicJobOwnedByNonPublicUserAccessedByPublicUser() {
         $user = $this->createAndActivateUser('user@example.com', 'password');
-        
+
+        $this->getUserService()->setUser($user);
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());
         
-        $this->getJobController('setPublicAction', array(
-            'user' => $user->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $jobId);
-        
+        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $jobId);
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->assertEquals(200, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
     }    
     
     public function testTrueForPublicJobOwnedByNonPublicUserAccessedByNonPublicUser() {
         $user = $this->createAndActivateUser('user@example.com', 'password');
-        
+
+        $this->getUserService()->setUser($user);
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());
         
-        $this->getJobController('setPublicAction', array(
-            'user' => $user->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $jobId);
+        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $jobId);
         
-        $this->assertEquals(200, $this->getJobController('isPublicAction', array(
-            'user' => $user->getEmail()
-        ))->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());        
+        $this->assertEquals(200, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
     }
     
     public function testTrueForPublicJobOwnedByNonPublicUserAccessedByDifferentNonPublicUser() {
         $user1 = $this->createAndActivateUser('user1@example.com', 'password');
         $user2 = $this->createAndActivateUser('user2@example.com', 'password');
-        
+
+        $this->getUserService()->setUser($user1);
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user1->getEmail());
         
-        $this->getJobController('setPublicAction', array(
-            'user' => $user1->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $jobId);
-        
-        $this->assertEquals(200, $this->getJobController('isPublicAction', array(
-            'user' => $user2->getEmail()
-        ))->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());          
+        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $jobId);
+
+        $this->getUserService()->setUser($user2);
+        $this->assertEquals(200, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
     }
     
     public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByPublicUser() {
         $user = $this->createAndActivateUser('user@example.com', 'password');
-        
-        $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());        
+
+        $this->getUserService()->setUser($user);
+        $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->assertEquals(404, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
     }    
     
     public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByNonPublicUser() {
         $user = $this->createAndActivateUser('user@example.com', 'password');
-        
+
+        $this->getUserService()->setUser($user);
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());
         
-        $this->assertEquals(404, $this->getJobController('isPublicAction', array(
-            'user' => $user->getEmail()
-        ))->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());        
+        $this->assertEquals(404, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
     }
     
     public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByDifferentNonPublicUser() {
         $user1 = $this->createAndActivateUser('user1@example.com', 'password');
         $user2 = $this->createAndActivateUser('user2@example.com', 'password');
-        
+
+        $this->getUserService()->setUser($user1);
         $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user1->getEmail());
-        
-        $this->assertEquals(404, $this->getJobController('isPublicAction', array(
-            'user' => $user2->getEmail()
-        ))->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());          
+
+        $this->getUserService()->setUser($user2);
+        $this->assertEquals(404, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
     }        
 }
 

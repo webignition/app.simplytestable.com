@@ -4,7 +4,11 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\WebsitesAction\E
 
 use SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\WebsitesAction\ContentTest;
 
-abstract class ExcludeFinishedTest extends ContentTest {    
+abstract class ExcludeFinishedTest extends ContentTest {
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
     
     protected function getQueryParameters() {
         return array(

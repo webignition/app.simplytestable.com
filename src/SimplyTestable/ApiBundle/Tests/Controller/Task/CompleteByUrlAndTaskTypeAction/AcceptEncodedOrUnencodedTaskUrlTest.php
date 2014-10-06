@@ -6,7 +6,9 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class AcceptEncodedOrUnencodedTaskUrlTest extends BaseControllerJsonTestCase {
     
-    public function testWithCoreAppUrlUnencodedAndCompletionReportUrlEncoded() {        
+    public function testWithCoreAppUrlUnencodedAndCompletionReportUrlEncoded() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $this->createWorker();
         
         $canonicalUrl = 'http://example.com/foo bar/';
@@ -36,6 +38,8 @@ class AcceptEncodedOrUnencodedTaskUrlTest extends BaseControllerJsonTestCase {
     }    
 
     public function testWithCoreAppUrlEncodedAndCompletionReportUrlUnencoded() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $this->createWorker();
         
         $canonicalUrl = 'http://example.com/foo bar/';

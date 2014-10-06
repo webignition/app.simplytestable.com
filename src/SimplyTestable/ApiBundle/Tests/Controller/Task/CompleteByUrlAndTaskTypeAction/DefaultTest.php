@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 class DefaultTest extends BaseControllerJsonTestCase {
  
     public function testWithSingleMatchingTask() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->queueTaskAssignResponseHttpFixture();
         
@@ -34,6 +36,8 @@ class DefaultTest extends BaseControllerJsonTestCase {
     }
     
     public function testWithMultipleMatchingTasksForSameUser() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $this->setJobTypeConstraintLimits();
         
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
@@ -81,18 +85,20 @@ class DefaultTest extends BaseControllerJsonTestCase {
             $this->assertEquals($this->getTaskService()->getCompletedState(), $task->getState());
         }
     }  
-    
+
     public function testWithMultipleMatchingTasksForDifferentUsers() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');        
-        
+        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
             self::DEFAULT_CANONICAL_URL,
             $user1->getEmail(),
             'full site',
             array('HTML validation')
         ));
-        
+
         $this->getJobService()->getById($this->createResolveAndPrepareJob(
             self::DEFAULT_CANONICAL_URL,
             $user2->getEmail(),
@@ -109,7 +115,7 @@ class DefaultTest extends BaseControllerJsonTestCase {
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $task->getId()
         ));
-        
+
         $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
@@ -136,6 +142,8 @@ class DefaultTest extends BaseControllerJsonTestCase {
     }  
     
     public function testWithSingleMatchingTaskFromMultiplePossibleTasksByParameters() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $this->setJobTypeConstraintLimits();
         
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
@@ -204,6 +212,8 @@ class DefaultTest extends BaseControllerJsonTestCase {
     }
     
     public function testWithMultipleMatchingTaskFromMultiplePossibleTasksByParameters() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $users = $this->createAndActivateUserCollection(3);
         $this->createWorker();
         
@@ -284,6 +294,8 @@ class DefaultTest extends BaseControllerJsonTestCase {
     } 
     
     public function testWithNoMatchingTaskFromMultiplePossibleTasksByParameters() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $this->setJobTypeConstraintLimits();
         
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(

@@ -4,6 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\CountAction\Excl
 
 class PublicUserWithIncompleteAndCompleteTestsTest extends StateBasedTest {
 
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
+
     protected function getExpectedCountValue() {
         return count($this->getCanonicalUrls()) - count($this->getJobService()->getFinishedStates());
     }

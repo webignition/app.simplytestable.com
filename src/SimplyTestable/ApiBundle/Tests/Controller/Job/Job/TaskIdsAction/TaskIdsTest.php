@@ -10,7 +10,8 @@ class TaskIdsTest extends BaseControllerJsonTestCase {
         return 'taskIdsAction';
     }
     
-    public function testTaskIdsAction() {        
+    public function testTaskIdsAction() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $jobStatus = $this->fetchJobStatusObject($job);
         

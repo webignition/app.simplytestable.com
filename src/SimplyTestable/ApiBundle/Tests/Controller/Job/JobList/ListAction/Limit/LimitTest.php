@@ -7,6 +7,10 @@ use SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\ListContent
 abstract class LimitTest extends ListContentTest {       
     
     const JOB_LIMIT = 10;
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
     
     protected function getCanonicalUrls() {
         return $this->getCanonicalUrlCollection(self::JOB_LIMIT);

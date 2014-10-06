@@ -14,16 +14,15 @@ abstract class SingleUserTest extends CountTest {
     
     public function setUp() {
         parent::setUp();
-        
+
         $this->count = json_decode($this->getJobListController(
             'countAction',
             $this->getPostParameters(),
             $this->getQueryParameters())->countAction()->getContent()
-       );
-                 
+        );
     }
-    
-    abstract protected function getQueryParameters();    
+
+    abstract protected function getQueryParameters();
     
     protected function getPostParameters() {
         return array();

@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 class LatestTest extends BaseControllerJsonTestCase {
     
     public function testLatestActionForPublicUser() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $canonicalUrl = 'http://example.com';
         $jobId = $this->createJobAndGetId($canonicalUrl);
 
@@ -28,10 +30,12 @@ class LatestTest extends BaseControllerJsonTestCase {
         $jobId2 = $this->createJobAndGetId($canonicalUrl2, $user2->getEmail());
         $jobId3 = $this->createJobAndGetId($canonicalUrl1);
 
+        $this->getUserService()->setUser($user1);
         $response1 = $this->getJobController('latestAction', array(
             'user' => $user1->getEmail()
         ))->latestAction($canonicalUrl1);
 
+        $this->getUserService()->setUser($user2);
         $response2 = $this->getJobController('latestAction', array(
             'user' => $user2->getEmail()
         ))->latestAction($canonicalUrl2);
@@ -51,6 +55,7 @@ class LatestTest extends BaseControllerJsonTestCase {
     public function testLatestActionReturns404ForNoLatestJob() {
         $canonicalUrl = 'http://example.com';
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $response = $this->getJobController('latestAction')->latestAction($canonicalUrl);
         $this->assertEquals(404, $response->getStatusCode());
     }
@@ -70,9 +75,8 @@ class LatestTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com';
         $jobId = $this->createJobAndGetId($canonicalUrl, $leader->getEmail());
 
-        $response = $this->getJobController('latestAction', [
-            'user' => $member->getEmail()
-        ])->latestAction($canonicalUrl);
+        $this->getUserService()->setUser($member);
+        $response = $this->getJobController('latestAction')->latestAction($canonicalUrl);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals($jobId, $this->getJobIdFromUrl($response->getTargetUrl()));
@@ -93,9 +97,8 @@ class LatestTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com';
         $jobId = $this->createJobAndGetId($canonicalUrl, $member->getEmail());
 
-        $response = $this->getJobController('latestAction', [
-            'user' => $leader->getEmail()
-        ])->latestAction($canonicalUrl);
+        $this->getUserService()->setUser($leader);
+        $response = $this->getJobController('latestAction')->latestAction($canonicalUrl);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals($jobId, $this->getJobIdFromUrl($response->getTargetUrl()));
@@ -118,9 +121,8 @@ class LatestTest extends BaseControllerJsonTestCase {
         $canonicalUrl = 'http://example.com';
         $jobId = $this->createJobAndGetId($canonicalUrl, $member1->getEmail());
 
-        $response = $this->getJobController('latestAction', [
-            'user' => $member2->getEmail()
-        ])->latestAction($canonicalUrl);
+        $this->getUserService()->setUser($member2);
+        $response = $this->getJobController('latestAction')->latestAction($canonicalUrl);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals($jobId, $this->getJobIdFromUrl($response->getTargetUrl()));

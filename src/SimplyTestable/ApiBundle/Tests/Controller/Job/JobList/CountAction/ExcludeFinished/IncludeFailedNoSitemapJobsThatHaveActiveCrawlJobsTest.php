@@ -4,6 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\CountAction\Excl
 
 class IncludeFailedNoSitemapJobsThatHaveActiveCrawlJobsTest extends StateBasedTest {
 
+    protected function getRequestingUser() {
+        return $this->getTestUser();
+    }
+
     protected function getExpectedCountValue() {
         return count($this->getCanonicalUrls());
     }
@@ -13,15 +17,13 @@ class IncludeFailedNoSitemapJobsThatHaveActiveCrawlJobsTest extends StateBasedTe
     }
     
     protected function createJobs() {
-        $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
-    }
-    
-    protected function getPostParameters() {
-        return array(
-            'user' => $this->jobs[0]->getUser()->getEmail()
+        $this->jobs[] = $this->getJobService()->getById(
+            $this->createResolveAndPrepareCrawlJob(
+                self::DEFAULT_CANONICAL_URL,
+                $this->getTestUser()->getEmail()
+            )
         );
     }
-
 }
 
 

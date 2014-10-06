@@ -14,6 +14,10 @@ abstract class FilterByUrlTest extends ListContentTest {
         'http://foo.example.com/',
         'https://foo.example.com/'        
     );
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
     
     protected function getQueryParameters() {
         return array(

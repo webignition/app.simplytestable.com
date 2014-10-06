@@ -23,6 +23,8 @@ abstract class WithJobsTest extends ValidRequestTest {
     public function preCall() {
         $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         for ($jobLimitIndex = 0; $jobLimitIndex < $this->getJobLimit(); $jobLimitIndex++) {
             $this->jobs[] = $this->getJobService()->getById(
                 $this->createResolveAndPrepareJob('http://' . $jobLimitIndex . '.example.com/')

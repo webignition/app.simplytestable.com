@@ -17,7 +17,8 @@ abstract class IssueCountTest extends BaseControllerJsonTestCase {
     
     public function setUp() {
         parent::setUp();
-        
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         foreach ($job->getTasks() as $task) {
             $this->getTaskController('completeByUrlAndTaskTypeAction', array(

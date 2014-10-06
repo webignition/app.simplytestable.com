@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 class CompleteActionTest extends BaseControllerJsonTestCase {      
    
     public function testCompleteAction() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));    
         

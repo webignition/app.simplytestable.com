@@ -22,6 +22,7 @@ class IncompleteDiscoveryTest extends BaseControllerJsonTestCase {
     public function setUp() {
         parent::setUp();
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
 
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);

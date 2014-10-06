@@ -41,14 +41,17 @@ class CreditsTest extends BaseControllerJsonTestCase {
         $this->getTeamMemberService()->add($team, $this->member1);
         $this->getTeamMemberService()->add($team, $this->member2);
 
+        $this->getUserService()->setUser($this->leader);
         $job1 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->leader->getEmail()));
         $this->setJobTasksCompleted($job1);
         $this->completeJob($job1);
 
+        $this->getUserService()->setUser($this->member1);
         $job2 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->member1->getEmail()));
         $this->setJobTasksCompleted($job2);
         $this->completeJob($job2);
 
+        $this->getUserService()->setUser($this->member2);
         $job3 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->member2->getEmail()));
         $this->setJobTasksCompleted($job3);
         $this->completeJob($job3);

@@ -11,6 +11,10 @@ class ExcludeByStateTest extends ContentTest {
         'http://two.example.com/',
         'http://three.example.com/'
     );
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
     
     protected function createJobs() {
         foreach ($this->canonicalUrls as $canonicalUrl) {

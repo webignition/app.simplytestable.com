@@ -4,6 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\Exclu
 
 class PublicUserWithIncompleteAndCompleteTestsTest extends StateBasedTest {
 
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
+
     protected function getExpectedListLength() {
         return count($this->getCanonicalUrls()) - count($this->getJobService()->getFinishedStates());
     }

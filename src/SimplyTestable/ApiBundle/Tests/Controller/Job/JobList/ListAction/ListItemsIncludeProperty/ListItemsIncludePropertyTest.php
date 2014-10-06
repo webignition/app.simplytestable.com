@@ -13,6 +13,10 @@ abstract class ListItemsIncludePropertyTest extends ListContentTest {
         $inflector = \ICanBoogie\Inflector::get();
         return $inflector->underscore(str_replace('Test', '', $localClassName));
     }
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
     
     abstract protected function getExpectedPropertyValue();
 

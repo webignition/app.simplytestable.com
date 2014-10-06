@@ -17,15 +17,17 @@ class DoesNotIncludeCrawlJobsTest extends StateBasedTest {
     protected function getCanonicalUrls() {
         return $this->canonicalUrls;
     }
+
+    protected function getRequestingUser() {
+        return $this->getTestUser();
+    }
     
     protected function createJobs() {        
         // Crawling job
         $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
             $this->canonicalUrls[0],
             $this->getTestUser()->getEmail()
-        ));        
-        
-        
+        ));
     }
     
     protected function getPostParameters() {

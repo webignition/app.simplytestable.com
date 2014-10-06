@@ -44,6 +44,8 @@ abstract class TeamTest extends BaseControllerJsonTestCase {
         $this->member1 = $this->createAndActivateUser('member1@example.com');
         $this->member2 = $this->createAndActivateUser('member2@example.com');
 
+        $this->getUserService()->setUser($this->getRequester());
+
         $team = $this->getTeamService()->create('Foo', $this->leader);
 
         $this->getTeamMemberService()->add($team, $this->member1);
@@ -53,9 +55,7 @@ abstract class TeamTest extends BaseControllerJsonTestCase {
         $this->jobIds[] = $this->createJobAndGetId('http://member1.example.com/', $this->member1->getEmail());
         $this->jobIds[] = $this->createJobAndGetId('http://member2.example.com/', $this->member2->getEmail());
 
-        $websitesResponse = $this->getJobListController('websitesAction', [
-            'user' => $this->getRequester()->getEmail()
-        ])->websitesAction(count($this->jobIds));
+        $websitesResponse = $this->getJobListController('websitesAction')->websitesAction(count($this->jobIds));
 
         $this->websites = json_decode($websitesResponse->getContent());
     }

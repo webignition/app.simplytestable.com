@@ -2,7 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\CountAction\ExcludeCurrent;
 
-class RegularJobTest extends ExcludeCurrentTest {    
+class RegularJobTest extends ExcludeCurrentTest {
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
     
     protected function getCanonicalUrls() {
         return array_merge(

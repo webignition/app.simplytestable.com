@@ -6,6 +6,10 @@ use SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\ListContent
 
 abstract class ExcludeCurrentTest extends ListContentTest {
 
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
+
     protected function getQueryParameters() {
         return array(
             'exclude-current' => '1'

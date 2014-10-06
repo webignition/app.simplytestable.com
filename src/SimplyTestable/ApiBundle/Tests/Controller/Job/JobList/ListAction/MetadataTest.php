@@ -6,6 +6,10 @@ class MetadataTest extends SingleListTest {
     
     const JOB_TOTAL = 10;
 
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
+
     
     public function testMaxResultsIsSet() {
         $this->assertEquals(self::JOB_TOTAL, $this->list->max_results);

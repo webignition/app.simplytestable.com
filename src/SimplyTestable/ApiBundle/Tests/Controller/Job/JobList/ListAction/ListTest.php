@@ -14,11 +14,14 @@ abstract class ListTest extends BaseControllerJsonTestCase {
     
     public function setUp() {
         parent::setUp();
+
+        $this->getUserService()->setUser($this->getRequestingUser());
         
         $this->createJobs();        
         $this->applyPreListChanges();                 
-    }    
-   
+    }
+
+    abstract protected function getRequestingUser();
     abstract protected function getCanonicalUrls();  
     
     protected function applyPreListChanges() {        

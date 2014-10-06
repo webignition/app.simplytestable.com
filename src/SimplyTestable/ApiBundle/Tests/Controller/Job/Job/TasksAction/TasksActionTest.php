@@ -11,6 +11,8 @@ class TasksActionTest extends BaseControllerJsonTestCase {
     }
     
     public function testNoOutputForIncompleteTasksWithPartialOutput() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
                 self::DEFAULT_CANONICAL_URL,
                 null,
@@ -68,6 +70,8 @@ class TasksActionTest extends BaseControllerJsonTestCase {
     
     
     public function testFailedNoRetryAvailableTaskOutputIsReturned() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
                 self::DEFAULT_CANONICAL_URL,
                 null,

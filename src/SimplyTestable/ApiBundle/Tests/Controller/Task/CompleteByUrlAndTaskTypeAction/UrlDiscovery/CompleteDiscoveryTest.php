@@ -43,6 +43,7 @@ abstract class CompleteDiscoveryTest extends BaseControllerJsonTestCase {
     public function setUp() {
         parent::setUp();
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
             self::DEFAULT_CANONICAL_URL,
             null,

@@ -53,9 +53,9 @@ abstract class TeamTest extends BaseControllerJsonTestCase {
         $this->jobIds[] = $this->createJobAndGetId('http://member1.example.com/', $this->member1->getEmail());
         $this->jobIds[] = $this->createJobAndGetId('http://member2.example.com/', $this->member2->getEmail());
 
-        $countResponse = $this->getJobListController('countAction', [
-            'user' => $this->getRequester()->getEmail()
-        ])->countAction(count($this->jobIds));
+        $this->getUserService()->setUser($this->getRequester());
+
+        $countResponse = $this->getJobListController('countAction')->countAction(count($this->jobIds));
 
         $this->count = json_decode($countResponse->getContent());
     }

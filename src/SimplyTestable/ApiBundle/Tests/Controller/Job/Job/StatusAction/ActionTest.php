@@ -15,6 +15,7 @@ class ActionTest extends BaseControllerJsonTestCase {
 
         $jobId = $this->createJobAndGetId($canonicalUrl);
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);
         $responseJsonObject = json_decode($response->getContent());
 
@@ -39,6 +40,7 @@ class ActionTest extends BaseControllerJsonTestCase {
     }
 
     public function testStatusForRejectedDueToPlanFullSiteConstraint() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $canonicalUrl = 'http://example.com/';
 
         $user = $this->getUserService()->getPublicUser();
@@ -66,6 +68,8 @@ class ActionTest extends BaseControllerJsonTestCase {
 
 
     public function testStatusForRejectedDueToPlanSingleUrlConstraint() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $canonicalUrl = 'http://example.com/';
 
         $user = $this->getUserService()->getPublicUser();
@@ -93,6 +97,8 @@ class ActionTest extends BaseControllerJsonTestCase {
 
 
     public function testStatusForJobUrlLimitAmmendment() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
 
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL));
@@ -106,6 +112,8 @@ class ActionTest extends BaseControllerJsonTestCase {
     }
 
     public function testDefaultIsPublicIfOwnedByPublicUser() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $canonicalUrl = 'http://example.com/';
 
         $jobId = $this->createJobAndGetId($canonicalUrl);
@@ -121,6 +129,7 @@ class ActionTest extends BaseControllerJsonTestCase {
 
     public function testDefaultIsPrivateIfNotOwnedByPublicUser() {
         $user = $this->createAndActivateUser('user@example.com', 'password1');
+        $this->getUserService()->setUser($user);
 
         $canonicalUrl = 'http://example.com/';
 
@@ -137,6 +146,8 @@ class ActionTest extends BaseControllerJsonTestCase {
 
 
     public function testParametersAreExposed() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $canonicalUrl = 'http://example.com/';
 
         $jobId = $this->createJobAndGetId($canonicalUrl, null, null, null, null, array(

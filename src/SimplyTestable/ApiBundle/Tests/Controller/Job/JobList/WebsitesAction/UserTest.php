@@ -27,10 +27,14 @@ class UserTest extends WebsitesTest {
         }    
         
         foreach ($this->users as $user) {
-            $this->lists[$user->getEmail()] = json_decode($this->getJobListController('WebsitesAction', array(
-                'user' => $user->getEmail()
-            ))->WebsitesAction()->getContent()); 
+            $this->getUserService()->setUser($user);
+
+            $this->lists[$user->getEmail()] = json_decode($this->getJobListController('WebsitesAction')->WebsitesAction()->getContent());
         }
+    }
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
     }
     
     public function testListZeroIsConstraintedToUserZero() {

@@ -3,10 +3,14 @@
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\CountAction\ExcludeFinished;
 
 class DoesNotIncludeCrawlJobsTest extends StateBasedTest {
-    
+
     private $canonicalUrls = array(
         'http://crawling.example.com/',
     );
+
+    protected function getRequestingUser() {
+        return $this->getTestUser();
+    }
 
     protected function getExpectedCountValue() {
         return count($this->getCanonicalUrls());
@@ -16,14 +20,12 @@ class DoesNotIncludeCrawlJobsTest extends StateBasedTest {
         return $this->canonicalUrls;
     }
     
-    protected function createJobs() {        
+    protected function createJobs() {
         // Crawling job
         $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
             $this->canonicalUrls[0],
             $this->getTestUser()->getEmail()
-        ));        
-        
-        
+        ));
     }
     
     protected function getPostParameters() {

@@ -13,6 +13,10 @@ class ExcludeByTypeTest extends ListContentTest {
     );
     
     private $excludedTypeName = 'crawl';
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
     
     protected function createJobs() {
         foreach ($this->canonicalUrls as $canonicalUrl) {

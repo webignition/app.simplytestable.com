@@ -4,6 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\Exclu
 
 class IncludeFailedNoSitemapJobsThatHaveActiveCrawlJobsTest extends StateBasedTest {
 
+    protected function getRequestingUser() {
+        return $this->getTestUser();
+    }
+
     protected function getExpectedListLength() {
         return count($this->getCanonicalUrls());
     }

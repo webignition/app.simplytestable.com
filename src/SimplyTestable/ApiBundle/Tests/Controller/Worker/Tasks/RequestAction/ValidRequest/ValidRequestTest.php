@@ -24,6 +24,8 @@ abstract class ValidRequestTest extends RequestTest {
 
         $this->preCall();
 
+        $this->clearRedis();
+
         $methodName = $this->getActionNameFromRouter();
         $this->response = $this->getCurrentController()->$methodName();
         $this->responseObject = json_decode($this->response->getContent(), true);

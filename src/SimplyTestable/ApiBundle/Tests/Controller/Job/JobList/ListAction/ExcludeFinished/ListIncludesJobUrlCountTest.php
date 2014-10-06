@@ -2,7 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\ExcludeFinished;
 
-class ListIncludesJobUrlCountTest extends ExcludeFinishedTest {    
+class ListIncludesJobUrlCountTest extends ExcludeFinishedTest {
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
 
     protected function getExpectedListLength() {
         return 1;

@@ -12,6 +12,10 @@ abstract class PublicUserWithLimitAndOnlyNewTestsTest extends ExcludeFinishedTes
         'http://three.example.com/'          
     );
 
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
+
     protected function getCanonicalUrls() {
         return $this->canonicalUrls;
     }    

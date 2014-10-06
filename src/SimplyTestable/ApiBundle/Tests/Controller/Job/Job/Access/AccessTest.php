@@ -14,9 +14,8 @@ abstract class AccessTest extends BaseControllerJsonTestCase {
         $user = $this->createAndActivateUser('user@example.com', 'password');
         $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail()));
 
-        $this->getJobController('setPublicAction', array(
-            'user' => $user->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $job->getId());
+        $this->getUserService()->setUser($user);
+        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $job->getId());
         
         $this->assertTrue($job->getIsPublic());
         $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());         
@@ -33,19 +32,17 @@ abstract class AccessTest extends BaseControllerJsonTestCase {
         $user2 = $this->createAndActivateUser('user2@example.com', 'password');
         
         $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL, $user1->getEmail()));
-        
-        $this->getJobController('setPublicAction', array(
-            'user' => $user1->getEmail()
-        ))->setPublicAction(self::CANONICAL_URL, $job->getId());
+
+        $this->getUserService()->setUser($user1);
+        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $job->getId());
         
         $this->assertTrue($job->getIsPublic());
         $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());
         
         $actionName = $this->getActionName();
-        
-        $this->assertEquals(200, $this->getJobController($actionName, array(
-            'user' => $user2->getEmail()            
-        ))->$actionName(self::CANONICAL_URL, $job->getId())->getStatusCode());         
+
+        $this->getUserService()->setUser($user2);
+        $this->assertEquals(200, $this->getJobController($actionName)->$actionName(self::CANONICAL_URL, $job->getId())->getStatusCode());
     }    
     
     public function testGetForPrivateJobOwnedByNonPublicUserByPublicUser() {                
@@ -57,7 +54,8 @@ abstract class AccessTest extends BaseControllerJsonTestCase {
         $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());
         
         $actionName = $this->getActionName();
-        
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->assertEquals(403, $this->getJobController($actionName)->$actionName(self::CANONICAL_URL, $job->getId())->getStatusCode());                 
     }    
 
@@ -71,10 +69,9 @@ abstract class AccessTest extends BaseControllerJsonTestCase {
         $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());
         
         $actionName = $this->getActionName();
-        
-        $this->assertEquals(200, $this->getJobController($actionName, array(
-            'user' => $user->getEmail()            
-        ))->$actionName(self::CANONICAL_URL, $job->getId())->getStatusCode());            
+
+        $this->getUserService()->setUser($user);
+        $this->assertEquals(200, $this->getJobController($actionName)->$actionName(self::CANONICAL_URL, $job->getId())->getStatusCode());
     }
     
     public function testGetForPrivateJobOwnedByNonPublicUserByDifferentNonPublicUser() {        
@@ -87,10 +84,9 @@ abstract class AccessTest extends BaseControllerJsonTestCase {
         $this->assertNotEquals($this->getUserService()->getPublicUser()->getId(), $job->getUser()->getId());
         
         $actionName = $this->getActionName();
-        
-        $this->assertEquals(403, $this->getJobController($actionName, array(
-            'user' => $user2->getEmail()            
-        ))->$actionName(self::CANONICAL_URL, $job->getId())->getStatusCode());           
+
+        $this->getUserService()->setUser($user2);
+        $this->assertEquals(403, $this->getJobController($actionName)->$actionName(self::CANONICAL_URL, $job->getId())->getStatusCode());
     }    
 }
 

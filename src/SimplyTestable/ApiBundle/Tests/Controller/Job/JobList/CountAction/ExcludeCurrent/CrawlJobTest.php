@@ -11,6 +11,10 @@ class CrawlJobTest extends ExcludeCurrentTest {
     protected function getExpectedCountValue() {
         return 0;
     }
+
+    protected function getRequestingUser() {
+        return $this->getUserService()->getPublicUser();
+    }
     
     protected function createJobs() {
         $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));

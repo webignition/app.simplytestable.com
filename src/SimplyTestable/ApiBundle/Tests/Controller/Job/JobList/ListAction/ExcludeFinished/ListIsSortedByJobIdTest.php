@@ -9,6 +9,10 @@ class ListIsSortedByJobIdTest extends StateBasedTest {
         'http://crawling.example.com/',
     );
 
+    protected function getRequestingUser() {
+        return $this->getTestUser();
+    }
+
     protected function getExpectedListLength() {
         return count($this->getCanonicalUrls());
     }
