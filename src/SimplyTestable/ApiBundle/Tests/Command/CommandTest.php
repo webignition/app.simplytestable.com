@@ -16,18 +16,25 @@ abstract class CommandTest extends ConsoleCommandTestCase {
             'Tests',
             'Command'
         ];
-        $classNameParts = [];
 
         $rawClassNameParts = explode('\\', get_class($this));
-        array_pop($rawClassNameParts);
+        $classNameParts = [];
+        $commandPartFound = false;
 
         foreach ($rawClassNameParts as $classNamePart) {
+            if ($commandPartFound) {
+                continue;
+            }
+
+            if (preg_match('/^.+Command$/', $classNamePart)) {
+                $commandPartFound = true;
+                $classNamePart = str_replace('Command', '', $classNamePart);
+            }
+
             if (!in_array($classNamePart, $excludedParts)) {
                 $classNameParts[] = strtolower($classNamePart);
             }
         }
-
-        $classNameParts[count($classNameParts) - 1] = str_replace('command', '', $classNameParts[count($classNameParts) - 1]);
 
         return implode(':', $classNameParts);
     }

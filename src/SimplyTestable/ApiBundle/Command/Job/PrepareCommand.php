@@ -55,15 +55,19 @@ class PrepareCommand extends BaseCommand
         }
         
         try {
-             $this->getJobPreparationService()->prepare($job);
-            
-            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                $this->getResqueQueueService()->enqueue(
-                    $this->getResqueJobFactoryService()->create(
-                        'task-assignment-selection'
-                    )
-                );
-            }
+            $this->getJobPreparationService()->prepare($job);
+
+            $limit = $this->getContainer()->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
+
+            $this->getTaskQueueService()->setLimit($limit);
+            $this->getTaskQueueService()->setJob($job);
+
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'task-assign-collection',
+                    ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
+                )
+            );
 
             $this->getLogger()->info("simplytestable:job:prepare: queued up [".$job->getTasks()->count()."] tasks covering [".$job->getUrlCount()."] urls and [".count($job->getRequestedTaskTypes())."] task types");
             
@@ -80,6 +84,14 @@ class PrepareCommand extends BaseCommand
             exit();
         }
     }
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\WorkerService
+     */
+    private function getWorkerService() {
+        return $this->getContainer()->get('simplytestable.services.workerservice');
+    }
     
     /**
      *
@@ -87,6 +99,14 @@ class PrepareCommand extends BaseCommand
      */    
     private function getJobService() {
         return $this->getContainer()->get('simplytestable.services.jobservice');
+    }
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\Task\QueueService
+     */
+    private function getTaskQueueService() {
+        return $this->getContainer()->get('simplytestable.services.task.queueservice');
     }
 
     /**

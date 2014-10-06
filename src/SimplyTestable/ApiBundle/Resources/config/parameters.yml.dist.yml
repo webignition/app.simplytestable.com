@@ -38,7 +38,7 @@ parameters:
       class: SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
   task_output_joiners:   
     link-integrity:
-      class: SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner    
+      class: SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner
   content_type_web_resource_map:
     default: webignition\WebResource\WebResource
     text/html: webignition\WebResource\WebPage\WebPage
@@ -49,3 +49,4 @@ parameters:
       base: http://ci.gears.simplytestable.com
       stripe_event_controller: /stripe/event/
   stripe_key: "stripe_key_value"
+  tasks_per_job_per_worker_count: 2
