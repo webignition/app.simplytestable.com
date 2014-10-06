@@ -12,6 +12,7 @@ abstract class SuccessfulPrepareTest extends CommandTest {
     }
 
     protected function getJob() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         return $this->getJobService()->getById($this->createAndResolveDefaultJob());
     }
 

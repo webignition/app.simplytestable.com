@@ -7,6 +7,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+
 class PrepareCommand extends BaseCommand
 {
     const RETURN_CODE_OK = 0;
@@ -23,13 +26,7 @@ class PrepareCommand extends BaseCommand
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {        
-        /* @var $job Job */
-        /* @var $taskType TaskType */
-        /* @var $task Task */
-        /* @var $websiteService \SimplyTestable\ApiBundle\Services\WebsiteService */
-        /* @var $entityManager \Doctrine\ORM\EntityManager */
-        
+    {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             $this->getResqueQueueService()->enqueue(
                 $this->getResqueJobFactoryService()->create(
@@ -57,17 +54,30 @@ class PrepareCommand extends BaseCommand
         try {
             $this->getJobPreparationService()->prepare($job);
 
-            $limit = $this->getContainer()->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
+            if ($job->getTasks()->count()) {
+                $limit = $this->getContainer()->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
 
-            $this->getTaskQueueService()->setLimit($limit);
-            $this->getTaskQueueService()->setJob($job);
+                $this->getTaskQueueService()->setLimit($limit);
+                $this->getTaskQueueService()->setJob($job);
 
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
-                    'task-assign-collection',
-                    ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
-                )
-            );
+                $this->getResqueQueueService()->enqueue(
+                    $this->getResqueJobFactoryService()->create(
+                        'task-assign-collection',
+                        ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
+                    )
+                );
+            } else {
+                if ($this->getCrawlJobContainerService()->hasForJob($job)) {
+                    $crawlJob = $this->getCrawlJobContainerService()->getForJob($job)->getCrawlJob();
+
+                    $this->getResqueQueueService()->enqueue(
+                        $this->getResqueJobFactoryService()->create(
+                            'task-assign',
+                            ['id' => $crawlJob->getTasks()->first()->getId()]
+                        )
+                    );
+                }
+            }
 
             $this->getLogger()->info("simplytestable:job:prepare: queued up [".$job->getTasks()->count()."] tasks covering [".$job->getUrlCount()."] urls and [".count($job->getRequestedTaskTypes())."] task types");
             
@@ -132,5 +142,14 @@ class PrepareCommand extends BaseCommand
      */     
     private function getJobPreparationService() {
         return $this->getContainer()->get('simplytestable.services.jobpreparationservice');
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\CrawlJobContainerService
+     */
+    private function getCrawlJobContainerService() {
+        return $this->getContainer()->get('simplytestable.services.crawljobcontainerservice');
     }
 }

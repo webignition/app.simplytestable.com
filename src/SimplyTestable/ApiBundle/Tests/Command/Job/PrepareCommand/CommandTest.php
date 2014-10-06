@@ -24,7 +24,6 @@ abstract class CommandTest extends BaseCommandTest {
         $this->job = $this->getJob();
 
         $this->clearRedis();
-
         $this->preCall();
 
         $this->returnCode = $this->executeCommand($this->getCommandName(), [

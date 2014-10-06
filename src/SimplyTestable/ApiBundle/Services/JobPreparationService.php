@@ -6,6 +6,15 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactoryService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use webignition\NormalisedUrl\NormalisedUrl;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationServiceException;
@@ -16,27 +25,27 @@ class JobPreparationService {
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\JobService
+     * @var JobService
      */
     private $jobService;    
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\TaskService
+     * @var TaskService
      */
     private $taskService;
     
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\JobTypeService
+     * @var JobTypeService
      */
     private $jobTypeService;    
     
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\WebSiteService
+     * @var WebSiteService
      */
     private $websiteService;
     
@@ -50,7 +59,7 @@ class JobPreparationService {
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+     * @var JobUserAccountPlanEnforcementService
      */
     private $jobUserAccountPlanEnforcementService;       
     
@@ -64,42 +73,42 @@ class JobPreparationService {
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\CrawlJobContainerService
+     * @var CrawlJobContainerService
      */
     private $crawlJobContainerService;
     
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\UserService
+     * @var UserService
      */
     private $userService;    
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\Resque\QueueService
+     * @var QueueService
      */
     private $resqueService;
 
 
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
+     * @var JobFactoryService
      */
     private $resqueJobFactoryService;
 
 
 
     public function __construct(
-        \SimplyTestable\ApiBundle\Services\JobService $jobService,
-        \SimplyTestable\ApiBundle\Services\TaskService $taskService,
-        \SimplyTestable\ApiBundle\Services\JobTypeService $jobTypeService,
-        \SimplyTestable\ApiBundle\Services\WebSiteService $websiteService,
-        \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
-        \SimplyTestable\ApiBundle\Services\CrawlJobContainerService $crawlJobContainerService,
-        \SimplyTestable\ApiBundle\Services\UserService $userService,
-        \SimplyTestable\ApiBundle\Services\Resque\QueueService $resqueQueueService,
-        \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService $resqueJobFactoryService
+        JobService $jobService,
+        TaskService $taskService,
+        JobTypeService $jobTypeService,
+        WebSiteService $websiteService,
+        JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
+        CrawlJobContainerService $crawlJobContainerService,
+        UserService $userService,
+        QueueService $resqueQueueService,
+        JobFactoryService $resqueJobFactoryService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
@@ -148,15 +157,7 @@ class JobPreparationService {
             if (!$this->userService->isPublicUser($job->getUser())) {
                 if (!$this->crawlJobContainerService->hasForJob($job)) {
                     $crawlJobContainer = $this->crawlJobContainerService->getForJob($job);
-                    $this->crawlJobContainerService->prepare($crawlJobContainer);                                                
-                    
-                    if ($this->resqueService->isEmpty('task-assignment-selection')) {
-                        $this->resqueService->enqueue(
-                            $this->resqueJobFactoryService->create(
-                                'task-assignment-selection'
-                            )
-                        );
-                    }                     
+                    $this->crawlJobContainerService->prepare($crawlJobContainer);
                 }
             }            
             
@@ -392,7 +393,7 @@ class JobPreparationService {
     
     /**
      * 
-     * @return \SimplyTestable\ApiBundle\Services\WebSiteService
+     * @return WebSiteService
      */
     public function getWebsiteService() {
         return $this->websiteService;

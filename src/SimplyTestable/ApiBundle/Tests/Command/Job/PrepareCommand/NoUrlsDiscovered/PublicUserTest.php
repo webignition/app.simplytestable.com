@@ -1,8 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand;
+namespace SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand\NoUrlsDiscovered;
 
-class NoDiscoveredUrlsTest extends CommandTest {
+use SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand\CommandTest;
+
+class PublicUserTest extends CommandTest {
 
     protected function preCall() {
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
@@ -15,10 +17,16 @@ class NoDiscoveredUrlsTest extends CommandTest {
     }
 
     protected function getJob() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         return $this->getJobService()->getById($this->createAndResolveDefaultJob());
     }
 
     protected function getExpectedReturnCode() {
         return 0;
+    }
+
+
+    public function testResqueJobIsNotCreated() {
+        $this->assertTrue($this->getResqueQueueService()->isEmpty('task-assign-collection'));
     }
 }
