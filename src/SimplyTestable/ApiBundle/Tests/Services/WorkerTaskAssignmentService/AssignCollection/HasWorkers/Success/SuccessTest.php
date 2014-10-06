@@ -32,12 +32,10 @@ abstract class SuccessTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getAssignCollectionHttpResponseFixtures()));
-        //var_dump($this->getHttpClientService()->getHistoryPlugin()->count());
-
-        //
     }
 
 

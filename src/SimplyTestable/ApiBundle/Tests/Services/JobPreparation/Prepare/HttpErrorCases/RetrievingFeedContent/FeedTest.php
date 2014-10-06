@@ -7,8 +7,9 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 abstract class FeedTest extends BaseSimplyTestableTestCase { 
     
     public function setUp() {
-        parent::setUp();        
-        
+        parent::setUp();
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
         
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(

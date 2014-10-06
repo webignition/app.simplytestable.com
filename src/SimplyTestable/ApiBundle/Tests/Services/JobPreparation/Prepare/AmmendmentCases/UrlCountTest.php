@@ -20,7 +20,8 @@ class UrlCountTest extends BaseSimplyTestableTestCase {
     
     public function setUp() {
         parent::setUp();
-        
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
         
         $this->setRequiredSitemapXmlUrlCount(11);        

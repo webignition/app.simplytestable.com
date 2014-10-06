@@ -18,6 +18,8 @@ abstract class CurlRejectionTest extends BaseSimplyTestableTestCase {
         )));
         
         $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::SOURCE_URL));
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->resolveJob($this->job->getWebsite()->getCanonicalUrl(), $this->job->getId());               
     }
     

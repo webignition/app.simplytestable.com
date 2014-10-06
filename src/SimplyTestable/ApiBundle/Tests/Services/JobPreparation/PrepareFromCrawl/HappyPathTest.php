@@ -15,8 +15,9 @@ class HappyPathTest extends BaseSimplyTestableTestCase {
     private $crawlJobContainer;    
     
     public function setUp() {
-        parent::setUp(); 
-        
+        parent::setUp();
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
         $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);                

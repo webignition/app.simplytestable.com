@@ -15,11 +15,15 @@ abstract class WithJobsTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         for ($jobLimitIndex = 0; $jobLimitIndex < $this->getJobLimit(); $jobLimitIndex++) {
             $this->jobs[] = $this->getJobService()->getById(
                 $this->createResolveAndPrepareJob('http://' . $jobLimitIndex . '.example.com/')
             );
         }
+
+        $this->getService()->clearJob();
 
         $this->getTaskQueueService()->setLimit($this->getTaskLimit());
     }

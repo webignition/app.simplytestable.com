@@ -25,6 +25,8 @@ class TooManyRedirectsTest extends BaseSimplyTestableTestCase {
     
     public function testFullSiteTestResolvesToEffectiveUrl() {        
         $job = $this->getJobService()->getById($this->createJobAndGetId('http://oneemco.ca/'));
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->resolveJob($job->getWebsite()->getCanonicalUrl(), $job->getId());
         
         $this->assertEquals(self::EFFECTIVE_URL, $job->getWebsite()->getCanonicalUrl());    

@@ -12,7 +12,9 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     public function setUp() {
         parent::setUp();
         $this->queueResolveHttpFixture();        
-        $this->queuePrepareHttpFixturesForCrawlJob(self::DEFAULT_CANONICAL_URL);        
+        $this->queuePrepareHttpFixturesForCrawlJob(self::DEFAULT_CANONICAL_URL);
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
     } 
     
     

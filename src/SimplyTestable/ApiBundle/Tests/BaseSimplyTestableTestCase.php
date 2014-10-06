@@ -360,14 +360,14 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     
     protected function createResolveAndPrepareJob($canonicalUrl, $userEmail = null, $type = null, $testTypes = null, $testTypeOptions = null, $parameters = null) {        
-        $this->queueResolveHttpFixture();        
+        $this->queueResolveHttpFixture();
         $this->queuePrepareHttpFixturesForJob($canonicalUrl);
-        
+
         $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
         $this->resolveJob($canonicalUrl, $job_id);
-        $this->prepareJob($canonicalUrl, $job_id);        
-        
-        return $job_id;        
+        $this->prepareJob($canonicalUrl, $job_id);
+
+        return $job_id;
     }
     
     

@@ -24,6 +24,8 @@ class HttpAuthTest extends BaseSimplyTestableTestCase {
             'http-auth-username' => $username,
             'http-auth-password' => $password
         )));
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->resolveJob($job->getWebsite()->getCanonicalUrl(), $job->getId());        
         
         /* @var $urlResolverBaseRequestCurlOptions \Guzzle\Common\Collection */

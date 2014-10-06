@@ -15,6 +15,7 @@ abstract class HappyPathTest extends BaseSimplyTestableTestCase {
     public function setUp() {
         parent::setUp();
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->job = $this->getJobService()->getById($this->createAndResolveDefaultJob());        
         $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet($this->getFixtureMessages()));      
         $this->getJobPreparationService()->prepare($this->job);

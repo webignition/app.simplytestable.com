@@ -19,7 +19,8 @@ class CrawlJobTest extends BaseSimplyTestableTestCase {
     
     public function setUp() {
         parent::setUp();
-        
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->job = $this->getJobService()->getById($this->createAndResolveJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail(), 'full site', array('html validation'), null, array(
             self::HTTP_AUTH_USERNAME_KEY => self::HTTP_AUTH_USERNAME,
             self::HTTP_AUTH_PASSWORD_KEY => self::HTTP_AUTH_PASSWORD

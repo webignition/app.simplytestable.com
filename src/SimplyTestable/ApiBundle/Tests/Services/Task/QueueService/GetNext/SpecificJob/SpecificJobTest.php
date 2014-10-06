@@ -21,6 +21,8 @@ class SpecificJobTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://foo.example.com/'));
         $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://bar.example.com/'));
 

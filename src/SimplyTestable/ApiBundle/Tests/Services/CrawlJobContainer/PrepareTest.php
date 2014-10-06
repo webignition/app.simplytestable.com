@@ -6,7 +6,8 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class PrepareTest extends BaseSimplyTestableTestCase {
 
-    public function testForInProgressState() {        
+    public function testForInProgressState() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
@@ -15,7 +16,8 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
     }
     
-    public function testForCompletedState() {        
+    public function testForCompletedState() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
@@ -24,7 +26,8 @@ class PrepareTest extends BaseSimplyTestableTestCase {
         $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
     }    
     
-    public function testForQueuedState() {        
+    public function testForQueuedState() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
@@ -37,6 +40,7 @@ class PrepareTest extends BaseSimplyTestableTestCase {
     } 
     
     public function testPrepareIsIdempotent() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         
@@ -47,6 +51,7 @@ class PrepareTest extends BaseSimplyTestableTestCase {
     }
     
     public function testUrlDiscoveryTaskHasWwwAndNonWwwScope() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
@@ -56,6 +61,7 @@ class PrepareTest extends BaseSimplyTestableTestCase {
     }    
     
     public function testUrlDiscoveryTaskHasNonWwwAndWwwScope() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);

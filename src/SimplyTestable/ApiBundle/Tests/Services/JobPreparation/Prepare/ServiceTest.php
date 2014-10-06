@@ -9,6 +9,7 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     const EXPECTED_TASK_TYPE_COUNT = 4;    
     
     public function testHandleSitemapContainingSchemelessUrls() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
         
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
@@ -20,6 +21,7 @@ class ServiceTest extends BaseSimplyTestableTestCase {
 
     
     public function testHandleSingleIndexLargeSitemap() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
         
         $this->getWebSiteService()->getSitemapFinder()->getSitemapRetriever()->getConfiguration()->setTotalTransferTimeout(0.00001);
@@ -33,7 +35,8 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     } 
 
     
-    public function testHandleLargeCollectionOfSitemaps() {        
+    public function testHandleLargeCollectionOfSitemaps() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
         
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));       
@@ -46,6 +49,7 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     
  
     public function testHandleMalformedRssUrl() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
         
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
@@ -56,7 +60,8 @@ class ServiceTest extends BaseSimplyTestableTestCase {
     }
     
     
-    public function testCrawlJobTakesParametersOfParentJob() {        
+    public function testCrawlJobTakesParametersOfParentJob() {
+        $this->getUserService()->setUser($this->getTestUser());
         $job = $this->getJobService()->getById($this->createAndResolveJob(
                 self::DEFAULT_CANONICAL_URL,
                 $this->getTestUser()->getEmail(),

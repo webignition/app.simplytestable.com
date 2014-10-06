@@ -8,7 +8,8 @@ class RootWebPageTest extends BaseSimplyTestableTestCase {
 
     public function setUp() {
         parent::setUp();
-        
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
         
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(

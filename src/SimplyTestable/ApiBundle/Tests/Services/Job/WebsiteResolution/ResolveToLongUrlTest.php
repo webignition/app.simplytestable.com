@@ -20,6 +20,8 @@ class ResolveToLongUrlTest extends BaseSimplyTestableTestCase {
     
     public function testTest() {      
         $job = $this->getJobService()->getById($this->createJobAndGetId(self::SOURCE_URL, null, 'single url'));
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->resolveJob($job->getWebsite()->getCanonicalUrl(), $job->getId());
         
         $this->assertEquals(self::EFFECTIVE_URL, $job->getWebsite()->getCanonicalUrl());    

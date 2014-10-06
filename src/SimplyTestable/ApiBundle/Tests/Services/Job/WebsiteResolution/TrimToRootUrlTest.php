@@ -22,6 +22,8 @@ class TrimToRootUrlTest extends BaseSimplyTestableTestCase {
     
     public function testFullSiteTestResolvesToRootUrl() {        
         $job = $this->getJobService()->getById($this->createJobAndGetId(self::SOURCE_URL));
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->resolveJob($job->getWebsite()->getCanonicalUrl(), $job->getId());
         
         $this->assertEquals(self::ROOT_URL, $job->getWebsite()->getCanonicalUrl());    
@@ -30,6 +32,8 @@ class TrimToRootUrlTest extends BaseSimplyTestableTestCase {
     
     public function testSingleUrlTestResolvesToEffectiveUrl() {        
         $job = $this->getJobService()->getById($this->createJobAndGetId(self::SOURCE_URL, null, 'single url'));
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->resolveJob($job->getWebsite()->getCanonicalUrl(), $job->getId());
         
         $this->assertEquals(self::EFFECTIVE_URL, $job->getWebsite()->getCanonicalUrl());    

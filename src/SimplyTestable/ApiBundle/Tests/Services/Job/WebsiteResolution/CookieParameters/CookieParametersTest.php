@@ -28,7 +28,8 @@ class CookieParametersTest extends BaseSimplyTestableTestCase {
         $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::SOURCE_URL, null, null, null, null, array(
             'cookies' => $this->cookies
         )));
-        
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->resolveJob($this->job->getWebsite()->getCanonicalUrl(), $this->job->getId());
     }
     

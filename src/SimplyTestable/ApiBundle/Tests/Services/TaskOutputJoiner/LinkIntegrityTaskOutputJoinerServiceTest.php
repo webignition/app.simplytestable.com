@@ -5,8 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Services\TaskOutputJoiner;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCase {
-   
-    public function testJoinOnComplete() {;
+
+    public function testJoinOnComplete() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));
 
@@ -72,7 +73,8 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
     }
     
     
-    public function testJoinGetsCorrectErrorCount() {        
+    public function testJoinGetsCorrectErrorCount() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity')));        
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')));        
 

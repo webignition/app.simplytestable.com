@@ -7,7 +7,8 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class ServiceTest extends BaseSimplyTestableTestCase {    
 
     
-    public function testCrawlJobAmmendmentsArePassedToParentJob() {        
+    public function testCrawlJobAmmendmentsArePassedToParentJob() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
         
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);        

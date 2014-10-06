@@ -21,7 +21,8 @@ class ServiceTest extends BaseSimplyTestableTestCase {
         parent::setUp();
         
         $this->queueResolveHttpFixture();
-        
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->job = $this->getJobService()->getById($this->createAndResolveJob(self::DEFAULT_CANONICAL_URL, null, null, array('html validation'), null, array(
             self::HTTP_AUTH_USERNAME_KEY => self::HTTP_AUTH_USERNAME,
             self::HTTP_AUTH_PASSWORD_KEY => self::HTTP_AUTH_PASSWORD

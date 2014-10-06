@@ -110,7 +110,6 @@ class QueueService {
             }
         }
 
-
         $taskIds = [];
         while (count($taskIds) < ($this->getLimit()) && count($jobTaskIds) > 0) {
             foreach ($jobTaskIds as $jobId => $taskIdSet) {

@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase {
     
     public function testGetDiscoveredUrls() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));            
         
