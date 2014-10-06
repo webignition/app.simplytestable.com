@@ -167,15 +167,19 @@ class JobController extends BaseJobController
                 }
             }            
             
-            $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));          
-            
-            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                $this->getResqueQueueService()->enqueue(
-                    $this->getResqueJobFactoryService()->create(
-                        'task-assignment-selection'
-                    )
-                );
-            }             
+            $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));
+
+            $limit = $this->container->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
+
+            $this->getTaskQueueService()->setLimit($limit);
+            $this->getTaskQueueService()->setJob($parentJob);
+
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'task-assign-collection',
+                    ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
+                )
+            );
         }
         
         $preCancellationState = clone $job->getState();
@@ -379,5 +383,21 @@ class JobController extends BaseJobController
      */
     private function getTeamService() {
         return $this->get('simplytestable.services.teamservice');
+    }
+
+
+    /**
+     * @return \SimplyTestable\ApiBundle\Services\WorkerService
+     */
+    private function getWorkerService() {
+        return $this->get('simplytestable.services.workerservice');
+    }
+
+
+    /**
+     * @return \SimplyTestable\ApiBundle\Services\Task\QueueService
+     */
+    private function getTaskQueueService() {
+        return $this->get('simplytestable.services.task.queueservice');
     }
 }
