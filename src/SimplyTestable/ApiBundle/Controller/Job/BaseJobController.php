@@ -162,32 +162,6 @@ abstract class BaseJobController extends ApiController
         
         return 'get' . $methodName . 'State';
     }
-    
-    
-    /**
-     *
-     * @return boolean
-     */
-    private function isTestEnvironment() {
-        return $this->get('kernel')->getEnvironment() == 'test';
-    }
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\User 
-     */
-    public function getUser() {
-        if (!$this->isTestEnvironment()) {                        
-            return parent::getUser();
-        }
-        
-        if  (is_null($this->getRequestValue('user'))) {
-            return $this->get('simplytestable.services.userservice')->getPublicUser();
-        }
-        
-        return $this->get('simplytestable.services.userservice')->findUserByEmail($this->getRequestValue('user'));
-    }
 
 
     /**
