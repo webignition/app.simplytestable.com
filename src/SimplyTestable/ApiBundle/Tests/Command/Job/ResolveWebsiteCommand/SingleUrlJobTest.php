@@ -25,6 +25,8 @@ class SingleUrlJobTest extends CommandTest {
                 )
             )                
         ));
+
+        $this->clearRedis();
         
         $this->assertReturnCode(0, array(
             'id' => $this->job->getId()
@@ -47,9 +49,10 @@ class SingleUrlJobTest extends CommandTest {
         $this->assertTrue(is_array($this->job->getTasks()->first()->getParameter('domains-to-ignore')));
     }
     
-    public function testResqueQueueContainsTaskAssignmentSelectionJob() {            
+    public function testResqueQueueContainsTaskAssignJob() {
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'task-assignment-selection'
+            'task-assign',
+            ['id' => $this->job->getTasks()->first()->getId()]
         ));         
     }
 }

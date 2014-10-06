@@ -55,13 +55,12 @@ class ResolveWebsiteCommand extends BaseCommand
 
             $this->getJobPreparationService()->prepare($job);
 
-            if ($this->getResqueQueueService()->isEmpty('task-assignment-selection')) {
-                $this->getResqueQueueService()->enqueue(
-                    $this->getResqueJobFactoryService()->create(
-                        'task-assignment-selection'
-                    )
-                );
-            }                
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'task-assign',
+                    ['id' => $job->getTasks()->first()->getId()]
+                )
+            );
         } else {
             $this->getResqueQueueService()->enqueue(
                 $this->getResqueJobFactoryService()->create(
