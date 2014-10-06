@@ -14,7 +14,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
     const ASSIGN_COLLECTION_OK_STATUS_CODE = 0;
     const ASSIGN_COLLECTION_NO_WORKERS_STATUS_CODE = 1;
     const ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE = 2;
-    
+
     
     /**
      * Assign a task to a to-be-chosen worker.
@@ -29,7 +29,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * 2: cannot assign, no workers
      * 3: could not assign to any workers
      */
-    public function assign(Task $task, $workers) {        
+    public function assign(Task $task, $workers) {
         $this->logger->info("WorkerTaskAssignmentService::assign: Initialising");
         $this->logger->info("WorkerTaskAssignmentService::assign: Processing task [".$task->getId()."] [".$task->getType()."] [".$task->getUrl()."]");
         
@@ -61,7 +61,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
 
         return 3;        
     }
-    
+
     
     /**
      * 
@@ -84,7 +84,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
      * 1: cannot assign, no workers
      * 2: could not assign to any workers
      */
-    public function assignCollection($tasks, $workers) {        
+    public function assignCollection($tasks, $workers) {
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: Initialising");        
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: [".count($workers)."] workers selected");
 
@@ -96,14 +96,22 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: workers [" . implode(',', $workerNames) . "]");
         
         if (count($workers) == 0) {
-            $this->logger->err("WorkerTaskAssignmentService::assignCollection: Cannot assign, no active workers.");
+            $this->logger->error("WorkerTaskAssignmentService::assignCollection: Cannot assign, no active workers.");
             return self::ASSIGN_COLLECTION_NO_WORKERS_STATUS_CODE;
-        }    
+        }
         
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: Task collection count [".count($tasks)."]");
+        if (count($tasks) === 0) {
+            return self::ASSIGN_COLLECTION_OK_STATUS_CODE;
+        }
 
-        shuffle($workers);
-        foreach ($workers as $worker) {            
+        $taskGroups = $this->getTaskGroups($tasks, count($workers));
+        $failedWorkers = [];
+        $failedGroups = [];
+
+        foreach ($taskGroups as $workerIndex => $tasks) {
+            $worker = $workers[$workerIndex];
+
             if ($this->assignCollectionToWorker($tasks, $worker)) {
                 foreach ($tasks as $task) {
                     $this->taskService->setStarted(
@@ -116,13 +124,67 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
                 }
 
                 $this->taskService->getManager()->flush();
+            } else {
+                if (!in_array($worker->getHostname(), $failedWorkers)) {
+                    $failedWorkers[] = $worker->getHostname();
+                }
 
-                return self::ASSIGN_COLLECTION_OK_STATUS_CODE;
-            }     
+                $failedGroups[] = $tasks;
+            }
         }
-        
-        return self::ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE;          
-     }    
+
+        if (count($failedGroups)) {
+            $nonFailedWorkers = [];
+            foreach ($workers as $worker) {
+                if (!in_array($worker->getHostname(), $failedWorkers)) {
+                    $nonFailedWorkers[] = $worker;
+                }
+            }
+
+            /**
+             * @var $failedTasks Task[]
+             */
+            $failedTasks = [];
+            foreach ($failedGroups as $failedGroup) {
+                $failedTasks = array_merge($failedTasks, $failedGroup);
+            }
+
+            if (count($nonFailedWorkers) > 0) {
+                return $this->assignCollection($failedTasks, $nonFailedWorkers);
+            }
+
+            foreach ($failedTasks as $task) {
+                $task->setState($this->taskService->getQueuedState());
+                $this->taskService->persistAndFlush($task);
+            }
+
+            return self::ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE;
+        }
+
+        return self::ASSIGN_COLLECTION_OK_STATUS_CODE;
+    }
+
+
+    /**
+     * @param Task[] $tasks
+     * @param int $workerCount
+     * @return Task[]
+     */
+    private function getTaskGroups($tasks, $workerCount) {
+        $taskGroups = [];
+
+        foreach ($tasks as $taskIndex => $task) {
+            $groupIndex = $taskIndex % $workerCount;
+
+            if (!isset($taskGroups[$groupIndex])) {
+                $taskGroups[$groupIndex] = [];
+            }
+
+            $taskGroups[$groupIndex][] = $task;
+        }
+
+        return $taskGroups;
+    }
     
     
     /**
@@ -192,7 +254,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
         
         $httpRequest = $this->httpClientService->postRequest($requestUrl, null, array(
             'tasks' => $requestData            
-        ));      
+        ));
         
         try {
             $response = $httpRequest->send();
@@ -201,7 +263,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService {
             return false;
         } catch (\Guzzle\Http\Exception\BadResponseException $badResponseException) {
             $response = $badResponseException->getResponse();
-        }        
+        }
         
         if (!$response->isSuccessful()) {
             $this->logger->err("WorkerTaskAssignmentService::assignCollectionToWorker " . $requestUrl . ": " . $response->getStatusCode()." ".$response->getReasonPhrase());     
