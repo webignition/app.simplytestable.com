@@ -78,7 +78,8 @@ class AssignmentSelectionCommandTest extends ConsoleCommandTestCase {
     }
     
     
-    private function runForNWorkers($requestedWorkerCount) {        
+    private function runForNWorkers($requestedWorkerCount) {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
 
         $taskCount = $job->getTasks()->count();

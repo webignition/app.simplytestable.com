@@ -40,6 +40,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     }
     
     public function testWithOnlyCrawlJobs() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
       
         $job->setType($this->getJobTypeService()->getCrawlType());
@@ -53,6 +54,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     }
     
     public function testWithSingleJobWithIncompleteTasks() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         
         $job->setState($this->getJobService()->getInProgressState());        
@@ -63,6 +65,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     }
     
     public function testWithSingleJobWithNoIncompleteTasks() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         
         foreach ($job->getTasks() as $task) {
@@ -77,7 +80,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     }
     
     
-    public function testWithCollectionOfJobsWithNoIncompleteTasks() {        
+    public function testWithCollectionOfJobsWithNoIncompleteTasks() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $jobs = array();
         
         $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://one.example.com/'));
@@ -101,6 +105,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     
     
     public function testWithCollectionOfJobsSomeWithIncompleteTasksAndSomeWithout() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $jobs = array();
         
         $jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob('http://one.example.com/'));

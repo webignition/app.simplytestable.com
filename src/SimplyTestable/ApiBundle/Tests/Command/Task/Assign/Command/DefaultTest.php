@@ -4,7 +4,8 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign\Command;
 
 class DefaultTest extends CommandTest {
 
-    public function testAssignValidTaskReturnsStatusCode0() {        
+    public function testAssignValidTaskReturnsStatusCode0() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->createWorker();
         
@@ -17,7 +18,8 @@ class DefaultTest extends CommandTest {
     }
     
     
-    public function testAssignTaskInWrongStateReturnsStatusCode1() {        
+    public function testAssignTaskInWrongStateReturnsStatusCode1() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->createWorker();
         
@@ -33,6 +35,7 @@ class DefaultTest extends CommandTest {
     }
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode2() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         
         $this->assertReturnCode(2, array(
@@ -49,6 +52,7 @@ class DefaultTest extends CommandTest {
     
     
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode3() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 404',
@@ -89,6 +93,7 @@ class DefaultTest extends CommandTest {
     
     
     public function testAssignFirstTaskOfJobDoesNotBreakRemainingTaskUrls() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->createWorker();
         

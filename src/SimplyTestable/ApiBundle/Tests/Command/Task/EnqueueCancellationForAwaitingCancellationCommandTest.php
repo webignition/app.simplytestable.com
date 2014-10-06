@@ -27,6 +27,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
     
     
     public function testCancellationJobsAreEnqueued() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         
         foreach ($job->getTasks() as $task) {

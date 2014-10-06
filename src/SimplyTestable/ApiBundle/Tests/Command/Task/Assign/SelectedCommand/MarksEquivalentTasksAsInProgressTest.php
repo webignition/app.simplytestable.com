@@ -11,6 +11,8 @@ class MarksEquivalentTasksAsInProgressTest extends CommandTest {
 
     public function setUp() {
         parent::setUp();
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         
         $this->setJobTypeConstraintLimits();
         $this->createWorker();

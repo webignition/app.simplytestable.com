@@ -14,6 +14,7 @@ class NoWorkersAvailableTest extends CollectionCommandTest {
     public function setUp() {
         parent::setUp();
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->taskIds = $this->getTaskIds($this->getJobService()->getById($this->createResolveAndPrepareDefaultJob()));
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(

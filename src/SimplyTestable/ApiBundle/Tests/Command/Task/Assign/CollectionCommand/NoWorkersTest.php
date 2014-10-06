@@ -14,6 +14,7 @@ class NoWorkersTest extends CollectionCommandTest {
     public function setUp() {
         parent::setUp();
 
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->taskIds = $this->getTaskIds($this->getJobService()->getById($this->createResolveAndPrepareDefaultJob()));
 
         $this->executeReturnCode = $this->execute(['ids' => implode($this->taskIds, ',')]);

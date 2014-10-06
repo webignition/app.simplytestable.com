@@ -20,6 +20,7 @@ class CancelCommandTest extends BaseTest {
     
 
     public function testCancelValidTaskReturnsStatusCode0() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 200',
@@ -53,7 +54,8 @@ class CancelCommandTest extends BaseTest {
     }
                
     
-    public function testCancelTaskInWrongStateReturnsStatusCodeMinus2() {      
+    public function testCancelTaskInWrongStateReturnsStatusCodeMinus2() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $worker = $this->createWorker();
         
@@ -83,7 +85,8 @@ class CancelCommandTest extends BaseTest {
     }
     
     
-    public function testCancelTaskWhenWorkerIsInReadOnlyModeReturnsStatusCode503() {        
+    public function testCancelTaskWhenWorkerIsInReadOnlyModeReturnsStatusCode503() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 503',

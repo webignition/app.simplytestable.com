@@ -26,6 +26,7 @@ class UrlDiscoverySelectionTest extends ConsoleCommandTestCase {
     }
     
     public function testUrlDiscoveryTaskIsSelectedForAssigment() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
         $this->createWorker();
         

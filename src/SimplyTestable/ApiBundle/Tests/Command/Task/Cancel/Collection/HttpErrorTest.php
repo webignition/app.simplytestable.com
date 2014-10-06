@@ -6,6 +6,8 @@ class HttpErrorTest extends BaseTest {
     
     public function setUp() {
         parent::setUp();
+
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(

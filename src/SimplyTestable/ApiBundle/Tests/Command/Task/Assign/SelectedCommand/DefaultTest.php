@@ -6,6 +6,7 @@ class DefaultTest extends CommandTest {
 
     
     public function testAssignValidTaskReturnsStatusCode0() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         $this->createWorker();
         
@@ -28,6 +29,7 @@ class DefaultTest extends CommandTest {
 
     
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         
         $task = $job->getTasks()->first();
@@ -39,7 +41,8 @@ class DefaultTest extends CommandTest {
     }
 
     
-    public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2() {        
+    public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2() {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
