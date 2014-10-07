@@ -20,14 +20,14 @@ class GetProcessedUrlsTest extends BaseSimplyTestableTestCase {
             'id' => $task->getId()
         ));
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '["http:\/\/example.com\/one\/"]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());             
+        ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $this->getCrawlJobContainerService()->processTaskResults($task);
         
@@ -36,14 +36,14 @@ class GetProcessedUrlsTest extends BaseSimplyTestableTestCase {
             'id' => $task->getId()
         ));
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '["http:\/\/example.com\/one\/"]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());        
+        ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $this->getCrawlJobContainerService()->processTaskResults($task);
         

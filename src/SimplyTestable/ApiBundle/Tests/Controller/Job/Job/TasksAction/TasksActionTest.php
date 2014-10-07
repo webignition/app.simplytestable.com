@@ -25,7 +25,7 @@ class TasksActionTest extends BaseControllerJsonTestCase {
 
         $now = new \DateTime();
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => $now->format('Y-m-d H:i:s'),
             'output' => json_encode(array(
                 array(
@@ -51,7 +51,7 @@ class TasksActionTest extends BaseControllerJsonTestCase {
             'state' => 'completed',
             'errorCount' => 1,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
+        ))->completeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $tasks[1]->getId()
@@ -80,14 +80,14 @@ class TasksActionTest extends BaseControllerJsonTestCase {
         ));
         
         foreach ($job->getTasks() as $task) {
-            $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+            $this->getTaskController('completeAction', array(
                 'end_date_time' => '2012-03-08 17:03:00',
                 'output' => '{"messages":[]}',
                 'contentType' => 'application/json',
                 'state' => 'task-failed-no-retry-available',
                 'errorCount' => 1,
                 'warningCount' => 0
-            ))->completeByUrlAndTaskTypeAction((string) $task->getUrl(), $task->getType()->getName(), $task->getParametersHash());            
+            ))->completeAction((string) $task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         }
         
         $tasksResponseObject = json_decode($this->getJobController('tasksAction')->tasksAction($job->getWebsite()->getCanonicalUrl(), $job->getId())->getContent());

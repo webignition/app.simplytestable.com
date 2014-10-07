@@ -48,14 +48,14 @@ abstract class PreprocessorTest extends BaseSimplyTestableTestCase {
         $now = new \DateTime();
         
         $this->createWorker();
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => $now->format('Y-m-d H:i:s'),
             'output' => json_encode($this->taskOutputContent),            
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string) $task->getUrl(), $task->getType()->getName(), $task->getParametersHash());        
+        ))->completeAction((string) $task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
                 
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $this->tasks->get(1)->getId()

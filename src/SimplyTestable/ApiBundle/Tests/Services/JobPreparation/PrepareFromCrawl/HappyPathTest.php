@@ -23,14 +23,14 @@ class HappyPathTest extends BaseSimplyTestableTestCase {
         $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);                
         $urlDiscoveryTask = $this->crawlJobContainer->getCrawlJob()->getTasks()->first();
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, 1)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$urlDiscoveryTask->getUrl(), $urlDiscoveryTask->getType()->getName(), $urlDiscoveryTask->getParametersHash());        
+        ))->completeAction((string)$urlDiscoveryTask->getUrl(), $urlDiscoveryTask->getType()->getName(), $urlDiscoveryTask->getParametersHash());
         
         $this->getJobPreparationService()->prepareFromCrawl($this->crawlJobContainer);
     }   

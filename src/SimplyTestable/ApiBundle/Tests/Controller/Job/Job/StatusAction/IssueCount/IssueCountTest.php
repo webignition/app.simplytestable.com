@@ -21,14 +21,14 @@ abstract class IssueCountTest extends BaseControllerJsonTestCase {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
         foreach ($job->getTasks() as $task) {
-            $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+            $this->getTaskController('completeAction', array(
                 'end_date_time' => '2012-03-08 17:03:00',
                 'output' => '[]',
                 'contentType' => 'application/json',
                 'state' => 'completed',
                 'errorCount' => $this->getReportedErrorCount(),
                 'warningCount' => $this->getReportedWarningCount()
-            ))->completeByUrlAndTaskTypeAction($task->getUrl(), $task->getType()->getName(), $task->getParametersHash());            
+            ))->completeAction($task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         }
         
         $response = $this->getJobController('statusAction')->statusAction(self::CANONICAL_URL, $job->getId());

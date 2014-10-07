@@ -16,14 +16,14 @@ class ServiceTest extends BaseSimplyTestableTestCase {
         
         $urlLimit = $this->getUserAccountPlanService()->getForUser($this->getTestUser())->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
 
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, $urlLimit)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$urlDiscoveryTask->getUrl(), $urlDiscoveryTask->getType()->getName(), $urlDiscoveryTask->getParametersHash());
+        ))->completeAction((string)$urlDiscoveryTask->getUrl(), $urlDiscoveryTask->getType()->getName(), $urlDiscoveryTask->getParametersHash());
         
         $this->assertEquals('plan-url-limit-reached:discovered-url-count-' . ($urlLimit + 1), $job->getAmmendments()->first()->getReason());
     }

@@ -23,14 +23,14 @@ class ServiceTest extends BaseSimplyTestableTestCase {
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($this->job);                
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$urlDiscoveryTask->getUrl(), $urlDiscoveryTask->getType()->getName(), $urlDiscoveryTask->getParametersHash());        
+        ))->completeAction((string)$urlDiscoveryTask->getUrl(), $urlDiscoveryTask->getType()->getName(), $urlDiscoveryTask->getParametersHash());
     }   
     
     

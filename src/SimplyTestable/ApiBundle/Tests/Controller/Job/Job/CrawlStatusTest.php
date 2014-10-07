@@ -40,14 +40,14 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         
         $urlCountToDiscover = (int)round($this->getUserAccountPlanService()->getForUser($task->getJob()->getUser())->getPlan()->getConstraintNamed('urls_per_job')->getLimit() / 2);        
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => json_encode($this->createUrlResultSet($job->getWebsite()->getCanonicalUrl(), $urlCountToDiscover)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
+        ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $jobObject = json_decode($this->getJobController('statusAction')->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
         

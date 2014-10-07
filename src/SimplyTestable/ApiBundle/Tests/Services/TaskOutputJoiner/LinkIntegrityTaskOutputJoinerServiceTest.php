@@ -15,7 +15,7 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
 
         $now = new \DateTime();
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => $now->format('Y-m-d H:i:s'),
             'output' => json_encode(array(
                 array(
@@ -41,13 +41,13 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
+        ))->completeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $tasks[1]->getId()
         ));        
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => $now->format('Y-m-d H:i:s'),
             'output' => json_encode(array(
                 array(
@@ -67,7 +67,7 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string) $tasks[1]->getUrl(), $tasks[1]->getType()->getName(), $tasks[1]->getParametersHash());        
+        ))->completeAction((string) $tasks[1]->getUrl(), $tasks[1]->getType()->getName(), $tasks[1]->getParametersHash());
         
         $this->assertEquals(2, $tasks[1]->getOutput()->getErrorCount());                
     }
@@ -82,7 +82,7 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
 
         $now = new \DateTime();
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => $now->format('Y-m-d H:i:s'),
             'output' => json_encode(array(
                 array(
@@ -108,13 +108,13 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             'state' => 'completed',
             'errorCount' => 1,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
+        ))->completeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
         $this->executeCommand('simplytestable:task:assign', array(
             'id' => $tasks[1]->getId()
         ));        
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => $now->format('Y-m-d H:i:s'),
             'output' => json_encode(array(
                 array(
@@ -134,7 +134,7 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             'state' => 'completed',
             'errorCount' => 1,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string) $tasks[1]->getUrl(), $tasks[1]->getType()->getName(), $tasks[1]->getParametersHash());        
+        ))->completeAction((string) $tasks[1]->getUrl(), $tasks[1]->getType()->getName(), $tasks[1]->getParametersHash());
         
         $this->assertEquals(2, $tasks[1]->getOutput()->getErrorCount());
     }  
