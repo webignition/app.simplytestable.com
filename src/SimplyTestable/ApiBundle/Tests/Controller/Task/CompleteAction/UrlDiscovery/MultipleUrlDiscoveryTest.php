@@ -15,6 +15,10 @@ class MultipleUrlDiscoveryTest extends CompleteDiscoveryTest {
             'warningCount' => 0
         ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
 
+        $this->assertFalse($this->getResqueQueueService()->isEmpty(
+            'task-assign-collection'
+        ));
+
         $task = $this->crawlJob->getTasks()->get(1);
         $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',

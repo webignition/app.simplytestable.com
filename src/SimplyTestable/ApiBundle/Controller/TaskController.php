@@ -88,24 +88,30 @@ class TaskController extends ApiController {
                 $this->getJobService()->complete($task->getJob());
             }
 
-            if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery')) && $this->getJobService()->isCompleted($task->getJob())) {
-                $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($task->getJob());
+            if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery'))) {
+                if ($this->getJobService()->isCompleted($task->getJob())) {
+                    $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($task->getJob());
 
-                foreach ($crawlJobContainer->getParentJob()->getRequestedTaskTypes() as $taskType) {
-                    /* @var $taskType TaskType */
-                    $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
+                    foreach ($crawlJobContainer->getParentJob()->getRequestedTaskTypes() as $taskType) {
+                        /* @var $taskType TaskType */
+                        $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
 
-                    if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
-                        $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey));
+                        if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
+                            $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey));
+                        }
                     }
-                }
 
-                $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
+                    $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
+
+                    $targetJob = $crawlJobContainer->getParentJob();
+                } else {
+                    $targetJob = $task->getJob();
+                }
 
                 $limit = $this->container->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
 
                 $this->getTaskQueueService()->setLimit($limit);
-                $this->getTaskQueueService()->setJob($crawlJobContainer->getParentJob());
+                $this->getTaskQueueService()->setJob($targetJob);
 
                 $this->getResqueQueueService()->enqueue(
                     $this->getResqueJobFactoryService()->create(
