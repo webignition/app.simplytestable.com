@@ -57,8 +57,8 @@ class ResolveWebsiteCommand extends BaseCommand
 
             $this->getResqueQueueService()->enqueue(
                 $this->getResqueJobFactoryService()->create(
-                    'task-assign',
-                    ['id' => $job->getTasks()->first()->getId()]
+                    'task-assign-collection',
+                    ['ids' => implode(',', $this->getTaskService()->getEntityRepository()->getIdsByJob($job))]
                 )
             );
         } else {
@@ -72,7 +72,15 @@ class ResolveWebsiteCommand extends BaseCommand
         
         return 0;
     }
-    
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Services\TaskService
+     */
+    private function getTaskService() {
+        return $this->getContainer()->get('simplytestable.services.taskservice');
+    }
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\JobService

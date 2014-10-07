@@ -49,10 +49,10 @@ class SingleUrlJobTest extends CommandTest {
         $this->assertTrue(is_array($this->job->getTasks()->first()->getParameter('domains-to-ignore')));
     }
     
-    public function testResqueQueueContainsTaskAssignJob() {
+    public function testResqueQueueContainsTaskAssignCollectionJob() {
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'task-assign',
-            ['id' => $this->job->getTasks()->first()->getId()]
+            'task-assign-collection',
+            ['ids' => implode(',', $this->getTaskService()->getEntityRepository()->getIdsByJob($this->job))]
         ));         
     }
 }

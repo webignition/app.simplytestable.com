@@ -59,7 +59,6 @@ abstract class BaseTestCase extends WebTestCase {
             new \SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand(),
             new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
             new \SimplyTestable\ApiBundle\Command\Job\PrepareCommand(),
-            new \SimplyTestable\ApiBundle\Command\Task\Assign\Command(),
             new \SimplyTestable\ApiBundle\Command\Task\Assign\SelectedCommand(),
             new \SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand(),
             new \SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand()

@@ -72,8 +72,8 @@ class PrepareCommand extends BaseCommand
 
                     $this->getResqueQueueService()->enqueue(
                         $this->getResqueJobFactoryService()->create(
-                            'task-assign',
-                            ['id' => $crawlJob->getTasks()->first()->getId()]
+                            'task-assign-collection',
+                            ['ids' => $crawlJob->getTasks()->first()->getId()]
                         )
                     );
                 }

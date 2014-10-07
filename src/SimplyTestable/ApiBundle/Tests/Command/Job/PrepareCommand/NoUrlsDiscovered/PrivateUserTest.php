@@ -26,17 +26,12 @@ class PrivateUserTest extends CommandTest {
         return 0;
     }
 
-    public function testTaskAssignCollectionResqueJobIsNotCreated() {
-        $this->assertTrue($this->getResqueQueueService()->isEmpty('task-assign-collection'));
-    }
-
-
-    public function testTaskAssignResqueJobForCrawlJobFirstTaskIsCreated() {
+    public function testTaskAssignCollectionResqueJobForCrawlJobFirstTaskIsCreated() {
         $crawlJob = $this->getCrawlJobContainerService()->getForJob($this->job)->getCrawlJob();
 
         $this->assertTrue($this->getResqueQueueService()->contains(
-            'task-assign',
-            ['id' => $crawlJob->getTasks()->first()->getId()]
+            'task-assign-collection',
+            ['ids' => $crawlJob->getTasks()->first()->getId()]
         ));
     }
 }
