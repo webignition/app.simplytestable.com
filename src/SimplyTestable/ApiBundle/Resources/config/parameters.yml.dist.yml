@@ -5,7 +5,6 @@ parameters:
     "job-resolve": "SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob"
     "task-assign": "SimplyTestable\ApiBundle\Resque\Job\Task\AssignJob"
     "task-assign-collection": "SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob"
-    "task-assignment-selection": "SimplyTestable\ApiBundle\Resque\Job\Task\AssignmentSelectionJob"
     "task-cancel": "SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob"
     "task-cancel-collection": "SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob"
     "worker-activate-verify": "SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob"
