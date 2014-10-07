@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteByUrlAndTaskTypeAction\UrlDiscovery;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteAction\UrlDiscovery;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;

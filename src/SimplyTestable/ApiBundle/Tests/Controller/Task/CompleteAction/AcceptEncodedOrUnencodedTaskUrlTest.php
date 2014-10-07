@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteByUrlAndTaskTypeAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteAction;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
@@ -24,14 +24,14 @@ class AcceptEncodedOrUnencodedTaskUrlTest extends BaseControllerJsonTestCase {
             'id' => $task->getId()
         ));    
         
-        $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction($encodedCanonicalUrl, $task->getType()->getName(), $task->getParametersHash());
+        ))->completeAction($encodedCanonicalUrl, $task->getType()->getName(), $task->getParametersHash());
         
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('task-completed', $task->getState()->getName());
@@ -55,14 +55,14 @@ class AcceptEncodedOrUnencodedTaskUrlTest extends BaseControllerJsonTestCase {
             'id' => $task->getId()
         ));    
         
-        $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction($canonicalUrl, $task->getType()->getName(), $task->getParametersHash());
+        ))->completeAction($canonicalUrl, $task->getType()->getName(), $task->getParametersHash());
         
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('task-completed', $task->getState()->getName());

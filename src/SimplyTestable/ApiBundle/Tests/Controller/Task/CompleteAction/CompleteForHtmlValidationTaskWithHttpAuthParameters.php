@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteByUrlAndTaskTypeAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteAction;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
@@ -21,14 +21,14 @@ class CompleteForHtmlValidationTaskWithHttpAuthParameters extends BaseController
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());
         
-        $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '{"messages":[]}',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());             
+        ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $this->assertEquals($this->getTaskService()->getCompletedState(), $task->getState());
         $this->assertNotNull($task->getOutput());

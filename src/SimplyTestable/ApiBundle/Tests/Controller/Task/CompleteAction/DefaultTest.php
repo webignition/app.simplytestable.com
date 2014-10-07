@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteByUrlAndTaskTypeAction;
+namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteAction;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
@@ -22,14 +22,14 @@ class DefaultTest extends BaseControllerJsonTestCase {
         
         $this->assertEquals($this->getJobService()->getInProgressState(), $job->getState());
         
-        $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction($task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
+        ))->completeAction($task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($this->getTaskService()->getCompletedState(), $task->getState());
@@ -62,14 +62,14 @@ class DefaultTest extends BaseControllerJsonTestCase {
             'id' => $task->getId()
         ));
         
-        $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());                
+        ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $this->assertEquals(200, $response->getStatusCode());
         
@@ -116,14 +116,14 @@ class DefaultTest extends BaseControllerJsonTestCase {
             'id' => $task->getId()
         ));
 
-        $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());        
+        ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         
         $this->assertEquals(200, $response->getStatusCode());
@@ -187,14 +187,14 @@ class DefaultTest extends BaseControllerJsonTestCase {
             'id' => $task->getId()
         ));
         
-        $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());        
+        ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
 
         $this->assertEquals(200, $response->getStatusCode());
         
@@ -266,14 +266,14 @@ class DefaultTest extends BaseControllerJsonTestCase {
             'id' => $task->getId()
         ));
         
-        $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());                
+        ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $this->assertEquals(200, $response->getStatusCode());
         
@@ -339,14 +339,14 @@ class DefaultTest extends BaseControllerJsonTestCase {
             'id' => $task->getId()
         ));
         
-        $response = $this->getTaskController('completeByUrlAndTaskTypeAction', array(
+        $response = $this->getTaskController('completeAction', array(
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => '[]',
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeByUrlAndTaskTypeAction((string)$task->getUrl(), $task->getType()->getName(), 'invalid-parameter-hash');        
+        ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), 'invalid-parameter-hash');
 
         $this->assertEquals(410, $response->getStatusCode());
         
