@@ -10,14 +10,14 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         $this->getUserService()->setUser($this->getTestUser());
 
         $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
-        
+
         $jobObject = json_decode($this->getJobController('statusAction', array(
             'user' => $this->getTestUser()->getEmail()
         ))->statusAction((string)$job->getWebsite(), $job->getId())->getContent());
-        
+
         $this->assertEquals('queued', $jobObject->crawl->state);
         $this->assertEquals(10, $jobObject->crawl->limit);
-    } 
+    }
     
     public function testWithInProgressCrawlJob() {
         $this->getUserService()->setUser($this->getTestUser());
@@ -32,8 +32,8 @@ class CrawlStatusTest extends BaseControllerJsonTestCase {
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
         
-        $this->assertEquals(0, $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->assertEquals(0, $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         )));
         
         $this->assertEquals($this->getTaskService()->getInProgressState(), $task->getState());
