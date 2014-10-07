@@ -43,8 +43,8 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             'warningCount' => 0
         ))->completeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $tasks[1]->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $tasks[1]->getId()
         ));        
         
         $this->getTaskController('completeAction', array(
@@ -110,8 +110,8 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             'warningCount' => 0
         ))->completeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
         
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $tasks[1]->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $tasks[1]->getId()
         ));        
         
         $this->getTaskController('completeAction', array(

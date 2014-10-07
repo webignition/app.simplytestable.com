@@ -15,8 +15,8 @@ class PublicPlanTest extends BaseSimplyTestableTestCase {
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();        
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($job->getUser());
@@ -44,8 +44,8 @@ class PublicPlanTest extends BaseSimplyTestableTestCase {
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();        
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($job->getUser());
@@ -61,8 +61,8 @@ class PublicPlanTest extends BaseSimplyTestableTestCase {
         ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->get(1);
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));        
         
         $this->getTaskController('completeAction', array(
@@ -87,8 +87,8 @@ class PublicPlanTest extends BaseSimplyTestableTestCase {
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($job->getUser());

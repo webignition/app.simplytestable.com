@@ -20,8 +20,8 @@ class AcceptEncodedOrUnencodedTaskUrlTest extends BaseControllerJsonTestCase {
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
 
         $task = $job->getTasks()->first();        
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));    
         
         $response = $this->getTaskController('completeAction', array(
@@ -51,8 +51,8 @@ class AcceptEncodedOrUnencodedTaskUrlTest extends BaseControllerJsonTestCase {
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
 
         $task = $job->getTasks()->first();        
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));    
         
         $response = $this->getTaskController('completeAction', array(

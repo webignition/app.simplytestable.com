@@ -10,14 +10,14 @@ class DefaultTest extends BaseControllerJsonTestCase {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
-        $this->queueTaskAssignResponseHttpFixture();
+        $this->queueTaskAssignCollectionResponseHttpFixture();
         
         $this->createWorker();
 
         $task = $job->getTasks()->first();
         
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         )); 
         
         $this->assertEquals($this->getJobService()->getInProgressState(), $job->getState());
@@ -54,12 +54,12 @@ class DefaultTest extends BaseControllerJsonTestCase {
             array('HTML validation', 'CSS validation')
         ));   
         
-        $this->queueTaskAssignResponseHttpFixture();
+        $this->queueTaskAssignCollectionResponseHttpFixture();
         $this->createWorker();          
         
         $task = $job->getTasks()->first();
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $response = $this->getTaskController('completeAction', array(
@@ -107,13 +107,13 @@ class DefaultTest extends BaseControllerJsonTestCase {
         ));   
         
         
-        $this->queueTaskAssignResponseHttpFixture();
+        $this->queueTaskAssignCollectionResponseHttpFixture();
         $this->createWorker();
         
         $task = $job->getTasks()->first();
         
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
 
         $response = $this->getTaskController('completeAction', array(
@@ -179,12 +179,12 @@ class DefaultTest extends BaseControllerJsonTestCase {
             )
         ));
         
-        $this->queueTaskAssignResponseHttpFixture();
+        $this->queueTaskAssignCollectionResponseHttpFixture();
         $this->createWorker();  
     
         $task = $job->getTasks()->first();
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $response = $this->getTaskController('completeAction', array(
@@ -261,9 +261,9 @@ class DefaultTest extends BaseControllerJsonTestCase {
     
         $task = $jobs[$users[0]->getEmail()][0]->getTasks()->first();
         
-        $this->queueTaskAssignResponseHttpFixture();
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->queueTaskAssignCollectionResponseHttpFixture();
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $response = $this->getTaskController('completeAction', array(
@@ -331,12 +331,12 @@ class DefaultTest extends BaseControllerJsonTestCase {
             )
         ));        
         
-        $this->queueTaskAssignResponseHttpFixture();
+        $this->queueTaskAssignCollectionResponseHttpFixture();
         $this->createWorker();
         
         $task = $job->getTasks()->first();
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $response = $this->getTaskController('completeAction', array(

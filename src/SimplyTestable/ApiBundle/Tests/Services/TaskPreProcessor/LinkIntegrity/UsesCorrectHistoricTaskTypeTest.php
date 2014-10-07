@@ -9,8 +9,8 @@ class UsesCorrectHistoricTaskTypeTest extends PreProcessorTest {
         
         $this->createWorker();
         
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $this->tasks->get(1)->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $this->tasks->get(1)->getId()
         ));
     }
     

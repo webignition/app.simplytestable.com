@@ -7,8 +7,8 @@ class SetUserAgentWhenGettingWebResourceTest extends ExcludedUrlsTest {
     public function setUp() {
         parent::setUp();
         
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $this->tasks->get(1)->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $this->tasks->get(1)->getId()
         ));          
     }       
     

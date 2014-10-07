@@ -57,8 +57,8 @@ abstract class PreprocessorTest extends BaseSimplyTestableTestCase {
             'warningCount' => 0
         ))->completeAction((string) $task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
                 
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $this->tasks->get(1)->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $this->tasks->get(1)->getId()
         ));         
     }
     

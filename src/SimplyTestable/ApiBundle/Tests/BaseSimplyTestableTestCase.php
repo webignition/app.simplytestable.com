@@ -423,14 +423,7 @@ User-Agent: *
 Sitemap: http://example.com/sitemap.xml
 EOD;
     }
-    
-    
-    protected function queueTaskAssignResponseHttpFixture() {
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.1 200 OK\nContent-Type: application/json\n\n" . '{"id":1,"url":"http:\/\/example.com\/","state":"queued","type":"HTML validation","parameters":""}'            
-        )));        
-    }
-    
+
     protected function queueTaskAssignCollectionResponseHttpFixture() {
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             "HTTP/1.1 200 OK\nContent-Type: application/json\n\n" . '[{"id":1,"url":"http:\/\/example.com\/","state":"queued","type":"HTML validation","parameters":""}]'            

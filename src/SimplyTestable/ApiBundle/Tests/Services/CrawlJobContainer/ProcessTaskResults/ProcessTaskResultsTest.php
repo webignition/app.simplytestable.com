@@ -17,8 +17,8 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase {
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $this->assertEquals($this->getTaskService()->getInProgressState(), $task->getState());
@@ -49,8 +49,8 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase {
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $this->getTaskController('completeAction', array(
@@ -66,8 +66,8 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase {
         $this->assertEquals(2, $crawlJobContainer->getCrawlJob()->getTasks()->count()); 
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->get(1);
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $this->getTaskController('completeAction', array(

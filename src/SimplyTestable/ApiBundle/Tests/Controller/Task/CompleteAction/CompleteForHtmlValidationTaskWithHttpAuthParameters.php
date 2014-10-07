@@ -15,8 +15,8 @@ class CompleteForHtmlValidationTaskWithHttpAuthParameters extends BaseController
         $task = $job->getTasks()->first();
         $this->assertNull($task->getOutput());
      
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $this->assertEquals('task-in-progress', $task->getState()->getName());

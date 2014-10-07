@@ -18,8 +18,8 @@ class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase {
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->first();        
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $this->getTaskController('completeAction', array(
@@ -34,8 +34,8 @@ class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase {
         $this->getCrawlJobContainerService()->processTaskResults($task);
         
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->get(1);        
-        $this->executeCommand('simplytestable:task:assign', array(
-            'id' => $task->getId()
+        $this->executeCommand('simplytestable:task:assigncollection', array(
+            'ids' => $task->getId()
         ));
         
         $this->getTaskController('completeAction', array(
