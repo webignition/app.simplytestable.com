@@ -40,8 +40,8 @@ Content-Type: application/json
 [{"id":1,"url":"http:\/\/webignition.net\/","state":"queued","type":"HTML validation","parameters":""},{"id":2,"url":"http:\/\/webignition.net\/articles\/","state":"queued","type":"HTML validation","parameters":""},{"id":3,"url":"http:\/\/webignition.net\/articles\/i-make-the-internet\/","state":"queued","type":"HTML validation","parameters":""},{"id":4,"url":"http:\/\/webignition.net\/articles\/getting-to-building-simpytestable-dot-com\/","state":"queued","type":"HTML validation","parameters":""},{"id":5,"url":"http:\/\/webignition.net\/articles\/veenus-group-seeks-plutonium-eating-martian-superhero\/","state":"queued","type":"HTML validation","parameters":""},{"id":6,"url":"http:\/\/webignition.net\/articles\/archive\/","state":"queued","type":"HTML validation","parameters":""},{"id":7,"url":"http:\/\/webignition.net\/articles\/program-code-is-for-people-not-computers\/","state":"queued","type":"HTML validation","parameters":""},{"id":8,"url":"http:\/\/webignition.net\/articles\/making-password-resets-60-percent-easier\/","state":"queued","type":"HTML validation","parameters":""},{"id":9,"url":"http:\/\/webignition.net\/articles\/which-is-faster-delay-perfeception-tests\/","state":"queued","type":"HTML validation","parameters":""}]'
         ]));
 
-        $this->worker = $this->createWorker('worker.example.com');
         $this->createWorker();
+        $this->worker = $this->createWorker('worker.example.com');
         $this->createWorker();
         $this->createWorker();
 

@@ -63,13 +63,17 @@ EOF
             return self::RETURN_CODE_OK;
         }
 
-        $workers = $this->getWorkerService()->getActiveCollection();
-        if (!is_null($input->getArgument('worker'))) {
+        $activeWorkers = $this->getWorkerService()->getActiveCollection();
+        $workers = [];
+
+        if (is_null($input->getArgument('worker'))) {
+            $workers = $activeWorkers;
+        } else {
             $selectedWorker = trim($input->getArgument('worker'));
 
-            foreach ($workers as $workerIndex => $worker) {
-                if ($worker->getHostname() != $selectedWorker) {
-                    unset($workers[$workerIndex]);
+            foreach ($activeWorkers as $activeWorker) {
+                if ($activeWorker->getHostname() == $selectedWorker) {
+                    $workers[] = $activeWorker;
                 }
             }
         }
