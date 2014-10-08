@@ -5,17 +5,18 @@ use webignition\WebResource\Exception\Exception as WebResourceException;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use webignition\InternetMediaType\InternetMediaType;
 use webignition\WebResource\WebResource;
+use webignition\WebResource\WebPage\WebPage;
 
 class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     
     public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {
         $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndType($task);
         if (count($rawTaskOutputs) === 0) {
-            return;
+            return false;
         }
 
         $webResource = $this->getWebResource($task);
-        if (is_null($webResource)) {
+        if (is_null($webResource) || !$webResource instanceof WebPage) {
             return false;
         }
         
