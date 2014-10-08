@@ -151,10 +151,10 @@ EOF
     
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\TaskPreProcessorFactoryService
+     * @return \SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService
      */    
     private function getTaskPreprocessorFactoryService() {
-        return $this->getContainer()->get('simplytestable.services.TaskPreProcessorServiceFactory');
+        return $this->getContainer()->get('simplytestable.services.taskPreprocessorServiceFactory');
     }
 
 
