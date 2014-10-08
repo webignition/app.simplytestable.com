@@ -101,8 +101,7 @@ class QueueService {
         $jobTaskIds = [];
         foreach ($incompleteJobs as $job) {
             $taskIdsForJob = $this->taskService->getEntityRepository()->getIdsByJobAndTaskStates($job, [
-                $this->taskService->getQueuedState(),
-                $this->taskService->getQueuedForAssignmentState()
+                $this->taskService->getQueuedState()
             ], $this->getLimit());
 
             if (count($taskIdsForJob)) {
@@ -135,8 +134,7 @@ class QueueService {
         $incompleteJobs =  $this->jobService->getEntityRepository()->getByStatesAndTaskStates(
             $this->jobService->getIncompleteStates(),
             [
-                $this->taskService->getQueuedState(),
-                $this->taskService->getQueuedForAssignmentState(),
+                $this->taskService->getQueuedState()
             ]
         );
 

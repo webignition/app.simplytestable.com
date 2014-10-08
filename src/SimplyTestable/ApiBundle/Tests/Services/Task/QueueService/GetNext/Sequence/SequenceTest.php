@@ -36,7 +36,7 @@ abstract class SequenceTest extends ServiceTest {
 
         foreach ($this->firstSetTaskIds as $taskId) {
             $task = $this->getTaskService()->getById($taskId);
-            $task->setState($this->getTaskService()->getCompletedState());
+            $task->setState($this->getTaskService()->getQueuedForAssignmentState());
             $this->getTaskService()->persistAndFlush($task);
         }
     }
