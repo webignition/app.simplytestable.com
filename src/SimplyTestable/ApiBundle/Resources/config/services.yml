@@ -368,3 +368,11 @@ services:
     arguments:
         jobService: "@simplytestable.services.jobservice"
         taskService: "@simplytestable.services.taskservice"
+
+  simplytestable.services.worker.taskNotificationService:
+    class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
+    arguments:
+        workerService: "@simplytestable.services.workerservice"
+        httpClientService: "@simplytestable.services.httpClientService"
+        urlService: "@simplytestable.services.urlService"
+        logger: "@logger"
