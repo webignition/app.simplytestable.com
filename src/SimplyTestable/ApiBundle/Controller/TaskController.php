@@ -103,19 +103,13 @@ class TaskController extends ApiController {
                     }
 
                     $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
-
-                    $limit = $this->container->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
-
-                    $this->getTaskQueueService()->setLimit($limit);
-                    $this->getTaskQueueService()->setJob($crawlJobContainer->getParentJob());
-
-                    $this->getResqueQueueService()->enqueue(
-                        $this->getResqueJobFactoryService()->create(
-                            'task-assign-collection',
-                            ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
-                        )
-                    );
                 }
+
+                $this->getResqueQueueService()->enqueue(
+                    $this->getResqueJobFactoryService()->create(
+                        'tasks-notify'
+                    )
+                );
             }
         }
 
@@ -166,15 +160,6 @@ class TaskController extends ApiController {
         return new Response(json_encode($this->getTaskService()->getCountByTaskTypeAndState($taskType, $state)), 200);
     }
 
-
-    /**
-     *
-     * @return WorkerService
-     */
-    private function getWorkerService() {
-        return $this->container->get('simplytestable.services.workerservice');
-    }
-    
     
     /**
      *
@@ -252,13 +237,5 @@ class TaskController extends ApiController {
         return $this->container->get('simplytestable.services.TaskOutputJoinerServiceFactory');
     }
 
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Task\QueueService
-     */
-    private function getTaskQueueService() {
-        return $this->container->get('simplytestable.services.task.queueservice');
-    }
 }
 
