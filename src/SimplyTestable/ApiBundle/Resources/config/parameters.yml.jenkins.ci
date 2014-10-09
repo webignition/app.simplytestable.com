@@ -8,6 +8,7 @@ parameters:
     "task-cancel-collection": "SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob"
     "worker-activate-verify": "SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob"
     "stripe-event": "SimplyTestable\ApiBundle\Resque\Job\Stripe\\ProcessEventJob"
+    "tasks-notify": "SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob"
   curl_options:
    - {name: "CURLOPT_SSL_VERIFYPEER", value: false}
    - {name: "CURLOPT_SSL_VERIFYHOST", value: false}
