@@ -15,7 +15,7 @@ class MultipleUrlDiscoveryTest extends CompleteDiscoveryTest {
             'warningCount' => 0
         ))->completeAction((string)$task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
 
-        $this->assertFalse($this->getResqueQueueService()->isEmpty(
+        $this->assertTrue($this->getResqueQueueService()->isEmpty(
             'task-assign-collection'
         ));
 

@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
 class TaskController extends ApiController {
     
@@ -103,22 +104,18 @@ class TaskController extends ApiController {
 
                     $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
 
-                    $targetJob = $crawlJobContainer->getParentJob();
-                } else {
-                    $targetJob = $task->getJob();
+                    $limit = $this->container->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
+
+                    $this->getTaskQueueService()->setLimit($limit);
+                    $this->getTaskQueueService()->setJob($crawlJobContainer->getParentJob());
+
+                    $this->getResqueQueueService()->enqueue(
+                        $this->getResqueJobFactoryService()->create(
+                            'task-assign-collection',
+                            ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
+                        )
+                    );
                 }
-
-                $limit = $this->container->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
-
-                $this->getTaskQueueService()->setLimit($limit);
-                $this->getTaskQueueService()->setJob($targetJob);
-
-                $this->getResqueQueueService()->enqueue(
-                    $this->getResqueJobFactoryService()->create(
-                        'task-assign-collection',
-                        ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
-                    )
-                );
             }
         }
 
