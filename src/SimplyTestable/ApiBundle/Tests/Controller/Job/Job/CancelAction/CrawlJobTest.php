@@ -58,19 +58,9 @@ class CrawlJobTest extends IsCancelledTest {
     }
 
 
-    public function testParentJobTaskAssignmentResqueJobIsQueued() {
-        $taskIds = [];
-        foreach ($this->parentJob->getTasks() as $task) {
-            $taskIds[] = $task->getId();
-        }
-
-        $length = $this->container->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
-
-        $taskIds = array_slice($taskIds, 0, $length);
-
-        $this->assertTrue($this->getResqueQueueService()->contains(
-            'task-assign-collection',
-            ['ids' => implode(',', $taskIds)]
+    public function testResqueTasksNotifyJobIsCreated() {
+        $this->assertFalse($this->getResqueQueueService()->isEmpty(
+            'tasks-notify'
         ));
     }
 
