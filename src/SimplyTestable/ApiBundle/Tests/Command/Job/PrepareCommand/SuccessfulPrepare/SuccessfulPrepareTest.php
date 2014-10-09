@@ -8,6 +8,15 @@ abstract class SuccessfulPrepareTest extends CommandTest {
 
     protected function preCall() {
         $this->queuePrepareHttpFixturesForJob($this->job->getWebsite()->getCanonicalUrl());
+
+        $fixture = 'HTTP/1.1 200 OK';
+        $fixtures = [];
+
+        for ($count = 0; $count < $this->getWorkerCount(); $count++) {
+            $fixtures[] = $fixture;
+        }
+
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($fixtures));
         $this->createWorkers($this->getWorkerCount());
     }
 
@@ -20,19 +29,9 @@ abstract class SuccessfulPrepareTest extends CommandTest {
         return 0;
     }
 
-    public function testSelectedTaskIdsAreQueuedForAssignment() {
-        $taskIds = [];
-        foreach ($this->job->getTasks() as $task) {
-            $taskIds[] = $task->getId();
-        }
-
-        $length = $this->container->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
-
-        $taskIds = array_slice($taskIds, 0, $length);
-
-        $this->assertTrue($this->getResqueQueueService()->contains(
-            'task-assign-collection',
-            ['ids' => implode(',', $taskIds)]
+    public function testResqueTasksNotifyJobIsCreated() {
+        $this->assertFalse($this->getResqueQueueService()->isEmpty(
+            'tasks-notify'
         ));
     }
 

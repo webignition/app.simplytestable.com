@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
 class PrepareCommand extends BaseCommand
@@ -55,15 +54,9 @@ class PrepareCommand extends BaseCommand
             $this->getJobPreparationService()->prepare($job);
 
             if ($job->getTasks()->count()) {
-                $limit = $this->getContainer()->getParameter('tasks_per_job_per_worker_count') * count($this->getWorkerService()->getActiveCollection());
-
-                $this->getTaskQueueService()->setLimit($limit);
-                $this->getTaskQueueService()->setJob($job);
-
                 $this->getResqueQueueService()->enqueue(
                     $this->getResqueJobFactoryService()->create(
-                        'task-assign-collection',
-                        ['ids' => implode(',', $this->getTaskQueueService()->getNext())]
+                        'tasks-notify'
                     )
                 );
             } else {
@@ -90,18 +83,11 @@ class PrepareCommand extends BaseCommand
             
             throw $jobPreparationServiceException;
         } catch (\Exception $e) {
-            var_dump(get_class($e), $e);
-            exit();
+            $this->getContainer()->get('logger')->error('JobPrepareCommand exception: [' . get_class($e) . ']');
+            $this->getContainer()->get('logger')->error('JobPrepareCommand exception: job id [' . $job->getId() . ']');
         }
     }
 
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WorkerService
-     */
-    private function getWorkerService() {
-        return $this->getContainer()->get('simplytestable.services.workerservice');
-    }
     
     /**
      *
@@ -111,13 +97,6 @@ class PrepareCommand extends BaseCommand
         return $this->getContainer()->get('simplytestable.services.jobservice');
     }
 
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Task\QueueService
-     */
-    private function getTaskQueueService() {
-        return $this->getContainer()->get('simplytestable.services.task.queueservice');
-    }
 
     /**
      *
