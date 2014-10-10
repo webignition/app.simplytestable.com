@@ -26,6 +26,8 @@ abstract class ValidRequestTest extends RequestTest {
 
         $this->clearRedis();
 
+        $this->preController();
+
         $methodName = $this->getActionNameFromRouter();
         $this->response = $this->getCurrentController()->$methodName();
         $this->responseObject = json_decode($this->response->getContent(), true);
@@ -34,6 +36,11 @@ abstract class ValidRequestTest extends RequestTest {
     protected function preCall() {
         $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
     }
+
+    protected function preController() {
+
+    }
+
 
     public function testResponseStatusCode() {
         $this->assertEquals(200, $this->response->getStatusCode());

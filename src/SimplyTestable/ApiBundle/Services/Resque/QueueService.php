@@ -158,5 +158,13 @@ class QueueService {
             return false;
         }
     }
+
+
+    /**
+     * @return Resque
+     */
+    public function getResque() {
+        return $this->resque;
+    }
     
 }

@@ -81,15 +81,17 @@ class TasksController extends ApiController {
             $this->getTaskService()->persistAndFlush($task);
         }
 
-        $this->getResqueQueueService()->enqueue(
-            $this->getResqueJobFactoryService()->create(
-                'task-assign-collection',
-                [
-                    'ids' => implode(',', $taskIds),
-                    'worker' => $worker_hostname
-                ]
-            )
-        );
+        if (!$this->getResqueQueueService()->contains('task-assign-collection', ['worker' => $worker_hostname])) {
+            $this->getResqueQueueService()->enqueue(
+                $this->getResqueJobFactoryService()->create(
+                    'task-assign-collection',
+                    [
+                        'ids' => implode(',', $taskIds),
+                        'worker' => $worker_hostname
+                    ]
+                )
+            );
+        }
 
         return $this->sendResponse();
     }
