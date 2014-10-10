@@ -68,6 +68,10 @@ class TasksController extends ApiController {
             return $this->sendResponse();
         }
 
+        if ($this->getResqueQueueService()->contains('task-assign-collection', ['worker' => $worker_hostname])) {
+            return $this->sendResponse();
+        }
+
         $this->getTaskQueueService()->setLimit($limit);
         $taskIds = $this->getTaskQueueService()->getNext();
         if (count($taskIds) == 0) {
@@ -81,17 +85,15 @@ class TasksController extends ApiController {
             $this->getTaskService()->persistAndFlush($task);
         }
 
-        if (!$this->getResqueQueueService()->contains('task-assign-collection', ['worker' => $worker_hostname])) {
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
-                    'task-assign-collection',
-                    [
-                        'ids' => implode(',', $taskIds),
-                        'worker' => $worker_hostname
-                    ]
-                )
-            );
-        }
+        $this->getResqueQueueService()->enqueue(
+            $this->getResqueJobFactoryService()->create(
+                'task-assign-collection',
+                [
+                    'ids' => implode(',', $taskIds),
+                    'worker' => $worker_hostname
+                ]
+            )
+        );
 
         return $this->sendResponse();
     }
