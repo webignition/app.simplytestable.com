@@ -195,12 +195,7 @@ class JobController extends BaseJobController
             $tasksToDeAssign[] = array(
                 'id' => $taskId
             );            
-        }      
-        
-        $this->getResqueQueueService()->removeCollection(
-            'task-assign-collection',
-            $tasksToDeAssign
-        );
+        }
 
         $tasksAwaitingCancellation = $this->getTaskService()->getAwaitingCancellationByJob($job);
         $taskIdsToCancel = array();
