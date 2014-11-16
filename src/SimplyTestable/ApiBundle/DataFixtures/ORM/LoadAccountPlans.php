@@ -123,7 +123,26 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
                     'limit' => 10000
                 )
             )
-        ),        
+        ),
+        array(
+            'names' => array(
+                'WDS-custom'
+            ),
+            'name' => 'WDS-custom',
+            'stripeId' => 'wds-2',
+            'isPremium' => true,
+            'visible' => false,
+            'constraints'  => array(
+                array(
+                    'name' => 'urls_per_job',
+                    'limit' => 8000
+                ),
+                array(
+                    'name' => 'credits_per_month',
+                    'limit' => 250000
+                )
+            )
+        ),
     );
     
     
