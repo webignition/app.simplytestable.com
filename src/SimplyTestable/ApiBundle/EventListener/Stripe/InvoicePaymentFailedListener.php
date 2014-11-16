@@ -21,7 +21,8 @@ class InvoicePaymentFailedListener extends InvoiceListener
             'lines' => $invoice->getLinesSummary(),
             'invoice_id' => $invoice->getId(),
             'total' => $invoice->getTotal(),            
-            'amount_due' => $invoice->getAmountDue()
+            'amount_due' => $invoice->getAmountDue(),
+            'currency' => $invoice->getCurrency()
         ));
         
         $this->issueWebClientEvent($webClientData);       

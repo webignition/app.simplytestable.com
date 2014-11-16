@@ -24,7 +24,8 @@ class WithDiscountTest extends InvoicePaymentSucceededTest {
                 'percent_off' => '20',
                 'discount' => 180
             ],
-            'has_discount' => 1
+            'has_discount' => 1,
+            'currency' => 'gbp'
         ));
     }
 

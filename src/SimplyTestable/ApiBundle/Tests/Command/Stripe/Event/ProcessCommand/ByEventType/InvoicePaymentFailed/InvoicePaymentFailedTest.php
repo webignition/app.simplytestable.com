@@ -20,6 +20,7 @@ class InvoicePaymentFailedTest extends ByEventTypeTest {
             'invoice_id' => 'in_2nL671LyaO5mbg',
             'total' => '1900',
             'amount_due' => '1900',
+            'currency' => 'gbp'
         ));
     }   
     

@@ -9,7 +9,7 @@ class InvoicePaymentSucceededListener extends InvoiceListener
         $this->setEvent($event);
         
         $invoice = $this->getStripeInvoice();
-        
+
         if ($invoice->getTotal() === 0 && $invoice->getAmountDue() === 0) {
             $this->markEntityProcessed();
             return;
@@ -21,7 +21,8 @@ class InvoicePaymentSucceededListener extends InvoiceListener
             'total' => $invoice->getTotal(),
             'amount_due' => $invoice->getAmountDue(),
             'invoice_id' => $invoice->getId(),
-            'has_discount' => (int)$invoice->hasDiscount()
+            'has_discount' => (int)$invoice->hasDiscount(),
+            'currency' => $invoice->getCurrency()
         ];
 
         if ($invoice->hasDiscount()) {

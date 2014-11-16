@@ -19,7 +19,8 @@ class AmountGreaterThanZeroTest extends InvoicePaymentSucceededTest {
             'subtotal' => '2000',
             'total' => '2000',
             'amount_due' => '0',
-            'has_discount' => 0
+            'has_discount' => 0,
+            'currency' => 'gbp'
         ));
     }
     

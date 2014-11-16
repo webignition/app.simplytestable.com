@@ -33,12 +33,13 @@ class ReceivedAfterCustomerSubscriptionDeletedTest extends ByEventTypeTest {
             'invoice_id' => 'in_2nL671LyaO5mbg',
             'total' => '1900',
             'amount_due' => '1900',
+            'currency' => 'gbp'
             )),
             array(
                 'event' => 'customer.subscription.deleted',
                 'plan_name' => 'Agency',
                 'actioned_by' => 'system'                
-            )            
+            )
         );
         
         return array_merge(parent::getExpectedNotificationBodyFields(), array(
