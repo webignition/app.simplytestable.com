@@ -9,7 +9,7 @@ class InvoicePaymentFailedListener extends InvoiceListener
 
     public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
         $this->setEvent($event);
-        
+
         if ($this->getStripeCustomer()->hasCard() === false) {
             $this->markEntityProcessed();
             return;

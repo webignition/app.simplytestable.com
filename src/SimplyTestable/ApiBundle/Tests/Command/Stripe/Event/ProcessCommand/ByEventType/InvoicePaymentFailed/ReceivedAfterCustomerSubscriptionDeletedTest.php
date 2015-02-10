@@ -41,21 +41,6 @@ class ReceivedAfterCustomerSubscriptionDeletedTest extends ByEventTypeTest {
                 'actioned_by' => 'system'                
             )
         );
-        
-        return array_merge(parent::getExpectedNotificationBodyFields(), array(
-            'lines' => array(
-                array(
-                    'proration' => 0,
-                    'plan_name' => 'Agency',
-                    'period_start' => 1382368580,
-                    'period_end' => 1385046980,
-                    'amount' => 1900
-                )
-            ),
-            'invoice_id' => 'in_2nL671LyaO5mbg',
-            'total' => '1900',
-            'amount_due' => '1900',
-        ));
     }   
     
     protected function getExpectedNotificationBodyEventName() {

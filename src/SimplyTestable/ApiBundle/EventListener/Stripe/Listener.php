@@ -140,7 +140,7 @@ abstract class Listener
     
     /**
      * 
-     * @return \SimplyTestable\ApiBundle\Model\Stripe\Customer
+     * @return \webignition\Model\Stripe\Customer
      */
     protected function getStripeCustomer() {
         return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent($this->event));
