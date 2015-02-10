@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "48627096871ff237f889f1a7084bec99",
+    "hash": "d06bf74d804fea152770be112c175812",
     "packages": [
         {
             "name": "bcc/resque-bundle",
@@ -3254,16 +3254,16 @@
         },
         {
             "name": "webignition/php-stripe-models",
-            "version": "0.2.4",
+            "version": "0.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/php-stripe-models.git",
-                "reference": "4eaa1b972d067c4b0dd4ca3fb608edcd75add636"
+                "reference": "d284b91641dd74a1411a71ba048a2faa8e7c3862"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/php-stripe-models/zipball/4eaa1b972d067c4b0dd4ca3fb608edcd75add636",
-                "reference": "4eaa1b972d067c4b0dd4ca3fb608edcd75add636",
+                "url": "https://api.github.com/repos/webignition/php-stripe-models/zipball/d284b91641dd74a1411a71ba048a2faa8e7c3862",
+                "reference": "d284b91641dd74a1411a71ba048a2faa8e7c3862",
                 "shasum": ""
             },
             "require": {
@@ -3297,7 +3297,7 @@
                 "model",
                 "stripe"
             ],
-            "time": "2014-08-19 16:49:41"
+            "time": "2014-11-16 13:28:32"
         },
         {
             "name": "webignition/quoted-string",
@@ -4866,9 +4866,7 @@
             "time": "2014-03-07 15:35:33"
         }
     ],
-    "aliases": [
-
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
         "kriswallsmith/assetic": 20,
@@ -4881,10 +4879,9 @@
         "bcc/resque-bundle": 20
     },
     "prefer-stable": true,
+    "prefer-lowest": false,
     "platform": {
         "php": ">=5.4.0"
     },
-    "platform-dev": [
-
-    ]
+    "platform-dev": []
 }
