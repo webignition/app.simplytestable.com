@@ -10,7 +10,8 @@ class ActiveTest extends CustomerSubscriptionCreatedTest {
         return array_merge(parent::getExpectedNotificationBodyFields(), array(
             'current_period_start' => '1392757613',
             'current_period_end' => '1395176813',
-            'amount' => '900'
+            'amount' => '900',
+            'currency' => 'gbp'
         ));
     }  
     

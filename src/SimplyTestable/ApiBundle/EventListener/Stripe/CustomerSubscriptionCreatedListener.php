@@ -28,7 +28,8 @@ class CustomerSubscriptionCreatedListener extends CustomerSubscriptionListener
             $webClientData = array_merge($webClientData, array(
                 'current_period_start' => $stripeSubscription->getCurrentPeriod()->getStart(),
                 'current_period_end' => $stripeSubscription->getCurrentPeriod()->getEnd(),
-                'amount' => $stripeSubscription->getPlan()->getAmount()
+                'amount' => $stripeSubscription->getPlan()->getAmount(),
+                'currency' => $stripeSubscription->getPlan()->getCurrency()
             ));             
         }
         
