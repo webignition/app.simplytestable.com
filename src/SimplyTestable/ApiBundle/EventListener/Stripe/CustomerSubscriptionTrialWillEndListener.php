@@ -15,7 +15,8 @@ class CustomerSubscriptionTrialWillEndListener extends CustomerSubscriptionListe
             'trial_end' => $stripeSubscription->getTrialPeriod()->getEnd(),
             'has_card' => (int)$stripeCustomer->hasCard(),
             'plan_amount' => $this->getPlanAmount(),
-            'plan_name' => $stripeSubscription->getPlan()->getName()
+            'plan_name' => $stripeSubscription->getPlan()->getName(),
+            'plan_currency' => $stripeSubscription->getPlan()->getCurrency()
         )));     
         
         $this->markEntityProcessed();

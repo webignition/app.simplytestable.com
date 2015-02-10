@@ -10,6 +10,7 @@ abstract class WithDiscountTest extends CustomerSubscriptionTrialWillEndTest {
             'plan_name' => 'Agency',
             'trial_end' => '1382368580',
             'plan_amount' => '1520',
+            'plan_currency' => 'gbp'
         ));
     }
 
