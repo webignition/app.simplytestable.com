@@ -10,7 +10,8 @@ abstract class WithDiscountTest extends PlanChangeTest {
             'old_plan' => 'Personal',
             'new_plan' => 'Agency',
             'new_amount' => '1520',
-            'subscription_status' => $this->getSubscriptionStatus()          
+            'subscription_status' => $this->getSubscriptionStatus(),
+            'currency' => 'gbp'
         );
         
         if ($this->getSubscriptionStatus() == 'trialing') {

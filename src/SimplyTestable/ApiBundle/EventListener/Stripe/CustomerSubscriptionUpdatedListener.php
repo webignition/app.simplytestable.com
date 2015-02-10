@@ -10,8 +10,10 @@ class CustomerSubscriptionUpdatedListener extends CustomerSubscriptionListener
 
         /* @var $stripeEventObject \webignition\Model\Stripe\Event\CustomerSubscriptionUpdated */
         $stripeEventObject = $this->getEventEntity()->getStripeEventObject();
-        $webClientEventData = $this->getDefaultWebClientData();        
         $stripeSubscription = $this->getStripeSubscription();
+        $webClientEventData = array_merge($this->getDefaultWebClientData(), [
+            'currency' => $stripeSubscription->getPlan()->getCurrency()
+        ]);
 
         if ($stripeEventObject->isPlanChange()) {
             $oldPlan = $stripeEventObject->getDataObject()->getPreviousAttributes()->get('plan');
