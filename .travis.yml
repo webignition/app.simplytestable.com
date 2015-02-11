@@ -13,8 +13,8 @@ php:
 before_script:
   # Additional PHP config  
   #- sudo find / -name 'php.ini'
-  - phpenv config-add travis.php.ini
-  
+  - sh -c 'if [ "$TRAVIS_PHP_VERSION" = "hhvm" -o "$TRAVIS_PHP_VERSION" = "hhvm-nightly" ]; then echo "is hhvm"; else phpenv config-add travis.php.ini; fi;'
+
   # Install code quality tools
   #- wget https://phar.phpunit.de/phpcpd.phar
   
