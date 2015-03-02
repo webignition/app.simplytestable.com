@@ -1013,6 +1013,8 @@ EOD;
     }
 
     protected function removeAllWebsites() {
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration');
+        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\Configuration');
         $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\WebSite');
     }    
     
