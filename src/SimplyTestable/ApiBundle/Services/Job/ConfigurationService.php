@@ -108,37 +108,11 @@ class ConfigurationService extends EntityService {
         return $jobConfiguration;
     }
 
-    public function get() {
-        return null;
-    }
-
-    public function update() {
-        return null;
-    }
-
-    public function delete() {
-        return null;
-    }
-
-    public function getList() {
-        return null;
-    }
-
-
-    /**
-     * @param $label
-     * @return bool
-     */
-    private function hasForLabel($label) {
-        return !is_null($this->getByLabel($label));
-    }
-
-
     /**
      * @param $label
      * @return null|JobConfiguration
      */
-    private function getByLabel($label) {
+    public function get($label) {
         $byUser = $this->getEntityRepository()->findOneBy([
             'label' => $label,
             'user' => $this->user
@@ -166,6 +140,27 @@ class ConfigurationService extends EntityService {
         }
 
         return null;
+    }
+
+    public function update() {
+        return null;
+    }
+
+    public function delete() {
+        return null;
+    }
+
+    public function getList() {
+        return null;
+    }
+
+
+    /**
+     * @param $label
+     * @return bool
+     */
+    private function hasForLabel($label) {
+        return !is_null($this->get($label));
     }
 
 
