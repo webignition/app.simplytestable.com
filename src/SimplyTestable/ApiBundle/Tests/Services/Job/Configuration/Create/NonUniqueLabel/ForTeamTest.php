@@ -9,21 +9,16 @@ class ForTeamTest extends ServiceTest {
 
     const LABEL = 'foo';
 
-    private $leader;
-
     public function setUp() {
         parent::setUp();
 
-        $this->leader = $this->createAndActivateUser('leader@example.com', 'password');
-
-        $team = $this->getTeamService()->create(
-            'Foo',
-            $this->leader
-        );
-
+        $leader = $this->createAndActivateUser('leader@example.com', 'password');
         $member = $this->createAndActivateUser('user@example.com');
 
-        $this->getTeamMemberService()->add($team, $member);
+        $this->getTeamMemberService()->add($this->getTeamService()->create(
+            'Foo',
+            $leader
+        ), $member);
 
         $this->getJobConfigurationService()->setUser($member);
         $this->getJobConfigurationService()->create(
@@ -33,6 +28,8 @@ class ForTeamTest extends ServiceTest {
             self::LABEL,
             ''
         );
+
+        $this->getJobConfigurationService()->setUser($leader);
     }
 
     public function testCreateWithNonUniqueLabelForTeamThrowsException() {
@@ -42,7 +39,7 @@ class ForTeamTest extends ServiceTest {
             JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
         );
 
-        $this->getJobConfigurationService()->setUser($this->leader);
+
         $this->getJobConfigurationService()->create(
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),

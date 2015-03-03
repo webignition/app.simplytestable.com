@@ -79,8 +79,6 @@ class ConfigurationService extends EntityService {
             );
         }
 
-
-
         if ($this->hasExisting($website, $type, $taskConfigurations, $parameters)) {
             throw new JobConfigurationServiceException(
                 'Matching configuration already exists',
@@ -178,7 +176,50 @@ class ConfigurationService extends EntityService {
      * @param string $parameters
      * @return bool
      */
-    private function hasExisting( WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
+    private function hasExisting(WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
+        if ($this->hasExistingForUser($website, $type, $taskConfigurations, $parameters)) {
+            return true;
+        }
+
+        if ($this->hasExistingForTeam($website, $type, $taskConfigurations, $parameters)) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private function hasExistingForTeam(WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
+        if (!$this->teamService->hasForUser($this->user)) {
+            return false;
+        }
+
+        /* @var $jobConfigurations JobConfiguration[] */
+        $jobConfigurations = $this->getEntityRepository()->findByWebsiteAndTypeAndParametersAndUsers(
+            $website,
+            $type,
+            $parameters,
+            $this->teamService->getPeopleForUser($this->user)
+        );
+
+        foreach ($jobConfigurations as $jobConfiguration) {
+            if ($this->areTaskConfigurationCollectionsEqual($taskConfigurations, $jobConfiguration->getTaskConfigurations())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @param WebSite $website
+     * @param JobType $type
+     * @param TaskConfiguration[] $taskConfigurations
+     * @param string $parameters
+     * @return bool
+     */
+    private function hasExistingForUser(WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
         if ($this->getEntityRepository()->getCountByProperties($this->user, $website, $type, $parameters) === 0) {
             return false;
         }

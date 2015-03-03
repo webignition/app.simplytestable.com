@@ -1,19 +1,14 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create\Uniqueness;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create\Uniqueness\ForTeam;
 
+use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create\Uniqueness\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
-use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 
 class WithDifferentTaskConfigurationsTest extends ServiceTest {
 
     const LABEL = 'foo';
     const PARAMETERS = 'parameters';
-
-    /**
-     * @var JobConfiguration
-     */
-    private $jobConfiguration = null;
 
     private $taskTypeOptionsSets = [
         [
@@ -64,6 +59,14 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
+        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+        $member = $this->createAndActivateUser('user@example.com');
+
+        $this->getTeamMemberService()->add($this->getTeamService()->create(
+            'Foo',
+            $leader
+        ), $member);
+
         /* @var $taskConfigurations TaskConfiguration[] */
         $taskConfigurations = [];
 
@@ -77,14 +80,16 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest {
             $taskConfigurations[] = $taskConfiguration;
         }
 
-        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
-        $this->jobConfiguration = $this->getJobConfigurationService()->create(
+        $this->getJobConfigurationService()->setUser($member);
+        $this->getJobConfigurationService()->create(
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
             $taskConfigurations,
             self::LABEL,
             self::PARAMETERS
         );
+
+        $this->getJobConfigurationService()->setUser($leader);
     }
 
 
