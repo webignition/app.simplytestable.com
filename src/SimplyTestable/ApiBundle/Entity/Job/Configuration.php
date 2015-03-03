@@ -13,6 +13,8 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * @ORM\Table(
  *     name="JobConfiguration"
  * )
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\Job\ConfigurationRepository")
+ *
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class Configuration
@@ -331,7 +333,7 @@ class Configuration
     /**
      * Get taskConfigurations
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return TaskConfiguration[]
      */
     public function getTaskConfigurations()
     {

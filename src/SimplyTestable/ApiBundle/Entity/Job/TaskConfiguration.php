@@ -191,4 +191,25 @@ class TaskConfiguration
     {
         return $this->options;
     }
+
+
+    /**
+     * @param TaskConfiguration $taskConfiguration
+     * @return bool
+     */
+    public function hasMatchingTypeAndOptions(TaskConfiguration $taskConfiguration) {
+        if ($this->getType()->getName() != $taskConfiguration->getType()->getName()) {
+            return false;
+        }
+
+        if ($this->getOptionCount() != $taskConfiguration->getOptionCount()) {
+            return false;
+        }
+
+        if ($this->getOptions() != $taskConfiguration->getOptions()) {
+            return false;
+        }
+
+        return true;
+    }
 }

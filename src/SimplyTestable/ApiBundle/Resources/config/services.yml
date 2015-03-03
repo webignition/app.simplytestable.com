@@ -376,3 +376,9 @@ services:
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
         logger: "@logger"
+
+  simplytestable.services.job.configurationservice:
+    class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+        teamService: "@simplytestable.services.teamservice"
