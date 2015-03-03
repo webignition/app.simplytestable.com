@@ -20,6 +20,12 @@ class ConfigurationService extends EntityService {
      */
     private $teamService;
 
+
+    /**
+     * @var User
+     */
+    private $user;
+
     /**
      * @param EntityManager $entityManager
      * @param TeamService $teamService
@@ -46,17 +52,36 @@ class ConfigurationService extends EntityService {
     }
 
 
-    public function create(User $user, WebSite $website, JobType $type, $taskConfigurations = [], $label = '', $parameters = '') {
+    /**
+     * @param User $user
+     * @return $this
+     */
+    public function setUser(User $user) {
+        $this->user = $user;
+        return $this;
+    }
+
+
+    public function create(WebSite $website, JobType $type, $taskConfigurations = [], $label = '', $parameters = '') {
+        if (!$this->hasUser()) {
+            throw new JobConfigurationServiceException(
+                'User is not set',
+                JobConfigurationServiceException::CODE_USER_NOT_SET
+            );
+        }
+
         $label = trim($label);
 
-        if ($this->hasForLabelAndUser($label, $user)) {
+        if ($this->hasForLabel($label)) {
             throw new JobConfigurationServiceException(
                 'Label "' . $label . '" is not unique',
                 JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
             );
         }
 
-        if ($this->hasExisting($user, $website, $type, $taskConfigurations, $parameters)) {
+
+
+        if ($this->hasExisting($website, $type, $taskConfigurations, $parameters)) {
             throw new JobConfigurationServiceException(
                 'Matching configuration already exists',
                 JobConfigurationServiceException::CONFIGURATION_ALREADY_EXISTS
@@ -65,7 +90,7 @@ class ConfigurationService extends EntityService {
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setLabel($label);
-        $jobConfiguration->setUser($user);
+        $jobConfiguration->setUser($this->user);
         $jobConfiguration->setWebsite($website);
         $jobConfiguration->setType($type);
         $jobConfiguration->setParameters($parameters);
@@ -104,43 +129,63 @@ class ConfigurationService extends EntityService {
 
     /**
      * @param $label
-     * @param User $user
      * @return bool
      */
-    private function hasForLabelAndUser($label, User $user) {
-        return !is_null($this->getByLabelAndUser($label, $user));
+    private function hasForLabel($label) {
+        return !is_null($this->getByLabel($label));
     }
 
 
     /**
      * @param $label
-     * @param User $user
      * @return null|JobConfiguration
      */
-    private function getByLabelAndUser($label, User $user) {
-        return $this->getEntityRepository()->findOneBy([
+    private function getByLabel($label) {
+        $byUser = $this->getEntityRepository()->findOneBy([
             'label' => $label,
-            'user' => $user
+            'user' => $this->user
         ]);
+
+        if (!is_null($byUser)) {
+            return $byUser;
+        }
+
+        if (!$this->teamService->hasForUser($this->user)) {
+            return null;
+        }
+
+        $people = $this->teamService->getPeopleForUser($this->user);
+
+        foreach ($people as $teamPerson) {
+            $entity = $this->getEntityRepository()->findOneBy([
+                'label' => $label,
+                'user' => $teamPerson
+            ]);
+
+            if (!is_null($entity)) {
+                return $entity;
+            }
+        }
+
+        return null;
     }
 
 
     /**
-     * @param User $user
      * @param WebSite $website
      * @param JobType $type
      * @param TaskConfiguration[] $taskConfigurations
      * @param string $parameters
      * @return bool
      */
-    private function hasExisting(User $user, WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
-        if ($this->getEntityRepository()->getCountByProperties($user, $website, $type, $parameters) === 0) {
+    private function hasExisting( WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
+        if ($this->getEntityRepository()->getCountByProperties($this->user, $website, $type, $parameters) === 0) {
             return false;
         }
 
         /* @var $jobConfigurations JobConfiguration[] */
         $jobConfigurations = $this->getEntityRepository()->findBy([
-            'user' => $user,
+            'user' => $this->user,
             'website' => $website,
             'type' => $type,
             'parameters' => $parameters
@@ -193,6 +238,14 @@ class ConfigurationService extends EntityService {
         }
 
         return false;
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function hasUser() {
+        return $this->user instanceof User;
     }
 
 

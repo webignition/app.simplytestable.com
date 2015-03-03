@@ -55,8 +55,8 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
             $taskConfigurations[] = $taskConfiguration;
         }
 
+        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create(
-            $this->getUserService()->getPublicUser(),
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
             $taskConfigurations,
@@ -87,7 +87,6 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
         }
 
         $this->getJobConfigurationService()->create(
-            $this->getUserService()->getPublicUser(),
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
             $taskConfigurations,

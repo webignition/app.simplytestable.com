@@ -3,9 +3,20 @@
 namespace SimplyTestable\ApiBundle\Exception\Services\Job\Configuration;
 
 class Exception extends \Exception {
-    
-    const CODE_LABEL_NOT_UNIQUE = 1;
-    const CONFIGURATION_ALREADY_EXISTS = 2;
+
+    const CODE_USER_NOT_SET = 1;
+    const CODE_LABEL_NOT_UNIQUE = 2;
+    const CONFIGURATION_ALREADY_EXISTS = 3;
+
+
+    /**
+     *
+     * @return boolean
+     */
+    public function isUserNotSetException() {
+        return $this->getCode() === self::CODE_USER_NOT_SET;
+    }
+
     
     /**
      * 

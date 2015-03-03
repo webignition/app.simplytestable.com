@@ -53,8 +53,8 @@ class WithTaskConfigurationsTest extends ServiceTest {
             $taskConfigurations[] = $taskConfiguration;
         }
 
+        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create(
-            $this->getUserService()->getPublicUser(),
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
             $taskConfigurations,

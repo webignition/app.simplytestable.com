@@ -2,9 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create;
 
+use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 
-class WithoutTaskConfigurationsTest extends ServiceTest {
+class WithoutUserTest extends ServiceTest {
 
     const LABEL = 'foo';
 
@@ -16,7 +17,16 @@ class WithoutTaskConfigurationsTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
+
+    }
+
+    public function testCallWithoutSettingUserThrowsException() {
+        $this->setExpectedException(
+            'SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception',
+            'User is not set',
+            JobConfigurationServiceException::CODE_USER_NOT_SET
+        );
+
         $this->jobConfiguration = $this->getJobConfigurationService()->create(
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
@@ -24,10 +34,6 @@ class WithoutTaskConfigurationsTest extends ServiceTest {
             self::LABEL,
             ''
         );
-    }
-
-    public function testIdIsSet() {
-        $this->assertNotNull($this->jobConfiguration->getId());
     }
 
 }
