@@ -29,18 +29,16 @@ class Version20150302211459_create_JobConfiguration_and_JobTaskConfiguration ext
                     id INT AUTO_INCREMENT NOT NULL,
                     jobconfiguration_id INT NOT NULL,
                     type_id INT DEFAULT NULL,
-                    options_id INT DEFAULT NULL,
+                    options LONGTEXT NOT NULL COMMENT '(DC2Type:array)',
                     INDEX IDX_C42E5F65E5B4855B (jobconfiguration_id),
                     INDEX IDX_C42E5F65C54C8C93 (type_id),
-                    INDEX IDX_C42E5F653ADB05F1 (options_id),
                     PRIMARY KEY(id)
                 ) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB",
                 "ALTER TABLE JobConfiguration ADD CONSTRAINT FK_549B62D9A76ED395 FOREIGN KEY (user_id) REFERENCES fos_user (id)",
                 "ALTER TABLE JobConfiguration ADD CONSTRAINT FK_549B62D918F45C82 FOREIGN KEY (website_id) REFERENCES WebSite (id)",
                 "ALTER TABLE JobConfiguration ADD CONSTRAINT FK_549B62D9C54C8C93 FOREIGN KEY (type_id) REFERENCES JobType (id)",
                 "ALTER TABLE JobTaskConfiguration ADD CONSTRAINT FK_C42E5F65E5B4855B FOREIGN KEY (jobconfiguration_id) REFERENCES JobConfiguration (id)",
-                "ALTER TABLE JobTaskConfiguration ADD CONSTRAINT FK_C42E5F65C54C8C93 FOREIGN KEY (type_id) REFERENCES TaskType (id)",
-                "ALTER TABLE JobTaskConfiguration ADD CONSTRAINT FK_C42E5F653ADB05F1 FOREIGN KEY (options_id) REFERENCES TaskTypeOptions (id)"
+                "ALTER TABLE JobTaskConfiguration ADD CONSTRAINT FK_C42E5F65C54C8C93 FOREIGN KEY (type_id) REFERENCES TaskType (id)"
             ],
             'down' => [
                 "ALTER TABLE JobTaskConfiguration DROP FOREIGN KEY FK_C42E5F65E5B4855B",
@@ -68,14 +66,12 @@ class Version20150302211459_create_JobConfiguration_and_JobTaskConfiguration ext
                     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                     jobconfiguration_id INT NOT NULL,
                     type_id INT DEFAULT NULL,
-                    options_id INT DEFAULT NULL,
+                    options LONGTEXT NOT NULL,
                     FOREIGN KEY(jobconfiguration_id) REFERENCES JobConfiguration (id),
-                    FOREIGN KEY(type_id) REFERENCES TaskType (id),
-                    FOREIGN KEY(options_id) REFERENCES TaskTypeOptions (id)
+                    FOREIGN KEY(type_id) REFERENCES TaskType (id)
                 )",
                 "CREATE INDEX IDX_C42E5F65E5B4855B ON JobTaskConfiguration (jobconfiguration_id)",
-                "CREATE INDEX IDX_C42E5F65C54C8C93 ON JobTaskConfiguration (type_id)",
-                "CREATE INDEX IDX_C42E5F653ADB05F1 ON JobTaskConfiguration (options_id)"
+                "CREATE INDEX IDX_C42E5F65C54C8C93 ON JobTaskConfiguration (type_id)"
             ],
             'down' => [
                 "ALTER TABLE JobTaskConfiguration DROP FOREIGN KEY FK_C42E5F65E5B4855B",

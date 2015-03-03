@@ -5,6 +5,8 @@ use Doctrine\ORM\Mapping as ORM;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Options as TaskType_Options;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 
 /**
  * 
@@ -56,13 +58,17 @@ class TaskConfiguration
 
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Entity\Task\Type\Options
+     * @var DoctrineCollection
      *
-     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Options")
-     * @ORM\JoinColumn(name="options_id", referencedColumnName="id", nullable=true)
-     *
+     * @ORM\Column(type="array", name="options", nullable=false)
      */
     protected $options;
+
+
+    public function __construct()
+    {
+        $this->options = new ArrayCollection();
+    }
 
 
     
@@ -131,13 +137,45 @@ class TaskConfiguration
         return $this->jobConfiguration;
     }
 
+
+    /**
+     *
+     * @return int
+     */
+    public function getOptionCount() {
+        return count($this->getOptions());
+    }
+
+
+    /**
+     *
+     * @param string $optionName
+     * @return mixed
+     */
+    public function getOption($optionName) {
+        $options = $this->getOptions();
+        return (isset($options[$optionName])) ? $options[$optionName] : null;
+    }
+
+
+    /**
+     *
+     * @param string $optionName
+     * @return boolean
+     */
+    public function hasOption($optionName) {
+        return !is_null($this->getOption($optionName));
+    }
+
+
+
     /**
      * Set options
      *
-     * @param TaskType_Options $options
+     * @param array $options
      * @return TaskConfiguration
      */
-    public function setOptions(TaskType_Options $options = null)
+    public function setOptions($options)
     {
         $this->options = $options;
 
@@ -147,7 +185,7 @@ class TaskConfiguration
     /**
      * Get options
      *
-     * @return TaskType_Options
+     * @return array
      */
     public function getOptions()
     {
