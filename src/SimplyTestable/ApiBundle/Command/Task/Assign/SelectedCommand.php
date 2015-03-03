@@ -45,7 +45,8 @@ EOF
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
         
         foreach ($tasks as $taskIndex => $task) {
-            $output->writeln('Handling task: ' . $task->getId());
+            /* @var $task Task */
+            $output->writeln('Handling task: ' . $task->getId() . '[' . $task->getType()->getName() . ']');
 
             if ($this->getTaskPreprocessorFactoryService()->hasPreprocessor($task)) {            
                 $preProcessorResponse = false;
