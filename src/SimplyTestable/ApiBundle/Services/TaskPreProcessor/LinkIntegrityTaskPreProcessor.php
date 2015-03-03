@@ -10,6 +10,8 @@ use webignition\WebResource\WebPage\WebPage;
 class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
     
     public function process(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {
+        $this->container->get('logger')->info('LinkIntegrityTaskPreProcessor::process: task [' . $task->getId() . ']');
+
         $rawTaskOutputs = $this->getTaskService()->getEntityRepository()->findOutputByJobAndType($task);
         if (count($rawTaskOutputs) === 0) {
             return false;
@@ -108,8 +110,12 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
      */
     private function getExistingLinkIntegrityResult($url, $existingLinkIntegrityResults) {
         foreach ($existingLinkIntegrityResults as $linkIntegrityResult) {
-            if ($linkIntegrityResult->url == $url) {
-                return $linkIntegrityResult;
+            if (is_object($linkIntegrityResult)) {
+                if ($linkIntegrityResult->url == $url) {
+                    return $linkIntegrityResult;
+                }
+            } else {
+                $this->container->get('logger')->error('LinkIntegrityTaskPreProcessor::getExistingLinkIntegrityResult: non-object found');
             }
         }
     }
@@ -140,6 +146,11 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor {
      * @return boolean
      */
     private function isLinkIntegrityError($linkIntegrityResult) {
+        if (!is_object($linkIntegrityResult)) {
+            $this->container->get('logger')->error('LinkIntegrityTaskPreProcessor::isLinkIntegrityError: non-object found');
+            return false;
+        }
+
         if ($linkIntegrityResult->type == 'curl') {
             return true;
         }
