@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\Success;
 
-use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 abstract class SuccessTest extends ServiceTest {
 
@@ -31,7 +31,7 @@ abstract class SuccessTest extends ServiceTest {
         $this->jobConfiguration = $this->getJobConfigurationService()->create(
             $this->getOriginalWebsite(),
             $this->getOriginalJobType(),
-            [],
+            $this->getStandardTaskConfigurationCollection(),
             self::LABEL,
             $this->getOriginalParameters()
         );
@@ -40,9 +40,11 @@ abstract class SuccessTest extends ServiceTest {
             self::LABEL,
             $this->getNewWebsite(),
             $this->getNewJobType(),
-            [],
+            $this->getNewTaskConfigurationCollection(),
             $this->getNewParameters()
         );
+
+        $this->jobConfiguration = $this->getJobConfigurationService()->get(self::LABEL);
     }
 
     abstract protected function getOriginalWebsite();
@@ -51,6 +53,11 @@ abstract class SuccessTest extends ServiceTest {
     abstract protected function getNewWebsite();
     abstract protected function getNewJobType();
     abstract protected function getNewParameters();
+
+    /**
+     * @return TaskConfigurationCollection
+     */
+    abstract protected function getNewTaskConfigurationCollection();
 
     protected function preCreateJobConfigurations() {
 
@@ -71,6 +78,13 @@ abstract class SuccessTest extends ServiceTest {
 
     public function testJobConfigurationHasNewParameters() {
         $this->assertEquals($this->jobConfiguration->getParameters(), $this->getNewParameters());
+    }
+
+
+    public function testJobConfigurationHasNewTaskConfigurationCollection() {
+        foreach ($this->jobConfiguration->getTaskConfigurations() as $taskConfiguration) {
+            $this->assertTrue($this->getNewTaskConfigurationCollection()->contains($taskConfiguration));
+        }
     }
 
 }

@@ -16,7 +16,7 @@ abstract class HasExistingTest extends ServiceTest {
         $this->getJobConfigurationService()->create(
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
-            [],
+            $this->getStandardTaskConfigurationCollection(),
             'first',
             'first-job-configuration-parameters'
         );
@@ -24,7 +24,7 @@ abstract class HasExistingTest extends ServiceTest {
         $this->getJobConfigurationService()->create(
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
-            [],
+            $this->getStandardTaskConfigurationCollection(),
             'second',
             'second-job-configuration-parameters'
         );
@@ -48,7 +48,7 @@ abstract class HasExistingTest extends ServiceTest {
             'first',
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
-            [],
+            $this->getStandardTaskConfigurationCollection(),
             'second-job-configuration-parameters'
         );
     }

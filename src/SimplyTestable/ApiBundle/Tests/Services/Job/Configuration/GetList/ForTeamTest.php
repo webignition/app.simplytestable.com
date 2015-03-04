@@ -72,7 +72,7 @@ class ForTeamTest extends ServiceTest {
                 $this->jobConfigurations[] = $this->getJobConfigurationService()->create(
                     $this->getWebSiteService()->fetch('http://' . $userIndex . '.' . $jobConfigurationIndex . 'example.com/'),
                     $this->getJobTypeService()->getFullSiteType(),
-                    [],
+                    $this->getStandardTaskConfigurationCollection(),
                     self::LABEL . '::' . $userIndex . '::' . $jobConfigurationIndex,
                     'parameters'
                 );

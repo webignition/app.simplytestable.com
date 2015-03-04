@@ -43,7 +43,7 @@ class ForUserTest extends ServiceTest {
             $this->jobConfigurations[] = $this->getJobConfigurationService()->create(
                 $this->getWebSiteService()->fetch('http://' . $jobConfigurationIndex . 'example.com/'),
                 $this->getJobTypeService()->getFullSiteType(),
-                [],
+                $this->getStandardTaskConfigurationCollection(),
                 self::LABEL . '::' . $jobConfigurationIndex,
                 'parameters'
             );
@@ -54,7 +54,7 @@ class ForUserTest extends ServiceTest {
             $this->jobConfigurations[] = $this->getJobConfigurationService()->create(
                 $this->getWebSiteService()->fetch('http://' . $jobConfigurationIndex . 'example.com/'),
                 $this->getJobTypeService()->getFullSiteType(),
-                [],
+                $this->getStandardTaskConfigurationCollection(),
                 self::LABEL . '::' . $jobConfigurationIndex,
                 'parameters'
             );

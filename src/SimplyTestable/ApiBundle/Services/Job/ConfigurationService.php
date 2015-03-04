@@ -159,7 +159,7 @@ class ConfigurationService extends EntityService {
         return null;
     }
 
-    public function update($label, WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
+    public function update($label, WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $parameters = '') {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
                 'User is not set',
@@ -174,7 +174,7 @@ class ConfigurationService extends EntityService {
             );
         }
 
-        if ($this->hasExisting($website, $type, $taskConfigurations, $parameters)) {
+        if ($this->hasExisting($website, $type, $taskConfigurationCollection, $parameters)) {
             throw new JobConfigurationServiceException(
                 'Matching configuration already exists',
                 JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
@@ -184,8 +184,15 @@ class ConfigurationService extends EntityService {
         $configuration = $this->get($label);
         $configuration->setWebsite($website);
         $configuration->setType($type);
-        // task config ...
         $configuration->setParameters($parameters);
+        $configuration->getTaskConfigurations()->clear();
+
+        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
+            /* @var $taskConfiguration TaskConfiguration */
+            $taskConfiguration->setJobConfiguration($configuration);
+            $configuration->addTaskConfiguration($taskConfiguration);
+            $this->getManager()->persist($taskConfiguration);
+        }
 
         $this->getManager()->persist($configuration);
         $this->getManager()->flush($configuration);
