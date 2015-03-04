@@ -16,7 +16,7 @@ class ForUserTest extends ServiceTest {
         $this->getJobConfigurationService()->create(
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
-            [],
+            $this->getStandardTaskConfigurationCollection(),
             self::LABEL,
             ''
         );
@@ -32,7 +32,7 @@ class ForUserTest extends ServiceTest {
         $this->getJobConfigurationService()->create(
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
-            [],
+            $this->getStandardTaskConfigurationCollection(),
             self::LABEL,
             ''
         );

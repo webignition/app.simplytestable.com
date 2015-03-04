@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create\Uniqu
 
 use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create\Uniqueness\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 
 class WithSameTaskConfigurationsTest extends ServiceTest {
@@ -37,8 +38,7 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        /* @var $taskConfigurations TaskConfiguration[] */
-        $taskConfigurations = [];
+        $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
@@ -47,14 +47,14 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 
-            $taskConfigurations[] = $taskConfiguration;
+            $taskConfigurationCollection->add($taskConfiguration);
         }
 
         $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
         $this->getJobConfigurationService()->create(
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
-            $taskConfigurations,
+            $taskConfigurationCollection,
             self::LABEL,
             self::PARAMETERS
         );
@@ -68,8 +68,7 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
             JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
         );
 
-        /* @var $taskConfigurations TaskConfiguration[] */
-        $taskConfigurations = [];
+        $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
@@ -78,13 +77,13 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 
-            $taskConfigurations[] = $taskConfiguration;
+            $taskConfigurationCollection->add($taskConfiguration);
         }
 
         $this->getJobConfigurationService()->create(
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
-            $taskConfigurations,
+            $taskConfigurationCollection,
             'bar',
             self::PARAMETERS
         );

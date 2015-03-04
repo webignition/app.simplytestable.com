@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 class ConfigurationService extends EntityService {
 
@@ -62,7 +63,7 @@ class ConfigurationService extends EntityService {
     }
 
 
-    public function create(WebSite $website, JobType $type, $taskConfigurations = [], $label = '', $parameters = '') {
+    public function create(WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $label = '', $parameters = '') {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
                 'User is not set',
@@ -79,7 +80,15 @@ class ConfigurationService extends EntityService {
             );
         }
 
-        if ($this->hasExisting($website, $type, $taskConfigurations, $parameters)) {
+        if ($taskConfigurationCollection->isEmpty()) {
+            throw new JobConfigurationServiceException(
+                'TaskConfigurationCollection is empty',
+                JobConfigurationServiceException::CODE_TASK_CONFIGURATION_COLLECTION_IS_EMPTY
+            );
+        }
+
+
+        if ($this->hasExisting($website, $type, $taskConfigurationCollection, $parameters)) {
             throw new JobConfigurationServiceException(
                 'Matching configuration already exists',
                 JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
@@ -95,7 +104,7 @@ class ConfigurationService extends EntityService {
 
         $this->getManager()->persist($jobConfiguration);
 
-        foreach ($taskConfigurations as $taskConfiguration) {
+        foreach ($taskConfigurationCollection->get() as $taskConfiguration) {
             /* @var $taskConfiguration TaskConfiguration */
             $taskConfiguration->setJobConfiguration($jobConfiguration);
             $jobConfiguration->addTaskConfiguration($taskConfiguration);
@@ -219,16 +228,16 @@ class ConfigurationService extends EntityService {
     /**
      * @param WebSite $website
      * @param JobType $type
-     * @param TaskConfiguration[] $taskConfigurations
+     * @param TaskConfigurationCollection $taskConfigurationCollection
      * @param string $parameters
      * @return bool
      */
-    private function hasExisting(WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
-        if ($this->hasExistingForUser($website, $type, $taskConfigurations, $parameters)) {
+    private function hasExisting(WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $parameters = '') {
+        if ($this->hasExistingForUser($website, $type, $taskConfigurationCollection, $parameters)) {
             return true;
         }
 
-        if ($this->hasExistingForTeam($website, $type, $taskConfigurations, $parameters)) {
+        if ($this->hasExistingForTeam($website, $type, $taskConfigurationCollection, $parameters)) {
             return true;
         }
 
@@ -236,7 +245,7 @@ class ConfigurationService extends EntityService {
     }
 
 
-    private function hasExistingForTeam(WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
+    private function hasExistingForTeam(WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $parameters = '') {
         if (!$this->teamService->hasForUser($this->user)) {
             return false;
         }
@@ -250,7 +259,7 @@ class ConfigurationService extends EntityService {
         );
 
         foreach ($jobConfigurations as $jobConfiguration) {
-            if ($this->areTaskConfigurationCollectionsEqual($taskConfigurations, $jobConfiguration->getTaskConfigurations())) {
+            if ($this->areTaskConfigurationCollectionsEqual($taskConfigurationCollection->get(), $jobConfiguration->getTaskConfigurations())) {
                 return true;
             }
         }
@@ -262,11 +271,11 @@ class ConfigurationService extends EntityService {
     /**
      * @param WebSite $website
      * @param JobType $type
-     * @param TaskConfiguration[] $taskConfigurations
+     * @param TaskConfigurationCollection $taskConfigurationCollection
      * @param string $parameters
      * @return bool
      */
-    private function hasExistingForUser(WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
+    private function hasExistingForUser(WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $parameters = '') {
         if ($this->getEntityRepository()->getCountByProperties($this->user, $website, $type, $parameters) === 0) {
             return false;
         }
@@ -280,7 +289,7 @@ class ConfigurationService extends EntityService {
         ]);
 
         foreach ($jobConfigurations as $jobConfiguration) {
-            if ($this->areTaskConfigurationCollectionsEqual($taskConfigurations, $jobConfiguration->getTaskConfigurations())) {
+            if ($this->areTaskConfigurationCollectionsEqual($taskConfigurationCollection->get(), $jobConfiguration->getTaskConfigurations())) {
                 return true;
             }
         }
