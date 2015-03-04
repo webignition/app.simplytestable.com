@@ -110,9 +110,17 @@ class ConfigurationService extends EntityService {
 
     /**
      * @param $label
+     * @throws JobConfigurationServiceException
      * @return null|JobConfiguration
      */
     public function get($label) {
+        if (!$this->hasUser()) {
+            throw new JobConfigurationServiceException(
+                'User is not set',
+                JobConfigurationServiceException::CODE_USER_NOT_SET
+            );
+        }
+
         $byUser = $this->getEntityRepository()->findOneBy([
             'label' => $label,
             'user' => $this->user
@@ -151,6 +159,8 @@ class ConfigurationService extends EntityService {
     }
 
     public function getList() {
+
+
         return null;
     }
 
