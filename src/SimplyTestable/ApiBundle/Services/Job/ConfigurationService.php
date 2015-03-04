@@ -72,7 +72,7 @@ class ConfigurationService extends EntityService {
 
         $label = trim($label);
 
-        if ($this->hasForLabel($label)) {
+        if ($this->has($label)) {
             throw new JobConfigurationServiceException(
                 'Label "' . $label . '" is not unique',
                 JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
@@ -82,7 +82,7 @@ class ConfigurationService extends EntityService {
         if ($this->hasExisting($website, $type, $taskConfigurations, $parameters)) {
             throw new JobConfigurationServiceException(
                 'Matching configuration already exists',
-                JobConfigurationServiceException::CONFIGURATION_ALREADY_EXISTS
+                JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
             );
         }
 
@@ -150,8 +150,38 @@ class ConfigurationService extends EntityService {
         return null;
     }
 
-    public function update() {
-        return null;
+    public function update($label, WebSite $website, JobType $type, $taskConfigurations = [], $parameters = '') {
+        if (!$this->hasUser()) {
+            throw new JobConfigurationServiceException(
+                'User is not set',
+                JobConfigurationServiceException::CODE_USER_NOT_SET
+            );
+        }
+
+        if (!$this->has($label)) {
+            throw new JobConfigurationServiceException(
+                'Configuration with label "' . $label . '" does not exist',
+                JobConfigurationServiceException::CODE_NO_SUCH_CONFIGURATION
+            );
+        }
+
+        if ($this->hasExisting($website, $type, $taskConfigurations, $parameters)) {
+            throw new JobConfigurationServiceException(
+                'Matching configuration already exists',
+                JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
+            );
+        }
+
+        $configuration = $this->get($label);
+        $configuration->setWebsite($website);
+        $configuration->setType($type);
+        // task config ...
+        $configuration->setParameters($parameters);
+
+        $this->getManager()->persist($configuration);
+        $this->getManager()->flush($configuration);
+
+        return true;
     }
 
     public function delete() {
@@ -181,7 +211,7 @@ class ConfigurationService extends EntityService {
      * @param $label
      * @return bool
      */
-    private function hasForLabel($label) {
+    private function has($label) {
         return !is_null($this->get($label));
     }
 

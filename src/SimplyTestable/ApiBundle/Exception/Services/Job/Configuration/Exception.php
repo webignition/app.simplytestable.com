@@ -6,7 +6,8 @@ class Exception extends \Exception {
 
     const CODE_USER_NOT_SET = 1;
     const CODE_LABEL_NOT_UNIQUE = 2;
-    const CONFIGURATION_ALREADY_EXISTS = 3;
+    const CODE_CONFIGURATION_ALREADY_EXISTS = 3;
+    const CODE_NO_SUCH_CONFIGURATION = 4;
 
 
     /**
@@ -31,6 +32,6 @@ class Exception extends \Exception {
      * @return bool
      */
     public function isConfigurationAlreadyExistsException() {
-        return $this->getCode() == self::CONFIGURATION_ALREADY_EXISTS;
+        return $this->getCode() == self::CODE_CONFIGURATION_ALREADY_EXISTS;
     }
 }

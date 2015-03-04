@@ -65,7 +65,7 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception',
             'Matching configuration already exists',
-            JobConfigurationServiceException::CONFIGURATION_ALREADY_EXISTS
+            JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
         );
 
         /* @var $taskConfigurations TaskConfiguration[] */
