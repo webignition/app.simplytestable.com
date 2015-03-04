@@ -158,10 +158,22 @@ class ConfigurationService extends EntityService {
         return null;
     }
 
+
+    /**
+     * @return JobConfiguration[]
+     * @throws JobConfigurationServiceException
+     */
     public function getList() {
+        if (!$this->hasUser()) {
+            throw new JobConfigurationServiceException(
+                'User is not set',
+                JobConfigurationServiceException::CODE_USER_NOT_SET
+            );
+        }
 
-
-        return null;
+        return $this->getEntityRepository()->findByUsers(
+            ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeopleForUser($this->user) : [$this->user]
+        );
     }
 
 

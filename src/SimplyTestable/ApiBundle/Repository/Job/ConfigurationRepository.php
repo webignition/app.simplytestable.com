@@ -55,5 +55,20 @@ class ConfigurationRepository extends EntityRepository {
     }
 
 
+    /**
+     * @param User[] $users
+     * @return JobConfiguration[]
+     */
+    public function findByUsers($users = []) {
+        $queryBuilder = $this->createQueryBuilder('JobConfiguration');
+        $queryBuilder->select('JobConfiguration');
+        $queryBuilder->where('JobConfiguration.user IN (:Users)');
+
+        $queryBuilder->setParameter('Users', $users);
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+
 
 }
