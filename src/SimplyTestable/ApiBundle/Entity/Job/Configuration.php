@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
+use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 /**
  * 
@@ -337,5 +338,18 @@ class Configuration
     public function getTaskConfigurations()
     {
         return $this->taskConfigurations;
+    }
+
+
+    /**
+     * @return TaskConfigurationCollection
+     */
+    public function getTaskConfigurationsAsCollection() {
+        $collection = new TaskConfigurationCollection();
+        foreach ($this->getTaskConfigurations() as $taskConfiguration) {
+            $collection->add($taskConfiguration);
+        }
+
+        return $collection;
     }
 }

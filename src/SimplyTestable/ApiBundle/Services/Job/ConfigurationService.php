@@ -238,47 +238,8 @@ class ConfigurationService extends EntityService {
         ]);
 
         foreach ($jobConfigurations as $jobConfiguration) {
-            if ($this->areTaskConfigurationCollectionsEqual($taskConfigurationCollection->get(), $jobConfiguration->getTaskConfigurations())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    /**
-     * @param TaskConfiguration[] $source
-     * @param TaskConfiguration[] $comparator
-     * @return bool
-     */
-    private function areTaskConfigurationCollectionsEqual($source = [], $comparator  = []) {
-        if (count($source) != count($comparator)) {
-            return false;
-        }
-
-        $matchCount = 0;
-
-        /* @var $taskConfiguration TaskConfiguration */
-        foreach ($source as $taskConfiguration) {
-            if ($this->taskConfigurationCollectionContainsTaskConfiguration($comparator, $taskConfiguration)) {
-                $matchCount++;
-            }
-        }
-
-        return $matchCount == count($source);
-    }
-
-
-    /**
-     * @param TaskConfiguration[] $taskConfigurationCollection
-     * @param TaskConfiguration $taskConfiguration
-     * @return bool
-     */
-    private function taskConfigurationCollectionContainsTaskConfiguration($taskConfigurationCollection = [], TaskConfiguration $taskConfiguration) {
-        /* @var $sourceTaskConfiguration TaskConfiguration */
-        foreach ($taskConfigurationCollection as $sourceTaskConfiguration) {
-            if ($sourceTaskConfiguration->hasMatchingTypeAndOptions($taskConfiguration)) {
+            /* @var $jobConfiguration JobConfiguration */
+            if ($taskConfigurationCollection->equals($jobConfiguration->getTaskConfigurationsAsCollection())) {
                 return true;
             }
         }

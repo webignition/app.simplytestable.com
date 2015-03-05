@@ -60,4 +60,25 @@ class Collection {
         return $this->count() == 0;
     }
 
+
+    public function equals(Collection $comparator) {
+        if ($this->count() != $comparator->count()) {
+            return false;
+        }
+
+        $matchCount = 0;
+
+        /* @var $taskConfiguration TaskConfiguration */
+        foreach ($this->get() as $taskConfiguration) {
+            if ($comparator->contains($taskConfiguration)) {
+                $matchCount++;
+            }
+        }
+
+        return $matchCount == $this->count();
+
+
+        return true;
+    }
+
 }
