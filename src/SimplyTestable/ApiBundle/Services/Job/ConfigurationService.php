@@ -44,14 +44,6 @@ class ConfigurationService extends EntityService {
         return self::ENTITY_NAME;
     }
 
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\Job\ConfigurationRepository
-     */
-    public function getEntityRepository() {
-        return parent::getEntityRepository();
-    }
-
 
     /**
      * @param User $user
@@ -130,33 +122,10 @@ class ConfigurationService extends EntityService {
             );
         }
 
-        $byUser = $this->getEntityRepository()->findOneBy([
+        return $this->getEntityRepository()->findOneBy([
             'label' => $label,
-            'user' => $this->user
+            'user' => ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeopleForUser($this->user) : [$this->user]
         ]);
-
-        if (!is_null($byUser)) {
-            return $byUser;
-        }
-
-        if (!$this->teamService->hasForUser($this->user)) {
-            return null;
-        }
-
-        $people = $this->teamService->getPeopleForUser($this->user);
-
-        foreach ($people as $teamPerson) {
-            $entity = $this->getEntityRepository()->findOneBy([
-                'label' => $label,
-                'user' => $teamPerson
-            ]);
-
-            if (!is_null($entity)) {
-                return $entity;
-            }
-        }
-
-        return null;
     }
 
     public function update($label, WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $parameters = '') {
@@ -238,9 +207,9 @@ class ConfigurationService extends EntityService {
             );
         }
 
-        return $this->getEntityRepository()->findByUsers(
-            ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeopleForUser($this->user) : [$this->user]
-        );
+        return $this->getEntityRepository()->findBy([
+            'user' => ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeopleForUser($this->user) : [$this->user]
+        ]);
     }
 
 
@@ -261,59 +230,11 @@ class ConfigurationService extends EntityService {
      * @return bool
      */
     private function hasExisting(WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $parameters = '') {
-        if ($this->hasExistingForUser($website, $type, $taskConfigurationCollection, $parameters)) {
-            return true;
-        }
-
-        if ($this->hasExistingForTeam($website, $type, $taskConfigurationCollection, $parameters)) {
-            return true;
-        }
-
-        return false;
-    }
-
-
-    private function hasExistingForTeam(WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $parameters = '') {
-        if (!$this->teamService->hasForUser($this->user)) {
-            return false;
-        }
-
-        /* @var $jobConfigurations JobConfiguration[] */
-        $jobConfigurations = $this->getEntityRepository()->findByWebsiteAndTypeAndParametersAndUsers(
-            $website,
-            $type,
-            $parameters,
-            $this->teamService->getPeopleForUser($this->user)
-        );
-
-        foreach ($jobConfigurations as $jobConfiguration) {
-            if ($this->areTaskConfigurationCollectionsEqual($taskConfigurationCollection->get(), $jobConfiguration->getTaskConfigurations())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    /**
-     * @param WebSite $website
-     * @param JobType $type
-     * @param TaskConfigurationCollection $taskConfigurationCollection
-     * @param string $parameters
-     * @return bool
-     */
-    private function hasExistingForUser(WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $parameters = '') {
-        if ($this->getEntityRepository()->getCountByProperties($this->user, $website, $type, $parameters) === 0) {
-            return false;
-        }
-
-        /* @var $jobConfigurations JobConfiguration[] */
         $jobConfigurations = $this->getEntityRepository()->findBy([
-            'user' => $this->user,
             'website' => $website,
             'type' => $type,
-            'parameters' => $parameters
+            'parameters' => $parameters,
+            'user' => ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeopleForUser($this->user) : [$this->user]
         ]);
 
         foreach ($jobConfigurations as $jobConfiguration) {

@@ -13,7 +13,6 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * @ORM\Table(
  *     name="JobConfiguration"
  * )
- * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\Job\ConfigurationRepository")
  *
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
