@@ -200,8 +200,29 @@ class ConfigurationService extends EntityService {
         return true;
     }
 
-    public function delete() {
-        return null;
+    public function delete($label) {
+        if (!$this->hasUser()) {
+            throw new JobConfigurationServiceException(
+                'User is not set',
+                JobConfigurationServiceException::CODE_USER_NOT_SET
+            );
+        }
+
+        if (!$this->has($label)) {
+            throw new JobConfigurationServiceException(
+                'Configuration with label "' . $label . '" does not exist',
+                JobConfigurationServiceException::CODE_NO_SUCH_CONFIGURATION
+            );
+        }
+
+        $configuration = $this->get($label);
+        $this->getManager()->remove($configuration);
+
+        foreach ($configuration->getTaskConfigurations() as $taskConfiguration) {
+            $this->getManager()->remove($taskConfiguration);
+        }
+
+        $this->getManager()->flush();
     }
 
 
