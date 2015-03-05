@@ -19,7 +19,7 @@ class WithoutUserTest extends ServiceTest {
             self::LABEL,
             $this->getWebSiteService()->fetch('http://example.com/'),
             $this->getJobTypeService()->getFullSiteType(),
-            [],
+            $this->getStandardTaskConfigurationCollection(),
             ''
         );
     }

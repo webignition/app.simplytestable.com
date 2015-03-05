@@ -4,6 +4,8 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\Succe
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\Success\SuccessTest;
+use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 abstract class TeamTest extends SuccessTest {
 
@@ -22,6 +24,25 @@ abstract class TeamTest extends SuccessTest {
      * @var User
      */
     protected $member2;
+
+
+    private $taskTypeOptionsSet = [
+        'CSS validation' => [
+            'options' => [
+                'css+foo' => 'css+bar'
+            ]
+        ],
+        'JS static analysis' => [
+            'options' => [
+                'js+foo' => 'js+bar'
+            ]
+        ],
+        'Link integrity' => [
+            'options' => [
+                'li+foo' => 'li+bar'
+            ]
+        ]
+    ];
 
 
     public function preCreateJobConfigurations() {
@@ -65,6 +86,22 @@ abstract class TeamTest extends SuccessTest {
 
     protected function getNewParameters() {
         return 'new-parameters';
+    }
+
+    protected function getNewTaskConfigurationCollection() {
+        $taskConfigurationCollection = new TaskConfigurationCollection();
+
+        foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
+            $taskConfiguration = new TaskConfiguration();
+            $taskConfiguration->setType(
+                $this->getTaskTypeService()->getByName($taskTypeName)
+            );
+            $taskConfiguration->setOptions($taskTypeOptions['options']);
+
+            $taskConfigurationCollection->add($taskConfiguration);
+        }
+
+        return $taskConfigurationCollection;
     }
 
 }
