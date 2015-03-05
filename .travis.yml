@@ -19,7 +19,7 @@ before_script:
   #- wget https://phar.phpunit.de/phpcpd.phar
   
   # Install composer for dependency management
-  - wget http://getcomposer.org/composer.phar 
+  #- wget http://getcomposer.org/composer.phar
   
   # Set the GitHub OAuth token to make use of the 6000 per hour rate limit
   - "mkdir -p ~/.composer"
@@ -30,7 +30,8 @@ before_script:
   - mv app/config/parameters.yml.travis app/config/parameters.yml
   - mv --force app/config/config_travis.yml app/config/config_test.yml
   - cp src/SimplyTestable/ApiBundle/Resources/config/parameters.yml.dist.yml src/SimplyTestable/ApiBundle/Resources/config/parameters.yml
-  - echo | php composer.phar install
+  #- echo | php composer.phar install
+  - composer install
   - php app/console doctrine:database:create
   - php app/console doctrine:migrations:migrate --no-interaction
   - php app/console doctrine:fixtures:load --append
