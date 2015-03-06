@@ -213,6 +213,40 @@ class ConfigurationService extends EntityService {
 
 
     /**
+     * @throws \SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception
+     */
+    public function removeAll() {
+        if (!$this->hasUser()) {
+            throw new JobConfigurationServiceException(
+                'User is not set',
+                JobConfigurationServiceException::CODE_USER_NOT_SET
+            );
+        }
+
+        if ($this->teamService->hasForUser($this->user)) {
+            throw new JobConfigurationServiceException(
+                'Unable to remove all; user is in a team',
+                JobConfigurationServiceException::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM
+            );
+        }
+
+        $userJobConfigurations = $this->getEntityRepository()->findBy([
+            'user' => $this->user
+        ]);
+
+        foreach ($userJobConfigurations as $userJobConfiguration) {
+            /* @var $userJobConfiguration JobConfiguration */
+            foreach ($userJobConfiguration->getTaskConfigurations() as $jobTaskConfiguration) {
+                $this->getManager()->remove($jobTaskConfiguration);
+            }
+
+            $this->getManager()->remove($userJobConfiguration);
+            $this->getManager()->flush($userJobConfiguration);
+        }
+    }
+
+
+    /**
      * @param $label
      * @return bool
      */

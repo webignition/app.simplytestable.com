@@ -9,6 +9,7 @@ class Exception extends \Exception {
     const CODE_CONFIGURATION_ALREADY_EXISTS = 3;
     const CODE_NO_SUCH_CONFIGURATION = 4;
     const CODE_TASK_CONFIGURATION_COLLECTION_IS_EMPTY = 5;
+    const CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM = 6;
 
 
     /**
@@ -41,7 +42,7 @@ class Exception extends \Exception {
      * @return bool
      */
     public function isNoSuchConfigurationException() {
-        return $this->code == self::CODE_NO_SUCH_CONFIGURATION;
+        return $this->getCode() == self::CODE_NO_SUCH_CONFIGURATION;
     }
 
 
@@ -49,6 +50,14 @@ class Exception extends \Exception {
      * @return bool
      */
     public function isTaskConfigurationCollectionIsEmptyException() {
-        return $this->code == self::CODE_TASK_CONFIGURATION_COLLECTION_IS_EMPTY;
+        return $this->getCode() == self::CODE_TASK_CONFIGURATION_COLLECTION_IS_EMPTY;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isUnableToPerformAsUserIsInATeamException() {
+        return $this->getCode() == self::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM;
     }
 }
