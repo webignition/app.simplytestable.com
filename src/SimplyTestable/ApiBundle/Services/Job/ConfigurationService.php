@@ -55,6 +55,15 @@ class ConfigurationService extends EntityService {
     }
 
 
+    /**
+     * @param WebSite $website
+     * @param JobType $type
+     * @param TaskConfigurationCollection $taskConfigurationCollection
+     * @param string $label
+     * @param string $parameters
+     * @return JobConfiguration
+     * @throws \SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception
+     */
     public function create(WebSite $website, JobType $type, TaskConfigurationCollection $taskConfigurationCollection, $label = '', $parameters = '') {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
