@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\NormaliseLabels;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\FixDuplicateLabelsWithinTeam;
 
 class NoTeamTest extends ServiceTest {
 
@@ -8,7 +8,7 @@ class NoTeamTest extends ServiceTest {
 
     public function testCallForUserNotOnTeam() {
         $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
-        $this->getJobConfigurationService()->normaliseLabels();
+        $this->getJobConfigurationService()->fixDuplicateLabelsWithinTeam();
     }
 
 }

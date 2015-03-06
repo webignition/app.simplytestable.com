@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\NormaliseLabels;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\FixDuplicateLabelsWithinTeam;
 
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;

@@ -1,10 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\NormaliseLabels;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\FixDuplicateLabelsWithinTeam;
 
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Collection as JobConfigurationCollection;
 
-class NewMemberHasLabelConflictsTest extends TeamTest {
+class NewMemberHasNoLabelConflictsTest extends TeamTest {
 
     /**
      * @var JobConfigurationCollection
@@ -53,14 +53,14 @@ class NewMemberHasLabelConflictsTest extends TeamTest {
                     'foo3' => 'bar'
                 ]
             ]),
-            'user1',
+            'user2',
             'parameters'
         );
 
         $this->getTeamMemberService()->add($this->team, $this->user2);
 
         $this->getJobConfigurationService()->setUser($this->user2);
-        $this->getJobConfigurationService()->normaliseLabels();
+        $this->getJobConfigurationService()->fixDuplicateLabelsWithinTeam();
         $this->memberJobConfigurationCollection = $this->getJobConfigurationService()->getList();
     }
 
@@ -70,11 +70,9 @@ class NewMemberHasLabelConflictsTest extends TeamTest {
     }
 
 
-    public function testNewMemberHasTeamJobConfigurationsWithLabelModifications() {
+    public function testNewMemberHasTeamJobConfigurationsWithNoLabelModifications() {
         foreach ($this->memberJobConfigurationCollection->get() as $jobConfiguration) {
-            if ($jobConfiguration->getUser() == $this->user2) {
-                $this->assertEquals('user1.2', $jobConfiguration->getLabel());
-            }
+            $this->assertTrue(in_array($jobConfiguration->getLabel(), ['leader', 'user1', 'user2']));
         }
     }
 

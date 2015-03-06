@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\NormaliseLabels;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\FixDuplicateLabelsWithinTeam;
 
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 
@@ -13,7 +13,7 @@ class WithoutUserTest extends ServiceTest {
             JobConfigurationServiceException::CODE_USER_NOT_SET
         );
 
-        $this->getJobConfigurationService()->normaliseLabels();
+        $this->getJobConfigurationService()->fixDuplicateLabelsWithinTeam();
     }
 
 }

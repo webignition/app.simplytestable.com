@@ -221,7 +221,7 @@ class ConfigurationService extends EntityService {
     }
 
 
-    public function normaliseLabels() {
+    public function fixDuplicateLabelsWithinTeam() {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
                 'User is not set',

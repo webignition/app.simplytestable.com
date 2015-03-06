@@ -1,10 +1,10 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\NormaliseLabels;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\FixDuplicateLabelsWithinTeam;
 
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Collection as JobConfigurationCollection;
 
-class NewMemberHasNoJobConfigurationsTest extends TeamTest {
+class NewMemberHasLabelConflictsTest extends TeamTest {
 
     /**
      * @var JobConfigurationCollection
@@ -43,22 +43,38 @@ class NewMemberHasNoJobConfigurationsTest extends TeamTest {
             'parameters'
         );
 
+
+        $this->getJobConfigurationService()->setUser($this->user2);
+        $this->getJobConfigurationService()->create(
+            $this->getWebSiteService()->fetch('http://example.com/'),
+            $this->getJobTypeService()->getFullSiteType(),
+            $this->getTaskConfigurationCollection([
+                'HTML validation' => [
+                    'foo3' => 'bar'
+                ]
+            ]),
+            'user1',
+            'parameters'
+        );
+
         $this->getTeamMemberService()->add($this->team, $this->user2);
 
         $this->getJobConfigurationService()->setUser($this->user2);
-        $this->getJobConfigurationService()->normaliseLabels();
+        $this->getJobConfigurationService()->fixDuplicateLabelsWithinTeam();
         $this->memberJobConfigurationCollection = $this->getJobConfigurationService()->getList();
     }
 
 
     public function testNewMemberHasTeamJobConfigurationCount() {
-        $this->assertEquals(2, $this->memberJobConfigurationCollection->count());
+        $this->assertEquals(3, $this->memberJobConfigurationCollection->count());
     }
 
 
-    public function testNewMemberHasTeamJobConfigurationsWithNoLabelModifications() {
-        foreach ($this->memberJobConfigurationCollection as $jobConfiguration) {
-            $this->assertTrue(in_array($jobConfiguration->getLabel(), ['leader', 'user1']));
+    public function testNewMemberHasTeamJobConfigurationsWithLabelModifications() {
+        foreach ($this->memberJobConfigurationCollection->get() as $jobConfiguration) {
+            if ($jobConfiguration->getUser() == $this->user2) {
+                $this->assertEquals('user1.2', $jobConfiguration->getLabel());
+            }
         }
     }
 
