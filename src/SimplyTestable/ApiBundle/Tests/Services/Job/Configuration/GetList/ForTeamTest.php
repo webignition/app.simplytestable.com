@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\GetList;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Model\Job\Configuration\Collection as JobConfigurationCollection;
 
 class ForTeamTest extends ServiceTest {
 
@@ -41,7 +40,7 @@ class ForTeamTest extends ServiceTest {
     private $jobConfigurations = [];
 
     /**
-     * @var JobConfigurationCollection[]
+     * @var array
      */
     private $retrievedJobConfigurations = [];
 
@@ -92,7 +91,7 @@ class ForTeamTest extends ServiceTest {
     public function testLeaderJobConfigurationCount() {
         $this->assertEquals(
             self::JOB_CONFIGURATION_COUNT * count($this->people),
-            $this->retrievedJobConfigurations[$this->people[0]->getEmail()]->count()
+            count($this->retrievedJobConfigurations[$this->people[0]->getEmail()])
         );
     }
 
@@ -100,7 +99,7 @@ class ForTeamTest extends ServiceTest {
     public function testMember1JobConfigurationCount() {
         $this->assertEquals(
             self::JOB_CONFIGURATION_COUNT * count($this->people),
-            $this->retrievedJobConfigurations[$this->people[1]->getEmail()]->count()
+            count($this->retrievedJobConfigurations[$this->people[1]->getEmail()])
         );
     }
 
@@ -108,7 +107,7 @@ class ForTeamTest extends ServiceTest {
     public function testMember2JobConfigurationCount() {
         $this->assertEquals(
             self::JOB_CONFIGURATION_COUNT * count($this->people),
-            $this->retrievedJobConfigurations[$this->people[2]->getEmail()]->count()
+            count($this->retrievedJobConfigurations[$this->people[2]->getEmail()])
         );
     }
 

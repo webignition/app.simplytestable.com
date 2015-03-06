@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\GetList;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Model\Job\Configuration\Collection as JobConfigurationCollection;
 
 class ForUserTest extends ServiceTest {
 
@@ -28,7 +27,7 @@ class ForUserTest extends ServiceTest {
     private $jobConfigurations = [];
 
     /**
-     * @var JobConfigurationCollection[]
+     * @var array
      */
     private $retrievedJobConfigurations = [];
 
@@ -74,14 +73,14 @@ class ForUserTest extends ServiceTest {
     public function testUser1JobConfigurationCount() {
         $this->assertEquals(
             self::JOB_CONFIGURATION_COUNT,
-            $this->retrievedJobConfigurations[$this->user1->getEmail()]->count()
+            count($this->retrievedJobConfigurations[$this->user1->getEmail()])
         );
     }
 
     public function testUser2JobConfigurationCount() {
         $this->assertEquals(
             self::JOB_CONFIGURATION_COUNT,
-            $this->retrievedJobConfigurations[$this->user1->getEmail()]->count()
+            count($this->retrievedJobConfigurations[$this->user1->getEmail()])
         );
     }
 
