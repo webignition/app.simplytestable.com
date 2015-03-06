@@ -65,6 +65,13 @@ class ConfigurationService extends EntityService {
 
         $label = trim($label);
 
+        if ($label == '') {
+            throw new JobConfigurationServiceException(
+                'Label cannot be empty',
+                JobConfigurationServiceException::CODE_LABEL_CANNOT_BE_EMPTY
+            );
+        }
+
         if ($this->has($label)) {
             throw new JobConfigurationServiceException(
                 'Label "' . $label . '" is not unique',
