@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
+use SimplyTestable\ApiBundle\Model\Job\Configuration\Collection as JobConfigurationCollection;
 
 class ConfigurationService extends EntityService {
 
@@ -196,7 +197,7 @@ class ConfigurationService extends EntityService {
 
 
     /**
-     * @return JobConfiguration[]
+     * @return JobConfigurationCollection
      * @throws JobConfigurationServiceException
      */
     public function getList() {
@@ -207,9 +208,46 @@ class ConfigurationService extends EntityService {
             );
         }
 
-        return $this->getEntityRepository()->findBy([
+        $jobConfigurations = $this->getEntityRepository()->findBy([
             'user' => ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeopleForUser($this->user) : [$this->user]
         ]);
+
+        $collection = new JobConfigurationCollection();
+        foreach ($jobConfigurations as $jobConfiguration) {
+            $collection->add($jobConfiguration);
+        }
+
+        return $collection;
+    }
+
+
+    public function normaliseLabels() {
+        if (!$this->hasUser()) {
+            throw new JobConfigurationServiceException(
+                'User is not set',
+                JobConfigurationServiceException::CODE_USER_NOT_SET
+            );
+        }
+
+        if (!$this->teamService->hasForUser($this->user)) {
+            return true;
+        }
+
+        $userJobConfigurations = $this->getEntityRepository()->findBy([
+            'user' => $this->user
+        ]);
+
+        $teamJobConfigurations = $this->getList();
+        $teamJobConfigurations->excludeUser($this->user);
+
+        foreach ($userJobConfigurations as $userJobConfiguration) {
+            /* @var $userJobConfiguration JobConfiguration */
+            if ($teamJobConfigurations->containsLabel($userJobConfiguration->getLabel())) {
+                $userJobConfiguration->setLabel($teamJobConfigurations->generateLabel($userJobConfiguration->getLabel()));
+                $this->getManager()->persist($userJobConfiguration);
+                $this->getManager()->flush($userJobConfiguration);
+            }
+        }
     }
 
 

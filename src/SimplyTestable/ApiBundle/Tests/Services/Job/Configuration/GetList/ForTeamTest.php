@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\GetList;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Model\Job\Configuration\Collection as JobConfigurationCollection;
 
 class ForTeamTest extends ServiceTest {
 
@@ -40,7 +41,7 @@ class ForTeamTest extends ServiceTest {
     private $jobConfigurations = [];
 
     /**
-     * @var array
+     * @var JobConfigurationCollection[]
      */
     private $retrievedJobConfigurations = [];
 
@@ -84,14 +85,14 @@ class ForTeamTest extends ServiceTest {
         foreach ($this->people as $userIndex => $user) {
             /* @var $user User */
             $this->getJobConfigurationService()->setUser($user);
-            $this->retrievedJobConfigurations[$user->getEmail()] = $this->getJobConfigurationService()->getList();
+            $this->retrievedJobConfigurations[$user->getEmail()] = $this->getJobConfigurationService()->getList(true);
         }
     }
 
     public function testLeaderJobConfigurationCount() {
         $this->assertEquals(
             self::JOB_CONFIGURATION_COUNT * count($this->people),
-            count($this->retrievedJobConfigurations[$this->people[0]->getEmail()])
+            $this->retrievedJobConfigurations[$this->people[0]->getEmail()]->count()
         );
     }
 
@@ -99,7 +100,7 @@ class ForTeamTest extends ServiceTest {
     public function testMember1JobConfigurationCount() {
         $this->assertEquals(
             self::JOB_CONFIGURATION_COUNT * count($this->people),
-            count($this->retrievedJobConfigurations[$this->people[1]->getEmail()])
+            $this->retrievedJobConfigurations[$this->people[1]->getEmail()]->count()
         );
     }
 
@@ -107,7 +108,7 @@ class ForTeamTest extends ServiceTest {
     public function testMember2JobConfigurationCount() {
         $this->assertEquals(
             self::JOB_CONFIGURATION_COUNT * count($this->people),
-            count($this->retrievedJobConfigurations[$this->people[2]->getEmail()])
+            $this->retrievedJobConfigurations[$this->people[2]->getEmail()]->count()
         );
     }
 

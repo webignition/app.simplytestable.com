@@ -352,4 +352,25 @@ class Configuration
 
         return $collection;
     }
+
+
+    /**
+     * @param Configuration $configuration
+     * @return bool
+     */
+    public function matches(Configuration $configuration) {
+        if ($this->getWebsite() != $configuration->getWebsite()) {
+            return false;
+        }
+
+        if (!$this->getType()->equals($configuration->getType())) {
+            return false;
+        }
+
+        if (!$this->getTaskConfigurationsAsCollection()->equals($configuration->getTaskConfigurationsAsCollection())) {
+            return false;
+        }
+
+        return $this->getParameters() == $configuration->getParameters();
+    }
 }

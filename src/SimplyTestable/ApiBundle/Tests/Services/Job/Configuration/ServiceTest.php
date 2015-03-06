@@ -34,4 +34,25 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
         return $taskConfigurationCollection;
     }
 
+
+    /**
+     * @param $taskConfigurationDetails
+     * @return TaskConfigurationCollection
+     */
+    protected function getTaskConfigurationCollection($taskConfigurationDetails) {
+        $taskConfigurationCollection = new TaskConfigurationCollection();
+
+        foreach ($taskConfigurationDetails as $taskName => $options) {
+            $taskConfiguration = new TaskConfiguration();
+            $taskConfiguration->setType(
+                $this->getTaskTypeService()->getByName($taskName)
+            );
+
+            $taskConfiguration->setOptions($options);
+            $taskConfigurationCollection->add($taskConfiguration);
+        }
+
+        return $taskConfigurationCollection;
+    }
+
 }
