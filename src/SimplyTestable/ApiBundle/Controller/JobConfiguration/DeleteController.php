@@ -2,15 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
-use Guzzle\Http\Message\Request as GuzzleRequest;
-
 class DeleteController extends JobConfigurationController {
-
-    public function __construct() {
-        $this->setRequestTypes(array(
-            'deleteAction' => GuzzleRequest::POST
-        ));
-    }
 
     public function deleteAction($label) {
         $label = trim($label);
