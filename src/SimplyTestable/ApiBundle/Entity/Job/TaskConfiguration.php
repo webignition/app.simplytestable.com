@@ -26,7 +26,6 @@ class TaskConfiguration
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      * 
-     * @SerializerAnnotation\Expose 
      */
     private $id;
 
@@ -61,6 +60,8 @@ class TaskConfiguration
      * @var DoctrineCollection
      *
      * @ORM\Column(type="array", name="options", nullable=false)
+     *
+     * @SerializerAnnotation\Expose
      */
     protected $options;
 

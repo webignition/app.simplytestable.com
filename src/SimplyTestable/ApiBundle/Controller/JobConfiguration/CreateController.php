@@ -3,17 +3,15 @@
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
-use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
-use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurationService;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use Guzzle\Http\Message\Request as GuzzleRequest;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 
-class CreateController extends ApiController {
+class CreateController extends JobConfigurationController {
 
     public function __construct() {
         $this->setInputDefinitions(array(
@@ -106,14 +104,6 @@ class CreateController extends ApiController {
      */
     private function getTaskTypeService() {
         return $this->get('simplytestable.services.tasktypeservice');
-    }
-
-
-    /**
-     * @return JobConfigurationService
-     */
-    private function getJobConfigurationService() {
-        return $this->get('simplytestable.services.job.configurationservice');
     }
 
 

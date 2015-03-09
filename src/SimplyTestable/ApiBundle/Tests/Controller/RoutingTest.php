@@ -6,7 +6,10 @@ use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
 abstract class RoutingTest extends BaseSimplyTestableTestCase {
 
-    public function testRouteExists() {        
+    public function testRouteExists() {
+//        var_dump($this->getRouteParameters());
+//        exit();
+
         try {
             $this->getCurrentRequestUrl($this->getRouteParameters());
         } catch (\Symfony\Component\Routing\Exception\RouteNotFoundException $routeNotFoundException) {

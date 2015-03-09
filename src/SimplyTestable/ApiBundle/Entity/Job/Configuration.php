@@ -27,7 +27,6 @@ class Configuration
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      * 
-     * @SerializerAnnotation\Expose 
      */
     private $id;
 
@@ -86,6 +85,7 @@ class Configuration
      * @var \Doctrine\Common\Collections\Collection
      *
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration", mappedBy="jobConfiguration")
+     * @SerializerAnnotation\Expose
      */
     protected $taskConfigurations = [];
 
