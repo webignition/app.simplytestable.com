@@ -241,6 +241,10 @@ jobconfiguration_create_create:
     pattern: /jobconfiguration/create/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Create:create }
 
+jobconfiguration_getlist_list:
+    pattern: /jobconfiguration/list/
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\GetList:list, _format: json }
+
 jobconfiguration_delete_delete:
     pattern: /jobconfiguration/{label}/delete/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Delete:delete, _format: json }
