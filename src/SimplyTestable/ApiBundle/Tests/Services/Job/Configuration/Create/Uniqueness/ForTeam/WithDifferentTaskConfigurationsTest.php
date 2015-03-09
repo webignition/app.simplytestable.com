@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create\Uniqu
 use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create\Uniqueness\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
+use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
 class WithDifferentTaskConfigurationsTest extends ServiceTest {
 
@@ -57,6 +58,11 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest {
         ]
     ];
 
+    /**
+     * @var ConfigurationValues
+     */
+    private $values;
+
     public function setUp() {
         parent::setUp();
 
@@ -80,14 +86,15 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest {
             $taskConfigurationCollection->add($taskConfiguration);
         }
 
+        $this->values = new ConfigurationValues();
+        $this->values->setLabel(self::LABEL);
+        $this->values->setParameters(self::PARAMETERS);
+        $this->values->setTaskConfigurationCollection($taskConfigurationCollection);
+        $this->values->setType($this->getJobTypeService()->getFullSiteType());
+        $this->values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+
         $this->getJobConfigurationService()->setUser($member);
-        $this->getJobConfigurationService()->create(
-            $this->getWebSiteService()->fetch('http://example.com/'),
-            $this->getJobTypeService()->getFullSiteType(),
-            $taskConfigurationCollection,
-            self::LABEL,
-            self::PARAMETERS
-        );
+        $this->getJobConfigurationService()->create($this->values);
 
         $this->getJobConfigurationService()->setUser($leader);
     }
@@ -106,13 +113,9 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest {
             $taskConfigurationCollection->add($taskConfiguration);
         }
 
-        $this->getJobConfigurationService()->create(
-            $this->getWebSiteService()->fetch('http://example.com/'),
-            $this->getJobTypeService()->getFullSiteType(),
-            $taskConfigurationCollection,
-            'bar',
-            self::PARAMETERS
-        );
+        $this->values->setTaskConfigurationCollection($taskConfigurationCollection);
+        $this->values->setLabel('bar');
+        $this->getJobConfigurationService()->create($this->values);
     }
 
 

@@ -11,6 +11,8 @@ class Exception extends \Exception {
     const CODE_TASK_CONFIGURATION_COLLECTION_IS_EMPTY = 5;
     const CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM = 6;
     const CODE_LABEL_CANNOT_BE_EMPTY = 7;
+    const CODE_WEBSITE_CANNOT_BE_EMPTY = 8;
+    const CODE_TYPE_CANNOT_BE_EMPTY = 9;
 
 
     /**
@@ -68,5 +70,21 @@ class Exception extends \Exception {
      */
     public function isLabelCannotBeEmptyException() {
         return $this->getCode() == self::CODE_LABEL_CANNOT_BE_EMPTY;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isWebsiteCannotBeEmptyException() {
+        return $this->getCode() == self::CODE_WEBSITE_CANNOT_BE_EMPTY;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isTypeCannotBeEmptyException() {
+        return $this->getCode() == self::CODE_TYPE_CANNOT_BE_EMPTY;
     }
 }

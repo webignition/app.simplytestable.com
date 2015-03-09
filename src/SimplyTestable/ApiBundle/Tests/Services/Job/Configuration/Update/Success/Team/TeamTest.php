@@ -104,4 +104,8 @@ abstract class TeamTest extends SuccessTest {
         return $taskConfigurationCollection;
     }
 
+    protected function getNewLabel() {
+        return 'new-foo';
+    }
+
 }

@@ -1,15 +1,16 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\EmptyNewLabel;
 
+use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
-class WithTaskConfigurationsTest extends ServiceTest {
+abstract class EmptyNewLabelTest extends ServiceTest {
 
-    const LABEL = 'foo';
+    const LABEL = 'bar';
 
     /**
      * @var JobConfiguration
@@ -39,9 +40,10 @@ class WithTaskConfigurationsTest extends ServiceTest {
         ]
     ];
 
-    public function setUp() {
-        parent::setUp();
+    abstract protected function getCurrentUser();
 
+
+    public function testEmptyLabelIsIgnored() {
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
@@ -57,27 +59,21 @@ class WithTaskConfigurationsTest extends ServiceTest {
         $values = new ConfigurationValues();
         $values->setLabel(self::LABEL);
         $values->setParameters('parameters');
+        $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
         $values->setTaskConfigurationCollection($taskConfigurationCollection);
         $values->setType($this->getJobTypeService()->getFullSiteType());
-        $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
 
-        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
+        $this->getJobConfigurationService()->setUser($this->getCurrentUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($values);
-    }
 
-    public function testIdIsSet() {
-        $this->assertNotNull($this->jobConfiguration->getId());
-    }
+        $newValues = new ConfigurationValues();
+        $newValues->setLabel('');
+        $newValues->setParameters('foo');
 
-    public function testTaskConfigurationsAreSetOnJobConfiguration() {
-        $this->assertEquals(count($this->taskTypeOptionsSet), count($this->jobConfiguration->getTaskConfigurations()));
+        $this->getJobConfigurationService()->update(
+            $this->jobConfiguration,
+            $newValues
+        );
     }
-
-    public function testTaskConfigurationsHaveJobConfigurationSet() {
-        foreach ($this->jobConfiguration->getTaskConfigurations() as $taskConfiguration) {
-            $this->assertEquals($this->jobConfiguration, $taskConfiguration->getJobConfiguration());
-        }
-    }
-
 
 }

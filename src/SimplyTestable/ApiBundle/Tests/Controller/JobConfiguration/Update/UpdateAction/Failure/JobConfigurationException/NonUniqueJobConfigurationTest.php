@@ -1,0 +1,28 @@
+<?php
+
+namespace SimplyTestable\ApiBundle\Tests\Controller\JobConfiguration\Update\UpdateAction\Failure\JobConfigurationException;
+
+use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
+
+class NonUniqueJobConfigurationTest extends ExceptionTest {
+
+    protected function preCallController() {
+        $requestPostData = $this->getRequestPostData();
+        $requestPostData['label'] = 'bar';
+
+        $methodName = $this->getActionNameFromRouter();
+        $this->getCurrentController($requestPostData)->$methodName();
+    }
+
+
+    protected function getHeaderErrorCode()
+    {
+        return JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS;
+    }
+
+    protected function getHeaderErrorMessage()
+    {
+        return 'Matching configuration already exists';
+    }
+
+}

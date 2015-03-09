@@ -69,4 +69,8 @@ class UserTest extends SuccessTest {
 
         return $taskConfigurationCollection;
     }
+
+    protected function getNewLabel() {
+        return 'new-foo';
+    }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\InvalidLabel\Team;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\EmptyNewLabel\Team;
 
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\InvalidLabel\InvalidLabelTest;
+use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\EmptyNewLabel\EmptyNewLabelTest;
 
-abstract class TeamTest extends InvalidLabelTest {
+abstract class TeamTest extends EmptyNewLabelTest {
 
     /**
      * @var User

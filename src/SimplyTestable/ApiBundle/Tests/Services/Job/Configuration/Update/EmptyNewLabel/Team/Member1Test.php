@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\InvalidLabel\Team;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\EmptyNewLabel\Team;
 
 class Member1Test extends TeamTest {
 

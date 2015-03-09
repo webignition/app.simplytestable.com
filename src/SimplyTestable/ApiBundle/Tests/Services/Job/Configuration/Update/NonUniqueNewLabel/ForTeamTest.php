@@ -1,19 +1,14 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create\NonUniqueLabel;
+namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\NonUniqueNewLabel;
 
-use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Create\ServiceTest;
+use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
 class ForTeamTest extends ServiceTest {
 
     const LABEL = 'foo';
-
-    /**
-     * @var ConfigurationValues
-     */
-    private $values;
 
     public function setUp() {
         parent::setUp();
@@ -26,16 +21,14 @@ class ForTeamTest extends ServiceTest {
             $leader
         ), $member);
 
+        $values = new ConfigurationValues();
+        $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $values->setType($this->getJobTypeService()->getFullSiteType());
+        $values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
+        $values->setLabel(self::LABEL);
+
         $this->getJobConfigurationService()->setUser($member);
-
-        $this->values = new ConfigurationValues();
-        $this->values->setLabel(self::LABEL);
-        $this->values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-        $this->values->setType($this->getJobTypeService()->getFullSiteType());
-        $this->values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
-
-        $this->getJobConfigurationService()->create($this->values);
-
+        $this->getJobConfigurationService()->create($values);
         $this->getJobConfigurationService()->setUser($leader);
     }
 
@@ -46,7 +39,11 @@ class ForTeamTest extends ServiceTest {
             JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
         );
 
-        $this->getJobConfigurationService()->create($this->values);
+        $values = new ConfigurationValues();
+        $values->setLabel(self::LABEL);
+
+
+        $this->getJobConfigurationService()->create($values);
     }
 
 }

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\Success;
 
 use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Update\ServiceTest;
+use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
@@ -15,10 +16,6 @@ abstract class SuccessTest extends ServiceTest {
      */
     private $jobConfiguration;
 
-    /**
-     * @var int
-     */
-    private $updateReturnValue;
 
     abstract protected function getCurrentUser();
 
@@ -27,24 +24,32 @@ abstract class SuccessTest extends ServiceTest {
 
         $this->preCreateJobConfigurations();
 
+        $originalValues = new ConfigurationValues();
+        $originalValues->setLabel(self::LABEL);
+        $originalValues->setParameters($this->getOriginalParameters());
+        $originalValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
+        $originalValues->setType($this->getOriginalJobType());
+        $originalValues->setWebsite($this->getOriginalWebsite());
+
         $this->getJobConfigurationService()->setUser($this->getCurrentUser());
-        $this->jobConfiguration = $this->getJobConfigurationService()->create(
-            $this->getOriginalWebsite(),
-            $this->getOriginalJobType(),
-            $this->getStandardTaskConfigurationCollection(),
-            self::LABEL,
-            $this->getOriginalParameters()
+        $this->jobConfiguration = $this->getJobConfigurationService()->create($originalValues);
+
+        $newValues = new ConfigurationValues();
+        $newValues->setLabel($this->getNewLabel());
+        $newValues->setParameters($this->getNewParameters());
+        $newValues->setTaskConfigurationCollection($this->getNewTaskConfigurationCollection());
+        $newValues->setType($this->getNewJobType());
+        $newValues->setWebsite($this->getNewWebsite());
+
+        $this->getJobConfigurationService()->update(
+            $this->jobConfiguration,
+            $newValues
         );
 
-        $this->updateReturnValue = $this->getJobConfigurationService()->update(
-            self::LABEL,
-            $this->getNewWebsite(),
-            $this->getNewJobType(),
-            $this->getNewTaskConfigurationCollection(),
-            $this->getNewParameters()
-        );
+        $jobConfigurationId = $this->jobConfiguration->getId();
 
-        $this->jobConfiguration = $this->getJobConfigurationService()->get(self::LABEL);
+        $this->getManager()->clear();
+        $this->jobConfiguration = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Configuration')->find($jobConfigurationId);
     }
 
     abstract protected function getOriginalWebsite();
@@ -53,6 +58,7 @@ abstract class SuccessTest extends ServiceTest {
     abstract protected function getNewWebsite();
     abstract protected function getNewJobType();
     abstract protected function getNewParameters();
+    abstract protected function getNewLabel();
 
     /**
      * @return TaskConfigurationCollection
@@ -61,10 +67,6 @@ abstract class SuccessTest extends ServiceTest {
 
     protected function preCreateJobConfigurations() {
 
-    }
-
-    public function testUpdateIsSuccessful() {
-        $this->assertTrue($this->updateReturnValue);
     }
 
     public function testJobConfigurationHasNewWebsite() {
@@ -76,6 +78,7 @@ abstract class SuccessTest extends ServiceTest {
         $this->assertEquals($this->jobConfiguration->getType(), $this->getNewJobType());
     }
 
+
     public function testJobConfigurationHasNewParameters() {
         $this->assertEquals($this->jobConfiguration->getParameters(), $this->getNewParameters());
     }
@@ -85,6 +88,11 @@ abstract class SuccessTest extends ServiceTest {
         foreach ($this->jobConfiguration->getTaskConfigurations() as $taskConfiguration) {
             $this->assertTrue($this->getNewTaskConfigurationCollection()->contains($taskConfiguration));
         }
+    }
+
+
+    public function testJobConfigurationHasNewLabel() {
+        $this->assertEquals($this->jobConfiguration->getLabel(), $this->getNewLabel());
     }
 
 }

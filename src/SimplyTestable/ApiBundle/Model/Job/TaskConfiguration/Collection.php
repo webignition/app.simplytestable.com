@@ -61,6 +61,10 @@ class Collection {
     }
 
 
+    /**
+     * @param Collection $comparator
+     * @return bool
+     */
     public function equals(Collection $comparator) {
         if ($this->count() != $comparator->count()) {
             return false;
@@ -76,9 +80,15 @@ class Collection {
         }
 
         return $matchCount == $this->count();
+    }
 
 
-        return true;
+    /**
+     * @return $this
+     */
+    public function clear() {
+        $this->collection = [];
+        return $this;
     }
 
 }
