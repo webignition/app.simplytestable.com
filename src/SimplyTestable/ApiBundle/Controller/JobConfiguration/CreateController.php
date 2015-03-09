@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfi
 use Guzzle\Http\Message\Request as GuzzleRequest;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
 
 class CreateController extends JobConfigurationController {
 
@@ -50,13 +51,14 @@ class CreateController extends JobConfigurationController {
         $this->getJobConfigurationService()->setUser($this->getUser());
 
         try {
-            $jobConfiguration = $this->getJobConfigurationService()->create(
-                $this->getRequestWebsite(),
-                $this->getRequestJobType(),
-                $this->getRequestTaskConfigurationCollection(),
-                $this->getRequest()->get('label'),
-                $this->getRequest()->get('parameters')
-            );
+            $jobConfigurationValues = new JobConfigurationValues();
+            $jobConfigurationValues->setWebsite($this->getRequestWebsite());
+            $jobConfigurationValues->setType($this->getRequestJobType());
+            $jobConfigurationValues->setTaskConfigurationCollection($this->getRequestTaskConfigurationCollection());
+            $jobConfigurationValues->setLabel($this->getRequest()->get('label'));
+            $jobConfigurationValues->setParameters($this->getRequest()->get('parameters'));
+
+            $jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
             return $this->redirect($this->generateUrl(
                 'jobconfiguration_get_get',
