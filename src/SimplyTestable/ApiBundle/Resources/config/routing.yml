@@ -243,4 +243,4 @@ jobconfiguration_create_create:
 
 jobconfiguration_get_get:
     pattern: /jobconfiguration/{label}/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Get:get }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Get:get, _format: json }
