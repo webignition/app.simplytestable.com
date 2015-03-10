@@ -4,17 +4,20 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\JobConfiguration\Update\Upda
 
 use SimplyTestable\ApiBundle\Tests\Controller\JobConfiguration\Update\UpdateAction\UpdateTest;
 use Symfony\Component\HttpFoundation\Response;
+use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
+use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 
 abstract class FailureTest extends UpdateTest {
 
-    private $requestPostData = [
-        'website' => 'http://example.com/',
-        'type' => 'Full site',
-        'task-configuration' => [
-            'HTML validation' => [],
-            'CSS validation' => []
-        ],
-        'parameters' => ''
+    const LABEL1 = 'foo';
+    const LABEL2 = 'bar';
+
+    /**
+     * @var array
+     */
+    protected  $originalTaskConfiguration = [
+        'HTML validation' => []
     ];
 
     /**
@@ -26,20 +29,39 @@ abstract class FailureTest extends UpdateTest {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getCurrentUser());
+        $this->getJobConfigurationService()->setUser($this->getCurrentUser());
 
-        $this->preCallController();
+        $jobConfigurationValues = new JobConfigurationValues();
+        $jobConfigurationValues->setLabel(self::LABEL1);
+        $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
+        $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $jobConfigurationValues->setParameters($this->getOriginalParameters());
+
+        $this->getJobConfigurationService()->create($jobConfigurationValues);
+
+        $jobConfigurationValues->setLabel(self::LABEL2);
+        $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
+        $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://foo.example.com/'));
+        $jobConfigurationValues->setParameters($this->getOriginalParameters());
+
+        $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(self::LABEL);
+        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName($this->getMethodLabel());
     }
 
-    protected function preCallController() {
-
-    }
-
+    abstract protected function getMethodLabel();
+    abstract protected function getNewLabel();
+    abstract protected function getNewParameters();
     abstract protected function getCurrentUser();
     abstract protected function getHeaderErrorCode();
     abstract protected function getHeaderErrorMessage();
+
+    protected function getOriginalParameters() {
+        return 'parameters';
+    }
 
     public function testResponseStatusCodeIs400() {
         $this->assertEquals(400, $this->response->getStatusCode());
@@ -56,6 +78,33 @@ abstract class FailureTest extends UpdateTest {
     }
 
     protected function getRequestPostData() {
-        return $this->requestPostData;
+        return [
+            'website' => 'http://example.com/',
+            'type' => 'Full site',
+            'task-configuration' => [
+                'HTML validation' => []
+            ],
+            'parameters' => $this->getNewParameters(),
+            'label' => $this->getNewLabel()
+        ];
+    }
+
+
+    /**
+     * @return TaskConfigurationCollection
+     */
+    protected function getStandardTaskConfigurationCollection() {
+        $taskConfigurationCollection = new TaskConfigurationCollection();
+
+        foreach ($this->originalTaskConfiguration as $taskTypeName => $taskTypeOptions) {
+            $taskConfiguration = new TaskConfiguration();
+            $taskConfiguration->setType(
+                $this->getTaskTypeService()->getByName($taskTypeName)
+            );
+            $taskConfiguration->setOptions($taskTypeOptions);
+            $taskConfigurationCollection->add($taskConfiguration);
+        }
+
+        return $taskConfigurationCollection;
     }
 }

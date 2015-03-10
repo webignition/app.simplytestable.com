@@ -21,4 +21,18 @@ class RoutingTest extends BaseRoutingTest {
         ];
     }
 
+
+    protected function getRequestPostData() {
+        return [
+            'website' => 'http://example.com/',
+            'type' => 'Full site',
+            'task-configuration' => [
+                'HTML validation' => [],
+                'CSS validation' => []
+            ],
+            'parameters' => '',
+            'label' => 'foo'
+        ];
+    }
+
 }

@@ -10,6 +10,12 @@ abstract class ActionTest extends BaseControllerJsonTestCase {
     const LABEL = 'foo';
     const NEW_LABEL = 'foo-new';
 
+    public function setUp() {
+        parent::setUp();
+        $this->getRouter()->getContext()->setMethod('POST');
+    }
+
+
     /**
      * @return JobConfigurationService
      */

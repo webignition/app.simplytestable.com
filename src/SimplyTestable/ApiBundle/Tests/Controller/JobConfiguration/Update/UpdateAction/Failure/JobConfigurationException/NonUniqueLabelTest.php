@@ -6,12 +6,6 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as J
 
 class NonUniqueLabelTest extends ExceptionTest {
 
-    protected function preCallController() {
-        $methodName = $this->getActionNameFromRouter();
-        $this->getCurrentController($this->getRequestPostData())->$methodName();
-    }
-
-
     protected function getHeaderErrorCode()
     {
         return JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE;
@@ -19,7 +13,21 @@ class NonUniqueLabelTest extends ExceptionTest {
 
     protected function getHeaderErrorMessage()
     {
-        return 'Label "foo" is not unique';
+        return 'Label "bar" is not unique';
     }
 
+    protected function getNewLabel()
+    {
+        return self::LABEL2;
+    }
+
+    protected function getNewParameters()
+    {
+        return $this->getOriginalParameters() . '-foo';
+    }
+
+    protected function getMethodLabel()
+    {
+        return self::LABEL1;
+    }
 }

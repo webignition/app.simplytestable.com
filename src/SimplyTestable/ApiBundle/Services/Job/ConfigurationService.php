@@ -173,46 +173,66 @@ class ConfigurationService extends EntityService {
             }
         }
 
+        $comparatorValues = clone $newValues;
+
         if (!$newValues->hasWebsite()) {
-            $newValues->setWebsite($jobConfiguration->getWebsite());
+            $comparatorValues->setWebsite($jobConfiguration->getWebsite());
         }
 
         if (!$newValues->hasType()) {
-            $newValues->setType($jobConfiguration->getType());
+            $comparatorValues->setType($jobConfiguration->getType());
         }
 
         if (!$newValues->hasTaskConfigurationCollection()) {
-            $newValues->setTaskConfigurationCollection($jobConfiguration->getTaskConfigurationsAsCollection());
+            $comparatorValues->setTaskConfigurationCollection($jobConfiguration->getTaskConfigurationsAsCollection());
         }
 
         if (!$newValues->hasParameters()) {
-            $newValues->setParameters($jobConfiguration->getParameters());
+            $comparatorValues->setParameters($jobConfiguration->getParameters());
         }
 
-        if ($this->hasExisting($newValues)) {
-            throw new JobConfigurationServiceException(
-                'Matching configuration already exists',
-                JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
-            );
+        if ($this->matches($jobConfiguration, $comparatorValues)) {
+            if (!$this->hasLabelChange($jobConfiguration, $comparatorValues)) {
+                return $jobConfiguration;
+            }
+        } else {
+            if ($this->hasExisting($comparatorValues)) {
+                throw new JobConfigurationServiceException(
+                    'Matching configuration already exists',
+                    JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
+                );
+            }
         }
 
-        $jobConfiguration->setLabel($newValues->getLabel());
-        $jobConfiguration->setUser($this->user);
-        $jobConfiguration->setWebsite($newValues->getWebsite());
-        $jobConfiguration->setType($newValues->getType());
-        $jobConfiguration->setParameters($newValues->getParameters());
-
-        foreach ($jobConfiguration->getTaskConfigurations() as $oldTaskConfiguration) {
-            $this->getManager()->remove($oldTaskConfiguration);
+        if ($newValues->hasNonEmptyLabel()) {
+            $jobConfiguration->setLabel($newValues->getLabel());
         }
 
-        $jobConfiguration->getTaskConfigurations()->clear();
+        if ($newValues->hasWebsite()) {
+            $jobConfiguration->setWebsite($newValues->getWebsite());
+        }
 
-        foreach ($newValues->getTaskConfigurationCollection()->get() as $taskConfiguration) {
-            /* @var $taskConfiguration TaskConfiguration */
-            $taskConfiguration->setJobConfiguration($jobConfiguration);
-            $jobConfiguration->addTaskConfiguration($taskConfiguration);;
-            $this->getManager()->persist($taskConfiguration);
+        if ($newValues->hasType()) {
+            $jobConfiguration->setType($newValues->getType());
+        }
+
+        if ($newValues->hasParameters()) {
+            $jobConfiguration->setParameters($newValues->getParameters());
+        }
+
+        if ($newValues->hasTaskConfigurationCollection()) {
+            foreach ($jobConfiguration->getTaskConfigurations() as $oldTaskConfiguration) {
+                $this->getManager()->remove($oldTaskConfiguration);
+            }
+
+            $jobConfiguration->getTaskConfigurations()->clear();
+
+            foreach ($newValues->getTaskConfigurationCollection()->get() as $taskConfiguration) {
+                /* @var $taskConfiguration TaskConfiguration */
+                $taskConfiguration->setJobConfiguration($jobConfiguration);
+                $jobConfiguration->addTaskConfiguration($taskConfiguration);;
+                $this->getManager()->persist($taskConfiguration);
+            }
         }
 
         $this->getManager()->persist($jobConfiguration);
@@ -339,5 +359,42 @@ class ConfigurationService extends EntityService {
     }
 
 
+    /**
+     * @param JobConfiguration $jobConfiguration
+     * @param ConfigurationValues $values
+     * @return bool
+     */
+    private function matches(JobConfiguration $jobConfiguration, ConfigurationValues $values) {
+        if ($jobConfiguration->getParameters() != $values->getParameters()) {
+            return false;
+        }
 
+        if (!$jobConfiguration->getTaskConfigurationsAsCollection()->equals($values->getTaskConfigurationCollection())) {
+            return false;
+        }
+
+        if (!$jobConfiguration->getType()->equals($values->getType())) {
+            return false;
+        }
+
+        if (!$jobConfiguration->getWebsite()->equals($values->getWebsite())) {
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
+     * @param JobConfiguration $jobConfiguration
+     * @param ConfigurationValues $values
+     * @return bool
+     */
+    private function hasLabelChange(JobConfiguration $jobConfiguration, ConfigurationValues $values) {
+        if ($values->hasEmptyLabel()) {
+            return false;
+        }
+
+        return $jobConfiguration->getLabel() != $values->getLabel();
+    }
 }

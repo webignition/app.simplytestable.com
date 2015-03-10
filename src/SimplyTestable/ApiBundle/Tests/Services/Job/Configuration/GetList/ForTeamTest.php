@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\GetList;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
 class ForTeamTest extends ServiceTest {
 
@@ -69,13 +70,14 @@ class ForTeamTest extends ServiceTest {
         foreach ($this->people as $userIndex => $user) {
             $this->getJobConfigurationService()->setUser($user);
             for ($jobConfigurationIndex = 0; $jobConfigurationIndex < self::JOB_CONFIGURATION_COUNT; $jobConfigurationIndex++) {
-                $this->jobConfigurations[] = $this->getJobConfigurationService()->create(
-                    $this->getWebSiteService()->fetch('http://' . $userIndex . '.' . $jobConfigurationIndex . 'example.com/'),
-                    $this->getJobTypeService()->getFullSiteType(),
-                    $this->getStandardTaskConfigurationCollection(),
-                    self::LABEL . '::' . $userIndex . '::' . $jobConfigurationIndex,
-                    'parameters'
-                );
+                $jobConfigurationValues = new ConfigurationValues();
+                $jobConfigurationValues->setLabel(self::LABEL . '::' . $userIndex . '::' . $jobConfigurationIndex);
+                $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
+                $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+                $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://' . $userIndex . '.' . $jobConfigurationIndex . 'example.com/'));
+                $jobConfigurationValues->setParameters('parameters');
+
+                $this->jobConfigurations[] = $this->getJobConfigurationService()->create($jobConfigurationValues);
             }
         }
 

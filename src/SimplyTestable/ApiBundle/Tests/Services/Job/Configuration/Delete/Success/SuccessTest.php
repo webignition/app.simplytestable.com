@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Delete\Succe
 
 use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Delete\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
-use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
+use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
 abstract class SuccessTest extends ServiceTest {
 
@@ -22,14 +22,14 @@ abstract class SuccessTest extends ServiceTest {
 
         $this->preCreateJobConfigurations();
 
+        $jobConfigurationValues = new ConfigurationValues();
+        $jobConfigurationValues->setLabel(self::LABEL);
+        $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
+        $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://original.example.com/'));
+
         $this->getJobConfigurationService()->setUser($this->getCurrentUser());
-        $this->jobConfiguration = $this->getJobConfigurationService()->create(
-            $this->getWebSiteService()->fetch('http://original.example.com/'),
-            $this->getJobTypeService()->getFullSiteType(),
-            $this->getStandardTaskConfigurationCollection(),
-            self::LABEL,
-            ''
-        );
+        $this->jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $this->assertNotNull($this->jobConfiguration->getId());
         $this->getJobConfigurationService()->delete(self::LABEL);

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Get;
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
+use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
 class ForTeamWithNoMatchTest extends ServiceTest {
 
@@ -55,14 +56,15 @@ class ForTeamWithNoMatchTest extends ServiceTest {
             $taskConfigurationCollection->add($taskConfiguration);
         }
 
+        $jobConfigurationValues = new ConfigurationValues();
+        $jobConfigurationValues->setLabel(self::LABEL);
+        $jobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
+        $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $jobConfigurationValues->setParameters('parameters');
+
         $this->getJobConfigurationService()->setUser($leader);
-        $this->getJobConfigurationService()->create(
-            $this->getWebSiteService()->fetch('http://example.com/'),
-            $this->getJobTypeService()->getFullSiteType(),
-            $taskConfigurationCollection,
-            self::LABEL,
-            'parameters'
-        );
+        $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $this->getJobConfigurationService()->setUser($member);
     }

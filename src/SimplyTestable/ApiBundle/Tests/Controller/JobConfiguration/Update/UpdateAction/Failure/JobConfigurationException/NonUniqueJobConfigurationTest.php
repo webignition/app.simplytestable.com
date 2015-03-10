@@ -6,15 +6,6 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as J
 
 class NonUniqueJobConfigurationTest extends ExceptionTest {
 
-    protected function preCallController() {
-        $requestPostData = $this->getRequestPostData();
-        $requestPostData['label'] = 'bar';
-
-        $methodName = $this->getActionNameFromRouter();
-        $this->getCurrentController($requestPostData)->$methodName();
-    }
-
-
     protected function getHeaderErrorCode()
     {
         return JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS;
@@ -25,4 +16,18 @@ class NonUniqueJobConfigurationTest extends ExceptionTest {
         return 'Matching configuration already exists';
     }
 
+    protected function getNewLabel()
+    {
+        return self::LABEL . '-foo';
+    }
+
+    protected function getNewParameters()
+    {
+        return $this->getOriginalParameters();
+    }
+
+    protected function getMethodLabel()
+    {
+        return self::LABEL2;
+    }
 }
