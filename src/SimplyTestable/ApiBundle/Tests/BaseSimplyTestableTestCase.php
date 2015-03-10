@@ -37,20 +37,20 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     
     public function setUp() {
         parent::setUp();        
-        $this->removeAllJobs();
-        $this->removeAllWebsites();
-        $this->removeAllTasks();
-        $this->removeAllWorkers();        
-        $this->removeTestTaskTypes();
-        $this->removeTestTaskTypeClasses();
-        $this->removeTestAccountPlanContraints();
-        $this->removeAllUserAccountPlans();
-        $this->removeTestAccountPlans();
-        $this->removeTestStates();
-        $this->removeTestJobTypes();
-        $this->removeAllUserEmailChangeRequests();
-        $this->removeAllStripeEvents();
-        $this->rebuildDefaultDataState();
+//        $this->removeAllJobs();
+//        $this->removeAllWebsites();
+//        $this->removeAllTasks();
+//        $this->removeAllWorkers();
+//        $this->removeTestTaskTypes();
+//        $this->removeTestTaskTypeClasses();
+//        $this->removeTestAccountPlanContraints();
+//        $this->removeAllUserAccountPlans();
+//        $this->removeTestAccountPlans();
+//        $this->removeTestStates();
+//        $this->removeTestJobTypes();
+//        $this->removeAllUserEmailChangeRequests();
+//        $this->removeAllStripeEvents();
+//        $this->rebuildDefaultDataState();
         $this->clearRedis();
         $this->requiredSitemapXmlUrlCount = null;
     }

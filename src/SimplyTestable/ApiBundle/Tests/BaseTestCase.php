@@ -46,6 +46,7 @@ abstract class BaseTestCase extends WebTestCase {
         }        
         
         $this->setDefaultSystemState();
+        $this->container->get('doctrine')->getConnection()->beginTransaction();
     }
     
     
@@ -186,6 +187,9 @@ abstract class BaseTestCase extends WebTestCase {
     
     public function tearDown() {
         parent::tearDown();
+
+        $this->container->get('doctrine')->getConnection()->rollback();
+
         $this->container->get('doctrine')->getConnection()->close();
         
         $refl = new \ReflectionObject($this);
