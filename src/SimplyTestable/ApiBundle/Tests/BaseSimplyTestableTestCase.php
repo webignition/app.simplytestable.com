@@ -36,29 +36,9 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
     private $requiredSitemapXmlUrlCount = null;
     
     public function setUp() {
-        parent::setUp();        
-//        $this->removeAllJobs();
-//        $this->removeAllWebsites();
-//        $this->removeAllTasks();
-//        $this->removeAllWorkers();
-//        $this->removeTestTaskTypes();
-//        $this->removeTestTaskTypeClasses();
-//        $this->removeTestAccountPlanContraints();
-//        $this->removeAllUserAccountPlans();
-//        $this->removeTestAccountPlans();
-//        $this->removeTestStates();
-//        $this->removeTestJobTypes();
-//        $this->removeAllUserEmailChangeRequests();
-//        $this->removeAllStripeEvents();
-//        $this->rebuildDefaultDataState();
+        parent::setUp();
         $this->clearRedis();
         $this->requiredSitemapXmlUrlCount = null;
-    }
-   
-    
-    protected function rebuildDefaultDataState() {
-        $this->removeAllUsers();        
-        $this->loadDataFixtures();
     }
     
     
@@ -67,54 +47,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
         $plan = $this->getAccountPlanService()->find('public');
         
         $this->getUserAccountPlanService()->subscribe($user, $plan);          
-    }
-    
-    protected function removeTestStates() {        
-        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\State', 'test');
-    }    
-    
-    
-    protected function removeTestAccountPlans() {
-        $this->removeAllUserPostActivationProperties();
-        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan', 'test');
-    }     
-    
-    
-    protected function removeTestJobTypes() {        
-        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\Job\Type', 'test');
-    }
-    
-    
-    protected function removeTestTaskTypes() {        
-        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\Task\Type\Type', 'test');
-    }    
-    
-    protected function removeTestTaskTypeClasses() {        
-        $this->removeAllOfEntityPrefixedWith('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass', 'test');
-    }     
-    
-    
-    private function removeAllOfEntityPrefixedWith($entityName, $prefix) {
-        $allEntities = $this->getManager()->getRepository($entityName)->findAll();
-        foreach ($allEntities as $entity) {
-            if (substr($entity->getName(), 0, strlen($prefix)) == $prefix) {
-                $this->getManager()->remove($entity);
-                $this->getManager()->flush();
-            }
-        }        
-    }
-    
-    
-    protected function removeTestAccountPlanContraints() {        
-        $testPlanConstraintNames = array('foo', 'bar');
-        
-        foreach ($testPlanConstraintNames as $constraintName) {
-            $constraints = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint')->findByName($constraintName);
-            if (is_array($constraints) && count($constraints) > 0) {
-                $this->getManager()->remove($constraints[0]);
-                $this->getManager()->flush();
-            }
-        }
     }
     
     
@@ -971,103 +903,7 @@ EOD;
         $this->getWorkerService()->persistAndFlush($worker);
         return $worker;
     }
-    
-    
-    protected function removeAllWorkers() {
-        $this->removeAllWorkerActivationRequests();
-        $this->removeAllTasks();
-        
-        $workers = $this->getWorkerService()->getEntityRepository()->findAll();
-        foreach ($workers as $worker) {
-            $this->getWorkerService()->getManager()->remove($worker);
-        }
-        
-        $this->getWorkerService()->getManager()->flush();
-    }
-    
-    protected function removeAllJobs() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions');
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\CrawlJobContainer');
-        
-        $this->removeAllTasks();
-        $this->removeAllJobRejectionReasons();
-        $this->removeAllJobAmmendments();
-        
-        $jobs = $this->getJobService()->getEntityRepository()->findAll();
-        foreach ($jobs as $job) {
-            $this->getJobService()->getManager()->remove($job);
-        }
-        
-        $this->getJobService()->getManager()->flush();
-    }
-    
-    protected function removeAllUsers() {
-        $this->removeAllTeamInvites();
-        $this->removeAllTeamMembers();
-        $this->removeAllTeams();
-        $this->removeAllJobs();
-        
-        $users = $this->getUserService()->findUsers();
-        foreach ($users as $user) {
-            $this->getUserService()->deleteUser($user);
-        }
-    }
 
-    protected function removeAllTeamInvites() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Team\Invite');
-    }
-
-    protected function removeAllTeamMembers() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Team\Member');
-    }
-
-    protected function removeAllTeams() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Team\Team');
-    }
-
-    protected function removeAllWebsites() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration');
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\Configuration');
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\WebSite');
-    }    
-    
-    protected function removeAllUserAccountPlans() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserAccountPlan');
-    }
-
-    protected function removeAllUserPostActivationProperties() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserPostActivationProperties');
-    }
-    
-    
-    protected function removeAllUserEmailChangeRequests() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest');      
-    }
-    
-    protected function removeAllStripeEvents() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Stripe\Event');      
-    }    
-    
-    
-    protected function removeAllJobRejectionReasons() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\RejectionReason');      
-    }    
-    
-    protected function removeAllJobAmmendments() {
-        $this->removeAllForEntity('SimplyTestable\ApiBundle\Entity\Job\Ammendment');      
-    }       
-    
-    
-    private function removeAllForEntity($entityName) {
-        $entities = $this->getManager()->getRepository($entityName)->findAll();
-        if (is_array($entities) && count($entities) > 0) {
-            foreach ($entities as $entity) {
-                $this->getManager()->remove($entity);
-                $this->getManager()->flush();
-            }
-        }        
-    }    
-    
     
     protected function createPublicUserIfMissing() {        
         if (!$this->getUserService()->exists('public@simplytestable.com')) {
@@ -1100,26 +936,7 @@ EOD;
             $manipulator->activate($user->getUsername());      
         }
     }    
-      
-    
-    protected function removeAllTasks() {
-        $tasks = $this->getTaskService()->getEntityRepository()->findAll();
-        foreach ($tasks as $task) {
-            $this->getTaskService()->getManager()->remove($task);
-        }
-        
-        $this->getTaskService()->getManager()->flush();
-    }
-    
-    protected function removeAllWorkerActivationRequests() {
-        $requests = $this->getWorkerActivationRequestService()->getEntityRepository()->findAll();
-        foreach ($requests as $request) {
-            $this->getWorkerActivationRequestService()->getManager()->remove($request);
-        }
-        
-        $this->getWorkerActivationRequestService()->getManager()->flush();
-    }
-    
+
     
     /**
      * Create and return a collection of workers
