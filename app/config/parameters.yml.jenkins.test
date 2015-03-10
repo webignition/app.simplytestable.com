@@ -4,7 +4,7 @@ parameters:
     database_port: null
     database_name: test_app_simplytestable_com
     database_user: root
-    database_password: rootl
+    database_password: root
     locale: en
     secret: SetThis!
     admin_user_email: test.ci.admin@example.com
