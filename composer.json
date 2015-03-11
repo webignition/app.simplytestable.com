@@ -44,7 +44,10 @@
         "webignition/web-resource-service":"1.0.3",
         "chrisboulton/php-resque": "dev-master",
         "chrisboulton/php-resque-scheduler": "dev-master",
-        "bcc/resque-bundle": "dev-master"
+        "bcc/resque-bundle": "dev-master",
+        "webignition/web-resource-model": "1.1.8",
+        "webignition/web-json-model": "1.0.1",
+        "webignition/web-page-model": "1.0.2"
     },
     "require-dev": {
         "icanboogie/inflector":">=1.0,<2",
