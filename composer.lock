@@ -3202,16 +3202,16 @@
         },
         {
             "name": "webignition/internet-media-type",
-            "version": "0.4.6",
+            "version": "0.4.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/internet-media-type.git",
-                "reference": "2cec55b87255f582575743e328a0ce45bc1dbaee"
+                "reference": "968b95796bc682c7f554c2ec671b6a97a9d5a5b0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/internet-media-type/zipball/2cec55b87255f582575743e328a0ce45bc1dbaee",
-                "reference": "2cec55b87255f582575743e328a0ce45bc1dbaee",
+                "url": "https://api.github.com/repos/webignition/internet-media-type/zipball/968b95796bc682c7f554c2ec671b6a97a9d5a5b0",
+                "reference": "968b95796bc682c7f554c2ec671b6a97a9d5a5b0",
                 "shasum": ""
             },
             "require": {
@@ -3220,9 +3220,7 @@
                 "webignition/string-parser": ">=0.2.2,<1.0"
             },
             "require-dev": {
-                "guzzle/guzzle": ">=3.8.1,<4",
-                "phpunit/phpunit": "3.7.*",
-                "symfony/class-loader": "*"
+                "phpunit/phpunit": "~4.0"
             },
             "type": "library",
             "autoload": {
@@ -3250,7 +3248,7 @@
                 "media type",
                 "media-type"
             ],
-            "time": "2014-04-23 11:21:02"
+            "time": "2015-02-20 16:52:30"
         },
         {
             "name": "webignition/php-stripe-models",
