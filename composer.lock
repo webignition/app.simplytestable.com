@@ -2833,16 +2833,16 @@
         },
         {
             "name": "webignition/absolute-url-deriver",
-            "version": "1.5",
+            "version": "1.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/absolute-url-deriver.git",
-                "reference": "19fcee7ddd7376977671ccdac392e01c387a4cd8"
+                "reference": "b7dace7091da38b6a311d44d68a4a2d8c07f3394"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/19fcee7ddd7376977671ccdac392e01c387a4cd8",
-                "reference": "19fcee7ddd7376977671ccdac392e01c387a4cd8",
+                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/b7dace7091da38b6a311d44d68a4a2d8c07f3394",
+                "reference": "b7dace7091da38b6a311d44d68a4a2d8c07f3394",
                 "shasum": ""
             },
             "require": {
@@ -2876,7 +2876,7 @@
                 "absolute",
                 "url"
             ],
-            "time": "2014-04-04 13:29:41"
+            "time": "2014-10-20 06:50:04"
         },
         {
             "name": "webignition/character-set-list",
