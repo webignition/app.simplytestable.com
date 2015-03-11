@@ -3521,16 +3521,16 @@
         },
         {
             "name": "webignition/url",
-            "version": "1.9.13",
+            "version": "1.9.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url.git",
-                "reference": "1b322b7421595c263deb0ec6de70a2c401ce1ce0"
+                "reference": "b651aed2781260d8b25a086e766f528d1b9a675e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url/zipball/1b322b7421595c263deb0ec6de70a2c401ce1ce0",
-                "reference": "1b322b7421595c263deb0ec6de70a2c401ce1ce0",
+                "url": "https://api.github.com/repos/webignition/url/zipball/b651aed2781260d8b25a086e766f528d1b9a675e",
+                "reference": "b651aed2781260d8b25a086e766f528d1b9a675e",
                 "shasum": ""
             },
             "require": {
@@ -3562,7 +3562,7 @@
             "keywords": [
                 "url"
             ],
-            "time": "2014-09-15 14:09:41"
+            "time": "2015-02-13 11:52:39"
         },
         {
             "name": "webignition/url-resolver",
