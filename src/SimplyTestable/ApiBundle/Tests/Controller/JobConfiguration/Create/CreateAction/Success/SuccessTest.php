@@ -26,7 +26,9 @@ abstract class SuccessTest extends CreateTest {
         $this->getUserService()->setUser($this->createAndActivateUser('user@example.com'));
 
         $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName();
+        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(
+            $this->container->get('request')
+        );
         $this->jobConfiguration = $this->getJobConfigurationService()->get($this->getLabel());
     }
 

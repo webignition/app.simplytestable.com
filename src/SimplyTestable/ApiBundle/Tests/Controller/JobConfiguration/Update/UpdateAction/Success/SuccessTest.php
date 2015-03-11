@@ -51,7 +51,10 @@ abstract class SuccessTest extends UpdateTest {
         $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName($this->getOriginalLabel());
+        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(
+            $this->container->get('request'),
+            $this->getOriginalLabel()
+        );
 
         $this->jobConfiguration = $this->getJobConfigurationService()->get($this->getUpdatedLabel());
     }

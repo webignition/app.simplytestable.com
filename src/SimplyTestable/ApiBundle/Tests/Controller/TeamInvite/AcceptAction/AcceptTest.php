@@ -11,7 +11,9 @@ class AcceptTest extends ActionTest {
         $this->getUserService()->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->getCurrentController()->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(1, $response->headers->get('X-TeamInviteAccept-Error-Code'));
@@ -31,7 +33,9 @@ class AcceptTest extends ActionTest {
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
             'team' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(2, $response->headers->get('X-TeamInviteAccept-Error-Code'));
@@ -55,7 +59,9 @@ class AcceptTest extends ActionTest {
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
             'team' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNull($invite->getId());
@@ -87,7 +93,9 @@ class AcceptTest extends ActionTest {
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
             'team' => $invite1->getTeam()->getName()
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
         $this->assertNull($invite1->getId());
@@ -114,7 +122,9 @@ class AcceptTest extends ActionTest {
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
             'team' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNotNull($invite->getId());

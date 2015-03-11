@@ -8,7 +8,9 @@ class ErrorCasesTest extends ActionTest {
 
     public function testInvalidTokenReturnsBadRequest() {
         $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->getCurrentController()->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(1, $response->headers->get('X-TeamInviteActivateAndAccept-Error-Code'));

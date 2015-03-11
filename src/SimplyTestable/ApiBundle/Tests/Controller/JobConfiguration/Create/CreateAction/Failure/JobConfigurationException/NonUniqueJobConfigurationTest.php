@@ -11,7 +11,9 @@ class NonUniqueJobConfigurationTest extends ExceptionTest {
         $requestPostData['label'] = 'bar';
 
         $methodName = $this->getActionNameFromRouter();
-        $this->getCurrentController($requestPostData)->$methodName();
+        $this->getCurrentController($requestPostData)->$methodName(
+            $this->container->get('request')
+        );
     }
 
 

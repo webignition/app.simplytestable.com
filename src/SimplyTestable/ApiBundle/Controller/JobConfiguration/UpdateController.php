@@ -8,10 +8,18 @@ use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfi
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use Symfony\Component\HttpFoundation\Request;
 
 class UpdateController extends JobConfigurationController {
 
-    public function updateAction($label) {
+    /**
+     * @var Request
+     */
+    private $request;
+
+    public function updateAction(Request $request, $label) {
+        $this->request = $request;
+
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
@@ -59,8 +67,8 @@ class UpdateController extends JobConfigurationController {
      */
     private function getRequestJobConfigurationValues() {
         $values = new JobConfigurationValues();
-        $values->setLabel($this->getRequest()->request->get('label'));
-        $values->setParameters($this->getRequest()->request->get('parameters'));
+        $values->setLabel($this->request->request->get('label'));
+        $values->setParameters($this->request->request->get('parameters'));
         $values->setTaskConfigurationCollection($this->getRequestTaskConfigurationCollection());
         $values->setWebsite($this->getRequestWebsite());
         $values->setType($this->getRequestJobType());
@@ -71,7 +79,7 @@ class UpdateController extends JobConfigurationController {
 
     private function getRequestWebsite() {
         return $this->getWebsiteService()->fetch(
-            trim($this->getRequest()->get('website'))
+            trim($this->request->get('website'))
         );
     }
 
@@ -119,7 +127,7 @@ class UpdateController extends JobConfigurationController {
      */
     private function getRequestTaskConfigurationCollection() {
         $adapter = new RequestAdapter();
-        $adapter->setRequest($this->getRequest());
+        $adapter->setRequest($this->request);
         $adapter->setTaskTypeService($this->getTaskTypeService());
 
         return $adapter->getCollection();

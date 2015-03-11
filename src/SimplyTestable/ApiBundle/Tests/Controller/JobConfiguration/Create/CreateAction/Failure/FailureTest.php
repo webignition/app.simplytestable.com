@@ -31,7 +31,9 @@ abstract class FailureTest extends CreateTest {
         $this->preCallController();
 
         $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName();
+        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(
+            $this->container->get('request')
+        );
     }
 
     protected function preCallController() {

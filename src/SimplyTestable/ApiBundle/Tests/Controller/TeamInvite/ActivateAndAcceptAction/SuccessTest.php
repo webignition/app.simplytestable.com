@@ -49,7 +49,9 @@ class SuccessTest extends ActionTest {
         $this->response = $this->getCurrentController([
             'token' => $invite->getToken(),
             'password' => 'foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
     }
 
 

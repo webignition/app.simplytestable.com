@@ -11,7 +11,9 @@ class DeclineTest extends ActionTest {
         $this->getUserService()->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->getCurrentController()->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
@@ -32,7 +34,9 @@ class DeclineTest extends ActionTest {
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
             'team' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
@@ -56,7 +60,9 @@ class DeclineTest extends ActionTest {
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
             'team' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($invitee));

@@ -16,7 +16,7 @@ abstract class Listener
     
     /**
      *
-     * @var \Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
+     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
      */
     protected $dispatcher;
     
@@ -76,7 +76,7 @@ abstract class Listener
      */
     public function __construct(
             Logger $logger,
-            \Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher $dispatcher,
+            \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher,
             \SimplyTestable\ApiBundle\Services\StripeService $stripeService,
             \SimplyTestable\ApiBundle\Services\StripeEventService $stripeEventService,
             \SimplyTestable\ApiBundle\Services\UserAccountPlanService $userAccountPlanService,

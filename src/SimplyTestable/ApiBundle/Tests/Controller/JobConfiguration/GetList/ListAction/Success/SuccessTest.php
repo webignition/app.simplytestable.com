@@ -20,6 +20,8 @@ class SuccessTest extends GetListTest {
 
         $this->getUserService()->setUser($this->createAndActivateUser('user@example.com'));
 
+        $methodName = $this->getActionNameFromRouter();
+
         $this->getJobConfigurationCreateController('createAction', [
             'label' => 'foo',
             'website' => 'http://example.com/',
@@ -43,9 +45,11 @@ class SuccessTest extends GetListTest {
                     ]
                 ]
             ])
-        ])->createAction();
+        ])->createAction(
+            $this->container->get('request')
+        );
 
-        $methodName = $this->getActionNameFromRouter();
+
         $this->response = $this->getCurrentController()->$methodName('foo');
         $this->decodedResponse = json_decode($this->response->getContent(), true);
     }

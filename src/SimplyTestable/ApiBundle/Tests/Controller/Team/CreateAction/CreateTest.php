@@ -20,7 +20,9 @@ class CreateTest extends ActionTest {
 
         $response = $this->getCurrentController([
             'name' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('/team/', $response->headers->get('location'));
@@ -45,7 +47,9 @@ class CreateTest extends ActionTest {
 
         $response = $this->getCurrentController([
             'name' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('/team/', $response->headers->get('location'));
@@ -63,7 +67,9 @@ class CreateTest extends ActionTest {
 
         $response = $this->getCurrentController([
             'name' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('/team/', $response->headers->get('location'));
@@ -80,7 +86,9 @@ class CreateTest extends ActionTest {
 
         $response = $this->getCurrentController([
             'name' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(9, $response->headers->get('X-TeamCreate-Error-Code'));
@@ -95,7 +103,9 @@ class CreateTest extends ActionTest {
 
         $response = $this->getCurrentController([
             'name' => 'Foo'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(9, $response->headers->get('X-TeamCreate-Error-Code'));
@@ -119,7 +129,9 @@ class CreateTest extends ActionTest {
 
         $this->getCurrentController([
             'name' => 'Foo2'
-        ])->$methodName();
+        ])->$methodName(
+            $this->container->get('request')
+        );
 
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
 

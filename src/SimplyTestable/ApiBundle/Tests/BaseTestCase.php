@@ -79,7 +79,7 @@ abstract class BaseTestCase extends WebTestCase {
         $commandTester = new CommandTester($command);        
         
         $arguments['command'] = $command->getName();
-        
+
         return $commandTester->execute($arguments);
     }    
     
@@ -187,8 +187,6 @@ abstract class BaseTestCase extends WebTestCase {
     
     public function tearDown() {
         parent::tearDown();
-
-        $this->container->get('doctrine')->getConnection()->rollback();
 
         $this->container->get('doctrine')->getConnection()->close();
         

@@ -17,7 +17,10 @@ class NotFoundTest extends UpdateTest {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController()->$methodName(self::LABEL);
+        $this->response = $this->getCurrentController()->$methodName(
+            $this->container->get('request'),
+            self::LABEL
+        );
     }
 
     public function testResponseStatusCode() {

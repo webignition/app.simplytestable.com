@@ -13,7 +13,10 @@ class MaintenanceModeTest extends ActionTest {
 
     public function testCreateInMaintenanceReadOnlyModeReturns503() {
         $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController($this->getRequestPostData())->$methodName(self::LABEL);
+        $response = $this->getCurrentController($this->getRequestPostData())->$methodName(
+            $this->container->get('request'),
+            self::LABEL
+        );
 
         $this->assertEquals(503, $response->getStatusCode());
     }

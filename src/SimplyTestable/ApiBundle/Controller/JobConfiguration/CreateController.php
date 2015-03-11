@@ -11,8 +11,14 @@ use Guzzle\Http\Message\Request as GuzzleRequest;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use Symfony\Component\HttpFoundation\Request;
 
 class CreateController extends JobConfigurationController {
+
+    /**
+     * @var Request
+     */
+    private $request;
 
     public function __construct() {
         $this->setInputDefinitions(array(
@@ -30,7 +36,9 @@ class CreateController extends JobConfigurationController {
         ));
     }
 
-    public function createAction() {
+    public function createAction(Request $request) {
+        $this->request = $request;
+
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
@@ -55,8 +63,8 @@ class CreateController extends JobConfigurationController {
             $jobConfigurationValues->setWebsite($this->getRequestWebsite());
             $jobConfigurationValues->setType($this->getRequestJobType());
             $jobConfigurationValues->setTaskConfigurationCollection($this->getRequestTaskConfigurationCollection());
-            $jobConfigurationValues->setLabel($this->getRequest()->get('label'));
-            $jobConfigurationValues->setParameters($this->getRequest()->get('parameters'));
+            $jobConfigurationValues->setLabel($this->request->get('label'));
+            $jobConfigurationValues->setParameters($this->request->get('parameters'));
 
             $jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
@@ -79,7 +87,7 @@ class CreateController extends JobConfigurationController {
 
     private function getRequestWebsite() {
         return $this->getWebsiteService()->fetch(
-            trim($this->getRequest()->get('website'))
+            trim($this->request->get('website'))
         );
     }
 
@@ -127,7 +135,7 @@ class CreateController extends JobConfigurationController {
      */
     private function getRequestTaskConfigurationCollection() {
         $adapter = new RequestAdapter();
-        $adapter->setRequest($this->getRequest());
+        $adapter->setRequest($this->request);
         $adapter->setTaskTypeService($this->getTaskTypeService());
 
         return $adapter->getCollection();

@@ -8,7 +8,9 @@ class NonUniqueLabelTest extends ExceptionTest {
 
     protected function preCallController() {
         $methodName = $this->getActionNameFromRouter();
-        $this->getCurrentController($this->getRequestPostData())->$methodName();
+        $this->getCurrentController($this->getRequestPostData())->$methodName(
+            $this->container->get('request')
+        );
     }
 
 

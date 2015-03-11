@@ -49,7 +49,10 @@ abstract class FailureTest extends UpdateTest {
         $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName($this->getMethodLabel());
+        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(
+            $this->container->get('request'),
+            $this->getMethodLabel()
+        );
     }
 
     abstract protected function getMethodLabel();

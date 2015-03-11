@@ -6,10 +6,17 @@ use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInvi
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
+use Symfony\Component\HttpFoundation\Request;
 
 class TeamInviteController extends ApiController {
 
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
+
+    /**
+     * @var Request
+     */
+    private $request;
+
 
     public function getAction($invitee_email) {
         if (!$this->getUserService()->exists($invitee_email)) {
@@ -49,7 +56,9 @@ class TeamInviteController extends ApiController {
     }
 
 
-    public function acceptAction() {
+    public function acceptAction(Request $request) {
+        $this->request = $request;
+
         $team = $this->getTeamService()->getEntityRepository()->findOneBy([
             'name' => $this->getRequestTeam()
         ]);
@@ -153,9 +162,11 @@ class TeamInviteController extends ApiController {
     }
 
 
-    public function declineAction() {
+    public function declineAction(Request $request) {
+        $this->request = $request;
+
         $team = $this->getTeamService()->getEntityRepository()->findOneBy([
-            'name' => trim($this->getRequest()->request->get('team'))
+            'name' => trim($this->request->request->get('team'))
         ]);
 
         if ($team instanceof Team && $this->getTeamInviteService()->hasForTeamAndUser($team, $this->getUser())) {
@@ -176,8 +187,10 @@ class TeamInviteController extends ApiController {
     }
 
 
-    public function activateAndAcceptAction() {
-        $token = trim($this->getRequest()->request->get('token'));
+    public function activateAndAcceptAction(Request $request) {
+        $this->request = $request;
+
+        $token = trim($this->request->request->get('token'));
 
         if (!$this->getTeamInviteService()->hasForToken($token)) {
             return $this->sendFailureResponse([
@@ -190,7 +203,7 @@ class TeamInviteController extends ApiController {
 
         $this->getUserManipulator()->activate($invite->getUser()->getUsername());
 
-        $invite->getUser()->setPlainPassword(rawurldecode(trim($this->getRequest()->request->get('password'))));
+        $invite->getUser()->setPlainPassword(rawurldecode(trim($this->request->request->get('password'))));
         $this->getUserService()->updateUser($invite->getUser());
 
         $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
@@ -209,7 +222,7 @@ class TeamInviteController extends ApiController {
      * @return string
      */
     private function getRequestTeam() {
-        return trim($this->getRequest()->request->get('team'));
+        return trim($this->request->request->get('team'));
     }
 
 

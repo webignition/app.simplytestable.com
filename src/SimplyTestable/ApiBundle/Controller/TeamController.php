@@ -3,8 +3,14 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
+use Symfony\Component\HttpFoundation\Request;
 
 class TeamController extends ApiController {
+
+    /**
+     * @var Request
+     */
+    private $request;
 
     public function getAction() {
         if (!$this->getTeamService()->hasForUser($this->getUser())) {
@@ -26,7 +32,9 @@ class TeamController extends ApiController {
         ]);
     }
     
-    public function createAction() {
+    public function createAction(Request $request) {
+        $this->request = $request;
+
         if ($this->getUserService()->isSpecialUser($this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamCreate-Error-Code' => 9,
@@ -35,7 +43,7 @@ class TeamController extends ApiController {
         }
 
         try {
-            $this->getTeamService()->create($this->getRequest()->request->get('name'), $this->getUser());
+            $this->getTeamService()->create($this->request->request->get('name'), $this->getUser());
 
             $invites = $this->getTeamInviteService()->getForUser($this->getUser());
             foreach ($invites as $invite) {

@@ -24,6 +24,8 @@ class SuccessTest extends DeleteTest {
 
         $this->getUserService()->setUser($this->createAndActivateUser('user@example.com'));
 
+        $methodName = $this->getActionNameFromRouter();
+
         $this->getJobConfigurationCreateController('createAction', [
             'label' => 'foo',
             'website' => 'http://example.com/',
@@ -31,11 +33,13 @@ class SuccessTest extends DeleteTest {
             'task-configuration' => [
                 'HTML validation' => [],
             ]
-        ])->createAction();
+        ])->createAction(
+            $this->container->get('request')
+        );
 
         $this->jobConfiguration = $this->getJobConfigurationService()->get(self::LABEL);
 
-        $methodName = $this->getActionNameFromRouter();
+
         $this->response = $this->getCurrentController()->$methodName(self::LABEL);
     }
 
