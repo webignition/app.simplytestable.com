@@ -70,13 +70,20 @@ class Service extends EntityService {
             );
         }
 
+        if ($this->getEntityRepository()->has($jobConfiguration, $schedule, $isRecurring)) {
+            throw new ScheduledJobException(
+                'Matching scheduled job exists',
+                ScheduledJobException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
+            );
+        }
+
         $this->user = $jobConfiguration->getUser();
 
         $cronJob = new CronJob();
         $cronJob->setCommand('');
         $cronJob->setDescription('');
         $cronJob->setEnabled(true);
-        $cronJob->setName('');
+        $cronJob->setName($jobConfiguration->getId().':'.md5(rand()));
         $cronJob->setSchedule($schedule);
 
         $this->cronManager->saveJob($cronJob);
@@ -90,9 +97,19 @@ class Service extends EntityService {
         $this->getManager()->flush($scheduledJob);
 
         $scheduledJob->getCronJob()->setCommand('simplytestable:scheduledjob:enqueue ' . $scheduledJob->getId());
+        $scheduledJob->getCronJob()->setName($jobConfiguration->getId().':'.$cronJob->getId());
 
         $this->cronManager->saveJob($cronJob);
 
         return $scheduledJob;
+    }
+
+
+    /**
+     *
+     * @return \SimplyTestable\ApiBundle\Repository\ScheduledJob\Repository
+     */
+    public function getEntityRepository() {
+        return parent::getEntityRepository();
     }
 }

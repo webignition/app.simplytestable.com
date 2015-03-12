@@ -8,6 +8,8 @@ use Cron\CronBundle\Entity\CronJob;
 
 /**
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\ScheduledJob\Repository")
+ *
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class ScheduledJob
