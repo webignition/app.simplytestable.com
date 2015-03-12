@@ -7,20 +7,20 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
+use Psr\Log\LoggerInterface as Logger;
 
 abstract class BaseCommand extends ContainerAwareCommand {
     
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\ApplicationStateServic
+     * @var \SimplyTestable\ApiBundle\Services\ApplicationStateService
      */
     private $applicationStateService;
     
     
     /**
      *
-     * @return \Symfony\Component\HttpKernel\Log\LoggerInterface
+     * @return Logger
      */
     protected function getLogger() {
         return $this->getContainer()->get('logger');
