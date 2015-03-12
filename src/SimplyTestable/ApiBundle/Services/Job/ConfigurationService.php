@@ -397,4 +397,37 @@ class ConfigurationService extends EntityService {
 
         return $jobConfiguration->getLabel() != $values->getLabel();
     }
+
+
+    /**
+     * @param JobConfiguration $jobConfiguration
+     * @return bool
+     */
+    public function owns(JobConfiguration $jobConfiguration) {
+        if (!$this->hasUser()) {
+            return false;
+        }
+
+        if (is_null($jobConfiguration->getUser())) {
+            return false;
+        }
+
+        if ($jobConfiguration->getUser()->equals($this->user)) {
+            return true;
+        }
+
+        if (!$this->teamService->hasForUser($this->user)) {
+            return false;
+        }
+
+        $people = $this->teamService->getPeopleForUser($this->user);
+
+        foreach ($people as $person) {
+            if ($person->equals($this->user)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
