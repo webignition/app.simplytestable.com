@@ -18,7 +18,7 @@ class Version20150311215311_create_ScheduledJob extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE TABLE ScheduledJob (id INT AUTO_INCREMENT NOT NULL, jobconfiguration_id INT NOT NULL, cronjob_id INT NOT NULL, isRecurring TINYINT(1) NOT NULL, UNIQUE INDEX UNIQ_6147474AE5B4855B (jobconfiguration_id), UNIQUE INDEX UNIQ_6147474A6F6F56F3 (cronjob_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE ScheduledJob (id INT AUTO_INCREMENT NOT NULL, jobconfiguration_id INT NOT NULL, cronjob_id INT NOT NULL, isRecurring TINYINT(1) NOT NULL, INDEX IDX_6147474AE5B4855B (jobconfiguration_id), UNIQUE INDEX UNIQ_6147474A6F6F56F3 (cronjob_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE ScheduledJob ADD CONSTRAINT FK_6147474AE5B4855B FOREIGN KEY (jobconfiguration_id) REFERENCES JobConfiguration (id)');
         $this->addSql('ALTER TABLE ScheduledJob ADD CONSTRAINT FK_6147474A6F6F56F3 FOREIGN KEY (cronjob_id) REFERENCES CronJob (id)');
     }
