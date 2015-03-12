@@ -158,6 +158,15 @@ class Configuration
         return $this->user;
     }
 
+
+    /**
+     * @return bool
+     */
+    public function hasUser() {
+        return !is_null($this->user);
+    }
+
+
     /**
      * Set website
      *

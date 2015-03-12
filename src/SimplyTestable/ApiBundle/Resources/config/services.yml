@@ -382,3 +382,11 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
         teamService: "@simplytestable.services.teamservice"
+
+  simplytestable.services.scheduledjob.service:
+    class: SimplyTestable\ApiBundle\Services\ScheduledJob\Service
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+        jobConfigurationService: "@simplytestable.services.job.configurationservice"
+        teamService: "@simplytestable.services.teamservice"
+        cronManager: "@cron.manager"
