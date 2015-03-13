@@ -179,6 +179,16 @@ class Service extends EntityService {
 
 
     /**
+     * @param ScheduledJob $scheduledJob
+     */
+    public function delete(ScheduledJob $scheduledJob) {
+        $this->getManager()->remove($scheduledJob->getCronJob());
+        $this->getManager()->remove($scheduledJob);
+        $this->getManager()->flush();
+    }
+
+
+    /**
      *
      * @return \SimplyTestable\ApiBundle\Repository\ScheduledJob\Repository
      */
