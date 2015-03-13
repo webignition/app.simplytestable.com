@@ -161,6 +161,24 @@ class Service extends EntityService {
 
 
     /**
+     * @return ScheduledJob[]
+     * @throws ScheduledJobException
+     */
+    public function getList() {
+        if (!$this->hasUser()) {
+            throw new ScheduledJobException(
+                'User is not set',
+                ScheduledJobException::CODE_USER_NOT_SET
+            );
+        }
+
+        return $this->getEntityRepository()->getList(
+            ($this->teamService->hasForUser($this->user) ? $this->teamService->getPeopleForUser($this->user) : [$this->user])
+        );
+    }
+
+
+    /**
      *
      * @return \SimplyTestable\ApiBundle\Repository\ScheduledJob\Repository
      */
