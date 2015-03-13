@@ -189,6 +189,60 @@ class Service extends EntityService {
 
 
     /**
+     * @param ScheduledJob $scheduledJob
+     * @param JobConfiguration $jobConfiguration
+     * @param string $schedule
+     * @param bool $isRecurring
+     * @throws ScheduledJobException
+     */
+    public function update(ScheduledJob $scheduledJob, JobConfiguration $jobConfiguration = null, $schedule = null, $isRecurring = null) {
+        if (!is_null($jobConfiguration) && $scheduledJob->getJobConfiguration()->getId() == $jobConfiguration->getId()) {
+            $jobConfiguration = null;
+        }
+
+        if (!is_null($schedule) && $scheduledJob->getCronJob()->getSchedule() == $schedule) {
+            $schedule = null;
+        }
+
+        if (!is_null($isRecurring) && $scheduledJob->getIsRecurring() == $isRecurring) {
+            $isRecurring = null;
+        }
+
+        if (is_null($jobConfiguration) && is_null($schedule) && is_null($isRecurring)) {
+            return;
+        }
+
+        if (!is_null($jobConfiguration) && !is_null($schedule) && !is_null($isRecurring)) {
+            if ($this->getEntityRepository()->has($jobConfiguration, $schedule, $isRecurring)) {
+                throw new ScheduledJobException(
+                    'Matching scheduled job exists',
+                    ScheduledJobException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
+                );
+            }
+        }
+
+
+        if (!is_null($schedule)) {
+            $scheduledJob->getCronJob()->setSchedule($schedule);
+            $this->getManager()->persist($scheduledJob->getCronJob());
+        }
+
+        if (!is_null($jobConfiguration)) {
+            $scheduledJob->setJobConfiguration($jobConfiguration);
+        }
+
+        if (!is_null($isRecurring)) {
+            $scheduledJob->setIsRecurring($isRecurring);
+        }
+
+        $this->getManager()->persist($scheduledJob);
+        $this->getManager()->flush();
+
+        return;
+    }
+
+
+    /**
      *
      * @return \SimplyTestable\ApiBundle\Repository\ScheduledJob\Repository
      */
