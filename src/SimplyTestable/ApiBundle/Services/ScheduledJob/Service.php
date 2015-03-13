@@ -62,6 +62,22 @@ class Service extends EntityService {
     }
 
 
+    /**
+     * @param User $user
+     */
+    public function setUser(User $user) {
+        $this->user = $user;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function hasUser() {
+        return !is_null($this->user);
+    }
+
+
     public function create(JobConfiguration $jobConfiguration, $schedule = '* * * * *', $isRecurring = true) {
         if (!$jobConfiguration->hasUser()) {
             throw new ScheduledJobException(
@@ -102,6 +118,45 @@ class Service extends EntityService {
         $this->cronManager->saveJob($cronJob);
 
         return $scheduledJob;
+    }
+
+
+    /**
+     * @param $id
+     * @return null|ScheduledJob
+     * @throws \SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception
+     */
+    public function get($id) {
+        if (!$this->hasUser()) {
+            throw new ScheduledJobException(
+                'User is not set',
+                ScheduledJobException::CODE_USER_NOT_SET
+            );
+        }
+
+        /* @var $scheduledJob ScheduledJob */
+        $scheduledJob = $this->getEntityRepository()->find($id);
+        if (is_null($scheduledJob)) {
+            return null;
+        }
+
+        if ($scheduledJob->getJobConfiguration()->getUser()->equals($this->user)) {
+            return $scheduledJob;
+        }
+
+        if (!$this->teamService->hasForUser($this->user)) {
+            return null;
+        }
+
+        $people = $this->teamService->getPeopleForUser($this->user);
+
+        foreach ($people as $person) {
+            if ($scheduledJob->getJobConfiguration()->getUser()->equals($person)) {
+                return $scheduledJob;
+            }
+        }
+
+        return null;
     }
 
 
