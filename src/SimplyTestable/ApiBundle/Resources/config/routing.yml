@@ -263,6 +263,10 @@ scheduledjob_create_create:
     pattern: /scheduledjob/create/
     defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Create:create }
 
+scheduledjob_getlist_list:
+    pattern: /scheduledjob/list/
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\GetList:list }
+
 scheduledjob_delete_delete:
     pattern: /scheduledjob/{id}/delete/
     defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Delete:delete, _format: json }
