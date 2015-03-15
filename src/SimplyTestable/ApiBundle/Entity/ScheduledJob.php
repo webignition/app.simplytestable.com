@@ -32,7 +32,6 @@ class ScheduledJob
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Configuration")
      * @ORM\JoinColumn(name="jobconfiguration_id", referencedColumnName="id", nullable=false)
      *
-     * @SerializerAnnotation\Expose
      */
     private $jobConfiguration;
 
