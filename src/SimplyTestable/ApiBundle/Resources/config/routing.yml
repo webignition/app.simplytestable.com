@@ -258,3 +258,11 @@ jobconfiguration_update_update:
 jobconfiguration_get_get:
     pattern: /jobconfiguration/{label}/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Get:get, _format: json }
+
+scheduledjob_create_create:
+    pattern: /scheduledjob/create/
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Create:create }
+
+scheduledjob_get_get:
+    pattern: /scheduledjob/{id}/
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Get:get, _format: json }
