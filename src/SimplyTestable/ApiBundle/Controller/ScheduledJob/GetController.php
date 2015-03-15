@@ -17,7 +17,8 @@ class GetController extends ScheduledJobController {
             [
                 'id' => $scheduledJob->getId(),
                 'jobconfiguration' => $scheduledJob->getJobConfiguration()->getLabel(),
-                'schedule' => $scheduledJob->getCronJob()->getSchedule()
+                'schedule' => $scheduledJob->getCronJob()->getSchedule(),
+                'isrecurring' => (int)$scheduledJob->getIsRecurring()
             ]
         );
     }

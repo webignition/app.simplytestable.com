@@ -59,7 +59,8 @@ class SuccessTest extends GetListTest {
             [
                 'id' => $this->scheduledJob->getId(),
                 'jobconfiguration' => 'foo',
-                'schedule' => '* * * * *'
+                'schedule' => '* * * * *',
+                'isrecurring' => 1
             ]
         ], $this->decodedResponse);
     }

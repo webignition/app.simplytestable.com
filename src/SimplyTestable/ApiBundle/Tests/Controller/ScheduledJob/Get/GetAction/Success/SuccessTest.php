@@ -58,7 +58,8 @@ class SuccessTest extends GetTest {
         $this->assertEquals([
             'id' => $this->scheduledJob->getId(),
             'jobconfiguration' =>  $this->scheduledJob->getJobConfiguration()->getLabel(),
-            'schedule' => $this->scheduledJob->getCronJob()->getSchedule()
+            'schedule' => $this->scheduledJob->getCronJob()->getSchedule(),
+            'isrecurring' => 1
         ], $this->decodedResponse);
     }
 
