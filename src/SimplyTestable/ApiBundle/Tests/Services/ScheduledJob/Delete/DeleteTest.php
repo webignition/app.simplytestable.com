@@ -45,4 +45,9 @@ class SingleUserTest extends ServiceTest {
     public function testScheduledJobIsDeleted() {
         $this->assertNull($this->scheduledJob->getId());
     }
+
+
+    public function testJobConfigurationIsNotDeleted() {
+        $this->assertNotNull($this->scheduledJob->getJobConfiguration()->getId());
+    }
 }
