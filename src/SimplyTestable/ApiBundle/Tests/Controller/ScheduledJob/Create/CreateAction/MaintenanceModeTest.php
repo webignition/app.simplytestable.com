@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Create\CreateAction;
 
-use SimplyTestable\ApiBundle\Tests\Controller\UserCreation\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Create\ActionTest;
 
 class MaintenanceModeTest extends ActionTest {
 
