@@ -196,6 +196,10 @@ class Service extends EntityService {
      * @throws ScheduledJobException
      */
     public function update(ScheduledJob $scheduledJob, JobConfiguration $jobConfiguration = null, $schedule = null, $isRecurring = null) {
+        $comparatorJobConfiguration = is_null($jobConfiguration) ? clone $scheduledJob->getJobConfiguration() : $jobConfiguration;
+        $comparatorSchedule = is_null($schedule) ? $scheduledJob->getCronJob()->getSchedule() : $schedule;
+        $comparatorIsRecurring = is_null($isRecurring) ? $scheduledJob->getIsRecurring() : $isRecurring;
+
         if (!is_null($jobConfiguration) && $scheduledJob->getJobConfiguration()->getId() == $jobConfiguration->getId()) {
             $jobConfiguration = null;
         }
@@ -212,8 +216,8 @@ class Service extends EntityService {
             return;
         }
 
-        if (!is_null($jobConfiguration) && !is_null($schedule) && !is_null($isRecurring)) {
-            if ($this->getEntityRepository()->has($jobConfiguration, $schedule, $isRecurring)) {
+        if (!is_null($comparatorJobConfiguration) && !is_null($comparatorSchedule) && !is_null($comparatorIsRecurring)) {
+            if ($this->getEntityRepository()->has($comparatorJobConfiguration, $comparatorSchedule, $comparatorIsRecurring)) {
                 throw new ScheduledJobException(
                     'Matching scheduled job exists',
                     ScheduledJobException::CODE_MATCHING_SCHEDULED_JOB_EXISTS

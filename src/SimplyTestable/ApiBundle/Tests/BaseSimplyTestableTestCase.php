@@ -552,7 +552,7 @@ EOD;
      * @param string $password
      * @return \SimplyTestable\ApiBundle\Entity\User
      */
-    protected function createAndActivateUser($email, $password = 'password') {
+    protected function createAndActivateUser($email = 'user@example.com', $password = 'password') {
         $this->createUser($email, $password);
         
         $user = $this->getUserService()->findUserByEmail($email);            

@@ -1,0 +1,25 @@
+<?php
+
+namespace SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Update;
+
+use SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\ActionTest as BaseActionTest;
+
+abstract class ActionTest extends BaseActionTest {
+
+    public function setUp() {
+        parent::setUp();
+        $this->getRouter()->getContext()->setMethod('POST');
+    }
+
+
+    /**
+     * @param array $postData
+     * @param array $queryData
+     * @return \SimplyTestable\ApiBundle\Controller\ScheduledJob\UpdateController
+     */
+    protected function getCurrentController(array $postData = [], array $queryData = []) {
+        return parent::getCurrentController($postData, $queryData);
+    }
+
+
+}
