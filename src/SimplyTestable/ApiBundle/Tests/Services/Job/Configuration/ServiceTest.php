@@ -17,6 +17,14 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
 
 
     /**
+     * @return \SimplyTestable\ApiBundle\Services\ScheduledJob\Service
+     */
+    protected function getScheduledJobService() {
+        return $this->container->get('simplytestable.services.scheduledjob.service');
+    }
+
+
+    /**
      * @return TaskConfigurationCollection
      */
     protected function getStandardTaskConfigurationCollection() {
