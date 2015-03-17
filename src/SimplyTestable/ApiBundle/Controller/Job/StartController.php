@@ -36,7 +36,12 @@ class StartController extends ApiController {
         $jobConfiguration->setUser($this->getUser());
 
         try {
-            $this->getJobStartService()->start($jobConfiguration);
+            $job = $this->getJobStartService()->start($jobConfiguration);
+
+            return $this->redirect($this->generateUrl('job_job_status', array(
+                'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
+                'test_id' => $job->getId()
+            )));
         } catch (JobStartServiceException $jobStartServiceException) {
             if ($jobStartServiceException->isUnroutableWebsiteException()) {
                 return $this->rejectAsUnroutableAndRedirect($jobConfiguration);
@@ -49,13 +54,6 @@ class StartController extends ApiController {
                 $userAccountPlanEnforcementException->getAccountPlanConstraint()
             );
         }
-
-        $job = $this->getJobStartService()->start($jobConfiguration);
-        
-        return $this->redirect($this->generateUrl('job_job_status', array(
-            'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
-            'test_id' => $job->getId()
-        )));
     }
     
     

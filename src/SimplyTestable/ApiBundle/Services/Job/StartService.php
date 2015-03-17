@@ -57,6 +57,12 @@ class StartService {
     }
 
 
+    /**
+     * @param JobConfiguration $jobConfiguration
+     * @return null|Job
+     * @throws JobStartServiceException
+     * @throws UserAccountPlanEnforcementException
+     */
     public function start(JobConfiguration $jobConfiguration) {
         if (!$jobConfiguration->getWebsite()->isPubliclyRoutable()) {
             throw new JobStartServiceException(
