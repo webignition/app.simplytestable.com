@@ -8,6 +8,7 @@ class Exception extends \Exception {
 
     const CODE_FULL_SITE_JOB_LIMIT_REACHED = 1;
     const CODE_SINGLE_URL_JOB_LIMIT_REACHED = 2;
+    const CODE_CREDIT_LIMIT_REACHED = 3;
 
 
     /**
@@ -53,5 +54,13 @@ class Exception extends \Exception {
      */
     public function isJobLimitReachedException() {
         return $this->isFullSiteJobLimitReachedException() || $this->isSingleUrlJobLimitReachedException();
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isCreditLimitReachedException() {
+        return $this->getCode() == self::CODE_CREDIT_LIMIT_REACHED;
     }
 }

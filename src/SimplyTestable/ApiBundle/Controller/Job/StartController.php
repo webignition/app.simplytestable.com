@@ -48,24 +48,13 @@ class StartController extends ApiController
 
             throw $jobStartServiceException;
         } catch (UserAccountPlanEnforcementException $userAccountPlanEnforcementException) {
-            if ($userAccountPlanEnforcementException->isJobLimitReachedException()) {
-                return $this->rejectAsPlanLimitReachedAndRedirect(
-                    $userAccountPlanEnforcementException->getAccountPlanConstraint()
-                );
-            }
-
-            throw $userAccountPlanEnforcementException;
+            return $this->rejectAsPlanLimitReachedAndRedirect(
+                $userAccountPlanEnforcementException->getAccountPlanConstraint()
+            );
         }
 
         $this->siteRootUrl = $site_root_url;
 
-        $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
-        $this->getJobUserAccountPlanEnforcementService()->setJobType($jobConfiguration->getType());
-
-        if ($this->getJobUserAccountPlanEnforcementService()->isUserCreditLimitReached()) {
-            return $this->rejectAsPlanLimitReachedAndRedirect($this->getJobUserAccountPlanEnforcementService()->getCreditsPerMonthConstraint());
-        }
-        
         $existingJobs = $this->getJobService()->getEntityRepository()->getAllByWebsiteAndStateAndUserAndType(
             $this->getWebsite(),
             $this->getJobService()->getIncompleteStates(),
@@ -353,15 +342,7 @@ class StartController extends ApiController
     private function getJobTypeService() {
         return $this->get('simplytestable.services.jobtypeservice');
     } 
-    
-    
-    /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
-     */
-    private function getJobUserAccountPlanEnforcementService() {
-        return $this->get('simplytestable.services.jobuseraccountplanenforcementservice');
-    } 
+
     
     /**
      *

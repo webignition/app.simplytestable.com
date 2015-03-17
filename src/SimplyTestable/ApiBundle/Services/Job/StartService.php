@@ -59,6 +59,14 @@ class StartService {
                 );
             }
         }
+
+        if ($this->jobUserAccountPlanEnforcementService->isUserCreditLimitReached()) {
+            throw new UserAccountPlanEnforcementException(
+                'Credit limit reached',
+                UserAccountPlanEnforcementException::CODE_CREDIT_LIMIT_REACHED,
+                $this->jobUserAccountPlanEnforcementService->getCreditsPerMonthConstraint()
+            );
+        }
     }
 
 
