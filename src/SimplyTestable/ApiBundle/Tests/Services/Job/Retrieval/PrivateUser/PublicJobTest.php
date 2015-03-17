@@ -17,7 +17,10 @@ class PublicJobTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $response = $this->getJobStartController('startAction')->startAction(self::CANONICAL_URL);
+        $response = $this->getJobStartController('startAction')->startAction(
+            $this->container->get('request'),
+            self::CANONICAL_URL
+        );
         $this->job = $this->getJobService()->getById($this->getJobIdFromUrl($response->getTargetUrl()));
 
         $this->getJobRetrievalService()->setUser($this->createAndActivateUser('user@example.com'));
