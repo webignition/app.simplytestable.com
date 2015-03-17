@@ -1143,19 +1143,21 @@ EOD;
      *
      * @return string
      */
-    protected function getActionNameFromRouter() {
-        return explode('::', $this->getRouteController())[1];
+    protected function getActionNameFromRouter($routeParameters = null) {
+        return explode('::', $this->getRouteController($routeParameters))[1];
     }
 
 
 
-    protected function getRouteController() {
-        return $this->getRouter()->match($this->getCurrentRequestUrl($this->getRouteParameters()))[self::ROUTER_MATCH_CONTROLLER_KEY];
+    protected function getRouteController($routeParameters = null) {
+        $routeParameters = (is_null($routeParameters)) ? $this->getRouteParameters() : $routeParameters;
+        return $this->getRouter()->match($this->getCurrentRequestUrl($routeParameters))[self::ROUTER_MATCH_CONTROLLER_KEY];
     }
 
 
-    protected function getCurrentRequestUrl() {
-        return $this->getCurrentController()->generateUrl($this->getRouteFromTestNamespace(), $this->getRouteParameters());
+    protected function getCurrentRequestUrl($routeParameters = null) {
+        $routeParameters = (is_null($routeParameters)) ? $this->getRouteParameters() : $routeParameters;
+        return $this->getCurrentController()->generateUrl($this->getRouteFromTestNamespace(), $routeParameters);
     }
 
 
