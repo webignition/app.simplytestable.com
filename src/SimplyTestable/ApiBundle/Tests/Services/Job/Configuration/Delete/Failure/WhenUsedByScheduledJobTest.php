@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Delete\Failu
 use SimplyTestable\ApiBundle\Tests\Services\Job\Configuration\Delete\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 
 class WhenUsedByScheduledJobTest extends ServiceTest {
 
@@ -35,7 +36,11 @@ class WhenUsedByScheduledJobTest extends ServiceTest {
     }
 
     public function testDeleteThrowsForeignKeyException() {
-        $this->setExpectedException('Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException');
+        $this->setExpectedException(
+            'SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception',
+            'Job configuration is in use by one or more scheduled jobs',
+            JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB
+        );
 
         $this->getJobConfigurationService()->delete(self::LABEL);
     }

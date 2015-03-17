@@ -265,7 +265,16 @@ class ConfigurationService extends EntityService {
             $this->getManager()->remove($taskConfiguration);
         }
 
-        $this->getManager()->flush();
+        try {
+            $this->getManager()->flush();
+        } catch (ForeignKeyConstraintViolationException $foo) {
+            throw new JobConfigurationServiceException(
+                'Job configuration is in use by one or more scheduled jobs',
+                JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB
+            );
+        }
+
+
     }
 
     /**
