@@ -390,3 +390,6 @@ services:
         jobConfigurationService: "@simplytestable.services.job.configurationservice"
         teamService: "@simplytestable.services.teamservice"
         cronManager: "@cron.manager"
+
+  simplytestable.services.job.startservice:
+    class:  SimplyTestable\ApiBundle\Services\Job\StartService

@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
-
+use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Controller\ApiController;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -37,13 +37,14 @@ class StartController extends ApiController
 
         $jobConfiguration = $requestAdapter->getJobConfiguration();
 
-        //var_dump($request->request->get('type'), $jobConfiguration->getType()->getName());
-        //exit();
-        
+        try {
+            $this->getJobStartService()->start($jobConfiguration);
+        } catch (JobStartServiceException $jobStartServiceException) {
+            if ($jobStartServiceException->isUnroutableWebsiteException()) {
+                return $this->rejectAsUnroutableAndRedirect();
+            }
 
-        
-        if (!$jobConfiguration->getWebsite()->isPubliclyRoutable()) {
-            return $this->rejectAsUnroutableAndRedirect();
+            throw $jobStartServiceException;
         }
 
         $this->siteRootUrl = $site_root_url;
