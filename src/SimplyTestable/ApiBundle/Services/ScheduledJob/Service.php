@@ -253,4 +253,34 @@ class Service extends EntityService {
     public function getEntityRepository() {
         return parent::getEntityRepository();
     }
+
+
+    /**
+     * @throws ScheduledJobException
+     */
+    public function removeAll() {
+        if (!$this->hasUser()) {
+            throw new ScheduledJobException(
+                'User is not set',
+                ScheduledJobException::CODE_USER_NOT_SET
+            );
+        }
+
+        if ($this->teamService->hasForUser($this->user)) {
+            throw new ScheduledJobException(
+                'Unable to remove all; user is in a team',
+                ScheduledJobException::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM
+            );
+        }
+
+        $userScheduledJobs = $this->getEntityRepository()->getList([$this->user]);
+
+        foreach ($userScheduledJobs as $userScheduledJob) {
+            /* @var $userScheduledJob ScheduledJob */
+            $this->getManager()->remove($userScheduledJob->getCronJob());
+            $this->getManager()->remove($userScheduledJob);
+
+            $this->getManager()->flush();
+        }
+    }
 }
