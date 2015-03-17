@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\JobConfiguration\Delete\DeleteAction;
 
-use SimplyTestable\ApiBundle\Tests\Controller\JobConfiguration\Create\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Controller\JobConfiguration\Delete\ActionTest;
 
 abstract class DeleteTest extends ActionTest {
 
