@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Controller\ApiController;
 use Symfony\Component\HttpFoundation\Request;
+use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception as UserAccountPlanEnforcementException;
 
 class StartController extends ApiController
 {
@@ -36,6 +37,7 @@ class StartController extends ApiController
         );
 
         $jobConfiguration = $requestAdapter->getJobConfiguration();
+        $jobConfiguration->setUser($this->getUser());
 
         try {
             $this->getJobStartService()->start($jobConfiguration);
@@ -45,19 +47,20 @@ class StartController extends ApiController
             }
 
             throw $jobStartServiceException;
+        } catch (UserAccountPlanEnforcementException $userAccountPlanEnforcementException) {
+            if ($userAccountPlanEnforcementException->isFullSiteJobLimitReachedExcepton()) {
+                return $this->rejectAsPlanLimitReachedAndRedirect(
+                    $userAccountPlanEnforcementException->getAccountPlanConstraint()
+                );
+            }
+
+            throw $userAccountPlanEnforcementException;
         }
 
         $this->siteRootUrl = $site_root_url;
 
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
         $this->getJobUserAccountPlanEnforcementService()->setJobType($jobConfiguration->getType());
-        
-        if ($jobConfiguration->getType()->equals($this->getJobTypeService()->getFullSiteType())) {
-            if ($this->getJobUserAccountPlanEnforcementService()->isFullSiteJobLimitReachedForWebSite($this->getWebsite())) {
-                return $this->rejectAsPlanLimitReachedAndRedirect($this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint());
-            }
-        }
-        
         
         if ($jobConfiguration->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {
             if ($this->getJobUserAccountPlanEnforcementService()->isSingleUrlLimitReachedForWebsite($this->getWebsite())) {                

@@ -393,3 +393,6 @@ services:
 
   simplytestable.services.job.startservice:
     class:  SimplyTestable\ApiBundle\Services\Job\StartService
+    arguments:
+        jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
+        jobTypeService: "@simplytestable.services.jobtypeservice"

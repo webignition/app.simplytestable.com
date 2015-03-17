@@ -8,7 +8,7 @@ use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\WebSite;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstaint;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 
 class JobUserAccountPlanEnforcementService {
     
@@ -191,7 +191,7 @@ class JobUserAccountPlanEnforcementService {
 
     /**
      * 
-     * @return AccountPlanConstaint
+     * @return AccountPlanConstraint
      */
     public function getFullSiteJobLimitConstraint() {
         return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME);
@@ -200,7 +200,7 @@ class JobUserAccountPlanEnforcementService {
     
     /**
      * 
-     * @return AccountPlanConstaint
+     * @return AccountPlanConstraint
      */
     public function getSingleUrlJobLimitConstraint() {
         return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(self::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME);
@@ -209,7 +209,7 @@ class JobUserAccountPlanEnforcementService {
 
     /**
      * 
-     * @return AccountPlanConstaint
+     * @return AccountPlanConstraint
      */
     public function getJobUrlLimitConstraint() {
         return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME);
@@ -218,7 +218,7 @@ class JobUserAccountPlanEnforcementService {
     
     /**
      * 
-     * @return AccountPlanConstaint
+     * @return AccountPlanConstraint
      */
     public function getCreditsPerMonthConstraint() {
         return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(self::CREDITS_PER_MONTH_CONSTRAINT_NAME);
