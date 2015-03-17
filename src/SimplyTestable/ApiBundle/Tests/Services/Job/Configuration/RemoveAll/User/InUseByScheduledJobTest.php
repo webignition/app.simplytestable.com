@@ -10,14 +10,6 @@ class InUseByScheduledJobTest extends UserTest {
         parent::setUp();
 
         $this->getScheduledJobService()->create($this->jobConfiguration);
-
-//        try {
-
-//        } catch (\Exception $e) {
-//            var_dump(get_class($e));
-//        }
-
-
     }
 
     public function testRemoveThrowsException() {
