@@ -297,7 +297,7 @@ class Job
     /**
      * Get state
      *
-     * @return use SimplyTestable\ApiBundle\Entity\State 
+     * @return \SimplyTestable\ApiBundle\Entity\State
      */
     public function getState()
     {

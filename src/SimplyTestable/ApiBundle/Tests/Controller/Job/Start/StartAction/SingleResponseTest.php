@@ -8,7 +8,7 @@ abstract class SingleResponseTest extends ActionTest {
     /**
      * @var RedirectResponse
      */
-    private $response;
+    protected $response;
 
     public function setUp() {
         parent::setUp();
