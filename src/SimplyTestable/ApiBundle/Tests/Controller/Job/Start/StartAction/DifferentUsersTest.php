@@ -24,15 +24,24 @@ class DifferentUsersTest extends ActionTest {
 
         $this->responses[] = $this->getCurrentController([
             'user' => $user1
-        ])->$methodName(self::DEFAULT_CANONICAL_URL);
+        ])->$methodName(
+            $this->container->get('request'),
+            self::DEFAULT_CANONICAL_URL
+        );
 
         $this->responses[] = $this->getCurrentController([
             'user' => $user2
-        ])->$methodName(self::DEFAULT_CANONICAL_URL);
+        ])->$methodName(
+            $this->container->get('request'),
+            self::DEFAULT_CANONICAL_URL
+        );
 
         $this->responses[] = $this->getCurrentController([
             'user' => $user1
-        ])->$methodName(self::DEFAULT_CANONICAL_URL);
+        ])->$methodName(
+            $this->container->get('request'),
+            self::DEFAULT_CANONICAL_URL
+        );
     }
 
 

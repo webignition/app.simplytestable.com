@@ -24,7 +24,10 @@ class ActionTest extends BaseActionTest {
         parent::setUp();
 
         $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController()->$methodName(self::CANONICAL_URL);
+        $this->response = $this->getCurrentController()->$methodName(
+            $this->container->get('request'),
+            self::CANONICAL_URL
+        );
         $this->jobId = $this->getJobIdFromUrl($this->response->getTargetUrl());
     }
 

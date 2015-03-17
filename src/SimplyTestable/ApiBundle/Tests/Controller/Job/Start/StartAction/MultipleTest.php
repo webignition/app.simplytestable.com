@@ -25,7 +25,10 @@ class MultipleTest extends ActionTest {
             $methodName = $this->getActionNameFromRouter([
                 'site_root_url' => $canonicalUrl
             ]);
-            $this->responses[$canonicalUrl] = $this->getCurrentController()->$methodName($canonicalUrl);
+            $this->responses[$canonicalUrl] = $this->getCurrentController()->$methodName(
+                $this->container->get('request'),
+                $canonicalUrl
+            );
         }
     }
 

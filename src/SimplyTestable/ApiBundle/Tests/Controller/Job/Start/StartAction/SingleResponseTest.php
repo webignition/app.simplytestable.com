@@ -16,10 +16,17 @@ abstract class SingleResponseTest extends ActionTest {
         $this->preCall();
 
         $methodName = $this->getActionNameFromRouter([
-            'site_root_url' => self::DEFAULT_CANONICAL_URL
+            'site_root_url' => $this->getCanonicalUrl()
         ]);
 
-        $this->response = $this->getCurrentController()->$methodName(self::DEFAULT_CANONICAL_URL);
+        $this->response = $this->getCurrentController()->$methodName(
+            $this->container->get('request'),
+            $this->getCanonicalUrl()
+        );
+    }
+
+    protected function getCanonicalUrl() {
+        return self::DEFAULT_CANONICAL_URL;
     }
 
     protected function preCall() {}

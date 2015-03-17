@@ -6,15 +6,17 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 
 use SimplyTestable\ApiBundle\Controller\ApiController;
+use Symfony\Component\HttpFoundation\Request;
 
 class StartController extends ApiController
 {
-    private $siteRootUrl = null;   
-    
-    public function startAction($site_root_url)
-    {        
+    private $siteRootUrl = null;
+
+
+    public function startAction(Request $request, $site_root_url) {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }        
@@ -22,10 +24,22 @@ class StartController extends ApiController
         if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
+
+        if (!$request->attributes->has('site_root_url')) {
+            $request->attributes->set('site_root_url', $site_root_url);
+        }
+
+        $requestAdapter = new RequestAdapter();
+        $requestAdapter->setRequest($request);
+        $requestAdapter->setWebsiteService($this->get('simplytestable.services.websiteservice'));
+
+        $jobConfiguration = $requestAdapter->getJobConfiguration();
+
+        //var_dump($site_root_url, $jobConfiguration, $jobConfiguration->getWebsite());
         
         $this->siteRootUrl = $site_root_url;
         
-        if (!$this->getWebsite()->isPubliclyRoutable()) {
+        if (!$jobConfiguration->getWebsite()->isPubliclyRoutable()) {
             return $this->rejectAsUnroutableAndRedirect();
         }
 
@@ -372,7 +386,15 @@ class StartController extends ApiController
      */
     private function getJobRejectionService() {
         return $this->get('simplytestable.services.job.rejectionservice');
-    }     
+    }
+
+
+    /**
+     * @return \SimplyTestable\ApiBundle\Services\Job\StartService
+     */
+    private function getJobStartService() {
+        return $this->get('simplytestable.services.job.startservice');
+    }
     
 
     
