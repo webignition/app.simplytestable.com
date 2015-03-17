@@ -286,7 +286,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
             $postData['parameters'] = $parameters;
         }
         
-        return $this->getJobStartController('startAction', $postData)->startAction($canonicalUrl);
+        return $this->getJobStartController('startAction', $postData)->startAction(
+            $this->container->get('request'),
+            $canonicalUrl
+        );
     } 
     
     

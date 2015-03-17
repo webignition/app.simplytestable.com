@@ -7,12 +7,20 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 class RetestTest extends BaseControllerJsonTestCase {
     
     public function testWithInvalidId() {        
-        $this->assertEquals(400, $this->getJobStartController('retestAction')->retestAction('foo', 1)->getStatusCode());
+        $this->assertEquals(400, $this->getJobStartController('retestAction')->retestAction(
+            $this->container->get('request'),
+            'foo',
+            1
+        )->getStatusCode());
     }    
     
     public function testWithIncompleteJob() {  
         $jobId = $this->createJobAndGetId('http://example.com/');
-        $this->assertEquals(400, $this->getJobStartController('retestAction')->retestAction('foo', $jobId)->getStatusCode());
+        $this->assertEquals(400, $this->getJobStartController('retestAction')->retestAction(
+            $this->container->get('request'),
+            'foo',
+            $jobId
+        )->getStatusCode());
     }       
     
     public function testRetestJobIsNotOriginalJob() {  
@@ -20,7 +28,11 @@ class RetestTest extends BaseControllerJsonTestCase {
         $job->setState($this->getJobService()->getCompletedState());
         $this->getJobService()->persistAndFlush($job);        
         
-        $response = $this->getJobStartController('retestAction')->retestAction('foo', $job->getId());
+        $response = $this->getJobStartController('retestAction')->retestAction(
+            $this->container->get('request'),
+            'foo',
+            $job->getId()
+        );
         
         $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
         $retestJob = $this->getJobService()->getById($retestJobId);
@@ -33,7 +45,11 @@ class RetestTest extends BaseControllerJsonTestCase {
         $job->setState($this->getJobService()->getCompletedState());
         $this->getJobService()->persistAndFlush($job);        
         
-        $response = $this->getJobStartController('retestAction')->retestAction('foo', $job->getId());
+        $response = $this->getJobStartController('retestAction')->retestAction(
+            $this->container->get('request'),
+            'foo',
+            $job->getId()
+        );
         
         $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
         $retestJob = $this->getJobService()->getById($retestJobId);
@@ -46,7 +62,11 @@ class RetestTest extends BaseControllerJsonTestCase {
         $job->setState($this->getJobService()->getCompletedState());
         $this->getJobService()->persistAndFlush($job);        
         
-        $response = $this->getJobStartController('retestAction')->retestAction('foo', $job->getId());
+        $response = $this->getJobStartController('retestAction')->retestAction(
+            $this->container->get('request'),
+            'foo',
+            $job->getId()
+        );
         
         $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
         $retestJob = $this->getJobService()->getById($retestJobId);
@@ -63,7 +83,11 @@ class RetestTest extends BaseControllerJsonTestCase {
         $job->setState($this->getJobService()->getCompletedState());
         $this->getJobService()->persistAndFlush($job);        
         
-        $response = $this->getJobStartController('retestAction')->retestAction('foo', $job->getId());
+        $response = $this->getJobStartController('retestAction')->retestAction(
+            $this->container->get('request'),
+            'foo',
+            $job->getId()
+        );
         
         $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
         $retestJob = $this->getJobService()->getById($retestJobId);
@@ -84,7 +108,11 @@ class RetestTest extends BaseControllerJsonTestCase {
         $job->setState($this->getJobService()->getCompletedState());
         $this->getJobService()->persistAndFlush($job);        
         
-        $response = $this->getJobStartController('retestAction')->retestAction('foo', $job->getId());
+        $response = $this->getJobStartController('retestAction')->retestAction(
+            $this->container->get('request'),
+            'foo',
+            $job->getId()
+        );
         
         $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
         $retestJob = $this->getJobService()->getById($retestJobId);
@@ -120,7 +148,11 @@ class RetestTest extends BaseControllerJsonTestCase {
         $job->setState($this->getJobService()->getCompletedState());
         $this->getJobService()->persistAndFlush($job);        
         
-        $response = $this->getJobStartController('retestAction')->retestAction('foo', $job->getId());
+        $response = $this->getJobStartController('retestAction')->retestAction(
+            $this->container->get('request'),
+            'foo',
+            $job->getId()
+        );
         
         $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
         $retestJob = $this->getJobService()->getById($retestJobId);

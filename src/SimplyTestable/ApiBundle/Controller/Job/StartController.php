@@ -116,7 +116,7 @@ class StartController extends ApiController
     }
     
     
-    public function retestAction($site_root_url, $test_id) {
+    public function retestAction(Request $request, $site_root_url, $test_id) {
         $job = $this->getJobService()->getById($test_id);
         if (is_null($job)) {
             return $this->sendFailureResponse();
@@ -142,7 +142,7 @@ class StartController extends ApiController
         $query->set('test-types', $taskTypeNames);        
         $query->set('test-type-options', $taskTypeOptionsArray);
         
-        return $this->startAction($job->getWebsite()->getCanonicalUrl());
+        return $this->startAction($request, $job->getWebsite()->getCanonicalUrl());
     }      
     
     private function rejectAsUnroutableAndRedirect() {
