@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 
 class ConfigurationService extends EntityService {
 
@@ -314,7 +315,16 @@ class ConfigurationService extends EntityService {
             }
 
             $this->getManager()->remove($userJobConfiguration);
-            $this->getManager()->flush($userJobConfiguration);
+
+            try {
+                $this->getManager()->flush($userJobConfiguration);
+            } catch (ForeignKeyConstraintViolationException $foo) {
+                throw new JobConfigurationServiceException(
+                    'One or more job configurations are in use by one or more scheduled jobs',
+                    JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB
+                );
+            }
+
         }
     }
 

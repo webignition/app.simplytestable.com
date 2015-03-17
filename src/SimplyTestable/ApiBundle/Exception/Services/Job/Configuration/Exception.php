@@ -13,6 +13,7 @@ class Exception extends \Exception {
     const CODE_LABEL_CANNOT_BE_EMPTY = 7;
     const CODE_WEBSITE_CANNOT_BE_EMPTY = 8;
     const CODE_TYPE_CANNOT_BE_EMPTY = 9;
+    const CODE_IS_IN_USE_BY_SCHEDULED_JOB = 10;
 
 
     /**
@@ -86,5 +87,12 @@ class Exception extends \Exception {
      */
     public function isTypeCannotBeEmptyException() {
         return $this->getCode() == self::CODE_TYPE_CANNOT_BE_EMPTY;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInUseByScheduledJobException() {
+        return $this->getCode() == self::CODE_IS_IN_USE_BY_SCHEDULED_JOB;
     }
 }
