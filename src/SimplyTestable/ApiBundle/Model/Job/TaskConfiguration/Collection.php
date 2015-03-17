@@ -2,7 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Model\Job\TaskConfiguration;
 
+use Proxies\__CG__\SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use  SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Model\Task\Type\Collection as TaskTypeCollection;
 
 class Collection {
 
@@ -89,6 +92,20 @@ class Collection {
     public function clear() {
         $this->collection = [];
         return $this;
+    }
+
+
+    /**
+     * @return TaskTypeCollection
+     */
+    public function getTaskTypes() {
+        $taskTypes = new TaskTypeCollection();
+
+        foreach ($this->get() as $taskConfiguration) {
+            $taskTypes->add($taskConfiguration->getType());
+        }
+
+        return $taskTypes;
     }
 
 }

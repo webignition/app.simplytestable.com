@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +12,7 @@ use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use  SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
 class RequestAdapter {
 
@@ -33,6 +35,12 @@ class RequestAdapter {
 
 
     /**
+     * @var TaskTypeService
+     */
+    private $taskTypeService;
+
+
+    /**
      * @var JobConfiguration
      */
     private $jobConfiguration;
@@ -41,12 +49,14 @@ class RequestAdapter {
     public function __construct(
         Request $request,
         WebSiteService $webSiteService,
-        JobTypeService $jobTypeService
+        JobTypeService $jobTypeService,
+        TaskTypeService $taskTypeService
     ) {
         $this->request = $request;
         $this->jobConfiguration = null;
         $this->websiteService = $webSiteService;
         $this->jobTypeService = $jobTypeService;
+        $this->taskTypeService = $taskTypeService;
     }
 
 
@@ -66,6 +76,14 @@ class RequestAdapter {
         $this->jobConfiguration = new JobConfiguration();
         $this->jobConfiguration->setWebsite($this->getRequestWebsite());
         $this->jobConfiguration->setType($this->getRequestJobType());
+
+        foreach ($this->getTaskConfigurationCollection()->get() as $taskConfiguration) {
+            $this->jobConfiguration->addTaskConfiguration($taskConfiguration);
+        }
+
+        if ($this->hasRequestParameters()) {
+            $this->jobConfiguration->setParameters($this->getRequestParameters());
+        }
     }
 
 
@@ -86,6 +104,121 @@ class RequestAdapter {
         }
 
         return $this->jobTypeService->getByName($this->request->request->get('type'));
+    }
+
+
+    private function getTaskConfigurationCollection() {
+        $collection = $this->getRequestTaskConfigurationCollection();
+
+        if ($collection->isEmpty()) {
+            $selectableTaskTypes = $this->getAllSelectableTaskTypes();
+            foreach ($selectableTaskTypes as $taskType) {
+                $taskConfiguration = new TaskConfiguration();
+                $taskConfiguration->setType($taskType);
+                $collection->add($taskConfiguration);
+            }
+        }
+
+        return $collection;
+    }
+
+
+    private function getRequestTaskConfigurationCollection() {
+        $collection = new TaskConfigurationCollection();
+
+        if (!$this->request->request->has('test-types')) {
+            return $collection;
+        }
+
+        if (!is_array($this->request->request->get('test-types'))) {
+            return $collection;
+        }
+
+        foreach ($this->request->request->get('test-types') as $taskTypeName) {
+            if ($this->taskTypeService->exists($taskTypeName)) {
+                $taskType = $this->taskTypeService->getByName($taskTypeName);
+
+                if ($taskType->isSelectable()) {
+                    $taskConfiguration = new TaskConfiguration();
+                    $taskConfiguration->setType($taskType);
+                    $taskConfiguration->setOptions($this->getRequestTaskTypeOptions($taskType));
+                    $collection->add($taskConfiguration);
+                }
+            }
+        }
+
+        return $collection;
+    }
+
+
+    /**
+     * @param TaskType $taskType
+     * @return array
+     */
+    private function getRequestTaskTypeOptions(TaskType $taskType) {
+        if (!$this->request->request->has('test-type-options')) {
+            return [];
+        }
+
+        if (!is_array($this->request->request->get('test-type-options'))) {
+            return [];
+        }
+
+        $rawTaskTypeOptions = $this->request->request->get('test-type-options');
+
+        foreach ($rawTaskTypeOptions as $taskTypeName => $options) {
+            if (strtolower(urldecode(strtolower($taskTypeName))) == strtolower($taskType->getName())) {
+                return $options;
+            }
+        }
+
+        return [];
+    }
+
+
+    /**
+     *
+     * @return array
+     */
+    private function getAllSelectableTaskTypes() {
+        return $this->taskTypeService->getEntityRepository()->findBy([
+            'selectable' => true
+        ]);
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getRequestParameters() {
+        if (!$this->request->request->has('parameters')) {
+            return null;
+        }
+
+        if (!is_array($this->request->request->get('parameters'))) {
+            return null;
+        }
+
+        $parameters = [];
+        $rawParameters = $this->request->request->get('parameters');
+
+        foreach ($rawParameters as $key => $value) {
+            $parameters[urldecode(strtolower($key))] = $value;
+        }
+
+        if (!count($parameters)) {
+            return null;
+        }
+
+        return $parameters;
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function hasRequestParameters() {
+        return !is_null($this->getRequestParameters());
     }
     
 }

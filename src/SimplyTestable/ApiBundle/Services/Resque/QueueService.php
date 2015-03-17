@@ -166,5 +166,13 @@ class QueueService {
     public function getResque() {
         return $this->resque;
     }
+
+
+    /**
+     * @return JobFactoryService
+     */
+    public function getJobFactoryService() {
+        return $this->jobFactoryService;
+    }
     
 }

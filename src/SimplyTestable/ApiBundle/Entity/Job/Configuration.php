@@ -319,12 +319,12 @@ class Configuration
     /**
      * Add taskConfigurations
      *
-     * @param TaskConfiguration $taskConfigurations
+     * @param TaskConfiguration $taskConfiguration
      * @return Configuration
      */
-    public function addTaskConfiguration(TaskConfiguration $taskConfigurations)
+    public function addTaskConfiguration(TaskConfiguration $taskConfiguration)
     {
-        $this->taskConfigurations[] = $taskConfigurations;
+        $this->taskConfigurations[] = $taskConfiguration;
 
         return $this;
     }
@@ -332,11 +332,11 @@ class Configuration
     /**
      * Remove taskConfigurations
      *
-     * @param TaskConfiguration $taskConfigurations
+     * @param TaskConfiguration $taskConfiguration
      */
-    public function removeTaskConfiguration(TaskConfiguration $taskConfigurations)
+    public function removeTaskConfiguration(TaskConfiguration $taskConfiguration)
     {
-        $this->taskConfigurations->removeElement($taskConfigurations);
+        $this->taskConfigurations->removeElement($taskConfiguration);
     }
 
     /**

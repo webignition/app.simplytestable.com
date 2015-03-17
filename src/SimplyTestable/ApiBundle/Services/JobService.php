@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
+use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 
 class JobService extends EntityService {
     
@@ -266,49 +267,36 @@ class JobService extends EntityService {
     public function isResolving(Job $job) {
         return $job->getState()->equals($this->getResolvingState());
     } 
-    
-    
+
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
-     * @param array $taskTypes
-     * @param array $taskTypeOptionsArray
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $type
-     * @param array $parameters
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
+     * @param JobConfiguration $jobConfiguration
+     * @return Job
      */
-    public function create(User $user, WebSite $website, array $taskTypes, array $taskTypeOptionsArray, JobType $type, array $parameters) {        
+    public function create(JobConfiguration $jobConfiguration) {
         $job = new Job();
-        $job->setUser($user);
-        $job->setWebsite($website);
-        $job->setType($type);
-        
-        foreach ($taskTypes as $taskType) {
-            if ($taskType instanceof TaskType) {                
-                $job->addRequestedTaskType($taskType);
-            }
-        }
-        
-        foreach ($taskTypeOptionsArray as $taskTypeName => $taskTypeOptions) {
-            if ($this->taskTypeService->exists($taskTypeName)) {
-                $taskType = $this->taskTypeService->getByName($taskTypeName);
-                $comparatorTaskTypeName = strtolower($taskType->getName());
-                
+        $job->setUser($jobConfiguration->getUser());
+        $job->setWebsite($jobConfiguration->getWebsite());
+        $job->setType($jobConfiguration->getType());
+
+        foreach ($jobConfiguration->getTaskConfigurationsAsCollection()->get() as $taskConfiguration) {
+            $job->addRequestedTaskType($taskConfiguration->getType());
+
+            if ($taskConfiguration->getOptionCount()) {
                 $taskTypeOptions = new TaskTypeOptions();
                 $taskTypeOptions->setJob($job);
-                $taskTypeOptions->setTaskType($taskType);
-                $taskTypeOptions->setOptions($taskTypeOptionsArray[$comparatorTaskTypeName]);                
+                $taskTypeOptions->setTaskType($taskConfiguration->getType());
+                $taskTypeOptions->setOptions($taskConfiguration->getOptions());
 
                 $this->getManager()->persist($taskTypeOptions);
-                $job->getTaskTypeOptions()->add($taskTypeOptions);             
+                $job->getTaskTypeOptions()->add($taskTypeOptions);
             }
         }
-        
-        if (count($parameters)) {
-            $job->setParameters(json_encode($parameters));
+
+        if ($jobConfiguration->hasParameters()) {
+            $job->setParameters(json_encode($jobConfiguration->getParameters()));
         }
-        
+
         $job->setState($this->getStartingState());
         $this->getManager()->persist($job);
         $this->getManager()->flush();
@@ -429,17 +417,7 @@ class JobService extends EntityService {
      */
     private function isCancelled(Job $job) {
         return $job->getState()->equals($this->getCancelledState());
-    }   
-    
-
-    /**
-     *
-     * @param Job $job
-     * @return boolean 
-     */
-    private function isInProgress(Job $job) {
-        return $job->getState()->equals($this->getInProgressState());
-    }     
+    }
     
     
     /**

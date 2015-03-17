@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\Job\FeatureOptions as JobFeatureOptions;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
+use SimplyTestable\ApiBundle\Model\Task\Type\Collection as TaskTypeCollection;
 
 /**
  * 
@@ -406,6 +407,20 @@ class Job
     public function getRequestedTaskTypes()
     {
         return $this->requestedTaskTypes;
+    }
+
+
+    /**
+     * @return TaskTypeCollection
+     */
+    public function getTaskTypeCollection() {
+        $collection = new TaskTypeCollection();
+
+        foreach ($this->getRequestedTaskTypes() as $taskType) {
+            $collection->add($taskType);
+        }
+
+        return $collection;
     }
     
     

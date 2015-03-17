@@ -6,73 +6,73 @@ use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 
 class RetestTest extends BaseControllerJsonTestCase {
     
-    public function testWithInvalidId() {        
+    public function testWithInvalidId() {
         $this->assertEquals(400, $this->getJobStartController('retestAction')->retestAction(
             $this->container->get('request'),
             'foo',
             1
         )->getStatusCode());
-    }    
-    
-    public function testWithIncompleteJob() {  
+    }
+
+    public function testWithIncompleteJob() {
         $jobId = $this->createJobAndGetId('http://example.com/');
         $this->assertEquals(400, $this->getJobStartController('retestAction')->retestAction(
             $this->container->get('request'),
             'foo',
             $jobId
         )->getStatusCode());
-    }       
-    
-    public function testRetestJobIsNotOriginalJob() {  
+    }
+
+    public function testRetestJobIsNotOriginalJob() {
         $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/'));
         $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);        
-        
+        $this->getJobService()->persistAndFlush($job);
+
         $response = $this->getJobStartController('retestAction')->retestAction(
             $this->container->get('request'),
             'foo',
             $job->getId()
         );
-        
+
         $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
         $retestJob = $this->getJobService()->getById($retestJobId);
-        
+
         $this->assertNotEquals($job->getId(), $retestJob->getId());
-    }    
-    
-    public function testWebsiteIsCloned() {  
+    }
+
+    public function testWebsiteIsCloned() {
         $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/'));
         $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);        
-        
+        $this->getJobService()->persistAndFlush($job);
+
         $response = $this->getJobStartController('retestAction')->retestAction(
             $this->container->get('request'),
             'foo',
             $job->getId()
         );
-        
+
         $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
         $retestJob = $this->getJobService()->getById($retestJobId);
-        
+
         $this->assertEquals($job->getWebsite()->getId(), $retestJob->getWebsite()->getId());
-    }    
-    
-    public function testTypeIsClonedForFullSiteJob() {  
+    }
+
+    public function testTypeIsClonedForFullSiteJob() {
         $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/'));
         $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);        
-        
+        $this->getJobService()->persistAndFlush($job);
+
         $response = $this->getJobStartController('retestAction')->retestAction(
             $this->container->get('request'),
             'foo',
             $job->getId()
         );
-        
+
         $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
         $retestJob = $this->getJobService()->getById($retestJobId);
-        
+
         $this->assertEquals($job->getType()->getName(), $retestJob->getType()->getName());
-    }    
+    }
     
     public function testTypeIsClonedForSingleUrlJob() {  
         $job = $this->getJobService()->getById($this->createJobAndGetId(
@@ -80,9 +80,10 @@ class RetestTest extends BaseControllerJsonTestCase {
             null,
             'single url'
         ));
+
         $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);        
-        
+        $this->getJobService()->persistAndFlush($job);
+
         $response = $this->getJobStartController('retestAction')->retestAction(
             $this->container->get('request'),
             'foo',

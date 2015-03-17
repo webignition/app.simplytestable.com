@@ -396,3 +396,6 @@ services:
     arguments:
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         jobTypeService: "@simplytestable.services.jobtypeservice"
+        jobService: "@simplytestable.services.jobservice"
+        userService: "@simplytestable.services.userservice"
+        resqueQueueService: "@simplytestable.services.resque.queueservice"
