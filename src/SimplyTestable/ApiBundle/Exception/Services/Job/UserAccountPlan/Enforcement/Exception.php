@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstr
 class Exception extends \Exception {
 
     const CODE_FULL_SITE_JOB_LIMIT_REACHED = 1;
+    const CODE_SINGLE_URL_JOB_LIMIT_REACHED = 2;
 
 
     /**
@@ -33,7 +34,24 @@ class Exception extends \Exception {
      *
      * @return boolean
      */
-    public function isFullSiteJobLimitReachedExcepton() {
+    public function isFullSiteJobLimitReachedException() {
         return $this->getCode() === self::CODE_FULL_SITE_JOB_LIMIT_REACHED;
+    }
+
+
+    /**
+     *
+     * @return boolean
+     */
+    public function isSingleUrlJobLimitReachedException() {
+        return $this->getCode() === self::CODE_SINGLE_URL_JOB_LIMIT_REACHED;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isJobLimitReachedException() {
+        return $this->isFullSiteJobLimitReachedException() || $this->isSingleUrlJobLimitReachedException();
     }
 }

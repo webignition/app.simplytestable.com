@@ -49,6 +49,16 @@ class StartService {
                 );
             }
         }
+
+        if ($jobConfiguration->getType()->equals($this->jobTypeService->getSingleUrlType())) {
+            if ($this->jobUserAccountPlanEnforcementService->isSingleUrlLimitReachedForWebsite($jobConfiguration->getWebsite())) {
+                throw new UserAccountPlanEnforcementException(
+                    'Single URL job limit reached for website',
+                    UserAccountPlanEnforcementException::CODE_SINGLE_URL_JOB_LIMIT_REACHED,
+                    $this->jobUserAccountPlanEnforcementService->getSingleUrlJobLimitConstraint()
+                );
+            }
+        }
     }
 
 

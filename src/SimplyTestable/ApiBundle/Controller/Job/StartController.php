@@ -48,7 +48,7 @@ class StartController extends ApiController
 
             throw $jobStartServiceException;
         } catch (UserAccountPlanEnforcementException $userAccountPlanEnforcementException) {
-            if ($userAccountPlanEnforcementException->isFullSiteJobLimitReachedExcepton()) {
+            if ($userAccountPlanEnforcementException->isJobLimitReachedException()) {
                 return $this->rejectAsPlanLimitReachedAndRedirect(
                     $userAccountPlanEnforcementException->getAccountPlanConstraint()
                 );
@@ -61,13 +61,7 @@ class StartController extends ApiController
 
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
         $this->getJobUserAccountPlanEnforcementService()->setJobType($jobConfiguration->getType());
-        
-        if ($jobConfiguration->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {
-            if ($this->getJobUserAccountPlanEnforcementService()->isSingleUrlLimitReachedForWebsite($this->getWebsite())) {                
-                return $this->rejectAsPlanLimitReachedAndRedirect($this->getJobUserAccountPlanEnforcementService()->getSingleUrlJobLimitConstraint());
-            }
-        }        
-        
+
         if ($this->getJobUserAccountPlanEnforcementService()->isUserCreditLimitReached()) {
             return $this->rejectAsPlanLimitReachedAndRedirect($this->getJobUserAccountPlanEnforcementService()->getCreditsPerMonthConstraint());
         }
