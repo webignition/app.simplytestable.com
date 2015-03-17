@@ -55,12 +55,12 @@ class StartController extends ApiController
 
         $this->siteRootUrl = $site_root_url;
 
-        $existingJobs = $this->getJobService()->getEntityRepository()->getAllByWebsiteAndStateAndUserAndType(
-            $this->getWebsite(),
-            $this->getJobService()->getIncompleteStates(),
-            $this->getUser(),
-            $jobConfiguration->getType()
-        );
+        $existingJobs = $this->getJobService()->getEntityRepository()->findBy([
+            'website' => $jobConfiguration->getWebsite(),
+            'state' => $this->getJobService()->getIncompleteStates(),
+            'user' => $jobConfiguration->getUser(),
+            'type' => $jobConfiguration->getType()
+        ]);
 
         $existingJobId = null;
         
