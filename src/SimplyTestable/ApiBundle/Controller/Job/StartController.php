@@ -29,33 +29,36 @@ class StartController extends ApiController
             $request->attributes->set('site_root_url', $site_root_url);
         }
 
-        $requestAdapter = new RequestAdapter();
-        $requestAdapter->setRequest($request);
-        $requestAdapter->setWebsiteService($this->get('simplytestable.services.websiteservice'));
+        $requestAdapter = new RequestAdapter(
+            $request,
+            $this->get('simplytestable.services.websiteservice'),
+            $this->get('simplytestable.services.jobtypeservice')
+        );
 
         $jobConfiguration = $requestAdapter->getJobConfiguration();
 
-        //var_dump($site_root_url, $jobConfiguration, $jobConfiguration->getWebsite());
+        //var_dump($request->request->get('type'), $jobConfiguration->getType()->getName());
+        //exit();
         
-        $this->siteRootUrl = $site_root_url;
+
         
         if (!$jobConfiguration->getWebsite()->isPubliclyRoutable()) {
             return $this->rejectAsUnroutableAndRedirect();
         }
 
-        $requestedJobType = $this->getRequestJobType();
+        $this->siteRootUrl = $site_root_url;
 
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
-        $this->getJobUserAccountPlanEnforcementService()->setJobType($requestedJobType);
+        $this->getJobUserAccountPlanEnforcementService()->setJobType($jobConfiguration->getType());
         
-        if ($requestedJobType->equals($this->getJobTypeService()->getFullSiteType())) {
+        if ($jobConfiguration->getType()->equals($this->getJobTypeService()->getFullSiteType())) {
             if ($this->getJobUserAccountPlanEnforcementService()->isFullSiteJobLimitReachedForWebSite($this->getWebsite())) {
                 return $this->rejectAsPlanLimitReachedAndRedirect($this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint());
             }
         }
         
         
-        if ($requestedJobType->equals($this->getJobTypeService()->getSingleUrlType())) { 
+        if ($jobConfiguration->getType()->equals($this->getJobTypeService()->getSingleUrlType())) {
             if ($this->getJobUserAccountPlanEnforcementService()->isSingleUrlLimitReachedForWebsite($this->getWebsite())) {                
                 return $this->rejectAsPlanLimitReachedAndRedirect($this->getJobUserAccountPlanEnforcementService()->getSingleUrlJobLimitConstraint());
             }
@@ -69,7 +72,7 @@ class StartController extends ApiController
             $this->getWebsite(),
             $this->getJobService()->getIncompleteStates(),
             $this->getUser(),
-            $requestedJobType
+            $jobConfiguration->getType()
         );
 
         $existingJobId = null;
@@ -89,7 +92,7 @@ class StartController extends ApiController
                 $this->getWebsite(),
                 $this->getTaskTypes(),
                 $this->getTaskTypeOptions(),
-                $requestedJobType,
+                $jobConfiguration->getType(),
                 $this->getParameters()
             );
             
