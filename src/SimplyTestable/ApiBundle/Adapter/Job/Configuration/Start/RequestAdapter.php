@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use Symfony\Component\HttpFoundation\Request;
