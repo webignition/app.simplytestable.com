@@ -11,7 +11,8 @@ use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
-use  SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class RequestAdapter {
 
@@ -95,14 +96,30 @@ class RequestAdapter {
 
 
     /**
+     * @return ParameterBag
+     */
+    private function getRequestPayload() {
+        if ($this->request->request->count()) {
+            return $this->request->request;
+        }
+
+        if ($this->request->query->count()) {
+            return $this->request->query;
+        }
+
+        return new ParameterBag();
+    }
+
+
+    /**
      * @return JobType
      */
     private function getRequestJobType() {
-        if (!$this->jobTypeService->has($this->request->request->get('type'))) {
+        if (!$this->jobTypeService->has($this->getRequestPayload()->get('type'))) {
             return $this->jobTypeService->getDefaultType();
         }
 
-        return $this->jobTypeService->getByName($this->request->request->get('type'));
+        return $this->jobTypeService->getByName($this->getRequestPayload()->get('type'));
     }
 
 
@@ -125,15 +142,15 @@ class RequestAdapter {
     private function getRequestTaskConfigurationCollection() {
         $collection = new TaskConfigurationCollection();
 
-        if (!$this->request->request->has('test-types')) {
+        if (!$this->getRequestPayload()->has('test-types')) {
             return $collection;
         }
 
-        if (!is_array($this->request->request->get('test-types'))) {
+        if (!is_array($this->getRequestPayload()->get('test-types'))) {
             return $collection;
         }
 
-        foreach ($this->request->request->get('test-types') as $taskTypeName) {
+        foreach ($this->getRequestPayload()->get('test-types') as $taskTypeName) {
             if ($this->taskTypeService->exists($taskTypeName)) {
                 $taskType = $this->taskTypeService->getByName($taskTypeName);
 
@@ -155,15 +172,15 @@ class RequestAdapter {
      * @return array
      */
     private function getRequestTaskTypeOptions(TaskType $taskType) {
-        if (!$this->request->request->has('test-type-options')) {
+        if (!$this->getRequestPayload()->has('test-type-options')) {
             return [];
         }
 
-        if (!is_array($this->request->request->get('test-type-options'))) {
+        if (!is_array($this->getRequestPayload()->get('test-type-options'))) {
             return [];
         }
 
-        $rawTaskTypeOptions = $this->request->request->get('test-type-options');
+        $rawTaskTypeOptions = $this->getRequestPayload()->get('test-type-options');
 
         foreach ($rawTaskTypeOptions as $taskTypeName => $options) {
             if (strtolower(urldecode(strtolower($taskTypeName))) == strtolower($taskType->getName())) {
@@ -190,16 +207,16 @@ class RequestAdapter {
      * @return array
      */
     private function getRequestParameters() {
-        if (!$this->request->request->has('parameters')) {
+        if (!$this->getRequestPayload()->has('parameters')) {
             return null;
         }
 
-        if (!is_array($this->request->request->get('parameters'))) {
+        if (!is_array($this->getRequestPayload()->get('parameters'))) {
             return null;
         }
 
         $parameters = [];
-        $rawParameters = $this->request->request->get('parameters');
+        $rawParameters = $this->getRequestPayload()->get('parameters');
 
         foreach ($rawParameters as $key => $value) {
             $parameters[urldecode(strtolower($key))] = $value;

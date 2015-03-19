@@ -75,12 +75,17 @@ class StartController extends ApiController {
         $taskTypeOptionsArray = array();        
         foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
             $taskTypeOptionsArray[strtolower($taskTypeOptions->getTaskType()->getName())] = $taskTypeOptions->getOptions();
-        }        
-        
-        /* @var $query \Symfony\Component\HttpFoundation\ParameterBag */
-        $request->request->set('type', $job->getType()->getName());
-        $request->request->set('test-types', $taskTypeNames);
-        $request->request->set('test-type-options', $taskTypeOptionsArray);
+        }
+
+        if ($request->request->count()) {
+            $request->request->set('type', $job->getType()->getName());
+            $request->request->set('test-types', $taskTypeNames);
+            $request->request->set('test-type-options', $taskTypeOptionsArray);
+        } else {
+            $request->query->set('type', $job->getType()->getName());
+            $request->query->set('test-types', $taskTypeNames);
+            $request->query->set('test-type-options', $taskTypeOptionsArray);
+        }
         
         return $this->startAction($request, $job->getWebsite()->getCanonicalUrl());
     }      
