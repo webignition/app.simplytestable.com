@@ -3,10 +3,29 @@ namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 
 class CrawlJobContainerRepository extends EntityRepository
 {
+
+    public function doesCrawlTaskParentStateMatchState(Task $task, State $state) {
+        $queryBuilder = $this->createQueryBuilder('CrawlJobContainer');
+        $queryBuilder->join('CrawlJobContainer.parentJob', 'ParentJob');
+        $queryBuilder->join('CrawlJobContainer.crawlJob', 'CrawlJob');
+        $queryBuilder->join('ParentJob.state', 'State');
+
+        $queryBuilder->select('State.name');
+
+        $queryBuilder->where('CrawlJob = :CrawlJob');
+        $queryBuilder->setParameter('CrawlJob', $task->getJob());
+        $queryBuilder->setMaxResults(1);
+
+        $result = $queryBuilder->getQuery()->getResult();
+        return (count($result) === 0) ? false : $result[0]['name'] == $state->getName();
+    }
+
     
     /**
      * 

@@ -45,14 +45,14 @@ class TaskController extends ApiController {
             return $this->sendFailureResponse();
         }        
         
-        $taskType = $this->getTaskTypeService()->getByName($task_type);        
-        
+        $taskType = $this->getTaskTypeService()->getByName($task_type);
+
         $tasks = $this->getTaskService()->getEquivalentTasks($canonical_url, $taskType, $parameter_hash, $this->getTaskService()->getIncompleteStates());
 
         if (count($tasks) === 0) {
             return $this->sendGoneResponse();
         }
-        
+
         $endDateTime = new \DateTime($this->getArguments('completeByUrlAndTaskTypeAction')->get('end_date_time'));
         $rawOutput = $this->getArguments('completeByUrlAndTaskTypeAction')->get('output');
         
@@ -89,20 +89,22 @@ class TaskController extends ApiController {
                 $this->getJobService()->complete($task->getJob());
             }
 
-            if ($task->getType()->equals($this->getTaskTypeService()->getByName('URL discovery'))) {
+            if ($task->getType()->equals($urlDiscoveryTaskType)) {
                 if ($this->getJobService()->isCompleted($task->getJob())) {
-                    $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($task->getJob());
+                    if ($this->getCrawlJobContainerService()->getEntityRepository()->doesCrawlTaskParentStateMatchState($task, $this->getJobService()->getFailedNoSitemapState())) {
+                        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($task->getJob());
 
-                    foreach ($crawlJobContainer->getParentJob()->getRequestedTaskTypes() as $taskType) {
-                        /* @var $taskType TaskType */
-                        $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
+                        foreach ($crawlJobContainer->getParentJob()->getRequestedTaskTypes() as $taskType) {
+                            /* @var $taskType TaskType */
+                            $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
 
-                        if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
-                            $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey));
+                            if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
+                                $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey));
+                            }
                         }
-                    }
 
-                    $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
+                        $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
+                    }
                 }
 
                 $this->getResqueQueueService()->enqueue(
