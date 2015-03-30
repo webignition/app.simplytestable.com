@@ -13,6 +13,6 @@ class DefaultTest extends SuccessTest {
      */
     protected function getExpectedTaskConfigurationIsEnabled()
     {
-        return false;
+        return true;
     }
 }

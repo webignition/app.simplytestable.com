@@ -53,7 +53,7 @@ class PersistTest extends TaskConfigurationTest {
     }
 
     public function testDefaultIsEnabled() {
-        $this->assertFalse($this->taskConfiguration->getIsEnabled());
+        $this->assertTrue($this->taskConfiguration->getIsEnabled());
     }
 
 }

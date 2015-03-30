@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Command\ScheduledJob\ExecuteCommand;
+namespace SimplyTestable\ApiBundle\Tests\Command\ScheduledJob\ExecuteCommand\Success;
 
 class MatchingCurrentJobTest extends SuccessTest {
 

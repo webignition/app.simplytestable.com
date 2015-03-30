@@ -70,7 +70,7 @@ class SuccessTest extends GetTest {
                     'type' => 'HTML validation',
                     'options' => [
                     ],
-                    'is_enabled' => false
+                    'is_enabled' => true
                 ],
                 [
                     'type' => 'CSS validation',
@@ -79,7 +79,7 @@ class SuccessTest extends GetTest {
                             'one.cdn.example.com'
                         ]
                     ],
-                    'is_enabled' => false
+                    'is_enabled' => true
                 ],
             ],
             'parameters' => '{"http-auth-username":"html-user","http-auth-password":"html-password","cookies":[{"Name":"cookie-name","Domain":".example.com","Value":"cookie-value"}]}'

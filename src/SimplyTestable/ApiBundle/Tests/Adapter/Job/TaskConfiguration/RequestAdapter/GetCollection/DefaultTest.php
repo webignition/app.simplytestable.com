@@ -19,9 +19,9 @@ class DefaultTest extends GetCollectionTest {
     }
 
 
-    public function testTaskConfigurationCollectionIsNotEnabled() {
+    public function testTaskConfigurationCollectionIsEnabled() {
         foreach ($this->collection->get() as $taskConfiguration) {
-            $this->assertFalse($taskConfiguration->getIsEnabled());
+            $this->assertTrue($taskConfiguration->getIsEnabled());
         }
     }
 
