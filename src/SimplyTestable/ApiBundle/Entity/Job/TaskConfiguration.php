@@ -69,11 +69,11 @@ class TaskConfiguration
     /**
      * @var bool
      *
-     * @ORM\Column(type="boolean", options={"default" = false})
+     * @ORM\Column(type="boolean", options={"default" = true})
      *
      * @SerializerAnnotation\Expose
      */
-    private $isEnabled = false;
+    private $isEnabled = true;
 
 
     public function __construct()

@@ -34,6 +34,22 @@ class Collection {
 
 
     /**
+     * @return TaskConfiguration[]
+     */
+    public function getEnabled() {
+        $collection = [];
+
+        foreach ($this->get() as $taskConfiguration) {
+            if ($taskConfiguration->getIsEnabled()) {
+                $collection[] = $taskConfiguration;
+            }
+        }
+
+        return $collection;
+    }
+
+
+    /**
      * @param TaskConfiguration $taskConfiguration
      * @return bool
      */

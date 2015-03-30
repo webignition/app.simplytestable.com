@@ -16,25 +16,33 @@ abstract class WithScheduledJobTest extends CommandTest {
     /**
      * @var ScheduledJob
      */
-    private $scheduledJob;
+    protected $scheduledJob;
 
     protected function preCall() {
-        $jobConfiguration = $this->createJobConfiguration([
-            'label' => 'foo',
-            'parameters' => 'parameters',
-            'type' => $this->getJobConfigurationJobType(),
-            'website' => $this->getJobConfigurationWebsite(),
-            'task_configuration' => [
-                'HTML validation' => []
-            ],
-
-        ], $this->getUser());
+        $jobConfiguration = $this->createJobConfiguration($this->getCreateJobConfigurationArray(), $this->getUser());
 
         $this->scheduledJob = $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * *',
             true
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCreateJobConfigurationArray() {
+        return [
+            'label' => 'foo',
+            'parameters' => 'parameters',
+            'type' => $this->getJobConfigurationJobType(),
+            'website' => $this->getJobConfigurationWebsite(),
+            'task_configuration' => [
+                'HTML validation' => [],
+                'CSS validation' => []
+            ],
+
+        ];
     }
 
 

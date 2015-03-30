@@ -102,7 +102,16 @@ abstract class CommandTest extends BaseCommandTest {
             foreach ($rawValues['task_configuration'] as $taskTypeName => $taskTypeOptions) {
                 $taskConfiguration = new TaskConfiguration();
                 $taskConfiguration->setType($this->getTaskTypeService()->getByName($taskTypeName));
+
+                if (isset($taskTypeOptions['is-enabled'])) {
+                    $taskConfiguration->setIsEnabled(filter_var($taskTypeOptions['is-enabled'], FILTER_VALIDATE_BOOLEAN));
+
+                    unset($taskTypeOptions['is-enabled']);
+                }
+
                 $taskConfiguration->setOptions($taskTypeOptions);
+
+
 
                 $taskConfigurationCollection->add($taskConfiguration);
             }
