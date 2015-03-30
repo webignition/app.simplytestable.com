@@ -68,7 +68,9 @@ class SuccessTest extends GetTest {
             'task_configurations' => [
                 [
                     'type' => 'HTML validation',
-                    'options' => []
+                    'options' => [
+                    ],
+                    'is_enabled' => false
                 ],
                 [
                     'type' => 'CSS validation',
@@ -76,7 +78,8 @@ class SuccessTest extends GetTest {
                         'domains-to-ignore' => [
                             'one.cdn.example.com'
                         ]
-                    ]
+                    ],
+                    'is_enabled' => false
                 ],
             ],
             'parameters' => '{"http-auth-username":"html-user","http-auth-password":"html-password","cookies":[{"Name":"cookie-name","Domain":".example.com","Value":"cookie-value"}]}'

@@ -70,6 +70,8 @@ class TaskConfiguration
      * @var bool
      *
      * @ORM\Column(type="boolean", options={"default" = false})
+     *
+     * @SerializerAnnotation\Expose
      */
     private $isEnabled = false;
 
