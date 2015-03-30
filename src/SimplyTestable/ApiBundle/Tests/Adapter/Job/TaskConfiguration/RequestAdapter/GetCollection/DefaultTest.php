@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Adapter\Job\TaskConfiguration\RequestAdapter\GetCollection;
 
-class TestTest extends GetCollectionTest {
+class DefaultTest extends GetCollectionTest {
 
     protected function getRequestValues() {
         return [
@@ -18,6 +18,12 @@ class TestTest extends GetCollectionTest {
         $this->assertEquals(2, $this->collection->count());
     }
 
+
+    public function testTaskConfigurationCollectionIsNotEnabled() {
+        foreach ($this->collection->get() as $taskConfiguration) {
+            $this->assertFalse($taskConfiguration->getIsEnabled());
+        }
+    }
 
     public function testHtmlValidationTypeIsPresent() {
         $this->assertEquals(

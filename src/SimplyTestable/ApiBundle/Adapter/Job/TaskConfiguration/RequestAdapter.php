@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\TaskTypeService;
 class RequestAdapter {
 
     const REQUEST_TASK_CONFIGURATION_KEY = 'task-configuration';
+    const REQUEST_IS_ENABLED_KEY = 'is-enabled';
 
     /**
      * @var Request
@@ -83,8 +84,13 @@ class RequestAdapter {
 
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType($taskType);
-            $taskConfiguration->setOptions($taskTypeOptions);
 
+            if (array_key_exists(self::REQUEST_IS_ENABLED_KEY, $taskTypeOptions)) {
+                $taskConfiguration->setIsEnabled(filter_var($taskTypeOptions[self::REQUEST_IS_ENABLED_KEY], FILTER_VALIDATE_BOOLEAN));
+                unset($taskTypeOptions[self::REQUEST_IS_ENABLED_KEY]);
+            }
+
+            $taskConfiguration->setOptions($taskTypeOptions);
             $this->collection->add($taskConfiguration);
         }
     }

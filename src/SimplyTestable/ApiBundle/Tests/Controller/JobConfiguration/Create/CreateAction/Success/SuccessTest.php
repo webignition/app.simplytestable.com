@@ -32,7 +32,15 @@ abstract class SuccessTest extends CreateTest {
         $this->jobConfiguration = $this->getJobConfigurationService()->get($this->getLabel());
     }
 
+    /**
+     * @return string
+     */
     abstract protected function getLabel();
+
+    /**
+     * @return bool
+     */
+    abstract protected function getExpectedTaskConfigurationIsEnabled();
 
 
     public function testResponseStatusCode() {
@@ -50,13 +58,26 @@ abstract class SuccessTest extends CreateTest {
     }
 
 
+    public function testHasTaskConfigurationCollection() {
+        $this->assertEquals(2, $this->jobConfiguration->getTaskConfigurations()->count());
+    }
+
+
+    public function testTaskConfigurationsAreNotEnabled() {
+        foreach ($this->jobConfiguration->getTaskConfigurations() as $taskConfiguration) {
+            $this->assertEquals($this->getExpectedTaskConfigurationIsEnabled(), $taskConfiguration->getIsEnabled());
+        }
+    }
+
+
     protected function getRequestPostData() {
         return [
             'label' => $this->getLabel(),
             'website' => 'http://example.com/',
             'type' => 'Full site',
             'task-configuration' => [
-                'HTML validation' => [],
+                'HTML validation' => [
+                ],
                 'CSS validation' => [
                     'domains-to-ignore' => [
                         'one.cdn.example.com'
