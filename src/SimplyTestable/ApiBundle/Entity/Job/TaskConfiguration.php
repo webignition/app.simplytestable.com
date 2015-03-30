@@ -66,6 +66,14 @@ class TaskConfiguration
     protected $options;
 
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", options={"default" = false})
+     */
+    private $isEnabled = false;
+
+
     public function __construct()
     {
         $this->options = new ArrayCollection();
@@ -212,5 +220,21 @@ class TaskConfiguration
         }
 
         return true;
+    }
+
+
+    /**
+     * @param $isEnabled
+     */
+    public function setIsEnabled($isEnabled) {
+        $this->isEnabled = $isEnabled;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function getIsEnabled() {
+        return $this->isEnabled;
     }
 }
