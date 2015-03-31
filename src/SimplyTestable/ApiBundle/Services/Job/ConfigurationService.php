@@ -166,7 +166,7 @@ class ConfigurationService extends EntityService {
         }
 
         if ($newValues->hasNonEmptyLabel()) {
-            if ($this->has($newValues->getLabel())) {
+            if ($this->has($newValues->getLabel()) && $this->get($newValues->getLabel()) != $jobConfiguration) {
                 throw new JobConfigurationServiceException(
                     'Label "' . $newValues->getLabel() . '" is not unique',
                     JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
