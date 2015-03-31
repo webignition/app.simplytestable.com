@@ -25,11 +25,18 @@ abstract class SuccessTest extends CreateTest {
 
         $this->getUserService()->setUser($this->createAndActivateUser('user@example.com'));
 
+        $this->preCallController();
+
         $methodName = $this->getActionNameFromRouter();
         $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(
             $this->container->get('request')
         );
+
         $this->jobConfiguration = $this->getJobConfigurationService()->get($this->getLabel());
+    }
+
+    protected function preCallController() {
+
     }
 
     /**
@@ -77,8 +84,10 @@ abstract class SuccessTest extends CreateTest {
             'type' => 'Full site',
             'task-configuration' => [
                 'HTML validation' => [
+                    'is-enabled' => true
                 ],
                 'CSS validation' => [
+                    'is-enabled' => true,
                     'domains-to-ignore' => [
                         'one.cdn.example.com'
                     ]

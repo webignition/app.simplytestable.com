@@ -55,7 +55,7 @@ class Collection {
      */
     public function contains(TaskConfiguration $taskConfiguration) {
         foreach ($this->collection as $comparator) {
-            if ($comparator->hasMatchingTypeAndOptions($taskConfiguration)) {
+            if ($comparator->hasMatchingTypeAndOptions($taskConfiguration) && $comparator->getIsEnabled() == $taskConfiguration->getIsEnabled()) {
                 return true;
             }
         }
