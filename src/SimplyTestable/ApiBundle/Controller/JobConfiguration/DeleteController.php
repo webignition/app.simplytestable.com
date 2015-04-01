@@ -7,6 +7,14 @@ use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobServic
 class DeleteController extends JobConfigurationController {
 
     public function deleteAction($label) {
+        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+
+        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+
         $label = trim($label);
 
         $this->getJobConfigurationService()->setUser($this->getUser());
