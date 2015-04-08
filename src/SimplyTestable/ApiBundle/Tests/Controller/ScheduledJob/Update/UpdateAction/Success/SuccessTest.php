@@ -47,6 +47,12 @@ abstract class SuccessTest extends UpdateTest {
 
 
     /**
+     * @var string|null
+     */
+    protected $originalCronModifier = null;
+
+
+    /**
      * @var int
      */
     private $originalScheduledJobId;
@@ -80,6 +86,7 @@ abstract class SuccessTest extends UpdateTest {
         $this->scheduledJob = $this->getScheduledJobService()->create(
             $this->originalJobConfiguration,
             $this->originalSchedule,
+            $this->originalCronModifier,
             $this->originalIsRecurring
         );
 
@@ -101,6 +108,7 @@ abstract class SuccessTest extends UpdateTest {
     abstract protected function getNewJobConfigurationLabel();
     abstract protected function getNewSchedule();
     abstract protected function getNewIsRecurring();
+    abstract protected function getNewCronModifier();
 
     protected function getScheduledJobId() {
         return $this->scheduledJob->getId();

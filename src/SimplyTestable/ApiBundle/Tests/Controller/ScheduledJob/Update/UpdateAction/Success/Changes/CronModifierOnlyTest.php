@@ -4,7 +4,16 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Update\UpdateAc
 
 use SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Update\UpdateAction\Success\SuccessTest;
 
-abstract class NoChangesTest extends SuccessTest {
+class CronModifierOnlyTest extends SuccessTest {
+
+    protected function getRequestPostData() {
+        return [
+            'job-configuration' => $this->originalJobConfiguration->getLabel(),
+            'schedule' => $this->originalSchedule,
+            'is-recurring' => $this->getNewIsRecurring(),
+            'schedule-modifier' => $this->getNewCronModifier()
+        ];
+    }
 
     protected function getNewJobConfigurationLabel()
     {
@@ -18,11 +27,11 @@ abstract class NoChangesTest extends SuccessTest {
 
     protected function getNewIsRecurring()
     {
-        return $this->originalIsRecurring;
+        return !$this->originalIsRecurring;
     }
 
     protected function getNewCronModifier()
     {
-        return $this->originalCronModifier;
+        return $this->originalCronModifier . 'bar';
     }
 }

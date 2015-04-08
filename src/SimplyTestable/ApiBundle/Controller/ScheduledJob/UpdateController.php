@@ -41,8 +41,9 @@ class UpdateController extends ScheduledJobController {
             $jobConfiguration = $this->getRequestJobConfiguration();
             $schedule = $this->getRequestSchedule();
             $isRecurring = $this->request->request->has('is-recurring') ? filter_var($this->request->request->get('is-recurring'), FILTER_VALIDATE_BOOLEAN)  : null;
+            $cronModifier = $this->request->request->get('schedule-modifier');
 
-            $this->getScheduledJobService()->update($scheduledJob, $jobConfiguration, $schedule, $isRecurring);
+            $this->getScheduledJobService()->update($scheduledJob, $jobConfiguration, $schedule, $cronModifier, $isRecurring);
         } catch (ScheduledJobControllerUpdateException $exception) {
             return $this->sendFailureResponse([
                 'X-ScheduledJobUpdate-Error' => json_encode([

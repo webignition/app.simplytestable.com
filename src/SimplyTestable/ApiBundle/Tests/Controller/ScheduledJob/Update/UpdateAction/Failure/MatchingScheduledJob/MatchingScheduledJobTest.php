@@ -1,12 +1,13 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Update\UpdateAction\Failure;
+namespace SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Update\UpdateAction\Failure\MatchingScheduledJob;
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Update\UpdateAction\Failure\FailureTest;
 
-class MatchingScheduledJobTest extends FailureTest {
+abstract class MatchingScheduledJobTest extends FailureTest {
 
     /**
      * @var User
@@ -88,9 +89,23 @@ class MatchingScheduledJobTest extends FailureTest {
         ], $this->getCurrentUser());
 
         $this->getScheduledJobService()->setUser($this->getCurrentUser());
-        $this->scheduledJob1 = $this->getScheduledJobService()->create($this->jobConfiguration1);
-        $this->scheduledJob2 = $this->getScheduledJobService()->create($this->jobConfiguration2);
+
+        $this->scheduledJob1 = $this->getScheduledJobService()->create(
+            $this->jobConfiguration1,
+            '* * * * *',
+            $this->getCronModifier(),
+            true
+        );
+
+        $this->scheduledJob2 = $this->getScheduledJobService()->create(
+            $this->jobConfiguration2,
+            '* * * * *',
+            $this->getCronModifier(),
+            true
+        );
     }
+
+    abstract protected function getCronModifier();
 
 
     protected function getRequestPostData() {

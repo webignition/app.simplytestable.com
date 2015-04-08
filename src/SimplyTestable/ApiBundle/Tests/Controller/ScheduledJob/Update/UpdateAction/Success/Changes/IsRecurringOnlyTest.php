@@ -28,4 +28,9 @@ class IsRecurringOnlyTest extends SuccessTest {
     {
         return !$this->originalIsRecurring;
     }
+
+    protected function getNewCronModifier()
+    {
+        return $this->originalCronModifier;
+    }
 }
