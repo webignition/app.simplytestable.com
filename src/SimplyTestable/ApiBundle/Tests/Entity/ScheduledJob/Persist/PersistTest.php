@@ -1,10 +1,11 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Entity\ScheduledJob;
+namespace SimplyTestable\ApiBundle\Tests\Entity\ScheduledJob\Persist;
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use SimplyTestable\ApiBundle\Tests\Entity\ScheduledJob\ScheduledJobTest;
 
-class PersistTest extends ScheduledJobTest {
+abstract class PersistTest extends ScheduledJobTest {
 
     /**
      * @var ScheduledJob

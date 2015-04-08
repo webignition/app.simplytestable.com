@@ -55,6 +55,14 @@ class ScheduledJob
 
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $cronModifier = null;
+
+
+    /**
      * Get id
      *
      * @return integer 
@@ -131,5 +139,32 @@ class ScheduledJob
     public function getIsRecurring()
     {
         return $this->isRecurring;
+    }
+
+
+    /**
+     * @param $cronModifier
+     * @return $this
+     */
+    public function setCronModifier($cronModifier)
+    {
+        $this->cronModifier = $cronModifier;
+        return $this;
+    }
+
+
+    /**
+     * @return string|null
+     */
+    public function getCronModifier() {
+        return $this->cronModifier;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function hasCronModifier() {
+        return !is_null($this->cronModifier);
     }
 }
