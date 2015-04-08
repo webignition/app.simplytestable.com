@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Create\CreateAction\CreateTest;
 use Symfony\Component\HttpFoundation\Response;
 
-class SuccessTest extends CreateTest {
+abstract class SuccessTest extends CreateTest {
 
     /**
      * @var Response
@@ -58,15 +58,6 @@ class SuccessTest extends CreateTest {
 
     public function testResponseRedirectLocation() {
         $this->assertEquals('/scheduledjob/' . $this->scheduledJob->getId() . '/', $this->response->headers->get('location'));
-    }
-
-
-    protected function getRequestPostData() {
-        return [
-            'job-configuration' => 'foo',
-            'schedule' => '* * * * *',
-            'is-recurring' =>  '1'
-        ];
     }
 
     protected function getScheduledJobIdFromResponseLocation() {
