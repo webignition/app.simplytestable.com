@@ -399,3 +399,6 @@ services:
         jobService: "@simplytestable.services.jobservice"
         userService: "@simplytestable.services.userservice"
         resqueQueueService: "@simplytestable.services.resque.queueservice"
+
+  simplytestable.services.scheduledjob.cronmodifier.validationservice:
+    class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService

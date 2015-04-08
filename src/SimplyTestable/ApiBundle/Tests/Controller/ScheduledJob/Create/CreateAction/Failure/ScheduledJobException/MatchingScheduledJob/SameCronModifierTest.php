@@ -6,7 +6,7 @@ class SameCronModifierTest extends MatchingScheduledJobExistsTest {
 
     protected function getOriginalCronModifier()
     {
-        return 'foo';
+        return '[ `date +\%d` -le 7 ]';
     }
 
     protected function getNewCronModifier()

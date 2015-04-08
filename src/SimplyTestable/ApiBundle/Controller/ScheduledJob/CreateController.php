@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurati
 use Cron\Validator\CrontabValidator;
 use Cron\Exception\InvalidPatternException;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobException;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 
 class CreateController extends ScheduledJobController {
 
@@ -78,6 +79,16 @@ class CreateController extends ScheduledJobController {
             ]);
         }
 
+
+        if (!$this->getCronModifierValidationService()->isValid($this->request->request->get('schedule-modifier'))) {
+            return $this->sendFailureResponse([
+                'X-ScheduledJobCreate-Error' => json_encode([
+                    'code' => 96,
+                    'message' => 'Malformed schedule modifier'
+                ])
+            ]);
+        }
+
         try {
             $scheduledJob = $this->getScheduledJobService()->create(
                 $jobConfiguration,
@@ -114,6 +125,14 @@ class CreateController extends ScheduledJobController {
      */
     protected function getJobConfigurationService() {
         return $this->get('simplytestable.services.job.configurationservice');
+    }
+
+
+    /**
+     * @return CronModifierValidationService
+     */
+    protected function getCronModifierValidationService() {
+        return $this->get('simplytestable.services.scheduledjob.cronmodifier.validationservice');
     }
 
 }
