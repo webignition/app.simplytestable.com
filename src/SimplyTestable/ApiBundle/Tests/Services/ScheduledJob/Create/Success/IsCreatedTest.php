@@ -30,6 +30,7 @@ class TestTest extends SuccessTest {
         $this->scheduledJob = $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * *',
+            null,
             true
         );
     }

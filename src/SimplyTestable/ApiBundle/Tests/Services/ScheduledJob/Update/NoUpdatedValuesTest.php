@@ -50,10 +50,11 @@ class NoUpdatedValuesTest extends ServiceTest {
         $this->scheduledJob = $this->getScheduledJobService()->create(
             $this->jobConfiguration,
             $this->schedule,
+            null,
             $this->isRecurring
         );
 
-        $this->getScheduledJobService()->update($this->scheduledJob, $this->jobConfiguration, $this->schedule, $this->isRecurring);
+        $this->getScheduledJobService()->update($this->scheduledJob, $this->jobConfiguration, $this->schedule, null, $this->isRecurring);
     }
 
 

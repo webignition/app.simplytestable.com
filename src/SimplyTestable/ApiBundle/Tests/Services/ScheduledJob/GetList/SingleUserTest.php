@@ -30,18 +30,21 @@ class SingleUserTest extends ServiceTest {
         $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * *',
+            null,
             true
         );
 
         $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * 0',
+            null,
             true
         );
 
         $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * 1',
+            null,
             true
         );
 

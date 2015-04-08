@@ -40,6 +40,7 @@ abstract class SuccessTest extends ServiceTest {
         $this->scheduledJob = $this->getScheduledJobService()->create(
             $this->getOriginalJobConfiguration(),
             $this->getOriginalSchedule(),
+            null,
             $this->getOriginalIsRecurring()
         );
 
@@ -47,6 +48,7 @@ abstract class SuccessTest extends ServiceTest {
             $this->scheduledJob,
             $this->getUpdatedJobConfiguration(),
             $this->getUpdatedSchedule(),
+            null,
             $this->getUpdatedIsRecurring()
         );
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\ScheduledJob\Create;
+namespace SimplyTestable\ApiBundle\Tests\Services\ScheduledJob\Create\MatchingScheduledJob;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
-use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobServiceException;
+use SimplyTestable\ApiBundle\Tests\Services\ScheduledJob\Create\ServiceTest;
 
-class MatchingScheduledJobTest extends ServiceTest {
+abstract class MatchingScheduledJobTest extends ServiceTest {
 
     /**
      * @var JobConfiguration
      */
-    private $jobConfiguration;
+    protected $jobConfiguration;
 
     public function setUp() {
         parent::setUp();
@@ -31,22 +31,11 @@ class MatchingScheduledJobTest extends ServiceTest {
         $this->getScheduledJobService()->create(
             $this->jobConfiguration,
             '* * * * *',
+            $this->getFirstCronModifier(),
             true
         );
     }
 
-    public function testCreateMatchingScheduledJobThrowsException() {
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception',
-            'Matching scheduled job exists',
-            ScheduledJobServiceException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
-        );
-
-        $this->getScheduledJobService()->create(
-            $this->jobConfiguration,
-            '* * * * *',
-            true
-        );
-    }
+    abstract protected function getFirstCronModifier();
 
 }

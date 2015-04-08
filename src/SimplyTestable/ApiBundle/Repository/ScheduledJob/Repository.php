@@ -12,22 +12,29 @@ class Repository extends EntityRepository {
     /**
      * @param JobConfiguration $jobConfiguration
      * @param $schedule
+     * @param $cronModifier
      * @param $isRecurring
      * @return bool
      */
-    public function has(JobConfiguration $jobConfiguration, $schedule, $isRecurring) {
+    public function has(JobConfiguration $jobConfiguration, $schedule, $cronModifier, $isRecurring) {
         $queryBuilder = $this->createQueryBuilder('ScheduledJob');
         $queryBuilder->select('count(ScheduledJob.id)');
         $queryBuilder->join('ScheduledJob.cronJob', 'CronJob');
-        $queryBuilder->where('
-        ScheduledJob.jobConfiguration = :JobConfiguration AND
+
+        $where = 'ScheduledJob.jobConfiguration = :JobConfiguration AND
         ScheduledJob.isRecurring = :IsRecurring AND
-        CronJob.schedule = :Schedule
-        ');
+        CronJob.schedule = :Schedule';
+
+        if (!is_null($cronModifier)) {
+            $where .= ' AND ScheduledJob.cronModifier = :CronModifier';
+            $queryBuilder->setParameter('CronModifier', $cronModifier);
+        }
+
+        $queryBuilder->where($where);
+
         $queryBuilder->setParameter('JobConfiguration', $jobConfiguration);
         $queryBuilder->setParameter('IsRecurring', $isRecurring);
         $queryBuilder->setParameter('Schedule', $schedule);
-
 
         $result = $queryBuilder->getQuery()->getResult();
         return $result[0][1] > 0;

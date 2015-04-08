@@ -31,6 +31,7 @@ abstract class WithTest extends BaseServiceTest {
         $scheduledJob = $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * *',
+            null,
             true
         );
 

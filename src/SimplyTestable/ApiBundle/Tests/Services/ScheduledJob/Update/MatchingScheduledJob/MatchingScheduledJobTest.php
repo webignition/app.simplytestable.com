@@ -1,13 +1,14 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Services\ScheduledJob\Update;
+namespace SimplyTestable\ApiBundle\Tests\Services\ScheduledJob\Update\MatchingScheduledJob;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobServiceException;
+use SimplyTestable\ApiBundle\Tests\Services\ScheduledJob\Update\ServiceTest;
 
-class MatchingScheduledJobTest extends ServiceTest {
+abstract class MatchingScheduledJobTest extends ServiceTest {
 
     /**
      * @var JobConfiguration
@@ -18,13 +19,13 @@ class MatchingScheduledJobTest extends ServiceTest {
     /**
      * @var JobConfiguration
      */
-    private $jobConfiguration2;
+    protected $jobConfiguration2;
 
 
     /**
      * @var ScheduledJob
      */
-    private $scheduledJob;
+    protected $scheduledJob;
 
 
     /**
@@ -62,29 +63,20 @@ class MatchingScheduledJobTest extends ServiceTest {
         $this->scheduledJob = $this->getScheduledJobService()->create(
             $this->jobConfiguration1,
             '* * * * *',
+            null,
             true
         );
 
         $this->getScheduledJobService()->create(
             $this->jobConfiguration2,
             '* * * * 1',
+            $this->getInitialCronModifier(),
             false
         );
     }
 
-    public function testCreateMatchingScheduledJobThrowsException() {
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception',
-            'Matching scheduled job exists',
-            ScheduledJobServiceException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
-        );
+    abstract protected function getInitialCronModifier();
 
-        $this->getScheduledJobService()->update(
-            $this->scheduledJob,
-            $this->jobConfiguration2,
-            '* * * * 1',
-            false
-        );
-    }
+
 
 }

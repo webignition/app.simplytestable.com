@@ -52,6 +52,7 @@ abstract class TeamTest extends ServiceTest {
         $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * *',
+            null,
             true
         );
 
@@ -59,6 +60,7 @@ abstract class TeamTest extends ServiceTest {
         $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * 0',
+            null,
             true
         );
 

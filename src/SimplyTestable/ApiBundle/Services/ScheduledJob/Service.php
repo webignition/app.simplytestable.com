@@ -78,7 +78,7 @@ class Service extends EntityService {
     }
 
 
-    public function create(JobConfiguration $jobConfiguration, $schedule = '* * * * *', $isRecurring = true) {
+    public function create(JobConfiguration $jobConfiguration, $schedule = '* * * * *', $cronModifier = null, $isRecurring = true) {
         if (!$jobConfiguration->hasUser()) {
             throw new ScheduledJobException(
                 'User is not set',
@@ -86,7 +86,7 @@ class Service extends EntityService {
             );
         }
 
-        if ($this->getEntityRepository()->has($jobConfiguration, $schedule, $isRecurring)) {
+        if ($this->getEntityRepository()->has($jobConfiguration, $schedule, $cronModifier, $isRecurring)) {
             throw new ScheduledJobException(
                 'Matching scheduled job exists',
                 ScheduledJobException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
@@ -108,6 +108,7 @@ class Service extends EntityService {
         $scheduledJob->setCronJob($cronJob);
         $scheduledJob->setJobConfiguration($jobConfiguration);
         $scheduledJob->setIsRecurring($isRecurring);
+        $scheduledJob->setCronModifier($cronModifier);
 
         $this->getManager()->persist($scheduledJob);
         $this->getManager()->flush($scheduledJob);
@@ -192,12 +193,14 @@ class Service extends EntityService {
      * @param ScheduledJob $scheduledJob
      * @param JobConfiguration $jobConfiguration
      * @param string $schedule
+     * @param string $cronModifier
      * @param bool $isRecurring
      * @throws ScheduledJobException
      */
-    public function update(ScheduledJob $scheduledJob, JobConfiguration $jobConfiguration = null, $schedule = null, $isRecurring = null) {
+    public function update(ScheduledJob $scheduledJob, JobConfiguration $jobConfiguration = null, $schedule = null, $cronModifier = null, $isRecurring = null) {
         $comparatorJobConfiguration = is_null($jobConfiguration) ? clone $scheduledJob->getJobConfiguration() : $jobConfiguration;
         $comparatorSchedule = is_null($schedule) ? $scheduledJob->getCronJob()->getSchedule() : $schedule;
+        $comparatorCronModifier = is_null($cronModifier) ? $scheduledJob->getCronModifier() : $cronModifier;
         $comparatorIsRecurring = is_null($isRecurring) ? $scheduledJob->getIsRecurring() : $isRecurring;
 
         if (!is_null($jobConfiguration) && $scheduledJob->getJobConfiguration()->getId() == $jobConfiguration->getId()) {
@@ -208,16 +211,20 @@ class Service extends EntityService {
             $schedule = null;
         }
 
+        if (!is_null($cronModifier) && $scheduledJob->getCronModifier() == $cronModifier) {
+            $cronModifier = null;
+        }
+
         if (!is_null($isRecurring) && $scheduledJob->getIsRecurring() == $isRecurring) {
             $isRecurring = null;
         }
 
-        if (is_null($jobConfiguration) && is_null($schedule) && is_null($isRecurring)) {
+        if (is_null($jobConfiguration) && is_null($schedule) && is_null($isRecurring) && is_null($cronModifier)) {
             return;
         }
 
         if (!is_null($comparatorJobConfiguration) && !is_null($comparatorSchedule) && !is_null($comparatorIsRecurring)) {
-            if ($this->getEntityRepository()->has($comparatorJobConfiguration, $comparatorSchedule, $comparatorIsRecurring)) {
+            if ($this->getEntityRepository()->has($comparatorJobConfiguration, $comparatorSchedule, $cronModifier, $comparatorIsRecurring)) {
                 throw new ScheduledJobException(
                     'Matching scheduled job exists',
                     ScheduledJobException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
