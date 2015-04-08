@@ -79,7 +79,12 @@ class CreateController extends ScheduledJobController {
         }
 
         try {
-            $scheduledJob = $this->getScheduledJobService()->create($jobConfiguration, $this->request->request->get('schedule'), $this->getRequestIsRecurring());
+            $scheduledJob = $this->getScheduledJobService()->create(
+                $jobConfiguration,
+                $this->request->request->get('schedule'),
+                $this->request->request->get('schedule-modifier'),
+                $this->getRequestIsRecurring()
+            );
 
             return $this->redirect($this->generateUrl(
                 'scheduledjob_get_get',

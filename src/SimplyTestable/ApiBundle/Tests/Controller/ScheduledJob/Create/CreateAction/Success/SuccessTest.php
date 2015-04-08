@@ -17,7 +17,7 @@ abstract class SuccessTest extends CreateTest {
     /**
      * @var ScheduledJob
      */
-    private $scheduledJob;
+    protected $scheduledJob;
 
 
     public function setUp() {
