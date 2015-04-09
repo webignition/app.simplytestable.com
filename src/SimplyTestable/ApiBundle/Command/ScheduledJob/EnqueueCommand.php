@@ -23,8 +23,8 @@ class EnqueueCommand extends BaseCommand {
     {
         $this->getLogger()->notice('simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] start');
 
-        if ($this->getResqueQueueService()->contains('scheduled-job', ['id' => (int)$input->getArgument('id')])) {
-            $this->getLogger()->notice('simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] already in queue');
+        if ($this->getResqueQueueService()->contains('scheduledjob-execute', ['id' => (int)$input->getArgument('id')])) {
+            $this->getLogger()->notice('simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] already in execute queue');
         } else {
             $this->getResqueQueueService()->enqueue(
                 $this->getResqueJobFactoryService()->create(
