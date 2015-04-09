@@ -32,6 +32,6 @@ class CronModifierOnlyTest extends SuccessTest {
 
     protected function getNewCronModifier()
     {
-        return $this->originalCronModifier . 'bar';
+        return '[ `date +\%d` -le 7 ]';
     }
 }

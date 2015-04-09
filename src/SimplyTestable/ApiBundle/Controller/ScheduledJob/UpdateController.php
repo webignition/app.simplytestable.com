@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as J
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Exception\Controller\ScheduledJob\Update\Exception as ScheduledJobControllerUpdateException;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobException;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 
 class UpdateController extends ScheduledJobController {
 
@@ -41,7 +42,7 @@ class UpdateController extends ScheduledJobController {
             $jobConfiguration = $this->getRequestJobConfiguration();
             $schedule = $this->getRequestSchedule();
             $isRecurring = $this->request->request->has('is-recurring') ? filter_var($this->request->request->get('is-recurring'), FILTER_VALIDATE_BOOLEAN)  : null;
-            $cronModifier = $this->request->request->get('schedule-modifier');
+            $cronModifier = $this->getRequestScheduleModifier();
 
             $this->getScheduledJobService()->update($scheduledJob, $jobConfiguration, $schedule, $cronModifier, $isRecurring);
         } catch (ScheduledJobControllerUpdateException $exception) {
@@ -112,11 +113,36 @@ class UpdateController extends ScheduledJobController {
     }
 
 
+    private function getRequestScheduleModifier() {
+        if (!$this->request->request->has('schedule-modifier')) {
+            return null;
+        }
+
+        $modifier = $this->request->request->get('schedule-modifier');
+        if (!$this->getCronModifierValidationService()->isValid($modifier)) {
+            throw new ScheduledJobControllerUpdateException(
+                'Invalid schedule modifier',
+                ScheduledJobControllerUpdateException::CODE_INVALID_SCHEDULE_MODIFIER
+            );
+        }
+
+        return null;
+    }
+
+
     /**
      * @return JobConfigurationService
      */
     protected function getJobConfigurationService() {
         return $this->get('simplytestable.services.job.configurationservice');
+    }
+
+
+    /**
+     * @return CronModifierValidationService
+     */
+    protected function getCronModifierValidationService() {
+        return $this->get('simplytestable.services.scheduledjob.cronmodifier.validationservice');
     }
 
 }
