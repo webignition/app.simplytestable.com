@@ -59,11 +59,6 @@ abstract class SuccessTest extends GetTest {
      */
     abstract protected function getCronModifier();
 
-    /**
-     * @return bool
-     */
-    abstract protected function isExpectingCronModifier();
-
     public function testResponseStatusCode() {
         $this->assertEquals(200, $this->response->getStatusCode());
     }
@@ -77,7 +72,7 @@ abstract class SuccessTest extends GetTest {
             'isrecurring' => 1
         ];
 
-        if ($this->isExpectingCronModifier()) {
+        if (!is_null($this->getCronModifier())) {
             $expectedResponseData['schedule-modifier'] = $this->scheduledJob->getCronModifier();
         }
 

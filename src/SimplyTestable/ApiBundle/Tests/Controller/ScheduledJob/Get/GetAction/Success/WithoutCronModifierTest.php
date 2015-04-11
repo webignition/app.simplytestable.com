@@ -8,12 +8,4 @@ class WithoutCronModifierTest extends SuccessTest {
         return null;
     }
 
-    /**
-     * @return bool
-     */
-    protected function isExpectingCronModifier()
-    {
-        return false;
-    }
-
 }

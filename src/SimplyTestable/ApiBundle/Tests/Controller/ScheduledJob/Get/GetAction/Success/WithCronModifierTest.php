@@ -8,11 +8,4 @@ class WithCronModifierTest extends SuccessTest {
         return 'foo';
     }
 
-    /**
-     * @return bool
-     */
-    protected function isExpectingCronModifier()
-    {
-        return true;
-    }
 }
