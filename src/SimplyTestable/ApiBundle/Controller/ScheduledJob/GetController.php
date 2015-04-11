@@ -13,14 +13,13 @@ class GetController extends ScheduledJobController {
             return $this->sendNotFoundResponse();
         }
 
-        return $this->sendResponse(
-            [
-                'id' => $scheduledJob->getId(),
-                'jobconfiguration' => $scheduledJob->getJobConfiguration()->getLabel(),
-                'schedule' => $scheduledJob->getCronJob()->getSchedule(),
-                'isrecurring' => (int)$scheduledJob->getIsRecurring()
-            ]
-        );
+        return $this->sendResponse([
+            'id' => $scheduledJob->getId(),
+            'jobconfiguration' => $scheduledJob->getJobConfiguration()->getLabel(),
+            'schedule' => $scheduledJob->getCronJob()->getSchedule(),
+            'schedule-modifier' => $scheduledJob->getCronModifier(),
+            'isrecurring' => (int)$scheduledJob->getIsRecurring(),
+        ]);
     }
 
 }

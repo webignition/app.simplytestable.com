@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Tests\Controller\ScheduledJob\Get\GetAction\GetTest;
 use Symfony\Component\HttpFoundation\Response;
 
-class SuccessTest extends GetTest {
+abstract class SuccessTest extends GetTest {
 
     /**
      * @var Response
@@ -42,12 +42,27 @@ class SuccessTest extends GetTest {
 
         ], $user);
 
-        $this->scheduledJob = $this->getScheduledJobService()->create($jobConfiguration, '* * * * *', true);
+        $this->scheduledJob = $this->getScheduledJobService()->create(
+            $jobConfiguration,
+            '* * * * *',
+            $this->getCronModifier(),
+            true
+        );
 
         $methodName = $this->getActionNameFromRouter();
         $this->response = $this->getCurrentController()->$methodName($this->scheduledJob->getId());
         $this->decodedResponse = json_decode($this->response->getContent(), true);
     }
+
+    /**
+     * @return string|null
+     */
+    abstract protected function getCronModifier();
+
+    /**
+     * @return bool
+     */
+    abstract protected function isExpectingCronModifier();
 
     public function testResponseStatusCode() {
         $this->assertEquals(200, $this->response->getStatusCode());
@@ -55,12 +70,18 @@ class SuccessTest extends GetTest {
 
 
     public function testDecodedResponseContent() {
-        $this->assertEquals([
+        $expectedResponseData = [
             'id' => $this->scheduledJob->getId(),
             'jobconfiguration' =>  $this->scheduledJob->getJobConfiguration()->getLabel(),
             'schedule' => $this->scheduledJob->getCronJob()->getSchedule(),
             'isrecurring' => 1
-        ], $this->decodedResponse);
+        ];
+
+        if ($this->isExpectingCronModifier()) {
+            $expectedResponseData['schedule-modifier'] = $this->scheduledJob->getCronModifier();
+        }
+
+        $this->assertEquals($expectedResponseData, $this->decodedResponse);
     }
 
 
