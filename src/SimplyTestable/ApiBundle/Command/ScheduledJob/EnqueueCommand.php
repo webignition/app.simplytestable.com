@@ -21,7 +21,10 @@ class EnqueueCommand extends BaseCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->getLogger()->notice('simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] start');
+        $startNotice = 'simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] start';
+
+        $output->write($startNotice);
+        $this->getLogger()->notice($startNotice);
 
         if ($this->getResqueQueueService()->contains('scheduledjob-execute', ['id' => (int)$input->getArgument('id')])) {
             $this->getLogger()->notice('simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] already in execute queue');
@@ -35,6 +38,11 @@ class EnqueueCommand extends BaseCommand {
 
             $this->getLogger()->notice('simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] enqueuing');
         }
+
+        $endNotice = 'simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] done';
+
+        $output->writeln($endNotice);
+        $this->getLogger()->notice($endNotice);
     }
 
 

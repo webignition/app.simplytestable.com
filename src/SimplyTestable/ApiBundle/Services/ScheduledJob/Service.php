@@ -113,7 +113,13 @@ class Service extends EntityService {
         $this->getManager()->persist($scheduledJob);
         $this->getManager()->flush($scheduledJob);
 
-        $scheduledJob->getCronJob()->setCommand('simplytestable:scheduledjob:enqueue ' . $scheduledJob->getId());
+        $command = 'simplytestable:scheduledjob:enqueue ' . $scheduledJob->getId();
+
+        if ($scheduledJob->hasCronModifier()) {
+            $command .= ' #' . $scheduledJob->getCronModifier();
+        }
+
+        $scheduledJob->getCronJob()->setCommand($command);
         $scheduledJob->getCronJob()->setName($jobConfiguration->getId().':'.$cronJob->getId());
 
         $this->cronManager->saveJob($cronJob);

@@ -48,3 +48,4 @@ parameters:
       base: http://ci.gears.simplytestable.com
       stripe_event_controller: /stripe/event/
   tasks_per_job_per_worker_count: 2
+  cron.command_builder.class: SimplyTestable\ApiBundle\Services\Cron\CommandBuilder\CommandBuilder
