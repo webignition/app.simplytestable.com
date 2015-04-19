@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
 
 class TaskRepository extends EntityRepository
 {    
@@ -561,15 +562,13 @@ class TaskRepository extends EntityRepository
         
         return (int)$result[0][1];       
     }
-    
-    
+
+
     /**
-     * 
      * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
-     * @param \DateTime $since
-     * @return array
+     * @return TaskOutput[]
      */
-    public function findOutputByJobAndType(\SimplyTestable\ApiBundle\Entity\Task\Task $task) {
+    public function findOutputByJobAndType(\SimplyTestable\ApiBundle\Entity\Task\Task $task, $limit = null) {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->join('Task.job', 'Job');
@@ -577,6 +576,11 @@ class TaskRepository extends EntityRepository
         
         $queryBuilder->select('TaskOutput.output');
         $queryBuilder->where('Job = :Job AND Task.type = :Type');
+        $queryBuilder->orderBy('TaskOutput.id', 'DESC');
+
+        if (!is_null($limit)) {
+            $queryBuilder->setMaxResults(100);
+        }
         
         $queryBuilder->setParameter('Job', $task->getJob());
         $queryBuilder->setParameter('Type', $task->getType());
