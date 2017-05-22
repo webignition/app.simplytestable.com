@@ -1,15 +1,15 @@
 parameters:
   bcc_resque_prefix: app.simplytestable.com
   resque-job-class-map:
-    "job-prepare": "SimplyTestable\ApiBundle\Resque\Job\Job\\PrepareJob"
-    "job-resolve": "SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob"
-    "task-assign-collection": "SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob"
-    "task-cancel": "SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob"
-    "task-cancel-collection": "SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob"
-    "worker-activate-verify": "SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob"
-    "stripe-event": "SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob"
-    "tasks-notify": "SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob"
-    "scheduledjob-execute": "SimplyTestable\ApiBundle\Resque\Job\ScheduledJob\ExecuteJob"
+    "job-prepare": SimplyTestable\ApiBundle\Resque\Job\Job\PrepareJob
+    "job-resolve": SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob
+    "task-assign-collection": SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob
+    "task-cancel": SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob
+    "task-cancel-collection": SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob
+    "worker-activate-verify": SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob
+    "stripe-event": SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob
+    "tasks-notify": SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob
+    "scheduledjob-execute": SimplyTestable\ApiBundle\Resque\Job\ScheduledJob\ExecuteJob
   curl_options:
    - {name: "CURLOPT_SSL_VERIFYPEER", value: false}
    - {name: "CURLOPT_SSL_VERIFYHOST", value: false}
