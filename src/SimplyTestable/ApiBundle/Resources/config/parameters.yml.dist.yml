@@ -7,12 +7,12 @@ parameters:
     "task-cancel": "SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob"
     "task-cancel-collection": "SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob"
     "worker-activate-verify": "SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob"
-    "stripe-event": "SimplyTestable\ApiBundle\Resque\Job\Stripe\\ProcessEventJob"
-    "tasks-notify": "SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\\NotifyJob"
+    "stripe-event": "SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob"
+    "tasks-notify": "SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob"
     "scheduledjob-execute": "SimplyTestable\ApiBundle\Resque\Job\ScheduledJob\ExecuteJob"
   curl_options:
    - {name: "CURLOPT_SSL_VERIFYPEER", value: false}
-   - {name: "CURLOPT_SSL_VERIFYHOST", value: false} 
+   - {name: "CURLOPT_SSL_VERIFYHOST", value: false}
   resque_pid: "simplytestable_apibundle"
   css-validation-domains-to-ignore:
    - cdnjs.cloudflare.com
@@ -25,24 +25,24 @@ parameters:
    - ajax.googleapis.com
    - netdna.bootstrapcdn.com
    - ajax.aspnetcdn.com
-   - static.nrelate.com   
-   - connect.facebook.net   
+   - static.nrelate.com
+   - connect.facebook.net
   stripe_webhook_developer_notification:
     recipient_email: jon@simplytestable.com
     sender_email: robot@simplytestable.com
     sender_name: Simply Testable Robot
     subject: Stripe Webhook Data {{ event-type }}
-  task_pre_processors:   
+  task_pre_processors:
     link-integrity:
       class: SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
-  task_output_joiners:   
+  task_output_joiners:
     link-integrity:
       class: SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner
   content_type_web_resource_map:
     default: webignition\WebResource\WebResource
     text/html: webignition\WebResource\WebPage\WebPage
     application/xhtml+xml: webignition\WebResource\WebPage\WebPage
-    application/json: webignition\WebResource\JsonDocument\JsonDocument      
+    application/json: webignition\WebResource\JsonDocument\JsonDocument
   web_client:
     urls:
       base: http://ci.gears.simplytestable.com
