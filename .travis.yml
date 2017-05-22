@@ -10,9 +10,9 @@ php:
   - 7
 
 before_script:
+  - phpenv config-add travis.php.ini
   - cp .travis.composer.config.json ~/.composer/config.json
 
-  # Build!
   - mkdir app/cache/test
   - mv app/config/parameters.yml.travis app/config/parameters.yml
   - mv --force app/config/config_travis.yml app/config/config_test.yml
