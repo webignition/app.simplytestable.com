@@ -5,47 +5,22 @@ services:
 language: php
 
 php:
-  - 5.4
   - 5.5
   - 5.6
-  - hhvm  
-  
-before_script:
-  # Additional PHP config  
-  #- sudo find / -name 'php.ini'
-  - sh -c 'if [ "$TRAVIS_PHP_VERSION" = "hhvm" -o "$TRAVIS_PHP_VERSION" = "hhvm-nightly" ]; then echo "is hhvm"; else phpenv config-add travis.php.ini; fi;'
+  - 7
 
-  # Install code quality tools
-  #- wget https://phar.phpunit.de/phpcpd.phar
-  
-  # Install composer for dependency management
-  #- wget http://getcomposer.org/composer.phar
-  
-  # Set the GitHub OAuth token to make use of the 6000 per hour rate limit
-  - "mkdir -p ~/.composer"
-  - cp .travis.composer.config.json ~/.composer/config.json    
-  
+before_script:
+  - cp .travis.composer.config.json ~/.composer/config.json
+
   # Build!
-  - mkdir app/cache/test  
+  - mkdir app/cache/test
   - mv app/config/parameters.yml.travis app/config/parameters.yml
   - mv --force app/config/config_travis.yml app/config/config_test.yml
   - cp src/SimplyTestable/ApiBundle/Resources/config/parameters.yml.dist.yml src/SimplyTestable/ApiBundle/Resources/config/parameters.yml
-  #- echo | php composer.phar install
   - composer install
   - php app/console doctrine:database:create
   - php app/console doctrine:migrations:migrate --no-interaction
   - php app/console doctrine:fixtures:load --append
-  
+
 script:
   - phpunit -c app
-  
-after_script:
-  #- php phpcpd.phar --exclude src/SimplyTestable/ApiBundle/Tests/ src/SimplyTestable/ApiBundle/
-  
-notifications:
-  irc:
-    - "irc.freenode.org#simplytestable"
-
-matrix:
-  allow_failures:
-    - php: hhvm
