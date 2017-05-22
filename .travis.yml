@@ -21,6 +21,7 @@ before_script:
   - php app/console doctrine:database:create
   - php app/console doctrine:migrations:migrate --no-interaction
   - php app/console doctrine:fixtures:load --append
+  - composer config --global process-timeout 2000
 
 script:
   - composer test
