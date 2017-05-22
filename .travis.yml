@@ -23,4 +23,4 @@ before_script:
   - php app/console doctrine:fixtures:load --append
 
 script:
-  - phpunit -c app
+  - php vendor/phpunit/phpunit/phpunit -c app
