@@ -28,18 +28,18 @@
         "mlpz/postmark-bundle": "*",
         "webignition/internet-media-type":">=0.4.4,<2.0",
         "webignition/website-sitemap-finder":">=1.0.2,<2.0",
-        "webignition/website-sitemap-retriever":">=1.0.1,<2.0",        
+        "webignition/website-sitemap-retriever":">=1.0.1,<2.0",
         "webignition/url": ">=1.9.12",
         "simplepie/simplepie":">=1.3.1,<1.4",
-        "webignition/website-rss-feed-finder":">=0.2.1,<1.0",        
+        "webignition/website-rss-feed-finder":">=0.2.1,<1.0",
         "guzzle/guzzle":">=3.8.0,<4",
         "jasonlewis/expressive-date": "1.0.*",
-        "stripe/stripe-php": "1.7.15",        
+        "stripe/stripe-php": "1.7.15",
         "webignition/html-validation-error-normaliser":"dev-master",
         "webignition/html-document-link-finder":">=0.7,<1.0",
         "webignition/url-resolver":">=0.3,<1.0",
         "webignition/php-stripe-models":">=0.2.5,<1.0",
-        "webignition/cookie-url-matcher":">=0.1,<1",        
+        "webignition/cookie-url-matcher":">=0.1,<1",
         "egulias/email-validator":"1.1.1",
         "webignition/web-resource-service":"1.0.3",
         "chrisboulton/php-resque": "dev-master",
@@ -67,8 +67,9 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"            
-        ]
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
+        ],
+        "test": "php vendor/phpunit/phpunit/phpunit -c app --colors"
     },
     "config": {
         "bin-dir": "bin"
