@@ -128,6 +128,7 @@ abstract class BaseTestCase extends WebTestCase {
         $request->request->add($postData);
         $request->query->add($queryData);
         $this->container->set('request', $request);
+        $this->container->enterScope('request');
 
         $controllerCallable = $this->getControllerCallable($request);
         $controllerCallable[0]->setContainer($this->container);
