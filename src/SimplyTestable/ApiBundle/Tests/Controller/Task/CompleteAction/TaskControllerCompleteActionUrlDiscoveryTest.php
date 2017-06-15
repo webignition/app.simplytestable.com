@@ -9,10 +9,11 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Tests\Controller\Task\AbstractTaskControllerTest;
+use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use Symfony\Component\HttpFoundation\Request;
 
-class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControllerTest
+class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTestCase
 {
     /**
      * @var CrawlJobContainer
@@ -81,12 +82,12 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControlle
             $expectedParentJobState = $completeActionCall['expectedParentJobState'];
             $expectedTaskStates = $completeActionCall['expectedTaskStates'];
 
-            $request = new Request([], $postData, [
-                CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => array_merge($defaultRouteParams, $routeParams)
-            ]);
-            $this->addRequestToContainer($request);
-
-            $this->createTaskController()->completeAction();
+            $this->createTaskController(
+                TaskControllerCompleteActionRequestFactory::create(
+                    $postData,
+                    array_merge($defaultRouteParams, $routeParams)
+                )
+            )->completeAction();
 
             $this->assertEquals($expectedCrawlJobState, $this->crawlJob->getState());
             $this->assertEquals($expectedParentJobState, $this->parentJob->getState());

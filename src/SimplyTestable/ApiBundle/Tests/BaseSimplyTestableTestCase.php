@@ -2,11 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Tests;
 
+use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use Symfony\Component\HttpFoundation\Request;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase {
 
@@ -196,18 +198,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase {
      */
     protected function getWorkerController($methodName, $postData = array(), $queryData = array()) {
         return $this->getController(self::WORKER_CONTROLLER_NAME, $methodName, $postData, $queryData);
-    }
-
-
-    /**
-     *
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     * @return \SimplyTestable\ApiBundle\Controller\TaskController
-     */
-    protected function getTaskController($methodName, $postData = array(), $queryData = array()) {
-        return $this->getController(self::TASK_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }
 
     /**
@@ -1335,5 +1325,21 @@ EOD;
             $this->container->get('simplytestable.services.jobpreparationservice'),
             $this->container->get('simplytestable.services.taskservice')
         );
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return TaskController
+     */
+    protected function createTaskController(Request $request)
+    {
+        $this->container->set('request', $request);
+        $this->container->enterScope('request');
+
+        $controller = new TaskController();
+        $controller->setContainer($this->container);
+
+        return $controller;
     }
 }

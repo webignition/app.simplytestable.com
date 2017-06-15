@@ -2,15 +2,14 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\TasksAction;
 
+use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
-class TasksActionTest extends BaseControllerJsonTestCase {
-    
-    protected function getActionName() {
-        return 'tasksAction';
-    }
-    
-    public function testNoOutputForIncompleteTasksWithPartialOutput() {
+class TasksActionTest extends BaseControllerJsonTestCase
+{
+    public function testNoOutputForIncompleteTasksWithPartialOutput()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
@@ -19,13 +18,17 @@ class TasksActionTest extends BaseControllerJsonTestCase {
                 'full site',
                 array('Link integrity')
          ));
-        
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
+
+        $this->queueHttpFixtures(
+            $this->buildHttpFixtureSet(
+                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
+            )
+        );
         $tasks = $job->getTasks();
 
         $now = new \DateTime();
-        
-        $this->getTaskController('completeAction', array(
+
+        $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => $now->format('Y-m-d H:i:s'),
             'output' => json_encode(array(
                 array(
@@ -45,21 +48,32 @@ class TasksActionTest extends BaseControllerJsonTestCase {
                     'state' => 204,
                     'type' => 'http',
                     'url' => 'http://example.com/three'
-                )            
-            )),            
+                )
+            )),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 1,
             'warningCount' => 0
-        ))->completeAction((string) $tasks[0]->getUrl(), $tasks[0]->getType()->getName(), $tasks[0]->getParametersHash());
-        
+        ], [
+            CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $tasks[0]->getType(),
+            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => $tasks[0]->getUrl(),
+            CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[0]->getParametersHash(),
+        ]);
+
+        $this->createTaskController($taskCompleteRequest)->completeAction();
+
         $this->executeCommand('simplytestable:task:assigncollection', array(
             'ids' => $tasks[1]->getId()
-        ));        
-        
-        $tasksResponseObject = json_decode($this->getJobController('tasksAction')->tasksAction($job->getWebsite()->getCanonicalUrl(), $job->getId())->getContent());
-        
-        foreach ($tasksResponseObject as $taskResponse) {            
+        ));
+
+        $tasksActionResponse = $this->getJobController('tasksAction')->tasksAction(
+            $job->getWebsite()->getCanonicalUrl(),
+            $job->getId()
+        );
+
+        $tasksResponseObject = json_decode($tasksActionResponse->getContent());
+
+        foreach ($tasksResponseObject as $taskResponse) {
             if ($taskResponse->id == $tasks[0]->getId()) {
                 $this->assertTrue(isset($taskResponse->output));
             } else {
@@ -67,9 +81,9 @@ class TasksActionTest extends BaseControllerJsonTestCase {
             }
         }
     }
-    
-    
-    public function testFailedNoRetryAvailableTaskOutputIsReturned() {
+
+    public function testFailedNoRetryAvailableTaskOutputIsReturned()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
@@ -78,23 +92,33 @@ class TasksActionTest extends BaseControllerJsonTestCase {
                 'full site',
                 array('HTML validation')
         ));
-        
+
         foreach ($job->getTasks() as $task) {
-            $this->getTaskController('completeAction', array(
+            $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
                 'end_date_time' => '2012-03-08 17:03:00',
                 'output' => '{"messages":[]}',
                 'contentType' => 'application/json',
                 'state' => 'task-failed-no-retry-available',
                 'errorCount' => 1,
                 'warningCount' => 0
-            ))->completeAction((string) $task->getUrl(), $task->getType()->getName(), $task->getParametersHash());
+            ], [
+                CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $task->getType(),
+                CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => $task->getUrl(),
+                CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
+            ]);
+
+            $this->createTaskController($taskCompleteRequest)->completeAction();
         }
-        
-        $tasksResponseObject = json_decode($this->getJobController('tasksAction')->tasksAction($job->getWebsite()->getCanonicalUrl(), $job->getId())->getContent());
-        
+
+        $tasksActionResponse = $this->getJobController('tasksAction')->tasksAction(
+            $job->getWebsite()->getCanonicalUrl(),
+            $job->getId()
+        );
+
+        $tasksResponseObject = json_decode($tasksActionResponse->getContent());
+
         foreach ($tasksResponseObject as $taskResponse) {
             $this->assertTrue(isset($taskResponse->output));
-        }        
-    }    
-    
+        }
+    }
 }

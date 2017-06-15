@@ -8,21 +8,22 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\UserService;
-use SimplyTestable\ApiBundle\Tests\Controller\Task\AbstractTaskControllerTest;
+use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 
-class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
+class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
 {
     public function testCompleteActionInMaintenanceReadOnlyMode()
     {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');
-        $response = $this->createTaskController()->completeAction();
+        $response = $this->createTaskController(new Request())->completeAction();
 
         $this->assertEquals(503, $response->getStatusCode());
     }
@@ -35,19 +36,13 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
      */
     public function testCompleteActionInvalidRequest($postData, $routeParams)
     {
-        $query = [];
-        $attributes = [
-            CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => $routeParams
-        ];
-
-        $request = new Request($query, $postData, $attributes);
-        $this->addRequestToContainer($request);
-
         $this->setExpectedException(
             BadRequestHttpException::class
         );
 
-        $this->createTaskController()->completeAction();
+        $this->createTaskController(
+            TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
+        )->completeAction();
     }
 
     /**
@@ -77,6 +72,10 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
      */
     public function testCompleteActionNoMatchingTasks($postData, $routeParams)
     {
+        $this->setExpectedException(
+            GoneHttpException::class
+        );
+
         $this->queueStandardJobHttpFixtures();
         $job =  $this->createJobFactory()->createResolveAndPrepare(
             'full site',
@@ -92,16 +91,9 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
             $this->container->get('simplytestable.services.taskservice')->getInProgressState()
         );
 
-        $request = new Request([], $postData, [
-            CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => $routeParams
-        ]);
-        $this->addRequestToContainer($request);
-
-        $this->setExpectedException(
-            GoneHttpException::class
-        );
-
-        $this->createTaskController()->completeAction();
+        $this->createTaskController(
+            TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
+        )->completeAction();
     }
 
     /**
@@ -193,12 +185,9 @@ class TaskControllerCompleteActionTest extends AbstractTaskControllerTest
             $jobs[] = $job;
         }
 
-        $request = new Request([], $postData, [
-            CompleteRequestFactory::ATTRIBUTE_ROUTE_PARAMS => $routeParams
-        ]);
-        $this->addRequestToContainer($request);
-
-        $response = $this->createTaskController()->completeAction();
+        $response = $this->createTaskController(
+            TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
+        )->completeAction();
 
         $this->assertTrue($response->isSuccessful());
 
