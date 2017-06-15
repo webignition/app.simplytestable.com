@@ -19,12 +19,11 @@ class ServiceTest extends BaseSimplyTestableTestCase
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
 
         $userAccountPlanPlan = $this->getUserAccountPlanService()->getForUser($this->getTestUser())->getPlan();
-
         $urlLimit = $userAccountPlanPlan->getConstraintNamed('urls_per_job')->getLimit();
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, 1)),
+            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, $urlLimit)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
