@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
 use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -12,12 +13,35 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\Job\StartService as JobStartService;
 use Symfony\Component\HttpFoundation\Request;
 
 class JobFactory
 {
+    const DEFAULT_TYPE = JobTypeService::FULL_SITE_NAME;
+    const DEFAULT_SITE_ROOT_URL = 'http://example.com';
+
+    const KEY_TYPE = 'type';
+    const KEY_SITE_ROOT_URL = 'siteRootUrl';
+    const KEY_TEST_TYPES = 'testTypes';
+    const KEY_TEST_TYPE_OPTIONS = 'testTypeOptions';
+    const KEY_PARAMETERS = 'parameters';
+    const KEY_USER = 'user';
+
+    /**
+     * @var array
+     */
+    private $defaultJobValues = [
+        self::KEY_TYPE => self::DEFAULT_TYPE,
+        self::KEY_SITE_ROOT_URL => self::DEFAULT_SITE_ROOT_URL,
+        self::KEY_TEST_TYPES => ['html validation'],
+        self::KEY_TEST_TYPE_OPTIONS => [],
+        self::KEY_PARAMETERS => [],
+        self::KEY_USER => null,
+    ];
+
     /**
      * @var JobTypeService
      */
@@ -61,6 +85,7 @@ class JobFactory
      * @param WebsiteResolutionService $websiteResolutionService
      * @param JobPreparationService $jobPreparationService
      * @param TaskService $taskService
+     * @param UserService $userService
      */
     public function __construct(
         JobTypeService $jobTypeService,
@@ -69,7 +94,8 @@ class JobFactory
         JobStartService $jobStartService,
         WebsiteResolutionService $websiteResolutionService,
         JobPreparationService $jobPreparationService,
-        TaskService $taskService
+        TaskService $taskService,
+        UserService $userService
     ) {
         $this->jobTypeService = $jobTypeService;
         $this->websiteService = $websiteService;
@@ -78,20 +104,18 @@ class JobFactory
         $this->websiteResolutionService = $websiteResolutionService;
         $this->jobPreparationService = $jobPreparationService;
         $this->taskService = $taskService;
+
+        $this->defaultJobValues[self::KEY_USER] = $userService->getPublicUser();
     }
 
     /**
-     * @param string $type
-     * @param string $siteRootUrl
-     * @param string[] $testTypes
-     * @param array $testTypeOptions
-     * @param array $parameters
-     * @param User $user
+     * @param array $jobValues
+     *
      * @return Job
      */
-    public function createResolveAndPrepare($type, $siteRootUrl, $testTypes, $testTypeOptions, $parameters, User $user)
+    public function createResolveAndPrepare($jobValues = [])
     {
-        $job = $this->create($type, $siteRootUrl, $testTypes, $testTypeOptions, $parameters, $user);
+        $job = $this->create($jobValues);
         $this->resolve($job);
         $this->prepare($job);
 
@@ -99,23 +123,24 @@ class JobFactory
     }
 
     /**
-     * @param string $type
-     * @param string $siteRootUrl
-     * @param string[] $testTypes
-     * @param array $testTypeOptions
-     * @param array $parameters
-     * @param User $user
+     * @param array $jobValues
      * @return Job
      */
-    public function create($type, $siteRootUrl, $testTypes, $testTypeOptions, $parameters, User $user)
+    public function create($jobValues = [])
     {
+        foreach ($this->defaultJobValues as $key => $value) {
+            if (!isset($jobValues[$key])) {
+                $jobValues[$key] = $value;
+            }
+        }
+
         $request = new Request([], [
-            'test-types' => $testTypes,
-            'test-type-options' => $testTypeOptions,
-            'parameters' => $parameters,
+            'test-types' => $jobValues[self::KEY_TEST_TYPES],
+            'test-type-options' => $jobValues[self::KEY_TEST_TYPE_OPTIONS],
+            'parameters' => $jobValues[self::KEY_PARAMETERS],
         ], [
-            'site_root_url' => $siteRootUrl,
-            'type' => $type,
+            'site_root_url' => $jobValues[self::KEY_SITE_ROOT_URL],
+            'type' => $jobValues[self::KEY_TYPE],
         ]);
 
         $requestAdapter = new RequestAdapter(
@@ -126,7 +151,7 @@ class JobFactory
         );
 
         $jobConfiguration = $requestAdapter->getJobConfiguration();
-        $jobConfiguration->setUser($user);
+        $jobConfiguration->setUser($jobValues[self::KEY_USER]);
 
         return $this->jobStartService->start($jobConfiguration);
     }

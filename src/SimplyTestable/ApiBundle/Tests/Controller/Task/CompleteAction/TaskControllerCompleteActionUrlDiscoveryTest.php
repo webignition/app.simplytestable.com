@@ -34,14 +34,14 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
     {
         parent::setUp();
         $this->queueCrawlJobHttpFixtures();
-        $job = $this->createJobFactory()->createResolveAndPrepare(
-            'html validation',
-            'http://example.com/',
-            ['html validation',],
-            [],
-            [],
-            $this->container->get('simplytestable.services.userservice')->getPublicUser()
-        );
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            'type' => 'full site',
+            'siteRootUrl' => 'http://example.com',
+            'testTypes' => ['html validation',],
+            'testTypeOptions' => [],
+            'parameters' => [],
+            'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()
+        ]);
 
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
 

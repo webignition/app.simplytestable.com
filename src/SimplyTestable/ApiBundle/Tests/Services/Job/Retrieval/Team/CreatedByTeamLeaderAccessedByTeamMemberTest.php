@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\Job\Retrieval\Team;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Services\Job\Retrieval\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
@@ -18,14 +19,9 @@ class CreatedByTeamLeaderAccessedByTeamMemberTest extends ServiceTest
 
         $leader = $this->createAndActivateUser('leader@example.com', 'password');
 
-        $this->job = $this->createJobFactory()->create(
-            'full site',
-            'http://example.com/',
-            ['html validation',],
-            [],
-            [],
-            $leader
-        );
+        $this->job = $this->createJobFactory()->create([
+            JobFactory::KEY_USER => $leader,
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',

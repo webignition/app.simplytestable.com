@@ -15,15 +15,7 @@ class ExceptionCasesTest extends ServiceTest
     public function setUp()
     {
         parent::setUp();
-
-        $this->job = $this->createJobFactory()->create(
-            'full site',
-            'http://example.com/',
-            ['html validation',],
-            [],
-            [],
-            $this->getUserService()->getPublicUser()
-        );
+        $this->job = $this->createJobFactory()->create();
     }
 
     public function testNoUserThrowsJobRetrievalServiceException()

@@ -77,14 +77,14 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         );
 
         $this->queueStandardJobHttpFixtures();
-        $job =  $this->createJobFactory()->createResolveAndPrepare(
-            'full site',
-            'http://example.com',
-            ['html validation',],
-            [],
-            [],
-            $this->container->get('simplytestable.services.userservice')->getPublicUser()
-        );
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            'type' => 'full site',
+            'siteRootUrl' => 'http://example.com',
+            'testTypes' => ['html validation',],
+            'testTypeOptions' => [],
+            'parameters' => [],
+            'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()
+        ]);
 
         $this->setJobTaskStates(
             $job,
@@ -168,14 +168,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             $jobValues['user'] = $user;
 
             $this->queueStandardJobHttpFixtures();
-            $job = $this->createJobFactory()->createResolveAndPrepare(
-                $jobValues['type'],
-                $jobValues['siteRootUrl'],
-                $jobValues['testTypes'],
-                $jobValues['testTypeOptions'],
-                $jobValues['parameters'],
-                $jobValues['user']
-            );
+            $job = $this->createJobFactory()->createResolveAndPrepare($jobValues);
 
             $this->setJobTaskStates(
                 $job,

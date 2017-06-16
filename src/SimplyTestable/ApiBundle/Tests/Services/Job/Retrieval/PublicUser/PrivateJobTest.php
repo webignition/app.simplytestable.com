@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Services\Job\Retrieval\PrivateUser;
 
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Services\Job\Retrieval\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
@@ -19,14 +20,9 @@ class PrivateJobTest extends ServiceTest
 
         $user = $this->createAndActivateUser('user@example.com');
 
-        $this->job = $this->createJobFactory()->create(
-            'full site',
-            'http://example.com/',
-            ['html validation',],
-            [],
-            [],
-            $user
-        );
+        $this->job = $this->createJobFactory()->create([
+            JobFactory::KEY_USER => $user,
+        ]);
 
         $this->getJobRetrievalService()->setUser($this->getUserService()->getPublicUser());
     }

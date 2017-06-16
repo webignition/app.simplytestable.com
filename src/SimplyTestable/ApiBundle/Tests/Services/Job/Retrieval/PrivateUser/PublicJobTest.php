@@ -16,14 +16,7 @@ class PublicJobTest extends ServiceTest
     {
         parent::setUp();
 
-        $this->job = $this->createJobFactory()->create(
-            'full site',
-            'http://example.com/',
-            ['html validation',],
-            [],
-            [],
-            $this->getUserService()->getPublicUser()
-        );
+        $this->job = $this->createJobFactory()->create();
 
         $this->getJobRetrievalService()->setUser($this->createAndActivateUser('user@example.com'));
     }

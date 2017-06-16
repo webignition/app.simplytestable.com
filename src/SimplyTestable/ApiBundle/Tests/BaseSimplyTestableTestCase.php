@@ -1475,7 +1475,8 @@ EOD;
             $this->container->get('simplytestable.services.job.startservice'),
             $this->container->get('simplytestable.services.jobwebsiteresolutionservice'),
             $this->container->get('simplytestable.services.jobpreparationservice'),
-            $this->container->get('simplytestable.services.taskservice')
+            $this->container->get('simplytestable.services.taskservice'),
+            $this->container->get('simplytestable.services.userservice')
         );
     }
 
