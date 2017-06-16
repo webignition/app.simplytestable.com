@@ -2,83 +2,93 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\PrepareFromCrawl;
 
+use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
-class HappyPathTest extends BaseSimplyTestableTestCase {    
-    
+class HappyPathTest extends BaseSimplyTestableTestCase
+{
     const EXPECTED_TASK_TYPE_COUNT = 4;
-    
+
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\CrawlJobContainer
+     * @var CrawlJobContainer
      */
-    private $crawlJobContainer;    
-    
-    public function setUp() {
+    private $crawlJobContainer;
+
+    public function setUp()
+    {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
-        
-        $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);                
+        $job = $this->getJobService()->getById(
+            $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail())
+        );
+
+        $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $urlDiscoveryTask = $this->crawlJobContainer->getCrawlJob()->getTasks()->first();
-        
-        $this->getTaskController('completeAction', array(
+
+        $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => '2012-03-08 17:03:00',
             'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, 1)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
             'warningCount' => 0
-        ))->completeAction((string)$urlDiscoveryTask->getUrl(), $urlDiscoveryTask->getType()->getName(), $urlDiscoveryTask->getParametersHash());
-        
+        ], [
+            CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => $urlDiscoveryTask->getType(),
+            CompleteRequestFactory::ROUTE_PARAM_CANONICAL_URL => $urlDiscoveryTask->getUrl(),
+            CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
+        ]);
+
+        $this->createTaskController($taskCompleteRequest)->completeAction();
+
         $this->getJobPreparationService()->prepareFromCrawl($this->crawlJobContainer);
-    }   
-    
-    
-    public function testStateIsQueued() {
+    }
+
+    public function testStateIsQueued()
+    {
         $this->assertEquals($this->getJobService()->getQueuedState(), $this->getJob()->getState());
     }
-    
-    
-    public function testHasStartTime() {
+
+    public function testHasStartTime()
+    {
         $this->assertNotNull($this->getJob()->getTimePeriod());
         $this->assertNotNull($this->getJob()->getTimePeriod()->getStartDateTime());
     }
-    
-    
-    public function testHasNotEndTime() {
+
+    public function testHasNotEndTime()
+    {
         $this->assertNull($this->getJob()->getTimePeriod()->getEndDateTime());
-    } 
-    
-    
-    public function testHasTasks() {        
+    }
+
+    public function testHasTasks()
+    {
         $this->assertEquals($this->getExpectedTaskCount(), $this->getJob()->getTasks()->count());
     }
-    
-    
-    public function testTaskStates() {        
+
+    public function testTaskStates()
+    {
         foreach ($this->getJob()->getTasks() as $task) {
             $this->assertEquals($this->getTaskService()->getQueuedState(), $task->getState());
         }
     }
-    
-    
+
     /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
+     * @return Job
      */
-    private function getJob() {
+    private function getJob()
+    {
         return $this->crawlJobContainer->getParentJob();
     }
-    
 
     /**
-     * 
      * @return int
      */
-    private function getExpectedTaskCount() {
-        return self::EXPECTED_TASK_TYPE_COUNT * count($this->getCrawlJobContainerService()->getDiscoveredUrls($this->crawlJobContainer));
+    private function getExpectedTaskCount()
+    {
+        $discoveredUrlsCount = count($this->getCrawlJobContainerService()->getDiscoveredUrls($this->crawlJobContainer));
+        return self::EXPECTED_TASK_TYPE_COUNT * $discoveredUrlsCount;
     }
-
 }

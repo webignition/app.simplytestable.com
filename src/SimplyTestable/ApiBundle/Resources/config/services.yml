@@ -1,57 +1,57 @@
 services:
   simplytestable.session.handler:
     class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
-  
+
   simplytestable.services.httpClientService:
     class:  SimplyTestable\ApiBundle\Services\HttpClientService
-    arguments: 
-        curlOptions: "%curl_options%"   
+    arguments:
+        curlOptions: "%curl_options%"
 
   simplytestable.services.websiteservice:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
-    arguments: 
+    arguments:
         entityManager: "@doctrine.orm.entity_manager"
         httpClientService: "@simplytestable.services.httpClientService"
-        
+
   simplytestable.services.jobwebsiteresolutionservice:
     class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
     arguments:
-        jobService: "@simplytestable.services.jobservice" 
-        httpClientService: "@simplytestable.services.httpClientService"        
+        jobService: "@simplytestable.services.jobservice"
+        httpClientService: "@simplytestable.services.httpClientService"
         websiteService: "@simplytestable.services.websiteservice"
         jobRejectionService: "@simplytestable.services.job.rejectionservice"
-        
+
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService
-    arguments: 
-        entityManager: "@doctrine.orm.entity_manager" 
-        
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+
   simplytestable.services.taskservice:
     class:  SimplyTestable\ApiBundle\Services\TaskService
-    arguments: 
-        entityManager: "@doctrine.orm.entity_manager"      
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
         stateService: "@simplytestable.services.stateservice"
         resqueQueueService: "@simplytestable.services.resque.queueService"
-        
+
   simplytestable.services.jobservice:
     class:  SimplyTestable\ApiBundle\Services\JobService
-    arguments: 
+    arguments:
         entityManager: "@doctrine.orm.entity_manager"
         stateService: "@simplytestable.services.stateservice"
         taskService: "@simplytestable.services.taskservice"
         taskTypeService: "@simplytestable.services.tasktypeservice"
-        
+
   simplytestable.services.job.rejectionservice:
     class:  SimplyTestable\ApiBundle\Services\Job\RejectionService
     arguments:
-        jobService: "@simplytestable.services.jobservice" 
-        
+        jobService: "@simplytestable.services.jobservice"
+
   simplytestable.services.joblistservice:
     class:  SimplyTestable\ApiBundle\Services\JobListService
-    arguments: 
+    arguments:
         jobService: "@simplytestable.services.jobservice"
         teamService: "@simplytestable.services.teamservice"
-        
+
   simplytestable.services.userservice:
     class:  SimplyTestable\ApiBundle\Services\UserService
     arguments:
@@ -61,31 +61,31 @@ services:
         objectManager: "@doctrine.orm.entity_manager"
         class: %fos_user.model.user.class%
         tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator
-        
+
   simplytestable.services.workerservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerService
-    arguments: 
+    arguments:
         entityManager: "@doctrine.orm.entity_manager"
         workeractivationRequestService: "@simplytestable.services.workeractivationrequestservice"
         httpClientService: "@simplytestable.services.httpClientService"
         stateService: "@simplytestable.services.stateservice"
-    
+
   simplytestable.controller.action_listener:
     class: SimplyTestable\ApiBundle\EventListener\BeforeListener
     arguments:
         logger: "@logger"
     tags:
-      - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }    
-      
+      - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+
   simplytestable.services.workeractivationrequestservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
-    arguments: 
+    arguments:
         entityManager: "@doctrine.orm.entity_manager"
         logger: "@logger"
         stateService: "@simplytestable.services.stateservice"
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
-        
+
   simplytestable.services.urlService:
     class:  SimplyTestable\ApiBundle\Services\UrlService
 
@@ -104,126 +104,126 @@ services:
 
   simplytestable.services.workertaskservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
-    arguments: 
+    arguments:
         logger: "@logger"
         workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
         httpClientService: "@simplytestable.services.httpClientService"
-        urlService: "@simplytestable.services.urlService"      
-        taskService: "@simplytestable.services.taskservice"      
-      
+        urlService: "@simplytestable.services.urlService"
+        taskService: "@simplytestable.services.taskservice"
+
   simplytestable.services.workertaskassignmentservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
-    arguments: 
+    arguments:
         logger: "@logger"
         workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
         httpClientService: "@simplytestable.services.httpClientService"
-        urlService: "@simplytestable.services.urlService"      
+        urlService: "@simplytestable.services.urlService"
         taskService: "@simplytestable.services.taskservice"
-        
+
   simplytestable.services.workertaskcancellationservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
-    arguments: 
+    arguments:
         logger: "@logger"
         workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
         httpClientService: "@simplytestable.services.httpClientService"
-        urlService: "@simplytestable.services.urlService"      
+        urlService: "@simplytestable.services.urlService"
         taskService: "@simplytestable.services.taskservice"
-        
+
   simplytestable.services.taskassignmentselectionservice:
     class:  SimplyTestable\ApiBundle\Services\TaskAssignmentSelectionService
-    arguments:             
-        jobService: "@simplytestable.services.jobservice"        
-        taskService: "@simplytestable.services.taskservice" 
+    arguments:
+        jobService: "@simplytestable.services.jobservice"
+        taskService: "@simplytestable.services.taskservice"
         logger: "@logger"
-        
+
   simplytestable.services.tasktypeservice:
     class:  SimplyTestable\ApiBundle\Services\TaskTypeService
-    arguments: 
-        entityManager: "@doctrine.orm.entity_manager"      
-        
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+
   simplytestable.services.jobtypeservice:
     class:  SimplyTestable\ApiBundle\Services\JobTypeService
-    arguments: 
-        entityManager: "@doctrine.orm.entity_manager"              
-        
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+
   simplytestable.services.applicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
-    
+
   simplytestable.services.commandService:
     class:   SimplyTestable\ApiBundle\Services\CommandService
     arguments:
-      container: "@service_container"     
-      
+      container: "@service_container"
+
   simplytestable.services.accountPlanService:
     class:   SimplyTestable\ApiBundle\Services\AccountPlanService
-    arguments: 
-        entityManager: "@doctrine.orm.entity_manager"   
-        
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+
   simplytestable.services.userAccountPlanService:
     class:   SimplyTestable\ApiBundle\Services\UserAccountPlanService
-    arguments: 
-        entityManager: "@doctrine.orm.entity_manager" 
-        userService: "@simplytestable.services.userservice" 
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+        userService: "@simplytestable.services.userservice"
         stripeService: "@simplytestable.services.stripeservice"
         teamService: "@simplytestable.services.teamservice"
         defaultTrialPeriod: "%default_trial_period%"
-        
+
   simplytestable.services.useremailchangerequestservice:
     class:  SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
         emailCanonicalizer: "@fos_user.util.email_canonicalizer"
-        tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator  
-        
+        tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator
+
   simplytestable.services.jobUserAccountPlanEnforcementService:
     class:   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
-    arguments: 
-        userAccountPlanService: "@simplytestable.services.userAccountPlanService" 
-        jobService: "@simplytestable.services.jobservice"        
+    arguments:
+        userAccountPlanService: "@simplytestable.services.userAccountPlanService"
+        jobService: "@simplytestable.services.jobservice"
         taskService: "@simplytestable.services.taskservice"
         teamService: "@simplytestable.services.teamservice"
-        
+
   simplytestable.services.jobRejectionReasonService:
     class:   SimplyTestable\ApiBundle\Services\JobRejectionReasonService
-    arguments: 
-        entityManager: "@doctrine.orm.entity_manager"           
-        
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
-    arguments: 
+    arguments:
         jobService: "@simplytestable.services.jobservice"
         taskService: "@simplytestable.services.taskservice"
         jobTypeService: "@simplytestable.services.jobtypeservice"
         websiteService: "@simplytestable.services.websiteservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         crawlJobContainerService: "@simplytestable.services.crawljobcontainerservice"
-        userService: "@simplytestable.services.userservice" 
+        userService: "@simplytestable.services.userservice"
         resqueQueueService: "@simplytestable.services.resque.queueService"
         resqueJobFactoryService: "@simplytestable.services.resque.jobFactoryService"
-        
+
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
-    arguments: 
-        entityManager: "@doctrine.orm.entity_manager"           
-        
+    arguments:
+        entityManager: "@doctrine.orm.entity_manager"
+
   simplytestable.services.stripeService:
     class:   SimplyTestable\ApiBundle\Services\StripeService
-    arguments: 
-        apiKey: "%stripe_key%"          
-        
+    arguments:
+        apiKey: "%stripe_key%"
+
   simplytestable.services.crawljobcontainerservice:
     class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
-    arguments: 
+    arguments:
         entityManager: "@doctrine.orm.entity_manager"
         taskService: "@simplytestable.services.taskservice"
         taskTypeService: "@simplytestable.services.tasktypeservice"
         jobTypeService: "@simplytestable.services.jobtypeservice"
         jobService: "@simplytestable.services.jobservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
-     
+
   simplytestable.services.taskPreprocessorServiceFactory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService
     arguments:
@@ -233,14 +233,14 @@ services:
   simplytestable.services.webResourceService:
     class:  webignition\WebResource\Service\Service
     calls:
-      - [createConfiguration, [{allow-uknown-resource-types: "true", retry-with-url-encoding-disabled: "true", content-type-web-resource-map: %content_type_web_resource_map% }]]     
-        
+      - [createConfiguration, [{allow-uknown-resource-types: "true", retry-with-url-encoding-disabled: "true", content-type-web-resource-map: %content_type_web_resource_map% }]]
+
   simplytestable.services.taskOutputJoinerServiceFactory:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\FactoryService
     arguments:
         container: "@service_container"
-        taskOutputJoiners: %task_output_joiners%          
-        
+        taskOutputJoiners: %task_output_joiners%
+
   simplytestable.listener.stripe.customer.subscription.deleted.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener
     arguments:
@@ -251,10 +251,10 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%    
-    tags: 
-      - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }                   
-        
+        webClientProperties: %web_client%
+    tags:
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
+
   simplytestable.listener.stripe.customer.subscription.created.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener
     arguments:
@@ -265,10 +265,10 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%    
+        webClientProperties: %web_client%
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
-      
+
   simplytestable.listener.stripe.customer.subscription.trial_will_end.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener
     arguments:
@@ -279,10 +279,10 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%    
+        webClientProperties: %web_client%
     tags:
-      - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }           
-      
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
+
   simplytestable.listener.stripe.customer.subscription.updated.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener
     arguments:
@@ -293,10 +293,10 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%    
+        webClientProperties: %web_client%
     tags:
-      - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }                 
-      
+      - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
+
   simplytestable.listener.stripe.invoice.succeeded.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener
     arguments:
@@ -307,10 +307,10 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%    
+        webClientProperties: %web_client%
     tags:
-      - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }       
-      
+      - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
+
   simplytestable.listener.stripe.invoice.payment_failed.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener
     arguments:
@@ -321,13 +321,13 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%    
+        webClientProperties: %web_client%
     tags:
-      - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }      
-      
+      - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
+
   simplytestable.services.postmark.sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\Sender
-        
+
   simplytestable.services.mail.service:
     class:   SimplyTestable\ApiBundle\Services\Mail\Service
     arguments:
@@ -402,3 +402,12 @@ services:
 
   simplytestable.services.scheduledjob.cronmodifier.validationservice:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService
+
+  simplytestable.services.request.factory.task.complete:
+    class:   SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory
+    scope: request
+    arguments:
+        request: "@request"
+        stateService: "@simplytestable.services.stateservice"
+        taskTypeService: "@simplytestable.services.tasktypeservice"
+        taskService: "@simplytestable.services.taskservice"

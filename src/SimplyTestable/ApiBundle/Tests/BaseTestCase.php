@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +13,7 @@ use Guzzle\Http\Client as HttpClient;
 use Symfony\Component\Console\Tester\CommandTester;
 
 abstract class BaseTestCase extends WebTestCase {
-    
+
     const FIXTURES_DATA_RELATIVE_PATH = '/Fixtures/Data';
 
     /**
@@ -23,35 +24,35 @@ abstract class BaseTestCase extends WebTestCase {
 
     /**
      *
-     * @var appTestDebugProjectContainer
+     * @var ContainerInterface
      */
     protected $container;
-    
-    
+
+
     /**
      *
      * @var \Symfony\Bundle\FrameworkBundle\Console\Application
      */
     protected $application;
-       
 
-    public function setUp() {        
+
+    public function setUp() {
         $this->client = static::createClient();
-        $this->container = $this->client->getKernel()->getContainer();        
+        $this->container = $this->client->getKernel()->getContainer();
         $this->application = new Application(self::$kernel);
         $this->application->setAutoExit(false);
-        
+
         foreach ($this->getCommands() as $command) {
             $this->application->add($command);
-        }        
-        
+        }
+
         $this->setDefaultSystemState();
         $this->container->get('doctrine')->getConnection()->beginTransaction();
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
      */
     protected function getCommands() {
@@ -64,57 +65,57 @@ abstract class BaseTestCase extends WebTestCase {
             new \SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand(),
             new \SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand()
         ), $this->getAdditionalCommands());
-    }    
-    
+    }
+
     /**
-     * 
+     *
      * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
-     */    
+     */
     protected function getAdditionalCommands() {
         return array();
-    }    
-    
+    }
+
     protected function executeCommand($name, $arguments = array()) {
         $command = $this->application->find($name);
-        $commandTester = new CommandTester($command);        
-        
+        $commandTester = new CommandTester($command);
+
         $arguments['command'] = $command->getName();
 
         return $commandTester->execute($arguments);
-    }    
-    
-    protected function setDefaultSystemState() {
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');        
     }
-    
-    
-    protected static function setupDatabase() {        
+
+    protected function setDefaultSystemState() {
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');
+    }
+
+
+    protected static function setupDatabase() {
         $commands = array(
             'php app/console doctrine:database:drop -e test --force',
             'php app/console doctrine:database:create -e test',
             'php app/console doctrine:migrations:migrate -e test --no-interaction'
         );
-        
+
         foreach ($commands as $command) {
             exec($command);
         }
-    } 
-    
+    }
+
     protected function loadDataFixtures() {
         $this->executeCommand('doctrine:fixtures:load', array(
             '--append' => true
         ));
-    }    
-    
-    protected function clearRedis() {        
+    }
+
+    protected function clearRedis() {
         exec('redis-cli -r 1 flushall');
     }
-    
+
     /**
-     * 
+     *
      * Builds a Controller object and the request to satisfy it. Attaches the request
      * to the object and to the container.
-     * 
+     *
      * @param string $controllerClass The full path to the controller class
      * @param string $controllerMethod Name of the controller method to be called
      * @param array $postData Array of post values
@@ -127,10 +128,11 @@ abstract class BaseTestCase extends WebTestCase {
         $request->request->add($postData);
         $request->query->add($queryData);
         $this->container->set('request', $request);
-              
-        $controllerCallable = $this->getControllerCallable($request);        
+        $this->container->enterScope('request');
+
+        $controllerCallable = $this->getControllerCallable($request);
         $controllerCallable[0]->setContainer($this->container);
-        
+
         $dispatcher = $this->container->get('event_dispatcher');
         $dispatcher->dispatch('kernel.controller', new \Symfony\Component\HttpKernel\Event\FilterControllerEvent(
                 self::$kernel,
@@ -141,10 +143,10 @@ abstract class BaseTestCase extends WebTestCase {
 
         return $controllerCallable[0];
     }
-    
+
     private function getControllerCallable(Request $request) {
-        $controllerResolver = new \Symfony\Component\HttpKernel\Controller\ControllerResolver();        
-        return $controllerResolver->getController($request);                
+        $controllerResolver = new \Symfony\Component\HttpKernel\Controller\ControllerResolver();
+        return $controllerResolver->getController($request);
     }
 
     /**
@@ -153,14 +155,14 @@ abstract class BaseTestCase extends WebTestCase {
      *
      * @return \Symfony\Component\HttpFoundation\Request The hydrated Request object.
      */
-    protected function createWebRequest() {        
+    protected function createWebRequest() {
         $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
         $request->server->set('REMOTE_ADDR', '127.0.0.1');
 
         return $request;
     }
-    
-    
+
+
     /**
      *
      * @param string $testName
@@ -168,28 +170,28 @@ abstract class BaseTestCase extends WebTestCase {
      */
     protected function getFixturesDataPath($testName = null) {
         $path = __DIR__ . self::FIXTURES_DATA_RELATIVE_PATH . '/' . str_replace('\\', DIRECTORY_SEPARATOR, get_class($this));
-        
+
         if (!is_null($testName)) {
             $path .= '/' . $testName;
         }
-        
+
         return $path;
-    } 
-    
-    
+    }
+
+
     /**
      *
      * @return string
      */
     protected function getCommonFixturesDataPath() {
         return __DIR__ . self::FIXTURES_DATA_RELATIVE_PATH . '/Common';
-    } 
-    
+    }
+
     public function tearDown() {
         parent::tearDown();
 
         $this->container->get('doctrine')->getConnection()->close();
-        
+
         $refl = new \ReflectionObject($this);
         foreach ($refl->getProperties() as $prop) {
             if (!$prop->isStatic() && 0 !== strpos($prop->getDeclaringClass()->getName(), 'PHPUnit_')) {
@@ -197,6 +199,6 @@ abstract class BaseTestCase extends WebTestCase {
                 $prop->setValue($this, null);
             }
         }
-    }    
+    }
 
 }
