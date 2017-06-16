@@ -5,30 +5,34 @@ namespace SimplyTestable\ApiBundle\Tests\Services\Job\Retrieval\PrivateUser;
 use SimplyTestable\ApiBundle\Tests\Services\Job\Retrieval\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
-class PublicJobTest extends ServiceTest {
-
-    const CANONICAL_URL = 'http://example.com/';
-
+class PublicJobTest extends ServiceTest
+{
     /**
      * @var Job
      */
     private $job;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $response = $this->getJobStartController('startAction')->startAction(
-            $this->container->get('request'),
-            self::CANONICAL_URL
+        $this->job = $this->createJobFactory()->create(
+            'full site',
+            'http://example.com/',
+            ['html validation',],
+            [],
+            [],
+            $this->getUserService()->getPublicUser()
         );
-        $this->job = $this->getJobService()->getById($this->getJobIdFromUrl($response->getTargetUrl()));
 
         $this->getJobRetrievalService()->setUser($this->job->getUser());
     }
 
-
-    public function testRetrieve() {
-        $this->assertEquals($this->job->getId(), $this->getJobRetrievalService()->retrieve($this->job->getId())->getId());
+    public function testRetrieve()
+    {
+        $this->assertEquals(
+            $this->job->getId(),
+            $this->getJobRetrievalService()->retrieve($this->job->getId())->getId()
+        );
     }
-
 }
