@@ -3,30 +3,33 @@
 namespace SimplyTestable\ApiBundle\Tests\Services\Job\Retrieval;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException;
 
-class ExceptionCasesTest extends ServiceTest {
-
-    const CANONICAL_URL = 'http://example.com/';
-
+class ExceptionCasesTest extends ServiceTest
+{
     /**
      * @var Job
      */
     private $job;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $response = $this->getJobStartController('startAction')->startAction(
-            $this->container->get('request'),
-            self::CANONICAL_URL
+        $this->job = $this->createJobFactory()->create(
+            'full site',
+            'http://example.com/',
+            ['html validation',],
+            [],
+            [],
+            $this->getUserService()->getPublicUser()
         );
-        $this->job = $this->getJobService()->getById($this->getJobIdFromUrl($response->getTargetUrl()));
     }
 
-
-    public function testNoUserThrowsJobRetrievalServiceException() {
+    public function testNoUserThrowsJobRetrievalServiceException()
+    {
         $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException',
+            RetrievalServiceException::class,
             'User not set',
             1
         );
@@ -34,17 +37,16 @@ class ExceptionCasesTest extends ServiceTest {
         $this->getJobRetrievalService()->retrieve($this->job->getId());
     }
 
-
-    public function testJobNotFoundThrowsJobRetrievalServiceException() {
+    public function testJobNotFoundThrowsJobRetrievalServiceException()
+    {
         $this->getJobRetrievalService()->setUser($this->job->getUser());
 
         $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException',
+            RetrievalServiceException::class,
             'Job [0] not found',
             2
         );
 
         $this->getJobRetrievalService()->retrieve(0);
     }
-
 }

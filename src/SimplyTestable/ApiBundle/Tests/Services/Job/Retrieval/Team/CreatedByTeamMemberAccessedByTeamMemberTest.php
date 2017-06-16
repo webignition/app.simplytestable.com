@@ -7,8 +7,6 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 
 class CreatedByTeamMemberAccessedByTeamMemberTest extends ServiceTest
 {
-    const CANONICAL_URL = 'http://example.com/';
-
     /**
      * @var Job
      */
