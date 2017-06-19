@@ -2,8 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job;
 
+use Guzzle\Http\Message\Response;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class CrawlStatusTest extends BaseControllerJsonTestCase
@@ -12,9 +15,11 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->getJobService()->getById(
-            $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail())
-        );
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $jobObject = json_decode($this->getJobController('statusAction', array(
             'user' => $this->getTestUser()->getEmail()
@@ -28,9 +33,12 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->getJobService()->getById(
-            $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail())
-        );
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
                 $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
@@ -93,9 +101,11 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->getJobService()->getById(
-            $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail())
-        );
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $statusActionResponse = $this->getJobController('statusAction')->statusAction(
             (string)$job->getWebsite(),
@@ -112,9 +122,12 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     public function testGetForPublicJobOwnedByNonPublicUserByPublicUser()
     {
         $this->getUserService()->setUser($this->getTestUser());
-        $job = $this->getJobService()->getById(
-            $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail())
-        );
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $this->getJobController('setPublicAction')->setPublicAction(
             $job->getWebsite()->getCanonicalUrl(),
@@ -131,9 +144,12 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     public function testGetForPublicJobOwnedByNonPublicUserByNonPublicUser()
     {
         $this->getUserService()->setUser($this->getTestUser());
-        $job = $this->getJobService()->getById(
-            $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail())
-        );
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $this->getJobController('setPublicAction')->setPublicAction(
             $job->getWebsite()->getCanonicalUrl(),
@@ -152,10 +168,11 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
         $user2 = $this->createAndActivateUser('user2@example.com', 'password');
 
         $this->getUserService()->setUser($user1);
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
-            self::DEFAULT_CANONICAL_URL,
-            $user1->getEmail()
-        ));
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $user1,
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $this->getJobController('setPublicAction')->setPublicAction(
             $job->getWebsite()->getCanonicalUrl(),
@@ -172,10 +189,10 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     public function testGetForPrivateJobOwnedByNonPublicUserByPublicUser()
     {
         $this->getUserService()->setUser($this->getTestUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
-            self::DEFAULT_CANONICAL_URL,
-            $this->getTestUser()->getEmail()
-        ));
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ]);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->assertEquals(403, $this->fetchJobResponse($job)->getStatusCode());
@@ -184,10 +201,12 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     public function testGetForPrivateJobOwnedByNonPublicUserByNonPublicUser()
     {
         $this->getUserService()->setUser($this->getTestUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
-            self::DEFAULT_CANONICAL_URL,
-            $this->getTestUser()->getEmail()
-        ));
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $jobObject = json_decode($this->fetchJobResponse($job)->getContent());
 
@@ -200,10 +219,10 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
         $user2 = $this->createAndActivateUser('user2@example.com', 'password');
 
         $this->getUserService()->setUser($user1);
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
-            self::DEFAULT_CANONICAL_URL,
-            $user1->getEmail()
-        ));
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $user1,
+        ]);
 
         $this->getUserService()->setUser($user2);
         $this->assertEquals(403, $this->fetchJobResponse($job)->getStatusCode());
@@ -223,10 +242,12 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
         $accountPlanUrlLimit = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
 
         $this->getUserService()->setUser($user);
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
-            self::DEFAULT_CANONICAL_URL,
-            $user->getEmail()
-        ));
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $user,
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $this->getJobController('setPublicAction')->setPublicAction(
             $job->getWebsite()->getCanonicalUrl(),

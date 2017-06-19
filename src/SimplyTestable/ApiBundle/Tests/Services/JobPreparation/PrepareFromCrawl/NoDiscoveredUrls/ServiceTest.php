@@ -5,6 +5,8 @@ namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\PrepareFromCraw
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class ServiceTest extends BaseSimplyTestableTestCase
@@ -21,9 +23,18 @@ class ServiceTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->job = $this->getJobService()->getById(
-            $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail())
-        );
+
+        $this->job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+            JobFactory::KEY_TEST_TYPES => [
+                'html validation',
+                'css validation',
+                'js static analysis',
+                'link integrity',
+            ],
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($this->job);
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();

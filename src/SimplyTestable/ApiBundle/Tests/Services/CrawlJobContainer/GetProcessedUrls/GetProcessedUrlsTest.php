@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\CrawlJobContainer\GetProcessed
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class GetProcessedUrlsTest extends BaseSimplyTestableTestCase
@@ -12,7 +13,10 @@ class GetProcessedUrlsTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
                 $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')

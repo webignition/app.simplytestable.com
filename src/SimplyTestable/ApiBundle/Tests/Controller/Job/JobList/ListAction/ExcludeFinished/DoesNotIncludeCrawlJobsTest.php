@@ -2,40 +2,48 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\ExcludeFinished;
 
-class DoesNotIncludeCrawlJobsTest extends StateBasedTest {
-    
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
+class DoesNotIncludeCrawlJobsTest extends StateBasedTest
+{
     private $canonicalUrls = array(
         'http://crawling.example.com/',
     );
 
-    protected function getExpectedListLength() {
+    protected function getExpectedListLength()
+    {
         return count($this->getCanonicalUrls());
     }
 
-    protected function getCanonicalUrls() {
+    protected function getCanonicalUrls()
+    {
         return $this->canonicalUrls;
     }
 
-    protected function getExpectedJobListUrls() {
+    protected function getExpectedJobListUrls()
+    {
         return array();
     }
 
-    protected function getRequestingUser() {
+    protected function getRequestingUser()
+    {
         return $this->getTestUser();
     }
-    
-    protected function createJobs() {        
+
+    protected function createJobs()
+    {
         // Crawling job
-        $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
-            $this->canonicalUrls[0],
-            $this->getTestUser()->getEmail()
-        ));
-    }
-    
-    public function testListContainsParentJobIdOnly() {
-        $this->assertEquals($this->jobs[0]->getId(), $this->list->jobs[0]->id);        
+        $this->jobs[] = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_SITE_ROOT_URL => $this->canonicalUrls[0],
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
     }
 
+    public function testListContainsParentJobIdOnly()
+    {
+        $this->assertEquals($this->jobs[0]->getId(), $this->list->jobs[0]->id);
+    }
 }
-
-

@@ -2,28 +2,32 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\CountAction\ExcludeFinished;
 
-class IncludeFailedNoSitemapJobsThatHaveActiveCrawlJobsTest extends StateBasedTest {
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-    protected function getRequestingUser() {
+class IncludeFailedNoSitemapJobsThatHaveActiveCrawlJobsTest extends StateBasedTest
+{
+    protected function getRequestingUser()
+    {
         return $this->getTestUser();
     }
 
-    protected function getExpectedCountValue() {
+    protected function getExpectedCountValue()
+    {
         return count($this->getCanonicalUrls());
     }
 
-    protected function getCanonicalUrls() {
+    protected function getCanonicalUrls()
+    {
         return array(self::DEFAULT_CANONICAL_URL);
     }
-    
-    protected function createJobs() {
-        $this->jobs[] = $this->getJobService()->getById(
-            $this->createResolveAndPrepareCrawlJob(
-                self::DEFAULT_CANONICAL_URL,
-                $this->getTestUser()->getEmail()
-            )
-        );
+
+    protected function createJobs()
+    {
+        $this->jobs[] = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
     }
 }
-
-

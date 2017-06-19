@@ -369,14 +369,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return $job_id;
     }
 
-    /**
-     * @return int
-     */
-    protected function createResolveAndPrepareDefaultCrawlJob()
-    {
-        return $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL);
-    }
-
     protected function queueResolveHttpFixture()
     {
         $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet(array(

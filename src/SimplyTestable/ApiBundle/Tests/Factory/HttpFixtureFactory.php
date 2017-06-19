@@ -32,4 +32,14 @@ class HttpFixtureFactory
             SitemapFixtureFactory::load('example.com-three-urls', $domain)
         ));
     }
+
+    public static function createStandardCrawlPrepareResponses()
+    {
+        return [
+            GuzzleResponse::fromMessage("HTTP/1.0 200 OK\nContent-Type: text/plain\n\nUser-Agent: *"),
+            GuzzleResponse::fromMessage('HTTP/1.1 404'),
+            GuzzleResponse::fromMessage('HTTP/1.1 404'),
+            GuzzleResponse::fromMessage('HTTP/1.1 404'),
+        ];
+    }
 }

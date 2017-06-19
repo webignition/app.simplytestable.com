@@ -2,22 +2,32 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\CountAction\ExcludeCurrent;
 
-class CrawlJobTest extends ExcludeCurrentTest {    
-    
-    protected function getCanonicalUrls() {
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
+class CrawlJobTest extends ExcludeCurrentTest
+{
+    protected function getCanonicalUrls()
+    {
         return array(self::DEFAULT_CANONICAL_URL);
     }
-    
-    protected function getExpectedCountValue() {
+
+    protected function getExpectedCountValue()
+    {
         return 0;
     }
 
-    protected function getRequestingUser() {
+    protected function getRequestingUser()
+    {
         return $this->getUserService()->getPublicUser();
     }
-    
-    protected function createJobs() {
-        $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
-    }    
 
+    protected function createJobs()
+    {
+        $this->jobs = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+    }
 }

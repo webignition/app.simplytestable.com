@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\CrawlJobContainer\ProcessTaskR
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class ProcessTaskResultsTest extends BaseSimplyTestableTestCase
@@ -12,7 +13,11 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase
     public function testWithUrlsNotYetProcessed()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
                 $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
@@ -45,7 +50,7 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase
         ]);
 
         $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
-        $taskController->completeAction();
+        $response = $taskController->completeAction();
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -56,7 +61,11 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase
     public function testWithAllUrlsAlreadyProcessed()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
                 $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')

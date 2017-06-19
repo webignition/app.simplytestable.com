@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\CrawlJobContainer\ProcessTaskR
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class PublicPlanTest extends BaseSimplyTestableTestCase
@@ -11,7 +12,11 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
     public function testWithConstraintHitOnFirstResultSet()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
                 $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
@@ -54,7 +59,11 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
     public function testWithConstraintHitOnSecondResultSet()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
                 $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
@@ -122,7 +131,11 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
     public function testCrawlJobHasAmmendmentAddedIfDiscoveredUrlSetIsConstrainedByAccountPlan()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
                 $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
