@@ -5,45 +5,53 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Worker\Tasks\RequestAction\V
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Tests\Controller\Worker\Tasks\RequestAction\ValidRequest\ValidRequestTest;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-abstract class WithJobsTest extends ValidRequestTest {
-
+abstract class WithJobsTest extends ValidRequestTest
+{
     /**
      * @var Job[]
      */
     private $jobs;
-
 
     /**
      * @var int[]
      */
     private $taskIds = [];
 
-
-    public function preCall() {
+    public function preCall()
+    {
         $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
+        $jobFactory = $this->createJobFactory();
+
         for ($jobLimitIndex = 0; $jobLimitIndex < $this->getJobLimit(); $jobLimitIndex++) {
-            $this->jobs[] = $this->getJobService()->getById(
-                $this->createResolveAndPrepareJob('http://' . $jobLimitIndex . '.example.com/')
-            );
+            $this->jobs[] = $jobFactory->createResolveAndPrepare([
+                JobFactory::KEY_SITE_ROOT_URL => 'http://' . $jobLimitIndex . '.example.com/',
+            ], [
+                'prepare' => [
+                    HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                    HttpFixtureFactory::createStandardSitemapResponse($jobLimitIndex . '.example.com/'),
+                ],
+            ]);
         }
 
         $this->getTaskQueueService()->setLimit($this->getTaskLimit());
         $this->taskIds = $this->getTaskQueueService()->getNext();
     }
 
-
-    public function testSelectedTasksAreQueuedForAssignment() {
+    public function testSelectedTasksAreQueuedForAssignment()
+    {
         foreach ($this->getSortedExpectedTasks() as $task) {
             $this->assertEquals('task-queued-for-assignment', $task->getState()->getName());
         }
     }
 
-
-    public function testTaskAssignCollectionResqueJob() {
+    public function testTaskAssignCollectionResqueJob()
+    {
         if ($this->getTaskLimit() === 0) {
             $this->assertFalse($this->getResqueQueueService()->contains(
                 'task-assign-collection',
@@ -63,8 +71,8 @@ abstract class WithJobsTest extends ValidRequestTest {
         }
     }
 
-
-    public function testRemainingTasksAreQueued() {
+    public function testRemainingTasksAreQueued()
+    {
         foreach ($this->jobs as $job) {
             foreach ($job->getTasks() as $task) {
                 if (!in_array($task->getId(), $this->taskIds)) {
@@ -74,11 +82,11 @@ abstract class WithJobsTest extends ValidRequestTest {
         }
     }
 
-
     /**
      * @return array
      */
-    protected function getRequestPostData() {
+    protected function getRequestPostData()
+    {
         return [
             'worker_hostname' => self::WORKER_HOSTNAME,
             'worker_token' => self::WORKER_TOKEN,
@@ -86,11 +94,11 @@ abstract class WithJobsTest extends ValidRequestTest {
         ];
     }
 
-
     /**
      * @return Task[]
      */
-    private function getSortedExpectedTasks() {
+    private function getSortedExpectedTasks()
+    {
         $rawTaskCollection = $this->getTaskService()->getEntityRepository()->getCollectionById($this->taskIds);
 
         $taskIdIndex = $this->taskIds;
@@ -113,11 +121,11 @@ abstract class WithJobsTest extends ValidRequestTest {
         return $tasks;
     }
 
-
     /**
      * @return int
      */
-    private function getJobLimit() {
+    private function getJobLimit()
+    {
         $classNameParts = explode('\\', get_class($this));
         $localClassName = array_pop($classNameParts);
 
@@ -127,11 +135,11 @@ abstract class WithJobsTest extends ValidRequestTest {
         return (int)str_replace('Job', '', $matches[0]);
     }
 
-
     /**
      * @return int
      */
-    private function getTaskLimit() {
+    private function getTaskLimit()
+    {
         $classNameParts = explode('\\', get_class($this));
         $localClassName = array_pop($classNameParts);
 
@@ -140,5 +148,4 @@ abstract class WithJobsTest extends ValidRequestTest {
 
         return (int)str_replace('Task', '', $matches[0]);
     }
-
 }

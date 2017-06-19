@@ -229,6 +229,7 @@ class JobPreparationService {
 
     private function prepareTasksFromCollectedUrls(Job $job, $urls) {
         $requestedTaskTypes = $job->getRequestedTaskTypes();
+
         $newTaskState = $this->taskService->getQueuedState();
 
         foreach ($urls as $url) {

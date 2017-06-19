@@ -52,47 +52,24 @@ class StartTest extends ActionTest
         $this->assertEquals($this->getJobService()->getStartingState(), $job->getState());
     }
 
-    public function testSingleUrlJobJsStaticAnalysisIgnoreCommonCdns()
-    {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
-            self::DEFAULT_CANONICAL_URL,
-            null,
-            'single url',
-            array(
-                'JS static analysis'
-            ),
-            array(
-                'JS static analysis' => array(
-                    'ignore-common-cdns' => 1
-                )
-            )
-        ));
-
-
-        $task = $job->getTasks()->first();
-        $parametersObject = json_decode($task->getParameters());
-        $this->assertTrue(count($parametersObject->{'domains-to-ignore'}) > 0);
-    }
-
     public function testStoreTaskTypeOptionsForTaskTypesThatHaveNotBeenSelected()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
-            self::DEFAULT_CANONICAL_URL,
-            null,
-            'single url',
-            array(
-                'JS static analysis'
-            ),
-            array(
-                'JS static analysis' => array(
+        $request = new Request([], [
+            'test-types' => ['js static analysis'],
+            'test-type-options' => [
+                'js static analysis' => [
                     'ignore-common-cdns' => 1
-                )
-            )
-        ));
+                ],
+            ],
+        ], [
+            'site_root_url' => self::DEFAULT_CANONICAL_URL,
+        ]);
+
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $startResponse = $jobStartController->startAction($request, self::DEFAULT_CANONICAL_URL);
+        $job = $this->getJobFromResponse($startResponse);
 
         $this->assertEquals(1, $job->getTaskTypeOptions()->count());
 
@@ -121,33 +98,5 @@ class StartTest extends ActionTest
 
         $job = $this->getJobFromResponse($jobStartResponse);
         $this->assertEquals('{"http-auth-username":"user","http-auth-password":"pass"}', $job->getParameters());
-    }
-
-    public function testWithSingleUrlTestAndHttpAuthParameters()
-    {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-
-        $httpAuthUsernameKey = 'http-auth-username';
-        $httpAuthPasswordKey = 'http-auth-password';
-        $httpAuthUsernameValue = 'foo';
-        $httpAuthPasswordValue = 'bar';
-
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
-                self::DEFAULT_CANONICAL_URL,
-                null,
-                'single url',
-                array('html validation'),
-                null,
-                array(
-                    $httpAuthUsernameKey => $httpAuthUsernameValue,
-                    $httpAuthPasswordKey => $httpAuthPasswordValue
-                )
-        ));
-
-        $decodedParameters = json_decode($job->getTasks()->first()->getParameters());
-        $this->assertTrue(isset($decodedParameters->$httpAuthUsernameKey));
-        $this->assertEquals($httpAuthUsernameValue, $decodedParameters->$httpAuthUsernameKey);
-        $this->assertTrue(isset($decodedParameters->$httpAuthPasswordKey));
-        $this->assertEquals($httpAuthPasswordValue, $decodedParameters->$httpAuthPasswordKey);
     }
 }

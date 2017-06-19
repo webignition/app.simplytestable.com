@@ -11,7 +11,7 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Controller\ApiController;
 
 class TasksController extends ApiController {
-    
+
     public function __construct() {
         $this->setInputDefinitions([
             'requestAction' => new InputDefinition([
@@ -24,10 +24,11 @@ class TasksController extends ApiController {
         $this->setRequestTypes(array(
             'requestAction' => \Guzzle\Http\Message\Request::POST
         ));
-    }  
-    
-    
-    public function requestAction() {
+    }
+
+
+    public function requestAction()
+    {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
@@ -74,6 +75,7 @@ class TasksController extends ApiController {
 
         $this->getTaskQueueService()->setLimit($limit);
         $taskIds = $this->getTaskQueueService()->getNext();
+
         if (count($taskIds) == 0) {
             return $this->sendResponse();
         }
@@ -137,13 +139,13 @@ class TasksController extends ApiController {
     private function getTaskQueueService() {
         return $this->get('simplytestable.services.task.queueservice');
     }
-    
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\WorkerService
-     */    
+     */
     private function getWorkerService() {
         return $this->container->get('simplytestable.services.workerservice');
-    }        
+    }
 }
 

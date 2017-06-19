@@ -2,56 +2,77 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\JobList\ListAction\ExcludeFinished;
 
-class ListIsSortedByJobIdTest extends StateBasedTest {
-    
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
+class ListIsSortedByJobIdTest extends StateBasedTest
+{
+    /**
+     * @var string[]
+     */
     private $canonicalUrls = array(
         'http://non-crawling.example.com/',
         'http://crawling.example.com/',
     );
 
-    protected function getRequestingUser() {
+    protected function getRequestingUser()
+    {
         return $this->getTestUser();
     }
 
-    protected function getExpectedListLength() {
+    protected function getExpectedListLength()
+    {
         return count($this->getCanonicalUrls());
     }
 
-    protected function getCanonicalUrls() {
+    protected function getCanonicalUrls()
+    {
         return $this->canonicalUrls;
     }
 
-    protected function getExpectedJobListUrls() {
+    protected function getExpectedJobListUrls()
+    {
         return array_reverse($this->getCanonicalUrls());
     }
-    
-    protected function createJobs() {
+
+    protected function createJobs()
+    {
+        $jobFactory = $this->createJobFactory();
+
         // Non-crawling job
-        $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareJob(
-            $this->canonicalUrls[0],
-            $this->getTestUser()->getEmail()
-        ));
-        
+        $this->jobs[] = $jobFactory->createResolveAndPrepare([
+            JobFactory::KEY_SITE_ROOT_URL => $this->canonicalUrls[0],
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => [
+                HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                HttpFixtureFactory::createStandardSitemapResponse($this->canonicalUrls[0]),
+            ],
+        ]);
+
         // Crawling job
-        $this->jobs[] = $this->getJobService()->getById($this->createResolveAndPrepareCrawlJob(
-            $this->canonicalUrls[1],
-            $this->getTestUser()->getEmail()
-        ));        
-        
-        
+        $this->jobs[] = $jobFactory->createResolveAndPrepare([
+            JobFactory::KEY_SITE_ROOT_URL => $this->canonicalUrls[1],
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => [
+                HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                HttpFixtureFactory::createStandardSitemapResponse($this->canonicalUrls[1]),
+            ],
+        ]);
     }
-    
-    protected function getPostParameters() {
+
+    protected function getPostParameters()
+    {
         return array(
             'user' => $this->jobs[0]->getUser()->getEmail()
         );
     }
-    
-    public function testListJobIdOrder() {        
-        $this->assertEquals($this->jobs[1]->getId(), $this->list->jobs[0]->id);        
-        $this->assertEquals($this->jobs[0]->getId(), $this->list->jobs[1]->id);        
+
+    public function testListJobIdOrder()
+    {
+        $this->assertEquals($this->jobs[1]->getId(), $this->list->jobs[0]->id);
+        $this->assertEquals($this->jobs[0]->getId(), $this->list->jobs[1]->id);
     }
-
 }
-
-

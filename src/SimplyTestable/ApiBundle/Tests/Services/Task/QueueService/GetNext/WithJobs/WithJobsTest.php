@@ -3,24 +3,34 @@
 namespace SimplyTestable\ApiBundle\Tests\Services\Task\QueueService\GetNext\WithJobs;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Services\Task\QueueService\ServiceTest;
 
-abstract class WithJobsTest extends ServiceTest {
-
+abstract class WithJobsTest extends ServiceTest
+{
     /**
      * @var Job[]
      */
     private $jobs;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
+        $jobFactory = $this->createJobFactory();
+
         for ($jobLimitIndex = 0; $jobLimitIndex < $this->getJobLimit(); $jobLimitIndex++) {
-            $this->jobs[] = $this->getJobService()->getById(
-                $this->createResolveAndPrepareJob('http://' . $jobLimitIndex . '.example.com/')
-            );
+            $this->jobs[] = $jobFactory->createResolveAndPrepare([
+                JobFactory::KEY_SITE_ROOT_URL => 'http://' . $jobLimitIndex . '.example.com/',
+            ], [
+                'prepare' => [
+                    HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                    HttpFixtureFactory::createStandardSitemapResponse($jobLimitIndex . '.example.com/'),
+                ],
+            ]);
         }
 
         $this->getService()->clearJob();
@@ -28,11 +38,11 @@ abstract class WithJobsTest extends ServiceTest {
         $this->getTaskQueueService()->setLimit($this->getTaskLimit());
     }
 
-
     /**
      * @return int
      */
-    private function getJobLimit() {
+    private function getJobLimit()
+    {
         $classNameParts = explode('\\', get_class($this));
         $localClassName = array_pop($classNameParts);
 
@@ -42,11 +52,11 @@ abstract class WithJobsTest extends ServiceTest {
         return (int)str_replace('Job', '', $matches[0]);
     }
 
-
     /**
      * @return int
      */
-    private function getTaskLimit() {
+    private function getTaskLimit()
+    {
         $classNameParts = explode('\\', get_class($this));
         $localClassName = array_pop($classNameParts);
 
@@ -56,10 +66,14 @@ abstract class WithJobsTest extends ServiceTest {
         return (int)str_replace('Task', '', $matches[0]);
     }
 
-    private function getExpectedTaskIds() {
+    private function getExpectedTaskIds()
+    {
         $jobTaskIds = [];
         foreach ($this->jobs as $job) {
-            $jobTaskIds[$job->getId()] =  $this->getTaskService()->getEntityRepository()->getIdsByJob($job, $this->getTaskLimit());
+            $jobTaskIds[$job->getId()] = $this->getTaskService()->getEntityRepository()->getIdsByJob(
+                $job,
+                $this->getTaskLimit()
+            );
         }
 
         $taskIds = [];
@@ -82,8 +96,8 @@ abstract class WithJobsTest extends ServiceTest {
         return $taskIds;
     }
 
-    public function testGetsExpectedTaskIds() {
+    public function testGetsExpectedTaskIds()
+    {
         $this->assertEquals($this->getExpectedTaskIds(), $this->getService()->getNext());
     }
-
 }

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand\SuccessfulPrepare;
 
 use SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand\CommandTest;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 abstract class SuccessfulPrepareTest extends CommandTest
 {
@@ -27,7 +28,18 @@ abstract class SuccessfulPrepareTest extends CommandTest
         $this->getUserService()->setUser($user);
 
         $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create();
+        $job = $jobFactory->create([
+            JobFactory::KEY_TEST_TYPES => ['js static analysis'],
+            JobFactory::KEY_TEST_TYPE_OPTIONS => [
+                'js static analysis' => [
+                    'ignore-common-cdns' => 1
+                ],
+            ],
+            JobFactory::KEY_PARAMETERS => [
+                'http-auth-username' => 'user',
+                'http-auth-password' => 'pass'
+            ],
+        ]);
         $jobFactory->resolve($job);
 
         return $job;
@@ -43,6 +55,31 @@ abstract class SuccessfulPrepareTest extends CommandTest
         $this->assertFalse($this->getResqueQueueService()->isEmpty(
             'tasks-notify'
         ));
+    }
+
+    public function testCommonCdnsToIgnoreAreSetOnDomainsToIgnore()
+    {
+        $task = $this->job->getTasks()->first();
+
+        $this->assertEquals(
+            json_decode($task->getParameters(), true)['domains-to-ignore'],
+            $this->container->getParameter('js-static-analysis-domains-to-ignore')
+        );
+    }
+
+    public function testJobParametersAreSetOnTask()
+    {
+        $task = $this->job->getTasks()->first();
+
+        $this->assertEquals(
+            json_decode($task->getParameters(), true)['http-auth-username'],
+            'user'
+        );
+
+        $this->assertEquals(
+            json_decode($task->getParameters(), true)['http-auth-password'],
+            'pass'
+        );
     }
 
     private function getWorkerCount()

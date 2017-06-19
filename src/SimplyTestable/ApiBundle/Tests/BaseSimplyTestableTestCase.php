@@ -351,34 +351,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
      *
      * @return int
      */
-    protected function createResolveAndPrepareJob(
-        $canonicalUrl,
-        $userEmail = null,
-        $type = null,
-        $testTypes = null,
-        $testTypeOptions = null,
-        $parameters = null
-    ) {
-        $this->queueResolveHttpFixture();
-        $this->queuePrepareHttpFixturesForJob($canonicalUrl);
-
-        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
-        $this->resolveJob($canonicalUrl, $job_id);
-        $this->prepareJob($canonicalUrl, $job_id);
-
-        return $job_id;
-    }
-
-    /**
-     * @param $canonicalUrl
-     * @param string $userEmail
-     * @param string $type
-     * @param array $testTypes
-     * @param array $testTypeOptions
-     * @param array $parameters
-     *
-     * @return int
-     */
     protected function createResolveAndPrepareCrawlJob(
         $canonicalUrl,
         $userEmail = null,
@@ -395,14 +367,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         $this->prepareJob($canonicalUrl, $job_id);
 
         return $job_id;
-    }
-
-    /**
-     * @return int
-     */
-    protected function createResolveAndPrepareDefaultJob()
-    {
-        return $this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL);
     }
 
     /**

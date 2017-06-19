@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Services\TaskPreProcessor\LinkIntegrity
 use Doctrine\ORM\PersistentCollection;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 abstract class PreprocessorTest extends BaseSimplyTestableTestCase
@@ -40,9 +41,11 @@ abstract class PreprocessorTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById(
-            $this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, null, 'full site', array('Link integrity'))
-        );
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_TEST_TYPES => ['link integrity'],
+        ]);
+
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
                 $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')
