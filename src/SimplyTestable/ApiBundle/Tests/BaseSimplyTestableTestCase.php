@@ -350,32 +350,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
      *
      * @return int
      */
-    protected function createAndResolveJob(
-        $canonicalUrl,
-        $userEmail = null,
-        $type = null,
-        $testTypes = null,
-        $testTypeOptions = null,
-        $parameters = null
-    ) {
-        $this->queueResolveHttpFixture();
-
-        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
-        $this->resolveJob($canonicalUrl, $job_id);
-
-        return $job_id;
-    }
-
-    /**
-     * @param $canonicalUrl
-     * @param string $userEmail
-     * @param string $type
-     * @param array $testTypes
-     * @param array $testTypeOptions
-     * @param array $parameters
-     *
-     * @return int
-     */
     protected function createResolveAndPrepareJob(
         $canonicalUrl,
         $userEmail = null,
