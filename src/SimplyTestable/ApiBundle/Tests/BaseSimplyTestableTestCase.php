@@ -298,77 +298,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return (int)$urlParts[count($urlParts) - 2];
     }
 
-    /**
-     * @param string $canonicalUrl
-     * @param string $userEmail
-     * @param string $type
-     * @param array $testTypes
-     *
-     * @return RedirectResponse
-     */
-    protected function createJob(
-        $canonicalUrl,
-        $userEmail = null,
-        $type = null,
-        $testTypes = null,
-        $testTypeOptions = null,
-        $parameters = null
-    ) {
-        $postData = array();
-        if (!is_null($userEmail)) {
-            $postData['user'] = $userEmail;
-        }
-
-        if (!is_null($type)) {
-            $postData['type'] = $type;
-        }
-
-        if (is_array($testTypes)) {
-            $postData['test-types'] = $testTypes;
-        }
-
-        if (is_array($testTypeOptions)) {
-            $postData['test-type-options'] = $testTypeOptions;
-        }
-
-        if (is_array($parameters)) {
-            $postData['parameters'] = $parameters;
-        }
-
-        return $this->getJobStartController('startAction', $postData)->startAction(
-            $this->container->get('request'),
-            $canonicalUrl
-        );
-    }
-
-    /**
-     * @param $canonicalUrl
-     * @param string $userEmail
-     * @param string $type
-     * @param array $testTypes
-     * @param array $testTypeOptions
-     * @param array $parameters
-     *
-     * @return int
-     */
-    protected function createResolveAndPrepareCrawlJob(
-        $canonicalUrl,
-        $userEmail = null,
-        $type = null,
-        $testTypes = null,
-        $testTypeOptions = null,
-        $parameters = null
-    ) {
-        $this->queueResolveHttpFixture();
-        $this->queuePrepareHttpFixturesForCrawlJob($canonicalUrl);
-
-        $job_id = $this->createJobAndGetId($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
-        $this->resolveJob($canonicalUrl, $job_id);
-        $this->prepareJob($canonicalUrl, $job_id);
-
-        return $job_id;
-    }
-
     protected function queueResolveHttpFixture()
     {
         $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet(array(
@@ -482,28 +411,6 @@ EOD;
             $this->getTaskService()->getManager()->persist($task);
             $this->getTaskService()->getManager()->flush($task);
         }
-    }
-
-    /**
-     * @param string $canonicalUrl
-     * @param string $userEmail
-     * @param string $type
-     * @param array $testTypes
-     * @param array $testTypeOptions
-     * @param array $parameters
-     *
-     * @return int
-     */
-    protected function createJobAndGetId(
-        $canonicalUrl,
-        $userEmail = null,
-        $type = 'full site',
-        $testTypes = null,
-        $testTypeOptions = null,
-        $parameters = null
-    ) {
-        $response = $this->createJob($canonicalUrl, $userEmail, $type, $testTypes, $testTypeOptions, $parameters);
-        return $this->getJobIdFromUrl($response->getTargetUrl());
     }
 
     /**
