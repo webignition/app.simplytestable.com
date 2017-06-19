@@ -44,7 +44,8 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $response = $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -85,7 +86,8 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->getCrawlJobContainerService()->processTaskResults($task);
         $this->assertEquals(2, $crawlJobContainer->getCrawlJob()->getTasks()->count());
@@ -108,7 +110,8 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->getCrawlJobContainerService()->processTaskResults($task);
 

@@ -60,7 +60,8 @@ class TasksActionTest extends BaseControllerJsonTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[0]->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->executeCommand('simplytestable:task:assigncollection', array(
             'ids' => $tasks[1]->getId()
@@ -107,7 +108,8 @@ class TasksActionTest extends BaseControllerJsonTestCase
                 CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
             ]);
 
-            $this->createTaskController($taskCompleteRequest)->completeAction();
+            $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+            $taskController->completeAction();
         }
 
         $tasksActionResponse = $this->getJobController('tasksAction')->tasksAction(

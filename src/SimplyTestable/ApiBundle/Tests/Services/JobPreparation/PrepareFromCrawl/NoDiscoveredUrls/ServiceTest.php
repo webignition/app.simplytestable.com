@@ -41,7 +41,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
     }
 
     public function testStateIsQueued()

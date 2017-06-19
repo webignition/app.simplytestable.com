@@ -56,7 +56,8 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[0]->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->executeCommand('simplytestable:task:assigncollection', array(
             'ids' => $tasks[1]->getId()
@@ -88,7 +89,8 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[1]->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->assertEquals(2, $tasks[1]->getOutput()->getErrorCount());
     }
@@ -141,7 +143,8 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[0]->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->executeCommand('simplytestable:task:assigncollection', array(
             'ids' => $tasks[1]->getId()
@@ -173,7 +176,8 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[1]->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->assertEquals(2, $tasks[1]->getOutput()->getErrorCount());
     }

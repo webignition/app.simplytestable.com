@@ -35,7 +35,8 @@ abstract class IssueCountTest extends BaseControllerJsonTestCase
                 CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
             ]);
 
-            $this->createTaskController($taskCompleteRequest)->completeAction();
+            $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+            $taskController->completeAction();
         }
 
         $response = $this->getJobController('statusAction')->statusAction(self::CANONICAL_URL, $job->getId());

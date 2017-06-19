@@ -42,7 +42,8 @@ class HappyPathTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->getJobPreparationService()->prepareFromCrawl($this->crawlJobContainer);
     }

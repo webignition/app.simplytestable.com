@@ -70,7 +70,8 @@ abstract class PreprocessorTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->executeCommand('simplytestable:task:assigncollection', array(
             'ids' => $this->tasks->get(1)->getId()

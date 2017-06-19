@@ -13,7 +13,8 @@ class RetestTest extends ActionTest
     public function testWithInvalidId()
     {
         $request = new Request();
-        $response = $this->createJobStartController($request)->retestAction(
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $response = $jobStartController->retestAction(
             $request,
             'foo',
             1
@@ -26,7 +27,8 @@ class RetestTest extends ActionTest
     {
         $job = $this->createJobFactory()->create();
         $request = new Request();
-        $response = $this->createJobStartController($request)->retestAction(
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $response = $jobStartController->retestAction(
             $request,
             'foo',
             $job->getId()
@@ -41,7 +43,8 @@ class RetestTest extends ActionTest
         $this->completeJob($job);
 
         $request = new Request();
-        $response = $this->createJobStartController($request)->retestAction(
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $response = $jobStartController->retestAction(
             $request,
             'foo',
             $job->getId()
@@ -62,7 +65,8 @@ class RetestTest extends ActionTest
         $this->completeJob($job);
 
         $request = new Request();
-        $response = $this->createJobStartController($request)->retestAction(
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $response = $jobStartController->retestAction(
             $request,
             'foo',
             $job->getId()

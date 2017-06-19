@@ -74,11 +74,11 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
     }
 
     /**
-     * @dataProvider fooDataProvider
+     * @dataProvider urlDiscoveryTaskCompletionDataProvider
      *
      * @param array $completeActionCalls
      */
-    public function testFoo($completeActionCalls)
+    public function testUrlDiscoverTaskCompletion($completeActionCalls)
     {
         $defaultRouteParams = [
             CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => 'url discovery',
@@ -92,12 +92,14 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
             $expectedParentJobState = $completeActionCall['expectedParentJobState'];
             $expectedTaskStates = $completeActionCall['expectedTaskStates'];
 
-            $this->createTaskController(
+            $taskController = $this->createControllerFactory()->createTaskController(
                 TaskControllerCompleteActionRequestFactory::create(
                     $postData,
                     array_merge($defaultRouteParams, $routeParams)
                 )
-            )->completeAction();
+            );
+
+            $taskController->completeAction();
 
             $this->assertEquals($expectedCrawlJobState, $this->crawlJob->getState());
             $this->assertEquals($expectedParentJobState, $this->parentJob->getState());
@@ -112,7 +114,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
     /**
      * @return array
      */
-    public function fooDataProvider()
+    public function urlDiscoveryTaskCompletionDataProvider()
     {
         $now = new \DateTime();
 

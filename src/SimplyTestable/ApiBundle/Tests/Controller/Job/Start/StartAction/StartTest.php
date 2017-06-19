@@ -19,7 +19,8 @@ class StartTest extends ActionTest
         ], [
             'site_root_url' => $canonicalUrl,
         ]);
-        $jobStartResponse = $this->createJobStartController($request)->startAction($request, $canonicalUrl);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $jobStartResponse = $jobStartController->startAction($request, $canonicalUrl);
 
         $job = $this->getJobFromResponse($jobStartResponse);
         $this->assertEquals($this->getJobService()->getStartingState(), $job->getState());
@@ -44,7 +45,8 @@ class StartTest extends ActionTest
         ], [
             'site_root_url' => $canonicalUrl,
         ]);
-        $jobStartResponse = $this->createJobStartController($request)->startAction($request, $canonicalUrl);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $jobStartResponse = $jobStartController->startAction($request, $canonicalUrl);
 
         $job = $this->getJobFromResponse($jobStartResponse);
         $this->assertEquals($this->getJobService()->getStartingState(), $job->getState());
@@ -114,7 +116,8 @@ class StartTest extends ActionTest
         ], [
             'site_root_url' => $canonicalUrl,
         ]);
-        $jobStartResponse = $this->createJobStartController($request)->startAction($request, $canonicalUrl);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $jobStartResponse = $jobStartController->startAction($request, $canonicalUrl);
 
         $job = $this->getJobFromResponse($jobStartResponse);
         $this->assertEquals('{"http-auth-username":"user","http-auth-password":"pass"}', $job->getParameters());

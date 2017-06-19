@@ -42,7 +42,8 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->assertCount(
             $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit(),
@@ -84,7 +85,8 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $task = $crawlJobContainer->getCrawlJob()->getTasks()->get(1);
         $this->executeCommand('simplytestable:task:assigncollection', array(
@@ -108,7 +110,8 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->assertCount(
             $userAccountPlanPlan->getConstraintNamed('urls_per_job')->getLimit(),
@@ -151,7 +154,8 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->assertCount(1, $crawlJobContainer->getCrawlJob()->getAmmendments());
 

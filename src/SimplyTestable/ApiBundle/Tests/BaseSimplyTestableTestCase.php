@@ -51,6 +51,7 @@ use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Services\WorkerService;
+use SimplyTestable\ApiBundle\Tests\Factory\ControllerFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -1470,19 +1471,11 @@ EOD;
     }
 
     /**
-     * @param Request $request
-     *
-     * @return TaskController
+     * @return ControllerFactory
      */
-    protected function createTaskController(Request $request)
+    protected function createControllerFactory()
     {
-        $this->container->set('request', $request);
-        $this->container->enterScope('request');
-
-        $controller = new TaskController();
-        $controller->setContainer($this->container);
-
-        return $controller;
+        return new ControllerFactory($this->container);
     }
 
     /**

@@ -22,7 +22,8 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
     public function testCompleteActionInMaintenanceReadOnlyMode()
     {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');
-        $response = $this->createTaskController(new Request())->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController(new Request());
+        $response = $taskController->completeAction();
 
         $this->assertEquals(503, $response->getStatusCode());
     }
@@ -39,9 +40,11 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             BadRequestHttpException::class
         );
 
-        $this->createTaskController(
+        $taskController = $this->createControllerFactory()->createTaskController(
             TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
-        )->completeAction();
+        );
+
+        $taskController->completeAction();
     }
 
     /**
@@ -89,9 +92,11 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             $this->container->get('simplytestable.services.taskservice')->getInProgressState()
         );
 
-        $this->createTaskController(
+        $taskController = $this->createControllerFactory()->createTaskController(
             TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
-        )->completeAction();
+        );
+
+        $taskController->completeAction();
     }
 
     /**
@@ -175,9 +180,10 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             $jobs[] = $job;
         }
 
-        $response = $this->createTaskController(
+        $taskController = $this->createControllerFactory()->createTaskController(
             TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
-        )->completeAction();
+        );
+        $response = $taskController->completeAction();
 
         $this->assertTrue($response->isSuccessful());
 

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>http://example.com/one</loc>
+    </url>
+    <url>
+        <loc>http://example.com/two</loc>
+    </url>
+    <url>
+        <loc>http://example.com/three</loc>
+    </url>
+    <url>
+        <loc>http://example.com/four</loc>
+    </url>
+    <url>
+        <loc>http://example.com/five</loc>
+    </url>
+    <url>
+        <loc>http://example.com/six</loc>
+    </url>
+    <url>
+        <loc>http://example.com/seven</loc>
+    </url>
+    <url>
+        <loc>http://example.com/eight</loc>
+    </url>
+    <url>
+        <loc>http://example.com/nine</loc>
+    </url>
+    <url>
+        <loc>http://example.com/ten</loc>
+    </url>
+    <url>
+        <loc>http://example.com/eleven</loc>
+    </url>
+</urlset>

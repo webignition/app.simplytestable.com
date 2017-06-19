@@ -73,7 +73,8 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $statusActionResponse = $this->getJobController('statusAction')->statusAction(
             (string)$job->getWebsite(),

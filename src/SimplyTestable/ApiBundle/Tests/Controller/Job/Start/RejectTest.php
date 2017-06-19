@@ -30,9 +30,9 @@ class RejectTest extends ActionTest
         }
 
         $request = new Request();
-        $startController = $this->createJobStartController($request);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
 
-        $rejectedJobResponse = $startController->startAction($request, $canonicalUrl);
+        $rejectedJobResponse = $jobStartController->startAction($request, $canonicalUrl);
         $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
 
         $this->assertEquals(
@@ -66,9 +66,9 @@ class RejectTest extends ActionTest
         $request = new Request([], [
             'type' => JobTypeService::SINGLE_URL_NAME,
         ]);
-        $startController = $this->createJobStartController($request);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
 
-        $rejectedJobResponse = $startController->startAction($request, $canonicalUrl);
+        $rejectedJobResponse = $jobStartController->startAction($request, $canonicalUrl);
         $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
 
         $this->assertTrue($rejectedJob->getState()->equals($this->getJobService()->getRejectedState()));
@@ -84,9 +84,9 @@ class RejectTest extends ActionTest
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $request = new Request();
-        $startController = $this->createJobStartController($request);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
 
-        $rejectedJobResponse = $startController->startAction($request, $url);
+        $rejectedJobResponse = $jobStartController->startAction($request, $url);
         $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
 
         $this->assertEquals($this->getJobService()->getRejectedState(), $rejectedJob->getState());
@@ -132,9 +132,9 @@ class RejectTest extends ActionTest
         $request = new Request([], [
             'user' => $user->getEmail(),
         ]);
-        $startController = $this->createJobStartController($request);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
 
-        $rejectedJobResponse = $startController->startAction($request, self::DEFAULT_CANONICAL_URL);
+        $rejectedJobResponse = $jobStartController->startAction($request, self::DEFAULT_CANONICAL_URL);
         $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
 
         $this->assertEquals(
