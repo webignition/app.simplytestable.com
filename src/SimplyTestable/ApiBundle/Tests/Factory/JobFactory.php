@@ -3,13 +3,12 @@
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
 use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
-use SimplyTestable\ApiBundle\Controller\UserController;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
-use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\Job\RejectionService as JobRejectionService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -78,6 +77,11 @@ class JobFactory
     private $taskService;
 
     /**
+     * @var JobRejectionService
+     */
+    private $jobRejectionService;
+
+    /**
      * @param JobTypeService $jobTypeService
      * @param WebSiteService $websiteService
      * @param TaskTypeService $taskTypeService
@@ -86,6 +90,7 @@ class JobFactory
      * @param JobPreparationService $jobPreparationService
      * @param TaskService $taskService
      * @param UserService $userService
+     * @param JobRejectionService $jobRejectionService
      */
     public function __construct(
         JobTypeService $jobTypeService,
@@ -95,7 +100,8 @@ class JobFactory
         WebsiteResolutionService $websiteResolutionService,
         JobPreparationService $jobPreparationService,
         TaskService $taskService,
-        UserService $userService
+        UserService $userService,
+        JobRejectionService $jobRejectionService
     ) {
         $this->jobTypeService = $jobTypeService;
         $this->websiteService = $websiteService;
@@ -104,6 +110,7 @@ class JobFactory
         $this->websiteResolutionService = $websiteResolutionService;
         $this->jobPreparationService = $jobPreparationService;
         $this->taskService = $taskService;
+        $this->jobRejectionService = $jobRejectionService;
 
         $this->defaultJobValues[self::KEY_USER] = $userService->getPublicUser();
     }
@@ -135,12 +142,12 @@ class JobFactory
         }
 
         $request = new Request([], [
+            'type' => $jobValues[self::KEY_TYPE],
             'test-types' => $jobValues[self::KEY_TEST_TYPES],
             'test-type-options' => $jobValues[self::KEY_TEST_TYPE_OPTIONS],
             'parameters' => $jobValues[self::KEY_PARAMETERS],
         ], [
             'site_root_url' => $jobValues[self::KEY_SITE_ROOT_URL],
-            'type' => $jobValues[self::KEY_TYPE],
         ]);
 
         $requestAdapter = new RequestAdapter(
@@ -182,5 +189,15 @@ class JobFactory
             $task->setState($state);
             $this->taskService->persistAndFlush($task);
         }
+    }
+
+    /**
+     * @param Job $job
+     * @param string $reason
+     * @param Constraint $constraint
+     */
+    public function reject(Job $job, $reason, Constraint $constraint)
+    {
+        $this->jobRejectionService->reject($job, $reason, $constraint);
     }
 }

@@ -3,89 +3,159 @@
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\IsPublicAction;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-class IsPublicActionTest extends BaseControllerJsonTestCase {
-    
-    const CANONICAL_URL = 'http://example.com';    
-    
-    public function testFalseForNonNumericJobId() { 
-        $this->assertEquals(404, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, 'foo')->getStatusCode());  
-    }    
-    
-    public function testFalseForInvalidJobId() { 
-        $this->assertEquals(404, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, 0)->getStatusCode());  
-    }      
-    
-    public function testTrueForJobOwnedByPublicUserAccessedByPublicUser() { 
-        $jobId = $this->createJobAndGetId(self::CANONICAL_URL);
-        $this->assertEquals(200, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());  
+class IsPublicActionTest extends BaseControllerJsonTestCase
+{
+    const CANONICAL_URL = 'http://example.com';
+
+    public function testFalseForNonNumericJobId()
+    {
+        $this->assertEquals(
+            404,
+            $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, 'foo')->getStatusCode()
+        );
     }
-    
-    public function testTrueForPublicJobOwnedByNonPublicUserAccessedByPublicUser() {
+
+    public function testFalseForInvalidJobId()
+    {
+        $this->assertEquals(
+            404,
+            $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, 0)->getStatusCode()
+        );
+    }
+
+    public function testTrueForJobOwnedByPublicUserAccessedByPublicUser()
+    {
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
+        ]);
+
+        $this->assertEquals(
+            200,
+            $this->getJobController('isPublicAction')
+                ->isPublicAction(self::CANONICAL_URL, $job->getId())
+                ->getStatusCode()
+        );
+    }
+
+    public function testTrueForPublicJobOwnedByNonPublicUserAccessedByPublicUser()
+    {
         $user = $this->createAndActivateUser('user@example.com', 'password');
 
         $this->getUserService()->setUser($user);
-        $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());
-        
-        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $jobId);
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
+            JobFactory::KEY_USER => $user,
+        ]);
+
+        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $job->getId());
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->assertEquals(200, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
-    }    
-    
-    public function testTrueForPublicJobOwnedByNonPublicUserAccessedByNonPublicUser() {
+        $this->assertEquals(
+            200,
+            $this->getJobController('isPublicAction')
+                ->isPublicAction(self::CANONICAL_URL, $job->getId())
+                ->getStatusCode()
+        );
+    }
+
+    public function testTrueForPublicJobOwnedByNonPublicUserAccessedByNonPublicUser()
+    {
         $user = $this->createAndActivateUser('user@example.com', 'password');
 
         $this->getUserService()->setUser($user);
-        $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());
-        
-        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $jobId);
-        
-        $this->assertEquals(200, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
+            JobFactory::KEY_USER => $user,
+        ]);
+
+        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $job->getId());
+
+        $this->assertEquals(
+            200,
+            $this->getJobController('isPublicAction')
+                ->isPublicAction(self::CANONICAL_URL, $job->getId())
+                ->getStatusCode()
+        );
     }
-    
-    public function testTrueForPublicJobOwnedByNonPublicUserAccessedByDifferentNonPublicUser() {
+
+    public function testTrueForPublicJobOwnedByNonPublicUserAccessedByDifferentNonPublicUser()
+    {
         $user1 = $this->createAndActivateUser('user1@example.com', 'password');
         $user2 = $this->createAndActivateUser('user2@example.com', 'password');
 
         $this->getUserService()->setUser($user1);
-        $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user1->getEmail());
-        
-        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $jobId);
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
+            JobFactory::KEY_USER => $user1,
+        ]);
+
+        $this->getJobController('setPublicAction')->setPublicAction(self::CANONICAL_URL, $job->getId());
 
         $this->getUserService()->setUser($user2);
-        $this->assertEquals(200, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
+        $this->assertEquals(
+            200,
+            $this->getJobController('isPublicAction')
+                ->isPublicAction(self::CANONICAL_URL, $job->getId())
+                ->getStatusCode()
+        );
     }
-    
-    public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByPublicUser() {
+
+    public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByPublicUser()
+    {
         $user = $this->createAndActivateUser('user@example.com', 'password');
 
         $this->getUserService()->setUser($user);
-        $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
+            JobFactory::KEY_USER => $user,
+        ]);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->assertEquals(404, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
-    }    
-    
-    public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByNonPublicUser() {
+        $this->assertEquals(
+            404,
+            $this->getJobController('isPublicAction')
+                ->isPublicAction(self::CANONICAL_URL, $job->getId())
+                ->getStatusCode()
+        );
+    }
+
+    public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByNonPublicUser()
+    {
         $user = $this->createAndActivateUser('user@example.com', 'password');
 
         $this->getUserService()->setUser($user);
-        $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user->getEmail());
-        
-        $this->assertEquals(404, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
+            JobFactory::KEY_USER => $user,
+        ]);
+
+        $this->assertEquals(
+            404,
+            $this->getJobController('isPublicAction')
+                ->isPublicAction(self::CANONICAL_URL, $job->getId())
+                ->getStatusCode()
+        );
     }
-    
-    public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByDifferentNonPublicUser() {
+
+    public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByDifferentNonPublicUser()
+    {
         $user1 = $this->createAndActivateUser('user1@example.com', 'password');
         $user2 = $this->createAndActivateUser('user2@example.com', 'password');
 
         $this->getUserService()->setUser($user1);
-        $jobId = $this->createJobAndGetId(self::CANONICAL_URL, $user1->getEmail());
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
+            JobFactory::KEY_USER => $user1,
+        ]);
 
         $this->getUserService()->setUser($user2);
-        $this->assertEquals(404, $this->getJobController('isPublicAction')->isPublicAction(self::CANONICAL_URL, $jobId)->getStatusCode());
-    }        
+        $this->assertEquals(
+            404,
+            $this->getJobController('isPublicAction')
+                ->isPublicAction(self::CANONICAL_URL, $job->getId())
+                ->getStatusCode()
+        );
+    }
 }
-
-

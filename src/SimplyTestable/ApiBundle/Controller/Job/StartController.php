@@ -15,8 +15,8 @@ class StartController extends ApiController {
     public function startAction(Request $request, $site_root_url) {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
-        }        
-        
+        }
+
         if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
@@ -55,24 +55,24 @@ class StartController extends ApiController {
             );
         }
     }
-    
-    
+
+
     public function retestAction(Request $request, $site_root_url, $test_id) {
         $job = $this->getJobService()->getById($test_id);
         if (is_null($job)) {
             return $this->sendFailureResponse();
         }
-        
+
         if (!$this->getJobService()->isFinished($job)) {
             return $this->sendFailureResponse();
         }
-        
-        $taskTypeNames = array();        
+
+        $taskTypeNames = array();
         foreach ($job->getRequestedTaskTypes() as $taskType) {
             $taskTypeNames[] = $taskType->getName();
         }
-        
-        $taskTypeOptionsArray = array();        
+
+        $taskTypeOptionsArray = array();
         foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
             $taskTypeOptionsArray[strtolower($taskTypeOptions->getTaskType()->getName())] = $taskTypeOptions->getOptions();
         }
@@ -86,34 +86,34 @@ class StartController extends ApiController {
             $request->query->set('test-types', $taskTypeNames);
             $request->query->set('test-type-options', $taskTypeOptionsArray);
         }
-        
+
         return $this->startAction($request, $job->getWebsite()->getCanonicalUrl());
-    }      
-    
+    }
+
     private function rejectAsUnroutableAndRedirect(JobConfiguration $jobConfiguration) {
         return $this->rejectAndRedirect($jobConfiguration, 'unroutable');
-    } 
-    
-    
+    }
+
+
     private function rejectAsPlanLimitReachedAndRedirect(JobConfiguration $jobConfiguration, AccountPlanConstraint $constraint) {
         return $this->rejectAndRedirect($jobConfiguration, 'plan-constraint-limit-reached', $constraint);
     }
-    
+
     private function rejectAndRedirect(JobConfiguration $jobConfiguration, $reason, AccountPlanConstraint $constraint = null) {
         $job = $this->getJobService()->create(
             $jobConfiguration
         );
-        
+
         $this->getJobRejectionService()->reject($job, $reason, $constraint);
 
         return $this->redirect($this->generateUrl('job_job_status', array(
             'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             'test_id' => $job->getId()
-        )));        
+        )));
     }
 
-    
-    
+
+
     /**
      *
      * @return boolean
@@ -121,28 +121,28 @@ class StartController extends ApiController {
     private function isTestEnvironment() {
         return $this->get('kernel')->getEnvironment() == 'test';
     }
-    
-    
+
+
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Entity\User 
+     * @return \SimplyTestable\ApiBundle\Entity\User
      */
     public function getUser() {
-        if (!$this->isTestEnvironment()) {                        
+        if (!$this->isTestEnvironment()) {
             return parent::getUser();
         }
-        
+
         if  (is_null($this->getRequestValue('user'))) {
             return $this->getUserService()->getPublicUser();
         }
-        
+
         return $this->getUserService()->findUserByEmail($this->getRequestValue('user'));
     }
 
-    
+
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\JobService 
+     * @return \SimplyTestable\ApiBundle\Services\JobService
      */
     private function getJobService() {
         return $this->get('simplytestable.services.jobservice');
@@ -164,8 +164,8 @@ class StartController extends ApiController {
     private function getJobStartService() {
         return $this->get('simplytestable.services.job.startservice');
     }
-    
 
-    
-  
+
+
+
 }

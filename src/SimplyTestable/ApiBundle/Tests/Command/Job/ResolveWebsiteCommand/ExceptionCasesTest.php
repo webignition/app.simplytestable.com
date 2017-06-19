@@ -1,47 +1,50 @@
 <?php
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Job\ResolveWebsiteCommand;
- 
-class ExceptionCasesTest extends CommandTest {
-    
-    public function testJobInWrongStateReturnsStatusCode1() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::DEFAULT_CANONICAL_URL)); 
+
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
+class ExceptionCasesTest extends CommandTest
+{
+    public function testJobInWrongStateReturnsStatusCode1()
+    {
+        $job = $this->createJobFactory()->create();
         $job->setState($this->getJobService()->getCancelledState());
-        $this->getJobService()->persistAndFlush($job);       
-        
+        $this->getJobService()->persistAndFlush($job);
+
         $this->assertReturnCode(1, array(
             'id' => $job->getId()
         ));
     }
-    
-    public function testSystemInMaintenanceModeReturnsStatusCode2() {
+
+    public function testSystemInMaintenanceModeReturnsStatusCode2()
+    {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');
         $this->assertReturnCode(2, array(
             'id' => 1
-        ));      
+        ));
     }
-    
-    
-    public function testHttpClientErrorPerformingResolution() {        
+
+    public function testHttpClientErrorPerformingResolution()
+    {
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 404',
             'HTTP/1.0 404'
         )));
-        
-        $this->job = $this->getJobService()->getById($this->createJobAndGetId(
-            self::DEFAULT_CANONICAL_URL,
-            null,
-            'single url',
-            array('CSS Validation'),
-            array(
-                'CSS validation' => array(
+
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+            JobFactory::KEY_TEST_TYPES => ['CSS Validation'],
+            JobFactory::KEY_TEST_TYPE_OPTIONS => [
+                'CSS validation' => [
                     'ignore-common-cdns' => 1,
-                )
-            )                
-        ));
-        
+                ],
+            ],
+        ]);
+
         $this->assertReturnCode(0, array(
-            'id' => $this->job->getId()
-        ));        
+            'id' => $job->getId()
+        ));
     }
 }

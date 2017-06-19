@@ -2,22 +2,21 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\PrepareFromCrawl\ExceptionCases;
 
+use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 
-class ServiceTest extends BaseSimplyTestableTestCase {    
-    
-    const CANONICAL_URL = 'http://example.com';
-    
-    public function testParentJobInWrongStateThrowsJobPreparationServiceException() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL)); 
-        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);     
-        
-        try {            
+class ServiceTest extends BaseSimplyTestableTestCase
+{
+    public function testParentJobInWrongStateThrowsJobPreparationServiceException()
+    {
+        $job = $this->createJobFactory()->create();
+        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+
+        try {
             $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
             $this->fail('\SimplyTestable\ApiBundle\Exception\Services\JobPreparation not thrown');
-        } catch (\SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception $jobPreparationServiceException) {
+        } catch (JobPreparationException $jobPreparationServiceException) {
             $this->assertTrue($jobPreparationServiceException->isJobInWrongStateException());
-        }        
+        }
     }
-
 }

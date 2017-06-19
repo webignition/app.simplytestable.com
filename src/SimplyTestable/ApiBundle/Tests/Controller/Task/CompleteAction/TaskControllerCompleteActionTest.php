@@ -13,7 +13,6 @@ use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
@@ -668,19 +667,6 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         $jobFactory->setTaskStates(
             $job,
             $state
-        );
-    }
-
-    /**
-     * @return UserFactory
-     */
-    private function createUserFactory()
-    {
-        return new UserFactory(
-            $this->container->get('simplytestable.services.userservice'),
-            $this->container->get('fos_user.util.user_manipulator'),
-            $this->container->get('simplytestable.services.useraccountplanservice'),
-            $this->container->get('simplytestable.services.accountplanservice')
         );
     }
 

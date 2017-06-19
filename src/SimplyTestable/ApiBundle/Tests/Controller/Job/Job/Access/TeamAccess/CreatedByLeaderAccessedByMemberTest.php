@@ -4,20 +4,20 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\Access\TeamAccess;
 
 use SimplyTestable\ApiBundle\Entity\User;
 
-abstract class CreatedByLeaderAccessedByMemberTest extends TeamAccessTest {
+abstract class CreatedByLeaderAccessedByMemberTest extends TeamAccessTest
+{
+    /**
+     * @var User
+     */
+    private $leader;
 
     /**
      * @var User
      */
-    var $leader;
+    private $member;
 
-
-    /**
-     * @var User
-     */
-    var $member;
-
-    public function preCreateJob() {
+    public function preCreateJob()
+    {
         $this->leader = $this->createAndActivateUser('leader@example.com');
         $this->member = $this->createAndActivateUser('user@example.com');
 
@@ -29,16 +29,13 @@ abstract class CreatedByLeaderAccessedByMemberTest extends TeamAccessTest {
         $this->getTeamMemberService()->add($team, $this->member);
     }
 
-
-    protected function getJobOwner() {
+    protected function getJobOwner()
+    {
         return $this->leader;
     }
 
-
-    protected function getJobAccessor() {
+    protected function getJobAccessor()
+    {
         return $this->member;
     }
-
 }
-
-

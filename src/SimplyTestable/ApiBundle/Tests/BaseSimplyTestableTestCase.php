@@ -52,6 +52,7 @@ use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -592,6 +593,7 @@ EOD;
     {
         $this->setJobTasksCompleted($job);
         $job->setState($this->getJobService()->getInProgressState());
+        $job->setTimePeriod(new TimePeriod());
         $this->getJobService()->complete($job);
     }
 
@@ -1476,7 +1478,22 @@ EOD;
             $this->container->get('simplytestable.services.jobwebsiteresolutionservice'),
             $this->container->get('simplytestable.services.jobpreparationservice'),
             $this->container->get('simplytestable.services.taskservice'),
-            $this->container->get('simplytestable.services.userservice')
+            $this->container->get('simplytestable.services.userservice'),
+            $this->container->get('simplytestable.services.job.rejectionservice')
+        );
+    }
+
+
+    /**
+     * @return UserFactory
+     */
+    protected function createUserFactory()
+    {
+        return new UserFactory(
+            $this->container->get('simplytestable.services.userservice'),
+            $this->container->get('fos_user.util.user_manipulator'),
+            $this->container->get('simplytestable.services.useraccountplanservice'),
+            $this->container->get('simplytestable.services.accountplanservice')
         );
     }
 
@@ -1494,5 +1511,20 @@ EOD;
         $controller->setContainer($this->container);
 
         return $controller;
+    }
+
+    /**
+     * @param Response $response
+     *
+     * @return Job
+     */
+    protected function getJobFromResponse(Response $response)
+    {
+        $locationHeader = $response->headers->get('location');
+        $locationHeaderParts = explode('/', rtrim($locationHeader, '/'));
+
+        return $this->getJobService()->getById(
+            (int)$locationHeaderParts[count($locationHeaderParts) - 1]
+        );
     }
 }

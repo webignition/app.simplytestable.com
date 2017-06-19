@@ -3,21 +3,24 @@
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\StatusAction;
 
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-class OwnersTest extends BaseControllerJsonTestCase {
-    
-    protected function getActionName() {
+class OwnersTest extends BaseControllerJsonTestCase
+{
+    protected function getActionName()
+    {
         return 'statusAction';
     }
 
-
-    public function testPublicJob() {
+    public function testPublicJob()
+    {
         $canonicalUrl = 'http://example.com/';
-
-        $jobId = $this->createJobAndGetId($canonicalUrl);
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+        ]);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);
+        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $job->getId());
         $responseJsonObject = json_decode($response->getContent());
 
         $this->assertEquals([
@@ -25,23 +28,29 @@ class OwnersTest extends BaseControllerJsonTestCase {
         ], $responseJsonObject->owners);
     }
 
-    public function testPrivateJob() {
+    public function testPrivateJob()
+    {
         $user = $this->createAndActivateUser('user@example.com');
 
         $canonicalUrl = 'http://example.com/';
 
-        $jobId = $this->createJobAndGetId($canonicalUrl, $user->getUsername());
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+            JobFactory::KEY_USER => $user,
+        ]);
 
         $this->getUserService()->setUser($user);
-        $responseJsonObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId)->getContent());
+        $responseJsonObject = json_decode(
+            $this->getJobController('statusAction')->statusAction($canonicalUrl, $job->getId())->getContent()
+        );
 
         $this->assertEquals([
             'user@example.com'
         ], $responseJsonObject->owners);
     }
 
-
-    public function testTeamJob() {
+    public function testTeamJob()
+    {
         $leader = $this->createAndActivateUser('leader@example.com');
         $user = $this->createAndActivateUser('user@example.com');
 
@@ -50,12 +59,15 @@ class OwnersTest extends BaseControllerJsonTestCase {
 
         $canonicalUrl = 'http://example.com/';
 
-        $jobId = $this->createJobAndGetId($canonicalUrl, $leader->getUsername());
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+            JobFactory::KEY_USER => $leader,
+        ]);
 
         $this->getUserService()->setUser($user);
         $responseJsonObject = json_decode($this->getJobController('statusAction', [
             'user' => $user->getUsername()
-        ])->statusAction($canonicalUrl, $jobId)->getContent());
+        ])->statusAction($canonicalUrl, $job->getId())->getContent());
 
         $this->assertEquals([
             'leader@example.com',

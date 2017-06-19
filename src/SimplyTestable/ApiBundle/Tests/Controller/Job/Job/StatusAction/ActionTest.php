@@ -2,26 +2,32 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\StatusAction;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-class ActionTest extends BaseControllerJsonTestCase {
-    
-    protected function getActionName() {
+class ActionTest extends BaseControllerJsonTestCase
+{
+    protected function getActionName()
+    {
         return 'statusAction';
     }
 
-    public function testStatusAction() {
+    public function testStatusAction()
+    {
         $canonicalUrl = 'http://example.com/';
 
-        $jobId = $this->createJobAndGetId($canonicalUrl);
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+        ]);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);
+        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $job->getId());
         $responseJsonObject = json_decode($response->getContent());
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $this->assertEquals($jobId, $responseJsonObject->id);
+        $this->assertEquals($job->getId(), $responseJsonObject->id);
         $this->assertEquals('public', $responseJsonObject->user);
         $this->assertEquals($canonicalUrl, $responseJsonObject->website);
         $this->assertEquals('new', $responseJsonObject->state);
@@ -39,7 +45,8 @@ class ActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(0, $responseJsonObject->warninged_task_count);
     }
 
-    public function testStatusForRejectedDueToPlanFullSiteConstraint() {
+    public function testStatusForRejectedDueToPlanFullSiteConstraint()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $canonicalUrl = 'http://example.com/';
 
@@ -47,15 +54,18 @@ class ActionTest extends BaseControllerJsonTestCase {
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
 
         $fullSiteJobsPerSiteConstraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
-        $fullSiteJobsPerSiteLimit = $fullSiteJobsPerSiteConstraint->getLimit();
 
-        for ($i = 0; $i < $fullSiteJobsPerSiteLimit; $i++) {
-            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
-            $this->cancelJob($job);
-        }
+        $jobFactory = $this->createJobFactory();
 
-        $rejectedJobId = $this->createJobAndGetId($canonicalUrl);
-        $jobStatusObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $rejectedJobId)->getContent());
+        $rejectedJob = $jobFactory->create([
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+        ]);
+
+        $jobFactory->reject($rejectedJob, 'plan-constraint-limit-reached', $fullSiteJobsPerSiteConstraint);
+
+        $jobStatusObject = json_decode(
+            $this->getJobController('statusAction')->statusAction($canonicalUrl, $rejectedJob->getId())->getContent()
+        );
 
         $this->assertNotNull($jobStatusObject->rejection);
         $this->assertEquals('plan-constraint-limit-reached', $jobStatusObject->rejection->reason);
@@ -63,11 +73,10 @@ class ActionTest extends BaseControllerJsonTestCase {
         $this->assertNotNull($jobStatusObject->rejection->constraint);
         $this->assertNotNull($jobStatusObject->rejection->constraint->name);
         $this->assertEquals('full_site_jobs_per_site', $jobStatusObject->rejection->constraint->name);
-
     }
 
-
-    public function testStatusForRejectedDueToPlanSingleUrlConstraint() {
+    public function testStatusForRejectedDueToPlanSingleUrlConstraint()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $canonicalUrl = 'http://example.com/';
@@ -75,16 +84,20 @@ class ActionTest extends BaseControllerJsonTestCase {
         $user = $this->getUserService()->getPublicUser();
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
 
-        $fullSiteJobsPerSiteConstraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
-        $fullSiteJobsPerSiteLimit = $fullSiteJobsPerSiteConstraint->getLimit();
+        $singleJobsPerUrlConstraint = $userAccountPlan->getPlan()->getConstraintNamed('single_url_jobs_per_url');
 
-        for ($i = 0; $i < $fullSiteJobsPerSiteLimit; $i++) {
-            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));
-            $this->cancelJob($job);
-        }
+        $jobFactory = $this->createJobFactory();
 
-        $rejectedJobId = $this->createJobAndGetId($canonicalUrl, null, 'single url');
-        $jobStatusObject = json_decode($this->getJobController('statusAction')->statusAction($canonicalUrl, $rejectedJobId)->getContent());
+        $rejectedJob = $jobFactory->create([
+            JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+        ]);
+
+        $jobFactory->reject($rejectedJob, 'plan-constraint-limit-reached', $singleJobsPerUrlConstraint);
+
+        $jobStatusObject = json_decode(
+            $this->getJobController('statusAction')->statusAction($canonicalUrl, $rejectedJob->getId())->getContent()
+        );
 
         $this->assertNotNull($jobStatusObject->rejection);
         $this->assertEquals('plan-constraint-limit-reached', $jobStatusObject->rejection->reason);
@@ -94,12 +107,15 @@ class ActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals('single_url_jobs_per_url', $jobStatusObject->rejection->constraint->name);
     }
 
-
-
-    public function testStatusForJobUrlLimitAmmendment() {
+    public function testStatusForJobUrlLimitAmmendment()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
+        $this->queueHttpFixtures(
+            $this->buildHttpFixtureSet(
+                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
+            )
+        );
 
         $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL));
 
@@ -111,14 +127,17 @@ class ActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals('urls_per_job', $jobObject->ammendments[0]->constraint->name);
     }
 
-    public function testDefaultIsPublicIfOwnedByPublicUser() {
+    public function testDefaultIsPublicIfOwnedByPublicUser()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $canonicalUrl = 'http://example.com/';
 
-        $jobId = $this->createJobAndGetId($canonicalUrl);
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+        ]);
 
-        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);
+        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $job->getId());
         $responseJsonObject = json_decode($response->getContent());
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -127,15 +146,19 @@ class ActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(true, $responseJsonObject->is_public);
     }
 
-    public function testDefaultIsPrivateIfNotOwnedByPublicUser() {
+    public function testDefaultIsPrivateIfNotOwnedByPublicUser()
+    {
         $user = $this->createAndActivateUser('user@example.com', 'password1');
         $this->getUserService()->setUser($user);
 
         $canonicalUrl = 'http://example.com/';
 
-        $jobId = $this->createJobAndGetId($canonicalUrl, $user->getEmail());
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+            JobFactory::KEY_USER => $user,
+        ]);
 
-        $response = $this->getJobStatus($canonicalUrl, $jobId, $user->getEmail());
+        $response = $this->getJobStatus($canonicalUrl, $job->getId(), $user->getEmail());
         $responseJsonObject = json_decode($response->getContent());
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -144,23 +167,29 @@ class ActionTest extends BaseControllerJsonTestCase {
         $this->assertEquals(false, $responseJsonObject->is_public);
     }
 
-
-    public function testParametersAreExposed() {
+    public function testParametersAreExposed()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $canonicalUrl = 'http://example.com/';
 
-        $jobId = $this->createJobAndGetId($canonicalUrl, null, null, null, null, array(
-            'http-auth-username' => 'example',
-            'http-auth-password' => 'password'
-        ));
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+            JobFactory::KEY_PARAMETERS => [
+                'http-auth-username' => 'example',
+                'http-auth-password' => 'password',
+            ],
+        ]);
 
-        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $jobId);
+        $response = $this->getJobController('statusAction')->statusAction($canonicalUrl, $job->getId());
         $responseJsonObject = json_decode($response->getContent());
 
         $this->assertEquals(200, $response->getStatusCode());
 
         $this->assertTrue(isset($responseJsonObject->parameters));
-        $this->assertEquals('{"http-auth-username":"example","http-auth-password":"password"}', $responseJsonObject->parameters);
+        $this->assertEquals(
+            '{"http-auth-username":"example","http-auth-password":"password"}',
+            $responseJsonObject->parameters
+        );
     }
 }
