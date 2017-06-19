@@ -600,22 +600,6 @@ EOD;
     }
 
     /**
-     * @param string $canonicalUrl
-     * @param int $jobId
-     * @param string $userEmail
-     *
-     * @return Response
-     */
-    protected function getJobStatus($canonicalUrl, $jobId, $userEmail = null)
-    {
-        $postData = (is_null($userEmail)) ? array() : array(
-            'user' => $userEmail
-        );
-
-        return $this->getJobController('statusAction', $postData)->statusAction($canonicalUrl, $jobId);
-    }
-
-    /**
      * @param string $email
      *
      * @return RedirectResponse
