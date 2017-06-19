@@ -20,7 +20,7 @@ class UserTest extends ListTest
     /**
      * @var Job[]
      */
-    private $jobs = array();
+    protected $jobs = array();
 
     public function setUp()
     {
