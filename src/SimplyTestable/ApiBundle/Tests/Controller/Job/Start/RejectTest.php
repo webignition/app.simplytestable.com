@@ -4,9 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Start;
 
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use Symfony\Component\HttpFoundation\Request;
-use Guzzle\Http\Message\Response as GuzzleResponse;
 
 class RejectTest extends ActionTest
 {
@@ -149,17 +147,5 @@ class RejectTest extends ActionTest
 
         $this->assertEquals('plan-constraint-limit-reached', $rejectionReason->getReason());
         $this->assertEquals('credits_per_month', $rejectionReason->getConstraint()->getName());
-    }
-
-    private function queueStandardJobHttpFixtures()
-    {
-        $this->queueHttpFixtures([
-            GuzzleResponse::fromMessage('HTTP/1.1 200 OK'),
-            GuzzleResponse::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
-            GuzzleResponse::fromMessage(sprintf(
-                "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
-                SitemapFixtureFactory::load('example.com-three-urls')
-            )),
-        ]);
     }
 }

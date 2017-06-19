@@ -52,12 +52,14 @@ use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
+use Guzzle\Http\Message\Response as GuzzleResponse;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase
 {
@@ -1526,5 +1528,17 @@ EOD;
         return $this->getJobService()->getById(
             (int)$locationHeaderParts[count($locationHeaderParts) - 1]
         );
+    }
+
+    protected function queueStandardJobHttpFixtures()
+    {
+        $this->queueHttpFixtures([
+            GuzzleResponse::fromMessage('HTTP/1.1 200 OK'),
+            GuzzleResponse::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
+            GuzzleResponse::fromMessage(sprintf(
+                "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
+                SitemapFixtureFactory::load('example.com-three-urls')
+            )),
+        ]);
     }
 }

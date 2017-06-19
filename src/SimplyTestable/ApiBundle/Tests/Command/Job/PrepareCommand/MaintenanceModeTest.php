@@ -2,22 +2,31 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand;
 
-class MaintenanceModeTest extends CommandTest {
-
-    protected function preCall() {
+class MaintenanceModeTest extends CommandTest
+{
+    protected function preCall()
+    {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');
     }
 
-    protected function getJob() {
+    protected function getJob()
+    {
+        $this->queueStandardJobHttpFixtures();
+        $jobFactory = $this->createJobFactory();
+        $job = $jobFactory->create();
+        $jobFactory->resolve($job);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        return $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        return $job;
     }
 
-    protected function getExpectedReturnCode() {
+    protected function getExpectedReturnCode()
+    {
         return 2;
     }
 
-    public function testResqueJobIsRequeued() {
+    public function testResqueJobIsRequeued()
+    {
         $this->assertTrue($this->getResqueQueueService()->contains('job-prepare', [
             'id' => $this->job->getId()
         ]));

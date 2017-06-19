@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteAction;
 
-use Guzzle\Http\Message\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -10,7 +9,6 @@ use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactor
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -643,18 +641,6 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                 ],
             ],
         ];
-    }
-
-    private function queueStandardJobHttpFixtures()
-    {
-        $this->queueHttpFixtures([
-            Response::fromMessage('HTTP/1.1 200 OK'),
-            Response::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
-            Response::fromMessage(sprintf(
-                "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
-                SitemapFixtureFactory::load('example.com-three-urls')
-            )),
-        ]);
     }
 
     /**
