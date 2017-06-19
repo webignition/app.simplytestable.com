@@ -9,11 +9,13 @@ use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactor
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Guzzle\Http\Message\Response as GuzzleResponse;
 
 class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
 {
@@ -73,7 +75,6 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             GoneHttpException::class
         );
 
-        $this->queueStandardJobHttpFixtures();
         $job = $this->createJobFactory()->createResolveAndPrepare([
             'type' => 'full site',
             'siteRootUrl' => 'http://example.com',
@@ -164,7 +165,6 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             $user = $userFactory->create($jobValues['user']);
             $jobValues['user'] = $user;
 
-            $this->queueStandardJobHttpFixtures();
             $job = $this->createJobFactory()->createResolveAndPrepare($jobValues);
 
             $this->setJobTaskStates(

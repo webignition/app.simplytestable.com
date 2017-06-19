@@ -6,10 +6,18 @@ class SitemapFixtureFactory
 {
     /**
      * @param string $name
+     * @param string $domain
+     *
      * @return string
      */
-    public static function load($name)
+    public static function load($name, $domain = 'example.com')
     {
-        return file_get_contents(__DIR__ . '/../Fixtures/Data/Sitemaps/' . $name . '.xml');
+        $content = file_get_contents(__DIR__ . '/../Fixtures/Data/Sitemaps/' . $name . '.xml');
+
+        if ($domain != 'example.com') {
+            $content = str_replace('//example.com/', '//' . $domain . '/', $content);
+        }
+
+        return $content;
     }
 }

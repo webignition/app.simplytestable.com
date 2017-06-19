@@ -1450,7 +1450,8 @@ EOD;
             $this->container->get('simplytestable.services.jobpreparationservice'),
             $this->container->get('simplytestable.services.taskservice'),
             $this->container->get('simplytestable.services.userservice'),
-            $this->container->get('simplytestable.services.job.rejectionservice')
+            $this->container->get('simplytestable.services.job.rejectionservice'),
+            $this->container->get('simplytestable.services.httpclientservice')
         );
     }
 

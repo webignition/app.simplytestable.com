@@ -6,16 +6,19 @@ use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\RejectionService as JobRejectionService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\TestHttpClientService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\Job\StartService as JobStartService;
 use Symfony\Component\HttpFoundation\Request;
+use Guzzle\Http\Message\Response as GuzzleResponse;
 
 class JobFactory
 {
@@ -82,6 +85,11 @@ class JobFactory
     private $jobRejectionService;
 
     /**
+     * @var TestHttpClientService
+     */
+    private $httpClientService;
+
+    /**
      * @param JobTypeService $jobTypeService
      * @param WebSiteService $websiteService
      * @param TaskTypeService $taskTypeService
@@ -91,6 +99,7 @@ class JobFactory
      * @param TaskService $taskService
      * @param UserService $userService
      * @param JobRejectionService $jobRejectionService
+     * @param HttpClientService $httpClientService
      */
     public function __construct(
         JobTypeService $jobTypeService,
@@ -101,7 +110,8 @@ class JobFactory
         JobPreparationService $jobPreparationService,
         TaskService $taskService,
         UserService $userService,
-        JobRejectionService $jobRejectionService
+        JobRejectionService $jobRejectionService,
+        TestHttpClientService $httpClientService
     ) {
         $this->jobTypeService = $jobTypeService;
         $this->websiteService = $websiteService;
@@ -111,20 +121,24 @@ class JobFactory
         $this->jobPreparationService = $jobPreparationService;
         $this->taskService = $taskService;
         $this->jobRejectionService = $jobRejectionService;
+        $this->httpClientService = $httpClientService;
 
         $this->defaultJobValues[self::KEY_USER] = $userService->getPublicUser();
     }
 
     /**
      * @param array $jobValues
+     * @param array $httpFixtures
      *
      * @return Job
      */
-    public function createResolveAndPrepare($jobValues = [])
+    public function createResolveAndPrepare($jobValues = [], $httpFixtures = [])
     {
         $job = $this->create($jobValues);
-        $this->resolve($job);
-        $this->prepare($job);
+        $this->resolve($job, (isset($httpFixtures['resolve']) ? $httpFixtures['resolve'] : null));
+        $this->prepare($job, (isset($httpFixtures['prepare']) ? $httpFixtures['prepare'] : null));
+
+        $this->httpClientService->getMockPlugin()->clearQueue();
 
         return $job;
     }
@@ -165,17 +179,43 @@ class JobFactory
 
     /**
      * @param Job $job
+     * @param array $httpFixtures
      */
-    public function resolve(Job $job)
+    public function resolve(Job $job, $httpFixtures = [])
     {
+        if (empty($httpFixtures)) {
+            $httpFixtures = [
+                GuzzleResponse::fromMessage('HTTP/1.1 200 OK'),
+            ];
+        }
+
+        foreach ($httpFixtures as $fixture) {
+            $this->httpClientService->queueFixture($fixture);
+        }
+
         $this->websiteResolutionService->resolve($job);
     }
 
     /**
      * @param Job $job
+     * @param array $httpFixtures
      */
-    public function prepare(Job $job)
+    public function prepare(Job $job, $httpFixtures = [])
     {
+        if (empty($httpFixtures)) {
+            $httpFixtures = [
+                GuzzleResponse::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
+                GuzzleResponse::fromMessage(sprintf(
+                    "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
+                    SitemapFixtureFactory::load('example.com-three-urls')
+                )),
+            ];
+        }
+
+        foreach ($httpFixtures as $fixture) {
+            $this->httpClientService->queueFixture($fixture);
+        }
+
         $this->jobPreparationService->prepare($job);
     }
 

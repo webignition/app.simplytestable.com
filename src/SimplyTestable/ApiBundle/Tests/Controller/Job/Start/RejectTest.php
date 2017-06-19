@@ -123,7 +123,6 @@ class RejectTest extends ActionTest
 
         $jobFactory = $this->createJobFactory();
 
-        $this->queueStandardJobHttpFixtures();
         $job = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => self::DEFAULT_CANONICAL_URL,
             JobFactory::KEY_USER => $user,

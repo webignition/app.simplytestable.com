@@ -109,6 +109,8 @@ class ActionTest extends BaseControllerJsonTestCase
 
     public function testStatusForJobUrlLimitAmmendment()
     {
+        $this->createJobFactory();
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $this->queueHttpFixtures(

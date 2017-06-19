@@ -14,7 +14,6 @@ class PrivateUserTest extends CommandTest
             'HTTP/1.0 404',
             'HTTP/1.0 404',
             'HTTP/1.0 404',
-            'HTTP/1.0 404',
         )));
     }
 

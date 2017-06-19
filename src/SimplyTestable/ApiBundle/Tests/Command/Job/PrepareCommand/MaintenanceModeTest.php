@@ -11,7 +11,6 @@ class MaintenanceModeTest extends CommandTest
 
     protected function getJob()
     {
-        $this->queueStandardJobHttpFixtures();
         $jobFactory = $this->createJobFactory();
         $job = $jobFactory->create();
         $jobFactory->resolve($job);

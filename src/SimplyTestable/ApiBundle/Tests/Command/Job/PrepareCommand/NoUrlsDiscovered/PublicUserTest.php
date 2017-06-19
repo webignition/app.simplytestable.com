@@ -13,7 +13,6 @@ class PublicUserTest extends CommandTest
             'HTTP/1.0 404',
             'HTTP/1.0 404',
             'HTTP/1.0 404',
-            'HTTP/1.0 404'
         )));
     }
 

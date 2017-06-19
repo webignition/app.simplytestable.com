@@ -33,7 +33,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
     public function setUp()
     {
         parent::setUp();
-        $this->queueCrawlJobHttpFixtures();
+
         $job = $this->createJobFactory()->createResolveAndPrepare([
             'type' => 'full site',
             'siteRootUrl' => 'http://example.com',
@@ -41,6 +41,16 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
             'testTypeOptions' => [],
             'parameters' => [],
             'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()
+        ], [
+            'resolve' => [
+                Response::fromMessage('HTTP/1.1 200 OK'),
+            ],
+            'prepare' => [
+                Response::fromMessage('HTTP/1.1 404'),
+                Response::fromMessage('HTTP/1.1 404'),
+                Response::fromMessage('HTTP/1.1 404'),
+                Response::fromMessage('HTTP/1.1 404'),
+            ],
         ]);
 
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
@@ -263,16 +273,5 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
                 ],
             ],
         ];
-    }
-
-    private function queueCrawlJobHttpFixtures()
-    {
-        $this->queueHttpFixtures([
-            Response::fromMessage('HTTP/1.1 200 OK'),
-            Response::fromMessage('HTTP/1.1 404'),
-            Response::fromMessage('HTTP/1.1 404'),
-            Response::fromMessage('HTTP/1.1 404'),
-            Response::fromMessage('HTTP/1.1 404'),
-        ]);
     }
 }
