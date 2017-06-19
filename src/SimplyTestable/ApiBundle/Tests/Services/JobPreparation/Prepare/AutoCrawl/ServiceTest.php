@@ -21,7 +21,12 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testPublicUserJobDoesNotAutostartCrawlJob()
     {
-        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        $user = $this->getUserService()->getPublicUser();
+        $this->getUserService()->setUser($user);
+
+        $jobFactory = $this->createJobFactory();
+        $job = $jobFactory->create();
+        $jobFactory->resolve($job);
         $this->getJobPreparationService()->prepare($job);
 
         $this->assertFalse($this->getCrawlJobContainerService()->hasForJob($job));

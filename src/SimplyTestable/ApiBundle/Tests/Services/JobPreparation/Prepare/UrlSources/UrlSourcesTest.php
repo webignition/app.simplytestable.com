@@ -2,23 +2,24 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\UrlSources;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-abstract class UrlSourcesTest extends BaseSimplyTestableTestCase {    
-    
-    const EXPECTED_TASK_TYPE_COUNT = 4;    
+abstract class UrlSourcesTest extends BaseSimplyTestableTestCase
+{
+    const EXPECTED_TASK_TYPE_COUNT = 4;
 
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\Job\Job
+     * @var Job
      */
-    private $job; 
-    
+    private $job;
+
     private $expectedUrls = array(
         'NoUrls' => array(),
         'SitemapXmlUrls' => array(
             'http://www.example.com/from-sitemap-xml/'
-        ),        
+        ),
         'SitemapTxtUrls' => array(
             'http://www.example.com/from-sitemap-txt/'
         ),
@@ -31,101 +32,115 @@ abstract class UrlSourcesTest extends BaseSimplyTestableTestCase {
         ),
         'RssUrls' => array(
             'http://example.com/from-rss-feed'
-        )        
+        )
     );
-    
-    
-    public function setUp() {
+
+    public function setUp()
+    {
         parent::setUp();
 
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->job = $this->getJobService()->getById($this->createAndResolveDefaultJob());        
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureItems())); 
-        
+        $user = $this->getUserService()->getPublicUser();
+        $this->getUserService()->setUser($user);
+
+        $jobFactory = $this->createJobFactory();
+        $this->job = $jobFactory->create([
+            JobFactory::KEY_TEST_TYPES => [
+                'html validation',
+                'css validation',
+                'js static analysis',
+                'link integrity',
+            ],
+        ]);
+        $jobFactory->resolve($this->job);
+        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureItems()));
+
         $this->getJobPreparationService()->prepare($this->job);
 
         $expectedUrls = $this->expectedUrls[$this->getResultSetKey()];
-        
+
         $this->assertEquals($this->getExpectedJobState(), $this->job->getState());
-        $this->assertEquals(self::EXPECTED_TASK_TYPE_COUNT * count($expectedUrls), $this->job->getTasks()->count());           
-        $this->assertHasExpectedTaskUrlSet($expectedUrls);        
+        $this->assertEquals(self::EXPECTED_TASK_TYPE_COUNT * count($expectedUrls), $this->job->getTasks()->count());
+        $this->assertHasExpectedTaskUrlSet($expectedUrls);
     }
-    
+
     abstract protected function getExpectedJobState();
-    
-    
-    private function assertHasExpectedTaskUrlSet($expectedUrls) {        
+
+    private function assertHasExpectedTaskUrlSet($expectedUrls)
+    {
         foreach ($this->getJobTaskUrls() as $jobUrl) {
             $this->assertTrue(in_array($jobUrl, $expectedUrls));
         }
-    }    
-    
+    }
+
     /**
-     * 
      * @return string[]
      */
-    private function getJobTaskUrls() {
+    private function getJobTaskUrls()
+    {
         $urls = array();
         foreach ($this->getTaskService()->getUrlsByJob($this->job) as $urlItem) {
             $urls[] = $urlItem['url'];
         }
-        
+
         return $urls;
-    }     
-    
-    private function getHttpFixtureItems() {
+    }
+
+    private function getHttpFixtureItems()
+    {
         $testCaseValues = $this->getTestCaseValues();
 
         $this->getSitemapResources($testCaseValues);
-        
+
         $httpFixtureSet = array_merge(array(
             ($testCaseValues['RobotsTxt']) ? $this->getRobotsTxtResource($testCaseValues) : 'HTTP/1.0 404',
         ), $this->getSitemapResources($testCaseValues), array(
             $this->getRootWebPageResource($testCaseValues)
-        ), $this->getNewsFeedResources($testCaseValues));      
+        ), $this->getNewsFeedResources($testCaseValues));
         return $httpFixtureSet;
     }
-    
-    private function getTestCaseValues() {
+
+    private function getTestCaseValues()
+    {
         $rawValues = explode('_', str_replace('test', '', $this->getName()));
         $testCaseValues = array();
         $currentKey = null;
-        
+
         foreach ($rawValues as $value) {
             if (substr($value, 0, strlen('Gets')) == 'Gets') {
                 continue;
             }
-            
+
             if (in_array($value, array('True', 'False'))) {
                 $testCaseValues[$currentKey] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
             } else {
                 $currentKey = $value;
             }
         }
-        
-        return $testCaseValues;        
+
+        return $testCaseValues;
     }
-    
-    
-    private function getResultSetKey() {
-        $rawValues = explode('_', str_replace('test', '', $this->getName()));        
+
+    private function getResultSetKey()
+    {
+        $rawValues = explode('_', str_replace('test', '', $this->getName()));
         foreach ($rawValues as $value) {
             if (substr($value, 0, strlen('Gets')) == 'Gets') {
                 return str_replace('Gets', '', $value);
             }
         }
     }
-    
-    
-    private function getRobotsTxtResource($testCaseValues) {                
-        if ($testCaseValues['SitemapXml'] === false &&  $testCaseValues['SitemapTxt'] === false ) {
+
+
+    private function getRobotsTxtResource($testCaseValues)
+    {
+        if ($testCaseValues['SitemapXml'] === false &&  $testCaseValues['SitemapTxt'] === false) {
 return <<<'EOD'
 HTTP/1.1 200 Ok
 Content-Type: text/plain
 
 User-Agent: *
 EOD;
-        } elseif ($testCaseValues['SitemapXml'] === false &&  $testCaseValues['SitemapTxt'] === true ) {
+        } elseif ($testCaseValues['SitemapXml'] === false &&  $testCaseValues['SitemapTxt'] === true) {
 return <<<'EOD'
 HTTP/1.1 200 Ok
 Content-Type: text/plain
@@ -133,7 +148,7 @@ Content-Type: text/plain
 User-Agent: *
 Sitemap: http://example.com/sitemap.txt
 EOD;
-        } elseif ($testCaseValues['SitemapXml'] === true &&  $testCaseValues['SitemapTxt'] === false ) {
+        } elseif ($testCaseValues['SitemapXml'] === true &&  $testCaseValues['SitemapTxt'] === false) {
 return <<<'EOD'
 HTTP/1.1 200 Ok
 Content-Type: text/plain
@@ -141,7 +156,7 @@ Content-Type: text/plain
 User-Agent: *
 Sitemap: http://example.com/sitemap.xml
 EOD;
-        } elseif ($testCaseValues['SitemapXml'] === true &&  $testCaseValues['SitemapTxt'] === true ) {
+        } elseif ($testCaseValues['SitemapXml'] === true &&  $testCaseValues['SitemapTxt'] === true) {
 return <<<'EOD'
 HTTP/1.1 200 Ok
 Content-Type: text/plain
@@ -152,32 +167,32 @@ Sitemap: http://example.com/sitemap.txt
 EOD;
         }
     }
-    
-    
-    private function getSitemapResources($testCaseValues) {
-        if ($testCaseValues['SitemapXml'] === false &&  $testCaseValues['SitemapTxt'] === false ) {
+
+    private function getSitemapResources($testCaseValues)
+    {
+        if ($testCaseValues['SitemapXml'] === false &&  $testCaseValues['SitemapTxt'] === false) {
             return array(
                 'HTTP/1.0 404',
                 'HTTP/1.0 404'
             );
-        } elseif ($testCaseValues['SitemapXml'] === false &&  $testCaseValues['SitemapTxt'] === true ) {
+        } elseif ($testCaseValues['SitemapXml'] === false &&  $testCaseValues['SitemapTxt'] === true) {
             return array(
                 $this->getSitemapTxtResource(),
             );
-        } elseif ($testCaseValues['SitemapXml'] === true &&  $testCaseValues['SitemapTxt'] === false ) {
+        } elseif ($testCaseValues['SitemapXml'] === true &&  $testCaseValues['SitemapTxt'] === false) {
             return array(
                 $this->getSitemapXmlResource(),
             );
-        } elseif ($testCaseValues['SitemapXml'] === true &&  $testCaseValues['SitemapTxt'] === true ) {
+        } elseif ($testCaseValues['SitemapXml'] === true &&  $testCaseValues['SitemapTxt'] === true) {
             return array(
                 $this->getSitemapXmlResource(),
                 $this->getSitemapTxtResource(),
             );
-        }        
+        }
     }
-    
-    
-    private function getRootWebPageResource($testCaseValues) {
+
+    private function getRootWebPageResource($testCaseValues)
+    {
         if ($testCaseValues['Rss'] === false && $testCaseValues['Atom'] === false) {
 return <<<'EOD'
 HTTP/1.1 200 Ok
@@ -228,7 +243,7 @@ EOD;
         }
     }
 
-    
+
     private function getSitemapXmlResource() {
 return <<<'EOD'
 HTTP/1.1 200 OK
@@ -244,20 +259,20 @@ Content-Type: application/xml
   </url>
 </urlset>
 EOD;
-    }  
-    
-    
-    private function getSitemapTxtResource() {
+    }
+
+    private function getSitemapTxtResource()
+    {
 return <<<'EOD'
 HTTP/1.1 200 OK
 Content-Type: text/plain
 
 http://www.example.com/from-sitemap-txt/
 EOD;
-    }    
-    
-    
-    private function getNewsFeedResources($testCaseValues) {
+    }
+
+    private function getNewsFeedResources($testCaseValues)
+    {
         if ($testCaseValues['Rss'] === false && $testCaseValues['Atom'] === false) {
             return array(
                 'HTTP/1.0 404',
@@ -270,16 +285,16 @@ EOD;
         } elseif ($testCaseValues['Rss'] === true && $testCaseValues['Atom'] === false) {
             return array(
                 $this->getRssResource()
-            );            
+            );
         } elseif ($testCaseValues['Rss'] === true && $testCaseValues['Atom'] === true) {
             return array(
                 $this->getRssResource()
-            );             
-        }        
+            );
+        }
     }
-    
-    
-    private function getAtomResource() {
+
+    private function getAtomResource()
+    {
 return <<<'EOD'
 HTTP/1.1 200 OK
 Content-Type: application/atom+xml
@@ -313,9 +328,9 @@ Content-Type: application/atom+xml
 </feed>
 EOD;
     }
-    
-    
-    private function getRssResource() {
+
+    private function getRssResource()
+    {
 return <<<'EOD'
 HTTP/1.1 200 OK
 Content-Type: application/rss+xml
@@ -341,6 +356,5 @@ Content-Type: application/rss+xml
 </channel>
 </rss>
 EOD;
-    }    
-    
+    }
 }

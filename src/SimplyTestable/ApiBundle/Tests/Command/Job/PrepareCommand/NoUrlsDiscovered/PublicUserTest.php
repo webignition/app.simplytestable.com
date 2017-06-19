@@ -4,9 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand\NoUrlsDiscov
 
 use SimplyTestable\ApiBundle\Tests\Command\Job\PrepareCommand\CommandTest;
 
-class PublicUserTest extends CommandTest {
-
-    protected function preCall() {
+class PublicUserTest extends CommandTest
+{
+    protected function preCall()
+    {
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 404',
             'HTTP/1.0 404',
@@ -16,17 +17,25 @@ class PublicUserTest extends CommandTest {
         )));
     }
 
-    protected function getJob() {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        return $this->getJobService()->getById($this->createAndResolveDefaultJob());
+    protected function getJob()
+    {
+        $user = $this->getUserService()->getPublicUser();
+        $this->getUserService()->setUser($user);
+
+        $jobFactory = $this->createJobFactory();
+        $job = $jobFactory->create();
+        $jobFactory->resolve($job);
+
+        return $job;
     }
 
-    protected function getExpectedReturnCode() {
+    protected function getExpectedReturnCode()
+    {
         return 0;
     }
 
-
-    public function testResqueJobIsNotCreated() {
+    public function testResqueJobIsNotCreated()
+    {
         $this->assertTrue($this->getResqueQueueService()->isEmpty('task-assign-collection'));
     }
 }

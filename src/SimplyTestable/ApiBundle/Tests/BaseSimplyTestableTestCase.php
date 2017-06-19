@@ -366,11 +366,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return $job_id;
     }
 
-    protected function createAndResolveDefaultJob()
-    {
-        return $this->createAndResolveJob(self::DEFAULT_CANONICAL_URL);
-    }
-
     /**
      * @param $canonicalUrl
      * @param string $userEmail

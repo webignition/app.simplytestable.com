@@ -11,8 +11,12 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testHandleSitemapContainingSchemelessUrls()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        $user = $this->getUserService()->getPublicUser();
+        $this->getUserService()->setUser($user);
+
+        $jobFactory = $this->createJobFactory();
+        $job = $jobFactory->create();
+        $jobFactory->resolve($job);
 
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
@@ -27,8 +31,19 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testHandleSingleIndexLargeSitemap()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        $user = $this->getUserService()->getPublicUser();
+        $this->getUserService()->setUser($user);
+
+        $jobFactory = $this->createJobFactory();
+        $job = $jobFactory->create([
+            JobFactory::KEY_TEST_TYPES => [
+                'html validation',
+                'css validation',
+                'js static analysis',
+                'link integrity',
+            ],
+        ]);
+        $jobFactory->resolve($job);
 
         $this
             ->getWebSiteService()
@@ -57,8 +72,19 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testHandleLargeCollectionOfSitemaps()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        $user = $this->getUserService()->getPublicUser();
+        $this->getUserService()->setUser($user);
+
+        $jobFactory = $this->createJobFactory();
+        $job = $jobFactory->create([
+            JobFactory::KEY_TEST_TYPES => [
+                'html validation',
+                'css validation',
+                'js static analysis',
+                'link integrity',
+            ],
+        ]);
+        $jobFactory->resolve($job);
 
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
@@ -80,8 +106,12 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testHandleMalformedRssUrl()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createAndResolveDefaultJob());
+        $user = $this->getUserService()->getPublicUser();
+        $this->getUserService()->setUser($user);
+
+        $jobFactory = $this->createJobFactory();
+        $job = $jobFactory->create();
+        $jobFactory->resolve($job);
 
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
