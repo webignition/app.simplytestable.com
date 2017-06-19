@@ -2,49 +2,58 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Task\Cancel\Collection;
 
-class HttpErrorTest extends BaseTest {
-    
-    public function setUp() {
+class HttpErrorTest extends BaseTest
+{
+    public function setUp()
+    {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+
+        $job = $this->createJobFactory()->createResolveAndPrepare();
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 ' . $this->getStatusCode()
-        )));   
-        
+        )));
+
         $worker = $this->createWorker();
-        
+
         foreach ($job->getTasks() as $task) {
             $task->setState($this->getTaskService()->getQueuedState());
             $task->setWorker($worker);
             $this->getTaskService()->getManager()->persist($task);
         }
-        
+
         $this->getTaskService()->getManager()->flush();
-        
+
         $this->assertReturnCode(0, array(
             'ids' => implode(',', $this->getTaskIds($job))
         ));
-        
+
         foreach ($job->getTasks() as $task) {
             $this->assertEquals($this->getTaskService()->getCancelledState(), $task->getState());
-        }        
+        }
     }
-    
-    public function test400() {}
-    public function test404() {}
-    public function test500() {}
-    public function test503() {}
-    
-    
+
+    public function test400()
+    {
+    }
+
+    public function test404()
+    {
+    }
+
+    public function test500()
+    {
+    }
+
+    public function test503()
+    {
+    }
+
     /**
-     * 
      * @return int
      */
     private function getStatusCode() {
         return (int)  str_replace('test', '', $this->getName());
     }
-
 }

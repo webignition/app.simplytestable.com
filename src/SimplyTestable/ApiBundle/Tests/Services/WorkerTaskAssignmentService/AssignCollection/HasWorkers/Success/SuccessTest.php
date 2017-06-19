@@ -8,38 +8,35 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 
-abstract class SuccessTest extends ServiceTest {
-
-
+abstract class SuccessTest extends ServiceTest
+{
     /**
      * @var Worker[]
      */
     private $workers = null;
-
 
     /**
      * @var Job
      */
     private $job;
 
-
     /**
      * @var Task[]
      */
     private $tasks;
 
-
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+        $this->job = $this->createJobFactory()->createResolveAndPrepare();
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getAssignCollectionHttpResponseFixtures()));
     }
 
-
-    public function testTasksAreAssigned() {
+    public function testTasksAreAssigned()
+    {
         $this->getService()->assignCollection($this->getTasks(), $this->getWorkers());
 
         foreach ($this->getTasks() as $task) {
@@ -47,7 +44,8 @@ abstract class SuccessTest extends ServiceTest {
         }
     }
 
-    public function testTaskAssignmentDistribution() {
+    public function testTaskAssignmentDistribution()
+    {
         $this->getService()->assignCollection($this->getTasks(), $this->getWorkers());
 
         if (count($this->getTasks()) === 0) {
@@ -62,12 +60,10 @@ abstract class SuccessTest extends ServiceTest {
                 $this->assertEquals($worker->getHostname(), $task->getWorker()->getHostname());
             }
         }
-
-
     }
 
-
-    protected function getWorkerCount() {
+    protected function getWorkerCount()
+    {
         $classNameParts = explode('\\', get_class($this));
         foreach ($classNameParts as $classNamePart) {
             if (preg_match('/^Worker[0-9]+$/', $classNamePart)) {
@@ -78,8 +74,8 @@ abstract class SuccessTest extends ServiceTest {
         return 0;
     }
 
-
-    private function getTaskCount() {
+    private function getTaskCount()
+    {
         $classNameParts = explode('\\', get_class($this));
 
         foreach ($classNameParts as $classNamePart) {
@@ -91,16 +87,16 @@ abstract class SuccessTest extends ServiceTest {
         return 0;
     }
 
-
-    protected function getExpectedReturnCode() {
+    protected function getExpectedReturnCode()
+    {
         return WorkerTaskAssignmentService::ASSIGN_COLLECTION_OK_STATUS_CODE;
     }
-
 
     /**
      * @return Worker[]
      */
-    protected function getWorkers() {
+    protected function getWorkers()
+    {
         if (is_null($this->workers)) {
             $this->workers = $this->createWorkers($this->getWorkerCount());
         }
@@ -108,8 +104,8 @@ abstract class SuccessTest extends ServiceTest {
         return $this->workers;
     }
 
-
-    protected function getTasks() {
+    protected function getTasks()
+    {
         if (is_null($this->tasks)) {
             $taskRemoveCount = count($this->job->getTasks()) - $this->getTaskCount();
 
@@ -126,8 +122,8 @@ abstract class SuccessTest extends ServiceTest {
         return $this->tasks;
     }
 
-
-    private function getTaskGroups() {
+    private function getTaskGroups()
+    {
         $taskGroups = [];
 
         foreach ($this->getTasks() as $taskIndex => $task) {
@@ -143,8 +139,8 @@ abstract class SuccessTest extends ServiceTest {
         return $taskGroups;
     }
 
-
-    private function getAssignCollectionHttpResponseFixtures() {
+    private function getAssignCollectionHttpResponseFixtures()
+    {
         $fixtures = [];
 
         for ($index = 0; $index < $this->getWorkerCount(); $index++) {
@@ -154,8 +150,8 @@ abstract class SuccessTest extends ServiceTest {
         return $fixtures;
     }
 
-
-    private function getAssignCollectionHttpResponseFixture() {
+    private function getAssignCollectionHttpResponseFixture()
+    {
         return <<<'EOD'
 HTTP/1.1 200 OK
 Content-Type: application/json
@@ -163,5 +159,4 @@ Content-Type: application/json
 [{"id":1,"url":"http://example.com/","state":"queued","type":"HTML validation","parameters":""}]
 EOD;
     }
-
 }

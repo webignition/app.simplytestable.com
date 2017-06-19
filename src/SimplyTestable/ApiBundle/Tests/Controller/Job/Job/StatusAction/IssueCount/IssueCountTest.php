@@ -20,7 +20,7 @@ abstract class IssueCountTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+        $job = $this->createJobFactory()->createResolveAndPrepare();
         foreach ($job->getTasks() as $task) {
             $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
                 'end_date_time' => '2012-03-08 17:03:00',
