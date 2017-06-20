@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Services\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
-use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 
@@ -45,7 +44,7 @@ class RetrievalService
 
     /**
      * @param int $jobId
-     * @throws RetrievalServiceException
+     * @throws JobRetrievalServiceException
      *
      * @return Job
      */

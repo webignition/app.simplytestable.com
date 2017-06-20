@@ -99,7 +99,7 @@ class JobFactory
      * @param TaskService $taskService
      * @param UserService $userService
      * @param JobRejectionService $jobRejectionService
-     * @param HttpClientService $httpClientService
+     * @param TestHttpClientService $httpClientService
      */
     public function __construct(
         JobTypeService $jobTypeService,
