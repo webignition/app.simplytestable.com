@@ -1,42 +1,46 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests;
+namespace SimplyTestable\ApiBundle\Tests\Functional;
 
+use Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand;
+use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
+use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
+use SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand;
+use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
+use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
+use SimplyTestable\ApiBundle\Command\Task\Assign\SelectedCommand;
+use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpFoundation\Request;
-use Guzzle\Http\Client as HttpClient;
 use Symfony\Component\Console\Tester\CommandTester;
 
-abstract class BaseTestCase extends WebTestCase {
-
+abstract class BaseTestCase extends WebTestCase
+{
     const FIXTURES_DATA_RELATIVE_PATH = '/Fixtures/Data';
 
     /**
-     *
-     * @var \Symfony\Bundle\FrameworkBundle\Client
+     * @var Client
      */
     protected $client;
 
     /**
-     *
      * @var ContainerInterface
      */
     protected $container;
 
-
     /**
-     *
-     * @var \Symfony\Bundle\FrameworkBundle\Console\Application
+     * @var Application
      */
     protected $application;
 
-
-    public function setUp() {
+    public function setUp()
+    {
         $this->client = static::createClient();
         $this->container = $this->client->getKernel()->getContainer();
         $this->application = new Application(self::$kernel);
@@ -46,36 +50,42 @@ abstract class BaseTestCase extends WebTestCase {
             $this->application->add($command);
         }
 
-        $this->setDefaultSystemState();
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');
         $this->container->get('doctrine')->getConnection()->beginTransaction();
     }
 
-
     /**
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     * @return ContainerAwareCommand[]
      */
-    protected function getCommands() {
+    protected function getCommands()
+    {
         return array_merge(array(
-            new \Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand(),
-            new \SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand(),
-            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand(),
-            new \SimplyTestable\ApiBundle\Command\Job\PrepareCommand(),
-            new \SimplyTestable\ApiBundle\Command\Task\Assign\SelectedCommand(),
-            new \SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand(),
-            new \SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand()
+            new LoadDataFixturesDoctrineCommand(),
+            new DisableReadOnlyCommand(),
+            new EnableReadOnlyCommand(),
+            new PrepareCommand(),
+            new SelectedCommand(),
+            new CollectionCommand(),
+            new ResolveWebsiteCommand()
         ), $this->getAdditionalCommands());
     }
 
     /**
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     * @return ContainerAwareCommand[]
      */
-    protected function getAdditionalCommands() {
+    protected function getAdditionalCommands()
+    {
         return array();
     }
 
-    protected function executeCommand($name, $arguments = array()) {
+    /**
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return int
+     */
+    protected function executeCommand($name, $arguments = array())
+    {
         $command = $this->application->find($name);
         $commandTester = new CommandTester($command);
 
@@ -84,30 +94,8 @@ abstract class BaseTestCase extends WebTestCase {
         return $commandTester->execute($arguments);
     }
 
-    protected function setDefaultSystemState() {
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
-    }
-
-
-    protected static function setupDatabase() {
-        $commands = array(
-            'php app/console doctrine:database:drop -e test --force',
-            'php app/console doctrine:database:create -e test',
-            'php app/console doctrine:migrations:migrate -e test --no-interaction'
-        );
-
-        foreach ($commands as $command) {
-            exec($command);
-        }
-    }
-
-    protected function loadDataFixtures() {
-        $this->executeCommand('doctrine:fixtures:load', array(
-            '--append' => true
-        ));
-    }
-
-    protected function clearRedis() {
+    protected function clearRedis()
+    {
         exec('redis-cli -r 1 flushall');
     }
 
@@ -120,9 +108,15 @@ abstract class BaseTestCase extends WebTestCase {
      * @param string $controllerMethod Name of the controller method to be called
      * @param array $postData Array of post values
      * @param array $queryData Array of query string values
-     * @return \Symfony\Bundle\FrameworkBundle\Controller\Controller
+     *
+     * @return Controller
      */
-    protected function createController($controllerClass, $controllerMethod, array $postData = array(), array $queryData = array()) {
+    protected function createController(
+        $controllerClass,
+        $controllerMethod,
+        array $postData = array(),
+        array $queryData = array()
+    ) {
         $request = $this->createWebRequest();
         $request->attributes->set('_controller', $controllerClass.'::'.$controllerMethod);
         $request->request->add($postData);
@@ -144,8 +138,15 @@ abstract class BaseTestCase extends WebTestCase {
         return $controllerCallable[0];
     }
 
-    private function getControllerCallable(Request $request) {
-        $controllerResolver = new \Symfony\Component\HttpKernel\Controller\ControllerResolver();
+    /**
+     * @param Request $request
+     *
+     * @return callable|false
+     */
+    private function getControllerCallable(Request $request)
+    {
+        $controllerResolver = new ControllerResolver();
+
         return $controllerResolver->getController($request);
     }
 
@@ -153,22 +154,23 @@ abstract class BaseTestCase extends WebTestCase {
      * Creates a new Request object and hydrates it with the proper values to make
      * a valid web request.
      *
-     * @return \Symfony\Component\HttpFoundation\Request The hydrated Request object.
+     * @return Request
      */
-    protected function createWebRequest() {
-        $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+    protected function createWebRequest()
+    {
+        $request = Request::createFromGlobals();
         $request->server->set('REMOTE_ADDR', '127.0.0.1');
 
         return $request;
     }
 
-
     /**
-     *
      * @param string $testName
+     *
      * @return string
      */
-    protected function getFixturesDataPath($testName = null) {
+    protected function getFixturesDataPath($testName = null)
+    {
         $path = __DIR__ . self::FIXTURES_DATA_RELATIVE_PATH . '/' . str_replace('\\', DIRECTORY_SEPARATOR, get_class($this));
 
         if (!is_null($testName)) {
@@ -178,16 +180,8 @@ abstract class BaseTestCase extends WebTestCase {
         return $path;
     }
 
-
-    /**
-     *
-     * @return string
-     */
-    protected function getCommonFixturesDataPath() {
-        return __DIR__ . self::FIXTURES_DATA_RELATIVE_PATH . '/Common';
-    }
-
-    public function tearDown() {
+    public function tearDown()
+    {
         parent::tearDown();
 
         $this->container->get('doctrine')->getConnection()->close();
@@ -200,5 +194,4 @@ abstract class BaseTestCase extends WebTestCase {
             }
         }
     }
-
 }

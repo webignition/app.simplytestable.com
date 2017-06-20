@@ -7,8 +7,8 @@ use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfi
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 
-class RequestAdapter {
-
+class RequestAdapter
+{
     const REQUEST_TASK_CONFIGURATION_KEY = 'task-configuration';
     const REQUEST_IS_ENABLED_KEY = 'is-enabled';
 
@@ -17,44 +17,38 @@ class RequestAdapter {
      */
     private $request;
 
-
     /**
      * @var TaskConfigurationCollection
      */
     private $collection;
-
 
     /**
      * @var TaskTypeService
      */
     private $taskTypeService;
 
-
     /**
      * @param Request $request
-     * @return $this
      */
-    public function setRequest(Request $request) {
+    public function setRequest(Request $request)
+    {
         $this->request = $request;
         $this->collection = new TaskConfigurationCollection();
-        return $this;
     }
-
 
     /**
      * @param TaskTypeService $taskTypeService
-     * @return $this
      */
-    public function setTaskTypeService(TaskTypeService $taskTypeService) {
+    public function setTaskTypeService(TaskTypeService $taskTypeService)
+    {
         $this->taskTypeService = $taskTypeService;
-        return $this;
     }
-
 
     /**
      * @return TaskConfigurationCollection
      */
-    public function getCollection() {
+    public function getCollection()
+    {
         if ($this->collection->isEmpty()) {
             $this->build();
         }
@@ -62,8 +56,8 @@ class RequestAdapter {
         return $this->collection;
     }
 
-
-    private function build() {
+    private function build()
+    {
         if (is_null($this->request->get(self::REQUEST_TASK_CONFIGURATION_KEY))) {
             return;
         }
@@ -86,7 +80,9 @@ class RequestAdapter {
             $taskConfiguration->setType($taskType);
 
             if (array_key_exists(self::REQUEST_IS_ENABLED_KEY, $taskTypeOptions)) {
-                $taskConfiguration->setIsEnabled(filter_var($taskTypeOptions[self::REQUEST_IS_ENABLED_KEY], FILTER_VALIDATE_BOOLEAN));
+                $taskConfiguration->setIsEnabled(
+                    filter_var($taskTypeOptions[self::REQUEST_IS_ENABLED_KEY], FILTER_VALIDATE_BOOLEAN)
+                );
                 unset($taskTypeOptions[self::REQUEST_IS_ENABLED_KEY]);
             }
 
@@ -94,5 +90,4 @@ class RequestAdapter {
             $this->collection->add($taskConfiguration);
         }
     }
-    
 }

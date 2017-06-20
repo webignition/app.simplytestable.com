@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests;
+namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Guzzle\Http\Exception\CurlException;
 use SimplyTestable\ApiBundle\Controller\Job\JobController;
@@ -8,7 +8,6 @@ use SimplyTestable\ApiBundle\Controller\Job\JobListController;
 use SimplyTestable\ApiBundle\Controller\Job\StartController as JobStartController;
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController as JobConfigurationCreateController;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController as StripeWebHookController;
-use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
 use SimplyTestable\ApiBundle\Controller\UserController;
@@ -57,7 +56,6 @@ use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
 use Guzzle\Http\Message\Response as GuzzleResponse;
