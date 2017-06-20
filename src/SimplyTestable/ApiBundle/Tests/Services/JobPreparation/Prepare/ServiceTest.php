@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare;
 
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
@@ -34,6 +35,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
      * @param int $expectedTaskCount
      * @param string $expectedJobState
      * @param string[] $expectedTaskUrls
+     * @param array $expectedTaskParameters
      * @param float $sitemapRetrieverTimeout
      */
     public function testPrepare(
@@ -42,6 +44,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
         $expectedTaskCount,
         $expectedJobState,
         $expectedTaskUrls,
+        $expectedTaskParameters,
         $sitemapRetrieverTimeout = null
     ) {
         $user = $this->getUserService()->getPublicUser();
@@ -66,12 +69,11 @@ class ServiceTest extends BaseSimplyTestableTestCase
         $this->assertCount($expectedTaskCount, $job->getTasks());
         $this->assertEquals($expectedJobState, $job->getState());
 
-        $taskUrls = [];
-        foreach ($job->getTasks() as $task) {
-            $taskUrls[] = $task->getUrl();
+        foreach ($job->getTasks() as $taskIndex => $task) {
+            /* @var Task $task */
+            $this->assertEquals($expectedTaskUrls[$taskIndex], $task->getUrl());
+            $this->assertEquals($expectedTaskParameters, $task->getParametersArray());
         }
-
-        $this->assertEquals($expectedTaskUrls, $taskUrls);
     }
 
     /**
@@ -94,6 +96,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
                 'expectedTaskCount' => 0,
                 'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
                 'expectedTaskUrls' => [],
+                'expectedTaskParameters' => [],
             ],
             'sitemap containing only schemeless urls' => [
                 'jobValues' => [],
@@ -110,6 +113,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
                 'expectedTaskCount' => 0,
                 'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
                 'expectedTaskUrls' => [],
+                'expectedTaskParameters' => [],
             ],
             'urls in multiple sitemaps' => [
                 'jobValues' => [],
@@ -155,6 +159,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
                     'http://example.com/nine',
                     'http://example.com/ten',
                 ],
+                'expectedTaskParameters' => [],
             ],
             'malformed rss url' => [
                 'jobValues' => [],
@@ -169,6 +174,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
                 'expectedTaskCount' => 0,
                 'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
                 'expectedTaskUrls' => [],
+                'expectedTaskParameters' => [],
             ],
             'large sitemap collection times out retrieving all' => [
                 'jobValues' => [],
@@ -210,6 +216,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
                     'http://example.com/nine',
                     'http://example.com/ten',
                 ],
+                'expectedTaskParameters' => [],
                 'sitemapRetrieverTimeout' => 0.00001,
             ],
             'sitemap txt' => [
@@ -228,6 +235,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
                 'expectedTaskUrls' => [
                     'http://example.com/from-sitemap-txt/',
                 ],
+                'expectedTaskParameters' => [],
             ],
             'atom feed urls' => [
                 'jobValues' => [],
@@ -249,6 +257,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
                 'expectedTaskUrls' => [
                     'http://example.com/from-atom-feed/',
                 ],
+                'expectedTaskParameters' => [],
             ],
             'rss feed urls' => [
                 'jobValues' => [],
@@ -270,6 +279,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
                 'expectedTaskUrls' => [
                     'http://example.com/from-rss-feed/',
                 ],
+                'expectedTaskParameters' => [],
             ],
             'sitemap xml and txt' => [
                 'jobValues' => [],
@@ -291,6 +301,33 @@ class ServiceTest extends BaseSimplyTestableTestCase
                 'expectedTaskUrls' => [
                     'http://example.com/from-sitemap-xml/',
                     'http://example.com/from-sitemap-txt/',
+                ],
+                'expectedTaskParameters' => [],
+            ],
+            'task parameters' => [
+                'jobValues' => [
+                    JobFactory::KEY_PARAMETERS => [
+                        'http-auth-username' => 'foo',
+                        'http-auth-password'=> 'bar',
+                    ],
+                ],
+                'httpFixtures' => [
+                    HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::generate([
+                            'http://example.com/one',
+                        ])
+                    ),
+                ],
+                'expectedTaskCount' => 1,
+                'expectedJobState' => JobService::QUEUED_STATE,
+                'expectedTaskUrls' => [
+                    'http://example.com/one',
+                ],
+                'expectedTaskParameters' => [
+                    'http-auth-username' => 'foo',
+                    'http-auth-password'=> 'bar',
                 ],
             ],
         ];
