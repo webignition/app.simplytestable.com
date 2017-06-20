@@ -2,126 +2,144 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare;
 
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\HtmlDocumentFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 
 class ServiceTest extends BaseSimplyTestableTestCase
 {
-    const EXPECTED_TASK_TYPE_COUNT = 4;
+    const EXPECTED_TASK_TYPE_COUNT = 1;
 
-    public function testHandleSitemapContainingSchemelessUrls()
-    {
+    /**
+     * @dataProvider prepareDataProvider
+     *
+     * @param array $jobValues
+     * @param array $httpFixtures
+     * @param int $expectedTaskCount
+     * @param string $expectedJobState
+     */
+    public function testPrepare(
+        $jobValues,
+        $httpFixtures,
+        $expectedTaskCount,
+        $expectedJobState,
+        $sitemapRetrieverTimeout = null
+    ) {
         $user = $this->getUserService()->getPublicUser();
         $this->getUserService()->setUser($user);
 
         $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create();
+        $job = $jobFactory->create($jobValues);
         $jobFactory->resolve($job);
 
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')
-            )
-        );
+        $this->queueHttpFixtures($httpFixtures);
         $this->getJobPreparationService()->prepare($job);
 
-        $this->assertTrue($job->getTasks()->isEmpty());
-        $this->assertEquals($this->getJobService()->getFailedNoSitemapState(), $job->getState());
+        $this->assertCount($expectedTaskCount, $job->getTasks());
+        $this->assertEquals($expectedJobState, $job->getState());
     }
 
-    public function testHandleSingleIndexLargeSitemap()
+    /**
+     * @return array
+     */
+    public function prepareDataProvider()
     {
-        $user = $this->getUserService()->getPublicUser();
-        $this->getUserService()->setUser($user);
-
-        $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create([
-            JobFactory::KEY_TEST_TYPES => [
-                'html validation',
-                'css validation',
-                'js static analysis',
-                'link integrity',
+        return [
+            'sitemap containing only schemeless urls' => [
+                'jobValues' => [],
+                'httpFixtures' => [
+                    HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::generate([
+                            'example.com/one',
+                            'example.com/two'
+                        ])
+                    ),
+                ],
+                'expectedTaskCount' => 0,
+                'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
             ],
-        ]);
-        $jobFactory->resolve($job);
-
-        $this
-            ->getWebSiteService()
-            ->getSitemapFinder()
-            ->getSitemapRetriever()
-            ->getConfiguration()
-            ->setTotalTransferTimeout(0.00001);
-
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')
-            )
-        );
-        $this->getJobPreparationService()->prepare($job);
-
-        $expectedUrlCount =
-            $this
-                ->getUserAccountPlanService()
-                ->getForUser($this->getUserService()->getPublicUser())
-                ->getPlan()
-                ->getConstraintNamed('urls_per_job')
-                ->getLimit();
-
-        $this->assertEquals(self::EXPECTED_TASK_TYPE_COUNT * $expectedUrlCount, $job->getTasks()->count());
-    }
-
-    public function testHandleLargeCollectionOfSitemaps()
-    {
-        $user = $this->getUserService()->getPublicUser();
-        $this->getUserService()->setUser($user);
-
-        $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create([
-            JobFactory::KEY_TEST_TYPES => [
-                'html validation',
-                'css validation',
-                'js static analysis',
-                'link integrity',
+            'urls in multiple sitemaps' => [
+                'jobValues' => [],
+                'httpFixtures' => [
+                    HttpFixtureFactory::createRobotsTxtResponse([
+                        'http://example.com/sitemap1.xml',
+                        'http://example.com/sitemap2.xml',
+                    ]),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::generate([
+                            'http://example.com/one',
+                            'http://example.com/two',
+                            'http://example.com/three',
+                            'http://example.com/four',
+                            'http://example.com/five',
+                            'http://example.com/six',
+                        ])
+                    ),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::generate([
+                            'http://example.com/seven',
+                            'http://example.com/eight',
+                            'http://example.com/nine',
+                            'http://example.com/ten',
+                            'http://example.com/eleven',
+                            'http://example.com/twelve',
+                        ])
+                    ),
+                ],
+                'expectedTaskCount' => 10,
+                'expectedJobState' => JobService::QUEUED_STATE,
             ],
-        ]);
-        $jobFactory->resolve($job);
-
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')
-            )
-        );
-        $this->getJobPreparationService()->prepare($job);
-
-        $expectedUrlCount =
-            $this
-                ->getUserAccountPlanService()
-                ->getForUser($this->getUserService()->getPublicUser())
-                ->getPlan()
-                ->getConstraintNamed('urls_per_job')
-                ->getLimit();
-
-        $this->assertEquals(self::EXPECTED_TASK_TYPE_COUNT * $expectedUrlCount, $job->getTasks()->count());
-    }
-
-    public function testHandleMalformedRssUrl()
-    {
-        $user = $this->getUserService()->getPublicUser();
-        $this->getUserService()->setUser($user);
-
-        $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create();
-        $jobFactory->resolve($job);
-
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')
-            )
-        );
-        $this->getJobPreparationService()->prepare($job);
-
-        $this->assertTrue($job->getTasks()->isEmpty());
-        $this->assertEquals($this->getJobService()->getFailedNoSitemapState(), $job->getState());
+            'malformed rss url' => [
+                'jobValues' => [],
+                'httpFixtures' => [
+                    HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                    HttpFixtureFactory::createNotFoundResponse(),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/html',
+                        HtmlDocumentFactory::load('malformed-rss-url')
+                    ),
+                ],
+                'expectedTaskCount' => 0,
+                'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
+            ],
+            'foo' => [
+                'jobValues' => [],
+                'httpFixtures' => [
+                    HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::load('example.com-index-50-sitemaps')
+                    ),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::generate([
+                            'http://example.com/one',
+                            'http://example.com/two',
+                            'http://example.com/three',
+                            'http://example.com/four',
+                            'http://example.com/five',
+                            'http://example.com/six',
+                            'http://example.com/seven',
+                            'http://example.com/eight',
+                            'http://example.com/nine',
+                            'http://example.com/ten',
+                            'http://example.com/eleven',
+                            'http://example.com/twelve',
+                        ])
+                    ),
+                ],
+                'expectedTaskCount' => 10,
+                'expectedJobState' => JobService::QUEUED_STATE,
+                'sitemapRetrieverTimeout' => 0.00001,
+            ],
+        ];
     }
 
     public function testCrawlJobTakesParametersOfParentJob()
