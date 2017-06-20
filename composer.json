@@ -71,7 +71,12 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile"
         ],
-        "test": "php vendor/phpunit/phpunit/phpunit -c app --colors"
+        "test-unit": "./bin/phpunit -c app --colors src/SimplyTestable/ApiBundle/Tests/Unit/",
+        "test-functional": "./bin/phpunit -c app --colors src/SimplyTestable/ApiBundle/Tests/Functional/",
+        "test": [
+            "@composer test-unit",
+            "@composer test-functional"
+        ]
     },
     "config": {
         "bin-dir": "bin"
