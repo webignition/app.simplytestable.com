@@ -4,53 +4,52 @@ namespace SimplyTestable\ApiBundle\Services\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
-
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 
-class RetrievalService {
-    
+class RetrievalService
+{
     /**
-     *
      * @var JobService
      */
     private $jobService;
 
-
     /**
-     *
      * @var TeamService
      */
     private $teamService;
-
 
     /**
      * @var User
      */
     private $user = null;
 
-    
-
-    public function __construct(JobService $jobService, TeamService $teamService) {
+    /**
+     * @param JobService $jobService
+     * @param TeamService $teamService
+     */
+    public function __construct(JobService $jobService, TeamService $teamService)
+    {
         $this->jobService = $jobService;
         $this->teamService = $teamService;
     }
 
-
     /**
      * @param User $user
      */
-    public function setUser(User $user) {
+    public function setUser(User $user)
+    {
         $this->user = $user;
     }
 
-
     /**
-     * @param $jobId
+     * @param int $jobId
+     * @throws JobRetrievalServiceException
+     *
      * @return Job
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException
      */
-    public function retrieve($jobId) {
+    public function retrieve($jobId)
+    {
         if (!$this->hasUser()) {
             throw new JobRetrievalServiceException(
                 'User not set',
@@ -76,8 +75,13 @@ class RetrievalService {
         return $job;
     }
 
-
-    private function isAuthorised(Job $job) {
+    /**
+     * @param Job $job
+     *
+     * @return bool
+     */
+    private function isAuthorised(Job $job)
+    {
         if ($job->getIsPublic()) {
             return true;
         }
@@ -93,12 +97,13 @@ class RetrievalService {
         return false;
     }
 
-
     /**
      * @param Job $job
+     *
      * @return bool
      */
-    private function isUserWithinTeamThatOwnsjob(Job $job) {
+    private function isUserWithinTeamThatOwnsjob(Job $job)
+    {
         if ($this->isJobOwnedByTeamLeaderAndUserMemberOfSameTeam($job)) {
             return true;
         }
@@ -117,9 +122,11 @@ class RetrievalService {
 
     /**
      * @param Job $job
+     *
      * @return bool
      */
-    private function isJobOwnedByTeamLeaderAndUserMemberOfSameTeam(Job $job) {
+    private function isJobOwnedByTeamLeaderAndUserMemberOfSameTeam(Job $job)
+    {
         if (!$this->teamService->hasTeam($job->getUser())) {
             return false;
         }
@@ -129,12 +136,13 @@ class RetrievalService {
         return $this->teamService->getMemberService()->contains($team, $this->user);
     }
 
-
     /**
      * @param Job $job
+     *
      * @return bool
      */
-    private function isJobOwnedByTeamMemberAndUserMemberOfSameTeam(Job $job) {
+    private function isJobOwnedByTeamMemberAndUserMemberOfSameTeam(Job $job)
+    {
         if (!$this->teamService->getMemberService()->belongsToTeam($job->getUser())) {
             return false;
         }
@@ -144,12 +152,13 @@ class RetrievalService {
         return $this->teamService->getMemberService()->contains($team, $this->user);
     }
 
-
     /**
      * @param Job $job
+     *
      * @return bool
      */
-    private function isJobOwnedByTeamMemberAndUserLeaderOfSameTeam(Job $job) {
+    private function isJobOwnedByTeamMemberAndUserLeaderOfSameTeam(Job $job)
+    {
         if (!$this->teamService->getMemberService()->belongsToTeam($job->getUser())) {
             return false;
         }
@@ -159,12 +168,11 @@ class RetrievalService {
         return $team->getLeader()->equals($this->user);
     }
 
-
     /**
      * @return bool
      */
-    private function hasUser() {
+    private function hasUser()
+    {
         return $this->user instanceof User;
     }
-  
 }
