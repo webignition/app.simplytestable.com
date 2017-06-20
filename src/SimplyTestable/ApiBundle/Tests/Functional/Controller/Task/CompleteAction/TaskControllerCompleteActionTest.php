@@ -9,25 +9,13 @@ use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactor
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
-use Guzzle\Http\Message\Response as GuzzleResponse;
 
 class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
 {
-    public function testCompleteActionInMaintenanceReadOnlyMode()
-    {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
-        $taskController = $this->createControllerFactory()->createTaskController(new Request());
-        $response = $taskController->completeAction();
-
-        $this->assertEquals(503, $response->getStatusCode());
-    }
-
     /**
      * @dataProvider completeActionInvalidRequestDataProvider
      *

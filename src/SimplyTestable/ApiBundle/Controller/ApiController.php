@@ -282,6 +282,10 @@ abstract class ApiController extends Controller
      * @return string
      */
     private function getStateResourcePath() {
-        return $this->container->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config/state/') . $this->get('kernel')->getEnvironment();
+        return $this
+                ->container
+                ->get('kernel')
+                ->locateResource('@SimplyTestableApiBundle/Resources/config/state/')
+            . $this->get('kernel')->getEnvironment();
     }
 }

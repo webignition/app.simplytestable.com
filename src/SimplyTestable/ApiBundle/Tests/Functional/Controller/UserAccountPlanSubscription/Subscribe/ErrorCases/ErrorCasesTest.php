@@ -49,12 +49,6 @@ class ErrorCasesTest extends BaseControllerJsonTestCase {
         $this->assertEquals(403, $response->getStatusCode());
     }
 
-    public function testActivateInMaintenanceReadOnlyModeReturns503() {
-
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
-        $this->assertEquals(503, $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '')->getStatusCode());
-    }
-
     public function testSubscribeWithUserThatHasDecliningCard() {
         $email = 'user1@example.com';
         $password = 'password1';
