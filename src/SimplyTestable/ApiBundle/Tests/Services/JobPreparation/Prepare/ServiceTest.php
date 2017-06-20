@@ -20,6 +20,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
      * @param array $httpFixtures
      * @param int $expectedTaskCount
      * @param string $expectedJobState
+     * @param float $sitemapRetrieverTimeout
      */
     public function testPrepare(
         $jobValues,
@@ -34,6 +35,15 @@ class ServiceTest extends BaseSimplyTestableTestCase
         $jobFactory = $this->createJobFactory();
         $job = $jobFactory->create($jobValues);
         $jobFactory->resolve($job);
+
+        if (!empty($sitemapRetrieverTimeout)) {
+            $this
+                ->getWebSiteService()
+                ->getSitemapFinder()
+                ->getSitemapRetriever()
+                ->getConfiguration()
+                ->setTotalTransferTimeout(0.00001);
+        }
 
         $this->queueHttpFixtures($httpFixtures);
         $this->getJobPreparationService()->prepare($job);
