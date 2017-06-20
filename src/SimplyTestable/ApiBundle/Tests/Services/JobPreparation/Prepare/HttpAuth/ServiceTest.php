@@ -55,47 +55,4 @@ class ServiceTest extends BaseSimplyTestableTestCase
             $this->assertEquals(self::HTTP_AUTH_PASSWORD, $decodedParameters->{self::HTTP_AUTH_PASSWORD_KEY});
         }
     }
-
-    public function testWithUrlsCollectedViaSitemapViaRobotsTxt()
-    {
-        $baseRequest = $this
-            ->getJobPreparationService()
-            ->getWebsiteService()
-            ->getSitemapFinder()
-            ->getConfiguration()
-            ->getBaseRequest();
-
-        $this->assertGreaterThan(0, $this->job->getTasks()->count());
-        $this->assertEquals(self::HTTP_AUTH_USERNAME, $baseRequest->getUsername());
-        $this->assertEquals(self::HTTP_AUTH_PASSWORD, $baseRequest->getPassword());
-    }
-
-
-    public function testWithUrlsCollectedSitemapViaGuessingPath()
-    {
-        $baseRequest = $this
-            ->getJobPreparationService()
-            ->getWebsiteService()
-            ->getSitemapFinder()
-            ->getConfiguration()
-            ->getBaseRequest();
-
-        $this->assertGreaterThan(0, $this->job->getTasks()->count());
-        $this->assertEquals(self::HTTP_AUTH_USERNAME, $baseRequest->getUsername());
-        $this->assertEquals(self::HTTP_AUTH_PASSWORD, $baseRequest->getPassword());
-    }
-
-    public function testWithUrlsCollectedViaRssFeed()
-    {
-        $baseRequest = $this
-            ->getJobPreparationService()
-            ->getWebsiteService()
-            ->getSitemapFinder()
-            ->getConfiguration()
-            ->getBaseRequest();
-
-        $this->assertGreaterThan(0, $this->job->getTasks()->count());
-        $this->assertEquals(self::HTTP_AUTH_USERNAME, $baseRequest->getUsername());
-        $this->assertEquals(self::HTTP_AUTH_PASSWORD, $baseRequest->getPassword());
-    }
 }
