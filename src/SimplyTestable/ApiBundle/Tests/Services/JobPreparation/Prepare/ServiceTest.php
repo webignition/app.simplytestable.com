@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare;
 
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\AtomFeedFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\HtmlDocumentFactory;
@@ -14,6 +15,16 @@ use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 class ServiceTest extends BaseSimplyTestableTestCase
 {
     const EXPECTED_TASK_TYPE_COUNT = 1;
+
+    public function testJobInWrongState()
+    {
+        $this->setExpectedException(
+            JobPreparationException::class
+        );
+
+        $job = $this->createJobFactory()->create();
+        $this->getJobPreparationService()->prepare($job);
+    }
 
     /**
      * @dataProvider prepareDataProvider
