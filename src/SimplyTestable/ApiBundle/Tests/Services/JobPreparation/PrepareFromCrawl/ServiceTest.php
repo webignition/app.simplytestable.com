@@ -4,6 +4,8 @@ namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\PrepareFromCraw
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class ServiceTest extends BaseSimplyTestableTestCase
@@ -11,9 +13,12 @@ class ServiceTest extends BaseSimplyTestableTestCase
     public function testCrawlJobAmmendmentsArePassedToParentJob()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById(
-            $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail())
-        );
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
@@ -34,7 +39,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->assertEquals(
             'plan-url-limit-reached:discovered-url-count-' . ($urlLimit + 1),

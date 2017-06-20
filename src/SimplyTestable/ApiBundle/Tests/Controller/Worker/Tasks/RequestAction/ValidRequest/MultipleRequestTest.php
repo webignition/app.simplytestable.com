@@ -2,28 +2,41 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Worker\Tasks\RequestAction\ValidRequest;
 
-class MultipleRequestTest extends ValidRequestTest {
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-    public function preCall() {
+class MultipleRequestTest extends ValidRequestTest
+{
+    public function preCall()
+    {
         $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $this->getJobService()->getById(
-            $this->createResolveAndPrepareJob('http://0.example.com/')
-        );
+        $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+        ], [
+            'prepare' => [
+                HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                HttpFixtureFactory::createStandardSitemapResponse('0.example.com/'),
+            ],
+        ]);
     }
 
-    protected function preController() {
+    protected function preController()
+    {
         $methodName = $this->getActionNameFromRouter();
         $this->getCurrentController()->$methodName();
 
         $this->assertFalse($this->getResqueQueueService()->isEmpty('task-assign-collection'));
-        $this->assertEquals(1, $this->getResqueQueueService()->getResque()->getQueue('task-assign-collection')->getSize());
+        $this->assertEquals(
+            1,
+            $this->getResqueQueueService()->getResque()->getQueue('task-assign-collection')->getSize()
+        );
     }
 
-
-    protected function getRequestPostData() {
+    protected function getRequestPostData()
+    {
         return [
             'worker_hostname' => self::WORKER_HOSTNAME,
             'worker_token' => self::WORKER_TOKEN,
@@ -31,9 +44,11 @@ class MultipleRequestTest extends ValidRequestTest {
         ];
     }
 
-
-    public function testResqueTaskAssignCollectionQueueSizeRemainsAtOne() {
-        $this->assertEquals(1, $this->getResqueQueueService()->getResque()->getQueue('task-assign-collection')->getSize());
+    public function testResqueTaskAssignCollectionQueueSizeRemainsAtOne()
+    {
+        $this->assertEquals(
+            1,
+            $this->getResqueQueueService()->getResque()->getQueue('task-assign-collection')->getSize()
+        );
     }
-
 }

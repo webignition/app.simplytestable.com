@@ -4,33 +4,32 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\User\GetAction;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-class CreditsTest extends BaseControllerJsonTestCase {
-
+class CreditsTest extends BaseControllerJsonTestCase
+{
     /**
      * @var User
      */
     private $leader;
-
 
     /**
      * @var User
      */
     private $member1;
 
-
     /**
      * @var User
      */
     private $member2;
-
 
     /**
      * @var int
      */
     private $expectedCreditsUsed = 0;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->leader = $this->createAndActivateUser('leader@example.com');
@@ -41,47 +40,48 @@ class CreditsTest extends BaseControllerJsonTestCase {
         $this->getTeamMemberService()->add($team, $this->member1);
         $this->getTeamMemberService()->add($team, $this->member2);
 
-        $this->getUserService()->setUser($this->leader);
-        $job1 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->leader->getEmail()));
-        $this->setJobTasksCompleted($job1);
+        $jobFactory = $this->createJobFactory();
+
+        $job1 = $jobFactory->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->leader,
+        ]);
         $this->completeJob($job1);
 
-        $this->getUserService()->setUser($this->member1);
-        $job2 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->member1->getEmail()));
-        $this->setJobTasksCompleted($job2);
+        $job2 = $jobFactory->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->member1,
+        ]);
         $this->completeJob($job2);
 
-        $this->getUserService()->setUser($this->member2);
-        $job3 = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->member2->getEmail()));
-        $this->setJobTasksCompleted($job3);
+        $job3 = $jobFactory->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->member2,
+        ]);
         $this->completeJob($job3);
 
-        $this->expectedCreditsUsed = $job1->getTasks()->count() + $job2->getTasks()->count()  + $job3->getTasks()->count();
+        $this->expectedCreditsUsed =
+            $job1->getTasks()->count() + $job2->getTasks()->count()  + $job3->getTasks()->count();
     }
 
-
-    public function testLeaderCredits() {
+    public function testLeaderCredits()
+    {
         $this->getUserService()->setUser($this->leader);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
     }
 
-
-    public function testMember1Credits() {
+    public function testMember1Credits()
+    {
         $this->getUserService()->setUser($this->member1);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
     }
 
-
-    public function testMember2Credits() {
+    public function testMember2Credits()
+    {
         $this->getUserService()->setUser($this->member2);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
     }
 }
-
-

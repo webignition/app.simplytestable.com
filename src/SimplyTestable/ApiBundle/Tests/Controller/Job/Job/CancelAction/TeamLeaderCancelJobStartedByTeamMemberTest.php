@@ -2,12 +2,23 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\CancelAction;
 
-class TeamLeaderCancelJobStartedByTeamMemberTest extends IsCancelledTest {
+use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
+class TeamLeaderCancelJobStartedByTeamMemberTest extends IsCancelledTest
+{
+    /**
+     * @var User
+     */
     private $leader;
+
+    /**
+     * @var User
+     */
     private $member;
 
-    protected function preCall() {
+    protected function preCall()
+    {
         $this->getUserService()->setUser($this->getLeader());
 
         $team = $this->getTeamService()->create(
@@ -18,20 +29,20 @@ class TeamLeaderCancelJobStartedByTeamMemberTest extends IsCancelledTest {
         $this->getTeamMemberService()->add($team, $this->getMember());
     }
 
-    protected function getJob() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId(
-            self::DEFAULT_CANONICAL_URL,
-            $this->getMember()->getEmail()
-        ));
-
-        return $job;
+    protected function getJob()
+    {
+        return $this->createJobFactory()->create([
+            JobFactory::KEY_USER => $this->getMember(),
+        ]);
     }
 
-    protected function getExpectedJobStartingState() {
+    protected function getExpectedJobStartingState()
+    {
         return $this->getJobService()->getStartingState();
     }
 
-    private function getLeader() {
+    private function getLeader()
+    {
         if (is_null($this->leader)) {
             $this->leader = $this->createAndActivateUser('leader@example.com');
         }
@@ -40,14 +51,12 @@ class TeamLeaderCancelJobStartedByTeamMemberTest extends IsCancelledTest {
     }
 
 
-    private function getMember() {
+    private function getMember()
+    {
         if (is_null($this->member)) {
             $this->member = $this->createAndActivateUser('member@example.com');
         }
 
         return $this->member;
     }
-    
 }
-
-

@@ -5,16 +5,10 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\Access\TeamAccess;
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-abstract class TeamAccessTest extends BaseControllerJsonTestCase {
-
-    /**
-     * Created by leader, accessed by member
-     * Created by member, accessed by another member
-     * Created by member, accessed by leader
-     */
-
-
+abstract class TeamAccessTest extends BaseControllerJsonTestCase
+{
     const CANONICAL_URL = 'http://www.example.com/';
 
     /**
@@ -32,21 +26,24 @@ abstract class TeamAccessTest extends BaseControllerJsonTestCase {
      */
     abstract protected function getJobAccessor();
 
-    protected function preCreateJob() {
+    protected function preCreateJob()
+    {
     }
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->preCreateJob();
 
-        $this->job = $this->getJobService()->getById($this->createJobAndGetId(
-            self::CANONICAL_URL,
-            $this->getJobOwner()->getEmail()
-        ));
+        $this->job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
+            JobFactory::KEY_USER => $this->getJobOwner(),
+        ]);
     }
 
-    public function testHasAccess() {
+    public function testHasAccess()
+    {
         $this->getUserService()->setUser($this->getJobAccessor());
 
         $actionName = $this->getActionNameFromRouter();
@@ -57,13 +54,11 @@ abstract class TeamAccessTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    protected function getRouteParameters() {
+    protected function getRouteParameters()
+    {
         return [
             'site_root_url' => self::CANONICAL_URL,
             'test_id' => $this->job->getId()
         ];
     }
-
 }
-
-

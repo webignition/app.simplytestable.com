@@ -20,7 +20,7 @@ abstract class IssueCountTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+        $job = $this->createJobFactory()->createResolveAndPrepare();
         foreach ($job->getTasks() as $task) {
             $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
                 'end_date_time' => '2012-03-08 17:03:00',
@@ -35,7 +35,8 @@ abstract class IssueCountTest extends BaseControllerJsonTestCase
                 CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
             ]);
 
-            $this->createTaskController($taskCompleteRequest)->completeAction();
+            $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+            $taskController->completeAction();
         }
 
         $response = $this->getJobController('statusAction')->statusAction(self::CANONICAL_URL, $job->getId());

@@ -5,33 +5,34 @@ namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign\CollectionCommand;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Worker;
 
-class SpecificWorkerTest extends CollectionCommandTest {
-
+class SpecificWorkerTest extends CollectionCommandTest
+{
     /**
      * @var int[]
      */
     private $taskIds = [];
-
 
     /**
      * @var Job
      */
     private $job;
 
-
     /**
      * @var Worker
      */
     private $worker;
 
-
+    /**
+     * @var int
+     */
     private $executeReturnCode = null;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultJob());
+        $this->job = $this->createJobFactory()->createResolveAndPrepare();
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet([
             'HTTP/1.1 200 OK
@@ -53,16 +54,15 @@ Content-Type: application/json
         ]);
     }
 
-
-    public function testExecuteReturnCodeIs0() {
+    public function testExecuteReturnCodeIs0()
+    {
         $this->assertEquals(0, $this->executeReturnCode);
     }
 
-
-    public function testTestWorker() {
+    public function testTestWorker()
+    {
         foreach ($this->job->getTasks() as $task) {
             $this->assertEquals($this->worker->getHostname(), $task->getWorker()->getHostname());
         }
     }
-
 }

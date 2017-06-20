@@ -2,85 +2,74 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Start\StartAction;
 
-class StartTest extends ActionTest {
-    
-    public function testFullSiteRejectionDoesNotAffectSingleUrlJobStart() {
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use Symfony\Component\HttpFoundation\Request;
+
+class StartTest extends ActionTest
+{
+    public function testFullSiteRejectionDoesNotAffectSingleUrlJobStart()
+    {
         $canonicalUrl = 'http://example.com/';
+        $jobFactory = $this->createJobFactory();
+        $jobFactory->create();
 
-        $user = $this->getUserService()->getPublicUser();
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
+        $request = new Request([], [
+            'type' => JobTypeService::SINGLE_URL_NAME,
+        ], [
+            'site_root_url' => $canonicalUrl,
+        ]);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $jobStartResponse = $jobStartController->startAction($request, $canonicalUrl);
 
-        $constraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
-        $constraintLimit = $constraint->getLimit();
-
-        for ($i = 0; $i < $constraintLimit; $i++) {
-            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
-        }
-
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));
-        $this->assertTrue($job->getState()->equals($this->getJobService()->getStartingState()));
+        $job = $this->getJobFromResponse($jobStartResponse);
+        $this->assertEquals($this->getJobService()->getStartingState(), $job->getState());
     }
 
-
-    public function testSingleUrlRejectionDoesNotAffectFullSiteJobStart() {
+    public function testSingleUrlRejectionDoesNotAffectFullSiteJobStart()
+    {
         $canonicalUrl = 'http://example.com/';
 
         $user = $this->getUserService()->getPublicUser();
         $this->getUserService()->setUser($user);
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
 
-        $constraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
-        $constraintLimit = $constraint->getLimit();
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+            JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+        ]);
 
-        for ($i = 0; $i < $constraintLimit; $i++) {
-            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));
-            $this->cancelJob($job);
-        }
+        $this->cancelJob($job);
 
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null));
-        $this->assertTrue($job->getState()->equals($this->getJobService()->getStartingState()));
+        $request = new Request([], [
+            'type' => JobTypeService::FULL_SITE_NAME,
+        ], [
+            'site_root_url' => $canonicalUrl,
+        ]);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $jobStartResponse = $jobStartController->startAction($request, $canonicalUrl);
+
+        $job = $this->getJobFromResponse($jobStartResponse);
+        $this->assertEquals($this->getJobService()->getStartingState(), $job->getState());
     }
 
-
-    public function testSingleUrlJobJsStaticAnalysisIgnoreCommonCdns() {
+    public function testStoreTaskTypeOptionsForTaskTypesThatHaveNotBeenSelected()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
-            self::DEFAULT_CANONICAL_URL,
-            null,
-            'single url',
-            array(
-                'JS static analysis'
-            ),
-            array(
-                'JS static analysis' => array(
+        $request = new Request([], [
+            'test-types' => ['js static analysis'],
+            'test-type-options' => [
+                'js static analysis' => [
                     'ignore-common-cdns' => 1
-                )
-            )
-        ));
+                ],
+            ],
+        ], [
+            'site_root_url' => self::DEFAULT_CANONICAL_URL,
+        ]);
 
-
-        $task = $job->getTasks()->first();
-        $parametersObject = json_decode($task->getParameters());
-        $this->assertTrue(count($parametersObject->{'domains-to-ignore'}) > 0);
-    }
-
-    public function testStoreTaskTypeOptionsForTaskTypesThatHaveNotBeenSelected() {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
-            self::DEFAULT_CANONICAL_URL,
-            null,
-            'single url',
-            array(
-                'JS static analysis'
-            ),
-            array(
-                'JS static analysis' => array(
-                    'ignore-common-cdns' => 1
-                )
-            )
-        ));
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $startResponse = $jobStartController->startAction($request, self::DEFAULT_CANONICAL_URL);
+        $job = $this->getJobFromResponse($startResponse);
 
         $this->assertEquals(1, $job->getTaskTypeOptions()->count());
 
@@ -91,45 +80,23 @@ class StartTest extends ActionTest {
         ), $cssValidationTaskTypeOptions->getOptions());
     }
 
-
-    public function testWithParameters() {
+    public function testWithParameters()
+    {
         $canonicalUrl = 'http://example.com/';
 
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, null, null, null, array(
-            'http-auth-username' => 'user',
-            'http-auth-password' => 'pass'
-        )));
+        $request = new Request([], [
+            'type' => JobTypeService::FULL_SITE_NAME,
+            'parameters' => [
+                'http-auth-username' => 'user',
+                'http-auth-password' => 'pass'
+            ],
+        ], [
+            'site_root_url' => $canonicalUrl,
+        ]);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $jobStartResponse = $jobStartController->startAction($request, $canonicalUrl);
 
+        $job = $this->getJobFromResponse($jobStartResponse);
         $this->assertEquals('{"http-auth-username":"user","http-auth-password":"pass"}', $job->getParameters());
     }
-    
-    
-    public function testWithSingleUrlTestAndHttpAuthParameters() {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-
-        $httpAuthUsernameKey = 'http-auth-username';
-        $httpAuthPasswordKey = 'http-auth-password';
-        $httpAuthUsernameValue = 'foo';
-        $httpAuthPasswordValue = 'bar';        
-        
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
-                self::DEFAULT_CANONICAL_URL,
-                null,
-                'single url',
-                array('html validation'),
-                null,
-                array(
-                    $httpAuthUsernameKey => $httpAuthUsernameValue,
-                    $httpAuthPasswordKey => $httpAuthPasswordValue
-                )
-        ));
-
-        $decodedParameters = json_decode($job->getTasks()->first()->getParameters());
-        $this->assertTrue(isset($decodedParameters->$httpAuthUsernameKey));
-        $this->assertEquals($httpAuthUsernameValue, $decodedParameters->$httpAuthUsernameKey);
-        $this->assertTrue(isset($decodedParameters->$httpAuthPasswordKey));
-        $this->assertEquals($httpAuthPasswordValue, $decodedParameters->$httpAuthPasswordKey);
-           
-    }    
-    
 }

@@ -5,8 +5,8 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\Access;
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
-abstract class PublicUserAccessTest extends BaseControllerJsonTestCase {
-    
+abstract class PublicUserAccessTest extends BaseControllerJsonTestCase
+{
     const CANONICAL_URL = 'http://www.example.com/';
 
     /**
@@ -14,24 +14,31 @@ abstract class PublicUserAccessTest extends BaseControllerJsonTestCase {
      */
     private $job;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
-        $this->job = $this->getJobService()->getById($this->createJobAndGetId(self::CANONICAL_URL));
+        $this->job = $this->createJobFactory()->create();
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
     }
-    
-    public function testGetForPublicJobOwnedByPublicUserByPublicUser() {
+
+    public function testGetForPublicJobOwnedByPublicUserByPublicUser()
+    {
         $this->assertTrue($this->job->getIsPublic());
         $this->assertEquals($this->getUserService()->getPublicUser()->getId(), $this->job->getUser()->getId());
-        
+
         $actionName = $this->getActionNameFromRouter();
-        $this->assertEquals(200, $this->getCurrentController()->$actionName(self::CANONICAL_URL, $this->job->getId())->getStatusCode());
+        $this->assertEquals(
+            200,
+            $this->getCurrentController()->$actionName(self::CANONICAL_URL, $this->job->getId())->getStatusCode()
+        );
     }
-    
-    public function testGetForPublicJobOwnedByPublicUserByNonPublicUser() {
+
+    public function testGetForPublicJobOwnedByPublicUserByNonPublicUser()
+    {
         $this->assertTrue($this->job->getIsPublic());
         $this->assertEquals($this->getUserService()->getPublicUser()->getId(), $this->job->getUser()->getId());
-        
+
         $user = $this->createAndActivateUser('user@example.com', 'password');
         $actionName = $this->getActionNameFromRouter();
 
@@ -40,13 +47,11 @@ abstract class PublicUserAccessTest extends BaseControllerJsonTestCase {
         ])->$actionName(self::CANONICAL_URL, $this->job->getId())->getStatusCode());
     }
 
-    protected function getRouteParameters() {
+    protected function getRouteParameters()
+    {
         return [
             'site_root_url' => self::CANONICAL_URL,
             'test_id' => $this->job->getId()
         ];
     }
-
 }
-
-

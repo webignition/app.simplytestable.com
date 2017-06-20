@@ -2,19 +2,19 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\Job\Retrieval\Team;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Services\Job\Retrieval\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
-class CreatedByTeamMemberAccessedByTeamMemberTest extends ServiceTest {
-
-    const CANONICAL_URL = 'http://example.com/';
-
+class CreatedByTeamMemberAccessedByTeamMemberTest extends ServiceTest
+{
     /**
      * @var Job
      */
     private $job;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $leader = $this->createAndActivateUser('leader@example.com', 'password');
@@ -30,14 +30,18 @@ class CreatedByTeamMemberAccessedByTeamMemberTest extends ServiceTest {
         $this->getTeamMemberService()->add($team, $member1);
         $this->getTeamMemberService()->add($team, $member2);
 
-        $this->job = $this->getJobService()->getById($this->getJobIdFromUrl($this->createJob(self::CANONICAL_URL, $member1->getEmail())->getTargetUrl()));
+        $this->job = $this->createJobFactory()->create([
+            JobFactory::KEY_USER => $member1,
+        ]);
 
         $this->getJobRetrievalService()->setUser($member2);
     }
 
-
-    public function testRetrieve() {
-        $this->assertEquals($this->job->getId(), $this->getJobRetrievalService()->retrieve($this->job->getId())->getId());
+    public function testRetrieve()
+    {
+        $this->assertEquals(
+            $this->job->getId(),
+            $this->getJobRetrievalService()->retrieve($this->job->getId())->getId()
+        );
     }
-
 }

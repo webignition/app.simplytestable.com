@@ -2,28 +2,41 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\CancelAction;
 
+use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-class CrawlJobTest extends IsCancelledTest {
-
+class CrawlJobTest extends IsCancelledTest
+{
     /**
      * @var Job
      */
     private $parentJob;
 
+    /**
+     * @var User
+     */
     private $user;
+
+    /**
+     * @var CrawlJobContainer
+     */
     private $crawlJobContainer;
 
-    protected function preCall() {
+    protected function preCall()
+    {
         $this->getUserService()->setUser($this->getUser());
     }
 
-    public function testParentJobIsQueued() {
+    public function testParentJobIsQueued()
+    {
         $this->assertEquals($this->getJobService()->getQueuedState(), $this->parentJob->getState());
     }
 
-    public function testParentJobTaskHasCrawlJobCssValidationDomainsToIgnore() {
+    public function testParentJobTaskHasCrawlJobCssValidationDomainsToIgnore()
+    {
         /* @var $task Task */
         $task = null;
         while (!$task) {
@@ -40,7 +53,8 @@ class CrawlJobTest extends IsCancelledTest {
         );
     }
 
-    public function testParentJobTaskHasCrawlJobJsStaticAnalysisDomainsToIgnore() {
+    public function testParentJobTaskHasCrawlJobJsStaticAnalysisDomainsToIgnore()
+    {
         /* @var $task Task */
         $task = null;
         while (!$task) {
@@ -57,25 +71,23 @@ class CrawlJobTest extends IsCancelledTest {
         );
     }
 
-
-    public function testResqueTasksNotifyJobIsCreated() {
+    public function testResqueTasksNotifyJobIsCreated()
+    {
         $this->assertFalse($this->getResqueQueueService()->isEmpty(
             'tasks-notify'
         ));
     }
 
-
-    protected function getJob() {
-        $this->parentJob = $this->getJobService()->getById($this->createJobAndGetId(
-            self::DEFAULT_CANONICAL_URL,
-            $this->getUser()->getEmail(),
-            'full site',
-            ['CSS validation', 'JS static analysis'],
-            [
+    protected function getJob()
+    {
+        $this->parentJob = $this->createJobFactory()->create([
+            JobFactory::KEY_TEST_TYPES => ['CSS validation', 'JS static analysis'],
+            JobFactory::KEY_TEST_TYPE_OPTIONS => [
                 'CSS validation' => ['ignore-common-cdns' => 1],
                 'JS static analysis' => ['ignore-common-cdns' => 1]
-            ]
-        ));
+            ],
+            JobFactory::KEY_USER => $this->getUser(),
+        ]);
 
         $this->parentJob->setState($this->getJobService()->getFailedNoSitemapState());
         $this->getJobService()->persistAndFlush($this->parentJob);
@@ -87,22 +99,22 @@ class CrawlJobTest extends IsCancelledTest {
         return $this->crawlJobContainer->getCrawlJob();
     }
 
-    protected function getExpectedJobStartingState() {
+    protected function getExpectedJobStartingState()
+    {
         return $this->getJobService()->getQueuedState();
     }
 
-    protected function getExpectedResponseCode() {
+    protected function getExpectedResponseCode()
+    {
         return 200;
     }
 
-    private function getUser() {
+    private function getUser()
+    {
         if (is_null($this->user)) {
             $this->user = $this->createAndActivateUser('user@example.com');
         }
 
         return $this->user;
     }
-    
 }
-
-

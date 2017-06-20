@@ -2,54 +2,62 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Job;
 
+use SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Tests\ConsoleCommandTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-class EnqueuePrepareAllCommandTest extends ConsoleCommandTestCase {    
-    
+class EnqueuePrepareAllCommandTest extends ConsoleCommandTestCase
+{
     /**
-     * 
-     * @return string
+      * @return string
      */
-    protected function getCommandName() {
+    protected function getCommandName()
+    {
         return 'simplytestable:job:enqueue-prepare-all';
     }
-    
-    
+
     /**
-     * 
-     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
+     * @return ContainerAwareCommand[]
      */
-    protected function getAdditionalCommands() {        
+    protected function getAdditionalCommands()
+    {
         return array(
-            new \SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand()
+            new EnqueuePrepareAllCommand()
         );
-    }    
-    
-    public function testJobsAreEnqueued() {      
+    }
+
+    public function testJobsAreEnqueued()
+    {
         $canonicalUrls = array(
             'http://one.example.com/',
             'http://two.example.com/'
         );
-        
-        $jobIds = array();
+
+        $jobFactory = $this->createJobFactory();
+
+        /* @var Job[] $jobs */
+        $jobs = array();
         foreach ($canonicalUrls as $canonicalUrl) {
-            $jobIds[] = $this->createJobAndGetId($canonicalUrl);
+            $jobs[] = $jobFactory->create([
+                JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+            ]);
         }
-        
-        $this->assertReturnCode(0);       
-        
-        foreach ($jobIds as $jobId) {
+
+        $this->assertReturnCode(0);
+
+        foreach ($jobs as $job) {
             $this->assertTrue($this->getResqueQueueService()->contains(
                 'job-prepare',
-                ['id' => $jobId]
-            ));            
-        }      
-    }
-    
-    
-    public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1() {     
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');        
-        $this->assertReturnCode(1);
+                ['id' => $job->getId()]
+            ));
+        }
     }
 
+    public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1()
+    {
+        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $this->assertReturnCode(1);
+    }
 }

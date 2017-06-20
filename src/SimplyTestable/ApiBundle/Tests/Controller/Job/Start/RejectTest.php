@@ -2,109 +2,149 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Start;
 
-use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use Symfony\Component\HttpFoundation\Request;
 
-class RejectTest extends BaseControllerJsonTestCase {   
-    
-    public function testRejectDueToPlanFullSiteConstraint() {
+class RejectTest extends ActionTest
+{
+    public function testRejectDueToPlanFullSiteConstraint()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $canonicalUrl = 'http://example.com/';
-        
-        $user = $this->getUserService()->getPublicUser();
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
-        
-        $constraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');        
-        $constraintLimit = $constraint->getLimit();
-        
-        for ($i = 0; $i < $constraintLimit; $i++) {
-            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));            
-            $this->cancelJob($job);            
-        }
-        
-        $rejectedJobId = $this->createJobAndGetId($canonicalUrl);
-        $rejectedJob = $this->getJobService()->getById($rejectedJobId);
-        
-        $this->assertTrue($rejectedJob->getState()->equals($this->getJobService()->getRejectedState()));
-    }
-    
-    public function testRejectDueToPlanSingleUrlConstraint() {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $canonicalUrl = 'http://example.com/';
-        
         $user = $this->getUserService()->getPublicUser();
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
-        
-        $constraint = $userAccountPlan->getPlan()->getConstraintNamed('single_url_jobs_per_url');        
+
+        $constraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
         $constraintLimit = $constraint->getLimit();
-        
+
+        $jobFactory = $this->createJobFactory();
+
         for ($i = 0; $i < $constraintLimit; $i++) {
-            $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl, null, 'single url'));            
+            $job = $jobFactory->create([
+                JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+            ]);
             $this->cancelJob($job);
         }
-        
-        $rejectedJobId = $this->createJobAndGetId($canonicalUrl, null, 'single url');
-        $rejectedJob = $this->getJobService()->getById($rejectedJobId);
-        
-        $this->assertTrue($rejectedJob->getState()->equals($this->getJobService()->getRejectedState()));        
+
+        $request = new Request();
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+
+        $rejectedJobResponse = $jobStartController->startAction($request, $canonicalUrl);
+        $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
+
+        $this->assertEquals(
+            $this->getJobService()->getRejectedState(),
+            $rejectedJob->getState()
+        );
     }
-    
-    
-    public function testRejectForUnroutableIpHost() {
+
+    public function testRejectDueToPlanSingleUrlConstraint()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $canonicalUrl = 'http://127.0.0.1/';
+        $canonicalUrl = 'http://example.com/';
 
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
-        $jobObject = $this->fetchJobStatusObject($job);
-        
-        $this->assertEquals('rejected', $jobObject->state);
-        $this->assertEquals('unroutable', $jobObject->rejection->reason);    
-    }    
-    
-    
-    public function testRejectForUnroutableDomainHost() {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $user = $this->getUserService()->getPublicUser();
+        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
 
-        $canonicalUrl = 'http://example/';
+        $constraint = $userAccountPlan->getPlan()->getConstraintNamed('single_url_jobs_per_url');
+        $constraintLimit = $constraint->getLimit();
 
-        $job = $this->getJobService()->getById($this->createJobAndGetId($canonicalUrl));
-        
-        $jobObject = $this->fetchJobStatusObject($job);
-        
-        $this->assertEquals('rejected', $jobObject->state);
-        $this->assertEquals('unroutable', $jobObject->rejection->reason);    
-    } 
-    
-    
-    public function testRejectWithCreditLimitReached() {
-        $tasksPerJob = 12;
-        $creditsPerMonth = 50;
-        $jobsRequiredToExhaustCredits = (int)ceil($creditsPerMonth/$tasksPerJob);
-        
-        $email = 'user-basic@example.com';
-        $password = 'password1';
-        
-        $this->createUser($email, $password);
+        $jobFactory = $this->createJobFactory();
 
-        $this->getUserService()->setUser($this->getUserService()->findUserByEmail($email));
-        
-        $this->getAccountPlanService()->find('basic')->getConstraintNamed('credits_per_month')->setLimit($creditsPerMonth);
-        
-        for ($jobIndex = 0; $jobIndex < $jobsRequiredToExhaustCredits; $jobIndex++) {            
-            $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));            
-            $this->setJobTasksCompleted($job);
-            $this->completeJob($job);
+        for ($i = 0; $i < $constraintLimit; $i++) {
+            $job = $jobFactory->create([
+                JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
+                JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+            ]);
+            $this->cancelJob($job);
         }
-        
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail()));
 
-        $rejectionReason = $this->getJobRejectionReasonService()->getForJob($job);
-        
-        $this->assertEquals('job-rejected', $job->getState()->getName());
+        $request = new Request([], [
+            'type' => JobTypeService::SINGLE_URL_NAME,
+        ]);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+
+        $rejectedJobResponse = $jobStartController->startAction($request, $canonicalUrl);
+        $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
+
+        $this->assertTrue($rejectedJob->getState()->equals($this->getJobService()->getRejectedState()));
+    }
+
+    /**
+     * @dataProvider rejectAsUnroutableDataProvider
+     *
+     * @param string $url
+     */
+    public function testRejectAsUnroutable($url)
+    {
+        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+
+        $request = new Request();
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+
+        $rejectedJobResponse = $jobStartController->startAction($request, $url);
+        $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
+
+        $this->assertEquals($this->getJobService()->getRejectedState(), $rejectedJob->getState());
+        $this->assertEquals(
+            'unroutable',
+            $this->getJobRejectionReasonService()->getForJob($rejectedJob)->getReason()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function rejectAsUnroutableDataProvider()
+    {
+        return [
+            'unroutable ip' => [
+                'url' => 'http://127.0.0.1/'
+            ],
+            'unroutable host' => [
+                'url' => 'http://foo/'
+            ],
+        ];
+    }
+
+    public function testRejectWithCreditLimitReached()
+    {
+        $creditsPerMonth = 3;
+        $user = $this->createUserFactory()->create('user-basic@example.com');
+
+        $this->getAccountPlanService()
+            ->find('basic')
+            ->getConstraintNamed('credits_per_month')
+            ->setLimit($creditsPerMonth);
+
+        $jobFactory = $this->createJobFactory();
+
+        $job = $jobFactory->createResolveAndPrepare([
+            JobFactory::KEY_SITE_ROOT_URL => self::DEFAULT_CANONICAL_URL,
+            JobFactory::KEY_USER => $user,
+        ]);
+        $this->completeJob($job);
+
+        $request = new Request([], [
+            'user' => $user->getEmail(),
+        ]);
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+
+        $rejectedJobResponse = $jobStartController->startAction($request, self::DEFAULT_CANONICAL_URL);
+        $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
+
+        $this->assertEquals(
+            $this->getJobService()->getRejectedState(),
+            $rejectedJob->getState()
+        );
+
+        $rejectionReason = $this->getJobRejectionReasonService()->getForJob($rejectedJob);
+
         $this->assertEquals('plan-constraint-limit-reached', $rejectionReason->getReason());
-        $this->assertEquals('credits_per_month', $rejectionReason->getConstraint()->getName());      
-    }    
-    
+        $this->assertEquals('credits_per_month', $rejectionReason->getConstraint()->getName());
+    }
 }

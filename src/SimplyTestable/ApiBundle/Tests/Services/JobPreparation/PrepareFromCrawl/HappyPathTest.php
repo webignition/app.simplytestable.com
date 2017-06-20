@@ -6,6 +6,8 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class HappyPathTest extends BaseSimplyTestableTestCase
@@ -22,9 +24,18 @@ class HappyPathTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->getJobService()->getById(
-            $this->createResolveAndPrepareCrawlJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail())
-        );
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_USER => $this->getTestUser(),
+            JobFactory::KEY_TEST_TYPES => [
+                'html validation',
+                'css validation',
+                'js static analysis',
+                'link integrity',
+            ],
+        ], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
 
         $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $urlDiscoveryTask = $this->crawlJobContainer->getCrawlJob()->getTasks()->first();
@@ -42,7 +53,8 @@ class HappyPathTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->getJobPreparationService()->prepareFromCrawl($this->crawlJobContainer);
     }

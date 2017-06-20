@@ -14,7 +14,7 @@ class PrepareCommand extends BaseCommand
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
-    
+
     protected function configure()
     {
         $this
@@ -35,21 +35,21 @@ class PrepareCommand extends BaseCommand
             );
 
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
-        }           
-        
+        }
+
         $this->getLogger()->info("simplytestable:job:prepare running for job [".$input->getArgument('id')."]");
-        
+
         $job = $this->getJobService()->getById((int)$input->getArgument('id'));
-        
+
         foreach ($job->getRequestedTaskTypes() as $taskType) {
             /* @var $taskType TaskType */
-            $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';            
+            $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
 
             if ($this->getContainer()->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
                 $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->getContainer()->getParameter($taskTypeParameterDomainsToIgnoreKey));
             }
         }
-        
+
         try {
             $this->getJobPreparationService()->prepare($job);
 
@@ -73,14 +73,14 @@ class PrepareCommand extends BaseCommand
             }
 
             $this->getLogger()->info("simplytestable:job:prepare: queued up [".$job->getTasks()->count()."] tasks covering [".$job->getUrlCount()."] urls and [".count($job->getRequestedTaskTypes())."] task types");
-            
+
             return self::RETURN_CODE_OK;
-        } catch (\SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception $jobPreparationServiceException) {            
+        } catch (\SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception $jobPreparationServiceException) {
             if ($jobPreparationServiceException->isJobInWrongStateException()) {
                 $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
                 return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
             }
-            
+
             throw $jobPreparationServiceException;
         } catch (\Exception $e) {
             $this->getContainer()->get('logger')->error('JobPrepareCommand exception: [' . get_class($e) . ']');
@@ -88,11 +88,11 @@ class PrepareCommand extends BaseCommand
         }
     }
 
-    
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\JobService
-     */    
+     */
     private function getJobService() {
         return $this->getContainer()->get('simplytestable.services.jobservice');
     }
@@ -118,7 +118,7 @@ class PrepareCommand extends BaseCommand
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
-     */     
+     */
     private function getJobPreparationService() {
         return $this->getContainer()->get('simplytestable.services.jobpreparationservice');
     }

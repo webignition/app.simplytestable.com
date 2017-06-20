@@ -236,5 +236,5 @@ class RequestAdapter {
     private function hasRequestParameters() {
         return !is_null($this->getRequestParameters());
     }
-    
+
 }

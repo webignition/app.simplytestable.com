@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Task\CompleteAction;
 
-use Guzzle\Http\Message\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -13,17 +12,18 @@ use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Guzzle\Http\Message\Response as GuzzleResponse;
 
 class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
 {
     public function testCompleteActionInMaintenanceReadOnlyMode()
     {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');
-        $response = $this->createTaskController(new Request())->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController(new Request());
+        $response = $taskController->completeAction();
 
         $this->assertEquals(503, $response->getStatusCode());
     }
@@ -40,9 +40,11 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             BadRequestHttpException::class
         );
 
-        $this->createTaskController(
+        $taskController = $this->createControllerFactory()->createTaskController(
             TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
-        )->completeAction();
+        );
+
+        $taskController->completeAction();
     }
 
     /**
@@ -76,24 +78,25 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             GoneHttpException::class
         );
 
-        $this->queueStandardJobHttpFixtures();
-        $job =  $this->createJobFactory()->createResolveAndPrepare(
-            'full site',
-            'http://example.com',
-            ['html validation',],
-            [],
-            [],
-            $this->container->get('simplytestable.services.userservice')->getPublicUser()
-        );
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            'type' => 'full site',
+            'siteRootUrl' => 'http://example.com',
+            'testTypes' => ['html validation',],
+            'testTypeOptions' => [],
+            'parameters' => [],
+            'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()
+        ]);
 
         $this->setJobTaskStates(
             $job,
             $this->container->get('simplytestable.services.taskservice')->getInProgressState()
         );
 
-        $this->createTaskController(
+        $taskController = $this->createControllerFactory()->createTaskController(
             TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
-        )->completeAction();
+        );
+
+        $taskController->completeAction();
     }
 
     /**
@@ -167,15 +170,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             $user = $userFactory->create($jobValues['user']);
             $jobValues['user'] = $user;
 
-            $this->queueStandardJobHttpFixtures();
-            $job = $this->createJobFactory()->createResolveAndPrepare(
-                $jobValues['type'],
-                $jobValues['siteRootUrl'],
-                $jobValues['testTypes'],
-                $jobValues['testTypeOptions'],
-                $jobValues['parameters'],
-                $jobValues['user']
-            );
+            $job = $this->createJobFactory()->createResolveAndPrepare($jobValues);
 
             $this->setJobTaskStates(
                 $job,
@@ -185,9 +180,10 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             $jobs[] = $job;
         }
 
-        $response = $this->createTaskController(
+        $taskController = $this->createControllerFactory()->createTaskController(
             TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
-        )->completeAction();
+        );
+        $response = $taskController->completeAction();
 
         $this->assertTrue($response->isSuccessful());
 
@@ -653,18 +649,6 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         ];
     }
 
-    private function queueStandardJobHttpFixtures()
-    {
-        $this->queueHttpFixtures([
-            Response::fromMessage('HTTP/1.1 200 OK'),
-            Response::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
-            Response::fromMessage(sprintf(
-                "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
-                SitemapFixtureFactory::load('example.com-three-urls')
-            )),
-        ]);
-    }
-
     /**
      * @param Job $job
      * @param State $state
@@ -675,19 +659,6 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         $jobFactory->setTaskStates(
             $job,
             $state
-        );
-    }
-
-    /**
-     * @return UserFactory
-     */
-    private function createUserFactory()
-    {
-        return new UserFactory(
-            $this->container->get('simplytestable.services.userservice'),
-            $this->container->get('fos_user.util.user_manipulator'),
-            $this->container->get('simplytestable.services.useraccountplanservice'),
-            $this->container->get('simplytestable.services.accountplanservice')
         );
     }
 

@@ -2,13 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Services\JobPreparation\Prepare\Cookies;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-abstract class ServiceTest extends BaseSimplyTestableTestCase {    
-    
-    
+abstract class ServiceTest extends BaseSimplyTestableTestCase
+{
     /**
-     *
      * @var array
      */
     protected $cookies = array(
@@ -16,24 +16,30 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
             'domain' => '.example.com',
             'name' => 'foo',
             'value' => 'bar'
-        )               
-    );    
-    
+        )
+    );
+
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\Job\Job
+     * @var Job
      */
     protected $job;
-    
-    public function setUp() {
+
+    public function setUp()
+    {
         parent::setUp();
-        
+
         $this->queueResolveHttpFixture();
+        $user = $this->getTestUser();
+        $this->getUserService()->setUser($user);
 
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->job = $this->getJobService()->getById($this->createAndResolveJob(self::DEFAULT_CANONICAL_URL, $this->getTestUser()->getEmail(), null, array('html validation'), null, array(
-            'cookies' => $this->cookies
-        )));
-    }    
+        $jobFactory = $this->createJobFactory();
+        $this->job = $jobFactory->create([
+            JobFactory::KEY_USER => $user,
+            JobFactory::KEY_PARAMETERS => [
+                'cookies' => $this->cookies
+            ],
+        ]);
 
+        $jobFactory->resolve($this->job);
+    }
 }

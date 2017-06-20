@@ -3,12 +3,13 @@
 namespace SimplyTestable\ApiBundle\Tests\Command\ScheduledJob\ExecuteCommand;
 
 use SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-class SingleUrlLimitReachedTest extends RejectedTest {
-
-    protected function preCall() {
+class SingleUrlLimitReachedTest extends RejectedTest
+{
+    protected function preCall()
+    {
         $user = $this->getUser();
 
         $this->getUserService()->setUser($user);
@@ -18,12 +19,14 @@ class SingleUrlLimitReachedTest extends RejectedTest {
         $constraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
         $constraintLimit = $constraint->getLimit();
 
+        $jobFactory = $this->createJobFactory();
+
         for ($i = 0; $i < $constraintLimit; $i++) {
-            $job = $this->getJobService()->getById($this->createJobAndGetId(
-                $this->getJobConfigurationWebsite(),
-                $user->getEmail(),
-                $this->getJobConfigurationJobType()
-            ));
+            $job = $jobFactory->create([
+                JobFactory::KEY_SITE_ROOT_URL => $this->getJobConfigurationWebsite(),
+                JobFactory::KEY_USER => $user,
+                JobFactory::KEY_TYPE => $this->getJobConfigurationJobType(),
+            ]);
             $this->cancelJob($job);
         }
 
@@ -33,7 +36,8 @@ class SingleUrlLimitReachedTest extends RejectedTest {
     /**
      * @return User
      */
-    protected function getJobConfigurationUser() {
+    protected function getJobConfigurationUser()
+    {
         return $this->getUserService()->getPublicUser();
     }
 
@@ -44,11 +48,13 @@ class SingleUrlLimitReachedTest extends RejectedTest {
         return 'single url';
     }
 
-    protected function getExpectedReturnCode() {
+    protected function getExpectedReturnCode()
+    {
         return ExecuteCommand::RETURN_CODE_PLAN_LIMIT_REACHED;
     }
 
-    protected function getJobListIndex() {
+    protected function getJobListIndex()
+    {
         return 1;
     }
 

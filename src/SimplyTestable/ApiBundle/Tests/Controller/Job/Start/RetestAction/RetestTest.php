@@ -2,176 +2,135 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Start\RetestAction;
 
-use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Controller\Job\Start\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use Symfony\Component\HttpFoundation\Request;
 
-class RetestTest extends BaseControllerJsonTestCase {
-    
-    public function testWithInvalidId() {
-        $this->assertEquals(400, $this->getJobStartController('retestAction')->retestAction(
-            $this->container->get('request'),
+class RetestTest extends ActionTest
+{
+    public function testWithInvalidId()
+    {
+        $request = new Request();
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $response = $jobStartController->retestAction(
+            $request,
             'foo',
             1
-        )->getStatusCode());
+        );
+
+        $this->assertEquals(400, $response->getStatusCode());
     }
 
-    public function testWithIncompleteJob() {
-        $jobId = $this->createJobAndGetId('http://example.com/');
-        $this->assertEquals(400, $this->getJobStartController('retestAction')->retestAction(
-            $this->container->get('request'),
-            'foo',
-            $jobId
-        )->getStatusCode());
-    }
-
-    public function testRetestJobIsNotOriginalJob() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/'));
-        $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);
-
-        $response = $this->getJobStartController('retestAction')->retestAction(
-            $this->container->get('request'),
+    public function testWithIncompleteJob()
+    {
+        $job = $this->createJobFactory()->create();
+        $request = new Request();
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $response = $jobStartController->retestAction(
+            $request,
             'foo',
             $job->getId()
         );
 
-        $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
-        $retestJob = $this->getJobService()->getById($retestJobId);
+        $this->assertEquals(400, $response->getStatusCode());
+    }
 
+    public function testRetestJobIsNotOriginalJob()
+    {
+        $job = $this->createJobFactory()->create();
+        $this->completeJob($job);
+
+        $request = new Request();
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $response = $jobStartController->retestAction(
+            $request,
+            'foo',
+            $job->getId()
+        );
+
+        $retestJob = $this->getJobFromResponse($response);
         $this->assertNotEquals($job->getId(), $retestJob->getId());
     }
 
-    public function testWebsiteIsCloned() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/'));
-        $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);
+    /**
+     * @dataProvider retestDataProvider
+     *
+     * @param array $jobValues
+     */
+    public function testRetestFoo($jobValues)
+    {
+        $job = $this->createJobFactory()->create($jobValues);
+        $this->completeJob($job);
 
-        $response = $this->getJobStartController('retestAction')->retestAction(
-            $this->container->get('request'),
+        $request = new Request();
+        $jobStartController = $this->createControllerFactory()->createJobStartController($request);
+        $response = $jobStartController->retestAction(
+            $request,
             'foo',
             $job->getId()
         );
 
-        $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
-        $retestJob = $this->getJobService()->getById($retestJobId);
+        $retestJob = $this->getJobFromResponse($response);
 
         $this->assertEquals($job->getWebsite()->getId(), $retestJob->getWebsite()->getId());
-    }
-
-    public function testTypeIsClonedForFullSiteJob() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId('http://example.com/'));
-        $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);
-
-        $response = $this->getJobStartController('retestAction')->retestAction(
-            $this->container->get('request'),
-            'foo',
-            $job->getId()
-        );
-
-        $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
-        $retestJob = $this->getJobService()->getById($retestJobId);
-
         $this->assertEquals($job->getType()->getName(), $retestJob->getType()->getName());
-    }
-    
-    public function testTypeIsClonedForSingleUrlJob() {  
-        $job = $this->getJobService()->getById($this->createJobAndGetId(
-            'http://example.com/',
-            null,
-            'single url'
-        ));
 
-        $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);
-
-        $response = $this->getJobStartController('retestAction')->retestAction(
-            $this->container->get('request'),
-            'foo',
-            $job->getId()
-        );
-        
-        $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
-        $retestJob = $this->getJobService()->getById($retestJobId);
-        
-        $this->assertEquals($job->getType()->getName(), $retestJob->getType()->getName());
-    }  
-
-    public function testTaskTypesAreCloned() {  
-        $job = $this->getJobService()->getById($this->createJobAndGetId(
-            'http://example.com/',
-            null,
-            null,
-            array(
-                'html validation',
-                'css validation'
-            )
-        ));
-        $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);        
-        
-        $response = $this->getJobStartController('retestAction')->retestAction(
-            $this->container->get('request'),
-            'foo',
-            $job->getId()
-        );
-        
-        $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
-        $retestJob = $this->getJobService()->getById($retestJobId);
-        
         $jobTaskTypeNames = array();
         foreach ($job->getRequestedTaskTypes() as $taskType) {
             $jobTaskTypeNames[] = $taskType->getName();
         }
-        
+
         $retestJobTaskTypeNames = array();
         foreach ($retestJob->getRequestedTaskTypes() as $taskType) {
             $retestJobTaskTypeNames[] = $taskType->getName();
-        } 
-        
-        $this->assertEquals($jobTaskTypeNames, $retestJobTaskTypeNames);
-    }     
-    
-    public function testTaskTypeOptionsAreCloned() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId(
-            'http://example.com/',
-            null,
-            null,
-            array(
-                'JS static analysis'
-            ),
-            array(
-                'JS static analysis' => array(
-                    'ignore-common-cdns' => 1,
-                    'jslint-foo' => 1
-                )
-            )
-        ));
-        $job->setState($this->getJobService()->getCompletedState());
-        $this->getJobService()->persistAndFlush($job);        
-        
-        $response = $this->getJobStartController('retestAction')->retestAction(
-            $this->container->get('request'),
-            'foo',
-            $job->getId()
-        );
-        
-        $retestJobId = $this->getJobIdFromUrl($response->getTargetUrl());
-        $retestJob = $this->getJobService()->getById($retestJobId);
-        
-        $jobTaskTypeOptionsArray = array();        
-        foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
-            $jobTaskTypeOptionsArray[strtolower($taskTypeOptions->getTaskType()->getName())] = $taskTypeOptions->getOptions();
-        }        
-        
-        $retestJobTaskTypeOptionsArray = array();        
-        foreach ($retestJob->getTaskTypeOptions() as $taskTypeOptions) {
-            $retestJobTaskTypeOptionsArray[strtolower($taskTypeOptions->getTaskType()->getName())] = $taskTypeOptions->getOptions();
         }
-        
+
+        $this->assertEquals($jobTaskTypeNames, $retestJobTaskTypeNames);
+
+        $jobTaskTypeOptionsArray = array();
+        foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
+            /* @var TaskTypeOptions $taskTypeOptions */
+            $options = $taskTypeOptions->getOptions();
+            $jobTaskTypeOptionsArray[strtolower($taskTypeOptions->getTaskType())] = $options;
+        }
+
+        $retestJobTaskTypeOptionsArray = array();
+        foreach ($retestJob->getTaskTypeOptions() as $taskTypeOptions) {
+            /* @var TaskTypeOptions $taskTypeOptions */
+            $options = $taskTypeOptions->getOptions();
+            $retestJobTaskTypeOptionsArray[strtolower($taskTypeOptions->getTaskType())] = $options;
+        }
+
         $this->assertEquals($jobTaskTypeOptionsArray, $retestJobTaskTypeOptionsArray);
-    }     
-   
-   
+    }
+
+    /**
+     * @return array
+     */
+    public function retestDataProvider()
+    {
+        return [
+            'full site' => [
+                'jobValues' => [
+                    JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+                    JobFactory::KEY_TEST_TYPES => [
+                        'html validation',
+                        'css validation'
+                    ],
+                    JobFactory::KEY_TEST_TYPE_OPTIONS => [
+                        'css validation' => [
+                            'ignore-common-cdns' => 1,
+                        ],
+                    ],
+                ],
+            ],
+            'single url' => [
+                'jobValues' => [
+                    JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+                ],
+            ],
+        ];
+    }
 }
-
-

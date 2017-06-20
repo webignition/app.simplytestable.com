@@ -2,20 +2,26 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Command\Task\Assign\CollectionCommand;
 
-class NoWorkersAvailableTest extends CollectionCommandTest {
-
+class NoWorkersAvailableTest extends CollectionCommandTest
+{
     /**
      * @var int[]
      */
     private $taskIds = [];
 
+    /**
+     * @var int
+     */
     private $executeReturnCode = null;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
+        $job = $this->createJobFactory()->createResolveAndPrepare();
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->taskIds = $this->getTaskIds($this->getJobService()->getById($this->createResolveAndPrepareDefaultJob()));
+        $this->taskIds = $this->getTaskIds($job);
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 404',
@@ -30,13 +36,13 @@ class NoWorkersAvailableTest extends CollectionCommandTest {
         $this->executeReturnCode = $this->execute(['ids' => implode($this->taskIds, ',')]);
     }
 
-
-    public function testExecuteReturnCodeIs2() {
+    public function testExecuteReturnCodeIs2()
+    {
         $this->assertEquals(2, $this->executeReturnCode);
     }
 
-
-    public function testResqueJobIsCreated() {
+    public function testResqueJobIsCreated()
+    {
         $this->assertTrue($this->getResqueQueueService()->contains(
             'task-assign-collection',
             array(
@@ -44,5 +50,4 @@ class NoWorkersAvailableTest extends CollectionCommandTest {
             )
         ));
     }
-
 }

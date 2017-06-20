@@ -33,15 +33,25 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
     public function setUp()
     {
         parent::setUp();
-        $this->queueCrawlJobHttpFixtures();
-        $job = $this->createJobFactory()->createResolveAndPrepare(
-            'html validation',
-            'http://example.com/',
-            ['html validation',],
-            [],
-            [],
-            $this->container->get('simplytestable.services.userservice')->getPublicUser()
-        );
+
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            'type' => 'full site',
+            'siteRootUrl' => 'http://example.com',
+            'testTypes' => ['html validation',],
+            'testTypeOptions' => [],
+            'parameters' => [],
+            'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()
+        ], [
+            'resolve' => [
+                Response::fromMessage('HTTP/1.1 200 OK'),
+            ],
+            'prepare' => [
+                Response::fromMessage('HTTP/1.1 404'),
+                Response::fromMessage('HTTP/1.1 404'),
+                Response::fromMessage('HTTP/1.1 404'),
+                Response::fromMessage('HTTP/1.1 404'),
+            ],
+        ]);
 
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
 
@@ -64,11 +74,11 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
     }
 
     /**
-     * @dataProvider fooDataProvider
+     * @dataProvider urlDiscoveryTaskCompletionDataProvider
      *
      * @param array $completeActionCalls
      */
-    public function testFoo($completeActionCalls)
+    public function testUrlDiscoverTaskCompletion($completeActionCalls)
     {
         $defaultRouteParams = [
             CompleteRequestFactory::ROUTE_PARAM_TASK_TYPE => 'url discovery',
@@ -82,12 +92,14 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
             $expectedParentJobState = $completeActionCall['expectedParentJobState'];
             $expectedTaskStates = $completeActionCall['expectedTaskStates'];
 
-            $this->createTaskController(
+            $taskController = $this->createControllerFactory()->createTaskController(
                 TaskControllerCompleteActionRequestFactory::create(
                     $postData,
                     array_merge($defaultRouteParams, $routeParams)
                 )
-            )->completeAction();
+            );
+
+            $taskController->completeAction();
 
             $this->assertEquals($expectedCrawlJobState, $this->crawlJob->getState());
             $this->assertEquals($expectedParentJobState, $this->parentJob->getState());
@@ -102,7 +114,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
     /**
      * @return array
      */
-    public function fooDataProvider()
+    public function urlDiscoveryTaskCompletionDataProvider()
     {
         $now = new \DateTime();
 
@@ -263,16 +275,5 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
                 ],
             ],
         ];
-    }
-
-    private function queueCrawlJobHttpFixtures()
-    {
-        $this->queueHttpFixtures([
-            Response::fromMessage('HTTP/1.1 200 OK'),
-            Response::fromMessage('HTTP/1.1 404'),
-            Response::fromMessage('HTTP/1.1 404'),
-            Response::fromMessage('HTTP/1.1 404'),
-            Response::fromMessage('HTTP/1.1 404'),
-        ]);
     }
 }

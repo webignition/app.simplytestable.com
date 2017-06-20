@@ -3,14 +3,15 @@
 namespace SimplyTestable\ApiBundle\Tests\Controller\Worker\Tasks\RequestAction\ValidRequest;
 
 use SimplyTestable\ApiBundle\Tests\Controller\Worker\Tasks\RequestAction\RequestTest;
+use Symfony\Component\HttpFoundation\Response;
 
-abstract class ValidRequestTest extends RequestTest {
-
+abstract class ValidRequestTest extends RequestTest
+{
     const WORKER_HOSTNAME = 'worker.example.com';
     const WORKER_TOKEN = 'foo';
 
     /**
-     * @var \Symfony\Component\HttpFoundation\Response
+     * @var Response
      */
     protected $response;
 
@@ -19,7 +20,8 @@ abstract class ValidRequestTest extends RequestTest {
      */
     protected $responseObject;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
         $this->preCall();
@@ -33,16 +35,17 @@ abstract class ValidRequestTest extends RequestTest {
         $this->responseObject = json_decode($this->response->getContent(), true);
     }
 
-    protected function preCall() {
+    protected function preCall()
+    {
         $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
     }
 
-    protected function preController() {
-
+    protected function preController()
+    {
     }
 
-
-    public function testResponseStatusCode() {
+    public function testResponseStatusCode()
+    {
         $this->assertEquals(200, $this->response->getStatusCode());
     }
 }

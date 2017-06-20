@@ -2,12 +2,15 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\CancelAction;
 
-class CancelParentJobOfCrawlJobTest extends IsCancelledTest {
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
+class CancelParentJobOfCrawlJobTest extends IsCancelledTest
+{
     private $user;
     private $crawlJobContainer;
 
-    protected function preCall() {
+    protected function preCall()
+    {
         $this->getUserService()->setUser($this->getUser());
 
         $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($this->job);
@@ -15,12 +18,19 @@ class CancelParentJobOfCrawlJobTest extends IsCancelledTest {
     }
 
 
-    public function testCrawlJobIsCancelled() {
-        $this->assertEquals($this->getJobService()->getCancelledState(), $this->crawlJobContainer->getCrawlJob()->getState());
+    public function testCrawlJobIsCancelled()
+    {
+        $this->assertEquals(
+            $this->getJobService()->getCancelledState(),
+            $this->crawlJobContainer->getCrawlJob()->getState()
+        );
     }
 
-    protected function getJob() {
-        $job = $this->getJobService()->getById($this->createJobAndGetId(self::DEFAULT_CANONICAL_URL, $this->getUser()->getEmail()));
+    protected function getJob()
+    {
+        $job = $this->createJobFactory()->create([
+            JobFactory::KEY_USER => $this->getUser(),
+        ]);
 
         $job->setState($this->getJobService()->getFailedNoSitemapState());
         $this->getJobService()->persistAndFlush($job);
@@ -28,22 +38,22 @@ class CancelParentJobOfCrawlJobTest extends IsCancelledTest {
         return $job;
     }
 
-    protected function getExpectedJobStartingState() {
+    protected function getExpectedJobStartingState()
+    {
         return $this->getJobService()->getFailedNoSitemapState();
     }
 
-    protected function getExpectedResponseCode() {
+    protected function getExpectedResponseCode()
+    {
         return 200;
     }
 
-    private function getUser() {
+    private function getUser()
+    {
         if (is_null($this->user)) {
             $this->user = $this->createAndActivateUser('user@example.com');
         }
 
         return $this->user;
     }
-    
 }
-
-

@@ -4,15 +4,24 @@ namespace SimplyTestable\ApiBundle\Tests\Services\CrawlJobContainer\GetDiscovere
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
-class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase {
-
-    public function testGetDiscoveredUrls() {
+class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase
+{
+    public function testGetDiscoveredUrls()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareDefaultCrawlJob());
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')));
+        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+
+        $this->queueHttpFixtures(
+            $this->buildHttpFixtureSet(
+                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
+            )
+        );
 
         $this->createWorker();
 
@@ -37,7 +46,8 @@ class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase {
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->getCrawlJobContainerService()->processTaskResults($task);
 
@@ -59,7 +69,8 @@ class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase {
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->getCrawlJobContainerService()->processTaskResults($task);
 
@@ -72,5 +83,4 @@ class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase {
             'http://example.com/five/'
         ), $this->getCrawlJobContainerService()->getDiscoveredUrls($crawlJobContainer));
     }
-
 }

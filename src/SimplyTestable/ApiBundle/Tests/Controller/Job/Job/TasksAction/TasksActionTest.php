@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\TasksAction;
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class TasksActionTest extends BaseControllerJsonTestCase
@@ -12,12 +13,9 @@ class TasksActionTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
-                self::DEFAULT_CANONICAL_URL,
-                null,
-                'full site',
-                array('Link integrity')
-         ));
+        $job = $this->createJobFactory()->createResolveAndPrepare([
+            JobFactory::KEY_TEST_TYPES => ['link integrity'],
+        ]);
 
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
@@ -60,7 +58,8 @@ class TasksActionTest extends BaseControllerJsonTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[0]->getParametersHash(),
         ]);
 
-        $this->createTaskController($taskCompleteRequest)->completeAction();
+        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController->completeAction();
 
         $this->executeCommand('simplytestable:task:assigncollection', array(
             'ids' => $tasks[1]->getId()
@@ -86,12 +85,7 @@ class TasksActionTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->getJobService()->getById($this->createResolveAndPrepareJob(
-                self::DEFAULT_CANONICAL_URL,
-                null,
-                'full site',
-                array('HTML validation')
-        ));
+        $job = $this->createJobFactory()->createResolveAndPrepare();
 
         foreach ($job->getTasks() as $task) {
             $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
@@ -107,7 +101,8 @@ class TasksActionTest extends BaseControllerJsonTestCase
                 CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
             ]);
 
-            $this->createTaskController($taskCompleteRequest)->completeAction();
+            $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+            $taskController->completeAction();
         }
 
         $tasksActionResponse = $this->getJobController('tasksAction')->tasksAction(
