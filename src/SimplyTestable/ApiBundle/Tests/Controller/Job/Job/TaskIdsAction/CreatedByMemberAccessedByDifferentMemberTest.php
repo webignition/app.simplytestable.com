@@ -1,7 +1,0 @@
-<?php
-
-namespace SimplyTestable\ApiBundle\Tests\Controller\Job\Job\TaskIdsAction;
-
-use SimplyTestable\ApiBundle\Tests\Controller\Job\Job\Access\TeamAccess\CreatedByMemberAccessedByDifferentMemberTest as BaseCreatedByMemberAccessedByDifferentMemberTest;
-
-class CreatedByMemberAccessedByDifferentMemberTest extends BaseCreatedByMemberAccessedByDifferentMemberTest {}

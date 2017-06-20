@@ -1230,7 +1230,7 @@ EOD;
                 return $relevantParts;
             }
 
-            if ($part != 'Tests') {
+            if ($part != 'Tests' && $part != 'Functional') {
                 $relevantParts[] = $part;
             }
         }
