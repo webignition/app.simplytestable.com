@@ -8,7 +8,7 @@ php:
   - 7
   - 7.1
 
-before_script:
+before_install:
   - composer self-update
   - phpenv config-add travis.php.ini
   - cp .travis.composer.config.json ~/.composer/config.json
