@@ -2,36 +2,34 @@
 
 namespace SimplyTestable\ApiBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\Console\Input\InputArgument;
 use SimplyTestable\ApiBundle\Controller\ApiController;
-use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class BeforeListener
 {
-    
     /**
-     *
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
-    
-    /**
-     *
-     * @param Logger $logger
-     */
-    public function __construct(
-            Logger $logger
-    )
-    {        
-        $this->logger = $logger;
-    }    
 
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param FilterControllerEvent $event
+     */
     public function onKernelController(FilterControllerEvent $event)
-    {     
+    {
         $controllerCallable = $event->getController();
-        
+
         /*
          * $controller passed can be either a class or a Closure. This is not usual in Symfony2 but it may happen.
          * If it is a class, it comes in array format
@@ -39,25 +37,27 @@ class BeforeListener
         if (!is_array($controllerCallable)) {
             return;
         }
-        
+
         $controller = $controllerCallable[0];
         $methodName = $controllerCallable[1];
-        
+
         if ($controller instanceof ApiController) {
-            /* @var $controller ApiController */            
+            /* @var $controller ApiController */
             $methodArguments = $controller->getArguments($methodName);
             foreach ($controller->getInputDefinition($methodName)->getArguments() as $inputArgument) {
                 /* @var $inputArgument InputArgument */
                 if ($inputArgument->isRequired()) {
                     if (!$methodArguments->has($inputArgument->getName())) {
-                        $this->logger->warn('BeforeListener' . get_class($controller) . '::' . $methodName.': missing required argument ['.$inputArgument->getName().']');
-                        throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
+                        $this->logger->warning(sprintf(
+                            'BeforeListener %s::%s: missing required argument [%s]',
+                            get_class($controller),
+                            $methodName,
+                            $inputArgument->getName()
+                        ));
+                        throw new HttpException(400);
                     }
                 }
-            }           
+            }
         }
-        
-
     }
-
 }
