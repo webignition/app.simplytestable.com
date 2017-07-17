@@ -36,7 +36,6 @@ abstract class WorkerTaskService
     protected $taskService;
 
     /**
-     *
      * @param LoggerInterface $logger
      * @param WorkerService $workerService
      * @param StateService $stateService

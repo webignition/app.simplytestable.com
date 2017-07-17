@@ -76,7 +76,7 @@ class SelectedCommand extends BaseCommand
         $workers = $workerService->getActiveCollection();
 
         if (count($workers) === 0) {
-            $this->getLogger()->err("TaskAssignSelectedCommand::execute: Cannot assign, no workers.");
+            $this->getLogger()->error("TaskAssignSelectedCommand::execute: Cannot assign, no workers.");
             return self::RETURN_CODE_FAILED_NO_WORKERS;
         }
 
