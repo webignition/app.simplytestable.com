@@ -1,7 +1,3 @@
-jms_security_extra:
-    secure_all_services: false
-    expressions: true
-
 security:
     encoders:
         Symfony\Component\Security\Core\User\User: plaintext
@@ -16,29 +12,29 @@ security:
 #            memory:
 #                users:
 #                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
-#                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }   
+#                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
         fos_user_bundle:
             id: fos_user.user_provider.username
 
     firewalls:
-        main:         
+        main:
             pattern: ^/
             anonymous: ~
-            form_login: false            
+            form_login: false
             provider: fos_user_bundle
             http_basic:
-                realm: "Simply Testable Core Application"                        
+                realm: "Simply Testable Core Application"
 
     access_control:
         - { path: ^/job/, role: ROLE_USER }
         - { path: ^/jobs/, role: ROLE_USER }
-        - { path: ^/tasks/, role: ROLE_USER }        
-        - { path: ^/user/$, role: ROLE_USER }  
-        - { path: ^/user/.+/token/$, role: ROLE_ADMIN } 
-        - { path: ^/user/.+/exists/$, role: ROLE_ADMIN } 
+        - { path: ^/tasks/, role: ROLE_USER }
+        - { path: ^/user/$, role: ROLE_USER }
+        - { path: ^/user/.+/token/$, role: ROLE_ADMIN }
+        - { path: ^/user/.+/exists/$, role: ROLE_ADMIN }
         - { path: ^/user/.+/email-change-request/$, role: ROLE_ADMIN }
         - { path: ^/user/.+/has-invites/$, role: ROLE_ADMIN }
-        - { path: ^/user/.+/$, role: ROLE_USER } 
+        - { path: ^/user/.+/$, role: ROLE_USER }
         - { path: ^/maintenance/, role: ROLE_ADMIN }
         - { path: ^/team/$, role: ROLE_USER }
         - { path: ^/user/invite/bytoken/.+/$, role: ROLE_ADMIN }

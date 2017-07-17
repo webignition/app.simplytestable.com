@@ -1,28 +1,35 @@
 sudo: false
 services:
   - redis-server
-  - memcache
 
 language: php
-
 php:
-  - 5.5
   - 5.6
   - 7
+  - 7.1
 
-before_script:
+before_install:
+  - composer self-update
   - phpenv config-add travis.php.ini
   - cp .travis.composer.config.json ~/.composer/config.json
-
-  - mkdir app/cache/test
   - mv app/config/parameters.yml.travis app/config/parameters.yml
   - mv --force app/config/config_travis.yml app/config/config_test.yml
   - cp src/SimplyTestable/ApiBundle/Resources/config/parameters.yml.dist.yml src/SimplyTestable/ApiBundle/Resources/config/parameters.yml
+
+install:
   - composer install
   - php app/console doctrine:database:create
   - php app/console doctrine:migrations:migrate --no-interaction
   - php app/console doctrine:fixtures:load --append
   - composer config --global process-timeout 2000
 
+before_script:
+  - php app/console --env=test cache:clear
+  - php app/console --env=test cache:warmup
+
 script:
   - composer test
+
+matrix:
+  allow_failures:
+  - php: 7.1
