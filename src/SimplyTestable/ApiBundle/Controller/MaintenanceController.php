@@ -8,7 +8,10 @@ use SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand;
 use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
 use SimplyTestable\ApiBundle\Command\Task\Assign\SelectedCommand as AssignSelectedCommand;
 use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class MaintenanceController extends ApiController
@@ -66,23 +69,20 @@ class MaintenanceController extends ApiController
 
     /**
      * @param string $commandClass
-     * @param array $inputArray
      *
-     * @return Response
+     * @return JsonResponse
      */
-    private function executeCommand($commandClass, $inputArray = [])
+    private function executeCommand($commandClass)
     {
-        $output = new BufferedOutput();
-        $commandService = $this->container->get('simplytestable.services.commandService');
+        /* @var ContainerAwareCommand $command */
+        $command = new $commandClass;
+        $command->setContainer($this->container);
 
-        $commandResponse =  $commandService->execute(
-            $commandClass,
-            $inputArray,
-            $output
-        );
+        $output = new BufferedOutput();
+        $commandResponse = $command->run(new ArrayInput([]), $output);
 
         $outputLines = explode("\n", trim($output->fetch()));
 
-        return $this->sendResponse($outputLines, $commandResponse === 0 ? 200 : 500);
+        return new JsonResponse($outputLines, $commandResponse === 0 ? 200 : 500);
     }
 }
