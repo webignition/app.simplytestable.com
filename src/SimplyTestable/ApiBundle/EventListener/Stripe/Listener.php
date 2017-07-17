@@ -2,88 +2,85 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
+use Psr\Log\LoggerInterface;
+use SimplyTestable\ApiBundle\Entity\Stripe\Event;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\StripeService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use webignition\Model\Stripe\Customer as StripeCustomer;
 
 abstract class Listener
 {
-    
     /**
-     *
-     * @var Logger
+     * @var LoggerInterface
      */
     private $logger;
-    
-    
+
     /**
-     *
-     * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     * @var EventDispatcherInterface
      */
     protected $dispatcher;
-    
-    
+
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\StripeService 
+     * @var StripeService
      */
     private $stripeService;
-    
-    
+
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\StripeEventService 
+     * @var StripeEventService
      */
     private $stripeEventService;
-    
-    
+
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\UserAccountPlanService
+     * @var UserAccountPlanService
      */
     private $userAccountPlanService;
-    
-    
+
     /**
-     *
      * @var array
      */
     private $webClientProperties;
-    
-    
+
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\HttpClientService
+     * @var HttpClientService
      */
     private $httpClientService;
-    
-    
+
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\AccountPlanService 
+     * @var AccountPlanService
      */
     private $accountPlanService;
-    
-    
+
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent 
+     * @var DispatchableEvent
      */
     private $event;
-    
-    
+
     /**
-     *
-     * @param Logger $logger
+     * @param LoggerInterface $logger
+     * @param EventDispatcherInterface $dispatcher
+     * @param StripeService $stripeService
+     * @param StripeEventService $stripeEventService
+     * @param UserAccountPlanService $userAccountPlanService
+     * @param HttpClientService $httpClientService
+     * @param AccountPlanService $accountPLanService
+     * @param $webClientProperties
      */
     public function __construct(
-            Logger $logger,
-            \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher,
-            \SimplyTestable\ApiBundle\Services\StripeService $stripeService,
-            \SimplyTestable\ApiBundle\Services\StripeEventService $stripeEventService,
-            \SimplyTestable\ApiBundle\Services\UserAccountPlanService $userAccountPlanService,
-            \SimplyTestable\ApiBundle\Services\HttpClientService $httpClientService,
-            \SimplyTestable\ApiBundle\Services\AccountPlanService $accountPLanService,
-            $webClientProperties
-    ) {                
+        LoggerInterface $logger,
+        EventDispatcherInterface $dispatcher,
+        StripeService $stripeService,
+        StripeEventService $stripeEventService,
+        UserAccountPlanService $userAccountPlanService,
+        HttpClientService $httpClientService,
+        AccountPlanService $accountPLanService,
+        $webClientProperties
+    ) {
         $this->logger = $logger;
         $this->dispatcher = $dispatcher;
         $this->stripeService = $stripeService;
@@ -93,81 +90,78 @@ abstract class Listener
         $this->accountPlanService = $accountPLanService;
         $this->webClientProperties = $webClientProperties;
     }
-    
-    
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event
+     * @param DispatchableEvent $event
      */
-    protected function setEvent(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
+    protected function setEvent(DispatchableEvent $event)
+    {
         $this->event = $event;
     }
-    
-    
+
     /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Services\StripeEventService
+     * @return StripeEventService
      */
-    protected function getStripeEventService() {
+    protected function getStripeEventService()
+    {
         return $this->stripeEventService;
     }
-    
+
     /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
+     * @return UserAccountPlanService
      */
-    protected function getUserAccountPlanService() {
+    protected function getUserAccountPlanService()
+    {
         return $this->userAccountPlanService;
     }
-    
+
     /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Entity\UserAccountPlan
+     * @return UserAccountPlan
      */
-    protected function getUserAccountPlanFromEvent() {
-        return $this->getUserAccountPlanService()->getForUser($this->getEventEntity()->getUser());   
-    }     
-    
-    
+    protected function getUserAccountPlanFromEvent()
+    {
+        return $this->getUserAccountPlanService()->getForUser($this->getEventEntity()->getUser());
+    }
+
     /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Entity\Stripe\Event
+     * @return Event
      */
-    protected function getEventEntity() {
+    protected function getEventEntity()
+    {
         return $this->event->getEntity();
     }
-    
-    
+
     /**
-     * 
-     * @return \webignition\Model\Stripe\Customer
+     * @return StripeCustomer
      */
-    protected function getStripeCustomer() {
+    protected function getStripeCustomer()
+    {
         return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent($this->event));
     }
-    
-    
-    protected function getDefaultWebClientData() {        
+
+    protected function getDefaultWebClientData()
+    {
         return array(
             'event' => $this->getEventEntity()->getType(),
             'user' => $this->getEventEntity()->getUser()->getEmail()
         );
-    }    
-    
-    
-    protected function markEntityProcessed() {
+    }
+
+    protected function markEntityProcessed()
+    {
         $this->getEventEntity()->setIsProcessed(true);
         $this->getStripeEventService()->persistAndFlush($this->getEventEntity());
     }
-    
-    protected function issueWebClientEvent($data) {                
+
+    protected function issueWebClientEvent($data)
+    {
         $subscriberUrl = $this->getWebClientSubscriberUrl();
         if (is_null($subscriberUrl)) {
             return false;
         }
-        
+
         $request = $this->httpClientService->postRequest($subscriberUrl, array(), $data);
-        
+
         try {
             $request->send();
             return true;
@@ -175,34 +169,34 @@ abstract class Listener
             return false;
         }
     }
-    
-    
+
     /**
-     * 
      * @return string|null
      */
-    private function getWebClientSubscriberUrl() {
+    private function getWebClientSubscriberUrl()
+    {
         if (!isset($this->webClientProperties['urls'])) {
             return null;
         }
-        
+
         if (!isset($this->webClientProperties['urls']['base'])) {
             return null;
         }
-        
+
         if (!isset($this->webClientProperties['urls']['stripe_event_controller'])) {
             return null;
-        }        
-        
-        return $this->webClientProperties['urls']['base'] . $this->webClientProperties['urls']['stripe_event_controller']; 
-    }
-    
-    
-    protected function downgradeToBasicPlan() {
-        $this->getUserAccountPlanService()->subscribe(
-                $this->event->getEntity()->getUser(),
-                $this->accountPlanService->find('basic')
-        );        
+        }
+
+        $webClientUrls = $this->webClientProperties['urls'];
+
+        return $webClientUrls['base'] . $webClientUrls['stripe_event_controller'];
     }
 
+    protected function downgradeToBasicPlan()
+    {
+        $this->getUserAccountPlanService()->subscribe(
+            $this->event->getEntity()->getUser(),
+            $this->accountPlanService->find('basic')
+        );
+    }
 }
