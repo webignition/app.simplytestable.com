@@ -1,52 +1,56 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-class CommandService { 
-    
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+class CommandService
+{
     /**
-     *
-     * @var \Symfony\Component\DependencyInjection\ContainerInterface
+     * @var ContainerInterface
      */
     private $container;
-    
+
     /**
-     * 
-     * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+     * @param ContainerInterface $container
      */
-    public function __construct(\Symfony\Component\DependencyInjection\ContainerInterface $container) {
+    public function __construct(ContainerInterface $container)
+    {
         $this->container = $container;
     }
-    
+
     /**
-     * 
      * @param string $commandClass
      * @param array $inputArray
-     * @param \CoreSphere\ConsoleBundle\Output\StringOutput $output
+     * @param BufferedOutput $output
+     *
      * @return mixed
      */
-    public function execute($commandClass, $inputArray = array(), \CoreSphere\ConsoleBundle\Output\StringOutput $output = null) {
-        $command = $this->get($commandClass);       
-        
-        $input = new \Symfony\Component\Console\Input\ArrayInput($inputArray);
-        
+    public function execute($commandClass, $inputArray = [], BufferedOutput $output = null)
+    {
+        $command = $this->get($commandClass);
+
+        $input = new ArrayInput($inputArray);
+
         if (is_null($output)) {
-            $output = new \CoreSphere\ConsoleBundle\Output\StringOutput();
+            $output = new BufferedOutput();
         }
-    
-        return $command->execute($input, $output);         
+
+        return $command->execute($input, $output);
     }
-    
-    
+
     /**
-     * 
      * @param string $commandClass
-     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand
+     *
+     * @return ContainerAwareCommand
      */
     public function get($commandClass) {
+        /* @var ContainerAwareCommand $command */
         $command = new $commandClass;
         $command->setContainer($this->container);
-        
+
         return $command;
     }
-    
 }
