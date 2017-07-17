@@ -2,61 +2,61 @@
 
 namespace SimplyTestable\ApiBundle\Command;
 
+use Psr\Log\LoggerInterface;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Psr\Log\LoggerInterface as Logger;
 
-abstract class BaseCommand extends ContainerAwareCommand {
-    
+abstract class BaseCommand extends ContainerAwareCommand
+{
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\ApplicationStateService
+     * @var ApplicationStateService
      */
     private $applicationStateService;
-    
-    
+
     /**
-     *
-     * @return Logger
+     * @return LoggerInterface
      */
-    protected function getLogger() {
+    protected function getLogger()
+    {
         return $this->getContainer()->get('logger');
     }
-    
-    
+
     /**
-     * 
      * @param int $number
+     *
      * @return boolean
      */
-    protected function isHttpStatusCode($number) {
+    protected function isHttpStatusCode($number)
+    {
         return strlen($number) == 3;
-    } 
-    
+    }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\ApplicationStateService
+     * @return ApplicationStateService
      */
-    protected function getApplicationStateService() {
+    protected function getApplicationStateService()
+    {
         if (is_null($this->applicationStateService)) {
-            $this->applicationStateService = $this->getContainer()->get('simplytestable.services.applicationStateService');
+            $this->applicationStateService = $this->getContainer()->get(
+                'simplytestable.services.applicationStateService'
+            );
             $this->applicationStateService->setStateResourcePath($this->getStateResourcePath());
         }
-        
+
         return $this->applicationStateService;
     }
-    
 
     /**
-     * 
      * @return string
      */
-    private function getStateResourcePath() {
-        return $this->getContainer()->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config/state/') . $this->getContainer()->get('kernel')->getEnvironment();
-    }    
-    
+    private function getStateResourcePath()
+    {
+        $kernel = $this->getContainer()->get('kernel');
+
+        return sprintf(
+            '%s%s',
+            $kernel->locateResource('@SimplyTestableApiBundle/Resources/config/state/'),
+            $kernel->getEnvironment()
+        );
+    }
 }
