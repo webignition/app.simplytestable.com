@@ -86,7 +86,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 
     private $requiredSitemapXmlUrlCount = null;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
         $this->clearRedis();

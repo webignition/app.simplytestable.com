@@ -39,7 +39,7 @@ abstract class BaseTestCase extends WebTestCase
      */
     protected $application;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->client = static::createClient();
         $this->container = $this->client->getKernel()->getContainer();
