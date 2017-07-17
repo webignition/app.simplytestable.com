@@ -20,7 +20,6 @@
         "doctrine/migrations": "~1.5",
         "doctrine/doctrine-migrations-bundle": "~1.2",
         "doctrine/doctrine-fixtures-bundle": "~2.3",
-        "winzou/console-bundle":"1.0.0",
         "mlpz/postmark-bundle": "*",
         "webignition/internet-media-type":">=0.4.4,<2.0",
         "webignition/website-sitemap-finder":">=1.0.2,<2.0",
