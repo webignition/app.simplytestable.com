@@ -1,84 +1,102 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 
-class TaskAssignmentSelectionService {
-    
+class TaskAssignmentSelectionService
+{
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\JobService
+     * @var JobService
      */
     private $jobService;
-    
+
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\TaskService
+     * @var TaskService
      */
-    private $taskService;   
-    
+    private $taskService;
     /**
      *
-     * @var \Symfony\Component\HttpKernel\Log\LoggerInterface
+     * @var LoggerInterface
      */
-    private $logger;    
-    
-    
+    private $logger;
+
     /**
-     *
-     * @param EntityManager $entityManager
-     * @param \SimplyTestable\ApiBundle\Services\JobService $jobService 
-     * @param \SimplyTestable\ApiBundle\Services\TaskService $taskService
+     * @param JobService $jobService
+     * @param TaskService $taskService
+     * @param LoggerInterface $logger
      */
     public function __construct(
-            \SimplyTestable\ApiBundle\Services\JobService $jobService,
-            \SimplyTestable\ApiBundle\Services\TaskService $taskService,
-            \Symfony\Component\HttpKernel\Log\LoggerInterface $logger)
-    {       
+        JobService $jobService,
+        TaskService $taskService,
+        LoggerInterface $logger
+    ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
         $this->logger = $logger;
     }
-    
-    
+
     /**
      * Get a limited collection of queued tasks from each job that has queued tasks
-     * 
+     *
+     * @param int $workerCount
+     *
      * @return array
      */
-    public function selectTasks($workerCount = 0) {
+    public function selectTasks($workerCount = 0)
+    {
         if ($workerCount === 0) {
             return array();
         }
-        
+
         $this->logger->info('TaskAssignmentSelectionService:selectTasks:start');
-        
+
         $jobs = $this->jobService->getJobsWithQueuedTasks();
-        
+
         $taskInProgressState = $this->taskService->getInProgressState();
         $taskQueuedForAssignmentState = $this->taskService->getQueuedForAssignmentState();
-        
+
         $tasks = array();
         foreach ($jobs as $jobIndex => $job) {
             /* @var $job Job */
-            $this->logger->info('TaskAssignmentSelectionService:selectTasks [job'.$jobIndex.'] ['.$job->getId().'] ['.$job->getWebsite().']');
+            $this->logger->info(sprintf(
+                'TaskAssignmentSelectionService:selectTasks [job%s] [%s] [%s]',
+                $jobIndex,
+                $job->getId(),
+                $job->getWebsite()
+            ));
 
             $inProgressTaskCount = $this->taskService->getCountByJobAndState($job, $taskInProgressState);
-            $queuedForAssignmentTaskCount = $this->taskService->getCountByJobAndState($job, $taskQueuedForAssignmentState);
-            
+            $queuedForAssignmentTaskCount = $this->taskService->getCountByJobAndState(
+                $job,
+                $taskQueuedForAssignmentState
+            );
+
             $limitForThisJob = ($workerCount * 2)  - $inProgressTaskCount - $queuedForAssignmentTaskCount;
-            
-            $this->logger->info('TaskAssignmentSelectionService:selectTasks:inProgressTaskCount: [job'.$jobIndex.'] ['.$inProgressTaskCount.']');
-            $this->logger->info('TaskAssignmentSelectionService:selectTasks:queuedForAssignmentTaskCount: [job'.$jobIndex.'] ['.$queuedForAssignmentTaskCount.']');
-            $this->logger->info('TaskAssignmentSelectionService:selectTasks:limitForThisJob: [job'.$jobIndex.'] ['.$limitForThisJob.']');
-            
+
+            $this->logger->info(sprintf(
+                'TaskAssignmentSelectionService:selectTasks:inProgressTaskCount: [job%s] [%s]',
+                $jobIndex,
+                $inProgressTaskCount
+            ));
+
+            $this->logger->info(sprintf(
+                'TaskAssignmentSelectionService:selectTasks:queuedForAssignmentTaskCount: [job%s] [%s]',
+                $jobIndex,
+                $queuedForAssignmentTaskCount
+            ));
+
+            $this->logger->info(sprintf(
+                'TaskAssignmentSelectionService:selectTasks:limitForThisJob: [job%s] [%s]',
+                $jobIndex,
+                $limitForThisJob
+            ));
+
             if ($limitForThisJob > 0) {
                 $tasks = array_merge($tasks, $this->jobService->getQueuedTasks($job, $limitForThisJob));
-            }         
+            }
         }
-        
+
         return $tasks;
     }
-    
 }

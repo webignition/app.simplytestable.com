@@ -2,30 +2,27 @@
 namespace SimplyTestable\ApiBundle\Services\Resque;
 
 use BCC\ResqueBundle\Resque;
+use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Resque\Job\Job;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use BCC\ResqueBundle\Job as ResqueJob;
-
 
 /**
  * Wrapper for \BCC\ResqueBundle\Resque that handles exceptions
  * when trying to interact with queues.
- * 
+ *
  * Exceptions generally occur when trying to establish a socket connection to
  * a redis server that does not exist. This can happen as in some environments
  * where the integration with redis is optional.
- * 
+ *
  */
-class QueueService {
-
+class QueueService
+{
     const QUEUE_KEY = 'queue';
 
     /**
-     *
      * @var Resque
      */
     private $resque;
-
 
     /**
      * @var string
@@ -33,34 +30,41 @@ class QueueService {
     private $environment = 'prod';
 
     /**
-     *
      * @var LoggerInterface
      */
     private $logger;
 
-
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
+     * @var JobFactoryService
      */
     private $jobFactoryService;
 
-
-    public function __construct(Resque $resque, $environment = 'prod', LoggerInterface $logger, JobFactoryService $jobFactoryService) {
+    /**
+     * @param Resque $resque
+     * @param string $environment
+     * @param LoggerInterface $logger
+     * @param JobFactoryService $jobFactoryService
+     */
+    public function __construct(
+        Resque $resque,
+        $environment = 'prod',
+        LoggerInterface $logger,
+        JobFactoryService $jobFactoryService
+    ) {
         $this->resque = $resque;
         $this->environment = $environment;
         $this->logger = $logger;
         $this->jobFactoryService = $jobFactoryService;
     }
 
-
     /**
-     *
      * @param string $queue
      * @param array $args
+     *
      * @return boolean
      */
-    public function contains($queue, $args = []) {
+    public function contains($queue, $args = [])
+    {
         try {
             return !is_null($this->findJobInQueue($queue, $args));
         } catch (\CredisException $credisException) {
@@ -72,12 +76,13 @@ class QueueService {
 
 
     /**
-     *
      * @param string $queue
      * @param array $args
+     *
      * @return ResqueJob|null
      */
-    private function findJobInQueue($queue, $args) {
+    private function findJobInQueue($queue, $args)
+    {
         $jobs = $this->resque->getQueue($queue)->getJobs();
 
         foreach ($jobs as $job) {
@@ -91,9 +96,15 @@ class QueueService {
         return null;
     }
 
-
-
-    private function match(ResqueJob $job, $queue, $args) {
+    /**
+     * @param ResqueJob $job
+     * @param string $queue
+     * @param array $args
+     *
+     * @return bool
+     */
+    private function match(ResqueJob $job, $queue, $args)
+    {
         if (!$this->jobFactoryService->getJobClassName($queue) == $job->job->payload['class']) {
             return false;
         }
@@ -119,7 +130,8 @@ class QueueService {
      * @throws \CredisException
      * @throws \Exception
      */
-    public function enqueue(Job $job, $trackStatus = false) {
+    public function enqueue(Job $job, $trackStatus = false)
+    {
         try {
             return $this->resque->enqueue($job, $trackStatus);
         } catch (\CredisException $credisException) {
@@ -127,13 +139,13 @@ class QueueService {
         }
     }
 
-
     /**
-     *
      * @param string $queue
+     *
      * @return boolean
      */
-    public function isEmpty($queue) {
+    public function isEmpty($queue)
+    {
         try {
             return $this->resque->getQueue($queue)->getSize() == 0;
         } catch (\Exception $exception) {
@@ -142,15 +154,14 @@ class QueueService {
         }
     }
 
-
-
     /**
-     *
      * @param string $queue
      * @param array $args
+     *
      * @return boolean
      */
-    public function dequeue($queue, $args = null) {
+    public function dequeue($queue, $args = null)
+    {
         try {
             return \Resque::redis()->lrem(self::QUEUE_KEY . ':' . $queue, 1, $this->findJobInQueue($queue, $args)) == 1;
         } catch (\Exception $exception) {
@@ -159,20 +170,19 @@ class QueueService {
         }
     }
 
-
     /**
      * @return Resque
      */
-    public function getResque() {
+    public function getResque()
+    {
         return $this->resque;
     }
-
 
     /**
      * @return JobFactoryService
      */
-    public function getJobFactoryService() {
+    public function getJobFactoryService()
+    {
         return $this->jobFactoryService;
     }
-    
 }

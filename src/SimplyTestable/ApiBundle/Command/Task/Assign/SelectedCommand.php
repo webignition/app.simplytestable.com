@@ -3,158 +3,135 @@ namespace SimplyTestable\ApiBundle\Command\Task\Assign;
 
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use Symfony\Component\HttpKernel\Log\LoggerInterface as Logger;
 
 class SelectedCommand extends BaseCommand
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_FAILED_NO_WORKERS = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = -1;
-    
+
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
             ->setName('simplytestable:task:assign-selected')
             ->setDescription('Assign to workers tasks selected for assignment')
-            ->setHelp(<<<EOF
-Assign to workers all tasks selected for assignment
-EOF
-        );
+            ->setHelp('Assign to workers all tasks selected for assignment');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function execute(InputInterface $input, OutputInterface $output)
-    {        
+    {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
-        }   
-        
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByState($this->getTaskService()->getQueuedForAssignmentState());
+        }
+
+        $taskService = $this->getContainer()->get('simplytestable.services.taskservice');
+
+        $taskIds = $taskService->getEntityRepository()->getIdsByState($taskService->getQueuedForAssignmentState());
         $output->writeln(count($taskIds).' tasks queued for assignment');
         if (count($taskIds) === 0) {
             return self::RETURN_CODE_OK;
-        }        
-        
+        }
+
         $output->writeln('Attempting to assign tasks '.  implode(',', $taskIds));
-        
-        $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
-        
+
+        $tasks = $taskService->getEntityRepository()->getCollectionById($taskIds);
+
         foreach ($tasks as $taskIndex => $task) {
             /* @var $task Task */
             $output->writeln('Handling task: ' . $task->getId() . '[' . $task->getType()->getName() . ']');
 
-            if ($this->getTaskPreprocessorFactoryService()->hasPreprocessor($task)) {            
+            $taskPreprocessorFactory = $this->getContainer()->get(
+                'simplytestable.services.TaskPreProcessorServiceFactory'
+            );
+
+            if ($taskPreprocessorFactory->hasPreprocessor($task)) {
                 $preProcessorResponse = false;
-                
+
                 try {
-                    $preProcessorResponse = $this->getTaskPreprocessorFactoryService()->getPreprocessor($task)->process($task);
+                    $preProcessorResponse = $taskPreprocessorFactory->getPreprocessor($task)->process($task);
                 } catch (\Exception $e) {
                 }
-                
+
                 if ($preProcessorResponse === true) {
                     unset($tasks[$taskIndex]);
                 }
-            }              
+            }
         }
-        
+
         if (count($tasks) === 0) {
             return self::RETURN_CODE_OK;
         }
-        
-        $workers = $this->getWorkerService()->getActiveCollection();
-                
-        if (count($workers) === 0) {            
-            $this->getLogger()->err("TaskAssignSelectedCommand::execute: Cannot assign, no workers.");
+
+        $workerService = $this->getContainer()->get('simplytestable.services.workerservice');
+        $workers = $workerService->getActiveCollection();
+
+        if (count($workers) === 0) {
+            $this->getLogger()->error("TaskAssignSelectedCommand::execute: Cannot assign, no workers.");
             return self::RETURN_CODE_FAILED_NO_WORKERS;
-        }             
-        
-        $response = $this->getWorkerTaskAssignmentService()->assignCollection($tasks, $workers);        
+        }
+
+        $workerTaskAssignmentService = $this->getContainer()->get(
+            'simplytestable.services.workertaskassignmentservice'
+        );
+
+        $response = $workerTaskAssignmentService->assignCollection($tasks, $workers);
         if ($response === 0) {
             $output->writeln('ok');
-            $entityManager = $this->getContainer()->get('doctrine')->getManager();             
-            
+            $entityManager = $this->getContainer()->get('doctrine')->getManager();
+
             $startedTasks = array();
             foreach ($tasks as $task) {
-                $equivalentTasks = $this->getTaskService()->getEquivalentTasks($task->getUrl(), $task->getType(), $task->getParametersHash(), array(
-                    $this->getTaskService()->getQueuedForAssignmentState(),
-                    $this->getTaskService()->getQueuedState()                
-                ));
-                
-                foreach ($equivalentTasks as $equivalentTask) {                
-                    $this->getTaskService()->setStarted(
+                $equivalentTasks = $taskService->getEquivalentTasks(
+                    $task->getUrl(),
+                    $task->getType(),
+                    $task->getParametersHash(),
+                    [
+                        $taskService->getQueuedForAssignmentState(),
+                        $taskService->getQueuedState()
+                    ]
+                );
+
+                foreach ($equivalentTasks as $equivalentTask) {
+                    $taskService->setStarted(
                         $equivalentTask,
                         $task->getWorker(),
                         $task->getRemoteId()
-                    );  
+                    );
 
-                    $this->getTaskService()->persistAndFlush($equivalentTask);
-                } 
-                
+                    $taskService->persistAndFlush($equivalentTask);
+                }
+
                 $startedTasks = array_merge($startedTasks, $equivalentTasks, array($task));
             }
-            
+
+            $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
+            $jobInProgressState = $jobService->getInProgressState();
+
             foreach ($startedTasks as $startedTask) {
+                /* @var Job $job */
                 $job = $startedTask->getJob();
-                
-                if ($job->getState()->getName() == 'job-queued') {                
-                    $job->setState($this->getJobService()->getInProgressState());
+
+                if ($job->getState()->getName() == 'job-queued') {
+                    $job->setState($jobInProgressState);
                     $entityManager->persist($job);
-                    $entityManager->flush();          
-                }                  
+                    $entityManager->flush();
+                }
             }
-                        
+
         } else {
             $output->writeln('Failed to assign task collection, response '.$response);
         }
-        
-        return $response;
-    }    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobService
-     */
-    private function getJobService() {
-        return $this->getContainer()->get('simplytestable.services.jobservice');
-    }      
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\TaskService
-     */
-    private function getTaskService() {
-        return $this->getContainer()->get('simplytestable.services.taskservice');
-    }  
 
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WorkerService
-     */    
-    private function getWorkerService() {
-        return $this->getContainer()->get('simplytestable.services.workerservice');
-    }    
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
-     */    
-    private function getWorkerTaskAssignmentService() {
-        return $this->getContainer()->get('simplytestable.services.workertaskassignmentservice');
-    }       
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\TaskPreProcessorFactoryService
-     */    
-    private function getTaskPreprocessorFactoryService() {
-        return $this->getContainer()->get('simplytestable.services.TaskPreProcessorServiceFactory');
-    }      
+        return $response;
+    }
 }
