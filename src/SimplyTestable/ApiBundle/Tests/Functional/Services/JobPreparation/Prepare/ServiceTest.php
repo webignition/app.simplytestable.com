@@ -17,13 +17,28 @@ class ServiceTest extends BaseSimplyTestableTestCase
 {
     const EXPECTED_TASK_TYPE_COUNT = 1;
 
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testJobInWrongState()
     {
         $this->setExpectedException(
             JobPreparationException::class
         );
 
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
         $this->getJobPreparationService()->prepare($job);
     }
 
@@ -50,9 +65,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
         $user = $this->getUserService()->getPublicUser();
         $this->getUserService()->setUser($user);
 
-        $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create($jobValues);
-        $jobFactory->resolve($job);
+        $job = $this->jobFactory->create($jobValues);
+        $this->jobFactory->resolve($job);
 
         if (!empty($sitemapRetrieverTimeout)) {
             $this
@@ -338,15 +352,14 @@ class ServiceTest extends BaseSimplyTestableTestCase
         $user = $this->getTestUser();
         $this->getUserService()->setUser($user);
 
-        $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $user,
             JobFactory::KEY_PARAMETERS => [
                 'http-auth-username' => 'example',
                 'http-auth-password' => 'password'
             ],
         ]);
-        $jobFactory->resolve($job);
+        $this->jobFactory->resolve($job);
 
         $this->queuePrepareHttpFixturesForCrawlJob($job->getWebsite()->getCanonicalUrl());
         $this->getJobPreparationService()->prepare($job);

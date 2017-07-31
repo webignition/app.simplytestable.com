@@ -13,7 +13,9 @@ class MultipleRequestTest extends ValidRequestTest
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $this->createJobFactory()->createResolveAndPrepare([
+        $jobFactory = new JobFactory($this->container);
+
+        $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
         ], [
             'prepare' => [

@@ -26,7 +26,7 @@ class ExcludeByTypeTest extends ContentTest
 
     protected function createJobs()
     {
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         foreach ($this->canonicalUrls as $canonicalUrl) {
             $this->jobs[] = $jobFactory->createResolveAndPrepare([

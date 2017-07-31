@@ -25,7 +25,7 @@ class SpecificJobTest extends ServiceTest
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         $this->jobs[] = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com/',

@@ -31,7 +31,7 @@ class UserTest extends ListTest
             $this->jobs[$emailAddress] = array();
         }
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         foreach ($this->getCanonicalUrlCollection(10) as $index => $canonicalUrl) {
             $this->jobs[$this->users[$index % 2]->getEmail()][] = $jobFactory->create([

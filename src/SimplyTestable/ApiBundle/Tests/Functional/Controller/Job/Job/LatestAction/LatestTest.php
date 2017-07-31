@@ -7,12 +7,27 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class LatestTest extends BaseControllerJsonTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testLatestActionForPublicUser()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $canonicalUrl = 'http://example.com';
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
         ]);
 
@@ -30,15 +45,15 @@ class LatestTest extends BaseControllerJsonTestCase
         $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
         $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
 
-        $job1 = $this->createJobFactory()->create([
+        $job1 = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl1,
             JobFactory::KEY_USER => $user1,
         ]);
-        $job2 = $this->createJobFactory()->create([
+        $job2 = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl2,
             JobFactory::KEY_USER => $user2,
         ]);
-        $job3 = $this->createJobFactory()->create([
+        $job3 = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl1,
         ]);
 
@@ -86,7 +101,7 @@ class LatestTest extends BaseControllerJsonTestCase
         $this->getTeamMemberService()->add($team, $member);
 
         $canonicalUrl = 'http://example.com';
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             JobFactory::KEY_USER => $leader,
         ]);
@@ -111,7 +126,7 @@ class LatestTest extends BaseControllerJsonTestCase
         $this->getTeamMemberService()->add($team, $member);
 
         $canonicalUrl = 'http://example.com';
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             JobFactory::KEY_USER => $member,
         ]);
@@ -138,7 +153,7 @@ class LatestTest extends BaseControllerJsonTestCase
         $this->getTeamMemberService()->add($team, $member2);
 
         $canonicalUrl = 'http://example.com';
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             JobFactory::KEY_USER => $member1,
         ]);

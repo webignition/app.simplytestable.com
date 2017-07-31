@@ -19,7 +19,9 @@ class CrawlJobTest extends ExcludeCurrentTest
 
     protected function createJobs()
     {
-        $this->jobs[] = $this->createJobFactory()->createResolveAndPrepare([
+        $jobFactory = new JobFactory($this->container);
+
+        $this->jobs[] = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->getTestUser(),
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),

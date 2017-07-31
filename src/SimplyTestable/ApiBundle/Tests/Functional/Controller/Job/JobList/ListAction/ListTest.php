@@ -13,7 +13,7 @@ abstract class ListTest extends BaseControllerJsonTestCase
      */
     protected $jobs = array();
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
@@ -32,7 +32,7 @@ abstract class ListTest extends BaseControllerJsonTestCase
 
     protected function createJobs()
     {
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
         foreach ($this->getCanonicalUrls() as $canonicalUrl) {
             $this->jobs[] = $jobFactory->create([
                 JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,

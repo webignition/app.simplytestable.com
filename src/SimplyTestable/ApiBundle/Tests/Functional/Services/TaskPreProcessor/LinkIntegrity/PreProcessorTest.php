@@ -42,7 +42,8 @@ abstract class PreProcessorTest extends BaseSimplyTestableTestCase
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $jobFactory = new JobFactory($this->container);
+        $job = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => ['link integrity'],
             JobFactory::KEY_TEST_TYPE_OPTIONS => $this->getTestTypeOptions(),
             JobFactory::KEY_PARAMETERS => $this->getJobParameters(),

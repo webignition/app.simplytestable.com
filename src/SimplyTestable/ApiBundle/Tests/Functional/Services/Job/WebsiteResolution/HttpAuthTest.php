@@ -21,7 +21,9 @@ class HttpAuthTest extends BaseSimplyTestableTestCase
         $username = 'example';
         $password = 'password';
 
-        $job = $this->createJobFactory()->create([
+        $jobFactory = new JobFactory($this->container);
+
+        $job = $jobFactory->create([
             JobFactory::KEY_PARAMETERS => [
                 'http-auth-username' => $username,
                 'http-auth-password' => $password,

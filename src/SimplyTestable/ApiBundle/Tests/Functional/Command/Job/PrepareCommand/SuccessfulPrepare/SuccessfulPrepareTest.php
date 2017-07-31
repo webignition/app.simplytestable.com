@@ -24,10 +24,11 @@ abstract class SuccessfulPrepareTest extends CommandTest
 
     protected function getJob()
     {
+        $jobFactory = new JobFactory($this->container);
+
         $user = $this->getUserService()->getPublicUser();
         $this->getUserService()->setUser($user);
 
-        $jobFactory = $this->createJobFactory();
         $job = $jobFactory->create([
             JobFactory::KEY_TEST_TYPES => ['js static analysis'],
             JobFactory::KEY_TEST_TYPE_OPTIONS => [

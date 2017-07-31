@@ -2,13 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 class ParametersTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testSetPersistGetParameters()
     {
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
         $job->setParameters(json_encode(array(
             'foo' => 'bar'
         )));
@@ -24,7 +40,7 @@ class ParametersTest extends BaseSimplyTestableTestCase
         $key = 'key-ɸ';
         $value = 'value-ɸ';
 
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
         $job->setParameters(json_encode(array(
             $key => $value
         )));

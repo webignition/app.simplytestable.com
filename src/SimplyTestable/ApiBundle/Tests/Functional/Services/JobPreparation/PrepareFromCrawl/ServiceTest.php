@@ -14,7 +14,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $jobFactory = new JobFactory($this->container);
+        $job = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->getTestUser(),
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),

@@ -8,11 +8,25 @@ use Symfony\Component\HttpFoundation\Request;
 
 class StartTest extends ActionTest
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testFullSiteRejectionDoesNotAffectSingleUrlJobStart()
     {
         $canonicalUrl = 'http://example.com/';
-        $jobFactory = $this->createJobFactory();
-        $jobFactory->create();
+        $this->jobFactory->create();
 
         $request = new Request([], [
             'type' => JobTypeService::SINGLE_URL_NAME,
@@ -33,7 +47,7 @@ class StartTest extends ActionTest
         $user = $this->getUserService()->getPublicUser();
         $this->getUserService()->setUser($user);
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
         ]);

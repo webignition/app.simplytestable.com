@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution\ExceptionCases;
 
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 class ServiceTest extends BaseSimplyTestableTestCase
@@ -11,7 +12,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testJobInWrongStateThrowsJobWebsiteResolutionException()
     {
-        $job = $this->createJobFactory()->create();
+        $jobFactory = new JobFactory($this->container);
+        $job = $jobFactory->create();
         $job->setState($this->getJobService()->getCancelledState());
         $this->getJobService()->persistAndFlush($job);
 

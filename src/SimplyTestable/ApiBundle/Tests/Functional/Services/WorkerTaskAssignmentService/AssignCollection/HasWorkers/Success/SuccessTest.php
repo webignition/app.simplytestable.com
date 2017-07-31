@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\WorkerTaskAssignmentService\AssignCollection\HasWorkers\Success;
 
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\WorkerTaskAssignmentService\AssignCollection\HasWorkers\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
@@ -30,7 +31,8 @@ abstract class SuccessTest extends ServiceTest
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->job = $this->createJobFactory()->createResolveAndPrepare();
+        $jobFactory = new JobFactory($this->container);
+        $this->job = $jobFactory->createResolveAndPrepare();
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getAssignCollectionHttpResponseFixtures()));
     }

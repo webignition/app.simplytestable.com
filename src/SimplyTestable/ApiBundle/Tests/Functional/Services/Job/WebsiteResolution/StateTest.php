@@ -8,9 +8,20 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class StateTest extends BaseSimplyTestableTestCase
 {
-    public function setUp()
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             "HTTP/1.0 200 OK"
@@ -19,7 +30,7 @@ class StateTest extends BaseSimplyTestableTestCase
 
     public function testFullSiteJobStateIsResolved()
     {
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
 
         $this->getJobWebsiteResolutionService()->resolve($job);
         $this->assertEquals($this->getJobService()->getResolvedState(), $job->getState());
@@ -27,7 +38,7 @@ class StateTest extends BaseSimplyTestableTestCase
 
     public function testSingleUrlJobStateIsResolved()
     {
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
         ]);
 

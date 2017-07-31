@@ -2,15 +2,31 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 
 class RejectionReasonTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testUtf8Reason()
     {
         $reason = 'ɸ';
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
 
         $rejectionReason = new RejectionReason();
         $rejectionReason->setJob($job);
@@ -34,7 +50,7 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase
 
     public function testPersistWithNoConstraint()
     {
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
 
         $rejectionReason = new RejectionReason();
         $rejectionReason->setJob($job);
@@ -48,7 +64,7 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase
 
     public function testPersistWithConstraint()
     {
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
 
         $rejectionReason = new RejectionReason();
         $rejectionReason->setJob($job);

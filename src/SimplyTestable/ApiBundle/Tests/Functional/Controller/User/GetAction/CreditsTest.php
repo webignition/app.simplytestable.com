@@ -40,7 +40,7 @@ class CreditsTest extends BaseControllerJsonTestCase
         $this->getTeamMemberService()->add($team, $this->member1);
         $this->getTeamMemberService()->add($team, $this->member2);
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         $job1 = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->leader,

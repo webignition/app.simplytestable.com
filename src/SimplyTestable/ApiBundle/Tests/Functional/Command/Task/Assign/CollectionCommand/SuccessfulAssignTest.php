@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Assign\CollectionCommand;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class SuccessfulAssignTest extends CollectionCommandTest
 {
@@ -21,12 +22,17 @@ class SuccessfulAssignTest extends CollectionCommandTest
      */
     private $executeReturnCode = null;
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         parent::setUp();
 
+        $jobFactory = new JobFactory($this->container);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->job = $this->createJobFactory()->createResolveAndPrepare();
+        $this->job = $jobFactory->createResolveAndPrepare();
         $this->queueHttpFixtures(
             $this->buildHttpFixtureSet(
                 $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(null). '/HttpResponses')

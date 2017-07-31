@@ -2,17 +2,33 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 class TaskTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testUtf8Url()
     {
         $taskUrl = 'http://example.com/ɸ';
 
         $task = new Task();
-        $task->setJob($this->createJobFactory()->create());
+        $task->setJob($this->jobFactory->create());
         $task->setUrl($taskUrl);
         $task->setState($this->getTaskService()->getQueuedState());
         $task->setType($this->getTaskTypeService()->getByName('HTML Validation'));
@@ -36,7 +52,7 @@ class TaskTest extends BaseSimplyTestableTestCase
         $value = 'value-ɸ';
 
         $task = new Task();
-        $task->setJob($this->createJobFactory()->create());
+        $task->setJob($this->jobFactory->create());
         $task->setUrl('http://example.com/');
         $task->setState($this->getTaskService()->getQueuedState());
         $task->setType($this->getTaskTypeService()->getByName('HTML Validation'));

@@ -2,42 +2,18 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\ResolveWebsiteCommand;
 
-use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class SingleUrlJobTest extends CommandTest
 {
-//    /**
-//     *
-//     * @var Job
-//     */
-//    private $job;
-//
-//    public function setUp()
-//    {
-//        parent::setUp();
-//        $this->queueResolveHttpFixture();
-//
-//        $this->job = $this->createJobFactory()->create([
-//            JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
-//            JobFactory::KEY_TEST_TYPES => ['CSS Validation'],
-//            JobFactory::KEY_TEST_TYPE_OPTIONS => [
-//                'CSS validation' => array(
-//                    'ignore-common-cdns' => 1,
-//                )
-//            ],
-//        ]);
-//
-//        $this->clearRedis();
-//    }
-
     public function testCommand()
     {
-        parent::setUp();
+        $jobFactory = new JobFactory($this->container);
+
         $this->queueResolveHttpFixture();
 
-        $job = $this->createJobFactory()->create([
+        $job = $jobFactory->create([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
             JobFactory::KEY_TEST_TYPES => ['CSS Validation'],
             JobFactory::KEY_TEST_TYPE_OPTIONS => [

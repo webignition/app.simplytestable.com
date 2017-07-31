@@ -19,10 +19,11 @@ class PrivateUserTest extends CommandTest
 
     protected function getJob()
     {
+        $jobFactory = new JobFactory($this->container);
+
         $user = $this->createAndActivateUser('user@example.com');
         $this->getUserService()->setUser($user);
 
-        $jobFactory = $this->createJobFactory();
         $job = $jobFactory->create([
             JobFactory::KEY_USER => $user,
         ]);

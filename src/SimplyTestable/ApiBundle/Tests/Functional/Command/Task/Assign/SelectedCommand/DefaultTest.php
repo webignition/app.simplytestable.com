@@ -2,12 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Assign\SelectedCommand;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
 class DefaultTest extends CommandTest
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testAssignValidTaskReturnsStatusCode0()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare();
         $this->createWorker();
 
         $this->queueTaskAssignCollectionResponseHttpFixture();
@@ -33,7 +50,7 @@ class DefaultTest extends CommandTest
     public function testAssignTaskWhenNoWorkersReturnsStatusCode1()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare();
 
         $task = $job->getTasks()->first();
         $task->setState($this->getTaskService()->getQueuedForAssignmentState());
@@ -46,7 +63,7 @@ class DefaultTest extends CommandTest
     public function testAssignTaskWhenNoWorkersAreAvailableReturnsStatusCode2()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare();
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 404',

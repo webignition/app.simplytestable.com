@@ -24,7 +24,7 @@ class UserTest extends CountTest
             $this->users[] = $this->createAndActivateUser($emailAddress, 'password');
         }
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         foreach ($this->getCanonicalUrls() as $index => $canonicalUrl) {
             $user = $this->users[($index === 0) ? 0 : 1];

@@ -10,6 +10,8 @@ class SingleUrlLimitReachedTest extends RejectedTest
 {
     protected function preCall()
     {
+        $jobFactory = new JobFactory($this->container);
+
         $user = $this->getUser();
 
         $this->getUserService()->setUser($user);
@@ -18,8 +20,6 @@ class SingleUrlLimitReachedTest extends RejectedTest
 
         $constraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
         $constraintLimit = $constraint->getLimit();
-
-        $jobFactory = $this->createJobFactory();
 
         for ($i = 0; $i < $constraintLimit; $i++) {
             $job = $jobFactory->create([

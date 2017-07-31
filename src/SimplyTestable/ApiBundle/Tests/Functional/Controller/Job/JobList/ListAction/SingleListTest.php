@@ -12,7 +12,7 @@ abstract class SingleListTest extends ListTest {
      */
     protected $jobs = array();
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->list = json_decode($this->getJobListController(

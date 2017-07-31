@@ -25,7 +25,7 @@ abstract class SequenceTest extends ServiceTest
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         for ($jobLimitIndex = 0; $jobLimitIndex < $this->getJobLimit(); $jobLimitIndex++) {
             $this->jobs[] = $jobFactory->createResolveAndPrepare([

@@ -38,7 +38,7 @@ class ListIsSortedByJobIdTest extends StateBasedTest
 
     protected function createJobs()
     {
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         // Non-crawling job
         $this->jobs[] = $jobFactory->createResolveAndPrepare([

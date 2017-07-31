@@ -9,6 +9,21 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RejectTest extends ActionTest
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testRejectDueToPlanFullSiteConstraint()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
@@ -21,10 +36,8 @@ class RejectTest extends ActionTest
         $constraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
         $constraintLimit = $constraint->getLimit();
 
-        $jobFactory = $this->createJobFactory();
-
         for ($i = 0; $i < $constraintLimit; $i++) {
-            $job = $jobFactory->create([
+            $job = $this->jobFactory->create([
                 JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             ]);
             $this->cancelJob($job);
@@ -54,10 +67,8 @@ class RejectTest extends ActionTest
         $constraint = $userAccountPlan->getPlan()->getConstraintNamed('single_url_jobs_per_url');
         $constraintLimit = $constraint->getLimit();
 
-        $jobFactory = $this->createJobFactory();
-
         for ($i = 0; $i < $constraintLimit; $i++) {
-            $job = $jobFactory->create([
+            $job = $this->jobFactory->create([
                 JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
                 JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
             ]);
@@ -124,9 +135,7 @@ class RejectTest extends ActionTest
             ->getConstraintNamed('credits_per_month')
             ->setLimit($creditsPerMonth);
 
-        $jobFactory = $this->createJobFactory();
-
-        $job = $jobFactory->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => self::DEFAULT_CANONICAL_URL,
             JobFactory::KEY_USER => $user,
         ]);

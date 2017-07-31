@@ -33,8 +33,10 @@ class DoesNotIncludeCrawlJobsTest extends StateBasedTest
 
     protected function createJobs()
     {
+        $jobFactory = new JobFactory($this->container);
+
         // Crawling job
-        $this->jobs[] = $this->createJobFactory()->createResolveAndPrepare([
+        $this->jobs[] = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => $this->canonicalUrls[0],
             JobFactory::KEY_USER => $this->getTestUser(),
         ], [

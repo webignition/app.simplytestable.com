@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Assign\CollectionCommand;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
 class NoWorkersAvailableTest extends CollectionCommandTest
 {
     /**
@@ -14,11 +16,16 @@ class NoWorkersAvailableTest extends CollectionCommandTest
      */
     private $executeReturnCode = null;
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         parent::setUp();
 
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $jobFactory = new JobFactory($this->container);
+
+        $job = $jobFactory->createResolveAndPrepare();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $this->taskIds = $this->getTaskIds($job);

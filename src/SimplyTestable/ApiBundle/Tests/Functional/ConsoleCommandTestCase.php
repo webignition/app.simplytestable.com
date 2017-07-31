@@ -17,7 +17,10 @@ abstract class ConsoleCommandTestCase extends BaseSimplyTestableTestCase
      */
     private $commandTester;
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         parent::setUp();
 

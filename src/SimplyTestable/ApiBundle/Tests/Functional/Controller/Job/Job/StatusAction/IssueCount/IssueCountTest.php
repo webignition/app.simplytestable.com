@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job\StatusAction\IssueCount;
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
@@ -19,8 +20,10 @@ abstract class IssueCountTest extends BaseControllerJsonTestCase
     {
         parent::setUp();
 
+        $jobFactory = new JobFactory($this->container);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $jobFactory->createResolveAndPrepare();
         foreach ($job->getTasks() as $task) {
             $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
                 'end_date_time' => '2012-03-08 17:03:00',

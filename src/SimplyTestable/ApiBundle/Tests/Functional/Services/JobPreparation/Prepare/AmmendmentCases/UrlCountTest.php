@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prep
 
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 /**
@@ -26,7 +27,7 @@ class UrlCountTest extends BaseSimplyTestableTestCase
         $user = $this->getUserService()->getPublicUser();
         $this->getUserService()->setUser($user);
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->create();
         $jobFactory->resolve($this->job);
 

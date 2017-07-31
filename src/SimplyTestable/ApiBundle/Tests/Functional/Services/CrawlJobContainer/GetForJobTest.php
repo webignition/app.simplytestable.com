@@ -2,13 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\CrawlJobContainer;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 class GetForJobTest extends BaseSimplyTestableTestCase
 {
     public function testGet()
     {
-        $job = $this->createJobFactory()->create();
+        $jobFactory = new JobFactory($this->container);
+
+        $job = $jobFactory->create();
 
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
 

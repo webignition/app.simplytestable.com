@@ -80,7 +80,9 @@ class CrawlJobTest extends IsCancelledTest
 
     protected function getJob()
     {
-        $this->parentJob = $this->createJobFactory()->create([
+        $jobFactory = new JobFactory($this->container);
+
+        $this->parentJob = $jobFactory->create([
             JobFactory::KEY_TEST_TYPES => ['CSS validation', 'JS static analysis'],
             JobFactory::KEY_TEST_TYPE_OPTIONS => [
                 'CSS validation' => ['ignore-common-cdns' => 1],

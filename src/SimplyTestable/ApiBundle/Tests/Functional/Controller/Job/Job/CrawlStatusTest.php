@@ -11,11 +11,26 @@ use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFa
 
 class CrawlStatusTest extends BaseControllerJsonTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testWithQueuedCrawlJob()
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->getTestUser(),
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
@@ -33,7 +48,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->getTestUser(),
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
@@ -101,7 +116,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->getTestUser(),
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
@@ -123,7 +138,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->getTestUser(),
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
@@ -145,7 +160,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->getTestUser(),
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
@@ -168,7 +183,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
         $user2 = $this->createAndActivateUser('user2@example.com', 'password');
 
         $this->getUserService()->setUser($user1);
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $user1,
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
@@ -190,7 +205,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->getTestUser(),
         ]);
 
@@ -202,7 +217,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getTestUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $this->getTestUser(),
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
@@ -220,7 +235,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
 
         $this->getUserService()->setUser($user1);
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $user1,
         ]);
 
@@ -243,7 +258,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
 
         $this->getUserService()->setUser($user);
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $user,
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),

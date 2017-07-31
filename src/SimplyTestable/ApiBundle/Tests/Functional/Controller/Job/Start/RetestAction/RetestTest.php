@@ -10,6 +10,21 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RetestTest extends ActionTest
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testWithInvalidId()
     {
         $request = new Request();
@@ -25,7 +40,7 @@ class RetestTest extends ActionTest
 
     public function testWithIncompleteJob()
     {
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
         $request = new Request();
         $jobStartController = $this->createControllerFactory()->createJobStartController($request);
         $response = $jobStartController->retestAction(
@@ -39,7 +54,7 @@ class RetestTest extends ActionTest
 
     public function testRetestJobIsNotOriginalJob()
     {
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
         $this->completeJob($job);
 
         $request = new Request();
@@ -61,7 +76,7 @@ class RetestTest extends ActionTest
      */
     public function testRetestFoo($jobValues)
     {
-        $job = $this->createJobFactory()->create($jobValues);
+        $job = $this->jobFactory->create($jobValues);
         $this->completeJob($job);
 
         $request = new Request();

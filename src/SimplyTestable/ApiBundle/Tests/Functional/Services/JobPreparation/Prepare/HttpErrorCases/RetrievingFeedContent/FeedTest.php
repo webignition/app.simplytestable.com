@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prepare\HttpErrorCases\RetrievingFeedContent;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 abstract class FeedTest extends BaseSimplyTestableTestCase
@@ -13,7 +14,7 @@ abstract class FeedTest extends BaseSimplyTestableTestCase
         $user = $this->getUserService()->getPublicUser();
         $this->getUserService()->setUser($user);
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->create();
         $jobFactory->resolve($job);
 

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task;
 
 use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
@@ -28,8 +29,10 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
 
     public function testCancellationJobsAreEnqueued()
     {
+        $jobFactory = new JobFactory($this->container);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $jobFactory->createResolveAndPrepare();
 
         foreach ($job->getTasks() as $task) {
             $task->setState($this->getTaskService()->getInProgressState());

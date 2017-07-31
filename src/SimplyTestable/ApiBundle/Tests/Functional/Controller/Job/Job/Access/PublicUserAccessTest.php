@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job\Access;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
@@ -14,10 +15,16 @@ abstract class PublicUserAccessTest extends BaseControllerJsonTestCase
      */
     private $job;
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         parent::setUp();
-        $this->job = $this->createJobFactory()->create();
+
+        $jobFactory = new JobFactory($this->container);
+
+        $this->job = $jobFactory->create();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
     }

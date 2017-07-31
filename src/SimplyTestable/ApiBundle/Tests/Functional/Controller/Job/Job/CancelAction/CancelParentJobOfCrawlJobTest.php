@@ -28,7 +28,9 @@ class CancelParentJobOfCrawlJobTest extends IsCancelledTest
 
     protected function getJob()
     {
-        $job = $this->createJobFactory()->create([
+        $jobFactory = new JobFactory($this->container);
+
+        $job = $jobFactory->create([
             JobFactory::KEY_USER => $this->getUser(),
         ]);
 

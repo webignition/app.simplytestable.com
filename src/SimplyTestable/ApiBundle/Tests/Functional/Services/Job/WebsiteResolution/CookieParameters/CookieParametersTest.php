@@ -31,7 +31,9 @@ class CookieParametersTest extends BaseSimplyTestableTestCase
             "HTTP/1.0 200"
         )));
 
-        $this->job = $this->createJobFactory()->create([
+        $jobFactory = new JobFactory($this->container);
+
+        $this->job = $jobFactory->create([
             JobFactory::KEY_PARAMETERS => [
                 'cookies' => $this->cookies,
             ],

@@ -7,6 +7,21 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class OwnersTest extends BaseControllerJsonTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     protected function getActionName()
     {
         return 'statusAction';
@@ -15,7 +30,7 @@ class OwnersTest extends BaseControllerJsonTestCase
     public function testPublicJob()
     {
         $canonicalUrl = 'http://example.com/';
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
         ]);
 
@@ -34,7 +49,7 @@ class OwnersTest extends BaseControllerJsonTestCase
 
         $canonicalUrl = 'http://example.com/';
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             JobFactory::KEY_USER => $user,
         ]);
@@ -59,7 +74,7 @@ class OwnersTest extends BaseControllerJsonTestCase
 
         $canonicalUrl = 'http://example.com/';
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             JobFactory::KEY_USER => $leader,
         ]);

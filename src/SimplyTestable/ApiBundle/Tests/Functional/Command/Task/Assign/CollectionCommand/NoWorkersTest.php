@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Assign\CollectionCommand;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
 class NoWorkersTest extends CollectionCommandTest
 {
     /**
@@ -18,8 +20,10 @@ class NoWorkersTest extends CollectionCommandTest
     {
         parent::setUp();
 
+        $jobFactory = new JobFactory($this->container);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $jobFactory->createResolveAndPrepare();
         $this->taskIds = $this->getTaskIds($job);
 
         $this->executeReturnCode = $this->execute(['ids' => implode($this->taskIds, ',')]);
