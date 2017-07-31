@@ -4,13 +4,28 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
+class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testPerformResetWithEncodedPassword() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testPerformResetWithEncodedPassword()
+    {
         $encodedNewPassword = rawurlencode('@password');
 
-        $userFactory = new UserFactory($this->container);
-        $user = $userFactory->createAndActivateUser();
+        $user = $this->userFactory->createAndActivateUser();
 
         $token = $this->getPasswordResetToken($user);
 
@@ -22,9 +37,9 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testPerformResetWithValidToken() {
-        $userFactory = new UserFactory($this->container);
-        $user = $userFactory->createAndActivateUser();
+    public function testPerformResetWithValidToken()
+    {
+        $user = $this->userFactory->createAndActivateUser();
 
         $token = $this->getPasswordResetToken($user);
 
@@ -36,8 +51,8 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-
-    public function testPerformResetWithInvalidToken() {
+    public function testPerformResetWithInvalidToken()
+    {
         $token = 'invalid token';
 
         $controller = $this->getUserPasswordResetController('resetPasswordAction', array(
@@ -52,11 +67,9 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
         }
     }
 
-    public function testPerformResetWithInactiveUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testPerformResetWithInactiveUser()
+    {
+        $user = $this->userFactory->create();
         $token = $this->getPasswordResetToken($user);
 
         $controller = $this->getUserPasswordResetController('resetPasswordAction', array(

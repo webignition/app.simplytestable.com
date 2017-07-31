@@ -22,7 +22,8 @@ class HasInvitesTest extends BaseControllerJsonTestCase
         $this->userFactory = new UserFactory($this->container);
     }
 
-    public function testNonexistentUserHasNoInvites() {
+    public function testNonexistentUserHasNoInvites()
+    {
         try {
             $controller = $this->getUserController('hasInvitesAction');
             $controller->hasInvitesAction('user@example.com');
@@ -32,7 +33,8 @@ class HasInvitesTest extends BaseControllerJsonTestCase
         }
     }
 
-    public function testUserWithNoInvitesHasNoInvites() {
+    public function testUserWithNoInvitesHasNoInvites()
+    {
         $user = $this->userFactory->createAndActivateUser();
 
         try {
@@ -44,9 +46,10 @@ class HasInvitesTest extends BaseControllerJsonTestCase
         }
     }
 
-    public function testUserWithInvites() {
+    public function testUserWithInvites()
+    {
         $leader = $this->userFactory->createAndActivateUser('leader@example.com');
-        $user = $this->createAndFindUser('user@example.com');
+        $user = $this->userFactory->create();
 
         $this->getTeamService()->create('Foo', $leader);
         $this->getTeamInviteService()->get($leader, $user);
@@ -57,5 +60,3 @@ class HasInvitesTest extends BaseControllerJsonTestCase
         );
     }
 }
-
-

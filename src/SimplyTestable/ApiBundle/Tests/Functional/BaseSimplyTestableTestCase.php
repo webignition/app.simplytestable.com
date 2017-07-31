@@ -471,18 +471,6 @@ EOD;
     }
 
     /**
-     * @param string $email
-     *
-     * @return User
-     */
-    protected function createAndFindUser($email, $password = 'password')
-    {
-        $this->createUser($email, $password);
-
-        return $this->getUserService()->findUserByEmail($email);
-    }
-
-    /**
      * @param User $user
      *
      * @return string
