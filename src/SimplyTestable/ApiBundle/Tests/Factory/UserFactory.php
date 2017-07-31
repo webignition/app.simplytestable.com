@@ -40,7 +40,7 @@ class UserFactory
      *
      * @return User
      */
-    public function create($email, $planName = 'basic')
+    public function create($email = 'user@example.com', $planName = 'basic')
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');

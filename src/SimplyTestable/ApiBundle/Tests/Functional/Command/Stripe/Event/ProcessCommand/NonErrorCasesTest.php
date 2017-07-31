@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Stripe\Event\ProcessCommand;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+
 abstract class NonErrorCasesTest extends ProcessCommandTest {
 
     protected $stripeId;
@@ -15,7 +17,9 @@ abstract class NonErrorCasesTest extends ProcessCommandTest {
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureSet()));
 
-        $user = $this->getTestUser();
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(

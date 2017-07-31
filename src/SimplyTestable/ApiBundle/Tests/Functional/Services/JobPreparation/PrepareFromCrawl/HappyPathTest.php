@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prep
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -25,9 +26,13 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->create();
+
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_USER => $this->getTestUser(),
+            JobFactory::KEY_USER => $user,
             JobFactory::KEY_TEST_TYPES => [
                 'html validation',
                 'css validation',

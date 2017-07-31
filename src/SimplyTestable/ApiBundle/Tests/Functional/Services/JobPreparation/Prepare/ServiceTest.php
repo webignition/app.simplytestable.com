@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prep
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\AtomFeedFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\HtmlDocumentFactory;
@@ -349,7 +350,9 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testCrawlJobTakesParametersOfParentJob()
     {
-        $user = $this->getTestUser();
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->create();
         $this->getUserService()->setUser($user);
 
         $job = $this->jobFactory->create([

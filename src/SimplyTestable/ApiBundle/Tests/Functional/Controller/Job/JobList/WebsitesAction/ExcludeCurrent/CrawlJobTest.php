@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\JobList\Websi
 
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class CrawlJobTest extends ExcludeCurrentTest
 {
@@ -20,9 +21,10 @@ class CrawlJobTest extends ExcludeCurrentTest
     protected function createJobs()
     {
         $jobFactory = new JobFactory($this->container);
+        $userFactory = new UserFactory($this->container);
 
         $this->jobs[] = $jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_USER => $this->getTestUser(),
+            JobFactory::KEY_USER => $userFactory->create(),
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);

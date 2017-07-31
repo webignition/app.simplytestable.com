@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prepare\HttpAuth;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -22,7 +23,9 @@ class CrawlJobTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $user = $this->getTestUser();
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->create();
 
         $this->getUserService()->setUser($user);
 

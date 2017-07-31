@@ -78,9 +78,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     const TEAM_INVITE_CONTROLLER_NAME = TeamInviteController::class;
     const JOBCONFIGURATION_CREATE_CONTROLLER_NAME = JobConfigurationCreateController::class;
 
-    const TEST_USER_EMAIL = 'user@example.com';
-    const TEST_USER_PASSWORD = 'password';
-
     const DEFAULT_CANONICAL_URL = 'http://example.com/';
     const DEFAULT_REQUIRED_SITEMAP_XML_URL_COUNT = 3;
 
@@ -499,33 +496,6 @@ EOD;
         $this->getUserCreationController('activateAction')->activateAction($user->getConfirmationToken());
 
         return $user;
-    }
-
-    /**
-     * @return User
-     */
-    protected function getTestUser() {
-        $user = $this->getUserService()->findUserByEmail(self::TEST_USER_EMAIL);
-        if (is_null($user)) {
-            $this->createAndActivateUser(self::TEST_USER_EMAIL, self::TEST_USER_PASSWORD);
-        }
-
-        return $this->getUserService()->findUserByEmail(self::TEST_USER_EMAIL);
-    }
-
-    /**
-     * @param int $count
-     *
-     * @return array
-     */
-    protected function createAndActivateUserCollection($count)
-    {
-        $users = array();
-        for ($index = 0; $index < $count; $index++) {
-            $users[] = $this->createAndActivateUser('user'.$index.'@example.com', 'password');
-        }
-
-        return $users;
     }
 
     /**

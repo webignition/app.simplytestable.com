@@ -4,16 +4,18 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\ScheduledJob\Execute
 
 use SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class CreditLimitReachedTest extends RejectedTest
 {
     protected function preCall()
     {
         $jobFactory = new JobFactory($this->container);
+        $userFactory = new UserFactory($this->container);
 
         $creditsPerMonth = 3;
 
-        $user = $this->getTestUser();
+        $user = $userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this

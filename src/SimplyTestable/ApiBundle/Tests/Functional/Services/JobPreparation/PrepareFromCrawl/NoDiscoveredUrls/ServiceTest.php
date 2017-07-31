@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prep
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -24,9 +25,11 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
+        $userFactory = new UserFactory($this->container);
+
         $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_USER => $this->getTestUser(),
+            JobFactory::KEY_USER => $userFactory->create(),
             JobFactory::KEY_TEST_TYPES => [
                 'html validation',
                 'css validation',
