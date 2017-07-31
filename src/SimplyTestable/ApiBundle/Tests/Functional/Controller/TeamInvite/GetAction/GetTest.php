@@ -2,13 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\GetAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
 
-class GetTest extends ActionTest {
+class GetTest extends ActionTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
 
     public function testInviterIsNotTeamLeaderReturnsBadResponse() {
-        $inviter = $this->createAndActivateUser('user1@example.com', 'password');
-        $invitee = $this->createAndActivateUser('user2@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('user1@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('user2@example.com');
 
         $this->getUserService()->setUser($inviter);
 
@@ -23,7 +39,7 @@ class GetTest extends ActionTest {
 
 
     public function testInviteeIsNotAUserCreatesUserAndCreatesInvite() {
-        $inviter = $this->createAndActivateUser('leader@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('leader@example.com');
         $team = $this->getTeamService()->create(
             'Foo',
             $inviter
@@ -52,8 +68,8 @@ class GetTest extends ActionTest {
 
 
     public function testInviteeIsTeamLeaderReturnsBadResponse() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getUserService()->setUser($inviter);
 
@@ -78,9 +94,9 @@ class GetTest extends ActionTest {
 
 
     public function testInviteeIsAlreadyOnADifferentTeamReturnsBadResponse() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $leaderTeam = $this->getTeamService()->create(
             'Foo1',
@@ -107,8 +123,8 @@ class GetTest extends ActionTest {
 
 
     public function testGetNewInviteReturnsInvite() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getTeamService()->create(
             'Foo',
@@ -128,8 +144,8 @@ class GetTest extends ActionTest {
 
 
     public function testGetExistingInviteReturnsInvite() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getTeamService()->create(
             'Foo',
@@ -148,7 +164,7 @@ class GetTest extends ActionTest {
 
 
     public function testInvitePublicUserReturnsBadRequest() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
 
         $this->getTeamService()->create(
             'Foo',
@@ -168,7 +184,7 @@ class GetTest extends ActionTest {
 
 
     public function testInviteAdminUserReturnsBadRequest() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
 
         $this->getTeamService()->create(
             'Foo',
@@ -188,8 +204,8 @@ class GetTest extends ActionTest {
 
 
     public function testInviteUserOnPremiumPlanReturnsBadRequest() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getUserAccountPlanService()->subscribe($invitee, $this->getAccountPlanService()->find('personal'));
 
@@ -211,8 +227,8 @@ class GetTest extends ActionTest {
 
 
     public function testTokenIsExposed() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getTeamService()->create(
             'Foo',

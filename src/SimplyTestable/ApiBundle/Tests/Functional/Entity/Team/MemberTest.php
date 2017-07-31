@@ -2,15 +2,19 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\Team\Member;
 
-class MemberTest extends BaseSimplyTestableTestCase {
+class MemberTest extends BaseSimplyTestableTestCase
+{
+    public function testPersist()
+    {
+        $userFactory = new UserFactory($this->container);
 
-    public function testPersist() {
         $team = new Team();
-        $team->setLeader($this->createAndActivateUser('team-leader@example.com', 'password'));
+        $team->setLeader($userFactory->createAndActivateUser('team-leader@example.com'));
         $team->setName('Foo');
 
         $this->getManager()->persist($team);
@@ -18,10 +22,9 @@ class MemberTest extends BaseSimplyTestableTestCase {
 
         $member = new Member();
         $member->setTeam($team);
-        $member->setUser($this->createAndActivateUser('team-member@example.com', 'password'));
+        $member->setUser($userFactory->createAndActivateUser('team-member@example.com'));
 
         $this->getManager()->persist($member);
         $this->getManager()->flush();
     }
-
 }

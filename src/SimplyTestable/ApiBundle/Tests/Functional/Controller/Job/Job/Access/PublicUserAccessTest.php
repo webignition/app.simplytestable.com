@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job\Access;
 
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
@@ -46,7 +47,9 @@ abstract class PublicUserAccessTest extends BaseControllerJsonTestCase
         $this->assertTrue($this->job->getIsPublic());
         $this->assertEquals($this->getUserService()->getPublicUser()->getId(), $this->job->getUser()->getId());
 
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createAndActivateUser();
+
         $actionName = $this->getActionNameFromRouter();
 
         $this->assertEquals(200, $this->getCurrentController([

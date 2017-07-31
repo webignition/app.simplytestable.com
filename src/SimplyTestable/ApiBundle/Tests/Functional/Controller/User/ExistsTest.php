@@ -2,15 +2,28 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-class ExistsTest extends BaseControllerJsonTestCase {
+class ExistsTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
 
     public function testExistsWithNotEnabledUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
 
         $controller = $this->getUserController('existsAction');
         $response = $controller->existsAction($user->getEmail());
@@ -20,10 +33,7 @@ class ExistsTest extends BaseControllerJsonTestCase {
 
 
     public function testExistsWithEnabledUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndActivateUser($email, $password);
+        $user = $this->userFactory->create();
 
         $controller = $this->getUserController('existsAction');
         $response = $controller->existsAction($user->getEmail());

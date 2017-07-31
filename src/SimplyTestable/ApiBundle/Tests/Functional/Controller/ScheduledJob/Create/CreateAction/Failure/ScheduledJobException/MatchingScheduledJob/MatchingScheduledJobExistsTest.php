@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Crea
 
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobException;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Create\CreateAction\Failure\ScheduledJobException\ExceptionTest;
 
 abstract class MatchingScheduledJobExistsTest extends ExceptionTest {
@@ -26,7 +27,9 @@ abstract class MatchingScheduledJobExistsTest extends ExceptionTest {
 
     protected function getCurrentUser() {
         if (is_null($this->user)) {
-            $this->user = $this->createAndActivateUser('user@example.com');
+            $userFactory = new UserFactory($this->container);
+
+            $this->user = $userFactory->createAndActivateUser();
         }
 
         return $this->user;

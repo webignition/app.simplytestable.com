@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job\LatestAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -13,6 +14,11 @@ class LatestTest extends BaseControllerJsonTestCase
     private $jobFactory;
 
     /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,7 @@ class LatestTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->jobFactory = new JobFactory($this->container);
+        $this->userFactory = new UserFactory($this->container);
     }
 
     public function testLatestActionForPublicUser()
@@ -42,8 +49,8 @@ class LatestTest extends BaseControllerJsonTestCase
         $canonicalUrl1 = 'http://one.example.com/';
         $canonicalUrl2 = 'http://two.example.com/';
 
-        $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
+        $user1 = $this->userFactory->createAndActivateUser('user1@example.com');
+        $user2 = $this->userFactory->createAndActivateUser('user2@example.com');
 
         $job1 = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl1,
@@ -90,8 +97,8 @@ class LatestTest extends BaseControllerJsonTestCase
 
     public function testForMemberInTeamWhereLatestBelongsToLeader()
     {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $member = $this->createAndActivateUser('member@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $member = $this->userFactory->createAndActivateUser('member@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
@@ -115,8 +122,8 @@ class LatestTest extends BaseControllerJsonTestCase
 
     public function testForLeaderInTeamMemberLatestBelongsToMember()
     {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $member = $this->createAndActivateUser('member@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $member = $this->userFactory->createAndActivateUser('member@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
@@ -140,9 +147,9 @@ class LatestTest extends BaseControllerJsonTestCase
 
     public function testForMemberInTeamWhereLatestBelongsToDifferentMember()
     {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $member1 = $this->createAndActivateUser('member1@example.com');
-        $member2 = $this->createAndActivateUser('member2@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $member1 = $this->userFactory->createAndActivateUser('member1@example.com');
+        $member2 = $this->userFactory->createAndActivateUser('member2@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',

@@ -2,40 +2,59 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TeamMember\Add;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamMember\ServiceTest;
 
-class RemoveTest extends ServiceTest {
+class RemoveTest extends ServiceTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testRemoveUserThatIsNotOnATeamReturnsTrue() {
-        $this->assertTrue($this->getTeamMemberService()->remove($this->createAndActivateUser('user@example.com', 'password')));
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
     }
 
+    public function testRemoveUserThatIsNotOnATeamReturnsTrue()
+    {
+        $user = $this->userFactory->create();
 
-    public function testRemoveUserThatIsOnATeamReturnsTrue() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+        $this->assertTrue($this->getTeamMemberService()->remove($user));
+    }
+
+    public function testRemoveUserThatIsOnATeamReturnsTrue()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($team, $user);
 
         $this->assertTrue($this->getTeamMemberService()->remove($user));
     }
 
-
-    public function testRemoveUserThatIsOnATeamRemovesTheUser() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+    public function testRemoveUserThatIsOnATeamRemovesTheUser()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($team, $user);
 
@@ -45,5 +64,4 @@ class RemoveTest extends ServiceTest {
 
         $this->assertFalse($this->getTeamMemberService()->contains($team, $user));
     }
-
 }

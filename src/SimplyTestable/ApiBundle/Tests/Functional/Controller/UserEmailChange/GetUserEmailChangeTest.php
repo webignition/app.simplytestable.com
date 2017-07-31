@@ -2,11 +2,27 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-class GetUserEmailChangeTest extends BaseControllerJsonTestCase {
+class GetUserEmailChangeTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testWithNonExistentUser() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testWithNonExistentUser()
+    {
         $email = 'user1@example.com';
         $controller = $this->getUserEmailChangeController('getAction');
 
@@ -18,11 +34,11 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase {
         }
     }
 
-    public function testWithValidUserThatHasNoEmailChangeRequest() {
+    public function testWithValidUserThatHasNoEmailChangeRequest()
+    {
         $email = 'user1@example.com';
-        $password = 'password1';
 
-        $this->createAndActivateUser($email, $password);
+        $this->userFactory->createAndActivateUser($email);
 
         $controller = $this->getUserEmailChangeController('getAction');
 
@@ -34,13 +50,12 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase {
         }
     }
 
-
-    public function testWithValidUserAndThatHasEmailChangeRequest() {
+    public function testWithValidUserAndThatHasEmailChangeRequest()
+    {
         $email = 'user1@example.com';
-        $password = 'password1';
         $newEmail = 'user1-new@example.com';
 
-        $user = $this->createAndActivateUser($email, $password);
+        $user = $this->userFactory->createAndActivateUser($email);
         $this->getUserService()->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), $newEmail);
@@ -54,5 +69,4 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase {
         $this->assertEquals($newEmail, $responseObject->new_email);
         $this->assertNotNull($responseObject->token);
     }
-
 }

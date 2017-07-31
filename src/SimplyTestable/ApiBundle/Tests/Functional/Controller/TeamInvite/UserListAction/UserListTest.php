@@ -2,12 +2,28 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\UserListAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
 
-class UserListTest extends ActionTest {
+class UserListTest extends ActionTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
 
     public function testNoInvitesReturnsEmptyCollection() {
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
         $this->getUserService()->setUser($leader);
 
         $this->getTeamService()->create(
@@ -23,9 +39,9 @@ class UserListTest extends ActionTest {
     }
 
     public function testHasInvitesReturnsInviteCollection() {
-        $leader1 = $this->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->createAndActivateUser('leader2@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
 
@@ -62,9 +78,9 @@ class UserListTest extends ActionTest {
 
 
     public function testUserOnPremiumPlanListsNoInvites() {
-        $leader1 = $this->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->createAndActivateUser('leader2@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
 

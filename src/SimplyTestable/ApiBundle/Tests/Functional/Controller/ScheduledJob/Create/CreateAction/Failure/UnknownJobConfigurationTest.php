@@ -2,10 +2,14 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Create\CreateAction\Failure;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+
 class UnknownJobConfigurationTest extends FailureTest {
 
     protected function getCurrentUser() {
-        return $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        return $userFactory->createAndActivateUser();
     }
 
     protected function getHeaderErrorCode()

@@ -2,12 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\Create;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Team\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
 
-class CreateTest extends ServiceTest {
+class CreateTest extends ServiceTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testEmptyNameThrowsTeamServiceException() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testEmptyNameThrowsTeamServiceException()
+    {
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
             '',
@@ -16,15 +33,15 @@ class CreateTest extends ServiceTest {
 
         $this->getTeamService()->create(
             '',
-            $this->createAndActivateUser('user@example.com', 'password')
+            $this->userFactory->createAndActivateUser()
         );
     }
 
-
-    public function testTakenNameThrowsTeamServiceException() {
+    public function testTakenNameThrowsTeamServiceException()
+    {
         $this->getTeamService()->create(
             'Foo',
-            $this->createAndActivateUser('user1@example.com', 'password')
+            $this->userFactory->createAndActivateUser()
         );
 
         $this->setExpectedException(
@@ -35,13 +52,13 @@ class CreateTest extends ServiceTest {
 
         $this->getTeamService()->create(
             'Foo',
-            $this->createAndActivateUser('user2@example.com', 'password')
+            $this->userFactory->createAndActivateUser('user2@example.com')
         );
     }
 
-
-    public function testUserAlreadyLeadsTeamThrowsTeamServiceException() {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+    public function testUserAlreadyLeadsTeamThrowsTeamServiceException()
+    {
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create(
             'Foo',
@@ -60,16 +77,16 @@ class CreateTest extends ServiceTest {
         );
     }
 
-
-    public function testUserAlreadyOnTeamThrowsTeamMemberServiceException() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+    public function testUserAlreadyOnTeamThrowsTeamMemberServiceException()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($team, $user);
 
@@ -84,5 +101,4 @@ class CreateTest extends ServiceTest {
             $user
         );
     }
-
 }

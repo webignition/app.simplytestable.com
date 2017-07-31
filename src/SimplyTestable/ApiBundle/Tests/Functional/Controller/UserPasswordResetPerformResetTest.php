@@ -2,15 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+
 class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
 
     public function testPerformResetWithEncodedPassword() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
         $encodedNewPassword = rawurlencode('@password');
 
-        $user = $this->createAndActivateUser($email, $password);
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createAndActivateUser();
+
         $token = $this->getPasswordResetToken($user);
 
         $controller = $this->getUserPasswordResetController('resetPasswordAction', array(
@@ -22,10 +23,9 @@ class UserPasswordResetPerformResetTest extends BaseControllerJsonTestCase {
     }
 
     public function testPerformResetWithValidToken() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createAndActivateUser();
 
-        $user = $this->createAndActivateUser($email, $password);
         $token = $this->getPasswordResetToken($user);
 
         $controller = $this->getUserPasswordResetController('resetPasswordAction', array(

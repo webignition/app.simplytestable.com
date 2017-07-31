@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Update\Success;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Update\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
@@ -35,7 +36,9 @@ abstract class SuccessTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $this->user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->user = $userFactory->createAndActivateUser();
 
         $this->scheduledJob = $this->getScheduledJobService()->create(
             $this->getOriginalJobConfiguration(),

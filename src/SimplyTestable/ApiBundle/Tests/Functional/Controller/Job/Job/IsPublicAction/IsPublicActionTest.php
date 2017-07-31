@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job\IsPublicAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -15,6 +16,11 @@ class IsPublicActionTest extends BaseControllerJsonTestCase
     private $jobFactory;
 
     /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -22,6 +28,7 @@ class IsPublicActionTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->jobFactory = new JobFactory($this->container);
+        $this->userFactory = new UserFactory($this->container);
     }
 
     public function testFalseForNonNumericJobId()
@@ -56,7 +63,7 @@ class IsPublicActionTest extends BaseControllerJsonTestCase
 
     public function testTrueForPublicJobOwnedByNonPublicUserAccessedByPublicUser()
     {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
         $job = $this->jobFactory->create([
@@ -77,7 +84,7 @@ class IsPublicActionTest extends BaseControllerJsonTestCase
 
     public function testTrueForPublicJobOwnedByNonPublicUserAccessedByNonPublicUser()
     {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
         $job = $this->jobFactory->create([
@@ -97,8 +104,8 @@ class IsPublicActionTest extends BaseControllerJsonTestCase
 
     public function testTrueForPublicJobOwnedByNonPublicUserAccessedByDifferentNonPublicUser()
     {
-        $user1 = $this->createAndActivateUser('user1@example.com', 'password');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+        $user1 = $this->userFactory->createAndActivateUser('user1@example.com');
+        $user2 = $this->userFactory->createAndActivateUser('user2@example.com');
 
         $this->getUserService()->setUser($user1);
         $job = $this->jobFactory->create([
@@ -119,7 +126,7 @@ class IsPublicActionTest extends BaseControllerJsonTestCase
 
     public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByPublicUser()
     {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
         $job = $this->jobFactory->create([
@@ -138,7 +145,7 @@ class IsPublicActionTest extends BaseControllerJsonTestCase
 
     public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByNonPublicUser()
     {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
         $job = $this->jobFactory->create([
@@ -156,8 +163,8 @@ class IsPublicActionTest extends BaseControllerJsonTestCase
 
     public function testFalseForPrivateJobOwnedByNonPublicUserAccessedByDifferentNonPublicUser()
     {
-        $user1 = $this->createAndActivateUser('user1@example.com', 'password');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+        $user1 = $this->userFactory->createAndActivateUser('user1@example.com');
+        $user2 = $this->userFactory->createAndActivateUser('user2@example.com');
 
         $this->getUserService()->setUser($user1);
         $job = $this->jobFactory->create([

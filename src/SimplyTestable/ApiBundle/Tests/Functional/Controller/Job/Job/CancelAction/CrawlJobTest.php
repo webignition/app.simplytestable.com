@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class CrawlJobTest extends IsCancelledTest
 {
@@ -114,7 +115,8 @@ class CrawlJobTest extends IsCancelledTest
     private function getUser()
     {
         if (is_null($this->user)) {
-            $this->user = $this->createAndActivateUser('user@example.com');
+            $userFactory = new UserFactory($this->container);
+            $this->user = $userFactory->createAndActivateUser();
         }
 
         return $this->user;

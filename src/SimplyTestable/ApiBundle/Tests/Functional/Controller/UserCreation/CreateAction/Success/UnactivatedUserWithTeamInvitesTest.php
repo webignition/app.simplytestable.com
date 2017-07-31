@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\CreateAction\Success;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class UnactivatedUserWithTeamInvitesTest extends SuccessTest {
 
@@ -59,7 +60,9 @@ class UnactivatedUserWithTeamInvitesTest extends SuccessTest {
     public function setUp() {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
         $this->getTeamService()->create('Foo', $leader);
         $this->getUserService()->setUser($leader);
 

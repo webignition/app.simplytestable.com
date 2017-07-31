@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prepare\AutoCrawl;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -44,7 +45,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testNonPublicUserJobDoesAutostartCrawlJob()
     {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createAndActivateUser();
 
         $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $user,

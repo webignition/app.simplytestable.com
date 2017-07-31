@@ -483,22 +483,6 @@ EOD;
     }
 
     /**
-     * @param string $email
-     * @param string $password
-     *
-     * @return User
-     */
-    protected function createAndActivateUser($email = 'user@example.com', $password = 'password')
-    {
-        $this->createUser($email, $password);
-
-        $user = $this->getUserService()->findUserByEmail($email);
-        $this->getUserCreationController('activateAction')->activateAction($user->getConfirmationToken());
-
-        return $user;
-    }
-
-    /**
      * @param User $user
      *
      * @return string

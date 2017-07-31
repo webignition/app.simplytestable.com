@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Delete;
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class SingleUserTest extends ServiceTest {
 
@@ -14,7 +15,10 @@ class SingleUserTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->createAndActivateUser();
+
 
         $jobConfiguration = $this->createJobConfiguration([
             'label' => 'foo',

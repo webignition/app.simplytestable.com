@@ -2,12 +2,28 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\CreateAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\ActionTest;
 
-class CreateTest extends ActionTest {
+class CreateTest extends ActionTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
 
     public function testRequestAsTeamLeaderReturnsExistingTeam() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $this->getTeamService()->create(
             'Foo',
@@ -31,14 +47,14 @@ class CreateTest extends ActionTest {
 
 
     public function testRequestAsTeamMemberReturnsExistingTeam() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($user);
 
         $this->getTeamMemberService()->add($team, $user);
@@ -58,7 +74,7 @@ class CreateTest extends ActionTest {
 
 
     public function testRequestAsNonLeaderAndNonMemberCreatesNewTeam() {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($user);
 
         $this->assertNull($this->getTeamService()->getForUser($user));
@@ -114,8 +130,8 @@ class CreateTest extends ActionTest {
 
 
     public function testUserInvitesDeletedOnTeamCreate() {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create('Foo1', $leader);
 

@@ -191,8 +191,9 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
 
     public function testGetForPublicJobOwnedByNonPublicUserByDifferentNonPublicUser()
     {
-        $user1 = $this->createAndActivateUser('user1@example.com', 'password');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+        $userFactory = new UserFactory($this->container);
+        $user1 = $userFactory->createAndActivateUser('user1@example.com');
+        $user2 = $userFactory->createAndActivateUser('user2@example.com');
 
         $this->getUserService()->setUser($user1);
         $job = $this->jobFactory->createResolveAndPrepare([
@@ -244,8 +245,9 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
 
     public function testGetForPrivateJobOwnedByNonPublicUserByDifferentNonPublicUser()
     {
-        $user1 = $this->createAndActivateUser('user1@example.com', 'password');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+        $userFactory = new UserFactory($this->container);
+        $user1 = $userFactory->createAndActivateUser('user1@example.com');
+        $user2 = $userFactory->createAndActivateUser('user2@example.com');
 
         $this->getUserService()->setUser($user1);
 

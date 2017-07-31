@@ -2,13 +2,30 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\TeamInvite\GetForTeam;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamInvite\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 
-class GetForTeamTest extends ServiceTest {
+class GetForTeamTest extends ServiceTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testTeamWithNoInvitesReturnsEmptyCollection() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testTeamWithNoInvitesReturnsEmptyCollection()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo1',
@@ -18,10 +35,10 @@ class GetForTeamTest extends ServiceTest {
         $this->assertEquals([], $this->getTeamInviteService()->getForTeam($team));
     }
 
-
-    public function testTeamWithInvitesReturnsInvites() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+    public function testTeamWithInvitesReturnsInvites()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create(
             'Foo1',
@@ -32,5 +49,4 @@ class GetForTeamTest extends ServiceTest {
 
         $this->assertEquals([$invite], $this->getTeamInviteService()->getForTeam($team));
     }
-
 }

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job\StatusAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -13,6 +14,11 @@ class OwnersTest extends BaseControllerJsonTestCase
     private $jobFactory;
 
     /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,7 @@ class OwnersTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->jobFactory = new JobFactory($this->container);
+        $this->userFactory = new UserFactory($this->container);
     }
 
     protected function getActionName()
@@ -45,7 +52,7 @@ class OwnersTest extends BaseControllerJsonTestCase
 
     public function testPrivateJob()
     {
-        $user = $this->createAndActivateUser('user@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $canonicalUrl = 'http://example.com/';
 
@@ -66,8 +73,8 @@ class OwnersTest extends BaseControllerJsonTestCase
 
     public function testTeamJob()
     {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser('user@example.com');
 
         $team = $this->getTeamService()->create('Foo', $leader);
         $this->getTeamMemberService()->add($team, $user);

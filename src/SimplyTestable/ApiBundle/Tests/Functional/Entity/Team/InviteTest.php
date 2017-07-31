@@ -2,18 +2,22 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 
-class InviteTest extends BaseSimplyTestableTestCase {
-
+class InviteTest extends BaseSimplyTestableTestCase
+{
     const TEAM_NAME = 'Foo';
     const TOKEN = 'token';
 
-    public function testPersist() {
+    public function testPersist()
+    {
+        $userFactory = new UserFactory($this->container);
+
         $team = new Team();
-        $team->setLeader($this->createAndActivateUser('team-leader@example.com', 'password'));
+        $team->setLeader($userFactory->createAndActivateUser('team-leader@example.com'));
         $team->setName('Foo');
 
         $this->getManager()->persist($team);
@@ -21,7 +25,7 @@ class InviteTest extends BaseSimplyTestableTestCase {
 
         $invite = new Invite();
         $invite->setTeam($team);
-        $invite->setUser($this->createAndActivateUser('team-member@example.com', 'password'));
+        $invite->setUser($userFactory->createAndActivateUser('team-member@example.com'));
         $invite->setToken(self::TOKEN);
 
         $this->getManager()->persist($invite);

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\GetByTokenAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
 
 class GetByTokenTest extends ActionTest {
@@ -16,8 +17,10 @@ class GetByTokenTest extends ActionTest {
 
 
     public function testTokenReturnsInvite() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $userFactory = new UserFactory($this->container);
+
+        $inviter = $userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getTeamService()->create(
             'Foo',

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\JobList\CountAction;
 
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class UserTest extends CountTest
 {
@@ -20,8 +21,10 @@ class UserTest extends CountTest
     {
         parent::setUp();
 
+        $userFactory = new UserFactory($this->container);
+
         foreach ($this->userEmailAddresses as $emailAddress) {
-            $this->users[] = $this->createAndActivateUser($emailAddress, 'password');
+            $this->users[] = $userFactory->createAndActivateUser($emailAddress);
         }
 
         $jobFactory = new JobFactory($this->container);

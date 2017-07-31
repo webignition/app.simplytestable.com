@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\Success;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\UpdateTest;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
@@ -36,7 +37,8 @@ abstract class SuccessTest extends UpdateTest {
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
         $this->getJobConfigurationService()->setUser($user);

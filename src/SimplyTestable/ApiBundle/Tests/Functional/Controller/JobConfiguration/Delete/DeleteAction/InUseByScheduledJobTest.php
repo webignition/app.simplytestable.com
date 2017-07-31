@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Delete\DeleteAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
@@ -17,7 +18,8 @@ class InUseByScheduledJobTest extends DeleteTest {
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndActivateUser();
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
 

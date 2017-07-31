@@ -2,12 +2,28 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\RemoveAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\ActionTest;
 
-class RemoveTest extends ActionTest {
+class RemoveTest extends ActionTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
 
     public function testMemberIsNotUserReturnsBadRequest() {
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $this->getTeamService()->create(
             'Foo',
@@ -25,8 +41,8 @@ class RemoveTest extends ActionTest {
 
 
     public function testLeaderIsNotALeaderReturnsBadRequest() {
-        $user1 = $this->createAndActivateUser('user1@example.com');
-        $user2 = $this->createAndActivateUser('user2@example.com');
+        $user1 = $this->userFactory->createAndActivateUser('user1@example.com');
+        $user2 = $this->userFactory->createAndActivateUser('user2@example.com');
 
         $this->getUserService()->setUser($user1);
 
@@ -41,9 +57,9 @@ class RemoveTest extends ActionTest {
 
 
     public function testUserIsNotInLeadersTeamThrowsTeamServiceException() {
-        $leader1 = $this->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->createAndActivateUser('leader2@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $team1 = $this->getTeamService()->create('Foo1', $leader1);
         $this->getTeamService()->create('Foo2', $leader2);
@@ -63,8 +79,8 @@ class RemoveTest extends ActionTest {
 
 
     public function testRemovesUserFromTeam() {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create('Foo', $leader);
         $this->getTeamMemberService()->add($team, $user);

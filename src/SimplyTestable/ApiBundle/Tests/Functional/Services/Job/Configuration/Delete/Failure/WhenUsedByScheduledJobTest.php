@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Delete\Failure;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Delete\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
@@ -19,7 +20,9 @@ class WhenUsedByScheduledJobTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndActivateUser();
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->createAndActivateUser();
 
         $jobConfigurationValues = new ConfigurationValues();
         $jobConfigurationValues->setLabel(self::LABEL);

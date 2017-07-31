@@ -6,9 +6,10 @@ use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-class ForTeamWithMatchTest extends ServiceTest {
-
+class ForTeamWithMatchTest extends ServiceTest
+{
     const LABEL = 'foo';
 
     /**
@@ -44,11 +45,14 @@ class ForTeamWithMatchTest extends ServiceTest {
         ]
     ];
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $member = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $member = $userFactory->createAndActivateUser('user@example.com');
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',
@@ -84,15 +88,16 @@ class ForTeamWithMatchTest extends ServiceTest {
         $this->retrievedConfiguration = $this->getJobConfigurationService()->get(self::LABEL);
     }
 
-    public function testOriginalAndRetrievedAreNotTheExactSameObject() {
+    public function testOriginalAndRetrievedAreNotTheExactSameObject()
+    {
         $this->assertNotEquals(
             spl_object_hash($this->originalConfiguration),
             spl_object_hash($this->retrievedConfiguration)
         );
     }
 
-    public function testOriginalAndRetrievedAreTheSameEntity() {
+    public function testOriginalAndRetrievedAreTheSameEntity()
+    {
         $this->assertEquals($this->originalConfiguration->getId(), $this->retrievedConfiguration->getId());
     }
-
 }

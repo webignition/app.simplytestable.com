@@ -2,20 +2,32 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-class CancelUserEmailChangeTest extends BaseControllerJsonTestCase {
+class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testForDifferentUser() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testForDifferentUser()
+    {
         $email1 = 'user1@example.com';
-        $password1 = 'password1';
-
-        $user1 = $this->createAndActivateUser($email1, $password1);
+        $user1 = $this->userFactory->createAndActivateUser($email1);
 
         $email2 = 'user2@example.com';
-        $password2 = 'password2';
-
-        $user2 = $this->createAndActivateUser($email2, $password2);
+        $user2 = $this->userFactory->createAndActivateUser($email2);
 
         $this->getUserService()->setUser($user2);
         $this->getUserEmailChangeController('createAction')->createAction($user2->getEmail(), 'user1-new@example.com');
@@ -31,11 +43,11 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase {
         }
     }
 
-    public function testForCorrectUser() {
+    public function testForCorrectUser()
+    {
         $email = 'user1@example.com';
-        $password = 'password1';
 
-        $user = $this->createAndActivateUser($email, $password);
+        $user = $this->userFactory->createAndActivateUser($email);
         $this->getUserService()->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), 'user1-new@example.com');
@@ -47,12 +59,11 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase {
         $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
     }
 
-
-    public function testWhenNoEmailChangeRequestExists() {
+    public function testWhenNoEmailChangeRequestExists()
+    {
         $email = 'user1@example.com';
-        $password = 'password1';
 
-        $user = $this->createAndActivateUser($email, $password);
+        $user = $this->userFactory->createAndActivateUser($email);
         $this->getUserService()->setUser($user);
 
         $response = $this->getUserEmailChangeController('cancelAction')->cancelAction($user->getEmail());
@@ -60,5 +71,4 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase {
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
     }
-
 }

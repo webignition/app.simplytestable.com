@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\CreateAction\Success;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class ExistingEnabledUserTest extends SuccessTest {
 
@@ -24,7 +25,9 @@ class ExistingEnabledUserTest extends SuccessTest {
     public function setUp() {
         parent::setUp();
 
-        $this->createAndActivateUser(self::DEFAULT_EMAIL);
+        $userFactory = new UserFactory($this->container);
+
+        $userFactory->createAndActivateUser(self::DEFAULT_EMAIL);
 
         $this->assertTrue($this->getUserService()->exists(self::DEFAULT_EMAIL));
 

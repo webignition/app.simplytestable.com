@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\TeamInvite\GetForToken;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamInvite\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 
@@ -13,8 +14,10 @@ class GetForTokenTest extends ServiceTest {
 
 
     public function testValidTokenReturnsInvite() {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $user = $userFactory->createAndActivateUser();
 
         $this->getTeamService()->create(
             'Foo1',

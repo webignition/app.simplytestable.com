@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction\HasInvite\Individual;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction\HasInvite\HasInviteTest;
 use SimplyTestable\ApiBundle\Entity\User;
 
@@ -21,10 +22,12 @@ class PremiumIndividualTest extends HasInviteTest {
 
 
     protected function preGetUser() {
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
         $this->getTeamService()->create('Foo', $leader);
 
-        $this->user = $this->createAndActivateUser('user@example.com');
+        $this->user = $userFactory->createAndActivateUser();
 
         $this->getTeamInviteService()->get($leader, $this->user);
 
