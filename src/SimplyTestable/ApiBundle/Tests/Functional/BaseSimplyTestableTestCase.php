@@ -1301,20 +1301,6 @@ EOD;
         );
     }
 
-
-    /**
-     * @return UserFactory
-     */
-    protected function createUserFactory()
-    {
-        return new UserFactory(
-            $this->container->get('simplytestable.services.userservice'),
-            $this->container->get('fos_user.util.user_manipulator'),
-            $this->container->get('simplytestable.services.useraccountplanservice'),
-            $this->container->get('simplytestable.services.accountplanservice')
-        );
-    }
-
     /**
      * @return ControllerFactory
      */

@@ -2,50 +2,22 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
-use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\AccountPlanService;
-use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
-use SimplyTestable\ApiBundle\Services\UserService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserFactory
 {
     /**
-     * @var UserService
+     * @var ContainerInterface
      */
-    private $userService;
+    private $container;
 
     /**
-     * @var UserManipulator
+     * @param ContainerInterface $container
      */
-    private $userManipulator;
-
-    /**
-     * @var UserAccountPlanService
-     */
-    private $userAccountPlanService;
-
-    /**
-     * @var AccountPlanService
-     */
-    private $accountPlanService;
-
-    /**
-     * @param UserService $userService
-     * @param UserManipulator $userManipulator
-     * @param UserAccountPlanService $userAccountPlanService
-     * @param AccountPlanService $accountPlanService
-     */
-    public function __construct(
-        UserService $userService,
-        UserManipulator $userManipulator,
-        UserAccountPlanService $userAccountPlanService,
-        AccountPlanService $accountPlanService
-    ) {
-        $this->userService = $userService;
-        $this->userManipulator = $userManipulator;
-        $this->userAccountPlanService = $userAccountPlanService;
-        $this->accountPlanService = $accountPlanService;
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
     }
 
     /**
@@ -70,17 +42,21 @@ class UserFactory
      */
     public function create($email, $planName = 'basic')
     {
-        if ($this->userService->exists($email)) {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+
+        if ($userService->exists($email)) {
             /* @var User $user */
-            $user = $this->userService->findUserByEmail($email);
+            $user = $userService->findUserByEmail($email);
 
             return $user;
         }
 
-        $user = $this->userService->create($email, 'password1');
-        $this->userAccountPlanService->subscribe(
+        $user = $userService->create($email, 'password1');
+        $userAccountPlanService->subscribe(
             $user,
-            $this->accountPlanService->find($planName)
+            $accountPlanService->find($planName)
         );
 
         return $user;
@@ -91,6 +67,8 @@ class UserFactory
      */
     public function activate(User $user)
     {
-        $this->userManipulator->activate($user->getEmail());
+        $userManipulator = $this->container->get('fos_user.util.user_manipulator');
+
+        $userManipulator->activate($user->getEmail());
     }
 }

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Start;
 
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 class RejectTest extends ActionTest
@@ -113,8 +114,10 @@ class RejectTest extends ActionTest
 
     public function testRejectWithCreditLimitReached()
     {
+        $userFactory = new UserFactory($this->container);
+
         $creditsPerMonth = 3;
-        $user = $this->createUserFactory()->create('user-basic@example.com');
+        $user = $userFactory->create('user-basic@example.com');
 
         $this->getAccountPlanService()
             ->find('basic')
