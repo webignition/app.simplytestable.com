@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\ActivateAction\Failure;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\ActionTest;
 use SimplyTestable\ApiBundle\Entity\User;
 
@@ -15,12 +16,9 @@ abstract class FailureTest extends ActionTest {
     public function setUp() {
         parent::setUp();
 
-        $email = 'user1@example.com';
-        $password = 'password1';
+        $userFactory = new UserFactory($this->container);
 
-        $this->createUser($email, $password);
-
-        $this->user = $this->getUserService()->findUserByEmail($email);
+        $this->user = $userFactory->create();
     }
 
     abstract protected function getConfirmationToken();

@@ -458,19 +458,6 @@ EOD;
     }
 
     /**
-     * @param string $email
-     *
-     * @return RedirectResponse
-     */
-    protected function createUser($email, $password)
-    {
-        return $this->getUserCreationController('createAction', array(
-            'email' => $email,
-            'password' => $password
-        ))->createAction();
-    }
-
-    /**
      * @param User $user
      *
      * @return string
