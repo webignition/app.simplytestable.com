@@ -3,11 +3,27 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Retrieval;
 
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
 
 class RetrievalServiceTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
     /**
      * @dataProvider retrieveFailureDataProvider
      *
@@ -22,16 +38,15 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
             JobRetrievalServiceException::CODE_NOT_AUTHORISED
         );
 
-        $userFactory = $this->createUserFactory();
-        $user = $userFactory->create('user@example.com');
-        $jobOwner = $userFactory->create('jobowner@example.com');
+        $user = $this->userFactory->create('user@example.com');
+        $jobOwner = $this->userFactory->create('jobowner@example.com');
 
         $teamService = $this->container->get('simplytestable.services.teamservice');
 
         if ($userTeamStatus == 'leader') {
             $teamService->create('userTeamAsLeader', $user);
         } elseif ($userTeamStatus == 'member') {
-            $userTeamLeader = $userFactory->create('userteamleader@example.com');
+            $userTeamLeader = $this->userFactory->create('userteamleader@example.com');
             $userTeam = $teamService->create('userTeamAsMember', $userTeamLeader);
             $teamService->getMemberService()->add($userTeam, $user);
         }
@@ -39,7 +54,7 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
         if ($jobOwnerTeamStatus == 'leader') {
             $teamService->create('ownerTeam', $jobOwner);
         } elseif ($jobOwnerTeamStatus == 'member') {
-            $jobOwnerTeamLeader = $userFactory->create('jobownerteamleader@example.com');
+            $jobOwnerTeamLeader = $this->userFactory->create('jobownerteamleader@example.com');
             $ownerTeam = $teamService->create('ownerTeamAsMember', $jobOwnerTeamLeader);
             $teamService->getMemberService()->add($ownerTeam, $jobOwner);
         }
@@ -108,9 +123,8 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
         $jobOwnerTeamStatus,
         $isJobPublic
     ) {
-        $userFactory = $this->createUserFactory();
-        $user = $userFactory->create($userEmail);
-        $jobOwner = $userFactory->create($jobOwnerEmail);
+        $user = $this->userFactory->create($userEmail);
+        $jobOwner = $this->userFactory->create($jobOwnerEmail);
 
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
@@ -128,7 +142,7 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
                 );
             }
         } elseif ($userTeamStatus == 'member' && $jobOwnerTeamStatus == 'member') {
-            $leader = $userFactory->create('teamleader@example.com');
+            $leader = $this->userFactory->create('teamleader@example.com');
 
             $team = $teamService->create('team', $leader);
             $teamService->getMemberService()->add($team, $user);

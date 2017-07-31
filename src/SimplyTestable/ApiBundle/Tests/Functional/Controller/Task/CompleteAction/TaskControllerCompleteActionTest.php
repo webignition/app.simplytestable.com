@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
@@ -150,7 +151,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         $expectedJobTaskOutputValues
     ) {
         $this->setJobTypeConstraintLimits();
-        $userFactory = $this->createUserFactory();
+        $userFactory = new UserFactory($this->container);
 
         /* @var Job[] $jobs */
         $jobs = [];
