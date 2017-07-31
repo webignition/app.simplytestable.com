@@ -40,7 +40,7 @@ class SuccessTest extends ActionTest {
         $userFactory = new UserFactory($this->container);
 
         $leader = $userFactory->createAndActivateUser('leader@example.com');
-        $this->user = $userFactory->createAndActivateUser();
+        $this->user = $userFactory->create();
         $this->initialPassword = $this->user->getPassword();
 
         $this->assertFalse($this->user->isEnabled());

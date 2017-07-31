@@ -62,8 +62,8 @@ class DeclineTest extends ActionTest
 
 
     public function testInviteIsDeclined() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getTeamService()->create(
             'Foo',

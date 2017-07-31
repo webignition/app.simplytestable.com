@@ -24,7 +24,7 @@ class UserTest extends WebsitesTest
         $userFactory = new UserFactory($this->container);
 
         foreach ($this->userEmailAddresses as $emailAddress) {
-            $this->users[] = $userFactory->createAndActivateUser($emailAddress, 'password');
+            $this->users[] = $userFactory->createAndActivateUser($emailAddress);
         }
 
         $jobFactory = new JobFactory($this->container);

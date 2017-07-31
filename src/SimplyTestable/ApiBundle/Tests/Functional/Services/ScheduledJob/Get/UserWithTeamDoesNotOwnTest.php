@@ -22,7 +22,7 @@ class UserWithTeamDoesNotOwnTest extends IsNotRetrievedTest {
     protected function setUpPreCreate() {
         $userFactory = new UserFactory($this->container);
 
-        $leader = $userFactory->createAndActivateUser('leader@example.com', 'password');
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
         $this->member = $userFactory->createAndActivateUser('member@example.com');
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(

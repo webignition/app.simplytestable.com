@@ -122,8 +122,8 @@ class AcceptTest extends ActionTest
 
 
     public function testUserWithPremiumPlanCannotAcceptInvite() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getTeamService()->create(
             'Foo',
