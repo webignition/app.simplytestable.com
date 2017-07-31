@@ -3,18 +3,34 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\CrawlJobContainer\ProcessTaskResults;
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class ProcessTaskResultsTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
 
     public function testWithUrlsNotYetProcessed()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
@@ -62,7 +78,7 @@ class ProcessTaskResultsTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 

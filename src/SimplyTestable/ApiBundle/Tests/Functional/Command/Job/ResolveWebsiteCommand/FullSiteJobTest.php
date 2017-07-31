@@ -8,10 +8,11 @@ class FullSiteJobTest extends CommandTest
 {
     public function testCommand()
     {
-        parent::setUp();
+        $jobFactory = new JobFactory($this->container);
+
         $this->queueResolveHttpFixture();
 
-        $job = $this->createJobFactory()->create([
+        $job = $jobFactory->create([
             JobFactory::KEY_TEST_TYPES => ['CSS Validation'],
         ]);
 

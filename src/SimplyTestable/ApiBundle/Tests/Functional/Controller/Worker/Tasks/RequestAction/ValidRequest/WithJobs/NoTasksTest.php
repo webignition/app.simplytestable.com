@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Worker\Tasks\RequestAction\ValidRequest\WithJobs;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\Worker\Tasks\RequestAction\ValidRequest\ValidRequestTest;
 
 class NoTasksTest extends ValidRequestTest
@@ -22,7 +23,10 @@ class NoTasksTest extends ValidRequestTest
         $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->job = $this->createJobFactory()->createResolveAndPrepare();
+
+        $jobFactory = new JobFactory($this->container);
+
+        $this->job = $jobFactory->createResolveAndPrepare();
 
         foreach ($this->job->getTasks() as $task) {
             $task->setState($this->getTaskService()->getCompletedState());

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 
@@ -9,7 +10,9 @@ class TaskTypeOptionsTest extends BaseSimplyTestableTestCase
 {
     public function testUtf8Options()
     {
-        $job = $this->createJobFactory()->create();
+        $jobFactory = new JobFactory($this->container);
+
+        $job = $jobFactory->create();
 
         $taskType = $this->getTaskTypeService()->getByName('HTML Validation');
 

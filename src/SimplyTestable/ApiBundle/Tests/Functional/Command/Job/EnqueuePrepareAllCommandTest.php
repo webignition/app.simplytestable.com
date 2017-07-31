@@ -35,7 +35,7 @@ class EnqueuePrepareAllCommandTest extends ConsoleCommandTestCase
             'http://two.example.com/'
         );
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         /* @var Job[] $jobs */
         $jobs = array();

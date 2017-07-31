@@ -2,8 +2,25 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Cancel\Command;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
 class CancelCommandTest extends BaseTest
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testCancelTaskThatDoesNotExistReturnsStatusCodeMinus1()
     {
         $this->assertReturnCode(-1, array(
@@ -22,7 +39,7 @@ class CancelCommandTest extends BaseTest
     public function testCancelValidTaskReturnsStatusCode0()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare();
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 200',
             'HTTP/1.0 200',
@@ -57,7 +74,7 @@ class CancelCommandTest extends BaseTest
     public function testCancelTaskInWrongStateReturnsStatusCodeMinus2()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare();
         $worker = $this->createWorker();
 
         $task = $job->getTasks()->first();
@@ -88,7 +105,7 @@ class CancelCommandTest extends BaseTest
     public function testCancelTaskWhenWorkerIsInReadOnlyModeReturnsStatusCode503()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare();
         $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
             'HTTP/1.0 503',
         )));

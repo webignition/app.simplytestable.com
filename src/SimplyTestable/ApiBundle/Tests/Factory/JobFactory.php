@@ -6,17 +6,8 @@ use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
-use SimplyTestable\ApiBundle\Services\HttpClientService;
-use SimplyTestable\ApiBundle\Services\Job\RejectionService as JobRejectionService;
-use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
-use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
-use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use SimplyTestable\ApiBundle\Services\TestHttpClientService;
-use SimplyTestable\ApiBundle\Services\UserService;
-use SimplyTestable\ApiBundle\Services\WebSiteService;
-use SimplyTestable\ApiBundle\Services\Job\StartService as JobStartService;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Guzzle\Http\Message\Response as GuzzleResponse;
 
@@ -45,84 +36,18 @@ class JobFactory
     ];
 
     /**
-     * @var JobTypeService
+     * @var ContainerInterface
      */
-    private $jobTypeService;
+    private $container;
 
     /**
-     * @var WebSiteService
+     * @param ContainerInterface $container
      */
-    private $websiteService;
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
 
-    /**
-     * @var TaskTypeService
-     */
-    private $taskTypeService;
-
-    /**
-     * @var JobStartService
-     */
-    private $jobStartService;
-
-    /**
-     * @var WebsiteResolutionService
-     */
-    private $websiteResolutionService;
-
-    /**
-     * @var JobPreparationService
-     */
-    private $jobPreparationService;
-
-    /**
-     * @var TaskService
-     */
-    private $taskService;
-
-    /**
-     * @var JobRejectionService
-     */
-    private $jobRejectionService;
-
-    /**
-     * @var TestHttpClientService
-     */
-    private $httpClientService;
-
-    /**
-     * @param JobTypeService $jobTypeService
-     * @param WebSiteService $websiteService
-     * @param TaskTypeService $taskTypeService
-     * @param JobStartService $jobStartService
-     * @param WebsiteResolutionService $websiteResolutionService
-     * @param JobPreparationService $jobPreparationService
-     * @param TaskService $taskService
-     * @param UserService $userService
-     * @param JobRejectionService $jobRejectionService
-     * @param TestHttpClientService $httpClientService
-     */
-    public function __construct(
-        JobTypeService $jobTypeService,
-        WebsiteService $websiteService,
-        TaskTypeService $taskTypeService,
-        JobStartService $jobStartService,
-        WebsiteResolutionService $websiteResolutionService,
-        JobPreparationService $jobPreparationService,
-        TaskService $taskService,
-        UserService $userService,
-        JobRejectionService $jobRejectionService,
-        TestHttpClientService $httpClientService
-    ) {
-        $this->jobTypeService = $jobTypeService;
-        $this->websiteService = $websiteService;
-        $this->taskTypeService = $taskTypeService;
-        $this->jobStartService = $jobStartService;
-        $this->websiteResolutionService = $websiteResolutionService;
-        $this->jobPreparationService = $jobPreparationService;
-        $this->taskService = $taskService;
-        $this->jobRejectionService = $jobRejectionService;
-        $this->httpClientService = $httpClientService;
-
+        $userService = $container->get('simplytestable.services.userservice');
         $this->defaultJobValues[self::KEY_USER] = $userService->getPublicUser();
     }
 
@@ -134,11 +59,13 @@ class JobFactory
      */
     public function createResolveAndPrepare($jobValues = [], $httpFixtures = [])
     {
+        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+
         $job = $this->create($jobValues);
         $this->resolve($job, (isset($httpFixtures['resolve']) ? $httpFixtures['resolve'] : null));
         $this->prepare($job, (isset($httpFixtures['prepare']) ? $httpFixtures['prepare'] : null));
 
-        $this->httpClientService->getMockPlugin()->clearQueue();
+        $httpClientService->getMockPlugin()->clearQueue();
 
         return $job;
     }
@@ -149,6 +76,11 @@ class JobFactory
      */
     public function create($jobValues = [])
     {
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $jobStartService = $this->container->get('simplytestable.services.job.startservice');
+
         foreach ($this->defaultJobValues as $key => $value) {
             if (!isset($jobValues[$key])) {
                 $jobValues[$key] = $value;
@@ -166,15 +98,15 @@ class JobFactory
 
         $requestAdapter = new RequestAdapter(
             $request,
-            $this->websiteService,
-            $this->jobTypeService,
-            $this->taskTypeService
+            $websiteService,
+            $jobTypeService,
+            $taskTypeService
         );
 
         $jobConfiguration = $requestAdapter->getJobConfiguration();
         $jobConfiguration->setUser($jobValues[self::KEY_USER]);
 
-        return $this->jobStartService->start($jobConfiguration);
+        return $jobStartService->start($jobConfiguration);
     }
 
     /**
@@ -183,6 +115,9 @@ class JobFactory
      */
     public function resolve(Job $job, $httpFixtures = [])
     {
+        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $websiteResolutionService = $this->container->get('simplytestable.services.jobwebsiteresolutionservice');
+
         if (empty($httpFixtures)) {
             $httpFixtures = [
                 GuzzleResponse::fromMessage('HTTP/1.1 200 OK'),
@@ -190,10 +125,10 @@ class JobFactory
         }
 
         foreach ($httpFixtures as $fixture) {
-            $this->httpClientService->queueFixture($fixture);
+            $httpClientService->queueFixture($fixture);
         }
 
-        $this->websiteResolutionService->resolve($job);
+        $websiteResolutionService->resolve($job);
     }
 
     /**
@@ -202,6 +137,9 @@ class JobFactory
      */
     public function prepare(Job $job, $httpFixtures = [])
     {
+        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
+
         if (empty($httpFixtures)) {
             $httpFixtures = [
                 GuzzleResponse::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
@@ -213,10 +151,10 @@ class JobFactory
         }
 
         foreach ($httpFixtures as $fixture) {
-            $this->httpClientService->queueFixture($fixture);
+            $httpClientService->queueFixture($fixture);
         }
 
-        $this->jobPreparationService->prepare($job);
+        $jobPreparationService->prepare($job);
     }
 
     /**
@@ -225,9 +163,11 @@ class JobFactory
      */
     public function setTaskStates(Job $job, State $state)
     {
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
         foreach ($job->getTasks() as $task) {
             $task->setState($state);
-            $this->taskService->persistAndFlush($task);
+            $taskService->persistAndFlush($task);
         }
     }
 
@@ -238,6 +178,8 @@ class JobFactory
      */
     public function reject(Job $job, $reason, Constraint $constraint)
     {
-        $this->jobRejectionService->reject($job, $reason, $constraint);
+        $jobRejectionService = $this->container->get('simplytestable.services.job.rejectionservice');
+
+        $jobRejectionService->reject($job, $reason, $constraint);
     }
 }

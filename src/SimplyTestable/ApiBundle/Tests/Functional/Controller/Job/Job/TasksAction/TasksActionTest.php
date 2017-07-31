@@ -9,11 +9,26 @@ use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFa
 
 class TasksActionTest extends BaseControllerJsonTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testNoOutputForIncompleteTasksWithPartialOutput()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => ['link integrity'],
         ]);
 
@@ -85,7 +100,7 @@ class TasksActionTest extends BaseControllerJsonTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare();
 
         foreach ($job->getTasks() as $task) {
             $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([

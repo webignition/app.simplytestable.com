@@ -32,7 +32,7 @@ abstract class CountTest extends BaseControllerJsonTestCase
 
     protected function createJobs()
     {
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         foreach ($this->getCanonicalUrls() as $canonicalUrl) {
             $this->jobs[] = $jobFactory->create([

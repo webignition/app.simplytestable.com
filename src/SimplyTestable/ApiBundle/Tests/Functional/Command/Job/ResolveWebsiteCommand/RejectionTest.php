@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\ResolveWebsiteCommand;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class RejectionTest extends CommandTest
 {
@@ -12,7 +13,10 @@ class RejectionTest extends CommandTest
      */
     private $job;
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         parent::setUp();
 
@@ -20,7 +24,9 @@ class RejectionTest extends CommandTest
             "CURL/28"
         )));
 
-        $this->job = $this->createJobFactory()->create();
+        $jobFactory = new JobFactory($this->container);
+
+        $this->job = $jobFactory->create();
 
         $this->clearRedis();
 

@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
@@ -17,6 +18,21 @@ use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 
 class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     /**
      * @dataProvider completeActionInvalidRequestDataProvider
      *
@@ -67,7 +83,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             GoneHttpException::class
         );
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             'type' => 'full site',
             'siteRootUrl' => 'http://example.com',
             'testTypes' => ['html validation',],
@@ -159,7 +175,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             $user = $userFactory->create($jobValues['user']);
             $jobValues['user'] = $user;
 
-            $job = $this->createJobFactory()->createResolveAndPrepare($jobValues);
+            $job = $this->jobFactory->createResolveAndPrepare($jobValues);
 
             $this->setJobTaskStates(
                 $job,
@@ -644,8 +660,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
      */
     private function setJobTaskStates(Job $job, State $state)
     {
-        $jobFactory = $this->createJobFactory();
-        $jobFactory->setTaskStates(
+        $this->jobFactory->setTaskStates(
             $job,
             $state
         );

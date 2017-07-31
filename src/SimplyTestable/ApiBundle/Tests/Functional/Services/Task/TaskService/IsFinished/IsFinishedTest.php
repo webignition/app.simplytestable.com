@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Task\TaskService\IsFinished;
 
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Task\TaskService\ServiceTest;
 
 abstract class IsFinishedTest extends ServiceTest
@@ -13,7 +14,8 @@ abstract class IsFinishedTest extends ServiceTest
     {
         parent::setUp();
 
-        $job = $this->createJobFactory()->create();
+        $jobFactory = new JobFactory($this->container);
+        $job = $jobFactory->create();
 
         $this->task = new Task();
         $this->task->setJob($job);

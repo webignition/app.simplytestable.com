@@ -27,7 +27,9 @@ class TooManyRedirectsTest extends BaseSimplyTestableTestCase
 
     public function testFullSiteTestResolvesToEffectiveUrl()
     {
-        $job = $this->createJobFactory()->create([
+        $jobFactory = new JobFactory($this->container);
+
+        $job = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::SOURCE_URL,
         ]);
 

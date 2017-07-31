@@ -26,7 +26,7 @@ class CrawlJobTest extends BaseSimplyTestableTestCase
 
         $this->getUserService()->setUser($user);
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->create([
             JobFactory::KEY_USER => $user,
             JobFactory::KEY_PARAMETERS => [

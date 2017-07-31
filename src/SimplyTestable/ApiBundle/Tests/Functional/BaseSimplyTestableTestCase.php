@@ -1283,25 +1283,6 @@ EOD;
     }
 
     /**
-     * @return JobFactory
-     */
-    protected function createJobFactory()
-    {
-        return new JobFactory(
-            $this->container->get('simplytestable.services.jobtypeservice'),
-            $this->container->get('simplytestable.services.websiteservice'),
-            $this->container->get('simplytestable.services.tasktypeservice'),
-            $this->container->get('simplytestable.services.job.startservice'),
-            $this->container->get('simplytestable.services.jobwebsiteresolutionservice'),
-            $this->container->get('simplytestable.services.jobpreparationservice'),
-            $this->container->get('simplytestable.services.taskservice'),
-            $this->container->get('simplytestable.services.userservice'),
-            $this->container->get('simplytestable.services.job.rejectionservice'),
-            $this->container->get('simplytestable.services.httpclientservice')
-        );
-    }
-
-    /**
      * @return ControllerFactory
      */
     protected function createControllerFactory()

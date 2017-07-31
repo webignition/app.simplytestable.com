@@ -2,17 +2,33 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 
 class AmmendmentTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testUtf8Reason()
     {
         $reason = 'ɸ';
 
         $ammendment = new Ammendment();
-        $ammendment->setJob($this->createJobFactory()->create());
+        $ammendment->setJob($this->jobFactory->create());
         $ammendment->setReason($reason);
 
         $this->getManager()->persist($ammendment);
@@ -34,7 +50,7 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
     public function testPersistWithNoConstraint()
     {
         $ammendment = new Ammendment();
-        $ammendment->setJob($this->createJobFactory()->create());
+        $ammendment->setJob($this->jobFactory->create());
         $ammendment->setReason('url-count-limited');
 
         $this->getManager()->persist($ammendment);
@@ -46,7 +62,7 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
     public function testPersistWithConstraint()
     {
         $ammendment = new Ammendment();
-        $ammendment->setJob($this->createJobFactory()->create());
+        $ammendment->setJob($this->jobFactory->create());
         $ammendment->setReason('url-count-limited');
         $ammendment->setConstraint($this->createAccountPlanConstraint());
 
@@ -58,7 +74,7 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
 
     public function testJobAmmendmentCountWithOneAmmendment()
     {
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
         $ammendment = new Ammendment();
         $ammendment->setJob($job);
         $ammendment->setReason('url-count-limited');
@@ -71,7 +87,7 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
 
     public function testJobAmmendmentCountWithMultipleAmmendments()
     {
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
 
         $ammendments = array();
 

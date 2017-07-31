@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\CrawlJobContainer\GetDiscoveredUrls;
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
@@ -13,7 +14,9 @@ class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $jobFactory = new JobFactory($this->container);
+
+        $job = $jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 

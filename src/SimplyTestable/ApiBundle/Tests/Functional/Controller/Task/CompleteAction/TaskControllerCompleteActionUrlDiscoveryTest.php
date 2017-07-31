@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,7 +35,9 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
     {
         parent::setUp();
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $jobFactory = new JobFactory($this->container);
+
+        $job = $jobFactory->createResolveAndPrepare([
             'type' => 'full site',
             'siteRootUrl' => 'http://example.com',
             'testTypes' => ['html validation',],

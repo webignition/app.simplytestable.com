@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Assign\Collecti
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class SpecificWorkerTest extends CollectionCommandTest
 {
@@ -27,12 +28,17 @@ class SpecificWorkerTest extends CollectionCommandTest
      */
     private $executeReturnCode = null;
 
-    public function setUp()
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         parent::setUp();
 
+        $jobFactory = new JobFactory($this->container);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $this->job = $this->createJobFactory()->createResolveAndPrepare();
+        $this->job = $jobFactory->createResolveAndPrepare();
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet([
             'HTTP/1.1 200 OK

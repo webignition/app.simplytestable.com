@@ -26,7 +26,9 @@ abstract class ListItemsIncludePropertyTest extends ListContentTest
 
     protected function createJobs()
     {
-        $this->createJobFactory()->createResolveAndPrepare([
+        $jobFactory = new JobFactory($this->container);
+
+        $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
         ]);
     }

@@ -8,11 +8,26 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class PrepareTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testForInProgressState()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
@@ -26,7 +41,7 @@ class PrepareTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
@@ -40,7 +55,7 @@ class PrepareTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
@@ -60,7 +75,7 @@ class PrepareTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
@@ -79,7 +94,7 @@ class PrepareTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
@@ -96,7 +111,7 @@ class PrepareTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job\TaskIdsAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -14,8 +15,10 @@ class TaskIdsTest extends BaseControllerJsonTestCase
 
     public function testTaskIdsAction()
     {
+        $jobFactory = new JobFactory($this->container);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $jobFactory->createResolveAndPrepare();
         $jobStatus = $this->fetchJobStatusObject($job);
 
         $jobController = $this->createControllerFactory()->createJobController(new Request());

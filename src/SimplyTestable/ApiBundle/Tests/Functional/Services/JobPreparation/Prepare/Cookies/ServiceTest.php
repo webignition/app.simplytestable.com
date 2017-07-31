@@ -32,7 +32,7 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase
         $user = $this->getTestUser();
         $this->getUserService()->setUser($user);
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->create([
             JobFactory::KEY_USER => $user,
             JobFactory::KEY_PARAMETERS => [

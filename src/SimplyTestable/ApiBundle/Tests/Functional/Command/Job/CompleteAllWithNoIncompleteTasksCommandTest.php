@@ -17,6 +17,21 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     const RETURN_CODE_NO_MATCHING_JOBS = 2;
 
     /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
+    /**
      * @return string
      */
     protected function getCommandName()
@@ -49,7 +64,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare();
+        $job = $this->jobFactory->createResolveAndPrepare();
         $job->setType($this->getJobTypeService()->getCrawlType());
         $this->setJobTasksCompleted($job);
 
@@ -62,7 +77,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
         ]);
 
@@ -76,7 +91,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     public function testWithSingleJobWithNoIncompleteTasks()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
         ]);
 
@@ -96,9 +111,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $jobs = array();
 
-        $jobFactory = $this->createJobFactory();
-
-        $jobs[] = $jobFactory->createResolveAndPrepare([
+        $jobs[] = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
         ], [
             'prepare' => [
@@ -107,7 +120,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
             ],
         ]);
 
-        $jobs[] = $jobFactory->createResolveAndPrepare([
+        $jobs[] = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com/',
         ], [
             'prepare' => [
@@ -134,9 +147,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
         /* @var Job[] $jobs */
         $jobs = array();
 
-        $jobFactory = $this->createJobFactory();
-
-        $jobs[] = $jobFactory->createResolveAndPrepare([
+        $jobs[] = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
         ], [
             'prepare' => [
@@ -145,7 +156,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
             ],
         ]);
 
-        $jobs[] = $jobFactory->createResolveAndPrepare([
+        $jobs[] = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com/',
         ], [
             'prepare' => [

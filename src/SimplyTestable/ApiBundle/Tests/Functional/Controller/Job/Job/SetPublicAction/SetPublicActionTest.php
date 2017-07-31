@@ -9,9 +9,24 @@ class SetPublicActionTest extends BaseControllerJsonTestCase
 {
     const CANONICAL_URL = 'http://example.com/';
 
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testSetPublicByPublicUserForJobOwnedByPublicUser()
     {
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
         ]);
         $this->assertTrue($job->getIsPublic());
@@ -27,7 +42,7 @@ class SetPublicActionTest extends BaseControllerJsonTestCase
     {
         $user = $this->createAndActivateUser('user@example.com', 'password1');
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
             JobFactory::KEY_USER => $user,
         ]);
@@ -44,7 +59,7 @@ class SetPublicActionTest extends BaseControllerJsonTestCase
     {
         $user = $this->createAndActivateUser('user@example.com', 'password1');
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
         ]);
         $this->assertTrue($job->getIsPublic());
@@ -61,7 +76,7 @@ class SetPublicActionTest extends BaseControllerJsonTestCase
         $user1 = $this->createAndActivateUser('user1@example.com', 'password1');
         $user2 = $this->createAndActivateUser('user2@example.com', 'password1');
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
             JobFactory::KEY_USER => $user1,
         ]);
@@ -86,7 +101,7 @@ class SetPublicActionTest extends BaseControllerJsonTestCase
 
         $this->getTeamMemberService()->add($team, $member);
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
             JobFactory::KEY_USER => $member,
         ]);
@@ -111,7 +126,7 @@ class SetPublicActionTest extends BaseControllerJsonTestCase
 
         $this->getTeamMemberService()->add($team, $member);
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
             JobFactory::KEY_USER => $leader,
         ]);
@@ -138,7 +153,7 @@ class SetPublicActionTest extends BaseControllerJsonTestCase
         $this->getTeamMemberService()->add($team, $member1);
         $this->getTeamMemberService()->add($team, $member2);
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::CANONICAL_URL,
             JobFactory::KEY_USER => $member1,
         ]);

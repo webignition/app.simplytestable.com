@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\PrepareCommand;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
 class MaintenanceModeTest extends CommandTest
 {
     protected function preCall()
@@ -11,7 +13,8 @@ class MaintenanceModeTest extends CommandTest
 
     protected function getJob()
     {
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
+
         $job = $jobFactory->create();
         $jobFactory->resolve($job);
 

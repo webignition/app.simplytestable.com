@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\PrepareCommand;
 
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+
 class JobInWrongStateTest extends CommandTest
 {
     protected function preCall()
@@ -11,7 +13,9 @@ class JobInWrongStateTest extends CommandTest
 
     protected function getJob()
     {
-        return $this->createJobFactory()->create();
+        $jobFactory = new JobFactory($this->container);
+
+        return $jobFactory->create();
     }
 
     protected function getExpectedReturnCode()

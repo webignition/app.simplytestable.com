@@ -19,7 +19,7 @@ abstract class LimitTest extends ServiceTest
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUserService()->getPublicUser());
         $this->setDifferentJobTypeLimits();
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         for ($jobIndex = 0; $jobIndex <= $this->getJobTypeCreateLimit() - 1; $jobIndex++) {
             $this->jobsCreatedBeforeLimitReached++;

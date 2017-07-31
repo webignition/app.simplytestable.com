@@ -19,7 +19,8 @@ abstract class CurlRejectionTest extends BaseSimplyTestableTestCase
             "CURL/" . $this->getTestStatusCode()
         )));
 
-        $this->job = $this->createJobFactory()->create([
+        $jobFactory = new JobFactory($this->container);
+        $this->job = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::SOURCE_URL,
         ]);
 

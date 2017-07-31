@@ -9,11 +9,26 @@ use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFa
 
 class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testJoinOnComplete()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => ['link integrity'],
         ]);
 
@@ -102,7 +117,7 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => ['link integrity'],
         ]);
 

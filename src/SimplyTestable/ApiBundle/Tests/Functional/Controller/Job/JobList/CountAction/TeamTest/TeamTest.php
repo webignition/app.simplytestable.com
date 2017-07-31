@@ -47,7 +47,7 @@ abstract class TeamTest extends BaseControllerJsonTestCase
         $this->getTeamMemberService()->add($team, $this->member1);
         $this->getTeamMemberService()->add($team, $this->member2);
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
         $this->jobs[] = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => 'http://leader.example.com/',
             JobFactory::KEY_USER => $this->leader,

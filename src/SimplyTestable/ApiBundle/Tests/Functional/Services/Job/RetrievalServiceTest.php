@@ -15,6 +15,11 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
     private $userFactory;
 
     /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -22,6 +27,7 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->jobFactory = new JobFactory($this->container);
     }
 
     /**
@@ -59,8 +65,7 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
             $teamService->getMemberService()->add($ownerTeam, $jobOwner);
         }
 
-        $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $jobOwner,
         ]);
 
@@ -149,8 +154,7 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
             $teamService->getMemberService()->add($team, $jobOwner);
         }
 
-        $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $jobOwner,
         ]);
 

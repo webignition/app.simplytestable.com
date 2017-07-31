@@ -9,6 +9,8 @@ class CreditLimitReachedTest extends RejectedTest
 {
     protected function preCall()
     {
+        $jobFactory = new JobFactory($this->container);
+
         $creditsPerMonth = 3;
 
         $user = $this->getTestUser();
@@ -20,7 +22,7 @@ class CreditLimitReachedTest extends RejectedTest
             ->getConstraintNamed('credits_per_month')
             ->setLimit($creditsPerMonth);
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([
+        $job = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $user,
         ]);
 

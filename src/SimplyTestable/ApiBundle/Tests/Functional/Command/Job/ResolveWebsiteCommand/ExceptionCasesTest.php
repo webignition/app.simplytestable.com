@@ -7,9 +7,25 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class ExceptionCasesTest extends CommandTest
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
+
     public function testJobInWrongStateReturnsStatusCode1()
     {
-        $job = $this->createJobFactory()->create();
+        $job = $this->jobFactory->create();
         $job->setState($this->getJobService()->getCancelledState());
         $this->getJobService()->persistAndFlush($job);
 
@@ -33,7 +49,7 @@ class ExceptionCasesTest extends CommandTest
             'HTTP/1.0 404'
         )));
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
             JobFactory::KEY_TEST_TYPES => ['CSS Validation'],
             JobFactory::KEY_TEST_TYPE_OPTIONS => [

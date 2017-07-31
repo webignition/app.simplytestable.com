@@ -10,9 +10,20 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
  */
 class ServiceTest extends BaseSimplyTestableTestCase
 {
-    public function setUp()
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
     {
         parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+
         $this->queueResolveHttpFixture();
         $this->queuePrepareHttpFixturesForCrawlJob(self::DEFAULT_CANONICAL_URL);
 
@@ -24,9 +35,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
         $user = $this->getUserService()->getPublicUser();
         $this->getUserService()->setUser($user);
 
-        $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create();
-        $jobFactory->resolve($job);
+        $job = $this->jobFactory->create();
+        $this->jobFactory->resolve($job);
         $this->getJobPreparationService()->prepare($job);
 
         $this->assertFalse($this->getCrawlJobContainerService()->hasForJob($job));
@@ -36,11 +46,10 @@ class ServiceTest extends BaseSimplyTestableTestCase
     {
         $user = $this->createAndActivateUser('user@example.com', 'password');
 
-        $jobFactory = $this->createJobFactory();
-        $job = $jobFactory->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $user,
         ]);
-        $jobFactory->resolve($job);
+        $this->jobFactory->resolve($job);
 
         $this->getJobPreparationService()->prepare($job);
 

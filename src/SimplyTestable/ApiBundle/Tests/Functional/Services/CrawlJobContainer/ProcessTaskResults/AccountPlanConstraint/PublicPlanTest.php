@@ -3,17 +3,33 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\CrawlJobContainer\ProcessTaskResults\AccountPlanConstraint;
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
 class PublicPlanTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     public function testWithConstraintHitOnFirstResultSet()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
@@ -60,7 +76,7 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
@@ -132,7 +148,7 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 

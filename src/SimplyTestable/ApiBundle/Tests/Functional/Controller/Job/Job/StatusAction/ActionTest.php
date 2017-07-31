@@ -11,6 +11,21 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ActionTest extends BaseControllerJsonTestCase
 {
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->jobFactory = new JobFactory($this->container);
+    }
+
     protected function getActionName()
     {
         return 'statusAction';
@@ -20,7 +35,7 @@ class ActionTest extends BaseControllerJsonTestCase
     {
         $canonicalUrl = 'http://example.com/';
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
         ]);
 
@@ -60,13 +75,11 @@ class ActionTest extends BaseControllerJsonTestCase
 
         $fullSiteJobsPerSiteConstraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
 
-        $jobFactory = $this->createJobFactory();
-
-        $rejectedJob = $jobFactory->create([
+        $rejectedJob = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
         ]);
 
-        $jobFactory->reject($rejectedJob, 'plan-constraint-limit-reached', $fullSiteJobsPerSiteConstraint);
+        $this->jobFactory->reject($rejectedJob, 'plan-constraint-limit-reached', $fullSiteJobsPerSiteConstraint);
 
         $jobController = $this->createControllerFactory()->createJobController(new Request());
         $jobStatusObject = json_decode(
@@ -92,14 +105,12 @@ class ActionTest extends BaseControllerJsonTestCase
 
         $singleJobsPerUrlConstraint = $userAccountPlan->getPlan()->getConstraintNamed('single_url_jobs_per_url');
 
-        $jobFactory = $this->createJobFactory();
-
-        $rejectedJob = $jobFactory->create([
+        $rejectedJob = $this->jobFactory->create([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
         ]);
 
-        $jobFactory->reject($rejectedJob, 'plan-constraint-limit-reached', $singleJobsPerUrlConstraint);
+        $this->jobFactory->reject($rejectedJob, 'plan-constraint-limit-reached', $singleJobsPerUrlConstraint);
 
         $jobController = $this->createControllerFactory()->createJobController(new Request());
         $jobStatusObject = json_decode(
@@ -116,11 +127,9 @@ class ActionTest extends BaseControllerJsonTestCase
 
     public function testStatusForJobUrlLimitAmmendment()
     {
-        $this->createJobFactory();
-
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
-        $job = $this->createJobFactory()->createResolveAndPrepare([], [
+        $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => [
                 GuzzleResponse::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
                 GuzzleResponse::fromMessage(sprintf(
@@ -149,7 +158,7 @@ class ActionTest extends BaseControllerJsonTestCase
 
         $canonicalUrl = 'http://example.com/';
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
         ]);
 
@@ -174,7 +183,7 @@ class ActionTest extends BaseControllerJsonTestCase
 
         $canonicalUrl = 'http://example.com/';
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             JobFactory::KEY_USER => $user,
         ]);
@@ -201,7 +210,7 @@ class ActionTest extends BaseControllerJsonTestCase
 
         $canonicalUrl = 'http://example.com/';
 
-        $job = $this->createJobFactory()->create([
+        $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             JobFactory::KEY_PARAMETERS => [
                 'http-auth-username' => 'example',

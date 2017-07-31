@@ -29,7 +29,8 @@ class ResolveToLongUrlTest extends BaseSimplyTestableTestCase
 
     public function testTest()
     {
-        $job = $this->createJobFactory()->create([
+        $jobFactory = new JobFactory($this->container);
+        $job = $jobFactory->create([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
         ]);
 

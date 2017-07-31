@@ -21,14 +21,16 @@ abstract class DifferentUrlTest extends BaseSimplyTestableTestCase
             "HTTP/1.0 200 OK"
         )));
 
-        $fullSiteJob = $this->createJobFactory()->create([
+        $jobFactory = new JobFactory($this->container);
+
+        $fullSiteJob = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::SOURCE_URL,
         ]);
 
         $this->getJobWebsiteResolutionService()->resolve($fullSiteJob);
         $this->assertEquals($this->getRootUrl(), $fullSiteJob->getWebsite()->getCanonicalUrl());
 
-        $singleUrlJob = $this->createJobFactory()->create([
+        $singleUrlJob = $jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => self::SOURCE_URL,
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
         ]);

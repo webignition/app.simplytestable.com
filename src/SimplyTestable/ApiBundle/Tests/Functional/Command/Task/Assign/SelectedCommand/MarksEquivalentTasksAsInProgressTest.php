@@ -13,7 +13,7 @@ class MarksEquivalentTasksAsInProgressTest extends CommandTest
         $this->setJobTypeConstraintLimits();
         $this->createWorker();
 
-        $jobFactory = $this->createJobFactory();
+        $jobFactory = new JobFactory($this->container);
 
         $job1 = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => ['css validation'],
