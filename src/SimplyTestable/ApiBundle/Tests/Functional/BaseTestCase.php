@@ -187,7 +187,7 @@ abstract class BaseTestCase extends WebTestCase
     {
         parent::tearDown();
 
-        $this->container->get('doctrine')->getConnection()->close();
+//        $this->container->get('doctrine')->getConnection()->close();
 
         $refl = new \ReflectionObject($this);
         foreach ($refl->getProperties() as $prop) {

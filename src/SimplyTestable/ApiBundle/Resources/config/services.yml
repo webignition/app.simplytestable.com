@@ -11,7 +11,6 @@ services:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
-        httpClientService: "@simplytestable.services.httpClientService"
 
   simplytestable.services.jobwebsiteresolutionservice:
     class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
@@ -198,12 +197,12 @@ services:
         jobService: "@simplytestable.services.jobservice"
         taskService: "@simplytestable.services.taskservice"
         jobTypeService: "@simplytestable.services.jobtypeservice"
-        websiteService: "@simplytestable.services.websiteservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         crawlJobContainerService: "@simplytestable.services.crawljobcontainerservice"
         userService: "@simplytestable.services.userservice"
         resqueQueueService: "@simplytestable.services.resque.queueService"
         resqueJobFactoryService: "@simplytestable.services.resque.jobFactoryService"
+        urlFinder: '@simplytestable.services.urlfinder'
 
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
@@ -415,5 +414,10 @@ services:
 
   simplytestable.services.urlresolver:
     class:  SimplyTestable\ApiBundle\Services\UrlResolver
+    arguments:
+        httpClientService: "@simplytestable.services.httpClientService"
+
+  simplytestable.services.urlfinder:
+    class:  SimplyTestable\ApiBundle\Services\UrlFinder
     arguments:
         httpClientService: "@simplytestable.services.httpClientService"
