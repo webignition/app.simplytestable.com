@@ -5,7 +5,6 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
@@ -517,24 +516,6 @@ class JobService extends EntityService
         }
 
         return $jobs;
-    }
-
-    /**
-     * @param Job $job
-     * @param int $limit
-     *
-     * @return Task[]
-     */
-    public function getQueuedTasks(Job $job, $limit = 1)
-    {
-        return $this->taskService->getEntityRepository()->findBy(
-            [
-                'job' => $job,
-                'state' => $this->taskService->getQueuedState()
-            ],
-            [],
-            $limit
-        );
     }
 
     /**
