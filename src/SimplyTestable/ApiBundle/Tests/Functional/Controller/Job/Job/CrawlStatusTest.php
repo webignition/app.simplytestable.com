@@ -23,7 +23,7 @@ class CrawlStatusTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
-     * {@inheritdoc}
+     * {@inheritdoc}x\
      */
     protected function setUp()
     {

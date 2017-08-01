@@ -72,6 +72,18 @@ class JobFactory
 
     /**
      * @param array $jobValues
+     *
+     * @return Job
+     */
+    public function createResolveAndPrepareStandardCrawlJob($jobValues = [])
+    {
+        return $this->createResolveAndPrepare($jobValues, [
+            'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
+        ]);
+    }
+
+    /**
+     * @param array $jobValues
      * @return Job
      */
     public function create($jobValues = [])
