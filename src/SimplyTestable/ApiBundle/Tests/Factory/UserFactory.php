@@ -7,6 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserFactory
 {
+    const DEFAULT_USER_EMAIL = 'user@example.com';
+
     /**
      * @var ContainerInterface
      */
@@ -26,7 +28,7 @@ class UserFactory
      *
      * @return User
      */
-    public function createAndActivateUser($email = 'user@example.com', $planName = 'basic')
+    public function createAndActivateUser($email = self::DEFAULT_USER_EMAIL, $planName = 'basic')
     {
         $user = $this->create($email, $planName);
         $this->activate($user);
@@ -40,7 +42,7 @@ class UserFactory
      *
      * @return User
      */
-    public function create($email = 'user@example.com', $planName = 'basic')
+    public function create($email = self::DEFAULT_USER_EMAIL, $planName = 'basic')
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
@@ -53,7 +55,7 @@ class UserFactory
             return $user;
         }
 
-        $user = $userService->create($email, 'password1');
+        $user = $userService->create($email, 'password');
         $userAccountPlanService->subscribe(
             $user,
             $accountPlanService->find($planName)
@@ -70,5 +72,45 @@ class UserFactory
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
 
         $userManipulator->activate($user->getEmail());
+    }
+
+    /**
+     * @return User[]
+     */
+    public function createPublicPrivateAndTeamUserSet()
+    {
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
+        $users = array_merge(
+            $this->createPublicAndPrivateUserSet(),
+            [
+                'leader' => $this->createAndActivateUser('leader@example.com'),
+                'member1' => $this->createAndActivateUser('member1@example.com'),
+                'member2' => $this->createAndActivateUser('member2@example.com'),
+            ]
+        );
+
+        $team = $teamService->create('Foo', $users['leader']);
+        $teamMemberService = $teamService->getMemberService();
+
+        $teamMemberService->add($team, $users['member1']);
+        $teamMemberService->add($team, $users['member2']);
+
+        return $users;
+    }
+
+    /**
+     * @return User[]
+     */
+    public function createPublicAndPrivateUserSet()
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        $users = [
+            'public' => $userService->getPublicUser(),
+            'private' => $this->createAndActivateUser('private@example.com'),
+        ];
+
+        return $users;
     }
 }
