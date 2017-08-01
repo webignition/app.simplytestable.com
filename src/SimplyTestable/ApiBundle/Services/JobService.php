@@ -275,7 +275,7 @@ class JobService extends EntityService
         }
 
         if ($jobConfiguration->hasParameters()) {
-            $job->setParameters(json_encode($jobConfiguration->getParameters()));
+            $job->setParameters($jobConfiguration->getParameters());
         }
 
         $job->setState($this->getStartingState());
