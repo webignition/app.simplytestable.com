@@ -2,20 +2,33 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase {
+class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testForDifferentUser() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testForDifferentUser()
+    {
         $email1 = 'user1@example.com';
-        $password1 = 'password1';
-
-        $user1 = $this->createAndActivateUser($email1, $password1);
+        $user1 = $this->userFactory->createAndActivateUser($email1);
 
         $email2 = 'user2@example.com';
-        $password2 = 'password2';
-
-        $user2 = $this->createAndActivateUser($email2, $password2);
+        $user2 = $this->userFactory->createAndActivateUser($email2);
 
         $this->getUserService()->setUser($user2);
         $this->getUserEmailChangeController('createAction')->createAction($user2->getEmail(), 'user1-new@example.com');
@@ -31,11 +44,11 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase {
         }
     }
 
-    public function testWhereNoEmailChangeRequestExists() {
+    public function testWhereNoEmailChangeRequestExists()
+    {
         $email = 'user1@example.com';
-        $password = 'password1';
 
-        $user = $this->createAndActivateUser($email, $password);
+        $user = $this->userFactory->createAndActivateUser($email);
         $this->getUserService()->setUser($user);
 
         try {
@@ -47,12 +60,11 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase {
         }
     }
 
-
-    public function testWithInvalidToken() {
+    public function testWithInvalidToken()
+    {
         $email = 'user1@example.com';
-        $password = 'password1';
 
-        $user = $this->createAndActivateUser($email, $password);
+        $user = $this->userFactory->createAndActivateUser($email);
         $this->getUserService()->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), 'user1-new@example.com');
@@ -66,52 +78,53 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase {
         }
     }
 
-
-    public function testWhenNewEmailHasSinceBeenTakenByAnotherUser() {
+    public function testWhenNewEmailHasSinceBeenTakenByAnotherUser()
+    {
         $email1 = 'user1@example.com';
-        $password1 = 'password1';
 
-        $user = $this->createAndActivateUser($email1, $password1);
+        $user = $this->userFactory->createAndActivateUser($email1);
         $this->getUserService()->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), 'user1-new@example.com');
         $emailChangeRequest = $this->getUserEmailChangeRequestService()->findByUser($user);
 
         $email2 = 'user1-new@example.com';
-        $password2 = 'password2';
-
-        $this->createAndActivateUser($email2, $password2);
+        $this->userFactory->createAndActivateUser($email2);
 
         try {
-            $this->getUserEmailChangeController('confirmAction')->confirmAction($user->getEmail(), $emailChangeRequest->getToken());
+            $this->getUserEmailChangeController('confirmAction')->confirmAction(
+                $user->getEmail(),
+                $emailChangeRequest->getToken()
+            );
 
             $this->fail('Attempt to confirm when email already taken did not generate HTTP 409');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertEquals(409, $exception->getStatusCode());
-            $this->assertInstanceOf('\SimplyTestable\ApiBundle\Entity\User', $this->getUserService()->findUserByEmail('user1-new@example.com'));
+            $this->assertInstanceOf(User::class, $this->getUserService()->findUserByEmail('user1-new@example.com'));
         }
     }
 
-
-    public function testExpectedUsage() {
+    public function testExpectedUsage()
+    {
         $email = 'user1@example.com';
-        $password = 'password1';
         $newEmail = 'user1-new@example.com';
 
-        $user = $this->createAndActivateUser($email, $password);
+        $user = $this->userFactory->createAndActivateUser($email);
         $this->getUserService()->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), $newEmail);
         $emailChangeRequest = $this->getUserEmailChangeRequestService()->findByUser($user);
 
-        $response = $this->getUserEmailChangeController('confirmAction')->confirmAction($user->getEmail(), $emailChangeRequest->getToken());
+        $response = $this->getUserEmailChangeController('confirmAction')->confirmAction(
+            $user->getEmail(),
+            $emailChangeRequest->getToken()
+        );
         $this->assertEquals(200, $response->getStatusCode());
 
         $this->getManager()->clear();
 
         $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
         $this->assertNull($this->getUserService()->findUserByEmail($email));
-        $this->assertInstanceOf('\SimplyTestable\ApiBundle\Entity\User', $this->getUserService()->findUserByEmail($newEmail));
+        $this->assertInstanceOf(User::class, $this->getUserService()->findUserByEmail($newEmail));
     }
-
 }

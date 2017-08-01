@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobServiceException;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Update\ServiceTest;
 
 abstract class MatchingScheduledJobTest extends ServiceTest {
@@ -36,7 +37,9 @@ abstract class MatchingScheduledJobTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $this->user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->user = $userFactory->createAndActivateUser();
 
         $this->jobConfiguration1 = $this->createJobConfiguration([
             'label' => 'foo1',

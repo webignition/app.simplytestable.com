@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\JobList\ListA
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class ListIsSortedByJobIdTest extends StateBasedTest
 {
@@ -18,7 +19,9 @@ class ListIsSortedByJobIdTest extends StateBasedTest
 
     protected function getRequestingUser()
     {
-        return $this->getTestUser();
+        $userFactory = new UserFactory($this->container);
+
+        return $userFactory->create();
     }
 
     protected function getExpectedListLength()
@@ -39,11 +42,13 @@ class ListIsSortedByJobIdTest extends StateBasedTest
     protected function createJobs()
     {
         $jobFactory = new JobFactory($this->container);
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->create();
 
         // Non-crawling job
         $this->jobs[] = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => $this->canonicalUrls[0],
-            JobFactory::KEY_USER => $this->getTestUser(),
+            JobFactory::KEY_USER => $user,
         ], [
             'prepare' => [
                 HttpFixtureFactory::createStandardRobotsTxtResponse(),
@@ -54,7 +59,7 @@ class ListIsSortedByJobIdTest extends StateBasedTest
         // Crawling job
         $this->jobs[] = $jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => $this->canonicalUrls[1],
-            JobFactory::KEY_USER => $this->getTestUser(),
+            JobFactory::KEY_USER => $user,
         ], [
             'prepare' => [
                 HttpFixtureFactory::createStandardRobotsTxtResponse(),

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\JobList\ListA
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class UserTest extends ListTest
 {
@@ -26,8 +27,10 @@ class UserTest extends ListTest
     {
         parent::setUp();
 
+        $userFactory = new UserFactory($this->container);
+
         foreach ($this->userEmailAddresses as $emailAddress) {
-            $this->users[] = $this->createAndActivateUser($emailAddress, 'password');
+            $this->users[] = $userFactory->createAndActivateUser($emailAddress);
             $this->jobs[$emailAddress] = array();
         }
 

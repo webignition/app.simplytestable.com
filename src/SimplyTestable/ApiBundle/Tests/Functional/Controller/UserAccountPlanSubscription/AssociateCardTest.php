@@ -2,81 +2,107 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserAccountPlanSubsciption;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class AssociateCardTest extends BaseControllerJsonTestCase {
+class AssociateCardTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testWithPublicUser() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testWithPublicUser()
+    {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    public function testWithWrongUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testWithWrongUser()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    public function testWithInvalidStripeCardToken() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testWithInvalidStripeCardToken()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, '');
+        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+            $user->getEmail(),
+            ''
+        );
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    public function testWithNoStripeCustomer() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testWithNoStripeCustomer()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, 'tok_22SBwowh6VeVgR');
+        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+            $user->getEmail(),
+            'tok_22SBwowh6VeVgR'
+        );
         $this->assertEquals(400, $response->getStatusCode());
     }
 
-    public function testWithValidStripeCustomerandValidStipeCardToken() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testWithValidStripeCustomerandValidStipeCardToken()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+            $user->getEmail(),
+            'personal'
+        );
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, $this->generateStripeCardToken());
+        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+            $user->getEmail(),
+            $this->generateStripeCardToken()
+        );
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testWithTokenForCardFailingZipCheck() {
-        $email = 'jon@simplytestable.com';
-        $password = 'password1';
+    public function testWithTokenForCardFailingZipCheck()
+    {
         $stripeErrorMessage = 'The zip code you supplied failed validation.';
         $stripeErrorParam = 'address_zip';
         $stripeErrorCode = 'incorrect_zip';
 
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+            $user->getEmail(),
+            'personal'
+        );
 
         $this->getStripeService()->setIssueStripeCardError(true);
         $this->getStripeService()->setNextStripeCardErrorMessage($stripeErrorMessage);
         $this->getStripeService()->setNextStripeCardErrorParam($stripeErrorParam);
         $this->getStripeService()->setNextStripeCardErrorCode($stripeErrorCode);
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, $this->generateStripeCardToken());
+        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+            $user->getEmail(),
+            $this->generateStripeCardToken()
+        );
         $this->assertEquals(400, $response->getStatusCode());
 
         $this->assertEquals($stripeErrorMessage, $response->headers->get('X-Stripe-Error-Message'));
@@ -84,25 +110,29 @@ class AssociateCardTest extends BaseControllerJsonTestCase {
         $this->assertEquals($stripeErrorCode, $response->headers->get('X-Stripe-Error-Code'));
     }
 
-
-    public function testWithTokenForCardFailingCvcCheck() {
-        $email = 'jon@simplytestable.com';
-        $password = 'password1';
+    public function testWithTokenForCardFailingCvcCheck()
+    {
         $stripeErrorMessage = 'Your card\'s security code is incorrect.';
         $stripeErrorParam = 'cvc';
         $stripeErrorCode = 'incorrect_cvc';
 
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+            $user->getEmail(),
+            'personal'
+        );
 
         $this->getStripeService()->setIssueStripeCardError(true);
         $this->getStripeService()->setNextStripeCardErrorMessage($stripeErrorMessage);
         $this->getStripeService()->setNextStripeCardErrorParam($stripeErrorParam);
         $this->getStripeService()->setNextStripeCardErrorCode($stripeErrorCode);
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction($email, $this->generateStripeCardToken());
+        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+            $user->getEmail(),
+            $this->generateStripeCardToken()
+        );
         $this->assertEquals(400, $response->getStatusCode());
 
         $this->assertEquals($stripeErrorMessage, $response->headers->get('X-Stripe-Error-Message'));
@@ -110,30 +140,33 @@ class AssociateCardTest extends BaseControllerJsonTestCase {
         $this->assertEquals($stripeErrorCode, $response->headers->get('X-Stripe-Error-Code'));
     }
 
-
-    private function generateStripeCardToken() {
+    private function generateStripeCardToken()
+    {
         return 'tok_' . $this->generateAlphaNumericToken(14);
     }
 
-    private function generateAlphaNumericToken($length) {
+    private function generateAlphaNumericToken($length)
+    {
         $token = '';
 
         while (strlen($token) < $length) {
-            $token .= (rand(0, 1) === 0) ? $this->generateRandomNumericCharacter() : $this->generateRandomAlphaCharacter();
+            $token .= (rand(0, 1) === 0)
+                ? $this->generateRandomNumericCharacter()
+                : $this->generateRandomAlphaCharacter();
         }
 
         return $token;
     }
 
-    private function generateRandomNumericCharacter() {
-        return (string)rand(0,9);
+    private function generateRandomNumericCharacter()
+    {
+        return (string)rand(0, 9);
     }
 
-    private function generateRandomAlphaCharacter() {
+    private function generateRandomAlphaCharacter()
+    {
         $character = chr(rand(65, 90));
-        return (rand(0, 1) === 1) ? $character : strtolower($character);
 
+        return (rand(0, 1) === 1) ? $character : strtolower($character);
     }
 }
-
-

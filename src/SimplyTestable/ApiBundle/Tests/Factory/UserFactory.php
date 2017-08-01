@@ -22,13 +22,13 @@ class UserFactory
 
     /**
      * @param string $email
-     * @param string $password
+     * @param string $planName
      *
      * @return User
      */
-    public function createAndActivateUser($email, $password)
+    public function createAndActivateUser($email = 'user@example.com', $planName = 'basic')
     {
-        $user = $this->create($email, $password);
+        $user = $this->create($email, $planName);
         $this->activate($user);
 
         return $user;
@@ -40,7 +40,7 @@ class UserFactory
      *
      * @return User
      */
-    public function create($email, $planName = 'basic')
+    public function create($email = 'user@example.com', $planName = 'basic')
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');

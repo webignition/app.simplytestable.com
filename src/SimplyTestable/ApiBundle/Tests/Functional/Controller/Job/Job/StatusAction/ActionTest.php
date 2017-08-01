@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job\StatusAction;
 
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use Guzzle\Http\Message\Response as GuzzleResponse;
@@ -178,7 +179,9 @@ class ActionTest extends BaseControllerJsonTestCase
 
     public function testDefaultIsPrivateIfNotOwnedByPublicUser()
     {
-        $user = $this->createAndActivateUser('user@example.com', 'password1');
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->createAndActivateUser();
         $this->getUserService()->setUser($user);
 
         $canonicalUrl = 'http://example.com/';

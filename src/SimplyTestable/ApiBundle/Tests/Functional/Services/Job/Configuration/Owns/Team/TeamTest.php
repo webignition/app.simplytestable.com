@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\O
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Owns\ServiceTest;
 
 abstract class TeamTest extends ServiceTest {
@@ -29,8 +30,10 @@ abstract class TeamTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $this->leader = $this->createAndActivateUser('leader@example.com');
-        $this->member = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
+        $this->member = $userFactory->createAndActivateUser('user@example.com');
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',

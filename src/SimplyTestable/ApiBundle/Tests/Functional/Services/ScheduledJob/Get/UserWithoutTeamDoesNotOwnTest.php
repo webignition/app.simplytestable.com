@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Get;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class UserWithoutTeamDoesNotOwnTest extends IsNotRetrievedTest {
 
@@ -19,8 +20,10 @@ class UserWithoutTeamDoesNotOwnTest extends IsNotRetrievedTest {
 
 
     protected function setUpPreCreate() {
-        $this->user1 = $this->createAndActivateUser('user1@example.com');
-        $this->user2 = $this->createAndActivateUser('user2@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->user1 = $userFactory->createAndActivateUser('user1@example.com');
+        $this->user2 = $userFactory->createAndActivateUser('user2@example.com');
     }
 
     protected function getJobConfigurationOwner()

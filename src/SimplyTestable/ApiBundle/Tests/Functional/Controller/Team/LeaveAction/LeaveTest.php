@@ -2,12 +2,28 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\LeaveAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\ActionTest;
 
-class LeaveTest extends ActionTest {
+class LeaveTest extends ActionTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
 
     public function testLeaderReturnsBadRequest() {
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $this->getTeamService()->create('Foo', $leader);
 
@@ -22,7 +38,7 @@ class LeaveTest extends ActionTest {
     }
 
     public function testUserNotOnTeamReturnsOkResponse() {
-        $user = $this->createAndActivateUser('user@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
 
@@ -34,8 +50,8 @@ class LeaveTest extends ActionTest {
 
 
     public function testUserInTeamLeavesTeam() {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create('Foo', $leader);
         $this->getTeamMemberService()->add($team, $user);

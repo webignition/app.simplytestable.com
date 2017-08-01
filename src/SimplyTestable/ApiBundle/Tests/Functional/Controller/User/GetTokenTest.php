@@ -2,15 +2,27 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-class GetTokenTest extends BaseControllerJsonTestCase {
+class GetTokenTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
 
     public function testGetTokenWithNotEnabledUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
 
         $controller = $this->getUserController('getTokenAction');
         $response = $controller->getTokenAction($user->getEmail());
@@ -35,10 +47,7 @@ class GetTokenTest extends BaseControllerJsonTestCase {
 
 
     public function testGetTokenWithEnabledUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndActivateUser($email, $password);
+        $user = $this->userFactory->createAndActivateUser();
 
         $controller = $this->getUserController('getTokenAction');
         $response = $controller->getTokenAction($user->getEmail());

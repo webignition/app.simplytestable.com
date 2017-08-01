@@ -5,12 +5,12 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\G
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-class ForTeamTest extends ServiceTest {
-
+class ForTeamTest extends ServiceTest
+{
     const LABEL = 'foo';
     const JOB_CONFIGURATION_COUNT = 5;
-
 
     /**
      * @var User
@@ -46,12 +46,15 @@ class ForTeamTest extends ServiceTest {
     private $retrievedJobConfigurations = [];
 
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $this->leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $this->member1 = $this->createAndActivateUser('user1@example.com');
-        $this->member2 = $this->createAndActivateUser('user2@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
+        $this->member1 = $userFactory->createAndActivateUser('user1@example.com');
+        $this->member2 = $userFactory->createAndActivateUser('user2@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',

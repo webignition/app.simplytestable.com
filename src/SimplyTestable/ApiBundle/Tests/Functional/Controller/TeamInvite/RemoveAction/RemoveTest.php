@@ -2,13 +2,28 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\RemoveAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
 
-class GetTest extends ActionTest {
+class GetTest extends ActionTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
 
     public function testUserIsNotTeamLeaderReturnsBadRequest() {
-        $user = $this->createAndActivateUser('user@example.com');
+        $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
@@ -19,7 +34,7 @@ class GetTest extends ActionTest {
 
 
     public function testInviteeIsNotAUserReturnsBadRequest() {
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
         $this->getUserService()->setUser($leader);
 
         $this->getTeamService()->create('Foo', $leader);
@@ -33,8 +48,8 @@ class GetTest extends ActionTest {
 
 
     public function testInviteeDoesNotHaveAnInviteReturnsBadRequest() {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($leader);
 
         $this->getTeamService()->create('Foo', $leader);
@@ -48,9 +63,9 @@ class GetTest extends ActionTest {
 
 
     public function testInviteIsNotForUsersTeamReturnsBadRequest() {
-        $leader1 = $this->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->createAndActivateUser('leader2@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create('Foo1', $leader1);
         $this->getTeamService()->create('Foo2', $leader2);
@@ -68,8 +83,8 @@ class GetTest extends ActionTest {
 
 
     public function testInviteIsRemoved() {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create('Foo', $leader);
         $this->getTeamInviteService()->get($leader, $user);

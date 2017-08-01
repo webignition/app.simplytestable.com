@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Cron\RunCommand;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Command\CommandTest as BaseCommandTest;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -46,7 +47,8 @@ abstract class CommandTest extends BaseCommandTest {
 
         $this->clearRedis();
 
-        $user = $this->createAndActivateUser();
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createAndActivateUser();
 
         $jobConfiguration = $this->createJobConfiguration([
             'label' => 'foo',

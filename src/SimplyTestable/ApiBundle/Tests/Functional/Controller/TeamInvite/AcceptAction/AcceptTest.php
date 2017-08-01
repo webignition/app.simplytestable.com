@@ -2,12 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\AcceptAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
 
-class AcceptTest extends ActionTest {
+class AcceptTest extends ActionTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
 
     public function testUserAcceptsForNonexistentTeamReturnsBadResponse() {
-        $user = $this->createAndActivateUser('user@example.com');
+        $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
@@ -21,13 +38,13 @@ class AcceptTest extends ActionTest {
     }
 
     public function testUserHasNoInviteReturnsBadResponse() {
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
         $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com');
+        $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
@@ -44,8 +61,8 @@ class AcceptTest extends ActionTest {
 
 
     public function testInviteIsAccepted() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getTeamService()->create(
             'Foo',
@@ -69,9 +86,9 @@ class AcceptTest extends ActionTest {
 
 
     public function testAcceptedInviteRemovesAllInvites() {
-        $leader1 = $this->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->createAndActivateUser('leader2@example.com');
-        $user = $this->createAndActivateUser('user@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create(
             'Foo1',
@@ -105,8 +122,8 @@ class AcceptTest extends ActionTest {
 
 
     public function testUserWithPremiumPlanCannotAcceptInvite() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getTeamService()->create(
             'Foo',

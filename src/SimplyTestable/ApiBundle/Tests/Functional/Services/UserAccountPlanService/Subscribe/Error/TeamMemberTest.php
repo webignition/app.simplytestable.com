@@ -2,33 +2,39 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\UserAccountPlanService\Subscribe\Error;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\UserAccountPlanService\ServiceTest;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 
-class TeamMemberTest extends ServiceTest {
+class TeamMemberTest extends ServiceTest
+{
 
     /**
      * @var User
      */
     private $user;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $this->user = $this->createAndActivateUser('user@example.com', 'password');
+        $this->user = $userFactory->createAndActivateUser();
         $this->getTeamMemberService()->add($team, $this->user);
     }
 
-    public function testTeamMemberSubscribeToPlanThrowsException() {
+    public function testTeamMemberSubscribeToPlanThrowsException()
+    {
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception',
             '',
@@ -38,5 +44,4 @@ class TeamMemberTest extends ServiceTest {
         $accountPlan = $this->getAccountPlanService()->find('basic');
         $this->getUserAccountPlanService()->subscribe($this->user, $accountPlan);
     }
-
 }

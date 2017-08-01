@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Create\CreateAction\Success;
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Create\CreateAction\CreateTest;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,7 +24,9 @@ abstract class SuccessTest extends CreateTest {
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
 

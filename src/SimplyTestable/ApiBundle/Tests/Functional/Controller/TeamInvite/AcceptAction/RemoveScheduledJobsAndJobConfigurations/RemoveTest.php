@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\AcceptAction\RemoveScheduledJobsAndJobConfigurations;
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
@@ -34,7 +35,9 @@ class RemoveTest extends ActionTest {
     public function setUp() {
         parent::setUp();
 
-        $this->invitee = $this->createAndActivateUser('invitee@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->invitee = $userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getUserService()->setUser($this->invitee);
 
@@ -65,7 +68,7 @@ class RemoveTest extends ActionTest {
         $this->scheduledJobs[] = $this->getScheduledJobService()->create($this->jobConfigurations[0], '* * * * *', true);
         $this->scheduledJobs[] = $this->getScheduledJobService()->create($this->jobConfigurations[1], '* * * * 1', true);
 
-        $inviter = $this->createAndActivateUser('inviter@example.com');
+        $inviter = $userFactory->createAndActivateUser('inviter@example.com');
 
         $this->getTeamService()->create(
             'Foo',

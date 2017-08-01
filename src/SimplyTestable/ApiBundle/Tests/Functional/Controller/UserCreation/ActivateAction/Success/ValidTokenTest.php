@@ -2,17 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\ActivateAction\Success;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+
 class ValidTokenTest extends SuccessTest {
 
     public function setUp() {
         parent::setUp();
 
-        $email = 'user1@example.com';
-        $password = 'password1';
+        $userFactory = new UserFactory($this->container);
 
-        $this->createUser($email, $password);
-
-        $this->user = $this->getUserService()->findUserByEmail($email);
+        $this->user = $userFactory->create();
 
         $methodName = $this->getActionNameFromRouter();
         $this->response = $this->getCurrentController()->$methodName($this->user->getConfirmationToken());

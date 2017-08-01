@@ -2,16 +2,19 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction\InTeam;
 
-class IndividualTest extends InTeamTest {
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-    public function getUser() {
-        return $this->createAndActivateUser('user@example.com');
+class IndividualTest extends InTeamTest
+{
+    public function getUser()
+    {
+        $userFactory = new UserFactory($this->container);
+
+        return $userFactory->createAndActivateUser();
     }
 
-
-    public function getExpectedUserInTeam() {
+    public function getExpectedUserInTeam()
+    {
         return false;
     }
 }
-
-

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActivateAndAcceptAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
 use Symfony\Component\HttpFoundation\Response as SymfonyHttpResponse;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -36,8 +37,10 @@ class SuccessTest extends ActionTest {
     public function setUp() {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $this->user = $this->createAndFindUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $this->user = $userFactory->create();
         $this->initialPassword = $this->user->getPassword();
 
         $this->assertFalse($this->user->isEnabled());

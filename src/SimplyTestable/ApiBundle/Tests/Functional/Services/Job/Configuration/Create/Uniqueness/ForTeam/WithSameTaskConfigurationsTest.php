@@ -2,14 +2,15 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\Uniqueness\ForTeam;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\Uniqueness\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
-class WithSameTaskConfigurationsTest extends ServiceTest {
-
+class WithSameTaskConfigurationsTest extends ServiceTest
+{
     const LABEL = 'foo';
     const PARAMETERS = 'parameters';
 
@@ -41,11 +42,14 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
      */
     private $values;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $member = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $member = $userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',
@@ -77,8 +81,8 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
         $this->getJobConfigurationService()->setUser($leader);
     }
 
-
-    public function testCreateWithSameArgumentsAndSameTaskConfigurationsThrowsException() {
+    public function testCreateWithSameArgumentsAndSameTaskConfigurationsThrowsException()
+    {
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception',
             'Matching configuration already exists',
@@ -88,6 +92,4 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
         $this->values->setLabel('bar');
         $this->getJobConfigurationService()->create($this->values);
     }
-
-
 }

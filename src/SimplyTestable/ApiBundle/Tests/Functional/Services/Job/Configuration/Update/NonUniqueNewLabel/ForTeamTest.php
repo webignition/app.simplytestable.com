@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\NonUniqueNewLabel;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
@@ -20,8 +21,10 @@ class ForTeamTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $member = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $member = $userFactory->createAndActivateUser('user@example.com');
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',

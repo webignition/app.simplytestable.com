@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Get;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class DirectOwnerTest extends IsRetrievedTest {
 
@@ -12,7 +13,9 @@ class DirectOwnerTest extends IsRetrievedTest {
     private $user;
 
     protected function setUpPreCreate() {
-        $this->user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->user = $userFactory->createAndActivateUser();
     }
 
     protected function getJobConfigurationOwner()

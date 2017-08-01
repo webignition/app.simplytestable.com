@@ -2,28 +2,40 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {
+class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testForUserWithBasicPlanAndNeverHadCard() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
 
-        $user = $this->createAndFindUser($email, $password);
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testForUserWithBasicPlanAndNeverHadCard()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertFalse(isset($responseObject->stripe_customer));
     }
 
-    public function testForUserWithBasicPlanAndHasCard() {
+    public function testForUserWithBasicPlanAndHasCard()
+    {
         $card = $this->getRandomCard();
 
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -48,13 +60,11 @@ class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {
     }
 
 
-    public function testForUserWithPremiumPlan() {
+    public function testForUserWithPremiumPlan()
+    {
         $card = $this->getRandomCard();
 
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -75,8 +85,8 @@ class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {
         }
     }
 
-
-    private function getRandomCard() {
+    private function getRandomCard()
+    {
         return array(
             'exp_month' => $this->getRandomCardExpiryMonth(),
             'exp_year' => $this->getRandomCardExpiryYear(),
@@ -85,8 +95,8 @@ class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {
         );
     }
 
-
-    private function getRandomCardExpiryMonth() {
+    private function getRandomCardExpiryMonth()
+    {
         $month = (string)rand(1, 12);
 
         if (strlen($month) === 1) {
@@ -96,9 +106,9 @@ class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {
         return $month;
     }
 
-
-    private function getRandomCardExpiryYear() {
-        $year = (string)rand(0,99);
+    private function getRandomCardExpiryYear()
+    {
+        $year = (string)rand(0, 99);
 
         if (strlen($year) === 1) {
             $year = str_pad($year, 2, '0', STR_PAD_LEFT);
@@ -111,22 +121,22 @@ class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase {
         return $year;
     }
 
-    private function getRandomCardLastFour() {
+    private function getRandomCardLastFour()
+    {
         $lastFour = '';
 
         while (strlen($lastFour) < 4) {
-            $lastFour .= rand(0,9);
+            $lastFour .= rand(0, 9);
         }
 
         return $lastFour;
     }
 
-    private function getRandomCardType() {
+    private function getRandomCardType()
+    {
         $cards = array('Visa', 'American Express', 'MasterCard', 'Discover', 'JCB', 'Diners Club', 'Unknown');
         $cardKey = array_rand($cards);
 
         return $cards[$cardKey];
     }
 }
-
-

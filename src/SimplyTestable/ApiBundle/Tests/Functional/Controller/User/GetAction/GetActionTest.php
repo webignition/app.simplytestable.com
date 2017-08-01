@@ -2,34 +2,44 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class GetActionTest extends BaseControllerJsonTestCase {
+class GetActionTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testGetForUserWithBasicPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
 
-        $user = $this->createAndFindUser($email, $password);
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testGetForUserWithBasicPlan()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
 
-        $this->assertEquals($email, $responseObject->email);
+        $this->assertEquals($user->getEmail(), $responseObject->email);
     }
 
-    public function testGetForUserWithPremiumPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testGetForUserWithPremiumPlan()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
-        $this->assertEquals($email, $responseObject->email);
+        $this->assertEquals($user->getEmail(), $responseObject->email);
     }
 }
-
-

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Create\CreateAction\Failure\JobConfigurationException;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Create\CreateAction\Failure\FailureTest;
 
 abstract class ExceptionTest extends FailureTest {
@@ -18,7 +19,8 @@ abstract class ExceptionTest extends FailureTest {
      */
     protected function getCurrentUser() {
         if (is_null($this->user)) {
-            $this->user = $this->createAndActivateUser('user@example.com');
+            $userFactory = new UserFactory($this->container);
+            $this->user = $userFactory->createAndActivateUser();
         }
 
         return $this->user;

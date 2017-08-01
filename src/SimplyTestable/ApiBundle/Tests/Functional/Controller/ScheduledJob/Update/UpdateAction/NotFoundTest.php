@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Update\UpdateAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Response;
 
 class NotFoundTest extends UpdateTest {
@@ -14,7 +15,9 @@ class NotFoundTest extends UpdateTest {
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndActivateUser();
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
 

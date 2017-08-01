@@ -3,10 +3,11 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Delete\InvalidLabel\Team;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Delete\InvalidLabel\InvalidLabelTest;
 
-abstract class TeamTest extends InvalidLabelTest {
-
+abstract class TeamTest extends InvalidLabelTest
+{
     /**
      * @var User
      */
@@ -24,12 +25,15 @@ abstract class TeamTest extends InvalidLabelTest {
     protected $member2;
 
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $this->leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $this->member1 = $this->createAndActivateUser('user1@example.com');
-        $this->member2 = $this->createAndActivateUser('user2@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
+        $this->member1 = $userFactory->createAndActivateUser('user1@example.com');
+        $this->member2 = $userFactory->createAndActivateUser('user2@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
@@ -39,5 +43,4 @@ abstract class TeamTest extends InvalidLabelTest {
         $this->getTeamMemberService()->add($team, $this->member1);
         $this->getTeamMemberService()->add($team, $this->member2);
     }
-
 }

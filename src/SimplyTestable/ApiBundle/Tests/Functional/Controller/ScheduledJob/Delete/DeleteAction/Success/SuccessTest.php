@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Delete\DeleteAction\Success;
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Delete\DeleteAction\DeleteTest;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,7 +23,9 @@ class SuccessTest extends DeleteTest {
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
 

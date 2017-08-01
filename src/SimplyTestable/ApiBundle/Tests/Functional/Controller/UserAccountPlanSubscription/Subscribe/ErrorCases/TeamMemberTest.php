@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserAccountPlanSubsciption\Subscribe\ErrorCases;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
 class TeamMemberTest extends BaseControllerJsonTestCase {
@@ -11,14 +12,16 @@ class TeamMemberTest extends BaseControllerJsonTestCase {
     public function setUp() {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $userFactory->createAndActivateUser();
         $this->getTeamMemberService()->add($team, $user);
 
         $this->getUserService()->setUser($user);

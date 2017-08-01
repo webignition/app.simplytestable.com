@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Update
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class NoUpdatedValuesTest extends ServiceTest {
 
@@ -34,7 +35,10 @@ class NoUpdatedValuesTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->createAndActivateUser();
+
 
         $this->jobConfiguration = $this->createJobConfiguration([
             'label' => 'foo',

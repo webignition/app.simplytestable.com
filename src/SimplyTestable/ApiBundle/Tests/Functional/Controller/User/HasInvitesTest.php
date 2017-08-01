@@ -2,11 +2,28 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class HasInvitesTest extends BaseControllerJsonTestCase {
+class HasInvitesTest extends BaseControllerJsonTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testNonexistentUserHasNoInvites() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testNonexistentUserHasNoInvites()
+    {
         try {
             $controller = $this->getUserController('hasInvitesAction');
             $controller->hasInvitesAction('user@example.com');
@@ -16,8 +33,9 @@ class HasInvitesTest extends BaseControllerJsonTestCase {
         }
     }
 
-    public function testUserWithNoInvitesHasNoInvites() {
-        $user = $this->createAndActivateUser('user@example.com');
+    public function testUserWithNoInvitesHasNoInvites()
+    {
+        $user = $this->userFactory->createAndActivateUser();
 
         try {
             $controller = $this->getUserController('hasInvitesAction');
@@ -28,9 +46,10 @@ class HasInvitesTest extends BaseControllerJsonTestCase {
         }
     }
 
-    public function testUserWithInvites() {
-        $leader = $this->createAndActivateUser('leader@example.com');
-        $user = $this->createAndFindUser('user@example.com');
+    public function testUserWithInvites()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->create();
 
         $this->getTeamService()->create('Foo', $leader);
         $this->getTeamInviteService()->get($leader, $user);
@@ -41,5 +60,3 @@ class HasInvitesTest extends BaseControllerJsonTestCase {
         );
     }
 }
-
-

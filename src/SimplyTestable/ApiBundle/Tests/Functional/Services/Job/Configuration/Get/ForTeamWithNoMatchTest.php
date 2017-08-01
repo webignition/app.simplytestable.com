@@ -5,9 +5,10 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\G
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-class ForTeamWithNoMatchTest extends ServiceTest {
-
+class ForTeamWithNoMatchTest extends ServiceTest
+{
     const LABEL = 'foo';
 
     private $taskTypeOptionsSet = [
@@ -33,11 +34,14 @@ class ForTeamWithNoMatchTest extends ServiceTest {
         ]
     ];
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $member = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $member = $userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',
@@ -69,8 +73,8 @@ class ForTeamWithNoMatchTest extends ServiceTest {
         $this->getJobConfigurationService()->setUser($member);
     }
 
-    public function testNoMatchReturnsNull() {
+    public function testNoMatchReturnsNull()
+    {
         $this->assertNull($this->getJobConfigurationService()->get('bar'));
     }
-
 }

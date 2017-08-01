@@ -2,17 +2,31 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class GetActionPlanContraintsTest extends BaseControllerJsonTestCase {
-
+class GetActionPlanContraintsTest extends BaseControllerJsonTestCase
+{
     const DEFAULT_TRIAL_PERIOD = 30;
 
-    public function testForUseWithBasicPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-        $user = $this->createAndFindUser($email, $password);
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testForUseWithBasicPlan()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
@@ -26,12 +40,9 @@ class GetActionPlanContraintsTest extends BaseControllerJsonTestCase {
         $this->assertEquals(10, $responseObject->plan_constraints->urls_per_job);
     }
 
-
-    public function testForUserWithPremiumPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testForUserWithPremiumPlan()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -47,5 +58,3 @@ class GetActionPlanContraintsTest extends BaseControllerJsonTestCase {
         $this->assertEquals(50, $responseObject->plan_constraints->urls_per_job);
     }
 }
-
-

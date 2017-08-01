@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Get;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class UserWithTeamDoesOwnTest extends IsRetrievedTest {
 
@@ -19,8 +20,10 @@ class UserWithTeamDoesOwnTest extends IsRetrievedTest {
 
 
     protected function setUpPreCreate() {
-        $this->leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $this->member = $this->createAndActivateUser('member@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
+        $this->member = $userFactory->createAndActivateUser('member@example.com');
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',

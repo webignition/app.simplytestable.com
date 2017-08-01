@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Start\StartAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class DifferentUsersTest extends ActionTest {
@@ -15,8 +16,10 @@ class DifferentUsersTest extends ActionTest {
     public function setUp() {
         parent::setUp();
 
-        $user1 = $this->createAndActivateUser('user1@example.com');
-        $user2 = $this->createAndActivateUser('user2@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $user1 = $userFactory->createAndActivateUser('user1@example.com');
+        $user2 = $userFactory->createAndActivateUser('user2@example.com');
 
         $methodName = $this->getActionNameFromRouter([
             'site_root_url' => self::DEFAULT_CANONICAL_URL

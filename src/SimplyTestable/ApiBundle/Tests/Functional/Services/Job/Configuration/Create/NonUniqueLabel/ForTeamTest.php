@@ -2,12 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\NonUniqueLabel;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
-class ForTeamTest extends ServiceTest {
-
+class ForTeamTest extends ServiceTest
+{
     const LABEL = 'foo';
 
     /**
@@ -15,11 +16,14 @@ class ForTeamTest extends ServiceTest {
      */
     private $values;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $member = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $member = $userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',
@@ -39,7 +43,8 @@ class ForTeamTest extends ServiceTest {
         $this->getJobConfigurationService()->setUser($leader);
     }
 
-    public function testCreateWithNonUniqueLabelForTeamThrowsException() {
+    public function testCreateWithNonUniqueLabelForTeamThrowsException()
+    {
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception',
             'Label "' . self::LABEL . '" is not unique',
@@ -48,5 +53,4 @@ class ForTeamTest extends ServiceTest {
 
         $this->getJobConfigurationService()->create($this->values);
     }
-
 }

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Get\GetAction\Success;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Get\GetAction\GetTest;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,7 +19,9 @@ class SuccessTest extends GetTest {
     public function setUp() {
         parent::setUp();
 
-        $this->getUserService()->setUser($this->createAndActivateUser('user@example.com'));
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createAndActivateUser();
+        $this->getUserService()->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
 

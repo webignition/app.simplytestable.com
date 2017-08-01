@@ -2,12 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\UserPostActivationProperties\GetForUser;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+
 class UserHasNoneTest extends ServiceTest {
 
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndFindUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->create();
         $this->userPostActivationProperties = $this->getUserPostActivationPropertiesService()->getForUser($user);
     }
 

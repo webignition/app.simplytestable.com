@@ -2,20 +2,37 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TeamMember\Add;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamMember\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\TeamMember\Exception as TeamMemberServiceException;
 
-class CreateTest extends ServiceTest {
+class CreateTest extends ServiceTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testUserAlreadyOnTeamThrowsTeamMemberServiceException() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testUserAlreadyOnTeamThrowsTeamMemberServiceException()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($team, $user);
 
@@ -28,16 +45,16 @@ class CreateTest extends ServiceTest {
         $this->getTeamMemberService()->add($team, $user);
     }
 
-
-    public function testUserNotAlreadyOnTeamIsAdded() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+    public function testUserNotAlreadyOnTeamIsAdded()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
 
         $member = $this->getTeamMemberService()->add($team, $user);
 
@@ -45,5 +62,4 @@ class CreateTest extends ServiceTest {
         $this->assertEquals($team->getId(), $member->getTeam()->getId());
         $this->assertEquals($user->getId(), $member->getUser()->getId());
     }
-
 }

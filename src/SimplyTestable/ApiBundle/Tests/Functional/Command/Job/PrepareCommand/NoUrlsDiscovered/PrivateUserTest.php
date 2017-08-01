@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\PrepareCommand\NoUrlsDiscovered;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Command\Job\PrepareCommand\CommandTest;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -20,8 +21,9 @@ class PrivateUserTest extends CommandTest
     protected function getJob()
     {
         $jobFactory = new JobFactory($this->container);
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createAndActivateUser();
 
-        $user = $this->createAndActivateUser('user@example.com');
         $this->getUserService()->setUser($user);
 
         $job = $jobFactory->create([

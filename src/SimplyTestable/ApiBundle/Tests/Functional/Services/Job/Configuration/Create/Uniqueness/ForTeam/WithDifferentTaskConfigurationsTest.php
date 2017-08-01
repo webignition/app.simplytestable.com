@@ -2,13 +2,14 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\Uniqueness\ForTeam;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\Uniqueness\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
-class WithDifferentTaskConfigurationsTest extends ServiceTest {
-
+class WithDifferentTaskConfigurationsTest extends ServiceTest
+{
     const LABEL = 'foo';
     const PARAMETERS = 'parameters';
 
@@ -63,11 +64,14 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest {
      */
     private $values;
 
-    public function setUp() {
+    public function setUp()
+    {
         parent::setUp();
 
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $member = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $member = $userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',
@@ -99,8 +103,8 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest {
         $this->getJobConfigurationService()->setUser($leader);
     }
 
-
-    public function testCreateWithSameArgumentsAndDifferentTaskConfigurationsDoesNotThrowException() {
+    public function testCreateWithSameArgumentsAndDifferentTaskConfigurationsDoesNotThrowException()
+    {
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSets[1] as $taskTypeName => $taskTypeOptions) {
@@ -117,6 +121,4 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest {
         $this->values->setLabel('bar');
         $this->getJobConfigurationService()->create($this->values);
     }
-
-
 }

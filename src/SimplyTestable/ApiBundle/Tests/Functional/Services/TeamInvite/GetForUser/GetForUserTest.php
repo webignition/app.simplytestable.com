@@ -2,21 +2,38 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\TeamInvite\GetForUser;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamInvite\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 
-class GetForUserTest extends ServiceTest {
+class GetForUserTest extends ServiceTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
 
-    public function testNoInvitesReturnsEmptyCollection() {
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testNoInvitesReturnsEmptyCollection()
+    {
+        $user = $this->userFactory->createAndActivateUser();
         $this->assertEquals([], $this->getTeamInviteService()->getForUser($user));
     }
 
 
-    public function testWithSingleInvite() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+    public function testWithSingleInvite()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create(
             'Foo',
@@ -34,11 +51,11 @@ class GetForUserTest extends ServiceTest {
         $this->assertEquals($invite->getId(), $invites[0]->getId());
     }
 
-
-    public function testWithManyInvites() {
-        $leader1 = $this->createAndActivateUser('leader1@example.com', 'password');
-        $leader2 = $this->createAndActivateUser('leader2@example.com', 'password');
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+    public function testWithManyInvites()
+    {
+        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create(
             'Foo1',
@@ -68,5 +85,4 @@ class GetForUserTest extends ServiceTest {
         $this->assertEquals($invite1->getId(), $invites[0]->getId());
         $this->assertEquals($invite2->getId(), $invites[1]->getId());
     }
-
 }

@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\UserPostActivationProperties\Create;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+
 class UserHasNoneTest extends ServiceTest {
 
     const ACCOUNT_PLAN_NAME = 'personal';
@@ -10,8 +12,10 @@ class UserHasNoneTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
+        $userFactory = new UserFactory($this->container);
+
         $this->userPostActivationProperties = $this->getUserPostActivationPropertiesService()->create(
-            $this->createAndFindUser('user@example.com'),
+            $userFactory->create(),
             $this->getAccountPlanService()->find(self::ACCOUNT_PLAN_NAME),
             self::COUPON
         );

@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Upda
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Update\UpdateAction\Failure\FailureTest;
 
 abstract class MatchingScheduledJobTest extends FailureTest {
@@ -42,7 +43,8 @@ abstract class MatchingScheduledJobTest extends FailureTest {
 
     protected function getCurrentUser() {
         if (is_null($this->user)) {
-            $this->user = $this->createAndActivateUser();
+            $userFactory = new UserFactory($this->container);
+            $this->user = $userFactory->createAndActivateUser();
         }
 
         return $this->user;

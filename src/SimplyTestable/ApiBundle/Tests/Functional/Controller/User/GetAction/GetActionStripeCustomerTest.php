@@ -2,17 +2,30 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class GetActionStripeCustomerTest extends BaseControllerJsonTestCase {
-
+class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
+{
     const DEFAULT_TRIAL_PERIOD = 30;
 
-    public function testForUserWithBasicPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-        $user = $this->createAndFindUser($email, $password);
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testForUserWithBasicPlan() {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
@@ -20,10 +33,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase {
     }
 
     public function testForUserWithPremiumPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -33,10 +43,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase {
     }
 
     public function testForUserWhereIsActiveIsZero() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -48,10 +55,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase {
     }
 
     public function testForUserWhereIsActiveIsZeroAndUserHasMany() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -66,10 +70,8 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase {
 
     public function testForUserWithPreviousPremiumTrialBackOnBasic() {
         $trialDaysRemaining = rand(1, self::DEFAULT_TRIAL_PERIOD);
-        $email = 'user-test-retention-of-trial-period@example.com';
-        $password = 'password1';
 
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -82,7 +84,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase {
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'basic');
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($user->getEmail(), 'basic');
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertTrue(isset($responseObject->stripe_customer));
@@ -90,12 +92,12 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase {
 
 
     public function testTeamMemberSummaryExcludesTeamStripeCustomer() {
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
         $this->getUserService()->setUser($leader);
 
         $this->getUserAccountPlanService()->subscribe($leader, $this->getAccountPlanService()->find('personal'));
 
-        $member = $this->createAndActivateUser('user@example.com');
+        $member = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create('Foo', $leader);
 

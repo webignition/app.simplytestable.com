@@ -3,10 +3,11 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Delete\Success\Team;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Delete\Success\SuccessTest;
 
-abstract class TeamTest extends SuccessTest {
-
+abstract class TeamTest extends SuccessTest
+{
     /**
      * @var User
      */
@@ -24,10 +25,13 @@ abstract class TeamTest extends SuccessTest {
     protected $member2;
 
 
-    public function preCreateJobConfigurations() {
-        $this->leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $this->member1 = $this->createAndActivateUser('user1@example.com');
-        $this->member2 = $this->createAndActivateUser('user2@example.com');
+    public function preCreateJobConfigurations()
+    {
+        $userFactory = new UserFactory($this->container);
+
+        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
+        $this->member1 = $userFactory->createAndActivateUser('user1@example.com');
+        $this->member2 = $userFactory->createAndActivateUser('user2@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
@@ -38,9 +42,8 @@ abstract class TeamTest extends SuccessTest {
         $this->getTeamMemberService()->add($team, $this->member2);
     }
 
-
-    protected function getCurrentUser() {
+    protected function getCurrentUser()
+    {
         return $this->getUserService()->getPublicUser();
     }
-
 }

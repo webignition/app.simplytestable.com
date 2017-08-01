@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prepare\Cookies;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -29,7 +30,9 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->queueResolveHttpFixture();
-        $user = $this->getTestUser();
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->create();
         $this->getUserService()->setUser($user);
 
         $jobFactory = new JobFactory($this->container);

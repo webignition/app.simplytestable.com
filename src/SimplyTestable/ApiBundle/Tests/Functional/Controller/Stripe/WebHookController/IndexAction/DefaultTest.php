@@ -2,10 +2,30 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Stripe\WebHookController\IndexAction;
 
-class DefaultTest extends IndexActionTest {
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
-    public function testWithStripeInvoicePaymentFailedEventForUnknownUser() {
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.payment_failed.event.json');
+class DefaultTest extends IndexActionTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testWithStripeInvoicePaymentFailedEventForUnknownUser()
+    {
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.payment_failed.event.json'
+        );
         $response = $this->getStripeWebHookController('indexAction', array(
             'event' => $fixture
         ))->indexAction();
@@ -18,16 +38,19 @@ class DefaultTest extends IndexActionTest {
         $this->assertEquals($responseObject->stripe_id, $stripeEvent->getStripeId());
     }
 
-    public function testWithStripeInvoicePaymentFailedEventForKnownUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testWithStripeInvoicePaymentFailedEventForKnownUser()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
+            $user,
+            $this->getAccountPlanService()->find('personal')
+        );
 
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.payment_failed.event.json');
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.payment_failed.event.json'
+        );
         $fixtureObject = json_decode($fixture);
 
         $fixtureObject->data->object->customer = $userAccountPlan->getStripeCustomer();
@@ -39,14 +62,17 @@ class DefaultTest extends IndexActionTest {
         $this->assertEquals(200, $response->getStatusCode());
 
         $responseObject = json_decode($response->getContent());
-        $this->assertEquals($email, $responseObject->user);
+        $this->assertEquals($user->getEmail(), $responseObject->user);
 
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
         $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
     }
 
-    public function testWithStripeCustomerSubscriptionCreatedEventForUnknownUser() {
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.subscription.created.event.json');
+    public function testWithStripeCustomerSubscriptionCreatedEventForUnknownUser()
+    {
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.subscription.created.event.json'
+        );
         $response = $this->getStripeWebHookController('indexAction', array(
             'event' => $fixture
         ))->indexAction();
@@ -59,17 +85,19 @@ class DefaultTest extends IndexActionTest {
         $this->assertEquals($responseObject->stripe_id, $stripeEvent->getStripeId());
     }
 
-
-    public function testWithStripeCustomerSubscriptionCreatedEventForKnownUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testWithStripeCustomerSubscriptionCreatedEventForKnownUser()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
+            $user,
+            $this->getAccountPlanService()->find('personal')
+        );
 
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.subscription.created.event.json');
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.subscription.created.event.json'
+        );
         $fixtureObject = json_decode($fixture);
 
         $fixtureObject->data->object->customer = $userAccountPlan->getStripeCustomer();
@@ -81,16 +109,18 @@ class DefaultTest extends IndexActionTest {
         $this->assertEquals(200, $response->getStatusCode());
 
         $responseObject = json_decode($response->getContent());
-        $this->assertEquals($email, $responseObject->user);
+        $this->assertEquals($user->getEmail(), $responseObject->user);
 
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
         $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
-
     }
 
 
-    public function testWithStripeInvoiceCreatedEventForUnknownUser() {
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.created.event.json');
+    public function testWithStripeInvoiceCreatedEventForUnknownUser()
+    {
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.created.event.json'
+        );
         $response = $this->getStripeWebHookController('indexAction', array(
             'event' => $fixture
         ))->indexAction();
@@ -101,20 +131,21 @@ class DefaultTest extends IndexActionTest {
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
 
         $this->assertEquals($responseObject->stripe_id, $stripeEvent->getStripeId());
-
     }
 
-
-    public function testWithStripeInvoiceCreatedEventForKnownUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testWithStripeInvoiceCreatedEventForKnownUser()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
+            $user,
+            $this->getAccountPlanService()->find('personal')
+        );
 
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.created.event.json');
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.created.event.json'
+        );
         $fixtureObject = json_decode($fixture);
 
         $fixtureObject->data->object->customer = $userAccountPlan->getStripeCustomer();
@@ -126,16 +157,17 @@ class DefaultTest extends IndexActionTest {
         $this->assertEquals(200, $response->getStatusCode());
 
         $responseObject = json_decode($response->getContent());
-        $this->assertEquals($email, $responseObject->user);
+        $this->assertEquals($user->getEmail(), $responseObject->user);
 
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
         $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
-
     }
 
-
-    public function testWithStripeCustomerUpdatedEventForUnknownUser() {
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.updated.event.json');
+    public function testWithStripeCustomerUpdatedEventForUnknownUser()
+    {
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.updated.event.json'
+        );
         $response = $this->getStripeWebHookController('indexAction', array(
             'event' => $fixture
         ))->indexAction();
@@ -146,20 +178,21 @@ class DefaultTest extends IndexActionTest {
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
 
         $this->assertEquals($responseObject->stripe_id, $stripeEvent->getStripeId());
-
     }
 
-
-    public function testWithStripeCustomerUpdatedEventForKnownUser() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testWithStripeCustomerUpdatedEventForKnownUser()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
+            $user,
+            $this->getAccountPlanService()->find('personal')
+        );
 
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.updated.event.json');
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.updated.event.json'
+        );
         $fixtureObject = json_decode($fixture);
 
         $fixtureObject->data->object->id = $userAccountPlan->getStripeCustomer();
@@ -171,22 +204,25 @@ class DefaultTest extends IndexActionTest {
         $this->assertEquals(200, $response->getStatusCode());
 
         $responseObject = json_decode($response->getContent());
-        $this->assertEquals($email, $responseObject->user);
+        $this->assertEquals($user->getEmail(), $responseObject->user);
 
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
         $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
     }
 
-    public function testStripeEventDataIsPersisted() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testStripeEventDataIsPersisted()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
+            $user,
+            $this->getAccountPlanService()->find('personal')
+        );
 
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.subscription.created.event.json');
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/customer.subscription.created.event.json'
+        );
         $fixtureObject = json_decode($fixture);
 
         $fixtureObject->data->object->customer = $userAccountPlan->getStripeCustomer();
@@ -198,19 +234,24 @@ class DefaultTest extends IndexActionTest {
         $this->assertEquals(200, $response->getStatusCode());
 
         $responseObject = json_decode($response->getContent());
-        $this->assertEquals($email, $responseObject->user);
+        $this->assertEquals($user->getEmail(), $responseObject->user);
 
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
         $this->assertEquals($user->getId(), $stripeEvent->getUser()->getId());
         $this->assertNotNull($stripeEvent->getStripeEventData());
 
         $this->assertEquals(json_encode($fixtureObject), $stripeEvent->getStripeEventData());
-        $this->assertEquals(new \webignition\Model\Stripe\Event\Event(json_encode($fixtureObject)), $stripeEvent->getStripeEventObject());
+        $this->assertEquals(
+            new \webignition\Model\Stripe\Event\Event(json_encode($fixtureObject)),
+            $stripeEvent->getStripeEventObject()
+        );
     }
 
-
-    public function testValidEventCreatesProcessEventResqueJob() {
-        $fixture = $this->getFixture($this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.payment_failed.event.json');
+    public function testValidEventCreatesProcessEventResqueJob()
+    {
+        $fixture = $this->getFixture(
+            $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.payment_failed.event.json'
+        );
 
         $response = $this->getStripeWebHookController('indexAction', array(
             'event' => $fixture
@@ -227,7 +268,4 @@ class DefaultTest extends IndexActionTest {
             )
         ));
     }
-
 }
-
-

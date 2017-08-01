@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\JobList\CountAction\TeamTest;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -38,9 +39,11 @@ abstract class TeamTest extends BaseControllerJsonTestCase
     {
         parent::setUp();
 
-        $this->leader = $this->createAndActivateUser('leader@example.com');
-        $this->member1 = $this->createAndActivateUser('member1@example.com');
-        $this->member2 = $this->createAndActivateUser('member2@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
+        $this->member1 = $userFactory->createAndActivateUser('member1@example.com');
+        $this->member2 = $userFactory->createAndActivateUser('member2@example.com');
 
         $team = $this->getTeamService()->create('Foo', $this->leader);
 

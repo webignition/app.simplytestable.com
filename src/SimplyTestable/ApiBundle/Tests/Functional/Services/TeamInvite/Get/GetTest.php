@@ -2,14 +2,31 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\TeamInvite\Get;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamInvite\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 
-class GetTest extends ServiceTest {
+class GetTest extends ServiceTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-    public function testInviterIsNotTeamLeaderThrowsTeamInviteServiceException() {
-        $user1 = $this->createAndActivateUser('user1@example.com', 'password');
-        $user2 = $this->createAndActivateUser('user2@example.com', 'password');
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testInviterIsNotTeamLeaderThrowsTeamInviteServiceException()
+    {
+        $user1 = $this->userFactory->createAndActivateUser('user1@example.com');
+        $user2 = $this->userFactory->createAndActivateUser('user2@example.com');
 
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception',
@@ -23,9 +40,10 @@ class GetTest extends ServiceTest {
         );
     }
 
-    public function testInviteeHasTeamThrowsTeamInviteServiceException() {
-        $leader1 = $this->createAndActivateUser('leader1@example.com', 'password');
-        $leader2 = $this->createAndActivateUser('leader2@example.com', 'password');
+    public function testInviteeHasTeamThrowsTeamInviteServiceException()
+    {
+        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
 
         $this->getTeamService()->create(
             'Foo1',
@@ -49,10 +67,11 @@ class GetTest extends ServiceTest {
         );
     }
 
-    public function testInviteeIsAlreadyInDifferentTeamThrowsTeamInviteServiceException() {
-        $leader1 = $this->createAndActivateUser('leader1@example.com', 'password');
-        $leader2 = $this->createAndActivateUser('leader2@example.com', 'password');
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+    public function testInviteeIsAlreadyInDifferentTeamThrowsTeamInviteServiceException()
+    {
+        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
+        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $user = $this->userFactory->createAndActivateUser('user@example.com');
 
         $team1 = $this->getTeamService()->create(
             'Foo1',
@@ -78,9 +97,10 @@ class GetTest extends ServiceTest {
         );
     }
 
-    public function testGetNewInviteReturnsInvite() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+    public function testGetNewInviteReturnsInvite()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser('user@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo1',
@@ -97,9 +117,10 @@ class GetTest extends ServiceTest {
         $this->assertEquals($user->getId(), $invite->getUser()->getId());
     }
 
-    public function testGetExistingInviteReturnsExistingInvite() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+    public function testGetExistingInviteReturnsExistingInvite()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $user = $this->userFactory->createAndActivateUser('user@example.com');
 
         $this->getTeamService()->create(
             'Foo1',
@@ -118,5 +139,4 @@ class GetTest extends ServiceTest {
 
         $this->assertEquals($invite1, $invite2);
     }
-
 }

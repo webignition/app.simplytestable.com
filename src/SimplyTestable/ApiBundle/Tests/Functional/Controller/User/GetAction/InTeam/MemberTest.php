@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction\InTeam;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class MemberTest extends InTeamTest {
 
@@ -25,10 +26,12 @@ class MemberTest extends InTeamTest {
 
 
     protected function preGetUser() {
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $userFactory->createAndActivateUser('leader@example.com');
         $team = $this->getTeamService()->create('Foo', $leader);
 
-        $this->user = $this->createAndActivateUser('user@example.com');
+        $this->user = $userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($team, $this->user);
     }

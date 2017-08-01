@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Create\MatchingScheduledJob;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Create\ServiceTest;
 
 abstract class MatchingScheduledJobTest extends ServiceTest {
@@ -15,7 +16,9 @@ abstract class MatchingScheduledJobTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $user = $this->createAndActivateUser('user@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->createAndActivateUser();
 
         $this->jobConfiguration = $this->createJobConfiguration([
             'label' => 'foo',

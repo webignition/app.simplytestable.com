@@ -2,12 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\DeclineAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
 
-class DeclineTest extends ActionTest {
+class DeclineTest extends ActionTest
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
 
     public function testUserDeclinesForNonexistentTeamReturnsOk() {
-        $user = $this->createAndActivateUser('user@example.com');
+        $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
@@ -22,13 +39,13 @@ class DeclineTest extends ActionTest {
 
 
     public function testUserHasNoInviteReturnsOk() {
-        $leader = $this->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
         $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com');
+        $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
@@ -45,8 +62,8 @@ class DeclineTest extends ActionTest {
 
 
     public function testInviteIsDeclined() {
-        $inviter = $this->createAndActivateUser('inviter@example.com', 'password');
-        $invitee = $this->createAndActivateUser('invitee@example.com', 'password');
+        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
 
         $this->getTeamService()->create(
             'Foo',

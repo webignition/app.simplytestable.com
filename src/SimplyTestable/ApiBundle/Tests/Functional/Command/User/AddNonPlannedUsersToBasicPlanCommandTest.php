@@ -2,48 +2,63 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\User;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
 
-class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase {
+class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase
+{
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
 
     /**
-     *
      * @return string
      */
-    protected function getCommandName() {
+    protected function getCommandName()
+    {
         return 'simplytestable:user:add-non-planned-users-to-basic-plan';
     }
 
-
     /**
-     *
      * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
      */
-    protected function getAdditionalCommands() {
+    protected function getAdditionalCommands()
+    {
         return array(
             new \SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand()
         );
     }
 
-    public function testAssignInMaintenanceReadOnlyModeReturnsStatusCode1() {
+    public function testAssignInMaintenanceReadOnlyModeReturnsStatusCode1()
+    {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');
         $this->assertReturnCode(1);
     }
 
-    public function testPublicUserIsNotAssignedBasicPlan() {
+    public function testPublicUserIsNotAssignedBasicPlan()
+    {
         $this->assertReturnCode(0);
 
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUserService()->getPublicUser());
         $this->assertEquals('public', $userAccountPlan->getPlan()->getName());
     }
 
-    public function testAdminUserIsNotAssignedBasicPlan() {
+    public function testAdminUserIsNotAssignedBasicPlan()
+    {
         $this->assertReturnCode(0);
         $this->assertNull($this->getUserAccountPlanService()->getForUser($this->getUserService()->getAdminUser()));
     }
 
-
-    public function testRegularUsersWithoutPlansAreAssignedTheBasicPlanWhenNoUsersHavePlans() {
+    public function testRegularUsersWithoutPlansAreAssignedTheBasicPlanWhenNoUsersHavePlans()
+    {
         $userEmailAddresses = array(
             'user1@example.com',
             'user2@example.com',
@@ -53,8 +68,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase {
         $users = array();
 
         foreach ($userEmailAddresses as $userEmailAddress) {
-            $this->createUser($userEmailAddress, 'password');
-            $user = $this->getUserService()->findUserByEmail($userEmailAddress);
+            $user = $this->userFactory->create($userEmailAddress);
 
             $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
             $this->getManager()->remove($userAccountPlan);
@@ -74,10 +88,9 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase {
         }
     }
 
-
-    public function testRegularUsersWithoutPlansAreAssignedTheBasicPlanWhenSomeUsersHavePlans() {
-        $this->createUser('user1@example.com', 'password');
-        $user1 = $this->getUserService()->findUserByEmail('user1@example.com');
+    public function testRegularUsersWithoutPlansAreAssignedTheBasicPlanWhenSomeUsersHavePlans()
+    {
+        $user1 = $this->userFactory->create('user1@example.com');
 
         $fooPlan = $this->createAccountPlan('test-foo-plan');
 
@@ -91,8 +104,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase {
         $users = array();
 
         foreach ($userEmailAddresses as $userEmailAddress) {
-            $this->createUser($userEmailAddress, 'password');
-            $user = $this->getUserService()->findUserByEmail($userEmailAddress);
+            $user = $this->userFactory->create($userEmailAddress);
 
             $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
             $this->getManager()->remove($userAccountPlan);
@@ -111,8 +123,9 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase {
             $this->assertEquals('basic', $this->getUserAccountPlanService()->getForUser($user)->getPlan()->getName());
         }
 
-        $this->assertEquals('test-foo-plan', $this->getUserAccountPlanService()->getForUser($user1)->getPlan()->getName());
+        $this->assertEquals(
+            'test-foo-plan',
+            $this->getUserAccountPlanService()->getForUser($user1)->getPlan()->getName()
+        );
     }
-
-
 }

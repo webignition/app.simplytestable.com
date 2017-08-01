@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\PrepareFromCrawl;
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -14,9 +15,13 @@ class ServiceTest extends BaseSimplyTestableTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->create();
+
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_USER => $this->getTestUser(),
+            JobFactory::KEY_USER => $user,
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
@@ -24,7 +29,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
 
-        $userAccountPlanPlan = $this->getUserAccountPlanService()->getForUser($this->getTestUser())->getPlan();
+        $userAccountPlanPlan = $this->getUserAccountPlanService()->getForUser($user)->getPlan();
         $urlLimit = $userAccountPlanPlan->getConstraintNamed('urls_per_job')->getLimit();
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\ScheduledJob\Execute
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 abstract class WithScheduledJobTest extends CommandTest {
 
@@ -67,7 +68,9 @@ abstract class WithScheduledJobTest extends CommandTest {
      * @return User
      */
     protected function getJobConfigurationUser() {
-        return $this->createAndActivateUser();
+        $userFactory = new UserFactory($this->container);
+
+        return $userFactory->createAndActivateUser();
     }
 
 

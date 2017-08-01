@@ -2,17 +2,31 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class UserPlanTest extends BaseControllerJsonTestCase {
-
+class UserPlanTest extends BaseControllerJsonTestCase
+{
     const DEFAULT_TRIAL_PERIOD = 30;
 
-    public function testHasUserPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
-        $user = $this->createAndFindUser($email, $password);
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->userFactory = new UserFactory($this->container);
+    }
+
+    public function testHasUserPlan()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
@@ -21,11 +35,9 @@ class UserPlanTest extends BaseControllerJsonTestCase {
         $this->assertTrue(isset($responseObject->user_plan->plan));
     }
 
-    public function testForUserWithBasicPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testForUserWithBasicPlan()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
@@ -34,11 +46,9 @@ class UserPlanTest extends BaseControllerJsonTestCase {
         $this->assertFalse($responseObject->user_plan->plan->is_premium);
     }
 
-    public function testForUserWithPremiumPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testForUserWithPremiumPlan()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -50,11 +60,9 @@ class UserPlanTest extends BaseControllerJsonTestCase {
         $this->assertEquals(self::DEFAULT_TRIAL_PERIOD, $responseObject->user_plan->start_trial_period);
     }
 
-    public function testRetrieveForUserWhereIsActiveIsZero() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testRetrieveForUserWhereIsActiveIsZero()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->deactivateAllForUser($user);
@@ -64,11 +72,9 @@ class UserPlanTest extends BaseControllerJsonTestCase {
         $this->assertEquals('basic', $responseObject->user_plan->plan->name);
     }
 
-    public function testRetrieveForUserWhereIsActiveIsZeroAndUserHasMany() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testRetrieveForUserWhereIsActiveIsZeroAndUserHasMany()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -78,30 +84,29 @@ class UserPlanTest extends BaseControllerJsonTestCase {
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
 
-        $this->assertEquals('agency', $responseObject->user_plan->plan->name);  ;
+        $this->assertEquals('agency', $responseObject->user_plan->plan->name);
     }
 
 
-    public function testStartTrialPeriodForUserWithBasicPlan() {
-        $email = 'user1@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+    public function testStartTrialPeriodForUserWithBasicPlan()
+    {
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals(self::DEFAULT_TRIAL_PERIOD, $responseObject->user_plan->start_trial_period);
     }
 
-    public function testStartTrialPeriodForUserWithPartExpiredPremiumTrial() {
+    public function testStartTrialPeriodForUserWithPartExpiredPremiumTrial()
+    {
         $trialDaysRemaining = rand(1, self::DEFAULT_TRIAL_PERIOD);
-        $email = 'user-test-retention-of-trial-period@example.com';
-        $password = 'password1';
-
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'personal');
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+            $user->getEmail(),
+            'personal'
+        );
 
         // Mock the fact that the Stripe customer.subscription.trial_end is
         // $trialDaysPassed days from now
@@ -111,19 +116,21 @@ class UserPlanTest extends BaseControllerJsonTestCase {
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'agency');
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+            $user->getEmail(),
+            'agency'
+        );
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals($trialDaysRemaining, $responseObject->user_plan->start_trial_period);
     }
 
 
-    public function testStartTrialPeriodForUserWithPartExpiredPremiumTrialBackOnBasic() {
+    public function testStartTrialPeriodForUserWithPartExpiredPremiumTrialBackOnBasic()
+    {
         $trialDaysRemaining = rand(1, self::DEFAULT_TRIAL_PERIOD);
-        $email = 'user-test-retention-of-trial-period@example.com';
-        $password = 'password1';
 
-        $user = $this->createAndFindUser($email, $password);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
@@ -136,27 +143,31 @@ class UserPlanTest extends BaseControllerJsonTestCase {
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($email, 'basic');
+        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+            $user->getEmail(),
+            'basic'
+        );
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals($trialDaysRemaining, $responseObject->user_plan->start_trial_period);
     }
 
 
-    public function testGetTeamPlanForTeamMember() {
-        $leader = $this->createAndActivateUser('leader@example.com', 'password');
+    public function testGetTeamPlanForTeamMember()
+    {
+        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
 
         $team = $this->getTeamService()->create(
             'Foo',
             $leader
         );
 
-        $user = $this->createAndActivateUser('user@example.com', 'password');
+        $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($user);
 
         $this->getTeamMemberService()->add($team, $user);
 
-        $this->getUserAccountPlanService()->subscribe($leader, $this->getAccountPlanService()->find('agency'));;
+        $this->getUserAccountPlanService()->subscribe($leader, $this->getAccountPlanService()->find('agency'));
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
 

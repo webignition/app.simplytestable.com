@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\GetList\Team;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\GetList\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 
@@ -29,8 +30,10 @@ abstract class TeamTest extends ServiceTest {
     public function setUp() {
         parent::setUp();
 
-        $this->leader = $this->createAndActivateUser('leader@example.com');
-        $this->member = $this->createAndActivateUser('member@example.com');
+        $userFactory = new UserFactory($this->container);
+
+        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
+        $this->member = $userFactory->createAndActivateUser('member@example.com');
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',
