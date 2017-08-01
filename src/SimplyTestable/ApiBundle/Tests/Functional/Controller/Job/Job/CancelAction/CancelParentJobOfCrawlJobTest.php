@@ -2,12 +2,18 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job\CancelAction;
 
+use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class CancelParentJobOfCrawlJobTest extends IsCancelledTest
 {
     private $user;
+
+    /**
+     * @var CrawlJobContainer
+     */
     private $crawlJobContainer;
 
     protected function preCall()
@@ -22,8 +28,8 @@ class CancelParentJobOfCrawlJobTest extends IsCancelledTest
     public function testCrawlJobIsCancelled()
     {
         $this->assertEquals(
-            $this->getJobService()->getCancelledState(),
-            $this->crawlJobContainer->getCrawlJob()->getState()
+            JobService::CANCELLED_STATE,
+            $this->crawlJobContainer->getCrawlJob()->getState()->getName()
         );
     }
 

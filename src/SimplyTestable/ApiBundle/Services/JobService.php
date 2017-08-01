@@ -90,14 +90,6 @@ class JobService extends EntityService
     /**
      * @return State
      */
-    public function getCancelledState()
-    {
-        return $this->stateService->fetch(self::CANCELLED_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getStartingState()
     {
         return $this->stateService->fetch(self::STARTING_STATE);
@@ -317,7 +309,9 @@ class JobService extends EntityService
             $job->getTimePeriod()->setEndDateTime(new \DateTime());
         }
 
-        $job->setState($this->getCancelledState());
+        $cancelledState = $this->stateService->fetch(self::CANCELLED_STATE);
+
+        $job->setState($cancelledState);
         return $this->persistAndFlush($job);
     }
 
@@ -381,7 +375,7 @@ class JobService extends EntityService
      */
     private function isCancelled(Job $job)
     {
-        return $job->getState()->equals($this->getCancelledState());
+        return self::CANCELLED_STATE === $job->getState()->getName();
     }
 
     /**
