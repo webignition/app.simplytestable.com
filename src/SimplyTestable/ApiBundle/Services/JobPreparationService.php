@@ -175,7 +175,9 @@ class JobPreparationService
 
             $this->prepareTasksFromCollectedUrls($job, $urls);
 
-            $job->setState($this->jobService->getQueuedState());
+            $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
+
+            $job->setState($jobQueuedState);
 
             $timePeriod = new TimePeriod();
             $timePeriod->setStartDateTime(new \DateTime());
@@ -225,7 +227,9 @@ class JobPreparationService
 
         $this->prepareTasksFromCollectedUrls($job, $urls);
 
-        $job->setState($this->jobService->getQueuedState());
+        $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
+
+        $job->setState($jobQueuedState);
 
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());

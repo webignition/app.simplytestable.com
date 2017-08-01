@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\PrepareFromCrawl\NoDiscoveredUrls;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -62,7 +63,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testStateIsQueued()
     {
-        $this->assertEquals($this->getJobService()->getQueuedState(), $this->job->getState());
+        $this->assertEquals(JobService::QUEUED_STATE, $this->job->getState()->getName());
     }
 
     public function testHasStartTime()

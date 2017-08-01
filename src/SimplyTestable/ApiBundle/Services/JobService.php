@@ -90,14 +90,6 @@ class JobService extends EntityService
     /**
      * @return State
      */
-    public function getQueuedState()
-    {
-        return $this->stateService->fetch(self::QUEUED_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getFailedNoSitemapState()
     {
         return $this->stateService->fetch(self::FAILED_NO_SITEMAP_STATE);
@@ -154,7 +146,7 @@ class JobService extends EntityService
      */
     public function isQueued(Job $job)
     {
-        return $job->getState()->equals($this->getQueuedState());
+        return self::QUEUED_STATE === $job->getState()->getName();
     }
 
     /**

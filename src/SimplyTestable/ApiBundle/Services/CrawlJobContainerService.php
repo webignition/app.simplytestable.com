@@ -135,8 +135,10 @@ class CrawlJobContainerService extends EntityService
             (string)$crawlJobContainer->getParentJob()->getWebsite()
         );
 
+        $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
+
         $crawlJobContainer->getCrawlJob()->addTask($task);
-        $crawlJobContainer->getCrawlJob()->setState($this->jobService->getQueuedState());
+        $crawlJobContainer->getCrawlJob()->setState($jobQueuedState);
 
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());
