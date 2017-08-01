@@ -20,7 +20,7 @@ use webignition\NormalisedUrl\NormalisedUrl;
 class EnqueuePrepareAllCommand extends BaseCommand
 {
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
-    
+
     protected function configure()
     {
         $this
@@ -31,14 +31,17 @@ class EnqueuePrepareAllCommand extends BaseCommand
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
-    {        
+    {
+        $stateService = $this->getContainer()->get('simplytestable.services.stateservice');
+        $jobStartingState = $stateService->fetch(JobService::STARTING_STATE);
+
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
-        
-        $jobIds = $this->getJobService()->getEntityRepository()->getIdsByState($this->getJobService()->getStartingState());
+
+        $jobIds = $this->getJobService()->getEntityRepository()->getIdsByState($jobStartingState);
         $output->writeln(count($jobIds).' new jobs to prepare');
-        
+
         foreach ($jobIds as $jobId) {
             $output->writeln('Enqueuing prepare for job '.$jobId);
 
@@ -49,24 +52,24 @@ class EnqueuePrepareAllCommand extends BaseCommand
                 )
             );
         }
-        
+
         return 0;
     }
-    
-    
+
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\JobService
-     */    
+     */
     private function getJobService() {
         return $this->getContainer()->get('simplytestable.services.jobservice');
     }
-    
-    
+
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
-     */        
+     */
     private function getResqueQueueService() {
         return $this->getContainer()->get('simplytestable.services.resque.queueService');
     }

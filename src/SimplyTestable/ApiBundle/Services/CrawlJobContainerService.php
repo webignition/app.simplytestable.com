@@ -38,12 +38,18 @@ class CrawlJobContainerService extends EntityService
     private $jobUserAccountPlanEnforcementService;
 
     /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
      * @param EntityManager $entityManager
      * @param TaskService $taskService
      * @param TaskTypeService $taskTypeService
      * @param JobTypeService $jobTypeService
      * @param JobService $jobService
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
+     * @param StateService $stateService
      */
     public function __construct(
         EntityManager $entityManager,
@@ -51,7 +57,8 @@ class CrawlJobContainerService extends EntityService
         TaskTypeService $taskTypeService,
         JobTypeService $jobTypeService,
         JobService $jobService,
-        JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
+        JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
+        StateService $stateService
     ) {
         parent::__construct($entityManager);
         $this->taskService = $taskService;
@@ -59,6 +66,7 @@ class CrawlJobContainerService extends EntityService
         $this->jobTypeService = $jobTypeService;
         $this->jobService = $jobService;
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -382,9 +390,11 @@ class CrawlJobContainerService extends EntityService
      */
     private function create(Job $job)
     {
+        $jobStartingState = $this->stateService->fetch(JobService::STARTING_STATE);
+
         $crawlJob = new Job();
         $crawlJob->setType($this->jobTypeService->getCrawlType());
-        $crawlJob->setState($this->jobService->getStartingState());
+        $crawlJob->setState($jobStartingState);
         $crawlJob->setUser($job->getUser());
         $crawlJob->setWebsite($job->getWebsite());
         $crawlJob->setParameters($job->getParameters());

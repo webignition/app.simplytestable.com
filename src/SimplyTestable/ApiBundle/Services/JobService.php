@@ -90,14 +90,6 @@ class JobService extends EntityService
     /**
      * @return State
      */
-    public function getStartingState()
-    {
-        return $this->stateService->fetch(self::STARTING_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getPreparingState()
     {
         return $this->stateService->fetch(self::PREPARING_STATE);
@@ -150,7 +142,7 @@ class JobService extends EntityService
      */
     public function isNew(Job $job)
     {
-        return $job->getState()->equals($this->getStartingState());
+        return self::STARTING_STATE === $job->getState()->getName();
     }
 
     /**
@@ -253,7 +245,9 @@ class JobService extends EntityService
             $job->setParameters($jobConfiguration->getParameters());
         }
 
-        $job->setState($this->getStartingState());
+        $startingState = $this->stateService->fetch(self::STARTING_STATE);
+
+        $job->setState($startingState);
         $this->getManager()->persist($job);
         $this->getManager()->flush();
 

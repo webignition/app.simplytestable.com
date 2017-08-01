@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Start\StartAction;
 
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -37,7 +38,7 @@ class StartTest extends ActionTest
         $jobStartResponse = $jobStartController->startAction($request, $canonicalUrl);
 
         $job = $this->getJobFromResponse($jobStartResponse);
-        $this->assertEquals($this->getJobService()->getStartingState(), $job->getState());
+        $this->assertEquals(JobService::STARTING_STATE, $job->getState()->getName());
     }
 
     public function testSingleUrlRejectionDoesNotAffectFullSiteJobStart()
@@ -63,7 +64,7 @@ class StartTest extends ActionTest
         $jobStartResponse = $jobStartController->startAction($request, $canonicalUrl);
 
         $job = $this->getJobFromResponse($jobStartResponse);
-        $this->assertEquals($this->getJobService()->getStartingState(), $job->getState());
+        $this->assertEquals(JobService::STARTING_STATE, $job->getState()->getName());
     }
 
     public function testStoreTaskTypeOptionsForTaskTypesThatHaveNotBeenSelected()
