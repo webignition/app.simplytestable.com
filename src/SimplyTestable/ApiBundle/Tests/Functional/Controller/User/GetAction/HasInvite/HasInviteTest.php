@@ -39,7 +39,7 @@ abstract class HasInviteTest extends BaseControllerJsonTestCase {
     }
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->preGetUser();

@@ -15,7 +15,7 @@ class InUseByScheduledJobTest extends DeleteTest {
      */
     private $response;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

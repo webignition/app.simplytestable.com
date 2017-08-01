@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prepare\Co
 
 abstract class RegularJobTest extends ServiceTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(). '/HttpResponses')));

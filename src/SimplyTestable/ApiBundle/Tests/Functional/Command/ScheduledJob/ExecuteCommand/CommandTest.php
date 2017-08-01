@@ -25,7 +25,7 @@ abstract class CommandTest extends BaseCommandTest {
      */
     protected $job;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->clearRedis();

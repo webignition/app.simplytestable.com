@@ -6,7 +6,7 @@ class MaintenanceModeTest extends CollectionCommandTest {
 
     private $executeReturnCode = null;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->executeCommand('simplytestable:maintenance:enable-read-only');

@@ -10,7 +10,7 @@ abstract class DifferentUrlTest extends BaseSimplyTestableTestCase
 {
     const SOURCE_URL = 'http://example.com/';
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

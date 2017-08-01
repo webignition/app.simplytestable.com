@@ -11,7 +11,7 @@ abstract class ServiceTest extends BaseServiceTest {
      */
     private $containsResult;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->clearRedis();

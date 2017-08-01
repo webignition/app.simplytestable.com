@@ -23,7 +23,7 @@ class InvalidPlanTest extends SuccessTest {
     private $user;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->assertFalse($this->getUserService()->exists(self::DEFAULT_EMAIL));

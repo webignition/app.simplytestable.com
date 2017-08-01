@@ -19,7 +19,7 @@ class CrawlJobTest extends BaseSimplyTestableTestCase
      */
     private $job;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

@@ -14,7 +14,7 @@ abstract class NotifyTest extends ServiceTest {
 
     protected $notifyReturnValue;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureItems()));
 

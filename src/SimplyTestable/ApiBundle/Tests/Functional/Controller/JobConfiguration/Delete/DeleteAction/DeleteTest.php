@@ -8,7 +8,7 @@ abstract class DeleteTest extends ActionTest {
 
     const LABEL = 'foo';
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->getRouter()->getContext()->setMethod('POST');
     }

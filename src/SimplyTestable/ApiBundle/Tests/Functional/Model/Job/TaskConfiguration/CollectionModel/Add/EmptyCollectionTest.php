@@ -13,7 +13,7 @@ class EmptyCollectionTest extends AddTest {
     private $taskConfiguration;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $taskType = new TaskType();

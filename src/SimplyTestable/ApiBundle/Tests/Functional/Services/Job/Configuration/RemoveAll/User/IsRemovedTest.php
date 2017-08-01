@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\R
 
 class IsRemovedTest extends UserTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->getJobConfigurationService()->removeAll();
     }

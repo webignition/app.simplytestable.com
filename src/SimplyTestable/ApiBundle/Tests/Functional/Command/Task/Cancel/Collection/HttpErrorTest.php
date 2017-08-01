@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class HttpErrorTest extends BaseTest
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

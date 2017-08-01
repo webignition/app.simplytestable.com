@@ -20,7 +20,7 @@ class ActionTest extends BaseActionTest {
     private $jobId;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $methodName = $this->getActionNameFromRouter();

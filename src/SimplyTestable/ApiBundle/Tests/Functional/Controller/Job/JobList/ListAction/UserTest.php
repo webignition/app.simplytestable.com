@@ -23,7 +23,7 @@ class UserTest extends ListTest
      */
     protected $jobs = array();
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

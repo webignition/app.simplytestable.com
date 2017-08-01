@@ -14,7 +14,7 @@ abstract class CollectionTest extends ModelTest {
     protected $collection;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
     }
 

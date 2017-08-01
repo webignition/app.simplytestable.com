@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 class RootWebPageTest extends BaseSimplyTestableTestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\ActionTest
 
 abstract class ActionTest extends BaseActionTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->getRouter()->getContext()->setMethod('POST');
     }

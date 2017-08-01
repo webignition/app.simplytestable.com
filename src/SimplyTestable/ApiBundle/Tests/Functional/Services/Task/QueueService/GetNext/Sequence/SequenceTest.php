@@ -19,7 +19,7 @@ abstract class SequenceTest extends ServiceTest
      */
     private $firstSetTaskIds = [];
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

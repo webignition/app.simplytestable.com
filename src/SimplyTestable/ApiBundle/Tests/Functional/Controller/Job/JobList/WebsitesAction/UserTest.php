@@ -17,7 +17,7 @@ class UserTest extends WebsitesTest
     private $users = array();
     private $lists = array();
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

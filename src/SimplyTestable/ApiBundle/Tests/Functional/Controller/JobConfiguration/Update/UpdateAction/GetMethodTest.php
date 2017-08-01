@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\
 
 class GetMethodTest extends UpdateTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->getRouter()->getContext()->setMethod('GET');
     }

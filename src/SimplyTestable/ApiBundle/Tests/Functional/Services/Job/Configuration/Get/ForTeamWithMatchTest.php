@@ -45,7 +45,7 @@ class ForTeamWithMatchTest extends ServiceTest
         ]
     ];
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

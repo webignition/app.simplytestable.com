@@ -26,7 +26,7 @@ abstract class SuccessTest extends ServiceTest
      */
     private $tasks;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

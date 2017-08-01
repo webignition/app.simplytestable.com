@@ -12,7 +12,7 @@ class MatchesExistingJobTest extends ActionTest {
      */
     private $responses;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $methodName = $this->getActionNameFromRouter([

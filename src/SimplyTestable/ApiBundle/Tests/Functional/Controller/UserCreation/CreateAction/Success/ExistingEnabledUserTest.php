@@ -22,7 +22,7 @@ class ExistingEnabledUserTest extends SuccessTest {
     private $user;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

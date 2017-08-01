@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\
 
 class NoChangesTest extends SuccessTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
     }
 

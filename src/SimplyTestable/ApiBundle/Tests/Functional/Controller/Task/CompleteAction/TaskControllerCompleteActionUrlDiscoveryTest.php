@@ -31,7 +31,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
      */
     private $parentJob;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

@@ -20,7 +20,7 @@ class HappyPathTest extends BaseSimplyTestableTestCase
      */
     private $crawlJobContainer;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

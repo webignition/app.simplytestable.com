@@ -17,7 +17,7 @@ class DoesContainTest extends ContainsTest {
      */
     private $taskConfiguration2;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $taskType1 = new TaskType();

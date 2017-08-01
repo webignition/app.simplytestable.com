@@ -10,7 +10,7 @@ abstract class SingleResponseTest extends ActionTest {
      */
     protected $response;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->preCall();

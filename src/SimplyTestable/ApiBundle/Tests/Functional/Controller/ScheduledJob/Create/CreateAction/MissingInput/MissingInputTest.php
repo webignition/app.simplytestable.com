@@ -15,7 +15,7 @@ abstract class MissingInputTest extends CreateTest {
 
     private $httpException;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());

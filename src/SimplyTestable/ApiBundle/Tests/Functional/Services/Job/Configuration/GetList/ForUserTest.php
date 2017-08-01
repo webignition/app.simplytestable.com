@@ -33,7 +33,7 @@ class ForUserTest extends ServiceTest
     private $retrievedJobConfigurations = [];
 
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

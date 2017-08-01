@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prep
 
 class CrawlJobTest extends ServiceTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->queuePrepareHttpFixturesForCrawlJob($this->job->getWebsite()->getCanonicalUrl());

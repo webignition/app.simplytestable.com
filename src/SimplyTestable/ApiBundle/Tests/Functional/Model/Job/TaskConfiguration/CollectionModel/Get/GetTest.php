@@ -16,7 +16,7 @@ class GetTest extends CollectionTest {
     private $taskConfigurations = [];
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         for ($index = 0; $index < self::COLLECTION_SIZE; $index++) {

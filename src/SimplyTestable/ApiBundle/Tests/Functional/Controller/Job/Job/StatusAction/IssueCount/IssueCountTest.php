@@ -16,7 +16,7 @@ abstract class IssueCountTest extends BaseControllerJsonTestCase
      */
     protected $jobData;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

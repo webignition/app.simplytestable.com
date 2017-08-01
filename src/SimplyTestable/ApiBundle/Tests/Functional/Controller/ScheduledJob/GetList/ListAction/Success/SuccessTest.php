@@ -23,7 +23,7 @@ abstract class SuccessTest extends GetListTest {
 
     private $decodedResponse;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

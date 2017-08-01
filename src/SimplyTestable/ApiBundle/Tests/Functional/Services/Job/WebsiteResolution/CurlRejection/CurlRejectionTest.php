@@ -11,7 +11,7 @@ abstract class CurlRejectionTest extends BaseSimplyTestableTestCase
 
     protected $job;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

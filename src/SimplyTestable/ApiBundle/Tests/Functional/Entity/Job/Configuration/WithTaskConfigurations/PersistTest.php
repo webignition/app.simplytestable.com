@@ -12,7 +12,7 @@ class PersistTest extends WithTaskConfigurationsTest {
      */
     private $configuration;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->configuration = new Configuration();

@@ -13,7 +13,7 @@ abstract class MatchingScheduledJobTest extends ServiceTest {
      */
     protected $jobConfiguration;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

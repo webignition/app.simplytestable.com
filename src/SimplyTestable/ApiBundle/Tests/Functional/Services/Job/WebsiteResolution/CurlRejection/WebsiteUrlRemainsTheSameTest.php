@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResoluti
 
 class WebsiteUrlRemainsTheSameTest extends CurlRejectionTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->assertEquals(self::SOURCE_URL, $this->job->getWebsite()->getCanonicalUrl());
     }

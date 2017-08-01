@@ -9,7 +9,7 @@ class UserHasNoneTest extends ServiceTest {
     const ACCOUNT_PLAN_NAME = 'personal';
     const COUPON = 'FOO';
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

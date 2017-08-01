@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Entity\WebSite;
 
 abstract class AbstractIsPubliclyRoutableTest extends BaseSimplyTestableTestCase {
 
-    public function setUp() {
+    protected function setUp() {
     }
 
     public function tearDown() {

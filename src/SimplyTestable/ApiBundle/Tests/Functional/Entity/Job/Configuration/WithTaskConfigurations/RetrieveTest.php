@@ -22,7 +22,7 @@ class RetrieveTest extends WithTaskConfigurationsTest {
      */
     private $configurationId;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->originalConfiguration = new Configuration();

@@ -17,7 +17,7 @@ class SuccessTest extends CommandTest {
     private $workers;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet([

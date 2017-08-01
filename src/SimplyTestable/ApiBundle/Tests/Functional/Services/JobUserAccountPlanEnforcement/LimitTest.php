@@ -12,7 +12,7 @@ abstract class LimitTest extends ServiceTest
 
     private $jobsCreatedBeforeLimitReached = 0;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

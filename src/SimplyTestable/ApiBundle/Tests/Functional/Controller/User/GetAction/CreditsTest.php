@@ -29,7 +29,7 @@ class CreditsTest extends BaseControllerJsonTestCase
      */
     private $expectedCreditsUsed = 0;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

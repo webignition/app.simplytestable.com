@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class HttpAuthTest extends BaseSimplyTestableTestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
