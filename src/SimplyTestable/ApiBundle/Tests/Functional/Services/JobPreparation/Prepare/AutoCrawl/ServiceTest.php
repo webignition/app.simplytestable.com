@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prepare\AutoCrawl;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -25,8 +26,12 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
         $this->jobFactory = new JobFactory($this->container);
 
-        $this->queueResolveHttpFixture();
-        $this->queuePrepareHttpFixturesForCrawlJob(self::DEFAULT_CANONICAL_URL);
+        $this->queueHttpFixtures(array_merge(
+            [
+                HttpFixtureFactory::createStandardResolveResponse(),
+            ],
+            HttpFixtureFactory::createStandardCrawlPrepareResponses()
+        ));
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
     }

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\ResolveWebsiteCommand;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class FullSiteJobTest extends CommandTest
@@ -10,7 +11,9 @@ class FullSiteJobTest extends CommandTest
     {
         $jobFactory = new JobFactory($this->container);
 
-        $this->queueResolveHttpFixture();
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createStandardResolveResponse(),
+        ]);
 
         $job = $jobFactory->create([
             JobFactory::KEY_TEST_TYPES => ['CSS Validation'],

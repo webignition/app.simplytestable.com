@@ -293,13 +293,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return (int)$urlParts[count($urlParts) - 2];
     }
 
-    protected function queueResolveHttpFixture()
-    {
-        $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 200'
-        )));
-    }
-
     protected function queuePrepareHttpFixturesForJob($url)
     {
         $fixtureMessages = array(
