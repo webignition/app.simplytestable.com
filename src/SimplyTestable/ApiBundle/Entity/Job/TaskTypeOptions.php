@@ -9,7 +9,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(
  *     name="JobTaskTypeOptions"
@@ -17,48 +17,48 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class TaskTypeOptions
-{    
+{
     /**
-     * 
+     *
      * @var integer
-     * 
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * 
+     *
      */
     protected $id;
-    
-    
+
+
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\Job\Job 
-     * 
+     * @var SimplyTestable\ApiBundle\Entity\Job\Job
+     *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="taskTypeOptions")
-     * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)     
+     * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)
      */
-    protected $job;    
-    
-    
+    protected $job;
+
+
     /**
      *
      * @var TaskType
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
      * @ORM\JoinColumn(name="tasktype_id", referencedColumnName="id", nullable=false)
      */
     protected $taskType;
-    
-    
+
+
     /**
-     * 
+     *
      * @var \Doctrine\Common\Collections\Collection
-     * 
+     *
      * @ORM\Column(type="array", name="options", nullable=false)
      */
     protected $options;
 
-    
+
     public function __construct()
     {
         $this->options = new \Doctrine\Common\Collections\ArrayCollection();
@@ -67,7 +67,7 @@ class TaskTypeOptions
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -83,14 +83,14 @@ class TaskTypeOptions
     public function setOptions($options)
     {
         $this->options = $options;
-    
+
         return $this;
     }
 
     /**
      * Get options
      *
-     * @return array 
+     * @return array
      */
     public function getOptions()
     {
@@ -106,14 +106,14 @@ class TaskTypeOptions
     public function setJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
     {
         $this->job = $job;
-    
+
         return $this;
     }
 
     /**
      * Get job
      *
-     * @return SimplyTestable\ApiBundle\Entity\Job\Job 
+     * @return SimplyTestable\ApiBundle\Entity\Job\Job
      */
     public function getJob()
     {
@@ -129,32 +129,32 @@ class TaskTypeOptions
     public function setTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType)
     {
         $this->taskType = $taskType;
-    
+
         return $this;
     }
 
     /**
      * Get taskType
      *
-     * @return SimplyTestable\ApiBundle\Entity\Task\Type\Type 
+     * @return \SimplyTestable\ApiBundle\Entity\Task\Type\Type
      */
     public function getTaskType()
     {
         return $this->taskType;
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @return int
      */
     public function getOptionCount() {
         return count($this->getOptions());
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param string $optionName
      * @return mixed
      */
@@ -162,10 +162,10 @@ class TaskTypeOptions
         $options = $this->getOptions();
         return (isset($options[$optionName])) ? $options[$optionName] : null;
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param string $optionName
      * @return boolean
      */
