@@ -629,4 +629,73 @@ class JobServiceTest extends BaseSimplyTestableTestCase
             $this->assertEquals(TaskService::CANCELLED_STATE, $task->getState()->getName());
         }
     }
+
+    /**
+     * @dataProvider completeFinishedJobDataProvider
+     *
+     * @param string $stateName
+     */
+    public function testCompleteFinishedJob($stateName)
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $job = $this->jobFactory->create();
+
+        $state = $stateService->fetch($stateName);
+        $job->setState($state);
+
+        $this->jobService->persistAndFlush($job);
+
+        $this->jobService->complete($job);
+
+        $this->assertEquals($stateName, $job->getState()->getName());
+    }
+
+    /**
+     * @return array
+     */
+    public function completeFinishedJobDataProvider()
+    {
+        return [
+            'finished; rejected' => [
+                'state' => JobService::REJECTED_STATE,
+            ],
+            'finished; cancelled' => [
+                'state' => JobService::CANCELLED_STATE,
+            ],
+            'finished; completed' => [
+                'state' => JobService::COMPLETED_STATE,
+            ],
+            'finished; failed-no-sitemap' => [
+                'state' => JobService::FAILED_NO_SITEMAP_STATE,
+            ],
+        ];
+    }
+
+    public function testCompleteWithIncompleteTasks()
+    {
+        $job = $this->jobFactory->createResolveAndPrepare();
+        $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
+
+        $this->jobService->complete($job);
+
+        $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
+    }
+
+
+    public function testComplete()
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $job = $this->jobFactory->createResolveAndPrepare();
+        $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
+        $this->assertNull($job->getTimePeriod()->getEndDateTime());
+
+        $this->jobFactory->setTaskStates($job, $stateService->fetch(TaskService::COMPLETED_STATE));
+
+        $this->jobService->complete($job);
+
+        $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
+        $this->assertInstanceOf(\DateTime::class, $job->getTimePeriod()->getEndDateTime());
+    }
 }
