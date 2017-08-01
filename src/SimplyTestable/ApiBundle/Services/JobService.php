@@ -499,6 +499,7 @@ class JobService extends EntityService
      */
     public function getUnfinishedJobsWithTasksAndNoIncompleteTasks()
     {
+        /* @var Job[] $jobs */
         $jobs = $this->getEntityRepository()->findBy(array(
             'state' => $this->getIncompleteStates()
         ));

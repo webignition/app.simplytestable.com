@@ -15,6 +15,7 @@ class JobFactory
 {
     const DEFAULT_TYPE = JobTypeService::FULL_SITE_NAME;
     const DEFAULT_SITE_ROOT_URL = 'http://example.com';
+    const DEFAULT_DOMAIN = 'example.com';
 
     const KEY_TYPE = 'type';
     const KEY_SITE_ROOT_URL = 'siteRootUrl';
@@ -54,16 +55,18 @@ class JobFactory
     /**
      * @param array $jobValues
      * @param array $httpFixtures
+     * @param string|null $domain
      *
      * @return Job
      */
-    public function createResolveAndPrepare($jobValues = [], $httpFixtures = [])
+    public function createResolveAndPrepare($jobValues = [], $httpFixtures = [], $domain = self::DEFAULT_DOMAIN)
     {
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
 
         $job = $this->create($jobValues);
+
         $this->resolve($job, (isset($httpFixtures['resolve']) ? $httpFixtures['resolve'] : null));
-        $this->prepare($job, (isset($httpFixtures['prepare']) ? $httpFixtures['prepare'] : null));
+        $this->prepare($job, (isset($httpFixtures['prepare']) ? $httpFixtures['prepare'] : null), $domain);
 
         $httpClientService->getMockPlugin()->clearQueue();
 
@@ -146,8 +149,9 @@ class JobFactory
     /**
      * @param Job $job
      * @param array $httpFixtures
+     * @param string|null $domain
      */
-    public function prepare(Job $job, $httpFixtures = [])
+    public function prepare(Job $job, $httpFixtures = [], $domain = null)
     {
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
@@ -157,7 +161,7 @@ class JobFactory
                 GuzzleResponse::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
                 GuzzleResponse::fromMessage(sprintf(
                     "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
-                    SitemapFixtureFactory::load('example.com-three-urls')
+                    SitemapFixtureFactory::load('example.com-three-urls', $domain)
                 )),
             ];
         }

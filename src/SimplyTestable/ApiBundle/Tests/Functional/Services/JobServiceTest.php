@@ -682,7 +682,6 @@ class JobServiceTest extends BaseSimplyTestableTestCase
         $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
     }
 
-
     public function testComplete()
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
@@ -697,5 +696,79 @@ class JobServiceTest extends BaseSimplyTestableTestCase
 
         $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
         $this->assertInstanceOf(\DateTime::class, $job->getTimePeriod()->getEndDateTime());
+    }
+
+    public function testGetUnfinishedJobsWithTasksAndNoIncompleteTasks()
+    {
+        $stateNames = [
+            JobService::STARTING_STATE,
+            JobService::CANCELLED_STATE,
+            JobService::COMPLETED_STATE,
+            JobService::IN_PROGRESS_STATE,
+            JobService::PREPARING_STATE,
+            JobService::QUEUED_STATE,
+            JobService::FAILED_NO_SITEMAP_STATE,
+            JobService::REJECTED_STATE,
+            JobService::RESOLVING_STATE,
+            JobService::RESOLVED_STATE,
+        ];
+        $zeroTaskStates = [
+            JobService::STARTING_STATE,
+            JobService::RESOLVING_STATE,
+            JobService::RESOLVED_STATE,
+        ];
+
+        $completedTasksStates = [
+            JobService::IN_PROGRESS_STATE,
+            JobService::PREPARING_STATE,
+            JobService::QUEUED_STATE,
+        ];
+
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->create();
+
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        /* @var Job[] $jobs */
+        $jobs = [];
+
+        foreach ($stateNames as $stateName) {
+            $domain = $stateName . '.example.com';
+
+            if (in_array($stateName, $zeroTaskStates)) {
+                $job = $this->jobFactory->create([
+                        JobFactory::KEY_USER => $user,
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://' . $domain,
+                ]);
+            } else {
+                $job = $this->jobFactory->createResolveAndPrepare(
+                    [
+                        JobFactory::KEY_USER => $user,
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://' . $domain,
+                    ],
+                    [],
+                    $domain
+                );
+            }
+
+            $job->setState($stateService->fetch($stateName));
+
+            $jobs[$stateName] = $job;
+        }
+
+        $taskCompletedState = $stateService->fetch(TaskService::COMPLETED_STATE);
+
+        foreach ($completedTasksStates as $stateName) {
+            $job = $jobs[$stateName];
+            $this->jobFactory->setTaskStates($job, $taskCompletedState);
+        }
+
+        $retrievedJobs = $this->jobService->getUnfinishedJobsWithTasksAndNoIncompleteTasks();
+
+        $this->assertCount(count($completedTasksStates), $retrievedJobs);
+
+        foreach ($retrievedJobs as $retrievedJob) {
+            $this->assertTrue(in_array($retrievedJob->getState()->getName(), $completedTasksStates));
+        }
     }
 }

@@ -4,14 +4,20 @@ namespace SimplyTestable\ApiBundle\Tests\Factory;
 
 class SitemapFixtureFactory
 {
+    const DEFAULT_DOMAIN = 'example.com';
+
     /**
      * @param string $name
      * @param string $domain
      *
      * @return string
      */
-    public static function load($name, $domain = 'example.com')
+    public static function load($name, $domain = self::DEFAULT_DOMAIN)
     {
+        if (empty($domain)) {
+            $domain = self::DEFAULT_DOMAIN;
+        }
+
         $content = file_get_contents(__DIR__ . '/../Fixtures/Data/Sitemaps/' . $name . '.xml');
 
         if ($domain != 'example.com') {
