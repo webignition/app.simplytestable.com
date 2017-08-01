@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\JobList\WebsitesAction\ExcludeByState;
 
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\JobList\WebsitesAction\ContentTest;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -36,10 +37,14 @@ class ExcludeByStateTest extends ContentTest
 
     protected function applyPreListChanges()
     {
-        $this->jobs[0]->setState($this->getJobService()->getCompletedState());
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobCompletedState = $stateService->fetch(JobService::COMPLETED_STATE);
+        $jobRejectedState = $stateService->fetch(JobService::REJECTED_STATE);
+
+        $this->jobs[0]->setState($jobCompletedState);
         $this->getJobService()->persistAndFlush($this->jobs[0]);
 
-        $this->jobs[1]->setState($this->getJobService()->getRejectedState());
+        $this->jobs[1]->setState($jobRejectedState);
         $this->getJobService()->persistAndFlush($this->jobs[0]);
     }
 

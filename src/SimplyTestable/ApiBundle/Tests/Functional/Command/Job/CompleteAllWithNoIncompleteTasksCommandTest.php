@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
@@ -103,7 +104,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
         $this->getJobService()->persistAndFlush($job);
 
         $this->assertReturnCode(self::RETURN_CODE_DONE);
-        $this->assertEquals($this->getJobService()->getCompletedState(), $job->getState());
+        $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
     }
 
     public function testWithCollectionOfJobsWithNoIncompleteTasks()
@@ -174,9 +175,9 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
 
         foreach ($jobs as $jobIndex => $job) {
             if ($jobIndex === 0) {
-                $this->assertEquals($this->getJobService()->getQueuedState(), $job->getState());
+                $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
             } else {
-                $this->assertEquals($this->getJobService()->getCompletedState(), $job->getState());
+                $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
             }
         }
     }

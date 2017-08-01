@@ -90,14 +90,6 @@ class JobService extends EntityService
     /**
      * @return State
      */
-    public function getCompletedState()
-    {
-        return $this->stateService->fetch(self::COMPLETED_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getInProgressState()
     {
         return $this->stateService->fetch(self::IN_PROGRESS_STATE);
@@ -224,7 +216,7 @@ class JobService extends EntityService
      */
     public function isCompleted(Job $job)
     {
-        return $job->getState()->equals($this->getCompletedState());
+        return self::COMPLETED_STATE == $job->getState();
     }
 
     /**
@@ -488,8 +480,10 @@ class JobService extends EntityService
             return $job;
         }
 
+        $completedState = $this->stateService->fetch(self::COMPLETED_STATE);
+
         $job->getTimePeriod()->setEndDateTime(new \DateTime());
-        $job->setState($this->getCompletedState());
+        $job->setState($completedState);
 
         return $this->persistAndFlush($job);
     }
