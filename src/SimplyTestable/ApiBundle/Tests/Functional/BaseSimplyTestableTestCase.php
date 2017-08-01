@@ -24,7 +24,6 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
-use SimplyTestable\ApiBundle\Services\CommandService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
@@ -51,14 +50,11 @@ use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Tests\Factory\ControllerFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
-use Guzzle\Http\Message\Response as GuzzleResponse;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase
 {
@@ -1089,5 +1085,79 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return $this->getJobService()->getById(
             (int)$locationHeaderParts[count($locationHeaderParts) - 1]
         );
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return Crawler
+     */
+    protected function getCrawler($options)
+    {
+        if (!isset($options['url'])) {
+            $options['url'] = '';
+        }
+
+        if (!isset($options['method'])) {
+            $options['method'] = 'GET';
+        }
+
+        if (!isset($options['parameters'])) {
+            $options['parameters'] = [];
+        }
+
+        if (!isset($options['files'])) {
+            $options['files'] = [];
+        }
+
+        if (!isset($options['server'])) {
+            $options['server'] = [];
+        }
+
+        if (!isset($options['user'])) {
+            $options['user']  = $this->getUserService()->getPublicUser();
+        }
+
+        $this->setRequestUserInSession($options['user']);
+
+        $crawler = $this->client->request(
+            $options['method'],
+            $options['url'],
+            $options['parameters'],
+            $options['files'],
+            $options['server']
+        );
+
+        return $crawler;
+    }
+
+    /**
+     * @return Response
+     */
+    protected function getClientResponse()
+    {
+        /* @var Response $response */
+        $response = $this->client->getResponse();
+
+        return $response;
+    }
+
+    /**
+     * @param User $user
+     */
+    private function setRequestUserInSession(User $user)
+    {
+        $session = $this->container->get('session');
+        $loginManager = $this->container->get('fos_user.security.login_manager');
+        $firewallName = $this->container->getParameter('fos_user.firewall_name');
+
+        $loginManager->loginUser($firewallName, $user);
+
+        $this->container->get('session')->set(
+            '_security_' . $firewallName,
+            serialize($this->container->get('security.context')->getToken())
+        );
+        $this->container->get('session')->save();
+        $this->client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
     }
 }

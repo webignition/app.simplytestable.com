@@ -115,56 +115,29 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
     /**
      * @dataProvider retrieveSuccessDataProvider
      *
-     * @param string $userEmail
-     * @param string|null $userTeamStatus
-     * @param string $jobOwnerEmail
-     * @param string|null $jobOwnerTeamStatus
-     * @param bool $isJobPublic
+     * @param string $owner
+     * @param string $requester
+     * @param bool $callSetPublic
      */
-    public function testRetrieveSuccess(
-        $userEmail,
-        $userTeamStatus,
-        $jobOwnerEmail,
-        $jobOwnerTeamStatus,
-        $isJobPublic
-    ) {
-        $user = $this->userFactory->create($userEmail);
-        $jobOwner = $this->userFactory->create($jobOwnerEmail);
+    public function testRetrieveSuccess($owner, $requester, $callSetPublic)
+    {
+        $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
+        $owner = $users[$owner];
+        $requester = $users[$requester];
 
-        $teamService = $this->container->get('simplytestable.services.teamservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
 
-        if ($userTeamStatus == 'leader' || $jobOwnerTeamStatus == 'leader') {
-            $team = $teamService->create(
-                'team',
-                $userTeamStatus == 'leader' ? $user : $jobOwner
-            );
-
-            if ($userTeamStatus == 'member' || $jobOwnerTeamStatus == 'member') {
-                $teamService->getMemberService()->add(
-                    $team,
-                    $userTeamStatus == 'member' ? $user : $jobOwner
-                );
-            }
-        } elseif ($userTeamStatus == 'member' && $jobOwnerTeamStatus == 'member') {
-            $leader = $this->userFactory->create('teamleader@example.com');
-
-            $team = $teamService->create('team', $leader);
-            $teamService->getMemberService()->add($team, $user);
-            $teamService->getMemberService()->add($team, $jobOwner);
-        }
-
         $job = $this->jobFactory->create([
-            JobFactory::KEY_USER => $jobOwner,
+            JobFactory::KEY_USER => $owner,
         ]);
 
-        if ($isJobPublic) {
+        if ($callSetPublic) {
             $job->setIsPublic(true);
             $jobService->persistAndFlush($job);
         }
 
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
-        $jobRetrievalService->setUser($user);
+        $jobRetrievalService->setUser($requester);
 
         $retrievedJob = $jobRetrievalService->retrieve($job->getId());
         $this->assertEquals($job, $retrievedJob);
@@ -173,40 +146,35 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
     public function retrieveSuccessDataProvider()
     {
         return [
-            'public job' => [
-                'userEmail' => 'user@example.com',
-                'userTeamStatus' => null,
-                'jobOwnerEmail' => 'jobowner@example.com',
-                'jobOwnerTeamStatus' => null,
-                'isJobPublic' => true,
+            'public owner, public requester' => [
+                'owner' => 'public',
+                'requester' => 'public',
+                'callSetPublic' => false,
             ],
-            'user is owner' => [
-                'userEmail' => 'user@example.com',
-                'userTeamStatus' => null,
-                'jobOwnerEmail' => 'user@example.com',
-                'jobOwnerTeamStatus' => null,
-                'isJobPublic' => false,
+            'private owner, public requester, public job' => [
+                'owner' => 'public',
+                'requester' => 'public',
+                'callSetPublic' => true,
             ],
-            'user member of team, owner leader of team' => [
-                'userEmail' => 'user@example.com',
-                'userTeamStatus' => 'member',
-                'jobOwnerEmail' => 'teamleader@example.com',
-                'jobOwnerTeamStatus' => 'leader',
-                'isJobPublic' => false,
+            'private owner, private requester' => [
+                'owner' => 'private',
+                'requester' => 'private',
+                'callSetPublic' => false,
             ],
-            'user leader of team, owner member of team' => [
-                'userEmail' => 'user@example.com',
-                'userTeamStatus' => 'leader',
-                'jobOwnerEmail' => 'teammember@example.com',
-                'jobOwnerTeamStatus' => 'member',
-                'isJobPublic' => false,
+            'leader owner, member1 requester' => [
+                'owner' => 'leader',
+                'requester' => 'member1',
+                'callSetPublic' => false,
             ],
-            'user member of team, owner member of team' => [
-                'userEmail' => 'user@example.com',
-                'userTeamStatus' => 'member',
-                'jobOwnerEmail' => 'teammember@example.com',
-                'jobOwnerTeamStatus' => 'member',
-                'isJobPublic' => false,
+            'member1 owner, leader requester' => [
+                'owner' => 'member1',
+                'requester' => 'leader',
+                'callSetPublic' => false,
+            ],
+            'member1 owner, member2 requester' => [
+                'owner' => 'member1',
+                'requester' => 'member2',
+                'callSetPublic' => false,
             ],
         ];
     }
