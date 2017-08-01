@@ -53,6 +53,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
                 Response::fromMessage('HTTP/1.1 404'),
                 Response::fromMessage('HTTP/1.1 404'),
                 Response::fromMessage('HTTP/1.1 404'),
+                Response::fromMessage('HTTP/1.1 404'),
             ],
         ]);
 

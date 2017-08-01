@@ -185,6 +185,7 @@ class HttpFixtureFactory
             GuzzleResponse::fromMessage('HTTP/1.1 404'),
             GuzzleResponse::fromMessage('HTTP/1.1 404'),
             GuzzleResponse::fromMessage('HTTP/1.1 404'),
+            GuzzleResponse::fromMessage('HTTP/1.1 404'),
         ];
     }
 }

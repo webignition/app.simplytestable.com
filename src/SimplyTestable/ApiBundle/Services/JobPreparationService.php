@@ -1,139 +1,125 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
-use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Services\JobTypeService;
-use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactoryService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
-use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\UserService;
-use SimplyTestable\ApiBundle\Services\WebSiteService;
 use webignition\NormalisedUrl\NormalisedUrl;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationServiceException;
 
-class JobPreparationService {
-
-    const RETRUN_CODE_OK = 0;
+class JobPreparationService
+{
+    const RETURN_CODE_OK = 0;
 
     /**
-     *
      * @var JobService
      */
     private $jobService;
 
     /**
-     *
      * @var TaskService
      */
     private $taskService;
 
-
     /**
-     *
      * @var JobTypeService
      */
     private $jobTypeService;
 
-
     /**
-     *
-     * @var WebSiteService
-     */
-    private $websiteService;
-
-
-    /**
-     *
      * @var array
      */
     private $processedUrls = array();
 
-
     /**
-     *
      * @var JobUserAccountPlanEnforcementService
      */
     private $jobUserAccountPlanEnforcementService;
 
-
     /**
-     *
      * @var array
      */
     private $predefinedDomainsToIgnore = array();
 
-
     /**
-     *
      * @var CrawlJobContainerService
      */
     private $crawlJobContainerService;
 
-
     /**
-     *
      * @var UserService
      */
     private $userService;
 
     /**
-     *
      * @var QueueService
      */
     private $resqueService;
 
-
     /**
-     *
      * @var JobFactoryService
      */
     private $resqueJobFactoryService;
 
+    /**
+     * @var UrlFinder
+     */
+    private $urlFinder;
 
-
+    /**
+     * @param JobService $jobService
+     * @param TaskService $taskService
+     * @param JobTypeService $jobTypeService
+     * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
+     * @param CrawlJobContainerService $crawlJobContainerService
+     * @param UserService $userService
+     * @param QueueService $resqueQueueService
+     * @param JobFactoryService $resqueJobFactoryService
+     * @param UrlFinder $urlFinder
+     */
     public function __construct(
         JobService $jobService,
         TaskService $taskService,
         JobTypeService $jobTypeService,
-        WebSiteService $websiteService,
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         CrawlJobContainerService $crawlJobContainerService,
         UserService $userService,
         QueueService $resqueQueueService,
-        JobFactoryService $resqueJobFactoryService
+        JobFactoryService $resqueJobFactoryService,
+        UrlFinder $urlFinder
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
         $this->jobTypeService = $jobTypeService;
-        $this->websiteService = $websiteService;
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->userService = $userService;
         $this->resqueService = $resqueQueueService;
         $this->resqueJobFactoryService = $resqueJobFactoryService;
+        $this->urlFinder = $urlFinder;
     }
 
-
     /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType
-     * @param array $domainsToIgnore
+     * @param TaskType $taskType
+     * @param string[] $domainsToIgnore
      */
-    public function setPredefinedDomainsToIgnore(TaskType $taskType, $domainsToIgnore)  {
+    public function setPredefinedDomainsToIgnore(TaskType $taskType, $domainsToIgnore)
+    {
         $this->predefinedDomainsToIgnore[$taskType->getName()] = $domainsToIgnore;
     }
 
-
-
-    public function prepare(Job $job) {
+    /**
+     * @param Job $job
+     * @throws JobPreparationServiceException
+     */
+    public function prepare(Job $job)
+    {
         if (!$this->jobService->isResolved($job)) {
             throw new JobPreparationServiceException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
@@ -149,9 +135,12 @@ class JobPreparationService {
         $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());
         $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit();
 
-        $urls = $this->collectUrlsForJob($job, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit());
+        $urls = $this->collectUrlsForJob(
+            $job,
+            $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit()
+        );
 
-        if ($urls === false || count($urls) == 0) {
+        if (empty($urls)) {
             $job->setState($this->jobService->getFailedNoSitemapState());
 
             if (!$this->userService->isPublicUser($job->getUser())) {
@@ -162,29 +151,38 @@ class JobPreparationService {
             }
 
             $this->jobService->persistAndFlush($job);
-            return true;
+        } else {
+            if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
+                $constraint = $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint();
+
+                $this->jobService->addAmmendment(
+                    $job,
+                    'plan-url-limit-reached:discovered-url-count-' . count($urls),
+                    $constraint
+                );
+                $urls = array_slice($urls, 0, $constraint->getLimit());
+            }
+
+            $this->prepareTasksFromCollectedUrls($job, $urls);
+
+            $job->setState($this->jobService->getQueuedState());
+
+            $timePeriod = new TimePeriod();
+            $timePeriod->setStartDateTime(new \DateTime());
+            $job->setTimePeriod($timePeriod);
+
+            $this->jobService->persistAndFlush($job);
         }
-
-        if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
-            $this->jobService->addAmmendment($job, 'plan-url-limit-reached:discovered-url-count-' . count($urls), $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint());
-            $urls = array_slice($urls, 0, $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit());
-        }
-
-        $this->prepareTasksFromCollectedUrls($job, $urls);
-
-        $job->setState($this->jobService->getQueuedState());
-
-        $timePeriod = new TimePeriod();
-        $timePeriod->setStartDateTime(new \DateTime());
-        $job->setTimePeriod($timePeriod);
-
-        $this->jobService->persistAndFlush($job);
-
-        return true;
     }
 
-
-    public function prepareFromCrawl(CrawlJobContainer $crawlJobContainer) {
+    /**
+     * @param CrawlJobContainer $crawlJobContainer
+     * @throws JobPreparationServiceException
+     *
+     * @return int
+     */
+    public function prepareFromCrawl(CrawlJobContainer $crawlJobContainer)
+    {
         $this->processedUrls = array();
         $job = $crawlJobContainer->getParentJob();
 
@@ -204,7 +202,7 @@ class JobPreparationService {
             /* @var $ammendment \SimplyTestable\ApiBundle\Entity\Job\Ammendment */
 
             foreach ($crawlJobContainer->getCrawlJob()->getAmmendments() as $ammendment) {
-                /* @var $ammendment \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint */
+                /* @var Ammendment $ammendment */
                 $constraint = $ammendment->getConstraint();
 
                 if ($constraint->getName() == JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME) {
@@ -223,11 +221,15 @@ class JobPreparationService {
 
         $this->jobService->persistAndFlush($job);
 
-        return self::RETRUN_CODE_OK;
+        return self::RETURN_CODE_OK;
     }
 
-
-    private function prepareTasksFromCollectedUrls(Job $job, $urls) {
+    /**
+     * @param Job $job
+     * @param string[] $urls
+     */
+    private function prepareTasksFromCollectedUrls(Job $job, $urls)
+    {
         $requestedTaskTypes = $job->getRequestedTaskTypes();
 
         $newTaskState = $this->taskService->getQueuedState();
@@ -251,7 +253,10 @@ class JobPreparationService {
                     if ($taskTypeOptions->getOptionCount()) {
                         $parameters = $taskTypeOptions->getOptions();
 
-                        $domainsToIgnore = $this->getDomainsToIgnore($taskTypeOptions, $this->predefinedDomainsToIgnore);
+                        $domainsToIgnore = $this->getDomainsToIgnore(
+                            $taskTypeOptions,
+                            $this->predefinedDomainsToIgnore
+                        );
 
                         if (count($domainsToIgnore)) {
                             $parameters['domains-to-ignore'] = $domainsToIgnore;
@@ -272,61 +277,51 @@ class JobPreparationService {
         }
     }
 
-
-
     /**
+     * @param Job $job
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return boolean
+     * @return bool
      */
-    private function isSingleUrlJob(Job $job) {
+    private function isSingleUrlJob(Job $job)
+    {
         return $job->getType()->equals($this->jobTypeService->getSingleUrlType());
     }
 
-
     /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param Job $job
      * @param int $softLimit
-     * @return array
+     *
+     * @return string[]
      */
-    private function collectUrlsForJob(Job $job, $softLimit) {
+    private function collectUrlsForJob(Job $job, $softLimit)
+    {
         $parameters = ($job->hasParameters()) ? json_decode($job->getParameters(), true) : array();
-        $parameters['softLimit'] = $softLimit;
-
-        if (isset($parameters['cookies'])) {
-            $parameters['cookies'] = $parameters['cookies'];
-        }
 
         if ($this->isSingleUrlJob($job)) {
             return array($job->getWebsite()->getCanonicalUrl());
-        } else {
-            try {
-                return $this->websiteService->getUrls($job->getWebsite(), $parameters);
-            } catch (\Exception $e) {
-                var_dump($e);
-                exit();
-            }
         }
+
+        return $this->urlFinder->getUrls($job->getWebsite(), $softLimit, $parameters);
     }
 
     /**
+     * @param NormalisedUrl $url
      *
-     * @param \webignition\NormalisedUrl\NormalisedUrl $url
-     * @return boolean
+     * @return bool
      */
-    private function isProcessedUrl(NormalisedUrl $url) {
+    private function isProcessedUrl(NormalisedUrl $url)
+    {
         return in_array((string)$url, $this->processedUrls);
     }
 
-
     /**
+     * @param Job $job
+     * @param TaskType $taskType
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType
-     * @return \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions
+     * @return TaskTypeOptions
      */
-    private function getTaskTypeOptions(Job $job, TaskType $taskType) {
+    private function getTaskTypeOptions(Job $job, TaskType $taskType)
+    {
         foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
             /* @var $taskTypeOptions TaskTypeOptions */
             if ($taskTypeOptions->getTaskType()->equals($taskType)) {
@@ -337,19 +332,22 @@ class JobPreparationService {
         return new TaskTypeOptions();
     }
 
-
     /**
+     * @param TaskTypeOptions $taskTypeOptions
+     * @param string[] $predefinedDomainsToIgnore
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
-     * @param array $predefinedDomainsToIgnore
-     * @return array
+     * @return string[]
      */
-    private function getDomainsToIgnore(TaskTypeOptions $taskTypeOptions, $predefinedDomainsToIgnore) {
+    private function getDomainsToIgnore(TaskTypeOptions $taskTypeOptions, $predefinedDomainsToIgnore)
+    {
         $rawDomainsToIgnore = array();
 
         if ($this->shouldIgnoreCommonCdns($taskTypeOptions)) {
             if (isset($predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()])) {
-                $rawDomainsToIgnore = array_merge($rawDomainsToIgnore, $predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()]);
+                $rawDomainsToIgnore = array_merge(
+                    $rawDomainsToIgnore,
+                    $predefinedDomainsToIgnore[$taskTypeOptions->getTaskType()->getName()]
+                );
             }
         }
 
@@ -371,32 +369,23 @@ class JobPreparationService {
         return $domainsToIgnore;
     }
 
-
     /**
+     * @param TaskTypeOptions $taskTypeOptions
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
-     * @return boolean
+     * @return bool
      */
-    private function shouldIgnoreCommonCdns(TaskTypeOptions $taskTypeOptions) {
+    private function shouldIgnoreCommonCdns(TaskTypeOptions $taskTypeOptions)
+    {
         return $taskTypeOptions->getOption('ignore-common-cdns') == '1';
     }
 
-
     /**
+     * @param TaskTypeOptions $taskTypeOptions
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
-     * @return boolean
+     * @return bool
      */
-    private function hasDomainsToIgnore(TaskTypeOptions $taskTypeOptions) {
+    private function hasDomainsToIgnore(TaskTypeOptions $taskTypeOptions)
+    {
         return is_array($taskTypeOptions->getOption('domains-to-ignore'));
-    }
-
-
-    /**
-     *
-     * @return WebSiteService
-     */
-    public function getWebsiteService() {
-        return $this->websiteService;
     }
 }
