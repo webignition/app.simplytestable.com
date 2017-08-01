@@ -31,7 +31,7 @@ class HttpErrorTest extends BaseTest
         $this->getTaskService()->getManager()->flush();
 
         $this->assertReturnCode(0, array(
-            'ids' => implode(',', $this->getTaskIds($job))
+            'ids' => implode(',', $job->getTaskIds())
         ));
 
         foreach ($job->getTasks() as $task) {
