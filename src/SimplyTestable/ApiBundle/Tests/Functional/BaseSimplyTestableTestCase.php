@@ -586,35 +586,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return $this->container->get('simplytestable.services.httpclientservice');
     }
 
-    protected function assertSystemCurlOptionsAreSetOnAllRequests()
-    {
-        foreach ($this->getHttpClientService()->getHistoryPlugin()->getAll() as $httpTransaction) {
-            foreach ($this->container->getParameter('curl_options') as $curlOption) {
-                $expectedValueAsString = $curlOption['value'];
-
-                if (is_string($expectedValueAsString)) {
-                    $expectedValueAsString = '"'.$expectedValueAsString.'"';
-                }
-
-                if (is_bool($curlOption['value'])) {
-                    $expectedValueAsString = ($curlOption['value']) ? 'true' : 'false';
-                }
-
-                $this->assertEquals(
-                    $curlOption['value'],
-                    $httpTransaction['request']->getCurlOptions()->get(constant($curlOption['name'])),
-                    sprintf(
-                        'Curl option "%s" not set to %s for %s %s',
-                        $curlOption['name'],
-                        $expectedValueAsString,
-                        $httpTransaction['request']->getMethod(),
-                        $httpTransaction['request']->getUrl()
-                    )
-                );
-            }
-        }
-    }
-
     /**
      * @return TestStripeService
      */

@@ -20,6 +20,7 @@ services:
         httpClientService: "@simplytestable.services.httpClientService"
         websiteService: "@simplytestable.services.websiteservice"
         jobRejectionService: "@simplytestable.services.job.rejectionservice"
+        urlResolver: '@simplytestable.services.urlresolver'
 
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService
@@ -411,3 +412,8 @@ services:
         stateService: "@simplytestable.services.stateservice"
         taskTypeService: "@simplytestable.services.tasktypeservice"
         taskService: "@simplytestable.services.taskservice"
+
+  simplytestable.services.urlresolver:
+    class:  SimplyTestable\ApiBundle\Services\UrlResolver
+    arguments:
+        httpClientService: "@simplytestable.services.httpClientService"
