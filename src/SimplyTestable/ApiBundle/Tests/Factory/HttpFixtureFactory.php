@@ -18,16 +18,15 @@ class HttpFixtureFactory
         ];
     }
 
-    /**
-     * @param string $contentType
-     * @param string $body
-     *
-     * @return GuzzleResponse
-     */
-    public static function createSuccessResponse($contentType = null, $body = '')
+    private static function createResponse($statusCode, $statusMessage, $contentType = null, $body = '')
     {
         $headerLines = [
-            'HTTP/1.1 200 OK'
+            sprintf(
+                'HTTP/1.1 %s %s',
+                $statusCode,
+                $statusMessage
+            ),
+
         ];
 
         if (!empty($contentType)) {
@@ -44,11 +43,46 @@ class HttpFixtureFactory
     }
 
     /**
+     * @param string $contentType
+     * @param string $body
+     *
+     * @return GuzzleResponse
+     */
+    public static function createSuccessResponse($contentType = null, $body = '')
+    {
+        return static::createResponse(200, 'OK', $contentType, $body);
+    }
+
+    /**
      * @return GuzzleResponse
      */
     public static function createNotFoundResponse()
     {
-        return GuzzleResponse::fromMessage('HTTP/1.1 404 Not Found');
+        return static::createResponse(404, 'Not Found');
+    }
+
+    /**
+     * @return GuzzleResponse
+     */
+    public static function createInternalServerErrorResponse()
+    {
+        return static::createResponse(500, 'Internal Server Error');
+    }
+
+    /**
+     * @return GuzzleResponse
+     */
+    public static function createServiceUnavailableResponse()
+    {
+        return static::createResponse(503, 'Service Unavailable');
+    }
+
+    /**
+     * @return GuzzleResponse
+     */
+    public static function createBadRequestResponse()
+    {
+        return static::createResponse(400, 'Bad Request');
     }
 
     /**
