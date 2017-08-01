@@ -404,21 +404,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @param Job $job
-     *
-     * @return array
-     */
-    protected function getTaskIds(Job $job)
-    {
-        return json_decode(
-            $this->getJobController('taskIdsAction')->taskIdsAction(
-                $job->getWebsite()->getCanonicalUrl(),
-                $job->getId()
-            )->getContent()
-        );
-    }
-
-    /**
      * @return CrawlJobContainerService
      */
     protected function getCrawlJobContainerService()
