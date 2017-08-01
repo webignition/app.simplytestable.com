@@ -3,6 +3,8 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution\MetaRedirect\DifferentUrl;
 
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\HtmlDocumentFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -14,12 +16,18 @@ abstract class DifferentUrlTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.0 200 OK\nContent-Type:text/html\n\n<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url=" . $this->getRedirectUrl() . "\"></head></html>",
-            "HTTP/1.0 200 OK",
-            "HTTP/1.0 200 OK\nContent-Type:text/html\n\n<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url=" . $this->getRedirectUrl() . "\"></head></html>",
-            "HTTP/1.0 200 OK"
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(
+                'text/html',
+                HtmlDocumentFactory::createMetaRedirectDocument($this->getRedirectUrl())
+            ),
+            HttpFixtureFactory::createSuccessResponse(),
+            HttpFixtureFactory::createSuccessResponse(
+                'text/html',
+                HtmlDocumentFactory::createMetaRedirectDocument($this->getRedirectUrl())
+            ),
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
 
         $jobFactory = new JobFactory($this->container);
 

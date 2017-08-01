@@ -2,12 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Worker\TaskNotificationService\Notify\Success;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Worker\TaskNotificationService\Notify\NotifyTest;
 
 abstract class SuccessTest extends NotifyTest {
 
     protected function getHttpFixtureItems() {
-        $fixture = 'HTTP/1.1 200 OK';
+        $fixture = HttpFixtureFactory::createSuccessResponse();
         $fixtures = [];
 
         for ($count = 0; $count < $this->getWorkerCount(); $count++) {

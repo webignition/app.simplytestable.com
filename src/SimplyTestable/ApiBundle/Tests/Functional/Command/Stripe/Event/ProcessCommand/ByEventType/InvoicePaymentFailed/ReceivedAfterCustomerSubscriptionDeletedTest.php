@@ -2,15 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Stripe\Event\ProcessCommand\ByEventType\InvoicePaymentFailed;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Command\Stripe\Event\ProcessCommand\ByEventType\ByEventTypeTest;
 
 class ReceivedAfterCustomerSubscriptionDeletedTest extends ByEventTypeTest {
 
     protected function getHttpFixtureSet() {
-        return array(
-            "HTTP/1.1 200 OK",
-            "HTTP/1.1 200 OK"
-        );
+        return [
+            HttpFixtureFactory::createSuccessResponse(),
+            HttpFixtureFactory::createSuccessResponse(),
+        ];
     }
 
     public function testUserIsDowngradedToBasicPlan() {

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Worker\TaskNotificationCommand;
 
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 
 class SuccessTest extends CommandTest {
 
@@ -20,11 +21,11 @@ class SuccessTest extends CommandTest {
     protected function setUp() {
         parent::setUp();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet([
-            'HTTP/1.1 200 OK',
-            'HTTP/1.1 200 OK',
-            'HTTP/1.1 200 OK'
-        ]));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(),
+            HttpFixtureFactory::createSuccessResponse(),
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
 
         $this->workers = $this->createWorkers(3);
         $this->returnCode = $this->executeCommand($this->getCommandName());

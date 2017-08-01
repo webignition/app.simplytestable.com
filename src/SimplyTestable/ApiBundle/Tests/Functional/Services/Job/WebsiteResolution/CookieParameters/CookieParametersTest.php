@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution\CookieParameters;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -27,9 +28,9 @@ class CookieParametersTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.0 200"
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
 
         $jobFactory = new JobFactory($this->container);
 

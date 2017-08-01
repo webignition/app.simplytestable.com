@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
@@ -13,10 +14,10 @@ class HttpRedirectTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.0 " . $this->getStatusCode() . "\nLocation:" . self::EFFECTIVE_URL,
-            "HTTP/1.0 200 OK"
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createMovedPermanentlyRedirectResponse(self::EFFECTIVE_URL),
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->create();
