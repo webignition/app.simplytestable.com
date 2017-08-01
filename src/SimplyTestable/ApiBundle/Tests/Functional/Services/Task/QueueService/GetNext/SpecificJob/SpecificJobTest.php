@@ -19,7 +19,7 @@ class SpecificJobTest extends ServiceTest
      */
     private $nextTaskIds = [];
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

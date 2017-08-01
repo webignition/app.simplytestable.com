@@ -10,7 +10,7 @@ abstract class IsFinishedTest extends ServiceTest
 {
     private $task;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

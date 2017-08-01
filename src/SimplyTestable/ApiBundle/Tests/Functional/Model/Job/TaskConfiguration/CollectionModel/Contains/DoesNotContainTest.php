@@ -13,7 +13,7 @@ class DoesNotContainTest extends ContainsTest {
     private $taskConfiguration1;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $taskType1 = new TaskType();

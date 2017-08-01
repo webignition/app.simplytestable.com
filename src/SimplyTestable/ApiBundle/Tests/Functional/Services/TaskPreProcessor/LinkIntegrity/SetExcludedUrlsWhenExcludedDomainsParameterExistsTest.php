@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TaskPreProcessor\Li
 
 class SetExcludedUrlsWhenExcludedDomainsParameterExistsTest extends ExcludedUrlsTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->executeCommand('simplytestable:task:assigncollection', array(

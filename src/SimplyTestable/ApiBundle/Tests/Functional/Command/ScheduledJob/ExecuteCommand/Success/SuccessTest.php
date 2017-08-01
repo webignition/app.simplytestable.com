@@ -19,7 +19,7 @@ abstract class SuccessTest extends WithScheduledJobTest {
     }
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->latestJob = $this->getJobService()->getEntityRepository()->findAll()[0];
     }

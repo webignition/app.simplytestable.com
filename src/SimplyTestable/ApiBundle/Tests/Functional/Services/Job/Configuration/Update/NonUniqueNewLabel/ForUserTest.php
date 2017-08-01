@@ -18,7 +18,7 @@ class ForUserTest extends ServiceTest {
     private $jobConfiguration;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $values = new ConfigurationValues();

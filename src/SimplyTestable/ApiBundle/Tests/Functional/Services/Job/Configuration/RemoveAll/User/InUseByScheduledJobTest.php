@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as J
 
 class InUseByScheduledJobTest extends UserTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->getScheduledJobService()->create($this->jobConfiguration);

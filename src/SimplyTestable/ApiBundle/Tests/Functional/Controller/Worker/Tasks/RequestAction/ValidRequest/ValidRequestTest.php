@@ -20,7 +20,7 @@ abstract class ValidRequestTest extends RequestTest
      */
     protected $responseObject;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

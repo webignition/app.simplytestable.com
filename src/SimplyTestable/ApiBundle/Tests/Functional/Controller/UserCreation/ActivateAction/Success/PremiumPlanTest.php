@@ -9,7 +9,7 @@ class PremiumPlanTest extends SuccessTest {
     const USER_PLAN = 'personal';
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->getUserCreationController('createAction', array(

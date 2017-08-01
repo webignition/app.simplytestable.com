@@ -16,7 +16,7 @@ abstract class UserTest extends ServiceTest {
     protected $jobConfiguration;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->preCreateJobConfigurations();

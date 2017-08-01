@@ -11,7 +11,7 @@ class NotFoundTest extends UpdateTest {
      */
     private $response;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());

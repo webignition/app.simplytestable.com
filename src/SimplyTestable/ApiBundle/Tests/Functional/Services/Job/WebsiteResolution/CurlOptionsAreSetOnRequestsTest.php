@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 class CUrlOptionsAreSetOnRequestsTest extends BaseSimplyTestableTestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

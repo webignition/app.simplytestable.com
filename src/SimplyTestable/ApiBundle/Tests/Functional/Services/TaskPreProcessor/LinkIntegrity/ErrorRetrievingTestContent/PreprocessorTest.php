@@ -36,7 +36,7 @@ abstract class PreprocessorTest extends BaseSimplyTestableTestCase
      */
     private $tasks = null;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

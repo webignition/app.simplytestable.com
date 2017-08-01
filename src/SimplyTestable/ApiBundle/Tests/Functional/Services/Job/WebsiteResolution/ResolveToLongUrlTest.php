@@ -17,7 +17,7 @@ class ResolveToLongUrlTest extends BaseSimplyTestableTestCase
         '1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890',
     ];
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

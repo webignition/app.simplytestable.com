@@ -23,7 +23,7 @@ class IsSetTest extends CommandTest {
      */
     private $activationRequests;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->workers = $this->createWorkers(3);

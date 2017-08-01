@@ -19,7 +19,7 @@ abstract class SuccessTest extends ServiceTest {
 
     abstract protected function getCurrentUser();
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->preCreateJobConfigurations();

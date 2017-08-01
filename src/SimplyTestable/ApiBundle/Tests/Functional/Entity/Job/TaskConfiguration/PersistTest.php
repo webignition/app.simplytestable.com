@@ -12,7 +12,7 @@ class PersistTest extends TaskConfigurationTest {
      */
     private $taskConfiguration;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $jobConfiguration = new JobConfiguration();

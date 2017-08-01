@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResoluti
 
 class RejectionReasonTest extends CurlRejectionTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->assertEquals('curl-' . $this->getTestStatusCode(), $this->getJobRejectionReasonService()->getForJob($this->job)->getReason());
     }

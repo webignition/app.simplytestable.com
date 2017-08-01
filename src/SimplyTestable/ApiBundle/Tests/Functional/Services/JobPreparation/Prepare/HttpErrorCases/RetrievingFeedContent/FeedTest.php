@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 abstract class FeedTest extends BaseSimplyTestableTestCase
 {
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

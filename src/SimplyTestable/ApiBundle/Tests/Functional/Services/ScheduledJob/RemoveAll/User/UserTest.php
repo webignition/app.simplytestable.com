@@ -16,7 +16,7 @@ abstract class UserTest extends ServiceTest {
     protected $scheduledJob;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

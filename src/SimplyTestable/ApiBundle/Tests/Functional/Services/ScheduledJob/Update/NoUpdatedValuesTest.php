@@ -32,7 +32,7 @@ class NoUpdatedValuesTest extends ServiceTest {
     private $isRecurring = true;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

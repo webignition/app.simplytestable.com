@@ -13,7 +13,7 @@ abstract class CountTest extends BaseControllerJsonTestCase
      */
     protected $jobs = array();
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

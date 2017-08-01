@@ -16,7 +16,7 @@ class SuccessTest extends GetTest {
 
     private $decodedResponse;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class UserHasTest extends ServiceTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

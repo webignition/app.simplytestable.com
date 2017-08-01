@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\Controller\RoutingTest as BaseRout
 
 class RoutingTest extends BaseRoutingTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->getRouter()->getContext()->setMethod('POST');
     }

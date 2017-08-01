@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\Command\Stripe\Event\ProcessComman
 
 abstract class ByEventTypeTest extends NonErrorCasesTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->getStripeService()->addResponseData($this->getStripeServiceResponseMethod(), $this->getStripeServiceResponseData());

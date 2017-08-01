@@ -28,7 +28,7 @@ abstract class TeamTest extends ServiceTest {
     protected $member2;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

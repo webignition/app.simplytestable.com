@@ -17,7 +17,7 @@ class UserTest extends CountTest
     private $users = array();
     private $counts = array();
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

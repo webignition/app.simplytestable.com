@@ -12,7 +12,7 @@ class UnroutableWebsiteTest extends RedirectResponseTest {
      */
     private $job;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->job = $this->getJobService()->getById($this->getJobIdFromUrl($this->response->getTargetUrl()));

@@ -14,7 +14,7 @@ abstract class WithJobsTest extends ServiceTest
      */
     private $jobs;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

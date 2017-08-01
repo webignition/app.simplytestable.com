@@ -6,7 +6,7 @@ class DeveloperEmailNotificationTest extends IndexActionTest {
 
     private $fixture = null;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->fixture = $this->getFixture($this->getFixturesDataPath(). '/StripeEvents/invoice.payment_failed.event.json');

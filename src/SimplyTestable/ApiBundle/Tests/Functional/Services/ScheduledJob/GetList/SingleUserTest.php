@@ -12,7 +12,7 @@ class SingleUserTest extends ServiceTest {
      */
     private $list;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

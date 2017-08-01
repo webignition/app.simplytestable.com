@@ -16,7 +16,7 @@ class NoWorkersTest extends CollectionCommandTest
      */
     private $executeReturnCode = null;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

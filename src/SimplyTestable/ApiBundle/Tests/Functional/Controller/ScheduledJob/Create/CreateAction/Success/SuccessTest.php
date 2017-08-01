@@ -21,7 +21,7 @@ abstract class SuccessTest extends CreateTest {
     protected $scheduledJob;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

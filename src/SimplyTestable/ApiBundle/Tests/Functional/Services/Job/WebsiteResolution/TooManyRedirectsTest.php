@@ -10,7 +10,7 @@ class TooManyRedirectsTest extends BaseSimplyTestableTestCase
     const SOURCE_URL = 'http://example.com/';
     const EFFECTIVE_URL = 'http://www.example.com/';
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

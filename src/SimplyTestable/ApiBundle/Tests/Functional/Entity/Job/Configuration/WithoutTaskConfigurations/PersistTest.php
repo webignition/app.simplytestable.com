@@ -11,7 +11,7 @@ class PersistTest extends WithoutTaskConfigurationsTest {
      */
     private $configuration;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->configuration = new Configuration();

@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TaskPreProcessor\Li
 
 class ViaAssignSelectedCommandTest extends PreProcessorTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $task = $this->tasks->get(1);

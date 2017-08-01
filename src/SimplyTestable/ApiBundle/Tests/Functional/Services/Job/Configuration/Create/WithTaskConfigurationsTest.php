@@ -39,7 +39,7 @@ class WithTaskConfigurationsTest extends ServiceTest {
         ]
     ];
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $taskConfigurationCollection = new TaskConfigurationCollection();

@@ -9,7 +9,7 @@ class HttpRedirectTest extends BaseSimplyTestableTestCase
 {
     const EFFECTIVE_URL = 'http://foo.example.com/';
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

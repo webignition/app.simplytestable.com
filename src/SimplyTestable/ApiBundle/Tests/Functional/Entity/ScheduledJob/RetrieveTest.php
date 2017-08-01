@@ -16,7 +16,7 @@ class RetrieveTest extends ScheduledJobTest {
      */
     private $retrievedScheduledJob;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->originalScheduledJob = $this->getScheduledJob();

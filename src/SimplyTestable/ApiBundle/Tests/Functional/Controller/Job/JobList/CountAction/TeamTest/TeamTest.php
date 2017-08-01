@@ -35,7 +35,7 @@ abstract class TeamTest extends BaseControllerJsonTestCase
      */
     private $count;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

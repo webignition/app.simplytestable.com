@@ -25,7 +25,7 @@ abstract class TeamTest extends InvalidLabelTest
     protected $member2;
 
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

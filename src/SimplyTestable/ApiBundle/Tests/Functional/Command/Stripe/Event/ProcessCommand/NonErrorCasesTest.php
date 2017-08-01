@@ -12,7 +12,7 @@ abstract class NonErrorCasesTest extends ProcessCommandTest {
     abstract protected function getExpectedNotificationBodyEventName();
     abstract protected function getStripeEventFixturePaths();
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureSet()));

@@ -15,7 +15,7 @@ class WithoutUserTest extends ServiceTest {
      */
     private $jobConfiguration = null;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
 

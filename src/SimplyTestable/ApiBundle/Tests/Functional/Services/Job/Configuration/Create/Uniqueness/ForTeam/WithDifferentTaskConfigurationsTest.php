@@ -64,7 +64,7 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest
      */
     private $values;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

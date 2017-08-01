@@ -18,7 +18,7 @@ class MultipleTest extends ActionTest {
         'http://two.example.com'
     ];
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         foreach ($this->canonicalUrls as $canonicalUrl) {

@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class ValidTokenTest extends SuccessTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

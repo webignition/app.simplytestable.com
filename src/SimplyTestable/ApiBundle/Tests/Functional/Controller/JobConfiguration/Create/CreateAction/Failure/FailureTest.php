@@ -23,7 +23,7 @@ abstract class FailureTest extends CreateTest {
      */
     private $response;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getCurrentUser());

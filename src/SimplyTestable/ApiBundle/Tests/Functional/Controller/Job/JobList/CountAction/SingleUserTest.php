@@ -12,7 +12,7 @@ abstract class SingleUserTest extends CountTest {
      */
     protected $jobs = array();
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->count = json_decode($this->getJobListController(

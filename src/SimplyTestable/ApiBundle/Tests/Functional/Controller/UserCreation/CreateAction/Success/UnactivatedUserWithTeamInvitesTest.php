@@ -57,7 +57,7 @@ class UnactivatedUserWithTeamInvitesTest extends SuccessTest {
     private $tempUserPassword;
 
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

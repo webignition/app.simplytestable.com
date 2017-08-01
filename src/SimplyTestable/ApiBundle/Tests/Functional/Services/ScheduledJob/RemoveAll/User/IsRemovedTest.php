@@ -5,7 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob\Remove
 
 class IsRemovedTest extends UserTest {
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
         $this->getScheduledJobService()->removeAll();
     }

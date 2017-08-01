@@ -18,7 +18,7 @@ abstract class FailureTest extends UpdateTest {
      */
     private $response;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->getUserService()->setUser($this->getCurrentUser());

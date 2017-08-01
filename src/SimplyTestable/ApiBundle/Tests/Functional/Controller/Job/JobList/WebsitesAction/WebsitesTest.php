@@ -13,7 +13,7 @@ abstract class WebsitesTest extends BaseControllerJsonTestCase
      */
     protected $jobs = array();
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

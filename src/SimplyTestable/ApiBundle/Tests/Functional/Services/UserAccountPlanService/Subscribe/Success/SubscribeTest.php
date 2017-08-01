@@ -28,7 +28,7 @@ abstract class SubscribeTest extends ServiceTest
      */
     private $userAccountPlan;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

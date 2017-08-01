@@ -12,7 +12,7 @@ abstract class WithTest extends BaseServiceTest {
      */
     protected $scheduledJob;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $this->setUpPreCreate();

@@ -25,7 +25,7 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase
      */
     protected $job;
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 

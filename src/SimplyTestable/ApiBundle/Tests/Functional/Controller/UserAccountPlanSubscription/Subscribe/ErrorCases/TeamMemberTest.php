@@ -9,7 +9,7 @@ class TeamMemberTest extends BaseControllerJsonTestCase {
 
     private $response;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
 
         $userFactory = new UserFactory($this->container);

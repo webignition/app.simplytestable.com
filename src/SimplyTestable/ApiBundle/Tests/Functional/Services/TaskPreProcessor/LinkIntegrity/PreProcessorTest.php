@@ -36,7 +36,7 @@ abstract class PreProcessorTest extends BaseSimplyTestableTestCase
         return array();
     }
 
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
