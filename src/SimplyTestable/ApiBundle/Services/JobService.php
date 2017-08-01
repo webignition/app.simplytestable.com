@@ -498,22 +498,6 @@ class JobService extends EntityService
     /**
      * @return Job[]
      */
-    public function getJobsWithQueuedTasks()
-    {
-        $states = array(
-            $this->getInProgressState(),
-            $this->getPreparingState(),
-            $this->getQueuedState()
-        );
-
-        $jobs = $this->getEntityRepository()->getByStateAndTaskState($states, $this->taskService->getQueuedState());
-
-        return $jobs;
-    }
-
-    /**
-     * @return Job[]
-     */
     public function getUnfinishedJobsWithTasksAndNoIncompleteTasks()
     {
         $jobs = $this->getEntityRepository()->findBy(array(
