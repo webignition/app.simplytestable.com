@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Command\Task\Assign;
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -114,8 +115,8 @@ class SelectedCommand extends BaseCommand
                 $startedTasks = array_merge($startedTasks, $equivalentTasks, array($task));
             }
 
-            $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
-            $jobInProgressState = $jobService->getInProgressState();
+            $stateService = $this->getContainer()->get('simplytestable.services.stateservice');
+            $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
 
             foreach ($startedTasks as $startedTask) {
                 /* @var Job $job */

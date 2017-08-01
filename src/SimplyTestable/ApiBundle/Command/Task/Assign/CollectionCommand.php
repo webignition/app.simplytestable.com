@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Command\Task\Assign;
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -99,8 +100,8 @@ class CollectionCommand extends BaseCommand
             return self::RETURN_CODE_FAILED_NO_WORKERS;
         }
 
-        $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
-        $jobInProgressState = $jobService->getInProgressState();
+        $stateService = $this->getContainer()->get('simplytestable.services.stateservice');
+        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
 
         $workerTaskAssignmentService = $this->getContainer()->get(
             'simplytestable.services.workertaskassignmentservice'

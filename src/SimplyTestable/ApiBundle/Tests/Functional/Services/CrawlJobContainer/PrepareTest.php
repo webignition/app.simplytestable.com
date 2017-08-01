@@ -26,6 +26,9 @@ class PrepareTest extends BaseSimplyTestableTestCase
 
     public function testForInProgressState()
     {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare([], [
@@ -33,7 +36,7 @@ class PrepareTest extends BaseSimplyTestableTestCase
         ]);
 
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
-        $crawlJobContainer->getCrawlJob()->setState($this->getJobService()->getInProgressState());
+        $crawlJobContainer->getCrawlJob()->setState($jobInProgressState);
 
         $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
     }

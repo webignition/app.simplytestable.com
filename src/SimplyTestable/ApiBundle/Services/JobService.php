@@ -90,14 +90,6 @@ class JobService extends EntityService
     /**
      * @return State
      */
-    public function getInProgressState()
-    {
-        return $this->stateService->fetch(self::IN_PROGRESS_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getCancelledState()
     {
         return $this->stateService->fetch(self::CANCELLED_STATE);
