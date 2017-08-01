@@ -293,23 +293,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return (int)$urlParts[count($urlParts) - 2];
     }
 
-    protected function queuePrepareHttpFixturesForJob($url)
-    {
-        $fixtureMessages = array(
-            $this->getDefaultRobotsTxtFixtureContent(),
-            $this->getDefaultSitemapXmlFixtureContent()
-        );
-
-        foreach ($fixtureMessages as $index => $fixtureMessage) {
-            if ($url != self::DEFAULT_CANONICAL_URL && substr_count($fixtureMessage, self::DEFAULT_CANONICAL_URL)) {
-                $fixtureMessage = str_replace(self::DEFAULT_CANONICAL_URL, $url, $fixtureMessage);
-                $fixtureMessages[$index] = $fixtureMessage;
-            }
-        }
-
-        $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet($fixtureMessages));
-    }
-
     protected function getDefaultRobotsTxtFixtureContent()
     {
 return <<<'EOD'
