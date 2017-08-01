@@ -1134,16 +1134,4 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
             (int)$locationHeaderParts[count($locationHeaderParts) - 1]
         );
     }
-
-    protected function queueStandardJobHttpFixtures()
-    {
-        $this->queueHttpFixtures([
-            GuzzleResponse::fromMessage('HTTP/1.1 200 OK'),
-            GuzzleResponse::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
-            GuzzleResponse::fromMessage(sprintf(
-                "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
-                SitemapFixtureFactory::load('example.com-three-urls')
-            )),
-        ]);
-    }
 }
