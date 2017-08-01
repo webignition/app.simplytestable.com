@@ -73,6 +73,11 @@ class JobPreparationService
     private $urlFinder;
 
     /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
      * @param JobService $jobService
      * @param TaskService $taskService
      * @param JobTypeService $jobTypeService
@@ -82,6 +87,7 @@ class JobPreparationService
      * @param QueueService $resqueQueueService
      * @param JobFactoryService $resqueJobFactoryService
      * @param UrlFinder $urlFinder
+     * @param StateService $stateService
      */
     public function __construct(
         JobService $jobService,
@@ -92,7 +98,8 @@ class JobPreparationService
         UserService $userService,
         QueueService $resqueQueueService,
         JobFactoryService $resqueJobFactoryService,
-        UrlFinder $urlFinder
+        UrlFinder $urlFinder,
+        StateService $stateService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
@@ -103,6 +110,7 @@ class JobPreparationService
         $this->resqueService = $resqueQueueService;
         $this->resqueJobFactoryService = $resqueJobFactoryService;
         $this->urlFinder = $urlFinder;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -127,7 +135,9 @@ class JobPreparationService
             );
         }
 
-        $job->setState($this->jobService->getPreparingState());
+        $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
+
+        $job->setState($jobPreparingState);
         $this->jobService->persistAndFlush($job);
 
         $this->processedUrls = array();
@@ -193,7 +203,9 @@ class JobPreparationService
             );
         }
 
-        $job->setState($this->jobService->getPreparingState());
+        $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
+
+        $job->setState($jobPreparingState);
         $this->jobService->persistAndFlush($job);
 
         $urls = $this->crawlJobContainerService->getDiscoveredUrls($crawlJobContainer, true);

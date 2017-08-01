@@ -90,14 +90,6 @@ class JobService extends EntityService
     /**
      * @return State
      */
-    public function getPreparingState()
-    {
-        return $this->stateService->fetch(self::PREPARING_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getQueuedState()
     {
         return $this->stateService->fetch(self::QUEUED_STATE);
@@ -152,7 +144,7 @@ class JobService extends EntityService
      */
     public function isPreparing(Job $job)
     {
-        return $job->getState()->equals($this->getPreparingState());
+        return self::PREPARING_STATE === $job->getState()->getName();
     }
 
     /**

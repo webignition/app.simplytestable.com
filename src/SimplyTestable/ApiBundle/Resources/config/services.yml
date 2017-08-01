@@ -191,6 +191,7 @@ services:
         resqueQueueService: "@simplytestable.services.resque.queueService"
         resqueJobFactoryService: "@simplytestable.services.resque.jobFactoryService"
         urlFinder: '@simplytestable.services.urlfinder'
+        stateService: '@simplytestable.services.stateservice'
 
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
