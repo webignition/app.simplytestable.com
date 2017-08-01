@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution\CurlRejection;
 
+use SimplyTestable\ApiBundle\Tests\Factory\CurlExceptionFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -15,9 +16,9 @@ abstract class CurlRejectionTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "CURL/" . $this->getTestStatusCode()
-        )));
+        $this->queueHttpFixtures([
+            CurlExceptionFactory::create('', $this->getTestStatusCode()),
+        ]);
 
         $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->create([

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\ResolveWebsiteCommand;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Tests\Factory\CurlExceptionFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class RejectionTest extends CommandTest
@@ -19,10 +20,9 @@ class RejectionTest extends CommandTest
     protected function setUp()
     {
         parent::setUp();
-
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "CURL/28"
-        )));
+        $this->queueHttpFixtures([
+            CurlExceptionFactory::create('Operation timed out', 28),
+        ]);
 
         $jobFactory = new JobFactory($this->container);
 

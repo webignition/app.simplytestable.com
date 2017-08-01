@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Stripe\Event\ProcessCommand;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 abstract class NonErrorCasesTest extends ProcessCommandTest {
@@ -15,7 +16,7 @@ abstract class NonErrorCasesTest extends ProcessCommandTest {
     protected function setUp() {
         parent::setUp();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getHttpFixtureSet()));
+        $this->queueHttpFixtures($this->getHttpFixtureSet());
 
         $userFactory = new UserFactory($this->container);
 
@@ -38,9 +39,9 @@ abstract class NonErrorCasesTest extends ProcessCommandTest {
     }
 
     protected function getHttpFixtureSet() {
-        return array(
-            "HTTP/1.1 200 OK"
-        );
+        return [
+            HttpFixtureFactory::createSuccessResponse(),
+        ];
     }
 
     public function testEventIsProcessed() {

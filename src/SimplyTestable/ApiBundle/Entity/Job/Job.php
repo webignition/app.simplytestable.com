@@ -1,18 +1,20 @@
 <?php
 namespace SimplyTestable\ApiBundle\Entity\Job;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
-use SimplyTestable\ApiBundle\Entity\Job\FeatureOptions as JobFeatureOptions;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Model\Task\Type\Collection as TaskTypeCollection;
 
 /**
- * 
  * @ORM\Entity
  * @ORM\Table(
  *     name="Job"
@@ -21,218 +23,186 @@ use SimplyTestable\ApiBundle\Model\Task\Type\Collection as TaskTypeCollection;
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class Job
-{    
+{
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * 
-     * @SerializerAnnotation\Expose 
+     *
+     * @SerializerAnnotation\Expose
      */
     protected $id;
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\User
-     * 
-     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
-     * 
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
-     * @SerializerAnnotation\Expose 
-     */
-    protected $user;
-    
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\WebSite
-     * 
-     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\WebSite")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
-     * 
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedWebsite")
-     * @SerializerAnnotation\Expose 
-     */
-    protected $website;
-    
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\State
-     * 
-     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
-     * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
-     * 
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
-     * @SerializerAnnotation\Expose 
-     */
-    protected $state; 
-    
-    
-    /**
-     * @var int
-     * @SerializerAnnotation\Expose 
-     */
-    protected $urlCount;    
-    
-    
-    /**
-     *
-     * @var \Doctrine\Common\Collections\Collection
-     * 
-     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedTasks")     
-     */
-    private $tasks;
-    
 
     /**
+     * @var User
      *
-     * @var \SimplyTestable\ApiBundle\Entity\Job\Type
-     * 
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     *
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
+     * @SerializerAnnotation\Expose
+     */
+    protected $user;
+
+    /**
+     * @var WebSite
+     *
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\WebSite")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
+     *
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedWebsite")
+     * @SerializerAnnotation\Expose
+     */
+    protected $website;
+
+    /**
+     * @var State
+     *
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
+     * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
+     *
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
+     * @SerializerAnnotation\Expose
+     */
+    protected $state;
+
+    /**
+     * @var int
+     * @SerializerAnnotation\Expose
+     */
+    protected $urlCount;
+
+    /**
+     * @var DoctrineCollection
+     *
+     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedTasks")
+     */
+    private $tasks;
+
+    /**
+     * @var JobType
+     *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Type")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=true)
-     * 
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedType")
-     * @SerializerAnnotation\Expose 
-     */
-    protected $type;     
-    
-    
-    
-    /**
      *
-     * @var \Doctrine\Common\Collections\Collection
-     * 
+     * @SerializerAnnotation\Accessor(getter="getPublicSerializedType")
+     * @SerializerAnnotation\Expose
+     */
+    protected $type;
+
+    /**
+     * @var DoctrineCollection
+     *
      * @ORM\ManyToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
      * @ORM\JoinTable(name="JobTaskTypes",
      *      inverseJoinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")},
      *      joinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")}
      * )
-     * 
+     *
      * @SerializerAnnotation\SerializedName("task_types")
-     * @SerializerAnnotation\Expose 
+     * @SerializerAnnotation\Expose
      */
     private $requestedTaskTypes;
-    
-    
-    /**
-     *
-     * @var \Doctrine\Common\Collections\Collection
-     * 
-     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions", mappedBy="job")
-     * 
-     */    
-    private $taskTypeOptions;  
-    
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\TimePeriod
-     * 
-     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist"})
-     * @SerializerAnnotation\Expose 
-     */
-    protected $timePeriod;
-    
-    
-    /**
-     *
-     * @var \Doctrine\Common\Collections\Collection
-     * 
-     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Ammendment", mappedBy="job", cascade={"persist"})  
-     */
-    private $ammendments;
-    
-    /**
-     *
-     * @var string
-     * @ORM\Column(type="text", nullable=true)
-     * @SerializerAnnotation\Expose 
-     */
-    protected $parameters;
-    
-    
-    /**
-     *
-     * @var boolean
-     * 
-     * @ORM\Column(type="boolean")
-     * @SerializerAnnotation\Expose 
-     */
-    private $isPublic = false;
-    
-    
-    
-    public function __construct()
-    {
-        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->requestedTaskTypes = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->taskTypeOptions = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->ammendments = new \Doctrine\Common\Collections\ArrayCollection();        
-        $this->parameters = '';
-    }
-    
-    
-    /**
-     *
-     * @return string
-     */
-    public function getPublicSerializedUser() {
-        return $this->getUser()->getUsername();
-    }
-    
-    /**
-     *
-     * @return string
-     */
-    public function getPublicSerializedWebsite() {
-        return (string)$this->getWebsite();
-    }
-    
-    
-    /**
-     *
-     * @return string
-     */
-    public function getPublicSerializedState() {
-        return str_replace('job-', '', (string)$this->getState());
-    }
-    
-    
-    /**
-     *
-     * @return string
-     */
-    public function getPublicSerializedType() {
-        return (string)$this->getType();
-    }
-        
-    
 
     /**
-     * 
-     * @return \Doctrine\Common\Collections\Collection
+     * @var DoctrineCollection
+     *
+     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions", mappedBy="job")
+     *
      */
-    public function getPublicSerializedTasks() {
-        $tasks = clone $this->getTasks();        
+    private $taskTypeOptions;
+
+    /**
+     * @var TimePeriod
+     *
+     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist"})
+     * @SerializerAnnotation\Expose
+     */
+    protected $timePeriod;
+
+    /**
+     * @var DoctrineCollection
+     *
+     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Ammendment", mappedBy="job", cascade={"persist"})
+     */
+    private $ammendments;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @SerializerAnnotation\Expose
+     */
+    protected $parameters;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean")
+     * @SerializerAnnotation\Expose
+     */
+    private $isPublic = false;
+
+    public function __construct()
+    {
+        $this->tasks = new ArrayCollection();
+        $this->requestedTaskTypes = new ArrayCollection();
+        $this->taskTypeOptions = new ArrayCollection();
+        $this->ammendments = new ArrayCollection();
+        $this->parameters = '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublicSerializedUser()
+    {
+        return $this->getUser()->getUsername();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublicSerializedWebsite()
+    {
+        return (string)$this->getWebsite();
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublicSerializedState()
+    {
+        return str_replace('job-', '', (string)$this->getState());
+    }
+
+    /**
+     * @return string
+     */
+    public function getPublicSerializedType()
+    {
+        return (string)$this->getType();
+    }
+
+    /**
+     * @return DoctrineCollection
+     */
+    public function getPublicSerializedTasks()
+    {
+        $tasks = clone $this->getTasks();
         foreach ($tasks as $task) {
-            /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
+            /* @var $task Task */
             $task->setOutput(null);
         }
-        
+
         return $tasks;
     }
-    
-    
+
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -240,21 +210,19 @@ class Job
     }
 
     /**
-     * Set user
-     *
      * @param User $user
+     *
      * @return Job
      */
     public function setUser(User $user)
     {
         $this->user = $user;
+
         return $this;
     }
 
     /**
-     * Get user
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
@@ -262,21 +230,19 @@ class Job
     }
 
     /**
-     * Set website
-     *
      * @param  $website
+     *
      * @return Job
      */
     public function setWebsite(WebSite $website)
     {
         $this->website = $website;
+
         return $this;
     }
 
     /**
-     * Get website
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Website
+     * @return WebSite
      */
     public function getWebsite()
     {
@@ -284,136 +250,122 @@ class Job
     }
 
     /**
-     * Set state
+     * @param State $state
      *
-     * @param \SimplyTestable\ApiBundle\Entity\State $state
      * @return Job
      */
     public function setState(State $state)
     {
         $this->state = $state;
+
         return $this;
     }
 
     /**
-     * Get state
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
     public function getState()
     {
         return $this->state;
     }
-    
-    
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
-     */
-    public function setNextState() {
-        if (!is_null($this->getState()->getNextState())) {
-            $this->state = $this->getState()->getNextState();
-        }        
-        
-        return $this;
-    }   
-    
 
     /**
-     * Add tasks
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
      * @return Job
      */
-    public function addTask(\SimplyTestable\ApiBundle\Entity\Task\Task $task)
+    public function setNextState()
+    {
+        if (!is_null($this->getState()->getNextState())) {
+            $this->state = $this->getState()->getNextState();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Task $task
+     *
+     * @return Job
+     */
+    public function addTask(Task $task)
     {
         $this->tasks[] = $task;
+
         return $this;
     }
 
     /**
      * Remove tasks
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
+     * @param Task $task
      */
-    public function removeTask(\SimplyTestable\ApiBundle\Entity\Task\Task $task)
+    public function removeTask(Task $task)
     {
         $this->tasks->removeElement($task);
     }
 
     /**
-     * Get tasks
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return DoctrineCollection
      */
     public function getTasks()
-    {        
+    {
         return $this->tasks;
     }
-    
+
     /**
-     * Set timePeriod
+     * @param TimePeriod $timePeriod
      *
-     * @param \SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod
-     * @return Task
+     * @return Job
      */
-    public function setTimePeriod(\SimplyTestable\ApiBundle\Entity\TimePeriod $timePeriod = null)
+    public function setTimePeriod(TimePeriod $timePeriod = null)
     {
         $this->timePeriod = $timePeriod;
-    
+
         return $this;
     }
 
     /**
-     * Get timePeriod
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\TimePeriod 
+     * @return TimePeriod
      */
     public function getTimePeriod()
     {
         return $this->timePeriod;
-    } 
+    }
 
     /**
-     * Add requestedTaskTypeClasses
+     * @param TaskType $requestedTaskType
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType
      * @return Job
      */
-    public function addRequestedTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType)
-    {        
-        if (!$this->requestedTaskTypes->contains($requestedTaskType)) {            
-            $this->requestedTaskTypes[] = $requestedTaskType;            
+    public function addRequestedTaskType(TaskType $requestedTaskType)
+    {
+        if (!$this->requestedTaskTypes->contains($requestedTaskType)) {
+            $this->requestedTaskTypes[] = $requestedTaskType;
         }
-        
+
         return $this;
     }
-    
+
     /**
-     * Remove requestedTaskTypeClasses
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskTypeClasses
+     * @param TaskType $requestedTaskType
      */
-    public function removeRequestedTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $requestedTaskType)
+    public function removeRequestedTaskType(TaskType $requestedTaskType)
     {
         $this->requestedTaskTypes->removeElement($requestedTaskType);
     }
 
     /**
-     * Get requestedTaskTypeClasses
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return DoctrineCollection
      */
     public function getRequestedTaskTypes()
     {
         return $this->requestedTaskTypes;
     }
 
-
     /**
      * @return TaskTypeCollection
      */
-    public function getTaskTypeCollection() {
+    public function getTaskTypeCollection()
+    {
         $collection = new TaskTypeCollection();
 
         foreach ($this->getRequestedTaskTypes() as $taskType) {
@@ -422,110 +374,102 @@ class Job
 
         return $collection;
     }
-    
-    
+
     /**
-     *
      * @param Job $job
-     * @return boolean 
+     *
+     * @return bool
      */
-    public function equals(Job $job) {
+    public function equals(Job $job)
+    {
         if (!$this->getState()->equals($job->getState())) {
             return false;
         }
-        
+
         if (!$this->getUser()->equals($job->getUser())) {
             return false;
         }
-        
+
         if (!$this->getWebsite()->equals($job->getWebsite())) {
             return false;
         }
-        
+
         if (!$this->requestedTaskTypesEquals($job->getRequestedTaskTypes())) {
             return false;
         }
-        
+
         return true;
     }
-    
-    
+
     /**
+     * @param DoctrineCollection $requestedTaskTypes
      *
-     * @param \Doctrine\Common\Collections\Collection $requestedTaskTypes
-     * @return boolean
+     * @return bool
      */
-    private function requestedTaskTypesEquals(\Doctrine\Common\Collections\Collection $requestedTaskTypes) {
+    private function requestedTaskTypesEquals(DoctrineCollection $requestedTaskTypes)
+    {
         /* @var $comparatorTaskType TaskType */
         /* @var $requestedTaskType TaskType */
-        foreach ($requestedTaskTypes as $comparatorTaskType) {            
+        foreach ($requestedTaskTypes as $comparatorTaskType) {
             foreach ($this->getRequestedTaskTypes() as $requestedTaskType) {
                 if (!$requestedTaskType->equals(($comparatorTaskType))) {
                     return false;
                 }
-            }            
+            }
         }
-        
+
         return true;
-    }
-    
-    
-    /**
-     *
-     * @return int 
-     */
-    public function getUrlCount() {
-        return $this->urlCount;
-    }
-    
-    
-    /**
-     *
-     * @param int $urlCount
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
-     */    
-    public function setUrlCount($urlCount) {
-        $this->urlCount = $urlCount;
-        return $this;                
     }
 
     /**
-     * Add taskTypeOptions
+     * @return int
+     */
+    public function getUrlCount()
+    {
+        return $this->urlCount;
+    }
+
+    /**
+     * @param int $urlCount
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
      * @return Job
      */
-    public function addTaskTypeOption(\SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions)
+    public function setUrlCount($urlCount)
     {
-        $this->taskTypeOptions[] = $taskTypeOptions;
-    
+        $this->urlCount = $urlCount;
         return $this;
     }
 
     /**
-     * Remove taskTypeOptions
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions
+     * @param TaskTypeOptions $taskTypeOptions
+     * @return Job
      */
-    public function removeTaskTypeOption(\SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions $taskTypeOptions)
+    public function addTaskTypeOption(TaskTypeOptions $taskTypeOptions)
+    {
+        $this->taskTypeOptions[] = $taskTypeOptions;
+
+        return $this;
+    }
+
+    /**
+     * @param TaskTypeOptions $taskTypeOptions
+     */
+    public function removeTaskTypeOption(TaskTypeOptions $taskTypeOptions)
     {
         $this->taskTypeOptions->removeElement($taskTypeOptions);
     }
 
     /**
-     * Get taskTypeOptions
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return DoctrineCollection
      */
     public function getTaskTypeOptions()
     {
         return $this->taskTypeOptions;
     }
-    
+
     /**
-     * Set type
+     * @param Type $type
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $type
      * @return Job
      */
     public function setType(JobType $type)
@@ -535,151 +479,146 @@ class Job
     }
 
     /**
-     * Get type
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Type
+     * @return Type
      */
     public function getType()
     {
         return $this->type;
-    }    
-    
-    
+    }
+
     /**
-     * Add tasks
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Ammendment $ammendment
+     * @param Ammendment $ammendment
      * @return Job
      */
-    public function addAmmendment(\SimplyTestable\ApiBundle\Entity\Job\Ammendment $ammendment)
+    public function addAmmendment(Ammendment $ammendment)
     {
         $this->ammendments[] = $ammendment;
         return $this;
     }
 
     /**
-     * Remove tasks
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Ammendment $ammendment
+     * @param Ammendment $ammendment
      */
-    public function removeAmmendment(\SimplyTestable\ApiBundle\Entity\Job\Ammendment $ammendment)
+    public function removeAmmendment(Ammendment $ammendment)
     {
         $this->ammendments->removeElement($ammendment);
     }
 
     /**
-     * Get tasks
-     *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return DoctrineCollection
      */
     public function getAmmendments()
-    {        
+    {
         return $this->ammendments;
-    } 
-    
-    
-    
+    }
 
     /**
-     * Set isPublic
-     *
      * @param boolean $isPublic
+     *
      * @return Job
      */
     public function setIsPublic($isPublic)
     {
         $this->isPublic = $isPublic;
-    
+
         return $this;
     }
 
     /**
-     * Get isPublic
-     *
-     * @return boolean 
+     * @return bool
      */
     public function getIsPublic()
     {
         return filter_var($this->isPublic, FILTER_VALIDATE_BOOLEAN);
     }
-    
-    
+
+
     /**
-     * Set parameters
-     *
      * @param string $parameters
-     * @return Task
+     *
+     * @return Job
      */
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
-    
+
         return $this;
     }
 
     /**
-     * Get parameters
-     *
      * @return string
      */
     public function getParameters()
     {
         return $this->parameters;
-    }  
-    
+    }
+
     /**
-     * 
-     * @return boolean
+     * @return bool
      */
-    public function hasParameters() {
+    public function hasParameters()
+    {
         return $this->getParameters() != '';
     }
-    
-    
+
     /**
-     * 
      * @return string
      */
-    public function getParametersHash() {
+    public function getParametersHash()
+    {
         return md5($this->getParameters());
     }
-    
-    
+
     /**
-     * 
-     * @return \stdClass
+     * @return array
      */
-    public function getParametersArray() {
+    public function getParametersArray()
+    {
         return json_decode($this->getParameters(), true);
-    }    
-    
-    
+    }
+
     /**
-     * 
      * @param string $name
-     * @return boolean
+     *
+     * @return bool
      */
-    public function hasParameter($name) {        
+    public function hasParameter($name)
+    {
         if (!$this->hasParameters()) {
             return false;
         }
-        
+
         $parameters = json_decode($this->getParameters());
         return isset($parameters->{$name});
     }
-    
-    
+
     /**
-     * 
      * @param string $name
+     *
      * @return mixed
      */
-    public function getParameter($name) {
+    public function getParameter($name)
+    {
         if (!$this->hasParameter($name)) {
             return null;
         }
-        
+
         $parameters = json_decode($this->getParameters(), true);
+
         return $parameters[$name];
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getTaskIds()
+    {
+        $taskIds = [];
+
+        foreach ($this->getTasks() as $task) {
+            $taskIds[] = $task->getId();
+        }
+
+        return $taskIds;
     }
 }

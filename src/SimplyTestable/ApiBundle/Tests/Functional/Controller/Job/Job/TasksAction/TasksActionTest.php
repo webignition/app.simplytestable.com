@@ -32,11 +32,6 @@ class TasksActionTest extends BaseControllerJsonTestCase
             JobFactory::KEY_TEST_TYPES => ['link integrity'],
         ]);
 
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
-            )
-        );
         $tasks = $job->getTasks();
 
         $now = new \DateTime();

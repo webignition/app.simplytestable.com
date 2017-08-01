@@ -33,12 +33,6 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
-            )
-        );
-
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
 
@@ -79,12 +73,6 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
         $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
-
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
-            )
-        );
 
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
@@ -151,12 +139,6 @@ class PublicPlanTest extends BaseSimplyTestableTestCase
         $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
-
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
-            )
-        );
 
         $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
         $this->getCrawlJobContainerService()->prepare($crawlJobContainer);

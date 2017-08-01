@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\WorkerTaskAssignmentService\AssignCollection\HasWorkers\Success;
 
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\WorkerTaskAssignmentService\AssignCollection\HasWorkers\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Worker;
@@ -34,7 +35,14 @@ abstract class SuccessTest extends ServiceTest
         $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->createResolveAndPrepare();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet($this->getAssignCollectionHttpResponseFixtures()));
+        $httpFixture = HttpFixtureFactory::createSuccessResponse('application/json', json_encode([]));
+        $httpFixtures = [];
+
+        for ($index = 0; $index < $this->getWorkerCount(); $index++) {
+            $httpFixtures[] = $httpFixture;
+        }
+
+        $this->queueHttpFixtures($httpFixtures);
     }
 
     public function testTasksAreAssigned()
@@ -139,26 +147,5 @@ abstract class SuccessTest extends ServiceTest
         }
 
         return $taskGroups;
-    }
-
-    private function getAssignCollectionHttpResponseFixtures()
-    {
-        $fixtures = [];
-
-        for ($index = 0; $index < $this->getWorkerCount(); $index++) {
-            $fixtures[] = $this->getAssignCollectionHttpResponseFixture();
-        }
-
-        return $fixtures;
-    }
-
-    private function getAssignCollectionHttpResponseFixture()
-    {
-        return <<<'EOD'
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-[{"id":1,"url":"http://example.com/","state":"queued","type":"HTML validation","parameters":""}]
-EOD;
     }
 }

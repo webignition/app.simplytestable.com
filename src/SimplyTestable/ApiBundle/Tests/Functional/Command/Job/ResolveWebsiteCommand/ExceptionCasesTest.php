@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\ResolveWebsiteCommand;
 
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class ExceptionCasesTest extends CommandTest
@@ -44,10 +45,10 @@ class ExceptionCasesTest extends CommandTest
 
     public function testHttpClientErrorPerformingResolution()
     {
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 404',
-            'HTTP/1.0 404'
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createNotFoundResponse(),
+            HttpFixtureFactory::createNotFoundResponse(),
+        ]);
 
         $job = $this->jobFactory->create([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,

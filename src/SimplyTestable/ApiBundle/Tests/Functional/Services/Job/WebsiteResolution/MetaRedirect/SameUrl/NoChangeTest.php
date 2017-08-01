@@ -2,14 +2,21 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution\MetaRedirect\SameUrl;
 
-class NoChangeTest extends SameUrlTest {
+use SimplyTestable\ApiBundle\Tests\Factory\HtmlDocumentFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 
-    protected function getTestHttpFixtures() {
-        return $this->buildHttpFixtureSet(array(
-            "HTTP/1.0 200 OK\nContent-Type:text/html\n\n<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url=" . self::SOURCE_URL . "\"></head></html>",
-        ));
+class NoChangeTest extends SameUrlTest
+{
+    protected function getTestHttpFixtures()
+    {
+        return [
+            HttpFixtureFactory::createSuccessResponse(
+                'text/html',
+                HtmlDocumentFactory::createMetaRedirectDocument(self::SOURCE_URL)
+            ),
+        ];
     }
-
-
-    public function testNoChange() {}
+    public function testNoChange()
+    {
+    }
 }

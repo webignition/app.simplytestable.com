@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -14,15 +15,15 @@ class TooManyRedirectsTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.0 301\nLocation: " . self::SOURCE_URL,
-            "HTTP/1.0 301\nLocation: " . self::SOURCE_URL,
-            "HTTP/1.0 301\nLocation: " . self::SOURCE_URL,
-            "HTTP/1.0 301\nLocation: " . self::SOURCE_URL,
-            "HTTP/1.0 301\nLocation: " . self::EFFECTIVE_URL,
-            "HTTP/1.0 301\nLocation: " . self::EFFECTIVE_URL,
-            "HTTP/1.0 200 OK"
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createMovedPermanentlyRedirectResponse(self::SOURCE_URL),
+            HttpFixtureFactory::createMovedPermanentlyRedirectResponse(self::SOURCE_URL),
+            HttpFixtureFactory::createMovedPermanentlyRedirectResponse(self::SOURCE_URL),
+            HttpFixtureFactory::createMovedPermanentlyRedirectResponse(self::SOURCE_URL),
+            HttpFixtureFactory::createMovedPermanentlyRedirectResponse(self::EFFECTIVE_URL),
+            HttpFixtureFactory::createMovedPermanentlyRedirectResponse(self::EFFECTIVE_URL),
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
     }
 
     public function testFullSiteTestResolvesToEffectiveUrl()

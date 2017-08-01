@@ -20,11 +20,10 @@ class GetDiscoveredUrlsTest extends BaseSimplyTestableTestCase
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath(__FUNCTION__). '/HttpResponses')
-            )
-        );
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse('application/json', json_encode([])),
+            HttpFixtureFactory::createSuccessResponse('application/json', json_encode([])),
+        ]);
 
         $this->createWorker();
 

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution;
 
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -21,10 +22,10 @@ class ResolveToLongUrlTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.1 301\nLocation: " . implode('', $this->effectiveUrl),
-            "HTTP/1.0 200"
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createMovedPermanentlyRedirectResponse(implode('', $this->effectiveUrl)),
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
     }
 
     public function testTest()

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TaskOutputJoiner;
 
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
@@ -32,11 +33,24 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             JobFactory::KEY_TEST_TYPES => ['link integrity'],
         ]);
 
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(
+                'text/html',
+                '<!DOCTYPE html>
+                       <html lang="en">
+                           <body>
+                               <a href="http://example.com/three">Another Example Three</a>
+                               <a href="http://example.com/one">Another Example One</a>
+                               <a href="http://example.com/two">Another Example Two</a>
+                               <a href="http://example.com/four">Example Four</a>
+                           </body>
+                       </html>'
+            ),
+            HttpFixtureFactory::createSuccessResponse(
+                'application/json',
+                json_encode([])
             )
-        );
+        ]);
 
         $tasks = $job->getTasks();
 
@@ -121,11 +135,24 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
             JobFactory::KEY_TEST_TYPES => ['link integrity'],
         ]);
 
-        $this->queueHttpFixtures(
-            $this->buildHttpFixtureSet(
-                $this->getHttpFixtureMessagesFromPath($this->getFixturesDataPath($this->getName()). '/HttpResponses')
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(
+                'text/html',
+                '<!DOCTYPE html>
+                       <html lang="en">
+                           <body>
+                               <a href="http://example.com/three">Another Example Three</a>
+                               <a href="http://example.com/one">Another Example One</a>
+                               <a href="http://example.com/two">Another Example Two</a>
+                               <a href="http://example.com/four">Example Four</a>
+                           </body>
+                       </html>'
+            ),
+            HttpFixtureFactory::createSuccessResponse(
+                'application/json',
+                json_encode([])
             )
-        );
+        ]);
 
         $tasks = $job->getTasks();
 

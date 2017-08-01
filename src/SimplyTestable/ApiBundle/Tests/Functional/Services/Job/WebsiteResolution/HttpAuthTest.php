@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -11,9 +12,9 @@ class HttpAuthTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.0 200"
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
     }
 
     public function testJobHttpAuthParametersArePassedToUrlResolver()

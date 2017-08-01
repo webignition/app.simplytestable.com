@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Cancel\Command;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class CancelCommandTest extends BaseTest
@@ -40,12 +41,13 @@ class CancelCommandTest extends BaseTest
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->jobFactory->createResolveAndPrepare();
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 200',
-            'HTTP/1.0 200',
-            'HTTP/1.0 200',
-            'HTTP/1.0 200',
-        )));
+
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(),
+            HttpFixtureFactory::createSuccessResponse(),
+            HttpFixtureFactory::createSuccessResponse(),
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
 
         $worker = $this->createWorker();
 
@@ -106,9 +108,10 @@ class CancelCommandTest extends BaseTest
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->jobFactory->createResolveAndPrepare();
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 503',
-        )));
+
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createServiceUnavailableResponse(),
+        ]);
 
         $worker = $this->createWorker();
 

@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 
+use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,6 +16,9 @@ class PrepareCommand extends BaseCommand
     const RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -24,11 +28,22 @@ class PrepareCommand extends BaseCommand
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
+        $applicationStateService = $this->getApplicationStateService();
+        $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
+        $logger = $this->getContainer()->get('logger');
+        $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
+        $jobPreparationService = $this->getContainer()->get('simplytestable.services.jobpreparationservice');
+        $crawlJobContainerService = $this->getContainer()->get('simplytestable.services.crawljobcontainerservice');
+
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+            $resqueQueueService->enqueue(
+                $resqueJobFactory->create(
                     'job-prepare',
                     ['id' => (int)$input->getArgument('id')]
                 )
@@ -37,34 +52,42 @@ class PrepareCommand extends BaseCommand
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $this->getLogger()->info("simplytestable:job:prepare running for job [".$input->getArgument('id')."]");
+        $logger->info(sprintf(
+            'simplytestable:job:prepare running for job [%s]',
+            $input->getArgument('id')
+        ));
 
-        $job = $this->getJobService()->getById((int)$input->getArgument('id'));
+        $job = $jobService->getById((int)$input->getArgument('id'));
 
         foreach ($job->getRequestedTaskTypes() as $taskType) {
-            /* @var $taskType TaskType */
-            $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
+            /* @var TaskType $taskType */
+            $taskTypeKey = strtolower(str_replace(' ', '-', $taskType->getName()));
+            $taskTypeParameterDomainsToIgnoreKey = $taskTypeKey . '-domains-to-ignore';
 
             if ($this->getContainer()->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
-                $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->getContainer()->getParameter($taskTypeParameterDomainsToIgnoreKey));
+                $taskTypeDomainsToIgnoreParameter = $this->getContainer()->getParameter(
+                    $taskTypeParameterDomainsToIgnoreKey
+                );
+
+                $jobPreparationService->setPredefinedDomainsToIgnore($taskType, $taskTypeDomainsToIgnoreParameter);
             }
         }
 
         try {
-            $this->getJobPreparationService()->prepare($job);
+            $jobPreparationService->prepare($job);
 
             if ($job->getTasks()->count()) {
-                $this->getResqueQueueService()->enqueue(
-                    $this->getResqueJobFactoryService()->create(
+                $resqueQueueService->enqueue(
+                    $resqueJobFactory->create(
                         'tasks-notify'
                     )
                 );
             } else {
-                if ($this->getCrawlJobContainerService()->hasForJob($job)) {
-                    $crawlJob = $this->getCrawlJobContainerService()->getForJob($job)->getCrawlJob();
+                if ($crawlJobContainerService->hasForJob($job)) {
+                    $crawlJob = $crawlJobContainerService->getForJob($job)->getCrawlJob();
 
-                    $this->getResqueQueueService()->enqueue(
-                        $this->getResqueJobFactoryService()->create(
+                    $resqueQueueService->enqueue(
+                        $resqueJobFactory->create(
                             'task-assign-collection',
                             ['ids' => $crawlJob->getTasks()->first()->getId()]
                         )
@@ -72,63 +95,21 @@ class PrepareCommand extends BaseCommand
                 }
             }
 
-            $this->getLogger()->info("simplytestable:job:prepare: queued up [".$job->getTasks()->count()."] tasks covering [".$job->getUrlCount()."] urls and [".count($job->getRequestedTaskTypes())."] task types");
+            $logger->info(sprintf(
+                'simplytestable:job:prepare: queued up [%s] tasks covering [%s] urls and [%s] task types',
+                $job->getTasks()->count(),
+                $job->getUrlCount(),
+                count($job->getRequestedTaskTypes())
+            ));
+        } catch (JobPreparationException $jobPreparationServiceException) {
+            $logger->info(sprintf(
+                'simplytestable:job:prepare: nothing to do, job has a state of [%s]',
+                $job->getState()->getName()
+            ));
 
-            return self::RETURN_CODE_OK;
-        } catch (\SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception $jobPreparationServiceException) {
-            if ($jobPreparationServiceException->isJobInWrongStateException()) {
-                $this->getLogger()->info("simplytestable:job:prepare: nothing to do, job has a state of [".$job->getState()->getName()."]");
-                return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
-            }
-
-            throw $jobPreparationServiceException;
-        } catch (\Exception $e) {
-            $this->getContainer()->get('logger')->error('JobPrepareCommand exception: [' . get_class($e) . ']');
-            $this->getContainer()->get('logger')->error('JobPrepareCommand exception: job id [' . $job->getId() . ']');
+            return self::RETURN_CODE_CANNOT_PREPARE_IN_WRONG_STATE;
         }
-    }
 
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobService
-     */
-    private function getJobService() {
-        return $this->getContainer()->get('simplytestable.services.jobservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
-     */
-    private function getResqueQueueService() {
-        return $this->getContainer()->get('simplytestable.services.resque.queueService');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
-     */
-    private function getResqueJobFactoryService() {
-        return $this->getContainer()->get('simplytestable.services.resque.jobFactoryService');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
-     */
-    private function getJobPreparationService() {
-        return $this->getContainer()->get('simplytestable.services.jobpreparationservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\CrawlJobContainerService
-     */
-    private function getCrawlJobContainerService() {
-        return $this->getContainer()->get('simplytestable.services.crawljobcontainerservice');
+        return self::RETURN_CODE_OK;
     }
 }

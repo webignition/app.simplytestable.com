@@ -293,105 +293,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return (int)$urlParts[count($urlParts) - 2];
     }
 
-    protected function queueResolveHttpFixture()
-    {
-        $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 200'
-        )));
-    }
-
-    protected function queuePrepareHttpFixturesForJob($url)
-    {
-        $fixtureMessages = array(
-            $this->getDefaultRobotsTxtFixtureContent(),
-            $this->getDefaultSitemapXmlFixtureContent()
-        );
-
-        foreach ($fixtureMessages as $index => $fixtureMessage) {
-            if ($url != self::DEFAULT_CANONICAL_URL && substr_count($fixtureMessage, self::DEFAULT_CANONICAL_URL)) {
-                $fixtureMessage = str_replace(self::DEFAULT_CANONICAL_URL, $url, $fixtureMessage);
-                $fixtureMessages[$index] = $fixtureMessage;
-            }
-        }
-
-        $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet($fixtureMessages));
-    }
-
-    protected function getDefaultRobotsTxtFixtureContent()
-    {
-return <<<'EOD'
-HTTP/1.1 200 OK
-Content-Type: text/plain
-
-User-Agent: *
-Sitemap: http://example.com/sitemap.xml
-EOD;
-    }
-
-    protected function queueTaskAssignCollectionResponseHttpFixture()
-    {
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.1 200 OK\nContent-Type: application/json\n\n" . '[{"id":1,"url":"http:\/\/example.com\/","state":"queued","type":"HTML validation","parameters":""}]'
-        )));
-    }
-
-    /**
-     * @param int $count
-     */
-    protected function setRequiredSitemapXmlUrlCount($count)
-    {
-        $this->requiredSitemapXmlUrlCount = $count;
-    }
-
-    /**
-     * @return int
-     */
-    protected function getRequiredSitemapXmlUrlCount()
-    {
-        return (is_null($this->requiredSitemapXmlUrlCount))
-            ? self::DEFAULT_REQUIRED_SITEMAP_XML_URL_COUNT
-            : $this->requiredSitemapXmlUrlCount;
-    }
-
-    protected function getDefaultSitemapXmlFixtureContent()
-    {
-        $urls = array();
-        for ($index = 0; $index < $this->getRequiredSitemapXmlUrlCount(); $index++) {
-            $urls[] = '<url><loc>' . self::DEFAULT_CANONICAL_URL . $index . '/</loc></url>';
-        }
-
-        $urlsString = implode("\n", $urls);
-
-return <<<EOD
-HTTP/1.1 200 OK
-Content-Type: text/xml
-
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-$urlsString
-</urlset>
-EOD;
-    }
-
-    protected function queuePrepareHttpFixturesForCrawlJob($url)
-    {
-        $fixtureMessages = array(
-            "HTTP/1.0 200 OK\nContent-Type: text/plain\n\nUser-Agent: *",
-            'HTTP/1.0 404',
-            'HTTP/1.0 404',
-            'HTTP/1.0 404',
-        );
-
-        foreach ($fixtureMessages as $index => $fixtureMessage) {
-            if ($url != self::DEFAULT_CANONICAL_URL && substr_count($fixtureMessage, self::DEFAULT_CANONICAL_URL)) {
-                $fixtureMessage = str_replace(self::DEFAULT_CANONICAL_URL, $url, $fixtureMessage);
-                $fixtureMessages[$index] = $fixtureMessage;
-            }
-        }
-
-        $this->getHttpClientService()->queueFixtures($this->buildHttpFixtureSet($fixtureMessages));
-    }
-
     protected function setJobTasksCompleted(Job $job)
     {
         foreach ($job->getTasks() as $task) {
@@ -1232,17 +1133,5 @@ EOD;
         return $this->getJobService()->getById(
             (int)$locationHeaderParts[count($locationHeaderParts) - 1]
         );
-    }
-
-    protected function queueStandardJobHttpFixtures()
-    {
-        $this->queueHttpFixtures([
-            GuzzleResponse::fromMessage('HTTP/1.1 200 OK'),
-            GuzzleResponse::fromMessage("HTTP/1.1 200 OK\nContent-type:text/plain\n\nsitemap: sitemap.xml"),
-            GuzzleResponse::fromMessage(sprintf(
-                "HTTP/1.1 200 OK\nContent-type:text/plain\n\n%s",
-                SitemapFixtureFactory::load('example.com-three-urls')
-            )),
-        ]);
     }
 }

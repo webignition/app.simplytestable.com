@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command;
 
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
@@ -28,9 +29,9 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
     }
 
     public function testSuccessfulActivateVerifyWorker() {
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 200',
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
 
         $activationRequestToken = 'token';
         $worker = $this->createWorker();
@@ -47,9 +48,9 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
 
 
     public function testFailedActivateVerifyWorker() {
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 400',
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createBadRequestResponse(),
+        ]);
 
         $activationRequestToken = 'invalid-token';
         $worker = $this->createWorker();
@@ -66,9 +67,9 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
 
 
     public function testActivateVerifyWhenWorkerIsInMaintenanceReadyOnlyMode() {
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 503',
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createServiceUnavailableResponse(),
+        ]);
 
         $activationRequestToken = 'token';
         $worker = $this->createWorker();
@@ -92,9 +93,9 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
 
 
     public function testActivateVerifyRaisesHttpClientError() {
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 404',
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createNotFoundResponse(),
+        ]);
 
         $activationRequestToken = 'token';
         $worker = $this->createWorker();
@@ -111,9 +112,9 @@ class WorkerActivateVerifyCommandTest extends ConsoleCommandTestCase {
 
 
     public function testActivateVerifyRaisesHttpServerError() {
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            'HTTP/1.0 500',
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createInternalServerErrorResponse(),
+        ]);
 
         $activationRequestToken = 'token';
         $worker = $this->createWorker();

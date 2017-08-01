@@ -2,14 +2,23 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution\MetaRedirect\SameUrl;
 
-class InvalidContentTypeTest extends SameUrlTest {
+use SimplyTestable\ApiBundle\Tests\Factory\HtmlDocumentFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 
-    protected function getTestHttpFixtures() {
-        return $this->buildHttpFixtureSet(array(
-            "HTTP/1.0 200 OK\nContent-Type:text/plain\n\n<!DOCTYPE html><html><head><meta http-equiv=\"refresh\" content=\"0; url=http://foo.example.com></head></html>",
-        ));
+class InvalidContentTypeTest extends SameUrlTest
+{
+
+    protected function getTestHttpFixtures()
+    {
+        return [
+            HttpFixtureFactory::createSuccessResponse(
+                'text/plain',
+                HtmlDocumentFactory::createMetaRedirectDocument('http://foo.example.com')
+            ),
+        ];
     }
 
-
-    public function testWithInvalidContentType() {}
+    public function testWithInvalidContentType()
+    {
+    }
 }

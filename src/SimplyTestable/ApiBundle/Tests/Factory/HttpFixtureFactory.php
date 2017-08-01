@@ -19,16 +19,31 @@ class HttpFixtureFactory
     }
 
     /**
+     * @param int $statusCode
+     * @param string $statusMessage
+     * @param array $headerLines
      * @param string $contentType
      * @param string $body
      *
      * @return GuzzleResponse
      */
-    public static function createSuccessResponse($contentType = null, $body = '')
-    {
-        $headerLines = [
-            'HTTP/1.1 200 OK'
-        ];
+    public static function createResponse(
+        $statusCode,
+        $statusMessage,
+        $headerLines = [],
+        $contentType = null,
+        $body = ''
+    ) {
+        $headerLines = array_merge(
+            [
+                sprintf(
+                    'HTTP/1.1 %s %s',
+                    $statusCode,
+                    $statusMessage
+                ),
+            ],
+            $headerLines
+        );
 
         if (!empty($contentType)) {
             $headerLines[] = 'Content-type: ' . $contentType;
@@ -44,11 +59,70 @@ class HttpFixtureFactory
     }
 
     /**
+     * @param string $contentType
+     * @param string $body
+     *
+     * @return GuzzleResponse
+     */
+    public static function createSuccessResponse($contentType = null, $body = '')
+    {
+        return static::createResponse(200, 'OK', [], $contentType, $body);
+    }
+
+    /**
      * @return GuzzleResponse
      */
     public static function createNotFoundResponse()
     {
-        return GuzzleResponse::fromMessage('HTTP/1.1 404 Not Found');
+        return static::createResponse(404, 'Not Found');
+    }
+
+    /**
+     * @return GuzzleResponse
+     */
+    public static function createInternalServerErrorResponse()
+    {
+        return static::createResponse(500, 'Internal Server Error');
+    }
+
+    /**
+     * @return GuzzleResponse
+     */
+    public static function createServiceUnavailableResponse()
+    {
+        return static::createResponse(503, 'Service Unavailable');
+    }
+
+    /**
+     * @return GuzzleResponse
+     */
+    public static function createBadRequestResponse()
+    {
+        return static::createResponse(400, 'Bad Request');
+    }
+
+    /**
+     * @param string $location
+     *
+     * @return GuzzleResponse
+     */
+    public static function createMovedPermanentlyRedirectResponse($location)
+    {
+        return static::createResponse(301, 'Moved Permanently', [
+            'Location: ' . $location,
+        ]);
+    }
+
+    /**
+     * @param string $location
+     *
+     * @return GuzzleResponse
+     */
+    public static function createFoundRedirectResponse($location)
+    {
+        return static::createResponse(302, 'Found', [
+            'Location: ' . $location,
+        ]);
     }
 
     /**

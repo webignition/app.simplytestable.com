@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\WebsiteResolution;
 
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -22,10 +23,9 @@ class StateTest extends BaseSimplyTestableTestCase
 
         $this->jobFactory = new JobFactory($this->container);
 
-
-        $this->queueHttpFixtures($this->buildHttpFixtureSet(array(
-            "HTTP/1.0 200 OK"
-        )));
+        $this->queueHttpFixtures([
+            HttpFixtureFactory::createSuccessResponse(),
+        ]);
     }
 
     public function testFullSiteJobStateIsResolved()
