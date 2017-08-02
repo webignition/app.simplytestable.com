@@ -65,16 +65,18 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
 
         $crawlJobContainerService->prepare($this->crawlJobContainer);
 
-        $jobService = $this->container->get('simplytestable.services.jobservice');
         $entityManager = $this->container->get('doctrine')->getManager();
 
-        $this->crawlJob->setState($jobService->getInProgressState());
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
+
+        $this->crawlJob->setState($jobInProgressState);
 
         $entityManager->persist($this->crawlJob);
         $entityManager->flush();
 
-        $this->assertEquals(JobService::IN_PROGRESS_STATE, $this->crawlJob->getState());
-        $this->assertEquals(JobService::FAILED_NO_SITEMAP_STATE, $this->parentJob->getState());
+        $this->assertEquals(JobService::IN_PROGRESS_STATE, $this->crawlJob->getState()->getName());
+        $this->assertEquals(JobService::FAILED_NO_SITEMAP_STATE, $this->parentJob->getState()->getName());
     }
 
     /**

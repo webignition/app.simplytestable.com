@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\ResolveWebsiteCommand;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Tests\Factory\CurlExceptionFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -37,7 +38,7 @@ class RejectionTest extends CommandTest
 
     public function testJobStateIsRejected()
     {
-        $this->assertEquals($this->getJobService()->getRejectedState(), $this->job->getState());
+        $this->assertEquals(JobService::REJECTED_STATE, $this->job->getState()->getName());
     }
 
     public function testNoTasksAreCreated()

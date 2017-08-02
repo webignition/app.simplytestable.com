@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prep
 
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -67,7 +68,7 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
     public function testStateIsQueued()
     {
-        $this->assertEquals($this->getJobService()->getQueuedState(), $this->getJob()->getState());
+        $this->assertEquals(JobService::QUEUED_STATE, $this->getJob()->getState()->getName());
     }
 
     public function testHasStartTime()

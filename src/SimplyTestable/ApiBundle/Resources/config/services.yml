@@ -20,6 +20,7 @@ services:
         websiteService: "@simplytestable.services.websiteservice"
         jobRejectionService: "@simplytestable.services.job.rejectionservice"
         urlResolver: '@simplytestable.services.urlresolver'
+        stateService: '@simplytestable.services.stateservice'
 
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService
@@ -145,11 +146,6 @@ services:
   simplytestable.services.applicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
 
-  simplytestable.services.commandService:
-    class:   SimplyTestable\ApiBundle\Services\CommandService
-    arguments:
-      container: "@service_container"
-
   simplytestable.services.accountPlanService:
     class:   SimplyTestable\ApiBundle\Services\AccountPlanService
     arguments:
@@ -196,6 +192,7 @@ services:
         resqueQueueService: "@simplytestable.services.resque.queueService"
         resqueJobFactoryService: "@simplytestable.services.resque.jobFactoryService"
         urlFinder: '@simplytestable.services.urlfinder'
+        stateService: '@simplytestable.services.stateservice'
 
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
@@ -216,6 +213,7 @@ services:
         jobTypeService: "@simplytestable.services.jobtypeservice"
         jobService: "@simplytestable.services.jobservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
+        stateService: '@simplytestable.services.stateservice'
 
   simplytestable.services.taskPreprocessorServiceFactory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService

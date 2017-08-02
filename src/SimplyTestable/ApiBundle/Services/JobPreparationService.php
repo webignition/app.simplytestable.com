@@ -73,6 +73,11 @@ class JobPreparationService
     private $urlFinder;
 
     /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
      * @param JobService $jobService
      * @param TaskService $taskService
      * @param JobTypeService $jobTypeService
@@ -82,6 +87,7 @@ class JobPreparationService
      * @param QueueService $resqueQueueService
      * @param JobFactoryService $resqueJobFactoryService
      * @param UrlFinder $urlFinder
+     * @param StateService $stateService
      */
     public function __construct(
         JobService $jobService,
@@ -92,7 +98,8 @@ class JobPreparationService
         UserService $userService,
         QueueService $resqueQueueService,
         JobFactoryService $resqueJobFactoryService,
-        UrlFinder $urlFinder
+        UrlFinder $urlFinder,
+        StateService $stateService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
@@ -103,6 +110,7 @@ class JobPreparationService
         $this->resqueService = $resqueQueueService;
         $this->resqueJobFactoryService = $resqueJobFactoryService;
         $this->urlFinder = $urlFinder;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -120,14 +128,16 @@ class JobPreparationService
      */
     public function prepare(Job $job)
     {
-        if (!$this->jobService->isResolved($job)) {
+        if (JobService::RESOLVED_STATE !== $job->getState()->getName()) {
             throw new JobPreparationServiceException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
             );
         }
 
-        $job->setState($this->jobService->getPreparingState());
+        $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
+
+        $job->setState($jobPreparingState);
         $this->jobService->persistAndFlush($job);
 
         $this->processedUrls = array();
@@ -141,7 +151,9 @@ class JobPreparationService
         );
 
         if (empty($urls)) {
-            $job->setState($this->jobService->getFailedNoSitemapState());
+            $jobFailedNoSitemapState = $this->stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+
+            $job->setState($jobFailedNoSitemapState);
 
             if (!$this->userService->isPublicUser($job->getUser())) {
                 if (!$this->crawlJobContainerService->hasForJob($job)) {
@@ -165,7 +177,9 @@ class JobPreparationService
 
             $this->prepareTasksFromCollectedUrls($job, $urls);
 
-            $job->setState($this->jobService->getQueuedState());
+            $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
+
+            $job->setState($jobQueuedState);
 
             $timePeriod = new TimePeriod();
             $timePeriod->setStartDateTime(new \DateTime());
@@ -186,14 +200,16 @@ class JobPreparationService
         $this->processedUrls = array();
         $job = $crawlJobContainer->getParentJob();
 
-        if (!$this->jobService->isFailedNoSitepmap($job)) {
+        if (JobService::FAILED_NO_SITEMAP_STATE !== $job->getState()->getName()) {
             throw new JobPreparationServiceException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
             );
         }
 
-        $job->setState($this->jobService->getPreparingState());
+        $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
+
+        $job->setState($jobPreparingState);
         $this->jobService->persistAndFlush($job);
 
         $urls = $this->crawlJobContainerService->getDiscoveredUrls($crawlJobContainer, true);
@@ -213,7 +229,9 @@ class JobPreparationService
 
         $this->prepareTasksFromCollectedUrls($job, $urls);
 
-        $job->setState($this->jobService->getQueuedState());
+        $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
+
+        $job->setState($jobQueuedState);
 
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());

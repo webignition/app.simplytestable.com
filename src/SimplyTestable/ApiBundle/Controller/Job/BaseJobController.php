@@ -68,7 +68,7 @@ abstract class BaseJobController extends ApiController
             'owners' => $this->getSerializedOwners($job)
         ];
 
-        if ($jobService->isRejected($job)) {
+        if (JobService::REJECTED_STATE === $job->getState()->getName()) {
             $jobSummary['rejection'] = $jobRejectionReasonService->getForJob($job);
         }
 

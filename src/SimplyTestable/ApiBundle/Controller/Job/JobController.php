@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
 
@@ -148,10 +150,19 @@ class JobController extends BaseJobController
             return $this->sendServiceUnavailableResponse();
         }
 
-        $this->getJobRetrievalService()->setUser($this->getUser());
+        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
+        $jobRetrievalService->setUser($this->getUser());
 
         try {
-            $job = $this->getJobRetrievalService()->retrieve($test_id);
+            $job = $jobRetrievalService->retrieve($test_id);
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -160,27 +171,31 @@ class JobController extends BaseJobController
 
         $this->testId = $test_id;
 
-        if ($job->getState()->equals($this->getJobService()->getFailedNoSitemapState())) {
-            $crawlJob = $this->getCrawlJobContainerService()->getForJob($job)->getCrawlJob();
+        if (JobService::FAILED_NO_SITEMAP_STATE === $job->getState()->getName()) {
+            $crawlJob = $crawlJobContainerService->getForJob($job)->getCrawlJob();
             $this->cancelAction($site_root_url, $crawlJob->getId());
         }
 
-        if ($job->getType()->equals($this->getJobTypeService()->getCrawlType())) {
-            $parentJob = $this->getCrawlJobContainerService()->getForJob($job)->getParentJob();
+        if ($job->getType()->equals($jobTypeService->getCrawlType())) {
+            $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
 
             foreach ($parentJob->getRequestedTaskTypes() as $taskType) {
-                /* @var $taskType TaskType */
-                $taskTypeParameterDomainsToIgnoreKey = strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
+                /* @var Type $taskType */
+                $taskTypeParameterDomainsToIgnoreKey =
+                    strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
 
                 if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
-                    $this->getJobPreparationService()->setPredefinedDomainsToIgnore($taskType, $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey));
+                    $jobPreparationService->setPredefinedDomainsToIgnore(
+                        $taskType,
+                        $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey)
+                    );
                 }
             }
 
-            $this->getJobPreparationService()->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));
+            $jobPreparationService->prepareFromCrawl($crawlJobContainerService->getForJob($parentJob));
 
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
+            $resqueQueueService->enqueue(
+                $resqueJobFactory->create(
                     'tasks-notify'
                 )
             );
@@ -188,11 +203,11 @@ class JobController extends BaseJobController
 
         $preCancellationState = clone $job->getState();
 
-        $this->getJobService()->cancel($job);
+        $jobService->cancel($job);
 
-        if ($preCancellationState->equals($this->getJobService()->getStartingState())) {
-            $this->getResqueQueueService()->dequeue(
-                $this->getResqueJobFactoryService()->create(
+        if (JobService::STARTING_STATE === $preCancellationState->getName()) {
+            $resqueQueueService->dequeue(
+                $resqueJobFactory->create(
                     'job-prepare',
                     ['id' => $job->getId()]
                 )
@@ -200,23 +215,23 @@ class JobController extends BaseJobController
         }
 
         $tasksToDeAssign = array();
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($job);
+        $taskIds = $taskService->getEntityRepository()->getIdsByJob($job);
         foreach ($taskIds as $taskId) {
             $tasksToDeAssign[] = array(
                 'id' => $taskId
             );
         }
 
-        $tasksAwaitingCancellation = $this->getTaskService()->getAwaitingCancellationByJob($job);
+        $tasksAwaitingCancellation = $taskService->getAwaitingCancellationByJob($job);
         $taskIdsToCancel = array();
 
-        foreach($tasksAwaitingCancellation as $task) {
+        foreach ($tasksAwaitingCancellation as $task) {
             $taskIdsToCancel[] = $task->getId();
         }
 
         if (count($taskIdsToCancel) > 0) {
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
+            $resqueQueueService->enqueue(
+                $resqueJobFactory->create(
                     'task-cancel-collection',
                     ['ids' => implode(',', $taskIdsToCancel)]
                 )

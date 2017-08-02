@@ -2,63 +2,50 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
-use SimplyTestable\ApiBundle\Entity\WebSite;
-use webignition\NormalisedUrl\NormalisedUrl;
+use Doctrine\ORM\EntityRepository;
 
-abstract class EntityService {    
-    
+abstract class EntityService
+{
     /**
-     *
-     * @var \Doctrine\ORM\EntityManager 
+     * @var EntityManager
      */
     protected $entityManager;
-    
-    
+
     /**
-     *
-     * @var \Doctrine\ORM\EntityRepository
+     * @var EntityRepository
      */
     private $entityRepository;
-    
-    
+
     /**
-     *
-     * @param \Doctrine\ORM\EntityManager $entityManager 
+     * @param EntityManager $entityManager
      */
-    public function __construct(EntityManager $entityManager) {
-        $this->entityManager = $entityManager;      
-    }    
-  
-    abstract protected function getEntityName();    
-    
-    /**
-     *
-     * @param string $entityName 
-     */
-    public function setEntityName($entityName) {
-        $this->entityName = $entityName;
+    public function __construct(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
     }
-    
-    
+
     /**
-     *
-     * @return \Doctrine\ORM\EntityManager 
+     * @return string
      */
-    public function getManager() {
+    abstract protected function getEntityName();
+
+    /**
+     * @return EntityManager
+     */
+    public function getManager()
+    {
         return $this->entityManager;
     }
-    
-    
+
     /**
-     *
-     * @return \Doctrine\ORM\EntityRepository
+     * @return EntityRepository
      */
-    public function getEntityRepository() {
+    public function getEntityRepository()
+    {
         if (is_null($this->entityRepository)) {
             $this->entityRepository = $this->entityManager->getRepository($this->getEntityName());
         }
-        
-        return $this->entityRepository;
-    }   
 
+        return $this->entityRepository;
+    }
 }

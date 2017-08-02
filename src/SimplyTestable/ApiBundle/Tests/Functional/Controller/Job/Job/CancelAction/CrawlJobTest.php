@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
@@ -33,7 +34,7 @@ class CrawlJobTest extends IsCancelledTest
 
     public function testParentJobIsQueued()
     {
-        $this->assertEquals($this->getJobService()->getQueuedState(), $this->parentJob->getState());
+        $this->assertEquals(JobService::QUEUED_STATE, $this->parentJob->getState()->getName());
     }
 
     public function testParentJobTaskHasCrawlJobCssValidationDomainsToIgnore()
@@ -92,7 +93,10 @@ class CrawlJobTest extends IsCancelledTest
             JobFactory::KEY_USER => $this->getUser(),
         ]);
 
-        $this->parentJob->setState($this->getJobService()->getFailedNoSitemapState());
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+
+        $this->parentJob->setState($jobFailedNoSitemapState);
         $this->getJobService()->persistAndFlush($this->parentJob);
 
         $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($this->parentJob);
@@ -104,7 +108,9 @@ class CrawlJobTest extends IsCancelledTest
 
     protected function getExpectedJobStartingState()
     {
-        return $this->getJobService()->getQueuedState();
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        return $stateService->fetch(JobService::QUEUED_STATE);
     }
 
     protected function getExpectedResponseCode()

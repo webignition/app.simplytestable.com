@@ -82,7 +82,7 @@ class RequestAdapter {
         }
 
         if ($this->hasRequestParameters()) {
-            $this->jobConfiguration->setParameters($this->getRequestParameters());
+            $this->jobConfiguration->setParameters(json_encode($this->getRequestParameters()));
         }
     }
 

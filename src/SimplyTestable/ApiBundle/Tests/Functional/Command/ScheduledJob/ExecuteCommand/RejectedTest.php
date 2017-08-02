@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\ScheduledJob\ExecuteCommand;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 
 abstract class RejectedTest extends WithScheduledJobTest
 {
@@ -15,8 +16,10 @@ abstract class RejectedTest extends WithScheduledJobTest
 
     public function testJobIsRejected()
     {
+        /* @var Job $job */
         $job = $this->getJobService()->getEntityRepository()->findAll()[$this->getJobListIndex()];
-        $this->assertTrue($this->getJobService()->isRejected($job));
+
+        $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
     }
 
     public function testRejectionReason()

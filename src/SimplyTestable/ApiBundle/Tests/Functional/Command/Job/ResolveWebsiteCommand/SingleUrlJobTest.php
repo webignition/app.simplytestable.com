@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\ResolveWebsiteCommand;
 
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -36,7 +37,7 @@ class SingleUrlJobTest extends CommandTest
         $task = $tasks->first();
 
         $this->assertEquals(0, $returnCode);
-        $this->assertEquals($this->getJobService()->getQueuedState(), $job->getState());
+        $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
         $this->assertEquals(1, $tasks->count());
         $this->assertEquals($this->getTaskService()->getQueuedState(), $task->getState());
         $this->assertTrue(is_array($task->getParameter('domains-to-ignore')));

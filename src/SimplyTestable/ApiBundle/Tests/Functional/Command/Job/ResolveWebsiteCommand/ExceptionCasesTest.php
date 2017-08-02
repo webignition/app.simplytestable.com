@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\ResolveWebsiteCommand;
 
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -26,8 +27,11 @@ class ExceptionCasesTest extends CommandTest
 
     public function testJobInWrongStateReturnsStatusCode1()
     {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobCancelledState = $stateService->fetch(JobService::CANCELLED_STATE);
+
         $job = $this->jobFactory->create();
-        $job->setState($this->getJobService()->getCancelledState());
+        $job->setState($jobCancelledState);
         $this->getJobService()->persistAndFlush($job);
 
         $this->assertReturnCode(1, array(

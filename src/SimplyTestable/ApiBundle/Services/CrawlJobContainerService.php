@@ -38,12 +38,18 @@ class CrawlJobContainerService extends EntityService
     private $jobUserAccountPlanEnforcementService;
 
     /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
      * @param EntityManager $entityManager
      * @param TaskService $taskService
      * @param TaskTypeService $taskTypeService
      * @param JobTypeService $jobTypeService
      * @param JobService $jobService
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
+     * @param StateService $stateService
      */
     public function __construct(
         EntityManager $entityManager,
@@ -51,7 +57,8 @@ class CrawlJobContainerService extends EntityService
         TaskTypeService $taskTypeService,
         JobTypeService $jobTypeService,
         JobService $jobService,
-        JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
+        JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
+        StateService $stateService
     ) {
         parent::__construct($entityManager);
         $this->taskService = $taskService;
@@ -59,6 +66,7 @@ class CrawlJobContainerService extends EntityService
         $this->jobTypeService = $jobTypeService;
         $this->jobService = $jobService;
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -110,15 +118,18 @@ class CrawlJobContainerService extends EntityService
      */
     public function prepare(CrawlJobContainer $crawlJobContainer)
     {
-        if ($crawlJobContainer->getCrawlJob()->getTasks()->count() > 1) {
+        $crawlJob = $crawlJobContainer->getCrawlJob();
+        $crawlJobTasks = $crawlJob->getTasks();
+
+        if ($crawlJobTasks->count() > 1) {
             return false;
         }
 
-        if ($crawlJobContainer->getCrawlJob()->getTasks()->count() === 1) {
+        if ($crawlJobTasks->count() === 1) {
             return true;
         }
 
-        if (!$this->jobService->isNew($crawlJobContainer->getCrawlJob())) {
+        if (JobService::STARTING_STATE !== $crawlJob->getState()->getName()) {
             return false;
         }
 
@@ -127,15 +138,17 @@ class CrawlJobContainerService extends EntityService
             (string)$crawlJobContainer->getParentJob()->getWebsite()
         );
 
-        $crawlJobContainer->getCrawlJob()->addTask($task);
-        $crawlJobContainer->getCrawlJob()->setState($this->jobService->getQueuedState());
+        $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
+
+        $crawlJob->addTask($task);
+        $crawlJob->setState($jobQueuedState);
 
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());
-        $crawlJobContainer->getCrawlJob()->setTimePeriod($timePeriod);
+        $crawlJob->setTimePeriod($timePeriod);
 
         $this->getManager()->persist($task);
-        $this->getManager()->persist($crawlJobContainer->getCrawlJob());
+        $this->getManager()->persist($crawlJob);
         $this->getManager()->flush();
 
         return true;
@@ -228,21 +241,23 @@ class CrawlJobContainerService extends EntityService
             return true;
         }
 
-        $this->jobUserAccountPlanEnforcementService->setUser($crawlJobContainer->getCrawlJob()->getUser());
+        $crawlJob = $crawlJobContainer->getCrawlJob();
+
+        $this->jobUserAccountPlanEnforcementService->setUser($crawlJob->getUser());
         $crawlDiscoveredUrlCount = count($this->getDiscoveredUrls($crawlJobContainer));
 
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($crawlDiscoveredUrlCount)) {
-            if ($crawlJobContainer->getCrawlJob()->getAmmendments()->isEmpty()) {
+            if ($crawlJob->getAmmendments()->isEmpty()) {
                 $this->jobService->addAmmendment(
-                    $crawlJobContainer->getCrawlJob(),
+                    $crawlJob,
                     'plan-url-limit-reached:discovered-url-count-' . $crawlDiscoveredUrlCount,
                     $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()
                 );
-                $this->jobService->persistAndFlush($crawlJobContainer->getCrawlJob());
+                $this->jobService->persistAndFlush($crawlJob);
             }
 
-            if (!$this->jobService->isCompleted($crawlJobContainer->getCrawlJob())) {
-                $this->jobService->cancelIncompleteTasks($crawlJobContainer->getCrawlJob());
+            if (JobService::COMPLETED_STATE !== $crawlJob->getState()->getName()) {
+                $this->jobService->cancelIncompleteTasks($crawlJob);
                 $this->taskService->getManager()->flush();
             }
 
@@ -255,13 +270,13 @@ class CrawlJobContainerService extends EntityService
             if (!$this->isTaskUrl($task->getJob(), $url)) {
                 $task = $this->createUrlDiscoveryTask($crawlJobContainer, $url);
                 $this->getManager()->persist($task);
-                $crawlJobContainer->getCrawlJob()->addTask($task);
+                $crawlJob->addTask($task);
                 $isFlushRequired = true;
             }
         }
 
         if ($isFlushRequired) {
-            $this->getManager()->persist($crawlJobContainer->getCrawlJob());
+            $this->getManager()->persist($crawlJob);
             $this->getManager()->flush();
         }
 
@@ -382,9 +397,11 @@ class CrawlJobContainerService extends EntityService
      */
     private function create(Job $job)
     {
+        $jobStartingState = $this->stateService->fetch(JobService::STARTING_STATE);
+
         $crawlJob = new Job();
         $crawlJob->setType($this->jobTypeService->getCrawlType());
-        $crawlJob->setState($this->jobService->getStartingState());
+        $crawlJob->setState($jobStartingState);
         $crawlJob->setUser($job->getUser());
         $crawlJob->setWebsite($job->getWebsite());
         $crawlJob->setParameters($job->getParameters());

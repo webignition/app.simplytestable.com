@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
@@ -75,21 +76,27 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
 
     public function testWithSingleJobWithIncompleteTasks()
     {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
         ]);
 
-        $job->setState($this->getJobService()->getInProgressState());
+        $job->setState($jobInProgressState);
         $this->getJobService()->persistAndFlush($job);
 
         $this->assertReturnCode(self::RETURN_CODE_NO_MATCHING_JOBS);
-        $this->assertEquals($this->getJobService()->getInProgressState(), $job->getState());
+        $this->assertEquals(JobService::IN_PROGRESS_STATE, $job->getState()->getName());
     }
 
     public function testWithSingleJobWithNoIncompleteTasks()
     {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
+
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
@@ -99,17 +106,19 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
             $task->setState($this->getTaskService()->getCompletedState());
         }
 
-        $job->setState($this->getJobService()->getInProgressState());
+        $job->setState($jobInProgressState);
         $this->getJobService()->persistAndFlush($job);
 
         $this->assertReturnCode(self::RETURN_CODE_DONE);
-        $this->assertEquals($this->getJobService()->getCompletedState(), $job->getState());
+        $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
     }
 
     public function testWithCollectionOfJobsWithNoIncompleteTasks()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $jobs = array();
+
+        /* @var Job[] $jobs */
+        $jobs = [];
 
         $jobs[] = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
@@ -136,7 +145,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
         $this->assertReturnCode(self::RETURN_CODE_DONE);
 
         foreach ($jobs as $job) {
-            $this->assertTrue($this->getJobService()->isCompleted($job));
+            $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
         }
     }
 
@@ -174,9 +183,9 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
 
         foreach ($jobs as $jobIndex => $job) {
             if ($jobIndex === 0) {
-                $this->assertEquals($this->getJobService()->getQueuedState(), $job->getState());
+                $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
             } else {
-                $this->assertEquals($this->getJobService()->getCompletedState(), $job->getState());
+                $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
             }
         }
     }

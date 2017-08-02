@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobUserAccountPlanEnforcement;
 
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 abstract class LimitTest extends ServiceTest
@@ -19,6 +20,9 @@ abstract class LimitTest extends ServiceTest
         $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUserService()->getPublicUser());
         $this->setDifferentJobTypeLimits();
 
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobCompletedState = $stateService->fetch(JobService::COMPLETED_STATE);
+
         $jobFactory = new JobFactory($this->container);
 
         for ($jobIndex = 0; $jobIndex <= $this->getJobTypeCreateLimit() - 1; $jobIndex++) {
@@ -28,7 +32,7 @@ abstract class LimitTest extends ServiceTest
                 JobFactory::KEY_TYPE => $this->getJobType(),
             ]);
 
-            if ($job->getState()->equals($this->getJobService()->getRejectedState())) {
+            if (JobService::REJECTED_STATE === $job->getState()->getName()) {
                 $this->fail('Job rejected before limit reached');
             }
 
@@ -40,7 +44,7 @@ abstract class LimitTest extends ServiceTest
 
             $job->setTimePeriod($timePeriod);
 
-            $job->setState($this->getJobService()->getCompletedState());
+            $job->setState($jobCompletedState);
             $this->getJobService()->persistAndFlush($job);
         }
     }

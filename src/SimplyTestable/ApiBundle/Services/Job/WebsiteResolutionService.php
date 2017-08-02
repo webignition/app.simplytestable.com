@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\UrlResolver;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use webignition\Url\Url;
@@ -38,24 +39,32 @@ class WebsiteResolutionService
     private $urlResolver = null;
 
     /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
      * @param JobService $jobService
      * @param HttpClientService $httpClientService
      * @param WebSiteService $websiteService
      * @param RejectionService $jobRejectionService
      * @param UrlResolver $urlResolver
+     * @param StateService $stateService
      */
     public function __construct(
         JobService $jobService,
         HttpClientService $httpClientService,
         WebSiteService $websiteService,
         RejectionService $jobRejectionService,
-        UrlResolver $urlResolver
+        UrlResolver $urlResolver,
+        StateService $stateService
     ) {
         $this->jobService = $jobService;
         $this->httpClientService = $httpClientService;
         $this->websiteService = $websiteService;
         $this->jobRejectionService = $jobRejectionService;
         $this->urlResolver = $urlResolver;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -64,14 +73,19 @@ class WebsiteResolutionService
      */
     public function resolve(Job $job)
     {
-        if (!$this->jobService->isNew($job)) {
+        $jobIsNew = JobService::STARTING_STATE === $job->getState()->getName();
+
+        if (!$jobIsNew) {
             throw new WebsiteResolutionException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 WebsiteResolutionException::CODE_JOB_IN_WRONG_STATE_CODE
             );
         }
 
-        $job->setState($this->jobService->getResolvingState());
+        $jobResolvingState = $this->stateService->fetch(JobService::RESOLVING_STATE);
+        $jobResolvedState = $this->stateService->fetch(JobService::RESOLVED_STATE);
+
+        $job->setState($jobResolvingState);
         $this->jobService->persistAndFlush($job);
 
         $this->urlResolver->configureForJob($job);
@@ -87,7 +101,7 @@ class WebsiteResolutionService
                 $job->setWebsite($this->websiteService->fetch($resolvedUrl));
             }
 
-            $job->setState($this->jobService->getResolvedState());
+            $job->setState($jobResolvedState);
         } catch (CurlException $curlException) {
             $this->jobRejectionService->reject($job, 'curl-' . $curlException->getErrorNo());
         }

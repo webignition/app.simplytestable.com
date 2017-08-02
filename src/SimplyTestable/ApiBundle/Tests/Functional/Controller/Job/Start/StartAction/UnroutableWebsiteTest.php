@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Start\StartAction;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobService;
 
 class UnroutableWebsiteTest extends RedirectResponseTest {
 
@@ -25,6 +26,6 @@ class UnroutableWebsiteTest extends RedirectResponseTest {
 
 
     public function testIsRejected() {
-        $this->assertEquals($this->getJobService()->getRejectedState(), $this->job->getState());
+        $this->assertEquals(JobService::REJECTED_STATE, $this->job->getState()->getName());
     }
 }
