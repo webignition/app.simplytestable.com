@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstr
 use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Controller\ApiController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception as UserAccountPlanEnforcementException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
@@ -99,20 +100,31 @@ class StartController extends ApiController {
         return $this->rejectAndRedirect($jobConfiguration, 'plan-constraint-limit-reached', $constraint);
     }
 
-    private function rejectAndRedirect(JobConfiguration $jobConfiguration, $reason, AccountPlanConstraint $constraint = null) {
+    /**
+     * @param JobConfiguration $jobConfiguration
+     * @param $reason
+     * @param AccountPlanConstraint|null $constraint
+     *
+     * @return RedirectResponse
+     */
+    private function rejectAndRedirect(
+        JobConfiguration $jobConfiguration,
+        $reason,
+        AccountPlanConstraint $constraint = null
+    ) {
         $job = $this->getJobService()->create(
             $jobConfiguration
         );
 
-        $this->getJobRejectionService()->reject($job, $reason, $constraint);
+        $jobService = $this->container->get('simplytestable.services.jobservice');
+
+        $jobService->reject($job, $reason, $constraint);
 
         return $this->redirect($this->generateUrl('job_job_status', array(
             'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             'test_id' => $job->getId()
         )));
     }
-
-
 
     /**
      *
@@ -147,16 +159,6 @@ class StartController extends ApiController {
     private function getJobService() {
         return $this->get('simplytestable.services.jobservice');
     }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Job\RejectionService
-     */
-    private function getJobRejectionService() {
-        return $this->get('simplytestable.services.job.rejectionservice');
-    }
-
 
     /**
      * @return \SimplyTestable\ApiBundle\Services\Job\StartService

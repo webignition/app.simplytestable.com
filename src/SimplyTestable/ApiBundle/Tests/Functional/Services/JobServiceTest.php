@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -770,5 +771,110 @@ class JobServiceTest extends BaseSimplyTestableTestCase
         foreach ($retrievedJobs as $retrievedJob) {
             $this->assertTrue(in_array($retrievedJob->getState()->getName(), $completedTasksStates));
         }
+    }
+
+    /**
+     * @dataProvider rejectInWrongStateDataProvider
+     *
+     * @param string $stateName
+     */
+    public function testRejectInWrongState($stateName)
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobRejectionReasonService = $this->container->get('simplytestable.services.jobrejectionreasonservice');
+
+        $job = $this->jobFactory->create();
+        $job->setState($stateService->fetch($stateName));
+        $this->jobService->persistAndFlush($job);
+
+        $this->jobService->reject($job, '');
+
+        $this->assertEquals($stateName, $job->getState()->getName());
+        $this->assertNull($jobRejectionReasonService->getForJob($job));
+    }
+
+    /**
+     * @return array
+     */
+    public function rejectInWrongStateDataProvider()
+    {
+        return [
+            JobService::CANCELLED_STATE => [
+                'stateName' => JobService::CANCELLED_STATE,
+            ],
+            JobService::COMPLETED_STATE => [
+                'stateName' => JobService::COMPLETED_STATE,
+            ],
+            JobService::IN_PROGRESS_STATE => [
+                'stateName' => JobService::IN_PROGRESS_STATE,
+            ],
+            JobService::QUEUED_STATE => [
+                'stateName' => JobService::QUEUED_STATE,
+            ],
+            JobService::FAILED_NO_SITEMAP_STATE => [
+                'stateName' => JobService::FAILED_NO_SITEMAP_STATE,
+            ],
+            JobService::REJECTED_STATE => [
+                'stateName' => JobService::REJECTED_STATE,
+            ],
+            JobService::RESOLVED_STATE => [
+                'stateName' => JobService::RESOLVED_STATE,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider rejectDataProvider
+     *
+     * @param string $userName
+     * @param string $reason
+     * @param string $constraintName
+     */
+    public function testReject($userName, $reason, $constraintName)
+    {
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->createPublicAndPrivateUserSet()[$userName];
+
+        $jobRejectionReasonService = $this->container->get('simplytestable.services.jobrejectionreasonservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+
+        $job = $this->jobFactory->create([
+            JobFactory::KEY_USER => $user,
+        ]);
+
+        if (empty($constraintName)) {
+            $constraint = null;
+        } else {
+            $plan = $userAccountPlanService->getForUser($user)->getPlan();
+            $constraint = $plan->getConstraintNamed($constraintName);
+        }
+
+        $this->jobService->reject($job, $reason, $constraint);
+
+        $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
+        $rejectionReason = $jobRejectionReasonService->getForJob($job);
+
+        $this->assertInstanceOf(RejectionReason::class, $rejectionReason);
+        $this->assertEquals($reason, $rejectionReason->getReason());
+        $this->assertEquals($constraint, $rejectionReason->getConstraint());
+    }
+
+    /**
+     * @return array
+     */
+    public function rejectDataProvider()
+    {
+        return [
+            'unroutable' => [
+                'user' => 'public',
+                'reason' => 'unroutable',
+                'constraintName' => null,
+            ],
+            'plan-constraint-limit-reached' => [
+                'user' => 'private',
+                'reason' => 'plan-constraint-limit-reached',
+                'constraintName' => 'credits_per_month',
+            ],
+        ];
     }
 }

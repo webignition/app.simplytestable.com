@@ -20,7 +20,7 @@ class ExecuteCommand extends BaseCommand
     const RETURN_CODE_INVALID_SCHEDULED_JOB = 3;
     const RETURN_CODE_UNROUTABLE = 4;
     const RETURN_CODE_PLAN_LIMIT_REACHED = 5;
-    
+
     protected function configure()
     {
         $this
@@ -84,7 +84,8 @@ class ExecuteCommand extends BaseCommand
             $jobConfiguration
         );
 
-        $this->getJobRejectionService()->reject($job, $reason, $constraint);
+        $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
+        $jobService->reject($job, $reason, $constraint);
     }
 
 
@@ -111,16 +112,6 @@ class ExecuteCommand extends BaseCommand
     private function getJobStartService() {
         return $this->getContainer()->get('simplytestable.services.job.startservice');
     }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Job\RejectionService
-     */
-    private function getJobRejectionService() {
-        return $this->getContainer()->get('simplytestable.services.job.rejectionservice');
-    }
-
 
     /**
      *

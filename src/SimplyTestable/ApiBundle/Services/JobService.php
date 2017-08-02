@@ -10,6 +10,8 @@ use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
+use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
 
 class JobService extends EntityService
 {
@@ -195,10 +197,12 @@ class JobService extends EntityService
 
     /**
      * @param Job $job
+     * @param string $reason
+     * @param AccountPlanConstraint|null $constraint
      *
      * @return Job
      */
-    public function reject(Job $job)
+    public function reject(Job $job, $reason, AccountPlanConstraint $constraint = null)
     {
         $jobStateName = $job->getState()->getName();
 
@@ -213,8 +217,15 @@ class JobService extends EntityService
         }
 
         $rejectedState = $this->stateService->fetch(self::REJECTED_STATE);
-
         $job->setState($rejectedState);
+
+        $rejectionReason = new JobRejectionReason();
+        $rejectionReason->setConstraint($constraint);
+        $rejectionReason->setJob($job);
+        $rejectionReason->setReason($reason);
+
+        $this->getManager()->persist($rejectionReason);
+
         return $this->persistAndFlush($job);
     }
 

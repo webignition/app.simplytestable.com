@@ -29,11 +29,6 @@ class WebsiteResolutionService
     private $websiteService;
 
     /**
-     * @var RejectionService
-     */
-    private $jobRejectionService;
-
-    /**
      * @var UrlResolver
      */
     private $urlResolver = null;
@@ -47,7 +42,6 @@ class WebsiteResolutionService
      * @param JobService $jobService
      * @param HttpClientService $httpClientService
      * @param WebSiteService $websiteService
-     * @param RejectionService $jobRejectionService
      * @param UrlResolver $urlResolver
      * @param StateService $stateService
      */
@@ -55,14 +49,12 @@ class WebsiteResolutionService
         JobService $jobService,
         HttpClientService $httpClientService,
         WebSiteService $websiteService,
-        RejectionService $jobRejectionService,
         UrlResolver $urlResolver,
         StateService $stateService
     ) {
         $this->jobService = $jobService;
         $this->httpClientService = $httpClientService;
         $this->websiteService = $websiteService;
-        $this->jobRejectionService = $jobRejectionService;
         $this->urlResolver = $urlResolver;
         $this->stateService = $stateService;
     }
@@ -103,9 +95,8 @@ class WebsiteResolutionService
 
             $job->setState($jobResolvedState);
         } catch (CurlException $curlException) {
-            $this->jobRejectionService->reject($job, 'curl-' . $curlException->getErrorNo());
+            $this->jobService->reject($job, 'curl-' . $curlException->getErrorNo());
         }
-
 
         $this->jobService->persistAndFlush($job);
     }
