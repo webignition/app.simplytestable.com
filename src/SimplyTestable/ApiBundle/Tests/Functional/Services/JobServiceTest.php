@@ -713,6 +713,7 @@ class JobServiceTest extends BaseSimplyTestableTestCase
             JobService::RESOLVING_STATE,
             JobService::RESOLVED_STATE,
         ];
+
         $zeroTaskStates = [
             JobService::STARTING_STATE,
             JobService::RESOLVING_STATE,
@@ -720,7 +721,6 @@ class JobServiceTest extends BaseSimplyTestableTestCase
         ];
 
         $completedTasksStates = [
-            JobService::IN_PROGRESS_STATE,
             JobService::PREPARING_STATE,
             JobService::QUEUED_STATE,
         ];
