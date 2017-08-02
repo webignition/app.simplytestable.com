@@ -92,16 +92,6 @@ class JobService extends EntityService
      *
      * @return bool
      */
-    public function isPreparing(Job $job)
-    {
-        return self::PREPARING_STATE === $job->getState()->getName();
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return bool
-     */
     public function isQueued(Job $job)
     {
         return self::QUEUED_STATE === $job->getState()->getName();
@@ -263,8 +253,9 @@ class JobService extends EntityService
         $jobStateName = $job->getState()->getName();
 
         $isNew = self::STARTING_STATE === $jobStateName;
+        $isPreparing = self::PREPARING_STATE === $jobStateName;
 
-        if (!$isNew && !$this->isPreparing($job) && !$this->isResolving($job)) {
+        if (!$isNew && !$isPreparing && !$this->isResolving($job)) {
             return $job;
         }
 
