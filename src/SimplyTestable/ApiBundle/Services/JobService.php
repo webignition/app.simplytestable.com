@@ -90,14 +90,6 @@ class JobService extends EntityService
     /**
      * @return State
      */
-    public function getResolvingState()
-    {
-        return $this->stateService->fetch(self::RESOLVING_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getResolvedState()
     {
         return $this->stateService->fetch(self::RESOLVED_STATE);
@@ -170,7 +162,7 @@ class JobService extends EntityService
      */
     public function isResolving(Job $job)
     {
-        return $job->getState()->equals($this->getResolvingState());
+        return self::RESOLVING_STATE === $job->getState()->getName();
     }
 
     /**
