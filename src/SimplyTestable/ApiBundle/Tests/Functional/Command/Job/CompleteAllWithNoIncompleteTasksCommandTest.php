@@ -116,7 +116,9 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     public function testWithCollectionOfJobsWithNoIncompleteTasks()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $jobs = array();
+
+        /* @var Job[] $jobs */
+        $jobs = [];
 
         $jobs[] = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
@@ -143,7 +145,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
         $this->assertReturnCode(self::RETURN_CODE_DONE);
 
         foreach ($jobs as $job) {
-            $this->assertTrue($this->getJobService()->isCompleted($job));
+            $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
         }
     }
 

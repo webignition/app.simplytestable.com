@@ -241,21 +241,23 @@ class CrawlJobContainerService extends EntityService
             return true;
         }
 
-        $this->jobUserAccountPlanEnforcementService->setUser($crawlJobContainer->getCrawlJob()->getUser());
+        $crawlJob = $crawlJobContainer->getCrawlJob();
+
+        $this->jobUserAccountPlanEnforcementService->setUser($crawlJob->getUser());
         $crawlDiscoveredUrlCount = count($this->getDiscoveredUrls($crawlJobContainer));
 
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($crawlDiscoveredUrlCount)) {
-            if ($crawlJobContainer->getCrawlJob()->getAmmendments()->isEmpty()) {
+            if ($crawlJob->getAmmendments()->isEmpty()) {
                 $this->jobService->addAmmendment(
-                    $crawlJobContainer->getCrawlJob(),
+                    $crawlJob,
                     'plan-url-limit-reached:discovered-url-count-' . $crawlDiscoveredUrlCount,
                     $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()
                 );
-                $this->jobService->persistAndFlush($crawlJobContainer->getCrawlJob());
+                $this->jobService->persistAndFlush($crawlJob);
             }
 
-            if (!$this->jobService->isCompleted($crawlJobContainer->getCrawlJob())) {
-                $this->jobService->cancelIncompleteTasks($crawlJobContainer->getCrawlJob());
+            if (JobService::COMPLETED_STATE !== $crawlJob->getState()->getName()) {
+                $this->jobService->cancelIncompleteTasks($crawlJob);
                 $this->taskService->getManager()->flush();
             }
 
@@ -268,13 +270,13 @@ class CrawlJobContainerService extends EntityService
             if (!$this->isTaskUrl($task->getJob(), $url)) {
                 $task = $this->createUrlDiscoveryTask($crawlJobContainer, $url);
                 $this->getManager()->persist($task);
-                $crawlJobContainer->getCrawlJob()->addTask($task);
+                $crawlJob->addTask($task);
                 $isFlushRequired = true;
             }
         }
 
         if ($isFlushRequired) {
-            $this->getManager()->persist($crawlJobContainer->getCrawlJob());
+            $this->getManager()->persist($crawlJob);
             $this->getManager()->flush();
         }
 
