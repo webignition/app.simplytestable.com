@@ -16,9 +16,10 @@ abstract class RejectedTest extends WithScheduledJobTest
 
     public function testJobIsRejected()
     {
+        /* @var Job $job */
         $job = $this->getJobService()->getEntityRepository()->findAll()[$this->getJobListIndex()];
 
-        $this->assertEquals(JobService::REJECTED_STATE, $job->getState->getName());
+        $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
     }
 
     public function testRejectionReason()
