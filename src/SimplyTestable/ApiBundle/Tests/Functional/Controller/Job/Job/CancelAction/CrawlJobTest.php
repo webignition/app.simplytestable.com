@@ -93,7 +93,10 @@ class CrawlJobTest extends IsCancelledTest
             JobFactory::KEY_USER => $this->getUser(),
         ]);
 
-        $this->parentJob->setState($this->getJobService()->getFailedNoSitemapState());
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+
+        $this->parentJob->setState($jobFailedNoSitemapState);
         $this->getJobService()->persistAndFlush($this->parentJob);
 
         $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($this->parentJob);

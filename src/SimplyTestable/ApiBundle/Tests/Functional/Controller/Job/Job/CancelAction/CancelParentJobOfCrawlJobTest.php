@@ -41,7 +41,10 @@ class CancelParentJobOfCrawlJobTest extends IsCancelledTest
             JobFactory::KEY_USER => $this->getUser(),
         ]);
 
-        $job->setState($this->getJobService()->getFailedNoSitemapState());
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+
+        $job->setState($jobFailedNoSitemapState);
         $this->getJobService()->persistAndFlush($job);
 
         return $job;
@@ -49,7 +52,10 @@ class CancelParentJobOfCrawlJobTest extends IsCancelledTest
 
     protected function getExpectedJobStartingState()
     {
-        return $this->getJobService()->getFailedNoSitemapState();
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+
+        return $jobFailedNoSitemapState;
     }
 
     protected function getExpectedResponseCode()

@@ -90,14 +90,6 @@ class JobService extends EntityService
     /**
      * @return State
      */
-    public function getFailedNoSitemapState()
-    {
-        return $this->stateService->fetch(self::FAILED_NO_SITEMAP_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getRejectedState()
     {
         return $this->stateService->fetch(self::REJECTED_STATE);
@@ -157,16 +149,6 @@ class JobService extends EntityService
     public function isRejected(Job $job)
     {
         return $job->getState()->equals($this->getRejectedState());
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return bool
-     */
-    public function isFailedNoSitepmap(Job $job)
-    {
-        return $job->getState()->equals($this->getFailedNoSitemapState());
     }
 
     /**
@@ -264,7 +246,7 @@ class JobService extends EntityService
      */
     public function cancel(Job $job)
     {
-        if ($this->isFinished($job) && $job->getState()->equals($this->getFailedNoSitemapState()) === false) {
+        if ($this->isFinished($job) && self::FAILED_NO_SITEMAP_STATE !== $job->getState()->getName()) {
             return $job;
         }
 
@@ -361,9 +343,9 @@ class JobService extends EntityService
      *
      * @return bool
      */
-    private function isFailedNoSitemap(Job $job)
+    public function isFailedNoSitemap(Job $job)
     {
-        return $job->getState()->equals($this->getFailedNoSitemapState());
+        return self::FAILED_NO_SITEMAP_STATE === $job->getState()->getName();
     }
 
     /**

@@ -70,12 +70,14 @@ class TaskController extends ApiController
             }
 
             if ($task->getType()->equals($urlDiscoveryTaskType)) {
+                $stateService = $this->container->get('simplytestable.services.stateservice');
+
                 if ($this->getJobService()->isCompleted($task->getJob())) {
-                    $failedNoSitemapState = $this->getJobService()->getFailedNoSitemapState();
+                    $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
 
                     if ($crawlJobContainerService->getEntityRepository()->doesCrawlTaskParentStateMatchState(
                         $task,
-                        $failedNoSitemapState
+                        $jobFailedNoSitemapState
                     )) {
                         $crawlJobContainer = $crawlJobContainerService->getForJob($task->getJob());
 

@@ -151,7 +151,9 @@ class JobPreparationService
         );
 
         if (empty($urls)) {
-            $job->setState($this->jobService->getFailedNoSitemapState());
+            $jobFailedNoSitemapState = $this->stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+
+            $job->setState($jobFailedNoSitemapState);
 
             if (!$this->userService->isPublicUser($job->getUser())) {
                 if (!$this->crawlJobContainerService->hasForJob($job)) {
@@ -198,7 +200,7 @@ class JobPreparationService
         $this->processedUrls = array();
         $job = $crawlJobContainer->getParentJob();
 
-        if (!$this->jobService->isFailedNoSitepmap($job)) {
+        if (!$this->jobService->isFailedNoSitemap($job)) {
             throw new JobPreparationServiceException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
