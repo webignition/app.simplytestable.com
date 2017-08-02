@@ -198,4 +198,13 @@ class JobFactory
 
         $jobService->reject($job, $reason, $constraint);
     }
+
+    /**
+     * @param Job $job
+     */
+    public function save(Job $job)
+    {
+        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobService->persistAndFlush($job);
+    }
 }

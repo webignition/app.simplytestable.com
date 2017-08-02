@@ -46,6 +46,7 @@ services:
     arguments:
         jobService: "@simplytestable.services.jobservice"
         teamService: "@simplytestable.services.teamservice"
+        jobListQueryBuilderFactory: '@simplytestable.services.joblistquerybuilderfactory'
 
   simplytestable.services.userservice:
     class:  SimplyTestable\ApiBundle\Services\UserService

@@ -1,0 +1,59 @@
+-
+  user: "public"
+  siteRootUrl: "http://0.example.com"
+  type: "full site"
+  state: "job-completed"
+
+-
+  user: "private"
+  siteRootUrl: "http://1.example.com"
+  type: "full site"
+  state: "job-completed"
+
+-
+  user: "public"
+  siteRootUrl: "http://0.example.com"
+  type: "full site"
+  state: "job-new"
+
+-
+  user: "public"
+  siteRootUrl: "http://1.example.com"
+  type: "full site"
+  state: "job-new"
+
+-
+  user: "public"
+  siteRootUrl: "http://0.example.com"
+  type: "single url"
+  state: "job-new"
+
+-
+  user: "public"
+  siteRootUrl: "http://1.example.com"
+  type: "single url"
+  state: "job-new"
+
+-
+  user: "private"
+  siteRootUrl: "http://0.example.com"
+  type: "full site"
+  state: "job-new"
+
+-
+  user: "private"
+  siteRootUrl: "http://1.example.com"
+  type: "full site"
+  state: "job-new"
+
+-
+  user: "private"
+  siteRootUrl: "http://0.example.com"
+  type: "single url"
+  state: "job-new"
+
+-
+  user: "private"
+  siteRootUrl: "http://1.example.com"
+  type: "single url"
+  state: "job-new"
