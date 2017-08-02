@@ -46,6 +46,7 @@ services:
     arguments:
         jobService: "@simplytestable.services.jobservice"
         teamService: "@simplytestable.services.teamservice"
+        jobListQueryBuilderFactory: '@simplytestable.services.joblistquerybuilderfactory'
 
   simplytestable.services.userservice:
     class:  SimplyTestable\ApiBundle\Services\UserService
@@ -406,3 +407,9 @@ services:
     class:  SimplyTestable\ApiBundle\Services\UrlFinder
     arguments:
         httpClientService: "@simplytestable.services.httpClientService"
+
+  simplytestable.services.joblistquerybuilderfactory:
+    class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
+    arguments:
+      teamService: '@simplytestable.services.teamservice'
+      entityManager: '@doctrine.orm.entity_manager'

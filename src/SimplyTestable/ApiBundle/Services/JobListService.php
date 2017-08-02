@@ -2,581 +2,128 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
-use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\State;
-
-use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Model\JobList\Configuration;
+use SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 
-class JobListService  {
-    
-    const DEFAULT_LIMIT = 1;
-    const MIN_LIMIT = 1;
-    const MAX_LIMIT = 100;
-    
-    const DEFAULT_OFFSET = 0; 
-    const MIN_OFFSET = 0;
-    
-    const DEFAULT_ORDER_BY = 'id';
-    
-    private $orderByFieldMap = array(
-        'id' => 'Job.id'
-    );
-    
-    
+class JobListService
+{
+    const EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET = 'Configuration not set';
+    const EXCEPTION_CODE_CONFIGURATION_NOT_SET = 1;
+
     /**
-     *
      * @var JobService
      */
     private $jobService;
 
-
     /**
-     *
      * @var TeamService
      */
     private $teamService;
-    
-    
-    /**
-     *
-     * @var int
-     */
-    private $limit = null;
-    
-    
-    /**
-     *
-     * @var int
-     */
-    private $offset = null;
-    
-    
-    /**
-     *
-     * @var User
-     */
-    private $user = null;
-    
-    
-    /**
-     *
-     * @var string
-     */
-    private $orderBy =  null;
-    
-    
-    /**
-     *
-     * @var boolean
-     */
-    private $sortDescending = true;
-    
-    
-    /**
-     * Collection of JobTypes to exclude from list
-     *  
-     * @var array
-     */
-    private $excludeTypes = array();
-    
-    
-    /**
-     * Collection of Job States to exclude from list
-     * 
-     * @var array
-     */
-    private $excludeStates = array();
-    
-    
-    /**
-     * Collection of ids of jobs to include if not otherwise included
-     *
-     * @var array
-     */
-    private $includeIds = array();
-    
-    
-    /**
-     * Explicitly exclude jobs by id
-     * 
-     * @var boolean
-     */
-    private $excludeIds = array();
-    
-    
-    /**
-     *
-     * @var string
-     */
-    private $urlFilter = null;
 
+    /**
+     * @var JobListQueryBuilderFactory
+     */
+    private $queryBuilderFactory;
+
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
     /**
      * @param JobService $jobService
      * @param TeamService $teamService
+     * @param JobListQueryBuilderFactory $jobListQueryBuilderFactory
      */
-    public function __construct(JobService $jobService, TeamService $teamService)
-    {
+    public function __construct(
+        JobService $jobService,
+        TeamService $teamService,
+        JobListQueryBuilderFactory $jobListQueryBuilderFactory
+    ) {
         $this->jobService = $jobService;
         $this->teamService = $teamService;
+        $this->queryBuilderFactory = $jobListQueryBuilderFactory;
     }
-    
-    
+
     /**
-     * 
-     * @param int $limit
+     * @param Configuration $configuration
      */
-    public function setLimit($limit) {        
-        $limit = (int)filter_var($limit, FILTER_VALIDATE_INT);
-        
-        if ($limit < self::MIN_LIMIT) {
-            $limit = self::MIN_LIMIT;
+    public function setConfiguration(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * @return Job[]
+     */
+    public function get()
+    {
+        if (empty($this->configuration)) {
+            throw new \RuntimeException(
+                self::EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET,
+                self::EXCEPTION_CODE_CONFIGURATION_NOT_SET
+            );
         }
-        
-        if ($limit > self::MAX_LIMIT) {
-            $limit = self::MAX_LIMIT;
-        }
-        
-        $this->limit = $limit;
-    }
-    
-    
-    /**
-     * 
-     * @param int $offset
-     */
-    public function setOffset($offset) {
-        $offset = (int)filter_var($offset, FILTER_VALIDATE_INT);        
-        
-        if ($offset < self::MIN_OFFSET) {
-            $offset = self::MIN_OFFSET;
-        }
-        
-        $this->offset = $offset;
-    }
-    
-    
-    /**
-     * 
-     * @return int
-     */
-    public function getLimit() {
-        return (is_null($this->limit)) ? self::DEFAULT_LIMIT : $this->limit;
-    }
-    
-    
-    /**
-     * 
-     * @return int
-     */
-    public function getOffset() {
-        return (is_null($this->offset)) ? self::DEFAULT_OFFSET : $this->offset;
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     */
-    public function setUser(User $user) {
-        $this->user = $user;
-    }
-    
-    
-    /**
-     * 
-     * @param string $orderBy
-     */
-    public function setOrderBy($orderBy) {
-        $this->orderBy = $orderBy;
-    }
-    
-    
-    public function setSortAscending() {
-        $this->sortDescending = false;
-    }    
-    
-    
-    public function setSortDescending() {
-        $this->sortDescending = true;
-    }
-    
-    
-    public function setExcludeTypes($excludeTypes) {
-        $this->excludeTypes = array();
-        
-        foreach ($excludeTypes as $jobType) {
-            if ($jobType instanceof JobType) {
-                $this->excludeTypes[] = $jobType;
-            }
-        }
-    }
-    
-    
-    public function setExcludeStates($excludeStates) {
-        $this->excludeStates = array();
-        
-        foreach ($excludeStates as $state) {
-            if ($state instanceof State) {
-                $this->excludeStates[] = $state;
-            }
-        }
-    }
-    
-    
-    /**
-     * 
-     * @param array $includeIds
-     */
-    public function setIncludeIds($includeIds) {
-        $this->includeIds = array();
-        
-        foreach ($includeIds as $jobId) {
-            $job = $this->getJobService()->getById($jobId);
-            if (!$this->isExcluded($job)) {
-                $this->includeIds[] = $job->getId();
-            }
-        }
-    }    
-    
-    
-    /**
-     * 
-     * @param array $excludeIds
-     */
-    public function setExcludeIds($excludeIds) {
-        $this->excludeIds = array();
-        
-        foreach ($excludeIds as $jobId) {
-            $job = $this->getJobService()->getById($jobId);
-            $this->excludeIds[] = $job->getId();
-        }
-    }
-    
-    
-    /**
-     * 
-     * @param string $filter
-     */
-    public function setUrlFilter($filter) {
-        $this->urlFilter = $filter;
-    }
-    
-    
-    private function isExcluded(Job $job) {
-//        foreach ($this->excludeStates as $state) {
-//            if ($job->getState()->equals($state)) {
-//                return true;
-//            }
-//        }
-//        
-//        foreach ($this->excludeTypes as $type) {
-//            if ($job->getType()->equals($type)) {
-//                return true;
-//            }
-//        }
-        
-//        foreach ($this->excludeIds as $id) {
-//            if ($job->getId() == $id) {
-//                return true;
-//            }
-//        }
-        
-        return false;
-    }
-    
-    
-    /**
-     * 
-     * @return array
-     */
-    public function get() {
-        $queryBuilder = $this->getDefaultQueryBuilder();
-        
-        $queryBuilder->setMaxResults($this->getLimit());
-        $queryBuilder->setFirstResult($this->getOffset());
-        
+
+        $queryBuilder = $this->queryBuilderFactory->create($this->configuration);
         $queryBuilder->select('Job');
-        
+
+        $queryBuilder->setMaxResults($this->configuration->getLimit());
+        $queryBuilder->setFirstResult($this->configuration->getOffset());
+
         return $queryBuilder->getQuery()->getResult();
     }
-    
-    
+
     /**
-     * 
      * @return int
      */
-    public function getMaxResults() {
-        $queryBuilder = $this->getDefaultQueryBuilder();
-        
+    public function getMaxResults()
+    {
+        if (empty($this->configuration)) {
+            throw new \RuntimeException(
+                self::EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET,
+                self::EXCEPTION_CODE_CONFIGURATION_NOT_SET
+            );
+        }
+
+        $queryBuilder = $this->queryBuilderFactory->create($this->configuration);
         $queryBuilder->select('COUNT(Job.id)');
-        
+
         $result = $queryBuilder->getQuery()->getResult();
-        
-        return (int)$result[0][1];    
+
+        return (int)$result[0][1];
     }
-    
-    
+
     /**
      * @return string[]
      */
-    public function getWebsiteUrls() {
-        $queryBuilder = $this->getDefaultQueryBuilder();        
-        
+    public function getWebsiteUrls()
+    {
+        if (empty($this->configuration)) {
+            throw new \RuntimeException(
+                self::EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET,
+                self::EXCEPTION_CODE_CONFIGURATION_NOT_SET
+            );
+        }
+
+        $queryBuilder = $this->queryBuilderFactory->create($this->configuration);
+
         if (!substr_count($queryBuilder->getDQL(), 'JOIN Job.website Website')) {
             $queryBuilder->join('Job.website', 'Website');
-        }        
-        
-        $queryBuilder->orderBy('Website.canonicalUrl');        
+        }
+
+        $queryBuilder->orderBy('Website.canonicalUrl');
         $queryBuilder->select('DISTINCT Website.canonicalUrl');
-        
+
         $results = $queryBuilder->getQuery()->getResult();
-        
-        $urls = array();
-        
+
+        $urls = [];
+
         foreach ($results as $result) {
             $urls[] = $result['canonicalUrl'];
         }
-        
-        return $urls;         
-    }
-    
-    
-    /**
-     * 
-     * @return boolean
-     */
-    private function hasUser() {
-        return !is_null($this->user);
-    }
-    
-    
-    /**
-     * 
-     * @return boolean
-     */
-    private function hasExcludeTypes() {
-        return is_array($this->excludeTypes) && count($this->excludeTypes) > 0;
-    }
-    
-    
-    /**
-     * 
-     * @return boolean
-     */
-    private function hasExcludeStates() {
-        return is_array($this->excludeStates) && count($this->excludeStates) > 0;
-    }
-    
-    
-    /**
-     * 
-     * @return boolean
-     */
-    private function hasIncludeIds() {
-        return is_array($this->includeIds) && count($this->includeIds) > 0;
-    }
-    
-    
-    /**
-     * 
-     * @return boolean
-     */
-    private function hasExcludeIds() {
-        return is_array($this->excludeIds) && count($this->excludeIds) > 0;
-    }
-    
-    
-    /**
-     * 
-     * @return boolean
-     */
-    private function hasUrlFilter() {
-        return !is_null($this->urlFilter);
-    }    
-    
-    
-    /**
-     * 
-     * @return \Doctrine\ORM\QueryBuilder
-     */    
-    private function getDefaultQueryBuilder() {
-        $queryBuilder = $this->getQueryBuilder();
-        
-        if ($this->hasUser()) {
-            $this->setQueryUserFilter($queryBuilder);           
-        }
-        
-        if ($this->hasExcludeTypes()) {            
-            $this->setQueryTypeExclusion($queryBuilder);
-        }
-        
-        if ($this->hasExcludeStates()) {            
-            $this->setQueryStateExclusion($queryBuilder);
-        }
-        
-        if ($this->hasIncludeIds()) {
-            $this->setQueryIncludeIds($queryBuilder);
-        }
-        
-        if ($this->hasExcludeIds()) {            
-            $this->setQueryExcludeIds($queryBuilder);
-        }  
-        
-        if ($this->hasUrlFilter()) {
-            $this->setQueryUrlFilter($queryBuilder);
-        }
-        
-        $queryBuilder->orderBy($this->getOrderByField(), $this->getOrder());        
-        
-        return $queryBuilder;
-    }
-    
-    
-    /**
-     * 
-     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
-     */
-    private function setQueryUserFilter(\Doctrine\ORM\QueryBuilder $queryBuilder) {
-        $users = ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeople($this->teamService->getForUser($this->user)) : [$this->user];
 
-        $userWhereParts = array();
-
-        foreach ($users as $userIndex => $user) {
-            $userWhereParts[] = 'Job.user = :User' . $userIndex;
-            $queryBuilder->setParameter('User' .  $userIndex, $user);
-        }
-
-        $queryBuilder->andWhere(implode(' OR ', $userWhereParts));
-    }
-    
-
-    /**
-     * 
-     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
-     */
-    private function setQueryTypeExclusion(\Doctrine\ORM\QueryBuilder $queryBuilder) {
-        $typeExclusionParts = array();
-
-        foreach ($this->excludeTypes as $typeIndex => $type) {                
-            $typeExclusionParts[] = 'Job.type != :Type' .  $typeIndex;
-            $queryBuilder->setParameter('Type' .  $typeIndex, $type);
-        }
-
-        $queryBuilder->andWhere('('.implode(' AND ', $typeExclusionParts).')');        
-    }
-    
-    
-    /**
-     * 
-     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
-     */
-    private function setQueryStateExclusion(\Doctrine\ORM\QueryBuilder $queryBuilder) {
-        $stateExclusionParts = array();
-
-        foreach ($this->excludeStates as $stateIndex => $state) {                
-            $stateExclusionParts[] = 'Job.state != :State' .  $stateIndex;
-            $queryBuilder->setParameter('State' .  $stateIndex, $state);
-        }
-
-        $queryBuilder->andWhere('('.implode(' AND ', $stateExclusionParts).')');        
-    }
-    
-
-    /**
-     * 
-     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
-     */    
-    private function setQueryIncludeIds(\Doctrine\ORM\QueryBuilder $queryBuilder) {
-        $idWhereParts = array();
-
-        foreach ($this->includeIds as $idIndex => $id) {
-            $idWhereParts[] = 'Job.id = :Id' . $idIndex;
-            $queryBuilder->setParameter('Id' .  $idIndex, $id);
-        }
-
-        $queryBuilder->orWhere(implode(' OR ', $idWhereParts));        
-    }
-    
-  
-    /**
-     * 
-     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
-     */
-    private function setQueryExcludeIds(\Doctrine\ORM\QueryBuilder $queryBuilder) {
-        $idWhereParts = array();
-
-        foreach ($this->excludeIds as $idIndex => $id) {
-            $idWhereParts[] = 'Job.id != :Id' . $idIndex;
-            $queryBuilder->setParameter('Id' .  $idIndex, $id);
-        }
-
-        $queryBuilder->andWhere(implode(' AND ', $idWhereParts));        
-    }
-    
-    
-    /**
-     * 
-     * @param \Doctrine\ORM\QueryBuilder $queryBuilder
-     */
-    private function setQueryUrlFilter(\Doctrine\ORM\QueryBuilder $queryBuilder) {
-        $queryBuilder->join('Job.website', 'Website');
-
-        if (substr_count($this->urlFilter, '*')) {
-            $queryBuilder->andWhere('Website.canonicalUrl LIKE :Website');
-            $queryBuilder->setParameter('Website', str_replace('*', '%', $this->urlFilter));               
-        } else {
-            $queryBuilder->andWhere('Website.canonicalUrl = :Website');
-            $queryBuilder->setParameter('Website', $this->urlFilter);                
-        }        
-    }
-    
-    /**
-     * 
-     * @return string
-     */
-    private function getOrder() {
-        return $this->sortDescending ? 'DESC' : 'ASC';
-    }
-    
-
-    /**
-     * 
-     * @return string
-     */
-    private function getOrderBy() {
-        return (is_null($this->orderBy)) ? self::DEFAULT_ORDER_BY : $this->orderBy;
-    }
-    
-    
-    /**
-     * 
-     * @return string
-     */
-    private function getOrderByField() {
-        return isset($this->orderByFieldMap[$this->getOrderBy()]) ? $this->orderByFieldMap[$this->getOrderBy()] : $this->orderByFieldMap[self::DEFAULT_ORDER_BY];
-    } 
-    
-    
-    /**
-     * 
-     * @return \Doctrine\ORM\QueryBuilder
-     */
-    private function getQueryBuilder() {
-        $queryBuilder = $this->getJobService()->getEntityRepository()->createQueryBuilder('Job');        
-        $queryBuilder->where('1 = 1');
-        
-        return $queryBuilder;
-    }
-    
-    
-    /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Services\JobService
-     */
-    private function getJobService() {
-        return $this->jobService;
+        return $urls;
     }
 }
