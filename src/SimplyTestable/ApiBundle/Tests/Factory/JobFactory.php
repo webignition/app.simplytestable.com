@@ -194,8 +194,8 @@ class JobFactory
      */
     public function reject(Job $job, $reason, Constraint $constraint)
     {
-        $jobRejectionService = $this->container->get('simplytestable.services.job.rejectionservice');
+        $jobService = $this->container->get('simplytestable.services.jobservice');
 
-        $jobRejectionService->reject($job, $reason, $constraint);
+        $jobService->reject($job, $reason, $constraint);
     }
 }
