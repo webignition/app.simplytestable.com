@@ -88,16 +88,6 @@ class JobService extends EntityService
     }
 
     /**
-     * @param Job $job
-     *
-     * @return bool
-     */
-    public function isResolving(Job $job)
-    {
-        return self::RESOLVING_STATE === $job->getState()->getName();
-    }
-
-    /**
      * @param JobConfiguration $jobConfiguration
      *
      * @return Job
@@ -212,10 +202,13 @@ class JobService extends EntityService
     {
         $jobStateName = $job->getState()->getName();
 
-        $isNew = self::STARTING_STATE === $jobStateName;
-        $isPreparing = self::PREPARING_STATE === $jobStateName;
+        $allowedStateNames = [
+            self::STARTING_STATE,
+            self::PREPARING_STATE,
+            self::RESOLVING_STATE,
+        ];
 
-        if (!$isNew && !$isPreparing && !$this->isResolving($job)) {
+        if (!in_array($jobStateName, $allowedStateNames)) {
             return $job;
         }
 
