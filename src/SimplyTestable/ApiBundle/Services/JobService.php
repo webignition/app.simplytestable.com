@@ -92,16 +92,6 @@ class JobService extends EntityService
      *
      * @return bool
      */
-    public function isResolved(Job $job)
-    {
-        return self::RESOLVED_STATE === $job->getState()->getName();
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return bool
-     */
     public function isResolving(Job $job)
     {
         return self::RESOLVING_STATE === $job->getState()->getName();

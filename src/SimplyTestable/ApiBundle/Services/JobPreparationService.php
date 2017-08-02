@@ -128,7 +128,7 @@ class JobPreparationService
      */
     public function prepare(Job $job)
     {
-        if (!$this->jobService->isResolved($job)) {
+        if (JobService::RESOLVED_STATE !== $job->getState()->getName()) {
             throw new JobPreparationServiceException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE
