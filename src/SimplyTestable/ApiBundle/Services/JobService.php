@@ -90,14 +90,6 @@ class JobService extends EntityService
     /**
      * @return State
      */
-    public function getRejectedState()
-    {
-        return $this->stateService->fetch(self::REJECTED_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getResolvingState()
     {
         return $this->stateService->fetch(self::RESOLVING_STATE);
@@ -148,7 +140,7 @@ class JobService extends EntityService
      */
     public function isRejected(Job $job)
     {
-        return $job->getState()->equals($this->getRejectedState());
+        return self::REJECTED_STATE === $job->getState()->getName();
     }
 
     /**
@@ -298,7 +290,9 @@ class JobService extends EntityService
             return $job;
         }
 
-        $job->setState($this->getRejectedState());
+        $rejectedState = $this->stateService->fetch(self::REJECTED_STATE);
+
+        $job->setState($rejectedState);
         return $this->persistAndFlush($job);
     }
 

@@ -32,7 +32,7 @@ abstract class LimitTest extends ServiceTest
                 JobFactory::KEY_TYPE => $this->getJobType(),
             ]);
 
-            if ($job->getState()->equals($this->getJobService()->getRejectedState())) {
+            if (JobService::REJECTED_STATE === $job->getState()->getName()) {
                 $this->fail('Job rejected before limit reached');
             }
 

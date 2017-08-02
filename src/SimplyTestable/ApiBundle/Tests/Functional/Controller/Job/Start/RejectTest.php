@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Start;
 
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -49,10 +50,7 @@ class RejectTest extends ActionTest
         $rejectedJobResponse = $jobStartController->startAction($request, $canonicalUrl);
         $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
 
-        $this->assertEquals(
-            $this->getJobService()->getRejectedState(),
-            $rejectedJob->getState()
-        );
+        $this->assertEquals(JobService::REJECTED_STATE, $rejectedJob->getState()->getName());
     }
 
     public function testRejectDueToPlanSingleUrlConstraint()
@@ -83,7 +81,7 @@ class RejectTest extends ActionTest
         $rejectedJobResponse = $jobStartController->startAction($request, $canonicalUrl);
         $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
 
-        $this->assertTrue($rejectedJob->getState()->equals($this->getJobService()->getRejectedState()));
+        $this->assertEquals(JobService::REJECTED_STATE, $rejectedJob->getState()->getName());
     }
 
     /**
@@ -101,7 +99,7 @@ class RejectTest extends ActionTest
         $rejectedJobResponse = $jobStartController->startAction($request, $url);
         $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
 
-        $this->assertEquals($this->getJobService()->getRejectedState(), $rejectedJob->getState());
+        $this->assertEquals(JobService::REJECTED_STATE, $rejectedJob->getState()->getName());
         $this->assertEquals(
             'unroutable',
             $this->getJobRejectionReasonService()->getForJob($rejectedJob)->getReason()
@@ -149,10 +147,7 @@ class RejectTest extends ActionTest
         $rejectedJobResponse = $jobStartController->startAction($request, self::DEFAULT_CANONICAL_URL);
         $rejectedJob = $this->getJobFromResponse($rejectedJobResponse);
 
-        $this->assertEquals(
-            $this->getJobService()->getRejectedState(),
-            $rejectedJob->getState()
-        );
+        $this->assertEquals(JobService::REJECTED_STATE, $rejectedJob->getState()->getName());
 
         $rejectionReason = $this->getJobRejectionReasonService()->getForJob($rejectedJob);
 
