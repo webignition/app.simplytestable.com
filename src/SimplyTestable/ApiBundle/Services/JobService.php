@@ -92,16 +92,6 @@ class JobService extends EntityService
      *
      * @return bool
      */
-    public function isQueued(Job $job)
-    {
-        return self::QUEUED_STATE === $job->getState()->getName();
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return bool
-     */
     public function isRejected(Job $job)
     {
         return self::REJECTED_STATE === $job->getState()->getName();
