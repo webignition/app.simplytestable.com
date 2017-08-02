@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job\ResolveWebsiteCommand;
 
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -26,7 +27,7 @@ class FullSiteJobTest extends CommandTest
         ));
 
         $this->assertEquals(0, $returnCode);
-        $this->assertEquals($this->getJobService()->getResolvedState(), $job->getState());
+        $this->assertEquals(JobService::RESOLVED_STATE, $job->getState()->getName());
         $this->assertEquals(0, $job->getTasks()->count());
         $this->assertTrue($this->getResqueQueueService()->contains(
             'job-prepare',
