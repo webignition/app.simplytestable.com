@@ -73,7 +73,9 @@ class WebsiteResolutionService
      */
     public function resolve(Job $job)
     {
-        if (!$this->jobService->isNew($job)) {
+        $jobIsNew = JobService::STARTING_STATE === $job->getState()->getName();
+
+        if (!$jobIsNew) {
             throw new WebsiteResolutionException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 WebsiteResolutionException::CODE_JOB_IN_WRONG_STATE_CODE

@@ -118,15 +118,18 @@ class CrawlJobContainerService extends EntityService
      */
     public function prepare(CrawlJobContainer $crawlJobContainer)
     {
-        if ($crawlJobContainer->getCrawlJob()->getTasks()->count() > 1) {
+        $crawlJob = $crawlJobContainer->getCrawlJob();
+        $crawlJobTasks = $crawlJob->getTasks();
+
+        if ($crawlJobTasks->count() > 1) {
             return false;
         }
 
-        if ($crawlJobContainer->getCrawlJob()->getTasks()->count() === 1) {
+        if ($crawlJobTasks->count() === 1) {
             return true;
         }
 
-        if (!$this->jobService->isNew($crawlJobContainer->getCrawlJob())) {
+        if (JobService::STARTING_STATE !== $crawlJob->getState()->getName()) {
             return false;
         }
 
@@ -137,15 +140,15 @@ class CrawlJobContainerService extends EntityService
 
         $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
 
-        $crawlJobContainer->getCrawlJob()->addTask($task);
-        $crawlJobContainer->getCrawlJob()->setState($jobQueuedState);
+        $crawlJob->addTask($task);
+        $crawlJob->setState($jobQueuedState);
 
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());
-        $crawlJobContainer->getCrawlJob()->setTimePeriod($timePeriod);
+        $crawlJob->setTimePeriod($timePeriod);
 
         $this->getManager()->persist($task);
-        $this->getManager()->persist($crawlJobContainer->getCrawlJob());
+        $this->getManager()->persist($crawlJob);
         $this->getManager()->flush();
 
         return true;

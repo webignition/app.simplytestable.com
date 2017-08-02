@@ -92,16 +92,6 @@ class JobService extends EntityService
      *
      * @return bool
      */
-    public function isNew(Job $job)
-    {
-        return self::STARTING_STATE === $job->getState()->getName();
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return bool
-     */
     public function isPreparing(Job $job)
     {
         return self::PREPARING_STATE === $job->getState()->getName();
@@ -270,7 +260,11 @@ class JobService extends EntityService
      */
     public function reject(Job $job)
     {
-        if (!$this->isNew($job) && !$this->isPreparing($job) && !$this->isResolving($job)) {
+        $jobStateName = $job->getState()->getName();
+
+        $isNew = self::STARTING_STATE === $jobStateName;
+
+        if (!$isNew && !$this->isPreparing($job) && !$this->isResolving($job)) {
             return $job;
         }
 
