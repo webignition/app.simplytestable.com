@@ -242,16 +242,6 @@ class JobService extends EntityService
      *
      * @return bool
      */
-    private function isCancelled(Job $job)
-    {
-        return self::CANCELLED_STATE === $job->getState()->getName();
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return bool
-     */
     public function isFailedNoSitemap(Job $job)
     {
         return self::FAILED_NO_SITEMAP_STATE === $job->getState()->getName();
