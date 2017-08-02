@@ -251,39 +251,6 @@ class JobService extends EntityService
     /**
      * @param Job $job
      *
-     * @return Job|bool
-     */
-    public function fetch(Job $job)
-    {
-        $jobs = $this->getEntityRepository()->findBy(array(
-            'state' => $job->getState(),
-            'user' => $job->getUser(),
-            'website' => $job->getWebsite()
-        ));
-
-        /* @var $comparator Job */
-        foreach ($jobs as $comparator) {
-            if ($job->equals($comparator)) {
-                return $comparator;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return bool
-     */
-    public function has(Job $job)
-    {
-        return $this->fetch($job) !== false;
-    }
-
-    /**
-     * @param Job $job
-     *
      * @return Job
      */
     public function persistAndFlush(Job $job)
