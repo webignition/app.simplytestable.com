@@ -92,16 +92,6 @@ class JobService extends EntityService
      *
      * @return bool
      */
-    public function isRejected(Job $job)
-    {
-        return self::REJECTED_STATE === $job->getState()->getName();
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return bool
-     */
     public function isCompleted(Job $job)
     {
         return self::COMPLETED_STATE == $job->getState();
@@ -262,23 +252,16 @@ class JobService extends EntityService
      */
     public function isFinished(Job $job)
     {
-        if ($this->isRejected($job)) {
-            return true;
-        }
+        $finishedStates = [
+            self::REJECTED_STATE,
+            self::CANCELLED_STATE,
+            self::COMPLETED_STATE,
+            self::FAILED_NO_SITEMAP_STATE,
+        ];
 
-        if ($this->isCancelled($job)) {
-            return true;
-        }
+        $jobStateName = $job->getState()->getName();
 
-        if ($this->isCompleted($job)) {
-            return true;
-        }
-
-        if ($this->isFailedNoSitemap($job)) {
-            return true;
-        }
-
-        return false;
+        return in_array($jobStateName, $finishedStates);
     }
 
     /**
