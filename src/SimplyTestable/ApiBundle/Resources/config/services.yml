@@ -20,6 +20,7 @@ services:
         websiteService: "@simplytestable.services.websiteservice"
         jobRejectionService: "@simplytestable.services.job.rejectionservice"
         urlResolver: '@simplytestable.services.urlresolver'
+        stateService: '@simplytestable.services.stateservice'
 
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService
