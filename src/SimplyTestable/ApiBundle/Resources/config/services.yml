@@ -406,3 +406,9 @@ services:
     class:  SimplyTestable\ApiBundle\Services\UrlFinder
     arguments:
         httpClientService: "@simplytestable.services.httpClientService"
+
+  simplytestable.services.joblistquerybuilderfactory:
+    class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
+    arguments:
+      teamService: '@simplytestable.services.teamservice'
+      entityManager: '@doctrine.orm.entity_manager'
