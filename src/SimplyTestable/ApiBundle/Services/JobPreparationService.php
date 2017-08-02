@@ -200,7 +200,7 @@ class JobPreparationService
         $this->processedUrls = array();
         $job = $crawlJobContainer->getParentJob();
 
-        if (!$this->jobService->isFailedNoSitemap($job)) {
+        if (JobService::FAILED_NO_SITEMAP_STATE !== $job->getState()->getName()) {
             throw new JobPreparationServiceException(
                 'Job is in wrong state, currently "'.$job->getState()->getName().'"',
                 JobPreparationServiceException::CODE_JOB_IN_WRONG_STATE_CODE

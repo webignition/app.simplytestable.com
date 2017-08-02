@@ -240,16 +240,6 @@ class JobService extends EntityService
     /**
      * @param Job $job
      *
-     * @return bool
-     */
-    public function isFailedNoSitemap(Job $job)
-    {
-        return self::FAILED_NO_SITEMAP_STATE === $job->getState()->getName();
-    }
-
-    /**
-     * @param Job $job
-     *
      * @return Job|bool
      */
     public function fetch(Job $job)
