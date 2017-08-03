@@ -49,14 +49,6 @@ class QueueService
     }
 
     /**
-     * @return int
-     */
-    public function getLimit()
-    {
-        return $this->limit;
-    }
-
-    /**
      * @param Job $job
      *
      * @return $this
@@ -96,9 +88,11 @@ class QueueService
 
         $jobTaskIds = [];
         foreach ($incompleteJobs as $job) {
-            $taskIdsForJob = $this->taskService->getEntityRepository()->getIdsByJobAndTaskStates($job, [
-                $this->taskService->getQueuedState()
-            ], $this->getLimit());
+            $taskIdsForJob = $this->taskService->getEntityRepository()->getIdsByJobAndTaskStates(
+                $job,
+                [$this->taskService->getQueuedState()],
+                $this->limit
+            );
 
             if (count($taskIdsForJob)) {
                 $jobTaskIds[$job->getId()] =  $taskIdsForJob;
@@ -106,7 +100,7 @@ class QueueService
         }
 
         $taskIds = [];
-        while (count($taskIds) < ($this->getLimit()) && count($jobTaskIds) > 0) {
+        while (count($taskIds) < ($this->limit) && count($jobTaskIds) > 0) {
             foreach ($jobTaskIds as $jobId => $taskIdSet) {
                 $taskIds[] = array_shift($taskIdSet);
 
@@ -118,8 +112,8 @@ class QueueService
             }
         }
 
-        if (count($taskIds) > $this->getLimit()) {
-            $taskIds = array_slice($taskIds, 0, $this->getLimit());
+        if (count($taskIds) > $this->limit) {
+            $taskIds = array_slice($taskIds, 0, $this->limit);
         }
 
         return $taskIds;
