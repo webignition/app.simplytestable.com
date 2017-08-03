@@ -168,7 +168,7 @@ class JobListController extends BaseJobController
         if (!is_null($this->get('request')->query->get('exclude-finished'))) {
             $excludeStateNames = array_merge(
                 $excludeStateNames,
-                $this->getStateNames($this->getJobService()->getFinishedStates())
+                $this->getJobService()->getFinishedStateNames()
             );
         }
 

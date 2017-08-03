@@ -39,6 +39,16 @@ class JobService extends EntityService
     ];
 
     /**
+     * @var string[]
+     */
+    private $finishedStates = [
+        self::REJECTED_STATE,
+        self::CANCELLED_STATE,
+        self::COMPLETED_STATE,
+        self::FAILED_NO_SITEMAP_STATE,
+    ];
+
+    /**
      * @var StateService
      */
     private $stateService;
@@ -236,16 +246,10 @@ class JobService extends EntityService
      */
     public function isFinished(Job $job)
     {
-        $finishedStates = [
-            self::REJECTED_STATE,
-            self::CANCELLED_STATE,
-            self::COMPLETED_STATE,
-            self::FAILED_NO_SITEMAP_STATE,
-        ];
-
-        $jobStateName = $job->getState()->getName();
-
-        return in_array($jobStateName, $finishedStates);
+        return in_array(
+            $job->getState()->getName(),
+            $this->finishedStates
+        );
     }
 
     /**
@@ -400,14 +404,11 @@ class JobService extends EntityService
     }
 
     /**
-     * @return State[]
+     * @return string[]
      */
-    public function getFinishedStates()
+    public function getFinishedStateNames()
     {
-        return $this->stateService->getEntityRepository()->findAllStartingWithAndExcluding(
-            'job-',
-            $this->getIncompleteStates()
-        );
+        return $this->finishedStates;
     }
 
     /**
