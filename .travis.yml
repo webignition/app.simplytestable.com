@@ -8,6 +8,10 @@ php:
   - 7
   - 7.1
 
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
 before_install:
   - composer self-update
   - phpenv config-add travis.php.ini
@@ -17,7 +21,7 @@ before_install:
   - cp src/SimplyTestable/ApiBundle/Resources/config/parameters.yml.dist.yml src/SimplyTestable/ApiBundle/Resources/config/parameters.yml
 
 install:
-  - composer install
+  - composer install --prefer-dist
   - php app/console doctrine:database:create
   - php app/console doctrine:migrations:migrate --no-interaction
   - php app/console doctrine:fixtures:load --append
