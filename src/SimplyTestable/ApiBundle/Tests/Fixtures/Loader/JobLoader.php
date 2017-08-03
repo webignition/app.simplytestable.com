@@ -39,6 +39,7 @@ class JobLoader
     public function load($fixture, $users)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
 
         $fixturePath = __DIR__ . '/../' . $fixture;
         $fixtureRealPath = realpath(__DIR__ . '/../' . $fixture);
@@ -62,7 +63,17 @@ class JobLoader
                 $jobValues['user'] = $users[$jobValues['user']];
             }
 
-            $job = $jobFactory->create($jobValues);
+            $parentJob = null;
+
+            if ($jobValues['type'] == 'crawl') {
+                $job = $jobFactory->createResolveAndPrepareStandardCrawlJob($jobValues);
+
+                $crawlJobContainer = $crawlJobContainerService->getForJob($job);
+
+                $jobs[] = $crawlJobContainer->getParentJob();
+            } else {
+                $job = $jobFactory->create($jobValues);
+            }
 
             if (isset($jobValues['state'])) {
                 $state = $stateService->fetch($jobValues['state']);

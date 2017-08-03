@@ -103,6 +103,7 @@ class JobListController extends BaseJobController
     {
         $crawlJobParentIds = array();
         $crawlJobContainers = $this->getCrawlJobContainerService()->getAllActiveForUser($this->getUser());
+
         foreach ($crawlJobContainers as $crawlJobContainer) {
             $crawlJobParentIds[] = $crawlJobContainer->getParentJob()->getId();
         }
@@ -116,7 +117,7 @@ class JobListController extends BaseJobController
     private function getExcludeTypeNames()
     {
         $excludeTypeNames = (is_null($this->get('request')->query->get('exclude-types')))
-            ? array('crawl')
+            ? []
             : $this->get('request')->query->get('exclude-types');
 
         if (!in_array('crawl', $excludeTypeNames)) {
