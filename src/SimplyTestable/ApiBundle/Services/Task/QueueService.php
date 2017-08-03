@@ -60,14 +60,6 @@ class QueueService
     }
 
     /**
-     * @return Job
-     */
-    public function getJob()
-    {
-        return $this->job;
-    }
-
-    /**
      * @return $this
      */
     public function clearJob()
