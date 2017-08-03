@@ -78,16 +78,6 @@ class CrawlJobContainerService extends EntityService
     }
 
     /**
-     * @param int $id
-     *
-     * @return Job
-     */
-    public function getById($id)
-    {
-        return $this->getEntityRepository()->find($id);
-    }
-
-    /**
      * @param Job $job
      *
      * @return bool
@@ -207,23 +197,15 @@ class CrawlJobContainerService extends EntityService
      */
     public function processTaskResults(Task $task)
     {
-        if (is_null($task->getType())) {
+        if (TaskTypeService::URL_DISCOVERY_TYPE !== $task->getType()->getName()) {
             return false;
         }
 
-        if (!$task->getType()->equals($this->taskTypeService->getByName('URL discovery'))) {
+        if (TaskService::COMPLETED_STATE !== $task->getState()->getName()) {
             return false;
         }
 
-        if (is_null($task->getState())) {
-            return false;
-        }
-
-        if (!$task->getState()->equals($this->taskService->getCompletedState())) {
-            return false;
-        }
-
-        if (is_null($task->getOutput())) {
+        if (empty($task->getOutput())) {
             return false;
         }
 
@@ -232,15 +214,7 @@ class CrawlJobContainerService extends EntityService
         }
 
         /* @var $crawlJobContainer CrawlJobContainer */
-        $crawlJobContainer = $this->getEntityRepository()->findOneBy(array(
-            'crawlJob' => $task->getJob()
-        ));
-
-        $taskDiscoveredUrlSet = $this->getDiscoveredUrlsFromTask($task);
-        if (!count($taskDiscoveredUrlSet) === 0) {
-            return true;
-        }
-
+        $crawlJobContainer = $this->getEntityRepository()->getForJob($task->getJob());
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
         $this->jobUserAccountPlanEnforcementService->setUser($crawlJob->getUser());
@@ -264,6 +238,7 @@ class CrawlJobContainerService extends EntityService
             return true;
         }
 
+        $taskDiscoveredUrlSet = $this->getDiscoveredUrlsFromTask($task);
         $isFlushRequired = false;
 
         foreach ($taskDiscoveredUrlSet as $url) {
@@ -327,6 +302,7 @@ class CrawlJobContainerService extends EntityService
 
     /**
      * @param CrawlJobContainer $crawlJobContainer
+     * @param bool $constrainToAccountPlan
      *
      * @return string[]
      */
@@ -336,8 +312,10 @@ class CrawlJobContainerService extends EntityService
             $crawlJobContainer->getParentJob()->getWebsite()->getCanonicalUrl()
         );
 
+        $crawlJob = $crawlJobContainer->getCrawlJob();
+
         $completedTaskUrls = $this->taskService->getEntityRepository()->findUrlsByJobAndState(
-            $crawlJobContainer->getCrawlJob(),
+            $crawlJob,
             $this->taskService->getCompletedState()
         );
 
@@ -348,7 +326,7 @@ class CrawlJobContainerService extends EntityService
         }
 
         $completedTaskOutputs = $this->taskService->getEntityRepository()->getOutputCollectionByJobAndState(
-            $crawlJobContainer->getCrawlJob(),
+            $crawlJob,
             $this->taskService->getCompletedState()
         );
 
@@ -363,12 +341,14 @@ class CrawlJobContainerService extends EntityService
         }
 
         if ($constrainToAccountPlan) {
-            $accountPlan = $this->jobUserAccountPlanEnforcementService->getUserAccountPlanService()->getForUser(
-                $crawlJobContainer->getCrawlJob()->getUser()
-            )->getPlan();
-            if ($accountPlan->hasConstraintNamed('urls_per_job')) {
-                return array_slice($discoveredUrls, 0, $accountPlan->getConstraintNamed('urls_per_job')->getLimit());
-            }
+            $userAccountPlanService = $this->jobUserAccountPlanEnforcementService->getUserAccountPlanService();
+            $accountPlan = $userAccountPlanService->getForUser($crawlJob->getUser())->getPlan();
+
+            $discoveredUrls = array_slice(
+                $discoveredUrls,
+                0,
+                $accountPlan->getConstraintNamed('urls_per_job')->getLimit()
+            );
         }
 
         return $discoveredUrls;
