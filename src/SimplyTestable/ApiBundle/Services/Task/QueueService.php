@@ -5,94 +5,90 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
-class QueueService {
-
+class QueueService
+{
     /**
-     *
      * @var JobService
      */
     private $jobService;
 
-
     /**
-     *
      * @var TaskService
      */
     private $taskService;
-
 
     /**
      * @var int
      */
     private $limit = 1;
 
-
     /**
      * @var Job
      */
     private $job = null;
 
-
     /**
      * @param JobService $jobService
      * @param TaskService $taskService
      */
-    public function __construct(JobService $jobService, TaskService $taskService) {
+    public function __construct(JobService $jobService, TaskService $taskService)
+    {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
     }
 
-
     /**
      * @param int $limit
+     *
      * @return $this
      */
-    public function setLimit($limit) {
+    public function setLimit($limit)
+    {
         $this->limit = $limit;
         return $this;
     }
 
-
     /**
      * @return int
      */
-    public function getLimit() {
+    public function getLimit()
+    {
         return $this->limit;
     }
 
-
     /**
      * @param Job $job
+     *
      * @return $this
      */
-    public function setJob(Job $job) {
+    public function setJob(Job $job)
+    {
         $this->job = $job;
         return $this;
     }
 
-
     /**
      * @return Job
      */
-    public function getJob() {
+    public function getJob()
+    {
         return $this->job;
     }
-
 
     /**
      * @return $this
      */
-    public function clearJob() {
+    public function clearJob()
+    {
         $this->job = null;
         return $this;
     }
 
-
-
     /**
      * @return int[]
      */
-    public function getNext() {
+    public function getNext()
+    {
         $incompleteJobs = $this->getIncompleteJobSet();
         if (count($incompleteJobs) === 0) {
             return [];
@@ -129,8 +125,11 @@ class QueueService {
         return $taskIds;
     }
 
-
-    private function getIncompleteJobSet() {
+    /**
+     * @return Job[]
+     */
+    private function getIncompleteJobSet()
+    {
         $incompleteJobs =  $this->jobService->getEntityRepository()->getByStatesAndTaskStates(
             $this->jobService->getIncompleteStates(),
             [
@@ -148,5 +147,4 @@ class QueueService {
 
         return $incompleteJobs;
     }
-
 }
