@@ -57,3 +57,9 @@
   siteRootUrl: "http://1.example.com"
   type: "single url"
   state: "job-new"
+
+-
+  user: "private"
+  siteRootUrl: "http://2.example.com"
+  type: "crawl"
+  state: "job-queued"
