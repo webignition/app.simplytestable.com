@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\ScheduledJob\Execute
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 abstract class WithScheduledJobTest extends CommandTest {
@@ -78,7 +79,7 @@ abstract class WithScheduledJobTest extends CommandTest {
      * @return string
      */
     protected function getJobConfigurationJobType() {
-        return 'full site';
+        return JobTypeService::FULL_SITE_NAME;
     }
 
 

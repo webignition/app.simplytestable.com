@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -38,7 +39,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
         $jobFactory = new JobFactory($this->container);
 
         $job = $jobFactory->createResolveAndPrepare([
-            'type' => 'full site',
+            'type' => JobTypeService::FULL_SITE_NAME,
             'siteRootUrl' => 'http://example.com',
             'testTypes' => ['html validation',],
             'testTypeOptions' => [],

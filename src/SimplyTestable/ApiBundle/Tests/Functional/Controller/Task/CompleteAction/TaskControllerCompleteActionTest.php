@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Task\CompleteActi
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -84,7 +85,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         );
 
         $job = $this->jobFactory->createResolveAndPrepare([
-            'type' => 'full site',
+            'type' => JobTypeService::FULL_SITE_NAME,
             'siteRootUrl' => 'http://example.com',
             'testTypes' => ['html validation',],
             'testTypeOptions' => [],
@@ -229,7 +230,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                 'jobCollectionData' => [
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => 'user1@example.com',
                         'testTypes' => [$htmlValidationTaskType->getName(),],
                         'testTypeOptions' => [],
@@ -271,7 +272,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                 'jobCollectionData' => [
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => 'user1@example.com',
                         'testTypes' => [$htmlValidationTaskType->getName(),],
                         'testTypeOptions' => [],
@@ -313,7 +314,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                 'jobCollectionData' => [
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => 'user1@example.com',
                         'testTypes' => [$htmlValidationTaskType->getName(),],
                         'testTypeOptions' => [],
@@ -355,7 +356,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                 'jobCollectionData' => [
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => 'user1@example.com',
                         'testTypes' => [$htmlValidationTaskType->getName(),],
                         'testTypeOptions' => [],
@@ -363,7 +364,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                     ],
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => UserService::PUBLIC_USER_EMAIL_ADDRESS,
                         'testTypes' => [
                             $htmlValidationTaskType->getName(),
@@ -428,7 +429,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                 'jobCollectionData' => [
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => 'user1@example.com',
                         'testTypes' => [$htmlValidationTaskType->getName(),],
                         'testTypeOptions' => [],
@@ -436,7 +437,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                     ],
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => 'user2@example.com',
                         'testTypes' => [
                             $htmlValidationTaskType->getName(),
@@ -501,7 +502,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                 'jobCollectionData' => [
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => 'user1@example.com',
                         'testTypes' => [$htmlValidationTaskType->getName(),],
                         'parameters' => [
@@ -511,7 +512,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                     ],
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => UserService::PUBLIC_USER_EMAIL_ADDRESS,
                         'testTypes' => [
                             $htmlValidationTaskType->getName(),
@@ -574,7 +575,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                 'jobCollectionData' => [
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => 'user1@example.com',
                         'testTypes' => [$cssValidationTaskType->getName(),],
                         'testTypeOptions' => [
@@ -588,7 +589,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
                     ],
                     [
                         'siteRootUrl' => 'http://example.com',
-                        'type' => 'full site',
+                        'type' => JobTypeService::FULL_SITE_NAME,
                         'user' => UserService::PUBLIC_USER_EMAIL_ADDRESS,
                         'testTypes' => [
                             $htmlValidationTaskType->getName(),

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobUserAccountPlanE
 
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 abstract class LimitTest extends ServiceTest
@@ -75,7 +76,9 @@ abstract class LimitTest extends ServiceTest
 
     private function getJobType()
     {
-        return $this->isFullSiteLimitTest() ? 'full site' : 'single url';
+        return $this->isFullSiteLimitTest()
+            ? JobTypeService::FULL_SITE_NAME
+            : JobTypeService::SINGLE_URL_NAME;
     }
 
     protected function getWebsite()
