@@ -6,8 +6,8 @@ use SimplyTestable\ApiBundle\Entity\Job\Type;
 class JobTypeService extends EntityService
 {
     const DEFAULT_TYPE_ID = 1;
-    const FULL_SITE_NAME = 'full site';
-    const SINGLE_URL_NAME = 'single url';
+    const FULL_SITE_NAME = 'Full site';
+    const SINGLE_URL_NAME = 'Single URL';
     const CRAWL_NAME = 'crawl';
 
     /**
