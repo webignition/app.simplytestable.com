@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Guzzle\Http\Message\Response as GuzzleResponse;
 
-class JobControlllerStatusActionTest extends AbstractJobControllerTest
+class JobControllerStatusActionTest extends AbstractJobControllerTest
 {
     const CANONICAL_URL = 'http://example.com/';
 
