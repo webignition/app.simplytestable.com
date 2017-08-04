@@ -95,7 +95,7 @@ class JobListServiceTest extends BaseSimplyTestableTestCase
             $listedJobData = [
                 'id' => $listedJob->getId(),
                 'url' => $listedJob->getWebsite()->getCanonicalUrl(),
-                'type' => strtolower($listedJob->getType()->getName()),
+                'type' => $listedJob->getType()->getName(),
                 'state' => $listedJob->getState()->getName(),
 
             ];
