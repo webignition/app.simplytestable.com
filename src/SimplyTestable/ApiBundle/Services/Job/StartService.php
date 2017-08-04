@@ -7,12 +7,13 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartS
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
-use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception as UserAccountPlanEnforcementException;
+use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
+    as UserAccountPlanEnforcementException;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 
-class StartService {
-
+class StartService
+{
     /**
      * @var JobUserAccountPlanEnforcementService
      */
@@ -23,25 +24,28 @@ class StartService {
      */
     private $jobTypeService;
 
-
     /**
      * @var JobService
      */
     private $jobService;
-
 
     /**
      * @var UserService
      */
     private $userService;
 
-
     /**
      * @var ResqueQueueService
      */
     private $resqueQueueService;
 
-
+    /**
+     * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
+     * @param JobTypeService $jobTypeService
+     * @param JobService $jobService
+     * @param UserService $userService
+     * @param ResqueQueueService $resqueQueueService
+     */
     public function __construct(
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         JobTypeService $jobTypeService,
@@ -56,14 +60,14 @@ class StartService {
         $this->resqueQueueService = $resqueQueueService;
     }
 
-
     /**
      * @param JobConfiguration $jobConfiguration
      * @return null|Job
      * @throws JobStartServiceException
      * @throws UserAccountPlanEnforcementException
      */
-    public function start(JobConfiguration $jobConfiguration) {
+    public function start(JobConfiguration $jobConfiguration)
+    {
         if (!$jobConfiguration->getWebsite()->isPubliclyRoutable()) {
             throw new JobStartServiceException(
                 'Unroutable website',
@@ -74,8 +78,10 @@ class StartService {
         $this->jobUserAccountPlanEnforcementService->setUser($jobConfiguration->getUser());
         $this->jobUserAccountPlanEnforcementService->setJobType($jobConfiguration->getType());
 
+        $website = $jobConfiguration->getWebsite();
+
         if ($jobConfiguration->getType()->equals($this->jobTypeService->getFullSiteType())) {
-            if ($this->jobUserAccountPlanEnforcementService->isFullSiteJobLimitReachedForWebSite($jobConfiguration->getWebsite())) {
+            if ($this->jobUserAccountPlanEnforcementService->isFullSiteJobLimitReachedForWebSite($website)) {
                 throw new UserAccountPlanEnforcementException(
                     'Full site job limit reached for website',
                     UserAccountPlanEnforcementException::CODE_FULL_SITE_JOB_LIMIT_REACHED,
@@ -85,7 +91,7 @@ class StartService {
         }
 
         if ($jobConfiguration->getType()->equals($this->jobTypeService->getSingleUrlType())) {
-            if ($this->jobUserAccountPlanEnforcementService->isSingleUrlLimitReachedForWebsite($jobConfiguration->getWebsite())) {
+            if ($this->jobUserAccountPlanEnforcementService->isSingleUrlLimitReachedForWebsite($website)) {
                 throw new UserAccountPlanEnforcementException(
                     'Single URL job limit reached for website',
                     UserAccountPlanEnforcementException::CODE_SINGLE_URL_JOB_LIMIT_REACHED,
@@ -102,8 +108,9 @@ class StartService {
             );
         }
 
-        if ($this->hasExistingJob($jobConfiguration)) {
-            return $this->getExistingJob($jobConfiguration);
+        $existingJob = $this->getExistingJob($jobConfiguration);
+        if (!empty($existingJob)) {
+            return $existingJob;
         }
 
         $job = $this->jobService->create(
@@ -125,12 +132,13 @@ class StartService {
         return $job;
     }
 
-
     /**
      * @param JobConfiguration $jobConfiguration
+     *
      * @return null|Job
      */
-    public function getExistingJob(JobConfiguration $jobConfiguration) {
+    public function getExistingJob(JobConfiguration $jobConfiguration)
+    {
         /* @var $existingJob Job */
         $existingJobs = $this->jobService->getEntityRepository()->findBy([
             'website' => $jobConfiguration->getWebsite(),
@@ -139,24 +147,14 @@ class StartService {
             'type' => $jobConfiguration->getType()
         ]);
 
+        $jobConfigurationTaskTypes = $jobConfiguration->getTaskConfigurationsAsCollection()->getTaskTypes();
+
         foreach ($existingJobs as $existingJob) {
-            if ($existingJob->getTaskTypeCollection()->equals($jobConfiguration->getTaskConfigurationsAsCollection()->getTaskTypes())) {
+            if ($existingJob->getTaskTypeCollection()->equals($jobConfigurationTaskTypes)) {
                 return $existingJob;
             }
         }
 
         return null;
     }
-
-
-    /**
-     * @param JobConfiguration $jobConfiguration
-     * @return bool
-     */
-    public function hasExistingJob(JobConfiguration $jobConfiguration) {
-        return !is_null($this->getExistingJob($jobConfiguration));
-    }
-
-
-
 }
