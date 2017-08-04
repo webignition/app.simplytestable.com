@@ -1,91 +1,87 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\State;
 
+class StateService extends EntityService
+{
+    const EXCEPTION_MESSAGE_UNKNOWN_STATE = 'Unknown state "%s"';
+    const EXCEPTION_CODE_UNKNOWN_STATE = 1;
 
-class StateService extends EntityService {
-    
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\State';
-    
-    private $states = array();
-    
     /**
-     *
-     * @return string
+     * @var State[]
      */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
+    private $states = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getEntityName()
+    {
+        return State::class;
     }
 
-    
     /**
      * @param string $name
-     * @return \SimplyTestable\ApiBundle\Entity\State
-     */
-    public function fetch($name) {
-        if (!isset($this->states[$name])) {            
-            if (!$this->has($name)) {
-                $this->create($name);
-            }            
-            
-            $this->states[$name] = $this->find($name);
-        }        
-        
-        return $this->states[$name];
-    }
-    
-    
-    /**
-     *
-     * @param string $name
-     * @return \SimplyTestable\ApiBundle\Entity\State 
-     */
-    public function find($name) {
-        return $this->getEntityRepository()->findOneByName($name);
-    }
-    
-    
-    /**
-     *
-     * @param string $name
-     * @return boolean
-     */
-    public function has($name) {
-        return !is_null($this->find($name));
-    }
-    
-    
-    /**
-     *
-     * @param string $name
-     * @return \SimplyTestable\ApiBundle\Entity\State
-     */
-    public function create($name) {
-        $state = new State();
-        $state->setName($name);
-        
-        $this->persistAndFlush($name);
-        return $state;
-    }
-    
-    /**
-     *
-     * @param State $job
      * @return State
      */
-    public function persistAndFlush(State $state) {
-        $this->getManager()->persist($state);
-        $this->getManager()->flush();
-        return $state;
-    }    
-    
+    public function fetch($name)
+    {
+        if (!isset($this->states[$name])) {
+            if (!$this->has($name)) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        self::EXCEPTION_MESSAGE_UNKNOWN_STATE,
+                        $name
+                    ),
+                    self::EXCEPTION_CODE_UNKNOWN_STATE
+                );
+            }
+
+            $this->states[$name] = $this->find($name);
+        }
+
+        return $this->states[$name];
+    }
+
     /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Repository\StateRepository
+     * @param string[] $stateNames
+     *
+     * @return State[]
      */
-    public function getEntityRepository() {
-        return parent::getEntityRepository();
+    public function fetchCollection($stateNames)
+    {
+        $states = [];
+
+        foreach ($stateNames as $stateName) {
+            $states[$stateName] = $this->fetch($stateName);
+        }
+
+        return $states;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return State
+     */
+    private function find($name)
+    {
+        /* @var State $state */
+        $state = $this->getEntityRepository()->findOneBy([
+           'name' => $name
+        ]);
+
+        return $state;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function has($name)
+    {
+        return !is_null($this->find($name));
     }
 }
