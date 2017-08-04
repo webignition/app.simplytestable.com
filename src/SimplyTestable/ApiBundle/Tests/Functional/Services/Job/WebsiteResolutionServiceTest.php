@@ -159,7 +159,7 @@ class WebsiteResolutionServiceTest extends BaseSimplyTestableTestCase
     public function resolveDataProvider()
     {
         return [
-            'full site' => [
+            JobTypeService::FULL_SITE_NAME => [
                 'jobValues' => [
                     JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
                     JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,

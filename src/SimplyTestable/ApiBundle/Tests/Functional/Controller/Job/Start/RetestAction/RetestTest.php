@@ -127,7 +127,7 @@ class RetestTest extends ActionTest
     public function retestDataProvider()
     {
         return [
-            'full site' => [
+            JobTypeService::FULL_SITE_NAME => [
                 'jobValues' => [
                     JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
                     JobFactory::KEY_TEST_TYPES => [
@@ -141,7 +141,7 @@ class RetestTest extends ActionTest
                     ],
                 ],
             ],
-            'single url' => [
+            JobTypeService::SINGLE_URL_NAME => [
                 'jobValues' => [
                     JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
                 ],

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\ScheduledJob\Execute
 
 use SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 class SingleUrlLimitReachedTest extends RejectedTest
@@ -45,7 +46,7 @@ class SingleUrlLimitReachedTest extends RejectedTest
      * @return string
      */
     protected function getJobConfigurationJobType() {
-        return 'single url';
+        return JobTypeService::SINGLE_URL_NAME;
     }
 
     protected function getExpectedReturnCode()

@@ -137,7 +137,7 @@ class JobListControllerTest extends BaseSimplyTestableTestCase
             $listedJobData = [
                 'id' => $listedJob['id'],
                 'url' => $listedJob['website'],
-                'type' => strtolower($listedJob['type']),
+                'type' => $listedJob['type'],
                 'state' => $listedJob['state'],
 
             ];
