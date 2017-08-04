@@ -75,7 +75,14 @@ class JobController extends BaseJobController
         return $this->setIsPublic($site_root_url, $test_id, false);
     }
 
-    public function isPublicAction($site_root_url, $test_id) {
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
+    public function isPublicAction($site_root_url, $test_id)
+    {
         $response = new Response();
 
         if (!$this->getJobService()->getIsPublic($test_id)) {
@@ -140,6 +147,12 @@ class JobController extends BaseJobController
         }
     }
 
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
     public function cancelAction($site_root_url, $test_id)
     {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {

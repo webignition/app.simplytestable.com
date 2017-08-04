@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 class JobControllerCancelActionTest extends AbstractJobControllerTest
 {
