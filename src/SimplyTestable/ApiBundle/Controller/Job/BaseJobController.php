@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
+use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Controller\ApiController;
@@ -28,6 +29,7 @@ abstract class BaseJobController extends ApiController
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $jobRejectionReasonService = $this->container->get('simplytestable.services.jobrejectionreasonservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
 
         $jobTaskTypeOptions = [];
 
@@ -53,7 +55,10 @@ abstract class BaseJobController extends ApiController
             'time_period' => $job->getTimePeriod(),
             'url_count' => $job->getUrlCount(),
             'task_count' => $taskService->getCountByJob($job),
-            'task_count_by_state' => $this->getTaskCountByState($job),
+            'task_count_by_state' => $this->getTaskCountByState(
+                $job,
+                $stateService->fetchCollection($taskService->getAvailableStateNames())
+            ),
             'task_types' => $job->getRequestedTaskTypes(),
             'errored_task_count' => $jobService->getErroredTaskCount($job),
             'cancelled_task_count' => $jobService->getCancelledTaskCount($job),
@@ -112,40 +117,24 @@ abstract class BaseJobController extends ApiController
 
     /**
      * @param Job $job
+     * @param State[] $taskStates
      *
      * @return array
      */
-    private function getTaskCountByState(Job $job)
+    private function getTaskCountByState(Job $job, $taskStates)
     {
-        $availableStateNames = $this->getTaskService()->getAvailableStateNames();
-        $taskCountByState = array();
+        $taskCountByState = [];
 
-        foreach ($availableStateNames as $stateName) {
-            $stateShortName = str_replace('task-', '', $stateName);
-            $methodName = $this->stateNameToStateRetrievalMethodName($stateShortName);
-            $taskCountByState[$stateShortName] = $this->getTaskService()->getCountByJobAndState(
+        foreach ($taskStates as $taskState) {
+            $taskStateShortName = str_replace('task-', '', $taskState->getName());
+
+            $taskCountByState[$taskStateShortName] = $this->getTaskService()->getCountByJobAndState(
                 $job,
-                $this->getTaskService()->$methodName()
+                $taskState
             );
         }
 
         return $taskCountByState;
-    }
-
-    /**
-     * @param string $stateName
-     *
-     * @return string
-     */
-    private function stateNameToStateRetrievalMethodName($stateName)
-    {
-        $methodName = $stateName;
-
-        $methodName = str_replace('-', ' ', $methodName);
-        $methodName = ucwords($methodName);
-        $methodName = str_replace(' ', '', $methodName);
-
-        return 'get' . $methodName . 'State';
     }
 
     /**
