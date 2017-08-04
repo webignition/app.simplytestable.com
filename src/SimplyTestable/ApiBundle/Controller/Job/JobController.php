@@ -85,13 +85,12 @@ class JobController extends BaseJobController
      */
     public function isPublicAction($site_root_url, $test_id)
     {
-        $response = new Response();
+        $jobService = $this->get('simplytestable.services.jobservice');
 
-        if (!$this->getJobService()->getIsPublic($test_id)) {
-            $response->setStatusCode(404);
-        }
-
-        return $response;
+        return new Response(
+            '',
+            $jobService->getIsPublic($test_id) ? 200 : 404
+        );
     }
 
     private function setIsPublic($site_root_url, $test_id, $isPublic) {
