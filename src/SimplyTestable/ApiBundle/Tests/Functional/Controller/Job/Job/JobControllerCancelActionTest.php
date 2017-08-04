@@ -7,32 +7,10 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class JobControllerCancelActionTest extends AbstractJobControllerTest
 {
-    /**
-     * @var UserFactory
-     */
-    private $userFactory;
-
-    /**
-     * @var JobFactory
-     */
-    private $jobFactory;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->userFactory = new UserFactory($this->container);
-        $this->jobFactory = new JobFactory($this->container);
-    }
-
     public function testRequest()
     {
         $job = $this->jobFactory->create([

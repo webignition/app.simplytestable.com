@@ -3,10 +3,13 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job;
 
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class JobControllerLatestActionTest extends AbstractJobControllerTest
+class JobControllerSetPublicActionTest extends AbstractJobControllerTest
 {
+    const CANONICAL_URL = 'http://example.com/';
+
     public function testRequest()
     {
         $job = $this->jobFactory->create([
@@ -14,7 +17,8 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         ]);
 
         $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_job_latest', [
+            'url' => $this->container->get('router')->generate('job_job_setpublic', [
+                'test_id' => $job->getId(),
                 'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
         ]);
@@ -22,24 +26,23 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
-        $this->assertTrue(
-            $response->isRedirect(sprintf(
-                'http://localhost/job/http://example.com//%d/',
-                $job->getId()
-            ))
-        );
+        $this->assertEquals(302, $response->getStatusCode());
     }
 
     /**
-     * @dataProvider latestActionDataProvider
+     * @dataProvider setPublicActionDataProvider
      *
      * @param string $owner
      * @param string $requester
-     * @param bool $callSetPublic
      * @param int $expectedResponseStatusCode
+     * @param bool $expectedIsPublic
      */
-    public function testLatestAction($owner, $requester, $callSetPublic, $expectedResponseStatusCode)
-    {
+    public function testSetPublicAction(
+        $owner,
+        $requester,
+        $expectedResponseStatusCode,
+        $expectedIsPublic
+    ) {
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
 
         $ownerUser = $users[$owner];
@@ -51,82 +54,71 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
             JobFactory::KEY_USER => $ownerUser,
         ]);
 
-        if ($callSetPublic) {
-            $this->jobController->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
-        }
-
         $this->getUserService()->setUser($requesterUser);
-        $response = $this->jobController->latestAction($job->getWebsite()->getCanonicalUrl());
+        $response = $this->jobController->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
 
         $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
         if ($expectedResponseStatusCode === 302) {
             $this->assertEquals($job->getId(), $this->getJobIdFromUrl($response->getTargetUrl()));
         }
+
+        $this->assertEquals($expectedIsPublic, $job->getIsPublic());
     }
 
     /**
      * @return array
      */
-    public function latestActionDataProvider()
+    public function setPublicActionDataProvider()
     {
         return [
             'public owner, public requester' => [
                 'owner' => 'public',
                 'requester' => 'public',
-                'callSetPublic' => false,
                 'expectedStatusCode' => 302,
+                'expectedIsPublic' => true,
             ],
             'public owner, private requester' => [
                 'owner' => 'public',
                 'requester' => 'private',
-                'callSetPublic' => false,
                 'expectedStatusCode' => 302,
+                'expectedIsPublic' => true,
             ],
             'private owner, private requester' => [
                 'owner' => 'private',
                 'requester' => 'private',
-                'callSetPublic' => false,
                 'expectedStatusCode' => 302,
+                'expectedIsPublic' => true,
             ],
-            'private owner, public requester, private test' => [
+            'private owner, public requester' => [
                 'owner' => 'private',
                 'requester' => 'public',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 404,
+                'expectedStatusCode' => 302,
+                'expectedIsPublic' => false,
             ],
-            'private owner, public requester, public test' => [
+            'private owner, different private requester' => [
                 'owner' => 'private',
-                'requester' => 'public',
-                'callSetPublic' => true,
-                'expectedStatusCode' => 404,
-            ],
-            'leader owner, leader requester' => [
-                'owner' => 'leader',
                 'requester' => 'leader',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 302,
+                'expectedStatusCode' => 403,
+                'expectedIsPublic' => false,
             ],
             'leader owner, member1 requester' => [
                 'owner' => 'leader',
                 'requester' => 'member1',
-                'callSetPublic' => false,
                 'expectedStatusCode' => 302,
+                'expectedIsPublic' => true,
+            ],
+            'member1 owner, leader requester' => [
+                'owner' => 'member1',
+                'requester' => 'leader',
+                'expectedStatusCode' => 302,
+                'expectedIsPublic' => true,
+            ],
+            'member1 owner, member2 requester' => [
+                'owner' => 'member1',
+                'requester' => 'member2',
+                'expectedStatusCode' => 302,
+                'expectedIsPublic' => true,
             ],
         ];
-    }
-
-    public function testForLeaderInTeamWhereLatestTestDoesNotExist()
-    {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
-
-        $this->getTeamService()->create(
-            'Foo',
-            $leader
-        );
-
-        $this->getUserService()->setUser($leader);
-        $response = $this->jobController->latestAction('http://example.com');
-
-        $this->assertEquals(404, $response->getStatusCode());
     }
 }

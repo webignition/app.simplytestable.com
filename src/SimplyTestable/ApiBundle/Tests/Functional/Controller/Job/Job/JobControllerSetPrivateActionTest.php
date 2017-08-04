@@ -6,8 +6,10 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class JobControllerIsPublicActionTest extends AbstractJobControllerTest
+class JobControllerSetPrivateActionTest extends AbstractJobControllerTest
 {
+    const CANONICAL_URL = 'http://example.com/';
+
     public function testRequest()
     {
         $job = $this->jobFactory->create([
@@ -15,7 +17,7 @@ class JobControllerIsPublicActionTest extends AbstractJobControllerTest
         ]);
 
         $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_job_ispublic', [
+            'url' => $this->container->get('router')->generate('job_job_setprivate', [
                 'test_id' => $job->getId(),
                 'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             ])
@@ -24,20 +26,26 @@ class JobControllerIsPublicActionTest extends AbstractJobControllerTest
         /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(302, $response->getStatusCode());
     }
 
     /**
-     * @dataProvider isPublicActionDataProvider
+     * @dataProvider setPrivateActionDataProvider
      *
      * @param string $owner
      * @param string $requester
      * @param bool $callSetPublic
      * @param int $expectedResponseStatusCode
+     * @param bool $expectedIsPublic
      */
-    public function testIsPublicAction($owner, $requester, $callSetPublic, $expectedResponseStatusCode)
-    {
-        $users = $this->userFactory->createPublicAndPrivateUserSet();
+    public function testSetPrivateAction(
+        $owner,
+        $requester,
+        $callSetPublic,
+        $expectedResponseStatusCode,
+        $expectedIsPublic
+    ) {
+        $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
 
         $ownerUser = $users[$owner];
         $requesterUser = $users[$requester];
@@ -53,52 +61,70 @@ class JobControllerIsPublicActionTest extends AbstractJobControllerTest
         }
 
         $this->getUserService()->setUser($requesterUser);
-        $response = $this->jobController->isPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+        $response = $this->jobController->setPrivateAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
 
         $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
+        if ($expectedResponseStatusCode === 302) {
+            $this->assertEquals($job->getId(), $this->getJobIdFromUrl($response->getTargetUrl()));
+        }
+
+        $this->assertEquals($expectedIsPublic, $job->getIsPublic());
     }
 
     /**
      * @return array
      */
-    public function isPublicActionDataProvider()
+    public function setPrivateActionDataProvider()
     {
         return [
             'public owner, public requester' => [
                 'owner' => 'public',
                 'requester' => 'public',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 200,
+                'expectedStatusCode' => 302,
+                'expectedIsPublic' => true,
             ],
             'public owner, private requester' => [
                 'owner' => 'public',
                 'requester' => 'private',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 200,
+                'expectedStatusCode' => 302,
+                'expectedIsPublic' => true,
             ],
             'private owner, private requester, private test' => [
                 'owner' => 'private',
                 'requester' => 'private',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 404,
+                'expectedStatusCode' => 302,
+                'expectedIsPublic' => false,
             ],
             'private owner, private requester, public test' => [
                 'owner' => 'private',
                 'requester' => 'private',
                 'callSetPublic' => true,
-                'expectedStatusCode' => 200,
+                'expectedStatusCode' => 302,
+                'expectedIsPublic' => false,
             ],
             'private owner, public requester, private test' => [
                 'owner' => 'private',
                 'requester' => 'public',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 404,
+                'expectedStatusCode' => 302,
+                'expectedIsPublic' => false,
             ],
             'private owner, public requester, public test' => [
                 'owner' => 'private',
                 'requester' => 'public',
                 'callSetPublic' => true,
-                'expectedStatusCode' => 200,
+                'expectedStatusCode' => 302,
+                'expectedIsPublic' => true,
+            ],
+            'private owner, different private requester, private test' => [
+                'owner' => 'private',
+                'requester' => 'leader',
+                'callSetPublic' => false,
+                'expectedStatusCode' => 403,
+                'expectedIsPublic' => false,
             ],
         ];
     }

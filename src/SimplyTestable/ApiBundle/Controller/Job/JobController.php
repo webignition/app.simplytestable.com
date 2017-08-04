@@ -84,11 +84,25 @@ class JobController extends BaseJobController
         );
     }
 
-    public function setPublicAction($site_root_url, $test_id) {
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return RedirectResponse|Response
+     */
+    public function setPublicAction($site_root_url, $test_id)
+    {
         return $this->setIsPublic($site_root_url, $test_id, true);
     }
 
-    public function setPrivateAction($site_root_url, $test_id) {
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return RedirectResponse|Response
+     */
+    public function setPrivateAction($site_root_url, $test_id)
+    {
         return $this->setIsPublic($site_root_url, $test_id, false);
     }
 
@@ -108,35 +122,45 @@ class JobController extends BaseJobController
         );
     }
 
-    private function setIsPublic($site_root_url, $test_id, $isPublic) {
-        if ($this->getUserService()->isPublicUser($this->getUser())) {
-            return $this->redirect($this->generateUrl('job_job_status', array(
-                'site_root_url' => $site_root_url,
-                'test_id' => $test_id
-            ), true));
+    /**
+     * @param string $siteRootUrl
+     * @param int $testId
+     * @param bool $isPublic
+     *
+     * @return RedirectResponse|Response
+     */
+    private function setIsPublic($siteRootUrl, $testId, $isPublic)
+    {
+        $userService = $this->get('simplytestable.services.userservice');
+        $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
+        $jobService = $this->get('simplytestable.services.jobservice');
+
+        if ($userService->isPublicUser($this->getUser())) {
+            return $this->createRedirectToJobStatus($siteRootUrl, $testId);
         }
 
-        $this->getJobRetrievalService()->setUser($this->getUser());
+        $jobRetrievalService->setUser($this->getUser());
 
         try {
-            $job = $this->getJobRetrievalService()->retrieve($test_id);
+            $job = $jobRetrievalService->retrieve($testId);
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
+
             return $response;
+        }
+
+        if ($userService->isPublicUser($job->getUser())) {
+            return $this->createRedirectToJobStatus($siteRootUrl, $testId);
         }
 
         if ($job->getIsPublic() !== $isPublic) {
             $job->setIsPublic(filter_var($isPublic, FILTER_VALIDATE_BOOLEAN));
-            $this->getJobService()->persistAndFlush($job);
+            $jobService->persistAndFlush($job);
         }
 
-        return $this->redirect($this->generateUrl('job_job_status', array(
-            'site_root_url' => $site_root_url,
-            'test_id' => $job->getId()
-        ), true));
+        return $this->createRedirectToJobStatus($siteRootUrl, $testId);
     }
-
 
     /**
      * @param string $site_root_url
