@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
@@ -153,24 +155,29 @@ class JobController extends BaseJobController
      *
      * @return Response
      */
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
     public function cancelAction($site_root_url, $test_id)
     {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        $isInMaintenanceReadOnlyState = $this->getApplicationStateService()->isInMaintenanceReadOnlyState();
+        $isInMaintenanceBackupReadOnlyState = $this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState();
+
+        if ($isInMaintenanceReadOnlyState || $isInMaintenanceBackupReadOnlyState) {
             return $this->sendServiceUnavailableResponse();
         }
 
-        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        $jobService = $this->container->get('simplytestable.services.jobservice');
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
+        $jobService = $this->get('simplytestable.services.jobservice');
+        $crawlJobContainerService = $this->get('simplytestable.services.crawljobcontainerservice');
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $taskService = $this->get('simplytestable.services.taskservice');
+        $stateService = $this->get('simplytestable.services.stateservice');
 
         $jobRetrievalService->setUser($this->getUser());
 
@@ -184,41 +191,39 @@ class JobController extends BaseJobController
 
         $this->testId = $test_id;
 
-        if (JobService::FAILED_NO_SITEMAP_STATE === $job->getState()->getName()) {
-            $crawlJob = $crawlJobContainerService->getForJob($job)->getCrawlJob();
-            $this->cancelAction($site_root_url, $crawlJob->getId());
-        }
+        $hasCrawlJob = $crawlJobContainerService->hasForJob($job);
 
-        if ($job->getType()->equals($jobTypeService->getCrawlType())) {
-            $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
+        if ($hasCrawlJob) {
+            $crawlJobContainer = $crawlJobContainerService->getForJob($job);
 
-            foreach ($parentJob->getRequestedTaskTypes() as $taskType) {
-                /* @var Type $taskType */
-                $taskTypeParameterDomainsToIgnoreKey =
-                    strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
+            $isParentJob = $crawlJobContainer->getParentJob() === $job;
+            $isCrawlJob = $crawlJobContainer->getCrawlJob() === $job;
 
-                if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
-                    $jobPreparationService->setPredefinedDomainsToIgnore(
-                        $taskType,
-                        $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey)
-                    );
-                }
+            if ($isParentJob) {
+                $this->cancelAction($site_root_url, $crawlJobContainer->getCrawlJob()->getId());
             }
 
-            $jobPreparationService->prepareFromCrawl($crawlJobContainerService->getForJob($parentJob));
+            if ($isCrawlJob) {
+                $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
+                $this->setJobPrepartionDomainsToIgnoredFromJobTaskTypes($parentJob, $jobPreparationService);
 
-            $resqueQueueService->enqueue(
-                $resqueJobFactory->create(
-                    'tasks-notify'
-                )
-            );
+                $jobPreparationService->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));
+
+                $resqueQueueService->enqueue(
+                    $resqueJobFactory->create(
+                        'tasks-notify'
+                    )
+                );
+            }
         }
 
         $preCancellationState = clone $job->getState();
 
         $jobService->cancel($job);
 
-        if (JobService::STARTING_STATE === $preCancellationState->getName()) {
+        $jobStartingState = $stateService->fetch(JobService::STARTING_STATE);
+
+        if ($preCancellationState->equals($jobStartingState)) {
             $resqueQueueService->dequeue(
                 $resqueJobFactory->create(
                     'job-prepare',
@@ -410,5 +415,27 @@ class JobController extends BaseJobController
      */
     private function getTeamService() {
         return $this->get('simplytestable.services.teamservice');
+    }
+
+    /**
+     * @param Job $job
+     * @param JobPreparationService $jobPreparationService
+     */
+    private function setJobPrepartionDomainsToIgnoredFromJobTaskTypes(
+        Job $job,
+        JobPreparationService $jobPreparationService
+    ) {
+        foreach ($job->getRequestedTaskTypes() as $taskType) {
+            /* @var Type $taskType */
+            $taskTypeNameKey = strtolower(str_replace(' ', '-', $taskType->getName()));
+            $taskTypeParameterDomainsToIgnoreKey = $taskTypeNameKey . '-domains-to-ignore';
+
+            if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
+                $jobPreparationService->setPredefinedDomainsToIgnore(
+                    $taskType,
+                    $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey)
+                );
+            }
+        }
     }
 }
