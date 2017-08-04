@@ -22,8 +22,8 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-    }  
-    
+    }
+
     private $stateDetails = array(
         'job-completed' => null,
         'job-in-progress' => 'job-completed',
@@ -48,12 +48,12 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
         'worker-active' => null,
         'worker-deleted' => null,
         'worker-offline' => null,
-        'worker-unactivated' => null,    
+        'worker-unactivated' => null,
         'job-rejected' => null,
         'job-resolving' => null,
         'job-resolved' => null
-    );  
-    
+    );
+
     /**
      * {@inheritDoc}
      */
@@ -63,17 +63,17 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
             if (!$this->getStateService()->has($name)) {
                 $state = new State();
                 $state->setName($name);
-                
+
                 if (!is_null($nextStateName)) {
-                    $state->setNextState($this->getStateService()->find($nextStateName));
+                    $state->setNextState($this->getStateService()->fetch($nextStateName));
                 }
-     
+
                 $manager->persist($state);
-                $manager->flush();                  
+                $manager->flush();
             }
         }
-        
-        
+
+
     }
 
     /**
@@ -83,10 +83,10 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
     {
         return 2; // the order in which fixtures will be loaded
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @return \SimplyTestable\ApiBundle\Services\StateService
      */
     public function getStateService() {

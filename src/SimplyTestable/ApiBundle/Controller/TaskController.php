@@ -129,7 +129,7 @@ class TaskController extends ApiController
         }
 
         $taskType = $this->getTaskTypeService()->getByName($task_type);
-        $state = $this->getStateService()->find($taskStatePrefix . $state_name);
+        $state = $this->getStateService()->fetch($taskStatePrefix . $state_name);
 
         return new Response(json_encode($this->getTaskService()->getCountByTaskTypeAndState($taskType, $state)), 200);
     }
