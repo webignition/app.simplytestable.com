@@ -314,8 +314,14 @@ class JobController extends BaseJobController
         return $this->sendResponse($taskIds);
     }
 
-
-    public function listUrlsAction($site_root_url, $test_id) {
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
+    public function listUrlsAction($site_root_url, $test_id)
+    {
         $this->getJobRetrievalService()->setUser($this->getUser());
 
         try {
@@ -328,8 +334,6 @@ class JobController extends BaseJobController
 
         return $this->sendResponse($this->getTaskService()->getUrlsByJob($job));
     }
-
-
 
     /**
      *
