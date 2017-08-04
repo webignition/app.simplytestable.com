@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,6 +24,8 @@ class JobFactory
     const KEY_TEST_TYPE_OPTIONS = 'testTypeOptions';
     const KEY_PARAMETERS = 'parameters';
     const KEY_USER = 'user';
+    const KEY_STATE = 'state';
+    const KEY_TASK_STATES = 'task-states';
 
     /**
      * @var array
@@ -62,13 +65,38 @@ class JobFactory
     public function createResolveAndPrepare($jobValues = [], $httpFixtures = [], $domain = self::DEFAULT_DOMAIN)
     {
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $taskService = $this->container->get('simplytestable.services.taskservice');
 
-        $job = $this->create($jobValues);
+        $ignoreState = true;
+
+        $job = $this->create($jobValues, $ignoreState);
 
         $this->resolve($job, (isset($httpFixtures['resolve']) ? $httpFixtures['resolve'] : null));
         $this->prepare($job, (isset($httpFixtures['prepare']) ? $httpFixtures['prepare'] : null), $domain);
 
         $httpClientService->getMockPlugin()->clearQueue();
+
+        if (isset($jobValues[self::KEY_STATE])) {
+            $job->setState($stateService->fetch($jobValues[self::KEY_STATE]));
+            $jobService->persistAndFlush($job);
+        }
+
+        if (isset($jobValues[self::KEY_TASK_STATES])) {
+            $stateNames = $jobValues[self::KEY_TASK_STATES];
+
+            /* @var Task[] $tasks */
+            $tasks = $job->getTasks();
+
+            foreach ($tasks as $taskIndex => $task) {
+                if (isset($stateNames[$taskIndex])) {
+                    $stateName = $stateNames[$taskIndex];
+                    $task->setState($stateService->fetch($stateName));
+                    $taskService->persistAndFlush($task);
+                }
+            }
+        }
 
         return $job;
     }
@@ -89,12 +117,14 @@ class JobFactory
      * @param array $jobValues
      * @return Job
      */
-    public function create($jobValues = [])
+    public function create($jobValues = [], $ignoreState = false)
     {
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $jobStartService = $this->container->get('simplytestable.services.job.startservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobService = $this->container->get('simplytestable.services.jobservice');
 
         foreach ($this->defaultJobValues as $key => $value) {
             if (!isset($jobValues[$key])) {
@@ -121,7 +151,15 @@ class JobFactory
         $jobConfiguration = $requestAdapter->getJobConfiguration();
         $jobConfiguration->setUser($jobValues[self::KEY_USER]);
 
-        return $jobStartService->start($jobConfiguration);
+        $job = $jobStartService->start($jobConfiguration);
+
+        if (isset($jobValues[self::KEY_STATE]) && !$ignoreState) {
+            $state = $stateService->fetch($jobValues[self::KEY_STATE]);
+            $job->setState($state);
+            $jobService->persistAndFlush($job);
+        }
+
+        return $job;
     }
 
     /**

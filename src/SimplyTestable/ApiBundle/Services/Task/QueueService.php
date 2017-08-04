@@ -3,7 +3,6 @@ namespace SimplyTestable\ApiBundle\Services\Task;
 
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
 
 class QueueService
 {
@@ -23,11 +22,6 @@ class QueueService
     private $limit = 1;
 
     /**
-     * @var Job
-     */
-    private $job = null;
-
-    /**
      * @param JobService $jobService
      * @param TaskService $taskService
      */
@@ -39,33 +33,10 @@ class QueueService
 
     /**
      * @param int $limit
-     *
-     * @return $this
      */
     public function setLimit($limit)
     {
         $this->limit = $limit;
-        return $this;
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return $this
-     */
-    public function setJob(Job $job)
-    {
-        $this->job = $job;
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    public function clearJob()
-    {
-        $this->job = null;
-        return $this;
     }
 
     /**
@@ -73,13 +44,19 @@ class QueueService
      */
     public function getNext()
     {
-        $incompleteJobs = $this->getIncompleteJobSet();
-        if (count($incompleteJobs) === 0) {
+        $incompleteJobsWithQueuedTasks = $this->jobService->getEntityRepository()->getByStatesAndTaskStates(
+            $this->jobService->getIncompleteStates(),
+            [
+                $this->taskService->getQueuedState()
+            ]
+        );
+
+        if (empty($incompleteJobsWithQueuedTasks)) {
             return [];
         }
 
         $jobTaskIds = [];
-        foreach ($incompleteJobs as $job) {
+        foreach ($incompleteJobsWithQueuedTasks as $job) {
             $taskIdsForJob = $this->taskService->getEntityRepository()->getIdsByJobAndTaskStates(
                 $job,
                 [$this->taskService->getQueuedState()],
@@ -109,28 +86,5 @@ class QueueService
         }
 
         return $taskIds;
-    }
-
-    /**
-     * @return Job[]
-     */
-    private function getIncompleteJobSet()
-    {
-        $incompleteJobs =  $this->jobService->getEntityRepository()->getByStatesAndTaskStates(
-            $this->jobService->getIncompleteStates(),
-            [
-                $this->taskService->getQueuedState()
-            ]
-        );
-
-        if (!is_null($this->job)) {
-            foreach ($incompleteJobs as $jobIndex => $job) {
-                if ($job->getId() !== $this->job->getId()) {
-                    unset($incompleteJobs[$jobIndex]);
-                }
-            }
-        }
-
-        return $incompleteJobs;
     }
 }
