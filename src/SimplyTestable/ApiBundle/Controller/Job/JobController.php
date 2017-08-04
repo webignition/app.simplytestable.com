@@ -6,35 +6,51 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class JobController extends BaseJobController
 {
     protected $testId = null;
 
-    public function latestAction($site_root_url) {
-        $website = $this->get('simplytestable.services.websiteservice')->fetch($site_root_url);
+    /**
+     * @param $site_root_url
+     *
+     * @return RedirectResponse|Response
+     */
+    public function latestAction($site_root_url)
+    {
+        $websiteService = $this->get('simplytestable.services.websiteservice');
+        $jobService = $this->get('simplytestable.services.jobservice');
+        $userService = $this->get('simplytestable.services.userservice');
+        $teamService = $this->get('simplytestable.services.teamservice');
+
+        $website = $websiteService->fetch($site_root_url);
         $latestJob = null;
 
-        if ($this->getTeamService()->hasTeam($this->getUser()) || $this->getTeamService()->getMemberService()->belongsToTeam($this->getUser())) {
-            $team = $this->getTeamService()->getForUser($this->getUser());
+        $userHasTeam = $teamService->hasTeam($this->getUser());
+        $userBelongsToTeam = $teamService->getMemberService()->belongsToTeam($this->getUser());
 
-            $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+        if ($userHasTeam || $userBelongsToTeam) {
+            $team = $teamService->getForUser($this->getUser());
+
+            $latestJob = $jobService->getEntityRepository()->findLatestByWebsiteAndUsers(
                 $website,
-                $this->getTeamService()->getPeople($team)
+                $teamService->getPeople($team)
             );
 
-            if (!is_null($latestJob)) {
-                return $this->redirect($this->generateUrl('job_job_status', array(
-                    'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
-                    'test_id' => $latestJob->getId()
-                ), true));
+            if ($latestJob instanceof Job) {
+                return $this->createRedirectToJobStatus(
+                    $latestJob->getWebsite()->getCanonicalUrl(),
+                    $latestJob->getId()
+                );
             }
         }
 
-        if (!$this->getUserService()->isPublicUser($this->getUser())) {
-            $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+        if (!$userService->isPublicUser($this->getUser())) {
+            $latestJob = $jobService->getEntityRepository()->findLatestByWebsiteAndUsers(
                 $website,
                 array(
                     $this->getUser()
@@ -42,20 +58,19 @@ class JobController extends BaseJobController
             );
 
             if (!is_null($latestJob)) {
-                return $this->redirect($this->generateUrl('job_job_status', array(
-                    'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
-                    'test_id' => $latestJob->getId()
-                ), true));
+                return $this->createRedirectToJobStatus(
+                    $latestJob->getWebsite()->getCanonicalUrl(),
+                    $latestJob->getId()
+                );
             }
         }
 
-        $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+        $latestJob = $jobService->getEntityRepository()->findLatestByWebsiteAndUsers(
             $website,
-            array(
-                $this->getUserService()->getPublicUser()
-            )
+            [
+                $userService->getPublicUser()
+            ]
         );
-
 
         if (is_null($latestJob)) {
             $response = new Response();
@@ -63,10 +78,10 @@ class JobController extends BaseJobController
             return $response;
         }
 
-        return $this->redirect($this->generateUrl('job_job_status', array(
-            'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
-            'test_id' => $latestJob->getId()
-        ), true));
+        return $this->createRedirectToJobStatus(
+            $latestJob->getWebsite()->getCanonicalUrl(),
+            $latestJob->getId()
+        );
     }
 
     public function setPublicAction($site_root_url, $test_id) {
@@ -414,6 +429,26 @@ class JobController extends BaseJobController
      */
     private function getTeamService() {
         return $this->get('simplytestable.services.teamservice');
+    }
+
+    /**
+     * @param string $siteRootUrl
+     * @param int $testId
+     *
+     * @return RedirectResponse
+     */
+    private function createRedirectToJobStatus($siteRootUrl, $testId)
+    {
+        return $this->redirect(
+            $this->generateUrl(
+                'job_job_status',
+                [
+                    'site_root_url' => $siteRootUrl,
+                    'test_id' => $testId
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
+        );
     }
 
     /**
