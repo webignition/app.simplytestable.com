@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -9,8 +10,14 @@ use SimplyTestable\ApiBundle\Entity\User;
 
 class CrawlJobContainerRepository extends EntityRepository
 {
-
-    public function doesCrawlTaskParentStateMatchState(Task $task, State $state) {
+    /**
+     * @param Task $task
+     * @param State $state
+     *
+     * @return bool
+     */
+    public function doesCrawlTaskParentJobStateMatchState(Task $task, State $state)
+    {
         $queryBuilder = $this->createQueryBuilder('CrawlJobContainer');
         $queryBuilder->join('CrawlJobContainer.parentJob', 'ParentJob');
         $queryBuilder->join('CrawlJobContainer.crawlJob', 'CrawlJob');
@@ -23,58 +30,77 @@ class CrawlJobContainerRepository extends EntityRepository
         $queryBuilder->setMaxResults(1);
 
         $result = $queryBuilder->getQuery()->getResult();
-        return (count($result) === 0) ? false : $result[0]['name'] == $state->getName();
+
+        return (empty($result))
+            ? false
+            : $result[0]['name'] == $state->getName();
     }
 
-    
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return boolean
+     * @param Job $job
+     *
+     * @return bool
      */
-    public function hasForJob(Job $job) {
+    public function hasForJob(Job $job)
+    {
         return !is_null($this->getForJob($job));
     }
-    
-    
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return \SimplyTestable\ApiBundle\Entity\CrawlJobContainer
+     * @param Job $job
+     *
+     * @return CrawlJobContainer
      */
-    public function getForJob(Job $job) {        
+    public function getForJob(Job $job)
+    {
         $queryBuilder = $this->createQueryBuilder('CrawlJobContainer');
         $queryBuilder->select('CrawlJobContainer');
         $queryBuilder->join('CrawlJobContainer.parentJob', 'ParentJob');
         $queryBuilder->join('CrawlJobContainer.crawlJob', 'CrawlJob');
-        
+
         $queryBuilder->where('ParentJob = :ParentJob OR CrawlJob = :CrawlJob');
         $queryBuilder->setParameter('ParentJob', $job);
-        $queryBuilder->setParameter('CrawlJob', $job);        
-        
+        $queryBuilder->setParameter('CrawlJob', $job);
+
         $queryBuilder->setMaxResults(1);
-        
+
         $result = $queryBuilder->getQuery()->getResult();
-        return (count($result) === 0) ? null : $result[0];    
+        return (count($result) === 0) ? null : $result[0];
     }
-    
-    
-    public function getAllForUserByCrawlJobStates(User $user, $states) {
+
+    /**
+     * @param User $user
+     * @param State[] $states
+     *
+     * @return CrawlJobContainer[]
+     */
+    public function getAllForUserByCrawlJobStates(User $user, $states)
+    {
+        if (empty($states)) {
+            return [];
+        }
+
         $queryBuilder = $this->createQueryBuilder('CrawlJobContainer');
         $queryBuilder->join('CrawlJobContainer.parentJob', 'ParentJob');
-        $queryBuilder->join('CrawlJobContainer.crawlJob', 'CrawlJob');        
+        $queryBuilder->join('CrawlJobContainer.crawlJob', 'CrawlJob');
         $queryBuilder->select('CrawlJobContainer');
-        
+
         $stateWhereParts = array();
-        
-        foreach ($states as $stateIndex => $state) {            
-            $stateWhereParts[] = 'CrawlJob.state = :State' . $stateIndex;
-            $queryBuilder->setParameter('State' . $stateIndex, $state);
+
+        $queryIndex = 0;
+
+        foreach ($states as $stateIndex => $state) {
+            $stateParameter = 'State' . $queryIndex;
+
+            $stateWhereParts[] = 'CrawlJob.state = :' . $stateParameter;
+            $queryBuilder->setParameter($stateParameter, $state);
+
+            $queryIndex++;
         }
-        
+
         $queryBuilder->where('CrawlJob.user = :User AND ('.implode(' OR ', $stateWhereParts).')');
-        $queryBuilder->setParameter('User', $user);        
-        
-        return $queryBuilder->getQuery()->getResult();         
+        $queryBuilder->setParameter('User', $user);
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

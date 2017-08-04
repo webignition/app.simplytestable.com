@@ -84,7 +84,10 @@ class CrawlJobContainerService extends EntityService
      */
     public function hasForJob(Job $job)
     {
-        return $this->getEntityRepository()->hasForJob($job);
+        /* @var CrawlJobContainerRepository $entityRepository */
+        $entityRepository = $this->getManager()->getRepository($this->getEntityName());
+
+        return $entityRepository->hasForJob($job);
     }
 
     /**
@@ -98,7 +101,10 @@ class CrawlJobContainerService extends EntityService
             return $this->create($job);
         }
 
-        return $this->getEntityRepository()->getForJob($job);
+        /* @var CrawlJobContainerRepository $entityRepository */
+        $entityRepository = $this->getManager()->getRepository($this->getEntityName());
+
+        return $entityRepository->getForJob($job);
     }
 
     /**
@@ -213,8 +219,11 @@ class CrawlJobContainerService extends EntityService
             return false;
         }
 
+        /* @var CrawlJobContainerRepository $entityRepository */
+        $entityRepository = $this->getManager()->getRepository($this->getEntityName());
+
         /* @var $crawlJobContainer CrawlJobContainer */
-        $crawlJobContainer = $this->getEntityRepository()->getForJob($task->getJob());
+        $crawlJobContainer = $entityRepository->getForJob($task->getJob());
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
         $this->jobUserAccountPlanEnforcementService->setUser($crawlJob->getUser());
@@ -416,7 +425,7 @@ class CrawlJobContainerService extends EntityService
     public function getAllActiveForUser(User $user)
     {
         /* @var CrawlJobContainerRepository $entityRepository */
-        $entityRepository = $this->getEntityRepository();
+        $entityRepository = $this->getManager()->getRepository($this->getEntityName());
 
         return $entityRepository->getAllForUserByCrawlJobStates(
             $user,
