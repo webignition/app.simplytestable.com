@@ -33,6 +33,10 @@ class TasksController extends ApiController {
             return $this->sendServiceUnavailableResponse();
         }
 
+        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+
         $worker_hostname = $this->getArguments('requestAction')->get('worker_hostname');
 
         if (!($this->getWorkerService()->has($worker_hostname))) {

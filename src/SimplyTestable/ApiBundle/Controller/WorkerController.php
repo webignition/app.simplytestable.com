@@ -14,7 +14,7 @@ use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 
 
 class WorkerController extends ApiController
-{    
+{
     public function __construct() {
         $this->setInputDefinitions(array(
             'activateAction' => new InputDefinition(array(
@@ -22,35 +22,39 @@ class WorkerController extends ApiController
                 new InputArgument('token', InputArgument::REQUIRED, 'Token to pass back to worker to verfiy')
             ))
         ));
-        
+
         $this->setRequestTypes(array(
             'activateAction' => \Guzzle\Http\Message\Request::POST
         ));
     }
-    
-    
+
+
     public function activateAction()
-    {        
+    {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
-        }          
-        
+        }
+
+        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+
         $worker = $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname'));
         if ($this->getWorkerRequestActivationService()->has($worker)) {
             $activationRequest = $this->getWorkerRequestActivationService()->fetch($worker);
-            
+
             if ($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState())) {
                 $activationRequest->setState($this->getWorkerRequestActivationService()->getStartingState());
                 return $this->sendSuccessResponse();
-            }            
-            
+            }
+
         } else {
             $activationRequest = $this->getWorkerRequestActivationService()->create(
                 $worker,
                 $this->getArguments('activateAction')->get('token')
             );
-        }        
-        
+        }
+
         $this->getWorkerRequestActivationService()->persistAndFlush($activationRequest);
 
 
@@ -60,11 +64,11 @@ class WorkerController extends ApiController
                 ['id' => $activationRequest->getWorker()->getId()]
             )
         );
-        
+
         return $this->sendSuccessResponse();
     }
-    
-    
+
+
     /**
      *
      * @param Worker $worker
@@ -75,11 +79,11 @@ class WorkerController extends ApiController
         if ($this->getWorkerRequestActivationService()->has($worker)) {
             return $this->getWorkerRequestActivationService()->fetch($worker);
         }
-        
+
         return $this->getWorkerRequestActivationService()->create($worker, $token);
     }
-    
-    
+
+
     /**
      *
      * @return WorkerService
@@ -87,14 +91,14 @@ class WorkerController extends ApiController
     private function getWorkerService() {
         return $this->container->get('simplytestable.services.workerservice');
     }
-    
-    
+
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
      */
     private function getWorkerRequestActivationService() {
-        return $this->container->get('simplytestable.services.workeractivationrequestservice');        
+        return $this->container->get('simplytestable.services.workeractivationrequestservice');
     }
 
 
@@ -114,8 +118,8 @@ class WorkerController extends ApiController
     private function getResqueJobFactoryService() {
         return $this->container->get('simplytestable.services.resque.jobFactoryService');
     }
-    
-    
+
+
 
 
 }

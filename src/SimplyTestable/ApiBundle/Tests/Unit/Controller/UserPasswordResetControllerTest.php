@@ -7,11 +7,18 @@ use SimplyTestable\ApiBundle\Tests\Factory\ContainerFactory;
 
 class UserPasswordResetControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testResetPasswordActionInMaintenanceReadOnlyMode()
+    use MaintenanceStatesDataProviderTrait;
+
+    /**
+     * @dataProvider maintenanceStatesDataProvider
+     *
+     * @param array $maintenanceStates
+     */
+    public function testResetPasswordActionInMaintenanceReadOnlyMode($maintenanceStates)
     {
         $controller = new UserPasswordResetController();
         $controller->setContainer(
-            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest()
+            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
         );
 
         $response = $controller->resetPasswordAction('foo');

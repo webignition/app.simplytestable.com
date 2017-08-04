@@ -27,6 +27,10 @@ class UserPasswordResetController extends UserController
             return $this->sendServiceUnavailableResponse();
         }
 
+        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+
         $user = $this->getUserService()->findUserByConfirmationToken($token);
         if (is_null($user)) {
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
