@@ -321,8 +321,14 @@ class JobController extends BaseJobController
         return $this->sendResponse($tasks);
     }
 
-
-    public function taskIdsAction($site_root_url, $test_id) {
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
+    public function taskIdsAction($site_root_url, $test_id)
+    {
         $this->getJobRetrievalService()->setUser($this->getUser());
 
         try {
