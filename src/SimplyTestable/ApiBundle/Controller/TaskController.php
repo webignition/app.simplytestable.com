@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
+use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactoryService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
@@ -27,6 +29,8 @@ class TaskController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
         $completeRequest = $this->container->get('simplytestable.services.request.factory.task.complete')->create();
         if (!$completeRequest->isValid()) {
             throw new BadRequestHttpException();
@@ -50,6 +54,9 @@ class TaskController extends ApiController
         $urlDiscoveryTaskType = $this->getTaskTypeService()->getByName('URL discovery');
 
         $crawlJobContainerService = $this->getCrawlJobContainerService();
+
+        /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
+        $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
 
         foreach ($tasks as $task) {
             if ($task->hasOutput() && $this->getTaskOutputJoinerFactoryService()->hasTaskOutputJoiner($task)) {
@@ -75,7 +82,7 @@ class TaskController extends ApiController
                 if (JobService::COMPLETED_STATE === $task->getJob()->getState()->getName()) {
                     $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
 
-                    if ($crawlJobContainerService->getEntityRepository()->doesCrawlTaskParentStateMatchState(
+                    if ($crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
                         $task,
                         $jobFailedNoSitemapState
                     )) {
