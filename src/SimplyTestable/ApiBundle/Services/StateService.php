@@ -45,6 +45,22 @@ class StateService extends EntityService
     }
 
     /**
+     * @param string[] $stateNames
+     *
+     * @return State[]
+     */
+    public function fetchCollection($stateNames)
+    {
+        $states = [];
+
+        foreach ($stateNames as $stateName) {
+            $states[$stateName] = $this->fetch($stateName);
+        }
+
+        return $states;
+    }
+
+    /**
      * @param string $name
      *
      * @return State

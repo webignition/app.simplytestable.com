@@ -97,4 +97,15 @@ class StateServiceTest extends BaseSimplyTestableTestCase
 
         return $testData;
     }
+
+    public function testFetchCollection()
+    {
+        $states = $this->stateService->fetchCollection($this->stateNames);
+
+        $this->assertEquals($this->stateNames, array_keys($states));
+
+        foreach ($states as $stateIndex => $state) {
+            $this->assertInstanceOf(State::class, $state);
+        }
+    }
 }
