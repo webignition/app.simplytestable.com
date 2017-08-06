@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Worker\Tasks\Requ
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\Worker\Tasks\RequestAction\ValidRequest\ValidRequestTest;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -22,7 +23,8 @@ abstract class WithJobsTest extends ValidRequestTest
 
     public function preCall()
     {
-        $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
+        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory->create(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TaskPreProcessor\Li
 
 use Doctrine\ORM\PersistentCollection;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
@@ -59,7 +60,8 @@ abstract class PreprocessorTest extends BaseSimplyTestableTestCase
 
         $now = new \DateTime();
 
-        $this->createWorker();
+        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory->create();
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => $now->format('Y-m-d H:i:s'),

@@ -2,9 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TaskPreProcessor\LinkIntegrity;
 
-class ViaAssignSelectedCommandTest extends PreProcessorTest {
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 
-    protected function setUp() {
+class ViaAssignSelectedCommandTest extends PreProcessorTest
+{
+    protected function setUp()
+    {
         parent::setUp();
 
         $task = $this->tasks->get(1);
@@ -13,18 +16,19 @@ class ViaAssignSelectedCommandTest extends PreProcessorTest {
         $this->getTaskService()->getManager()->persist($task);
         $this->getTaskService()->getManager()->flush();
 
-        $this->createWorker();
+        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory->create();
 
         $this->executeCommand('simplytestable:task:assign-selected');
     }
 
-    protected function getCompletedTaskOutput() {
+    protected function getCompletedTaskOutput()
+    {
         return $this->getDefaultCompletedTaskOutput();
     }
 
-    public function testDetermineCorrectErrorCount() {
+    public function testDetermineCorrectErrorCount()
+    {
         $this->assertEquals(0, $this->tasks->get(1)->getOutput()->getErrorCount());
     }
-
-
 }

@@ -2,8 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Cancel\Command;
 
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 
 class CancelCommandTest extends BaseTest
 {
@@ -13,6 +15,11 @@ class CancelCommandTest extends BaseTest
     private $jobFactory;
 
     /**
+     * @var Worker
+     */
+    private $worker;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +27,9 @@ class CancelCommandTest extends BaseTest
         parent::setUp();
 
         $this->jobFactory = new JobFactory($this->container);
+
+        $workerFactory = new WorkerFactory($this->container);
+        $this->worker = $workerFactory->create();
     }
 
     public function testCancelTaskThatDoesNotExistReturnsStatusCodeMinus1()
@@ -49,8 +59,6 @@ class CancelCommandTest extends BaseTest
             HttpFixtureFactory::createSuccessResponse(),
         ]);
 
-        $worker = $this->createWorker();
-
         $task = $job->getTasks()->first();
         $cancellableStates = array(
             $this->getTaskService()->getAwaitingCancellationState(),
@@ -60,7 +68,7 @@ class CancelCommandTest extends BaseTest
         );
 
         foreach ($cancellableStates as $state) {
-            $task->setWorker($worker);
+            $task->setWorker($this->worker);
             $task->setState($state);
             $this->getTaskService()->getManager()->persist($task);
             $this->getTaskService()->getManager()->flush();
@@ -77,7 +85,6 @@ class CancelCommandTest extends BaseTest
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->jobFactory->createResolveAndPrepare();
-        $worker = $this->createWorker();
 
         $task = $job->getTasks()->first();
 
@@ -91,7 +98,7 @@ class CancelCommandTest extends BaseTest
         );
 
         foreach ($uncancellableStates as $state) {
-            $task->setWorker($worker);
+            $task->setWorker($this->worker);
             $task->setState($state);
             $this->getTaskService()->getManager()->persist($task);
             $this->getTaskService()->getManager()->flush();
@@ -113,11 +120,9 @@ class CancelCommandTest extends BaseTest
             HttpFixtureFactory::createServiceUnavailableResponse(),
         ]);
 
-        $worker = $this->createWorker();
-
         $task = $job->getTasks()->first();
         $task->setState($this->getTaskService()->getQueuedState());
-        $task->setWorker($worker);
+        $task->setWorker($this->worker);
         $this->getTaskService()->getManager()->persist($task);
         $this->getTaskService()->getManager()->flush();
 
