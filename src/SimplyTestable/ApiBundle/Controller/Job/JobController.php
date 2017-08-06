@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -297,7 +298,15 @@ class JobController extends BaseJobController
         return $this->sendSuccessResponse();
     }
 
-    public function tasksAction($site_root_url, $test_id) {
+    /**
+     * @param Request $request
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
+    public function tasksAction(Request $request, $site_root_url, $test_id)
+    {
         $this->getJobRetrievalService()->setUser($this->getUser());
 
         try {
@@ -308,7 +317,8 @@ class JobController extends BaseJobController
             return $response;
         }
 
-        $taskIds = $this->getRequestTaskIds();
+        $taskIds = $this->getRequestTaskIds($request);
+
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $taskIds);
 
         foreach ($tasks as $task) {
@@ -404,13 +414,15 @@ class JobController extends BaseJobController
         return $this->getJobByUser();
     }
 
-
     /**
+     * @param Request $request
      *
-     * @return array|null
+     * @return \int[]|null
      */
-    private function getRequestTaskIds() {
-        $requestTaskIds = $this->getRequestValue('taskIds');
+    private function getRequestTaskIds(Request $request)
+    {
+        $requestTaskIds = $request->request->get('taskIds');
+
         $taskIds = array();
 
         if (substr_count($requestTaskIds, ':')) {
