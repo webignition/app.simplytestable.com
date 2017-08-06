@@ -244,7 +244,7 @@ class JobController extends BaseJobController
 
             if ($isCrawlJob) {
                 $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
-                $this->setJobPrepartionDomainsToIgnoredFromJobTaskTypes($parentJob, $jobPreparationService);
+                $this->setJobPreparationDomainsToIgnoredFromJobTaskTypes($parentJob, $jobPreparationService);
 
                 $jobPreparationService->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));
 
@@ -376,45 +376,6 @@ class JobController extends BaseJobController
     }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
-     */
-    protected function getJobByUser() {
-        $job = $this->getJobService()->getEntityRepository()->findOneBy(array(
-            'id' => $this->testId,
-            'user' => array(
-                $this->getUser(),
-                $this->getUserService()->getPublicUser()
-            )
-        ));
-
-        if (is_null($job)) {
-            return false;
-        }
-
-        return $this->populateJob($job);
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
-     */
-    protected function getJobByVisibilityOrUser() {
-        // Check for jobs that are public by owner
-        $publicJob = $this->getJobService()->getEntityRepository()->findOneBy(array(
-            'id' => $this->testId,
-            'isPublic' => true
-        ));
-
-        if (!is_null($publicJob)) {
-            return $this->populateJob($publicJob);
-        }
-
-        return $this->getJobByUser();
-    }
-
-    /**
      * @param Request $request
      *
      * @return \int[]|null
@@ -423,7 +384,7 @@ class JobController extends BaseJobController
     {
         $requestTaskIds = $request->request->get('taskIds');
 
-        $taskIds = array();
+        $taskIds = [];
 
         if (substr_count($requestTaskIds, ':')) {
             $rangeLimits = explode(':', $requestTaskIds);
@@ -442,39 +403,6 @@ class JobController extends BaseJobController
         }
 
         return (count($taskIds) > 0) ? $taskIds : null;
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
-     */
-    private function getJobPreparationService() {
-        return $this->container->get('simplytestable.services.jobpreparationservice');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
-     */
-    private function getResqueQueueService() {
-        return $this->container->get('simplytestable.services.resque.queueService');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
-     */
-    private function getResqueJobFactoryService() {
-        return $this->container->get('simplytestable.services.resque.jobFactoryService');
-    }
-
-
-    /**
-     * @return \SimplyTestable\ApiBundle\Services\Team\Service
-     */
-    private function getTeamService() {
-        return $this->get('simplytestable.services.teamservice');
     }
 
     /**
@@ -501,7 +429,7 @@ class JobController extends BaseJobController
      * @param Job $job
      * @param JobPreparationService $jobPreparationService
      */
-    private function setJobPrepartionDomainsToIgnoredFromJobTaskTypes(
+    private function setJobPreparationDomainsToIgnoredFromJobTaskTypes(
         Job $job,
         JobPreparationService $jobPreparationService
     ) {
