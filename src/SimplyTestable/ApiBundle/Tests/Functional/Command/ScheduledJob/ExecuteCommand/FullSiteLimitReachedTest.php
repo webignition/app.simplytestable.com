@@ -26,7 +26,7 @@ class FullSiteLimitReachedTest extends RejectedTest
                 JobFactory::KEY_SITE_ROOT_URL => $this->getJobConfigurationWebsite(),
                 JobFactory::KEY_USER => $user,
             ]);
-            $this->cancelJob($job);
+            $jobFactory->cancel($job);
         }
 
         parent::preCall();

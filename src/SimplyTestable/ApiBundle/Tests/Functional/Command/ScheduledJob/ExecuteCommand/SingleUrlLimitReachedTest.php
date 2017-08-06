@@ -28,7 +28,7 @@ class SingleUrlLimitReachedTest extends RejectedTest
                 JobFactory::KEY_USER => $user,
                 JobFactory::KEY_TYPE => $this->getJobConfigurationJobType(),
             ]);
-            $this->cancelJob($job);
+            $jobFactory->cancel($job);
         }
 
         parent::preCall();

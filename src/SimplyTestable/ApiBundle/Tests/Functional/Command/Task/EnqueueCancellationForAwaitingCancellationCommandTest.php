@@ -41,7 +41,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
 
         $this->getTaskService()->getManager()->flush();
         $this->getJobService()->getManager()->refresh($job);
-        $this->cancelJob($job);
+        $jobFactory->cancel($job);
 
         $this->assertReturnCode(0);
         $this->assertTrue($this->getResqueQueueService()->contains(

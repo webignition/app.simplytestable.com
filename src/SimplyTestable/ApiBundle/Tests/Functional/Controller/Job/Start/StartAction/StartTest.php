@@ -53,7 +53,7 @@ class StartTest extends ActionTest
             JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
         ]);
 
-        $this->cancelJob($job);
+        $this->jobFactory->cancel($job);
 
         $request = new Request([], [
             'type' => JobTypeService::FULL_SITE_NAME,

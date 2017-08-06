@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
 use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
+use SimplyTestable\ApiBundle\Controller\Job\JobController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
@@ -244,5 +245,15 @@ class JobFactory
     {
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $jobService->persistAndFlush($job);
+    }
+
+    /**
+     * @param Job $job
+     */
+    public function cancel(Job $job)
+    {
+        $jobController = new JobController();
+        $jobController->setContainer($this->container);
+        $jobController->cancelAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
     }
 }
