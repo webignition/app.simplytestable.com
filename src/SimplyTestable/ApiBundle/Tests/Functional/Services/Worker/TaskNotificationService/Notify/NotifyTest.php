@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Worker\TaskNotificationService\Notify;
 
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Worker\TaskNotificationService\ServiceTest;
 
 abstract class NotifyTest extends ServiceTest
@@ -19,7 +20,8 @@ abstract class NotifyTest extends ServiceTest
         parent::setUp();
         $this->queueHttpFixtures($this->getHttpFixtureItems());
 
-        $this->workers = $this->createWorkers($this->getWorkerCount());
+        $workerFactory = new WorkerFactory($this->container);
+        $this->workers = $workerFactory->createCollection($this->getWorkerCount());
 
         $this->notifyReturnValue = $this->getService()->notify();
     }

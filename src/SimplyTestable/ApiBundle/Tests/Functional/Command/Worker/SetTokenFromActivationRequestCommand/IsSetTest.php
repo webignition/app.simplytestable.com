@@ -4,9 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Worker\SetTokenFromA
 
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 
-class IsSetTest extends CommandTest {
-
+class IsSetTest extends CommandTest
+{
     /**
      * @var int
      */
@@ -17,41 +18,49 @@ class IsSetTest extends CommandTest {
      */
     private $workers;
 
-
     /**
      * @var WorkerActivationRequest[]
      */
     private $activationRequests;
 
-    protected function setUp() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
         parent::setUp();
 
-        $this->workers = $this->createWorkers(3);
+        $workerFactory = new WorkerFactory($this->container);
+        $this->workers = $workerFactory->createCollection(3);
 
         foreach ($this->workers as $worker) {
-            $this->activationRequests[$worker->getHostname()] = $this->getWorkerActivationRequestService()->create($worker, $worker->getHostname() . '.activation-token');
+            $this->activationRequests[$worker->getHostname()] = $this->getWorkerActivationRequestService()->create(
+                $worker,
+                $worker->getHostname() . '.activation-token'
+            );
         }
 
         $this->returnCode = $this->executeCommand($this->getCommandName());
     }
 
-
-    public function testReturnCodeIsZero() {
+    public function testReturnCodeIsZero()
+    {
         $this->assertEquals(0, $this->returnCode);
     }
 
-
-    public function testTokenIsSet() {
+    public function testTokenIsSet()
+    {
         foreach ($this->workers as $worker) {
             $this->assertNotNull($worker->getToken());
         }
     }
 
-
-    public function testTokenMatchesActivationRequest() {
+    public function testTokenMatchesActivationRequest()
+    {
         foreach ($this->workers as $worker) {
-            $this->assertEquals($this->getWorkerActivationRequestService()->fetch($worker)->getToken(), $worker->getToken());
+            $this->assertEquals(
+                $this->getWorkerActivationRequestService()->fetch($worker)->getToken(), $worker->getToken()
+            );
         }
     }
-
 }

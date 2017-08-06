@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\WorkerTaskAssignmen
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\WorkerTaskAssignmentService\AssignCollection\HasWorkers\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
@@ -108,7 +109,8 @@ abstract class SuccessTest extends ServiceTest
     protected function getWorkers()
     {
         if (is_null($this->workers)) {
-            $this->workers = $this->createWorkers($this->getWorkerCount());
+            $workerFactory = new WorkerFactory($this->container);
+            $this->workers = $workerFactory->createCollection($this->getWorkerCount());
         }
 
         return $this->workers;

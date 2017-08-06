@@ -653,23 +653,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * Create and return a collection of workers
-     *
-     * @param int $requestedWorkerCount
-     * @return array
-     */
-    protected function createWorkers($requestedWorkerCount)
-    {
-        $workers = array();
-
-        for ($workerIndex = 0; $workerIndex < $requestedWorkerCount; $workerIndex++) {
-            $workers[] = $this->createWorker('worker'.$workerIndex.'.worker.simplytestable.com');
-        }
-
-        return $workers;
-    }
-
-    /**
      * @param string $name
      *
      * @return Plan
