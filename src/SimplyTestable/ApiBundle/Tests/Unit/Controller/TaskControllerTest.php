@@ -7,11 +7,18 @@ use SimplyTestable\ApiBundle\Tests\Factory\ContainerFactory;
 
 class TaskControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testCompleteActionInMaintenanceReadOnlyMode()
+    use MaintenanceStatesDataProviderTrait;
+
+    /**
+     * @dataProvider maintenanceStatesDataProvider
+     *
+     * @param array $maintenanceStates
+     */
+    public function testCompleteActionInMaintenanceReadOnlyMode($maintenanceStates)
     {
         $controller = new TaskController();
         $controller->setContainer(
-            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest()
+            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
         );
 
         $response = $controller->completeAction();

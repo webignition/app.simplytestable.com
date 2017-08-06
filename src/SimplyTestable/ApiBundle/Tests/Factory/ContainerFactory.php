@@ -28,7 +28,7 @@ class ContainerFactory
         return $container;
     }
 
-    public static function createForMaintenanceReadOnlyModeControllerTest()
+    public static function createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
     {
         $applicationStateService = \Mockery::mock(ApplicationStateService::class);
         $applicationStateService
@@ -36,7 +36,11 @@ class ContainerFactory
 
         $applicationStateService
             ->shouldReceive('isInMaintenanceReadOnlyState')
-            ->andReturn(true);
+            ->andReturn($maintenanceStates['read-only']);
+
+        $applicationStateService
+            ->shouldReceive('isInMaintenanceBackupReadOnlyState')
+            ->andReturn($maintenanceStates['backup-read-only']);
 
         $kernel = \Mockery::mock(KernelInterface::class);
         $kernel

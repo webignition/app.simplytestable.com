@@ -3,10 +3,22 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job;
 
 use SimplyTestable\ApiBundle\Controller\Job\JobController;
+use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 abstract class AbstractJobControllerTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var UserFactory
+     */
+    protected $userFactory;
+
+    /**
+     * @var JobFactory
+     */
+    protected $jobFactory;
+
     /**
      * @var JobController
      */
@@ -21,5 +33,8 @@ abstract class AbstractJobControllerTest extends BaseSimplyTestableTestCase
 
         $this->jobController = new JobController();
         $this->jobController->setContainer($this->container);
+
+        $this->userFactory = new UserFactory($this->container);
+        $this->jobFactory = new JobFactory($this->container);
     }
 }

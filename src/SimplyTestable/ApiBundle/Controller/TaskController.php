@@ -29,6 +29,10 @@ class TaskController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
+        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $completeRequest = $this->container->get('simplytestable.services.request.factory.task.complete')->create();

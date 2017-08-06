@@ -7,11 +7,18 @@ use SimplyTestable\ApiBundle\Tests\Factory\ContainerFactory;
 
 class UserCreationControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testActivateActionInMaintenanceReadOnlyMode()
+    use MaintenanceStatesDataProviderTrait;
+
+    /**
+     * @dataProvider maintenanceStatesDataProvider
+     *
+     * @param array $maintenanceStates
+     */
+    public function testActivateActionInMaintenanceReadOnlyMode($maintenanceStates)
     {
         $controller = new UserCreationController();
         $controller->setContainer(
-            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest()
+            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
         );
 
         $response = $controller->activateAction();
@@ -19,11 +26,16 @@ class UserCreationControllerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(503, $response->getStatusCode());
     }
 
-    public function testCreateActionInMaintenanceReadOnlyMode()
+    /**
+     * @dataProvider maintenanceStatesDataProvider
+     *
+     * @param array $maintenanceStates
+     */
+    public function testCreateActionInMaintenanceReadOnlyMode($maintenanceStates)
     {
         $controller = new UserCreationController();
         $controller->setContainer(
-            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest()
+            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
         );
 
         $response = $controller->createAction();

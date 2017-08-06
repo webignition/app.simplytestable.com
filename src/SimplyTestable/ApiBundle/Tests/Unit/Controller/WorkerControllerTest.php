@@ -7,11 +7,18 @@ use SimplyTestable\ApiBundle\Tests\Factory\ContainerFactory;
 
 class WorkerControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testActivateActionInMaintenanceReadOnlyMode()
+    use MaintenanceStatesDataProviderTrait;
+
+    /**
+     * @dataProvider maintenanceStatesDataProvider
+     *
+     * @param array $maintenanceStates
+     */
+    public function testActivateActionInMaintenanceReadOnlyMode($maintenanceStates)
     {
         $controller = new WorkerController();
         $controller->setContainer(
-            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest()
+            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
         );
 
         $response = $controller->activateAction();

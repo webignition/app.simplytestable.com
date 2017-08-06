@@ -2,37 +2,56 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class JobController extends BaseJobController
 {
     protected $testId = null;
 
-    public function latestAction($site_root_url) {
-        $website = $this->get('simplytestable.services.websiteservice')->fetch($site_root_url);
+    /**
+     * @param $site_root_url
+     *
+     * @return RedirectResponse|Response
+     */
+    public function latestAction($site_root_url)
+    {
+        $websiteService = $this->get('simplytestable.services.websiteservice');
+        $jobService = $this->get('simplytestable.services.jobservice');
+        $userService = $this->get('simplytestable.services.userservice');
+        $teamService = $this->get('simplytestable.services.teamservice');
+
+        $website = $websiteService->fetch($site_root_url);
         $latestJob = null;
 
-        if ($this->getTeamService()->hasTeam($this->getUser()) || $this->getTeamService()->getMemberService()->belongsToTeam($this->getUser())) {
-            $team = $this->getTeamService()->getForUser($this->getUser());
+        $userHasTeam = $teamService->hasTeam($this->getUser());
+        $userBelongsToTeam = $teamService->getMemberService()->belongsToTeam($this->getUser());
 
-            $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+        if ($userHasTeam || $userBelongsToTeam) {
+            $team = $teamService->getForUser($this->getUser());
+
+            $latestJob = $jobService->getEntityRepository()->findLatestByWebsiteAndUsers(
                 $website,
-                $this->getTeamService()->getPeople($team)
+                $teamService->getPeople($team)
             );
 
-            if (!is_null($latestJob)) {
-                return $this->redirect($this->generateUrl('job_job_status', array(
-                    'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
-                    'test_id' => $latestJob->getId()
-                ), true));
+            if ($latestJob instanceof Job) {
+                return $this->createRedirectToJobStatus(
+                    $latestJob->getWebsite()->getCanonicalUrl(),
+                    $latestJob->getId()
+                );
             }
         }
 
-        if (!$this->getUserService()->isPublicUser($this->getUser())) {
-            $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+        if (!$userService->isPublicUser($this->getUser())) {
+            $latestJob = $jobService->getEntityRepository()->findLatestByWebsiteAndUsers(
                 $website,
                 array(
                     $this->getUser()
@@ -40,20 +59,19 @@ class JobController extends BaseJobController
             );
 
             if (!is_null($latestJob)) {
-                return $this->redirect($this->generateUrl('job_job_status', array(
-                    'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
-                    'test_id' => $latestJob->getId()
-                ), true));
+                return $this->createRedirectToJobStatus(
+                    $latestJob->getWebsite()->getCanonicalUrl(),
+                    $latestJob->getId()
+                );
             }
         }
 
-        $latestJob = $this->getJobService()->getEntityRepository()->findLatestByWebsiteAndUsers(
+        $latestJob = $jobService->getEntityRepository()->findLatestByWebsiteAndUsers(
             $website,
-            array(
-                $this->getUserService()->getPublicUser()
-            )
+            [
+                $userService->getPublicUser()
+            ]
         );
-
 
         if (is_null($latestJob)) {
             $response = new Response();
@@ -61,59 +79,89 @@ class JobController extends BaseJobController
             return $response;
         }
 
-        return $this->redirect($this->generateUrl('job_job_status', array(
-            'site_root_url' => $latestJob->getWebsite()->getCanonicalUrl(),
-            'test_id' => $latestJob->getId()
-        ), true));
+        return $this->createRedirectToJobStatus(
+            $latestJob->getWebsite()->getCanonicalUrl(),
+            $latestJob->getId()
+        );
     }
 
-    public function setPublicAction($site_root_url, $test_id) {
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return RedirectResponse|Response
+     */
+    public function setPublicAction($site_root_url, $test_id)
+    {
         return $this->setIsPublic($site_root_url, $test_id, true);
     }
 
-    public function setPrivateAction($site_root_url, $test_id) {
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return RedirectResponse|Response
+     */
+    public function setPrivateAction($site_root_url, $test_id)
+    {
         return $this->setIsPublic($site_root_url, $test_id, false);
     }
 
-    public function isPublicAction($site_root_url, $test_id) {
-        $response = new Response();
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
+    public function isPublicAction($site_root_url, $test_id)
+    {
+        $jobService = $this->get('simplytestable.services.jobservice');
 
-        if (!$this->getJobService()->getIsPublic($test_id)) {
-            $response->setStatusCode(404);
-        }
-
-        return $response;
+        return new Response(
+            '',
+            $jobService->getIsPublic($test_id) ? 200 : 404
+        );
     }
 
-    private function setIsPublic($site_root_url, $test_id, $isPublic) {
-        if ($this->getUserService()->isPublicUser($this->getUser())) {
-            return $this->redirect($this->generateUrl('job_job_status', array(
-                'site_root_url' => $site_root_url,
-                'test_id' => $test_id
-            ), true));
+    /**
+     * @param string $siteRootUrl
+     * @param int $testId
+     * @param bool $isPublic
+     *
+     * @return RedirectResponse|Response
+     */
+    private function setIsPublic($siteRootUrl, $testId, $isPublic)
+    {
+        $userService = $this->get('simplytestable.services.userservice');
+        $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
+        $jobService = $this->get('simplytestable.services.jobservice');
+
+        if ($userService->isPublicUser($this->getUser())) {
+            return $this->createRedirectToJobStatus($siteRootUrl, $testId);
         }
 
-        $this->getJobRetrievalService()->setUser($this->getUser());
+        $jobRetrievalService->setUser($this->getUser());
 
         try {
-            $job = $this->getJobRetrievalService()->retrieve($test_id);
+            $job = $jobRetrievalService->retrieve($testId);
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
+
             return $response;
+        }
+
+        if ($userService->isPublicUser($job->getUser())) {
+            return $this->createRedirectToJobStatus($siteRootUrl, $testId);
         }
 
         if ($job->getIsPublic() !== $isPublic) {
             $job->setIsPublic(filter_var($isPublic, FILTER_VALIDATE_BOOLEAN));
-            $this->getJobService()->persistAndFlush($job);
+            $jobService->persistAndFlush($job);
         }
 
-        return $this->redirect($this->generateUrl('job_job_status', array(
-            'site_root_url' => $site_root_url,
-            'test_id' => $job->getId()
-        ), true));
+        return $this->createRedirectToJobStatus($siteRootUrl, $testId);
     }
-
 
     /**
      * @param string $site_root_url
@@ -140,24 +188,35 @@ class JobController extends BaseJobController
         }
     }
 
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
     public function cancelAction($site_root_url, $test_id)
     {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        $isInMaintenanceReadOnlyState = $this->getApplicationStateService()->isInMaintenanceReadOnlyState();
+        $isInMaintenanceBackupReadOnlyState = $this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState();
+
+        if ($isInMaintenanceReadOnlyState || $isInMaintenanceBackupReadOnlyState) {
             return $this->sendServiceUnavailableResponse();
         }
 
-        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        $jobService = $this->container->get('simplytestable.services.jobservice');
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
+        $jobService = $this->get('simplytestable.services.jobservice');
+        $crawlJobContainerService = $this->get('simplytestable.services.crawljobcontainerservice');
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $taskService = $this->get('simplytestable.services.taskservice');
+        $stateService = $this->get('simplytestable.services.stateservice');
 
         $jobRetrievalService->setUser($this->getUser());
 
@@ -171,41 +230,39 @@ class JobController extends BaseJobController
 
         $this->testId = $test_id;
 
-        if (JobService::FAILED_NO_SITEMAP_STATE === $job->getState()->getName()) {
-            $crawlJob = $crawlJobContainerService->getForJob($job)->getCrawlJob();
-            $this->cancelAction($site_root_url, $crawlJob->getId());
-        }
+        $hasCrawlJob = $crawlJobContainerService->hasForJob($job);
 
-        if ($job->getType()->equals($jobTypeService->getCrawlType())) {
-            $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
+        if ($hasCrawlJob) {
+            $crawlJobContainer = $crawlJobContainerService->getForJob($job);
 
-            foreach ($parentJob->getRequestedTaskTypes() as $taskType) {
-                /* @var Type $taskType */
-                $taskTypeParameterDomainsToIgnoreKey =
-                    strtolower(str_replace(' ', '-', $taskType->getName())) . '-domains-to-ignore';
+            $isParentJob = $crawlJobContainer->getParentJob() === $job;
+            $isCrawlJob = $crawlJobContainer->getCrawlJob() === $job;
 
-                if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
-                    $jobPreparationService->setPredefinedDomainsToIgnore(
-                        $taskType,
-                        $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey)
-                    );
-                }
+            if ($isParentJob) {
+                $this->cancelAction($site_root_url, $crawlJobContainer->getCrawlJob()->getId());
             }
 
-            $jobPreparationService->prepareFromCrawl($crawlJobContainerService->getForJob($parentJob));
+            if ($isCrawlJob) {
+                $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
+                $this->setJobPreparationDomainsToIgnoredFromJobTaskTypes($parentJob, $jobPreparationService);
 
-            $resqueQueueService->enqueue(
-                $resqueJobFactory->create(
-                    'tasks-notify'
-                )
-            );
+                $jobPreparationService->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));
+
+                $resqueQueueService->enqueue(
+                    $resqueJobFactory->create(
+                        'tasks-notify'
+                    )
+                );
+            }
         }
 
         $preCancellationState = clone $job->getState();
 
         $jobService->cancel($job);
 
-        if (JobService::STARTING_STATE === $preCancellationState->getName()) {
+        $jobStartingState = $stateService->fetch(JobService::STARTING_STATE);
+
+        if ($preCancellationState->equals($jobStartingState)) {
             $resqueQueueService->dequeue(
                 $resqueJobFactory->create(
                     'job-prepare',
@@ -241,7 +298,15 @@ class JobController extends BaseJobController
         return $this->sendSuccessResponse();
     }
 
-    public function tasksAction($site_root_url, $test_id) {
+    /**
+     * @param Request $request
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
+    public function tasksAction(Request $request, $site_root_url, $test_id)
+    {
         $this->getJobRetrievalService()->setUser($this->getUser());
 
         try {
@@ -252,7 +317,8 @@ class JobController extends BaseJobController
             return $response;
         }
 
-        $taskIds = $this->getRequestTaskIds();
+        $taskIds = $this->getRequestTaskIds($request);
+
         $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $taskIds);
 
         foreach ($tasks as $task) {
@@ -265,8 +331,14 @@ class JobController extends BaseJobController
         return $this->sendResponse($tasks);
     }
 
-
-    public function taskIdsAction($site_root_url, $test_id) {
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
+    public function taskIdsAction($site_root_url, $test_id)
+    {
         $this->getJobRetrievalService()->setUser($this->getUser());
 
         try {
@@ -282,8 +354,14 @@ class JobController extends BaseJobController
         return $this->sendResponse($taskIds);
     }
 
-
-    public function listUrlsAction($site_root_url, $test_id) {
+    /**
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return Response
+     */
+    public function listUrlsAction($site_root_url, $test_id)
+    {
         $this->getJobRetrievalService()->setUser($this->getUser());
 
         try {
@@ -297,55 +375,16 @@ class JobController extends BaseJobController
         return $this->sendResponse($this->getTaskService()->getUrlsByJob($job));
     }
 
-
-
     /**
+     * @param Request $request
      *
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
+     * @return \int[]|null
      */
-    protected function getJobByUser() {
-        $job = $this->getJobService()->getEntityRepository()->findOneBy(array(
-            'id' => $this->testId,
-            'user' => array(
-                $this->getUser(),
-                $this->getUserService()->getPublicUser()
-            )
-        ));
+    private function getRequestTaskIds(Request $request)
+    {
+        $requestTaskIds = $request->request->get('taskIds');
 
-        if (is_null($job)) {
-            return false;
-        }
-
-        return $this->populateJob($job);
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job
-     */
-    protected function getJobByVisibilityOrUser() {
-        // Check for jobs that are public by owner
-        $publicJob = $this->getJobService()->getEntityRepository()->findOneBy(array(
-            'id' => $this->testId,
-            'isPublic' => true
-        ));
-
-        if (!is_null($publicJob)) {
-            return $this->populateJob($publicJob);
-        }
-
-        return $this->getJobByUser();
-    }
-
-
-    /**
-     *
-     * @return array|null
-     */
-    private function getRequestTaskIds() {
-        $requestTaskIds = $this->getRequestValue('taskIds');
-        $taskIds = array();
+        $taskIds = [];
 
         if (substr_count($requestTaskIds, ':')) {
             $rangeLimits = explode(':', $requestTaskIds);
@@ -367,35 +406,44 @@ class JobController extends BaseJobController
     }
 
     /**
+     * @param string $siteRootUrl
+     * @param int $testId
      *
-     * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
+     * @return RedirectResponse
      */
-    private function getJobPreparationService() {
-        return $this->container->get('simplytestable.services.jobpreparationservice');
+    private function createRedirectToJobStatus($siteRootUrl, $testId)
+    {
+        return $this->redirect(
+            $this->generateUrl(
+                'job_job_status',
+                [
+                    'site_root_url' => $siteRootUrl,
+                    'test_id' => $testId
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            )
+        );
     }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
+     * @param Job $job
+     * @param JobPreparationService $jobPreparationService
      */
-    private function getResqueQueueService() {
-        return $this->container->get('simplytestable.services.resque.queueService');
-    }
+    private function setJobPreparationDomainsToIgnoredFromJobTaskTypes(
+        Job $job,
+        JobPreparationService $jobPreparationService
+    ) {
+        foreach ($job->getRequestedTaskTypes() as $taskType) {
+            /* @var Type $taskType */
+            $taskTypeNameKey = strtolower(str_replace(' ', '-', $taskType->getName()));
+            $taskTypeParameterDomainsToIgnoreKey = $taskTypeNameKey . '-domains-to-ignore';
 
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
-     */
-    private function getResqueJobFactoryService() {
-        return $this->container->get('simplytestable.services.resque.jobFactoryService');
-    }
-
-
-    /**
-     * @return \SimplyTestable\ApiBundle\Services\Team\Service
-     */
-    private function getTeamService() {
-        return $this->get('simplytestable.services.teamservice');
+            if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
+                $jobPreparationService->setPredefinedDomainsToIgnore(
+                    $taskType,
+                    $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey)
+                );
+            }
+        }
     }
 }

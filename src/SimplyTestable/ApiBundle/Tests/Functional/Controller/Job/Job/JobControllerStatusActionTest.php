@@ -10,37 +10,15 @@ use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Guzzle\Http\Message\Response as GuzzleResponse;
 
-class JobControlllerStatusActionTest extends AbstractJobControllerTest
+class JobControllerStatusActionTest extends AbstractJobControllerTest
 {
     const CANONICAL_URL = 'http://example.com/';
-
-    /**
-     * @var UserFactory
-     */
-    private $userFactory;
-
-    /**
-     * @var JobFactory
-     */
-    private $jobFactory;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->userFactory = new UserFactory($this->container);
-        $this->jobFactory = new JobFactory($this->container);
-    }
 
     public function testRequest()
     {

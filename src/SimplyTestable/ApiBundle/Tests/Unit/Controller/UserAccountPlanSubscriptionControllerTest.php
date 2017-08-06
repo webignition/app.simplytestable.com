@@ -7,11 +7,18 @@ use SimplyTestable\ApiBundle\Tests\Factory\ContainerFactory;
 
 class UserAccountPlanSubscriptionControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testSubscribeActionInMaintenanceReadOnlyMode()
+    use MaintenanceStatesDataProviderTrait;
+
+    /**
+     * @dataProvider maintenanceStatesDataProvider
+     *
+     * @param array $maintenanceStates
+     */
+    public function testSubscribeActionInMaintenanceReadOnlyMode($maintenanceStates)
     {
         $controller = new UserAccountPlanSubscriptionController();
         $controller->setContainer(
-            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest()
+            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
         );
 
         $response = $controller->subscribeAction('user@example.com', 'foo');

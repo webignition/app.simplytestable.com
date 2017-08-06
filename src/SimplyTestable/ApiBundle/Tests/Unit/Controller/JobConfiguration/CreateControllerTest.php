@@ -4,15 +4,23 @@ namespace SimplyTestable\ApiBundle\Tests\Unit\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController;
 use SimplyTestable\ApiBundle\Tests\Factory\ContainerFactory;
+use SimplyTestable\ApiBundle\Tests\Unit\Controller\MaintenanceStatesDataProviderTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 class CreateControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public function testActivateActionInMaintenanceReadOnlyMode()
+    use MaintenanceStatesDataProviderTrait;
+
+    /**
+     * @dataProvider maintenanceStatesDataProvider
+     *
+     * @param array $maintenanceStates
+     */
+    public function testActivateActionInMaintenanceReadOnlyMode($maintenanceStates)
     {
         $controller = new CreateController();
         $controller->setContainer(
-            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest()
+            ContainerFactory::createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
         );
 
         $response = $controller->createAction(new Request());
