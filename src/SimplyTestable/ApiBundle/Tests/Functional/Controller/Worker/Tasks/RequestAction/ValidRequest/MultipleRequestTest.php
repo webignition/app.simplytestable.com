@@ -4,12 +4,14 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Worker\Tasks\Requ
 
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 
 class MultipleRequestTest extends ValidRequestTest
 {
     public function preCall()
     {
-        $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
+        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory->create(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 

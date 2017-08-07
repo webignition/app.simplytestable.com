@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Cancel\Command;
 
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 
 class HttpErrorTest extends BaseTest
 {
@@ -27,7 +28,8 @@ class HttpErrorTest extends BaseTest
             HttpFixtureFactory::createResponse($this->getStatusCode(), ''),
         ]);
 
-        $worker = $this->createWorker();
+        $workerFactory = new WorkerFactory($this->container);
+        $worker = $workerFactory->create();
 
         $task = $job->getTasks()->first();
         $cancellableStates = array(

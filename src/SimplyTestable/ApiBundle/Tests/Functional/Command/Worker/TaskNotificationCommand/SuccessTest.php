@@ -4,9 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Worker\TaskNotificat
 
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 
-class SuccessTest extends CommandTest {
-
+class SuccessTest extends CommandTest
+{
     /**
      * @var int
      */
@@ -17,8 +18,11 @@ class SuccessTest extends CommandTest {
      */
     private $workers;
 
-
-    protected function setUp() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
         parent::setUp();
 
         $this->queueHttpFixtures([
@@ -27,13 +31,14 @@ class SuccessTest extends CommandTest {
             HttpFixtureFactory::createSuccessResponse(),
         ]);
 
-        $this->workers = $this->createWorkers(3);
+        $workerFactory = new WorkerFactory($this->container);
+        $this->workers = $workerFactory->createCollection(3);
+
         $this->returnCode = $this->executeCommand($this->getCommandName());
     }
 
-
-    public function testReturnCodeIsZero() {
+    public function testReturnCodeIsZero()
+    {
         $this->assertEquals(0, $this->returnCode);
     }
-
 }

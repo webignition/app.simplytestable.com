@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Worker\Tasks\RequestAction\ValidRequest;
 
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\Worker\Tasks\RequestAction\RequestTest;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,7 +38,8 @@ abstract class ValidRequestTest extends RequestTest
 
     protected function preCall()
     {
-        $this->createWorker(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
+        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory->create(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
     }
 
     protected function preController()

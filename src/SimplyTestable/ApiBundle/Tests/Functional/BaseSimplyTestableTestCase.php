@@ -589,36 +589,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return $this->container->get('simplytestable.services.stripeeventservice');
     }
 
-    /**
-     * @return CommandService
-     */
-    protected function getCommandService()
-    {
-        return $this->container->get('simplytestable.services.commandservice');
-    }
-
-    /**
-     * @param string $hostname
-     * @param string $token
-     *
-     * @return Worker
-     */
-    protected function createWorker($hostname = null, $token = null)
-    {
-        if (is_null($hostname)) {
-            $hostname = md5(time()) . '.worker.simplytestable.com';
-        }
-
-        $worker = $this->getWorkerService()->get($hostname);
-        $worker->setToken($token);
-        $this->getWorkerService()->persistAndFlush($worker);
-
-        $worker->setState($this->getStateService()->fetch('worker-active'));
-
-        $this->getWorkerService()->persistAndFlush($worker);
-        return $worker;
-    }
-
     protected function createPublicUserIfMissing()
     {
         if (!$this->getUserService()->exists('public@simplytestable.com')) {
@@ -650,23 +620,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
             $manipulator = $this->container->get('fos_user.util.user_manipulator');
             $manipulator->activate($user->getUsername());
         }
-    }
-
-    /**
-     * Create and return a collection of workers
-     *
-     * @param int $requestedWorkerCount
-     * @return array
-     */
-    protected function createWorkers($requestedWorkerCount)
-    {
-        $workers = array();
-
-        for ($workerIndex = 0; $workerIndex < $requestedWorkerCount; $workerIndex++) {
-            $workers[] = $this->createWorker('worker'.$workerIndex.'.worker.simplytestable.com');
-        }
-
-        return $workers;
     }
 
     /**
