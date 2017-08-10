@@ -20,7 +20,8 @@ class Version20120716214708_create_Job extends AbstractMigration {
                     INDEX IDX_C395A61818F45C82 (website_id),
                     INDEX IDX_C395A6185D83CC1 (state_id),
                     UNIQUE INDEX UNIQ_C395A618E43FFED1 (timePeriod_id),
-                    PRIMARY KEY(id)) ENGINE = InnoDB",
+                    PRIMARY KEY(id))
+                    DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB",
                 "ALTER TABLE Job ADD CONSTRAINT FK_C395A618A76ED395 FOREIGN KEY (user_id) REFERENCES fos_user (id)",
                 "ALTER TABLE Job ADD CONSTRAINT FK_C395A61818F45C82 FOREIGN KEY (website_id) REFERENCES WebSite (id)",
                 "ALTER TABLE Job ADD CONSTRAINT FK_C395A6185D83CC1 FOREIGN KEY (state_id) REFERENCES State (id)",

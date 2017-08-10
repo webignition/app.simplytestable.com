@@ -18,7 +18,8 @@ class Version20120716214712_create_TaskType extends AbstractMigration {
                     selectable TINYINT(1) NOT NULL,
                     UNIQUE INDEX UNIQ_F7737B3C5E237E06 (name),
                     INDEX IDX_F7737B3CAEA19A54 (tasktypeclass_id),
-                    PRIMARY KEY(id)) ENGINE = InnoDB",
+                    PRIMARY KEY(id)) 
+                    DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB",
                 "ALTER TABLE TaskType ADD CONSTRAINT FK_F7737B3CAEA19A54 FOREIGN KEY (tasktypeclass_id) REFERENCES TaskTypeClass (id)"
             ],
             'down' => [

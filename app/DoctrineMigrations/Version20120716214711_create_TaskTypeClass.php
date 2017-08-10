@@ -15,7 +15,8 @@ class Version20120716214711_create_TaskTypeClass extends AbstractMigration {
                     name VARCHAR(255) NOT NULL,
                     description LONGTEXT DEFAULT NULL,
                     UNIQUE INDEX UNIQ_F92FE5F25E237E06 (name),
-                    PRIMARY KEY(id)) ENGINE = InnoDB"
+                    PRIMARY KEY(id)) 
+                    DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB"
             ],
             'down' => [
                 "DROP TABLE TaskTypeClass"

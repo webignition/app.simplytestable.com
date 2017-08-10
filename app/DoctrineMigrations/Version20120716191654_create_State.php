@@ -10,7 +10,14 @@ class Version20120716191654_create_State extends AbstractMigration {
     private $statements = [
         'mysql' => [
             'up' => [
-                "CREATE TABLE State (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, nextState_id INT DEFAULT NULL, UNIQUE INDEX UNIQ_6252FDFF5E237E06 (name), UNIQUE INDEX UNIQ_6252FDFF4A689548 (nextState_id), PRIMARY KEY(id)) ENGINE = InnoDB",
+                "CREATE TABLE State (
+                    id INT AUTO_INCREMENT NOT NULL, 
+                    name VARCHAR(255) NOT NULL, 
+                    nextState_id INT DEFAULT NULL, 
+                    UNIQUE INDEX UNIQ_6252FDFF5E237E06 (name), 
+                    UNIQUE INDEX UNIQ_6252FDFF4A689548 (nextState_id), 
+                    PRIMARY KEY(id)) 
+                    DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB",
                 "ALTER TABLE State ADD CONSTRAINT FK_6252FDFF4A689548 FOREIGN KEY (nextState_id) REFERENCES State (id)"
             ],
             'down' => [
