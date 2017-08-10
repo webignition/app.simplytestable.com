@@ -27,7 +27,8 @@ class Version20120716214726_create_Task extends AbstractMigration {
                     UNIQUE INDEX UNIQ_F24C741BE43FFED1 (timePeriod_id),
                     UNIQUE INDEX UNIQ_F24C741BDE097880 (output_id),
                     INDEX remoteId_idx (remoteId),
-                    PRIMARY KEY(id)) ENGINE = InnoDB",
+                    PRIMARY KEY(id)) 
+                    DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB",
                 "ALTER TABLE Task ADD CONSTRAINT FK_F24C741BBE04EA9 FOREIGN KEY (job_id) REFERENCES Job (id)",
                 "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B5D83CC1 FOREIGN KEY (state_id) REFERENCES State (id)",
                 "ALTER TABLE Task ADD CONSTRAINT FK_F24C741B6B20BA36 FOREIGN KEY (worker_id) REFERENCES Worker (id)",

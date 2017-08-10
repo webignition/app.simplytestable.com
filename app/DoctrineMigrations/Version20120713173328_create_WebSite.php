@@ -12,7 +12,12 @@ class Version20120713173328_create_WebSite extends AbstractMigration {
     private $statements = [
         'mysql' => [
             'up' => [
-                "CREATE TABLE WebSite (id INT AUTO_INCREMENT NOT NULL, canonicalUrl VARCHAR(255) NOT NULL, UNIQUE INDEX UNIQ_28E0CB454A404188 (canonicalUrl), PRIMARY KEY(id)) ENGINE = InnoDB"
+                "CREATE TABLE WebSite (
+                    id INT AUTO_INCREMENT NOT NULL, 
+                    canonicalUrl VARCHAR(255) NOT NULL, 
+                    UNIQUE INDEX UNIQ_28E0CB454A404188 (canonicalUrl), 
+                    PRIMARY KEY(id)) 
+                    DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB"
             ],
             'down' => [
                 "DROP TABLE WebSite"
