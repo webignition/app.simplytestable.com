@@ -320,36 +320,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @param string $canonicalUrl
-     * @param int $job_id
-     *
-     * @return \stdClass
-     */
-    protected function prepareJob($canonicalUrl, $job_id)
-    {
-        $this->executeCommand('simplytestable:job:prepare', array(
-            'id' => $job_id
-        ));
-
-        return json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());
-    }
-
-    /**
-     * @param string $canonicalUrl
-     * @param int $job_id
-     *
-     * @return \stdClass
-     */
-    protected function resolveJob($canonicalUrl, $job_id)
-    {
-        $this->executeCommand('simplytestable:job:resolve', array(
-            'id' => $job_id
-        ));
-
-        return json_decode($this->fetchJob($canonicalUrl, $job_id)->getContent());
-    }
-
-    /**
      * @param User $user
      *
      * @return string
@@ -358,40 +328,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     {
         $this->getUserPasswordResetController('getTokenAction')->getTokenAction($user->getEmail());
         return $this->getUserService()->getConfirmationToken($user);
-    }
-
-    /**
-     * @param string $canonicalUrl
-     * @param int $id
-     *
-     * @return Response
-     */
-    protected function fetchJob($canonicalUrl, $id)
-    {
-        return $this->getJobController('statusAction')->statusAction($canonicalUrl, $id);
-    }
-
-    /**
-     * @param Job $job
-     * @param array $parameters
-     *
-     * @return Response
-     */
-    protected function fetchJobResponse(Job $job, $parameters = array())
-    {
-        return $this->getJobController('statusAction', $parameters)->statusAction(
-            $job->getWebsite()->getCanonicalUrl(), $job->getId()
-        );
-    }
-
-    /**
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     *
-     * @return \stdClass
-     */
-    protected function fetchJobStatusObject(Job $job)
-    {
-        return json_decode($this->fetchJobResponse($job)->getContent());
     }
 
     /**
