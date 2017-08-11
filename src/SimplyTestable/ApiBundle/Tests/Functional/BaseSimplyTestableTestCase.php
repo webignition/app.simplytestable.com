@@ -60,9 +60,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 {
     const ROUTER_MATCH_CONTROLLER_KEY = '_controller';
 
-    const JOB_CONTROLLER_NAME = JobController::class;
-    const JOB_LIST_CONTROLLER_NAME = JobListController::class;
-    const JOB_START_CONTROLLER_NAME = JobStartController::class;
     const USER_CREATION_CONTROLLER_NAME = UserCreationController::class;
     const USER_PASSWORD_RESET_CONTROLLER_NAME = UserPasswordResetController::class;
     const USER_EMAIL_CHANGE_CONTROLLER_NAME = UserEmailChangeController::class;
@@ -100,40 +97,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getManager()
     {
         return $this->container->get('doctrine')->getManager();
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     *
-     * @return JobStartController
-     */
-    protected function getJobStartController($methodName, $postData = array())
-    {
-        return $this->getController(self::JOB_START_CONTROLLER_NAME, $methodName, $postData);
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     *
-     * @return JobController
-     */
-    protected function getJobController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(self::JOB_CONTROLLER_NAME, $methodName, $postData, $queryData);
-    }
-
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     *
-     * @return JobListController
-     */
-    protected function getJobListController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(self::JOB_LIST_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }
 
     /**
