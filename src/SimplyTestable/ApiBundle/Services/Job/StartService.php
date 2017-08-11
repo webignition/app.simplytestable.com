@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
     as UserAccountPlanEnforcementException;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 
@@ -40,24 +41,32 @@ class StartService
     private $resqueQueueService;
 
     /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param JobTypeService $jobTypeService
      * @param JobService $jobService
      * @param UserService $userService
      * @param ResqueQueueService $resqueQueueService
+     * @param StateService $stateService
      */
     public function __construct(
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         JobTypeService $jobTypeService,
         JobService $jobService,
         UserService $userService,
-        ResqueQueueService $resqueQueueService
+        ResqueQueueService $resqueQueueService,
+        StateService $stateService
     ) {
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->jobTypeService = $jobTypeService;
         $this->jobService = $jobService;
         $this->userService = $userService;
         $this->resqueQueueService = $resqueQueueService;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -137,12 +146,16 @@ class StartService
      *
      * @return null|Job
      */
-    public function getExistingJob(JobConfiguration $jobConfiguration)
+    private function getExistingJob(JobConfiguration $jobConfiguration)
     {
+        $incompleteJobStates = $this->stateService->fetchCollection(
+            $this->jobService->getIncompleteStateNames()
+        );
+
         /* @var $existingJob Job */
         $existingJobs = $this->jobService->getEntityRepository()->findBy([
             'website' => $jobConfiguration->getWebsite(),
-            'state' => $this->jobService->getIncompleteStates(),
+            'state' => $incompleteJobStates,
             'user' => $jobConfiguration->getUser(),
             'type' => $jobConfiguration->getType()
         ]);

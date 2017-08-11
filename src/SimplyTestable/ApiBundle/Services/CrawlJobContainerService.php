@@ -429,7 +429,7 @@ class CrawlJobContainerService extends EntityService
 
         return $entityRepository->getAllForUserByCrawlJobStates(
             $user,
-            $this->jobService->getIncompleteStates()
+            $this->stateService->fetchCollection($this->jobService->getIncompleteStateNames())
         );
     }
 }
