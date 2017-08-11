@@ -307,17 +307,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 
     /**
      * @param Job $job
-     *
-     * @return Response
-     */
-    protected function cancelJob(Job $job) {
-        return $this->getJobController('cancelAction')->cancelAction
-        ($job->getWebsite()->getCanonicalUrl(), $job->getId()
-        );
-    }
-
-    /**
-     * @param Job $job
      */
     protected function completeJob(Job $job)
     {

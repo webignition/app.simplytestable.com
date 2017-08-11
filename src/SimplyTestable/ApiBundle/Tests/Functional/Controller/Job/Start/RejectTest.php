@@ -41,7 +41,7 @@ class RejectTest extends ActionTest
             $job = $this->jobFactory->create([
                 JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             ]);
-            $this->cancelJob($job);
+            $this->jobFactory->cancel($job);
         }
 
         $request = new Request();
@@ -70,7 +70,7 @@ class RejectTest extends ActionTest
                 JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
                 JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
             ]);
-            $this->cancelJob($job);
+            $this->jobFactory->cancel($job);
         }
 
         $request = new Request([], [
