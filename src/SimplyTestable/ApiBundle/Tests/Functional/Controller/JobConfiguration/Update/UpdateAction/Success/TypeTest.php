@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\Success;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+
 class TypeTest extends SuccessTest {
 
     protected function setUp() {
@@ -17,7 +19,8 @@ class TypeTest extends SuccessTest {
     }
 
     protected function getNewJobType() {
-        return $this->getJobTypeService()->getSingleUrlType();
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        return $jobTypeService->getByName(JobTypeService::SINGLE_URL_NAME);
     }
 
     protected function getNewTaskConfiguration() {

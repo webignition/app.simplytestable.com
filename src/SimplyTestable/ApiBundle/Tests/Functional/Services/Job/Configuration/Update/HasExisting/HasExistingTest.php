@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\HasExisting;
 
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\ServiceTest;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
@@ -21,9 +22,12 @@ abstract class HasExistingTest extends ServiceTest {
 
         $this->getJobConfigurationService()->setUser($this->getCurrentUser());
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $firstValues = new ConfigurationValues();
         $firstValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
-        $firstValues->setType($this->getJobTypeService()->getFullSiteType());
+        $firstValues->setType($fullSiteJobType);
         $firstValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $firstValues->setLabel('first');
         $firstValues->setParameters('first-job-configuration-parameters');
@@ -32,7 +36,7 @@ abstract class HasExistingTest extends ServiceTest {
 
         $secondValues = new ConfigurationValues();
         $secondValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
-        $secondValues->setType($this->getJobTypeService()->getFullSiteType());
+        $secondValues->setType($fullSiteJobType);
         $secondValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $secondValues->setLabel('second');
         $secondValues->setParameters('second-job-configuration-parameters');

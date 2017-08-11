@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\EmptyNewLabel;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
@@ -56,12 +57,15 @@ abstract class EmptyNewLabelTest extends ServiceTest {
             $taskConfigurationCollection->add($taskConfiguration);
         }
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $values = new ConfigurationValues();
         $values->setLabel(self::LABEL);
         $values->setParameters('parameters');
         $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
         $values->setTaskConfigurationCollection($taskConfigurationCollection);
-        $values->setType($this->getJobTypeService()->getFullSiteType());
+        $values->setType($fullSiteJobType);
 
         $this->getJobConfigurationService()->setUser($this->getCurrentUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($values);

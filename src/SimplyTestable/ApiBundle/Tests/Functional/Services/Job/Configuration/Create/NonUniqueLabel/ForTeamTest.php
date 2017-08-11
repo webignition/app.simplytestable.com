@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\NonUniqueLabel;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
@@ -20,6 +21,9 @@ class ForTeamTest extends ServiceTest
     {
         parent::setUp();
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $userFactory = new UserFactory($this->container);
 
         $leader = $userFactory->createAndActivateUser('leader@example.com');
@@ -35,7 +39,7 @@ class ForTeamTest extends ServiceTest
         $this->values = new ConfigurationValues();
         $this->values->setLabel(self::LABEL);
         $this->values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-        $this->values->setType($this->getJobTypeService()->getFullSiteType());
+        $this->values->setType($fullSiteJobType);
         $this->values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
 
         $this->getJobConfigurationService()->create($this->values);

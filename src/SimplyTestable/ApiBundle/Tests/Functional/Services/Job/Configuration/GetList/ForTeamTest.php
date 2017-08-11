@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\G
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class ForTeamTest extends ServiceTest
@@ -50,6 +51,9 @@ class ForTeamTest extends ServiceTest
     {
         parent::setUp();
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $userFactory = new UserFactory($this->container);
 
         $this->leader = $userFactory->createAndActivateUser('leader@example.com');
@@ -76,7 +80,7 @@ class ForTeamTest extends ServiceTest
                 $jobConfigurationValues = new ConfigurationValues();
                 $jobConfigurationValues->setLabel(self::LABEL . '::' . $userIndex . '::' . $jobConfigurationIndex);
                 $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-                $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+                $jobConfigurationValues->setType($fullSiteJobType);
                 $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://' . $userIndex . '.' . $jobConfigurationIndex . 'example.com/'));
                 $jobConfigurationValues->setParameters('parameters');
 

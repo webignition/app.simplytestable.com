@@ -387,9 +387,10 @@ class CrawlJobContainerService extends EntityService
     private function create(Job $job)
     {
         $jobStartingState = $this->stateService->fetch(JobService::STARTING_STATE);
+        $crawlJobType = $this->jobTypeService->getByName(JobTypeService::CRAWL_NAME);
 
         $crawlJob = new Job();
-        $crawlJob->setType($this->jobTypeService->getCrawlType());
+        $crawlJob->setType($crawlJobType);
         $crawlJob->setState($jobStartingState);
         $crawlJob->setUser($job->getUser());
         $crawlJob->setWebsite($job->getWebsite());

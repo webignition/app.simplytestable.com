@@ -4,9 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job\Configuration\Wit
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 
-class RetrieveTest extends WithTaskConfigurationsTest {
-
+class RetrieveTest extends WithTaskConfigurationsTest
+{
     /**
      * @var Configuration
      */
@@ -22,8 +23,12 @@ class RetrieveTest extends WithTaskConfigurationsTest {
      */
     private $configurationId;
 
-    protected function setUp() {
+    protected function setUp()
+    {
         parent::setUp();
+
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $this->originalConfiguration = new Configuration();
         $this->originalConfiguration->setLabel('foo');
@@ -31,9 +36,7 @@ class RetrieveTest extends WithTaskConfigurationsTest {
         $this->originalConfiguration->setWebsite(
             $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
         );
-        $this->originalConfiguration->setType(
-            $this->getJobTypeService()->getFullSiteType()
-        );
+        $this->originalConfiguration->setType($fullSiteJobType);
         $this->originalConfiguration->setParameters('bar');
 
         $this->getManager()->persist($this->originalConfiguration);

@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\BaseCommand;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -55,7 +56,9 @@ class CompleteAllWithNoIncompleteTasksCommand extends BaseCommand
         $jobs = $jobService->getUnfinishedJobsWithTasksAndNoIncompleteTasks();
 
         // Exclude crawl jobs
-        $crawlJobType = $this->getContainer()->get('simplytestable.services.jobtypeservice')->getCrawlType();
+        $jobTypeService = $this->getContainer()->get('simplytestable.services.jobtypeservice');
+        $crawlJobType = $jobTypeService->getByName(JobTypeService::CRAWL_NAME);
+
         foreach ($jobs as $jobIndex => $job) {
             if ($job->getType() === $crawlJobType) {
                 unset($jobs[$jobIndex]);

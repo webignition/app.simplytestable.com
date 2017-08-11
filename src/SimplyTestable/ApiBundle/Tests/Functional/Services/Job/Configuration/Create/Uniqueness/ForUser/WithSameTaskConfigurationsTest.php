@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\Uniqueness\ForUser;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\Uniqueness\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
@@ -44,6 +45,9 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
     protected function setUp() {
         parent::setUp();
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
@@ -59,7 +63,7 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
         $this->values = new ConfigurationValues();
         $this->values->setLabel(self::LABEL);
         $this->values->setTaskConfigurationCollection($taskConfigurationCollection);
-        $this->values->setType($this->getJobTypeService()->getFullSiteType());
+        $this->values->setType($fullSiteJobType);
         $this->values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
         $this->values->setParameters(self::PARAMETERS);
 

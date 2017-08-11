@@ -3,16 +3,22 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job\Configuration\WithoutTaskConfigurations;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 
-class PersistTest extends WithoutTaskConfigurationsTest {
+class PersistTest extends WithoutTaskConfigurationsTest
+{
 
     /**
      * @var Configuration
      */
     private $configuration;
 
-    protected function setUp() {
+    protected function setUp()
+    {
         parent::setUp();
+
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $this->configuration = new Configuration();
         $this->configuration->setLabel('foo');
@@ -20,9 +26,7 @@ class PersistTest extends WithoutTaskConfigurationsTest {
         $this->configuration->setWebsite(
             $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
         );
-        $this->configuration->setType(
-            $this->getJobTypeService()->getFullSiteType()
-        );
+        $this->configuration->setType($fullSiteJobType);
         $this->configuration->setParameters('bar');
 
         $this->getManager()->persist($this->configuration);
@@ -30,7 +34,8 @@ class PersistTest extends WithoutTaskConfigurationsTest {
     }
 
 
-    public function testIsPersisted() {
+    public function testIsPersisted()
+    {
         $this->assertNotNull($this->configuration->getId());
     }
 }

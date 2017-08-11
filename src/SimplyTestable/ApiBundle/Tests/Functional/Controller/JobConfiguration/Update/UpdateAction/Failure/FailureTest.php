@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\Failure;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\UpdateTest;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
@@ -31,10 +32,13 @@ abstract class FailureTest extends UpdateTest {
         $this->getUserService()->setUser($this->getCurrentUser());
         $this->getJobConfigurationService()->setUser($this->getCurrentUser());
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $jobConfigurationValues = new JobConfigurationValues();
         $jobConfigurationValues->setLabel(self::LABEL1);
         $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-        $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+        $jobConfigurationValues->setType($fullSiteJobType);
         $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
         $jobConfigurationValues->setParameters($this->getOriginalParameters());
 
@@ -42,7 +46,7 @@ abstract class FailureTest extends UpdateTest {
 
         $jobConfigurationValues->setLabel(self::LABEL2);
         $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-        $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+        $jobConfigurationValues->setType($fullSiteJobType);
         $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://foo.example.com/'));
         $jobConfigurationValues->setParameters($this->getOriginalParameters());
 

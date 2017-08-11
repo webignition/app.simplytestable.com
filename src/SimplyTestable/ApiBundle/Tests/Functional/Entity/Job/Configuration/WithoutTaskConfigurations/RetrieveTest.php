@@ -3,8 +3,10 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job\Configuration\WithoutTaskConfigurations;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 
-class RetrieveTest extends WithoutTaskConfigurationsTest {
+class RetrieveTest extends WithoutTaskConfigurationsTest
+{
 
     /**
      * @var Configuration
@@ -21,8 +23,14 @@ class RetrieveTest extends WithoutTaskConfigurationsTest {
      */
     private $configurationId;
 
-    protected function setUp() {
+    protected function setUp()
+    {
         parent::setUp();
+
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $this->originalConfiguration = new Configuration();
         $this->originalConfiguration->setLabel('foo');
@@ -30,9 +38,7 @@ class RetrieveTest extends WithoutTaskConfigurationsTest {
         $this->originalConfiguration->setWebsite(
             $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
         );
-        $this->originalConfiguration->setType(
-            $this->getJobTypeService()->getFullSiteType()
-        );
+        $this->originalConfiguration->setType($fullSiteJobType);
         $this->originalConfiguration->setParameters('bar');
 
         $this->getManager()->persist($this->originalConfiguration);
@@ -41,19 +47,20 @@ class RetrieveTest extends WithoutTaskConfigurationsTest {
         $this->configurationId = $this->originalConfiguration->getId();
         $this->getManager()->clear();
 
-        $this->retrievedConfiguration = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Configuration')->find($this->configurationId);
+        $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
+        $this->retrievedConfiguration = $jobConfigurationRepository->find($this->configurationId);
     }
 
-
-    public function testOriginalAndRetrievedAreNotTheExactSameObject() {
+    public function testOriginalAndRetrievedAreNotTheExactSameObject()
+    {
         $this->assertNotEquals(
             spl_object_hash($this->originalConfiguration),
             spl_object_hash($this->retrievedConfiguration)
         );
     }
 
-    public function testOriginalAndRetrievedAreTheSameEntity() {
+    public function testOriginalAndRetrievedAreTheSameEntity()
+    {
         $this->assertEquals($this->originalConfiguration->getId(), $this->retrievedConfiguration->getId());
     }
-
 }
