@@ -354,6 +354,7 @@ services:
     arguments:
         jobService: "@simplytestable.services.jobservice"
         taskService: "@simplytestable.services.taskservice"
+        stateService: '@simplytestable.services.stateservice'
 
   simplytestable.services.worker.taskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
@@ -385,6 +386,7 @@ services:
         jobService: "@simplytestable.services.jobservice"
         userService: "@simplytestable.services.userservice"
         resqueQueueService: "@simplytestable.services.resque.queueservice"
+        stateService: '@simplytestable.services.stateservice'
 
   simplytestable.services.scheduledjob.cronmodifier.validationservice:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService

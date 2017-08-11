@@ -161,7 +161,7 @@ class JobListController extends BaseJobController
         if ($this->shouldExcludeCurrent()) {
             $excludeStateNames = array_merge(
                 $excludeStateNames,
-                $this->getStateNames($this->getJobService()->getIncompleteStates())
+                $this->getJobService()->getIncompleteStateNames()
             );
         }
 
@@ -198,23 +198,6 @@ class JobListController extends BaseJobController
         }
 
         return $excludeStates;
-    }
-
-    /**
-     * @param array $states
-     * @return string[]
-     */
-    private function getStateNames($states)
-    {
-        $stateNames = array();
-
-        foreach ($states as $state) {
-            if (!in_array($state->getName(), $stateNames)) {
-                $stateNames[] = $state->getName();
-            }
-        }
-
-        return $stateNames;
     }
 
     /**

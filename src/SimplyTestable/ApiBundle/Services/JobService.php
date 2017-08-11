@@ -310,9 +310,11 @@ class JobService extends EntityService
      */
     public function getUnfinishedJobsWithTasksAndNoIncompleteTasks()
     {
+        $incompleteStates = $this->stateService->fetchCollection($this->getIncompleteStateNames());
+
         /* @var Job[] $jobs */
         $jobs = $this->getEntityRepository()->findBy(array(
-            'state' => $this->getIncompleteStates()
+            'state' => $incompleteStates,
         ));
 
         foreach ($jobs as $jobIndex => $job) {
@@ -390,17 +392,11 @@ class JobService extends EntityService
     }
 
     /**
-     * @return State[]
+     * @return string[]
      */
-    public function getIncompleteStates()
+    public function getIncompleteStateNames()
     {
-        $incompleteStates = [];
-
-        foreach ($this->incompleteStateNames as $stateName) {
-            $incompleteStates[] = $this->stateService->fetch($stateName);
-        }
-
-        return $incompleteStates;
+        return $this->incompleteStateNames;
     }
 
     /**
