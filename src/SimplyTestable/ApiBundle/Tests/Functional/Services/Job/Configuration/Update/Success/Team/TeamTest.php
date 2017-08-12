@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\Success\Team;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\Success\SuccessTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
@@ -72,7 +73,8 @@ abstract class TeamTest extends SuccessTest {
     }
 
     protected function getOriginalJobType() {
-        return $this->getJobTypeService()->getFullSiteType();
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        return $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
     }
 
     protected function getOriginalParameters() {
@@ -84,7 +86,8 @@ abstract class TeamTest extends SuccessTest {
     }
 
     protected function getNewJobType() {
-        return $this->getJobTypeService()->getSingleUrlType();
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        return $jobTypeService->getByName(JobTypeService::SINGLE_URL_NAME);
     }
 
     protected function getNewParameters() {

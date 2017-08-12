@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\Success;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\UpdateTest;
 use Symfony\Component\HttpFoundation\Response;
@@ -84,8 +85,11 @@ abstract class SuccessTest extends UpdateTest {
         return $this->getStandardTaskConfigurationCollection();
     }
 
-    protected function getOriginalJobType() {
-        return $this->getJobTypeService()->getFullSiteType();
+    protected function getOriginalJobType()
+    {
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+
+        return $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
     }
 
     protected function getOriginalWebsite() {

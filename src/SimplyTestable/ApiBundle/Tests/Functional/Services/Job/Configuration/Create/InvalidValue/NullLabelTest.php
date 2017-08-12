@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\C
 
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\ServiceTest;
 
 class NullLabelTest extends ServiceTest {
@@ -15,10 +16,13 @@ class NullLabelTest extends ServiceTest {
             JobConfigurationServiceException::CODE_LABEL_CANNOT_BE_EMPTY
         );
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $values = new ConfigurationValues();
         $values->setLabel(null);
         $values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-        $values->setType($this->getJobTypeService()->getFullSiteType());
+        $values->setType($fullSiteJobType);
         $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
 
         $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());

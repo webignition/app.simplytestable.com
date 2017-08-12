@@ -4,16 +4,21 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job\TaskConfiguration
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 
-class PersistTest extends TaskConfigurationTest {
-
+class PersistTest extends TaskConfigurationTest
+{
     /**
      * @var TaskConfiguration
      */
     private $taskConfiguration;
 
-    protected function setUp() {
+    protected function setUp()
+    {
         parent::setUp();
+
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setLabel('foo');
@@ -21,9 +26,7 @@ class PersistTest extends TaskConfigurationTest {
         $jobConfiguration->setWebsite(
             $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
         );
-        $jobConfiguration->setType(
-            $this->getJobTypeService()->getFullSiteType()
-        );
+        $jobConfiguration->setType($fullSiteJobType);
         $jobConfiguration->setParameters('bar');
 
         $this->getManager()->persist($jobConfiguration);
@@ -48,12 +51,13 @@ class PersistTest extends TaskConfigurationTest {
         $this->taskConfiguration = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration')->find($taskConfigurationId);
     }
 
-    public function testIsPersisted() {
+    public function testIsPersisted()
+    {
         $this->assertNotNull($this->taskConfiguration->getId());
     }
 
-    public function testDefaultIsEnabled() {
+    public function testDefaultIsEnabled()
+    {
         $this->assertTrue($this->taskConfiguration->getIsEnabled());
     }
-
 }

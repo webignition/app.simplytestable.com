@@ -89,7 +89,7 @@ class StartService
 
         $website = $jobConfiguration->getWebsite();
 
-        if ($jobConfiguration->getType()->equals($this->jobTypeService->getFullSiteType())) {
+        if (JobTypeService::FULL_SITE_NAME == $jobConfiguration->getType()->getName()) {
             if ($this->jobUserAccountPlanEnforcementService->isFullSiteJobLimitReachedForWebSite($website)) {
                 throw new UserAccountPlanEnforcementException(
                     'Full site job limit reached for website',
@@ -99,7 +99,7 @@ class StartService
             }
         }
 
-        if ($jobConfiguration->getType()->equals($this->jobTypeService->getSingleUrlType())) {
+        if (JobTypeService::SINGLE_URL_NAME == $jobConfiguration->getType()->getName()) {
             if ($this->jobUserAccountPlanEnforcementService->isSingleUrlLimitReachedForWebsite($website)) {
                 throw new UserAccountPlanEnforcementException(
                     'Single URL job limit reached for website',

@@ -302,7 +302,7 @@ class JobPreparationService
      */
     private function isSingleUrlJob(Job $job)
     {
-        return $job->getType()->equals($this->jobTypeService->getSingleUrlType());
+        return JobTypeService::SINGLE_URL_NAME == $job->getType()->getName();
     }
 
     /**

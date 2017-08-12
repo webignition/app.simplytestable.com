@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\G
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class ForUserTest extends ServiceTest
@@ -37,6 +38,9 @@ class ForUserTest extends ServiceTest
     {
         parent::setUp();
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $userFactory = new UserFactory($this->container);
 
         $this->user1 = $userFactory->createAndActivateUser('user1@example.com');
@@ -47,7 +51,7 @@ class ForUserTest extends ServiceTest
             $jobConfigurationValues = new ConfigurationValues();
             $jobConfigurationValues->setLabel(self::LABEL . '::' . $jobConfigurationIndex);
             $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-            $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+            $jobConfigurationValues->setType($fullSiteJobType);
             $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://' . $jobConfigurationIndex . 'example.com/'));
             $jobConfigurationValues->setParameters('parameters');
 
@@ -59,7 +63,7 @@ class ForUserTest extends ServiceTest
             $jobConfigurationValues = new ConfigurationValues();
             $jobConfigurationValues->setLabel(self::LABEL . '::' . $jobConfigurationIndex);
             $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-            $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+            $jobConfigurationValues->setType($fullSiteJobType);
             $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://' . $jobConfigurationIndex . 'example.com/'));
             $jobConfigurationValues->setParameters('parameters');
 

@@ -54,28 +54,4 @@ class JobTypeService extends EntityService
     {
         return !is_null($this->getByName($name));
     }
-
-    /**
-     * @return Type
-     */
-    public function getFullSiteType()
-    {
-        return $this->getByName(self::FULL_SITE_NAME);
-    }
-
-    /**
-     * @return Type
-     */
-    public function getSingleUrlType()
-    {
-        return $this->getByName(self::SINGLE_URL_NAME);
-    }
-
-    /**
-     * @return Type
-     */
-    public function getCrawlType()
-    {
-        return $this->getByName(self::CRAWL_NAME);
-    }
 }

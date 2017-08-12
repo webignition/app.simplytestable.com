@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\Uniqueness\ForTeam;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Create\Uniqueness\ServiceTest;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
@@ -46,6 +47,9 @@ class WithSameTaskConfigurationsTest extends ServiceTest
     {
         parent::setUp();
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $userFactory = new UserFactory($this->container);
 
         $leader = $userFactory->createAndActivateUser('leader@example.com');
@@ -72,7 +76,7 @@ class WithSameTaskConfigurationsTest extends ServiceTest
         $this->values->setLabel(self::LABEL);
         $this->values->setParameters(self::PARAMETERS);
         $this->values->setTaskConfigurationCollection($taskConfigurationCollection);
-        $this->values->setType($this->getJobTypeService()->getFullSiteType());
+        $this->values->setType($fullSiteJobType);
         $this->values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
 
         $this->getJobConfigurationService()->setUser($member);

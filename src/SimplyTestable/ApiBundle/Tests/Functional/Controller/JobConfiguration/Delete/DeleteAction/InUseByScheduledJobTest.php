@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Delete\DeleteAction;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
@@ -23,10 +24,13 @@ class InUseByScheduledJobTest extends DeleteTest {
 
         $this->getUserService()->setUser($user);
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $jobConfigurationValues = new ConfigurationValues();
         $jobConfigurationValues->setLabel(self::LABEL);
         $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-        $jobConfigurationValues->setType($this->getJobTypeService()->getFullSiteType());
+        $jobConfigurationValues->setType($fullSiteJobType);
         $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://original.example.com/'));
 
         $this->getJobConfigurationService()->setUser($user);

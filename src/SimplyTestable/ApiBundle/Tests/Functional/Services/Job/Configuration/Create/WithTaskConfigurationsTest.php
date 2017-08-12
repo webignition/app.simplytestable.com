@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 
 class WithTaskConfigurationsTest extends ServiceTest {
 
@@ -42,6 +43,9 @@ class WithTaskConfigurationsTest extends ServiceTest {
     protected function setUp() {
         parent::setUp();
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
@@ -58,7 +62,7 @@ class WithTaskConfigurationsTest extends ServiceTest {
         $values->setLabel(self::LABEL);
         $values->setParameters('parameters');
         $values->setTaskConfigurationCollection($taskConfigurationCollection);
-        $values->setType($this->getJobTypeService()->getFullSiteType());
+        $values->setType($fullSiteJobType);
         $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
 
         $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());

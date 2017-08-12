@@ -65,8 +65,11 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $crawlJobType = $jobTypeService->getByName(JobTypeService::CRAWL_NAME);
+
         $job = $this->jobFactory->createResolveAndPrepare();
-        $job->setType($this->getJobTypeService()->getCrawlType());
+        $job->setType($crawlJobType);
         $this->setJobTasksCompleted($job);
 
         $this->getJobService()->persistAndFlush($job);
