@@ -63,14 +63,6 @@ class JobUserAccountPlanEnforcementService
     }
 
     /**
-     * @return UserAccountPlanService
-     */
-    public function getUserAccountPlanService()
-    {
-        return $this->userAccountPlanService;
-    }
-
-    /**
      * @param User $user
      */
     public function setUser(User $user)

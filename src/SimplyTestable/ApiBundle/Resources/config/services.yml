@@ -209,6 +209,7 @@ services:
         jobService: "@simplytestable.services.jobservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         stateService: '@simplytestable.services.stateservice'
+        userAccountPlanService: '@simplytestable.services.useraccountplanservice'
 
   simplytestable.services.taskPreprocessorServiceFactory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService
