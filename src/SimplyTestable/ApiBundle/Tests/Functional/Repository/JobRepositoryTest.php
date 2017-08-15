@@ -177,6 +177,98 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
     }
 
     /**
+     * @dataProvider getCountByStateDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param string $stateName
+     * @param int[] $expectedCount
+     */
+    public function testGetCountByState($jobValuesCollection, $stateName, $expectedCount)
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $state = $stateService->fetch($stateName);
+
+        /* @var Job[] $jobs */
+        $jobs = [];
+
+        foreach ($jobValuesCollection as $jobValues) {
+            $jobs[] = $this->jobFactory->create($jobValues);
+        }
+
+        $count = $this->jobRepository->getCountByState($state);
+
+        $this->assertEquals($expectedCount, $count);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCountByStateDataProvider()
+    {
+        return [
+            'no jobs' => [
+                'jobValuesCollection' => [],
+                'stateName' => JobService::CANCELLED_STATE,
+                'expectedCount' => 0,
+            ],
+            'no matches' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_STATE => JobService::REJECTED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'stateName' => JobService::COMPLETED_STATE,
+                'expectedCount' => 0,
+            ],
+            'one match' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_STATE => JobService::REJECTED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'stateName' => JobService::REJECTED_STATE,
+                'expectedCount' => 1,
+            ],
+            'two matches' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_STATE => JobService::REJECTED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'stateName' => JobService::CANCELLED_STATE,
+                'expectedCount' => 2,
+            ],
+        ];
+    }
+
+    /**
      * @return Job[]
      */
     private function createJobsForAllJobStatesWithTasksForAllTaskStates()
