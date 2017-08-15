@@ -3,7 +3,6 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 
@@ -35,31 +34,34 @@ class JobUserAccountPlanEnforcementService
     private $user;
 
     /**
-     * @var JobType
-     */
-    private $jobType;
-
-    /**
      * @var TeamService
      */
     private $teamService;
+
+    /**
+     * @var JobTypeService
+     */
+    private $jobTypeService;
 
     /**
      * @param UserAccountPlanService $userAccountPlanService
      * @param JobService $jobService
      * @param TaskService $taskService
      * @param TeamService $teamService
+     * @param JobTypeService $jobTypeService
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
         JobService $jobService,
         TaskService $taskService,
-        TeamService $teamService
+        TeamService $teamService,
+        JobTypeService $jobTypeService
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
         $this->jobService = $jobService;
         $this->taskService = $taskService;
         $this->teamService = $teamService;
+        $this->jobTypeService = $jobTypeService;
     }
 
     /**
@@ -68,14 +70,6 @@ class JobUserAccountPlanEnforcementService
     public function setUser(User $user)
     {
         $this->user = $user;
-    }
-
-    /**
-     * @param JobType $jobType
-     */
-    public function setJobType(JobType $jobType)
-    {
-        $this->jobType = $jobType;
     }
 
     /**
@@ -92,10 +86,11 @@ class JobUserAccountPlanEnforcementService
         }
 
         $jobRepository = $this->jobService->getEntityRepository();
+        $jobType = $this->jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $currentCount = $jobRepository->getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth(
             $this->user,
-            $this->jobType,
+            $jobType,
             $website
         );
 
@@ -120,10 +115,11 @@ class JobUserAccountPlanEnforcementService
         }
 
         $jobRepository = $this->jobService->getEntityRepository();
+        $jobType = $this->jobTypeService->getByName(JobTypeService::SINGLE_URL_NAME);
 
         $currentCount = $jobRepository->getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth(
             $this->user,
-            $this->jobType,
+            $jobType,
             $website
         );
 

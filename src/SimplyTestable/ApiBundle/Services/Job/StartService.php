@@ -85,7 +85,6 @@ class StartService
         }
 
         $this->jobUserAccountPlanEnforcementService->setUser($jobConfiguration->getUser());
-        $this->jobUserAccountPlanEnforcementService->setJobType($jobConfiguration->getType());
 
         $website = $jobConfiguration->getWebsite();
 
