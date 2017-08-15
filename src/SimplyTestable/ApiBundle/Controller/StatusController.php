@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,32 +17,31 @@ class StatusController extends ApiController
         $workerService = $this->container->get('simplytestable.services.workerservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $taskService = $this->container->get('simplytestable.services.taskservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
 
         $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
 
         /* @var Worker[] $workers */
         $workers = $workerService->getEntityRepository()->findAll();
 
-        $workerSummary = array();
+        $workerSummary = [];
         foreach ($workers as $worker) {
-            $workerSummary[] = array(
+            $workerSummary[] = [
                 'hostname' => $worker->getHostname(),
                 'state' => $worker->getPublicSerializedState()
-            );
+            ];
         }
 
-        $responseData = array(
+        return $this->sendResponse([
             'state' => $this->getApplicationStateService()->getState(),
             'workers' => $workerSummary,
             'version' => $this->getLatestGitHash(),
             'task_throughput_per_minute' => $taskService->getEntityRepository()->getThroughputSince(
                 new \DateTime('-1 minute')
             ),
-            'in_progress_job_count' => $jobService->getEntityRepository()->getCountByState($jobInProgressState)
-        );
-
-        return $this->sendResponse($responseData);
+            'in_progress_job_count' => $jobRepository->getCountByState($jobInProgressState)
+        ]);
     }
 
     /**
