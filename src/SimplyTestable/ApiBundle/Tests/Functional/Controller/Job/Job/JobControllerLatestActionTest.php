@@ -40,6 +40,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
      */
     public function testLatestAction($owner, $requester, $callSetPublic, $expectedResponseStatusCode)
     {
+        $jobService = $this->container->get('simplytestable.services.jobservice');
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
 
         $ownerUser = $users[$owner];
@@ -47,9 +48,14 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
 
         $this->getUserService()->setUser($ownerUser);
 
-        $job = $this->jobFactory->create([
-            JobFactory::KEY_USER => $ownerUser,
-        ]);
+        $jobStateNames = $jobService->getFinishedStateNames();
+
+        foreach ($jobStateNames as $jobStateName) {
+            $job = $this->jobFactory->create([
+                JobFactory::KEY_USER => $ownerUser,
+                JobFactory::KEY_STATE => $jobStateName,
+            ]);
+        }
 
         if ($callSetPublic) {
             $this->jobController->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
