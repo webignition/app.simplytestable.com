@@ -53,13 +53,7 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
 
         $jobs = $this->createJobsForAllJobStatesWithTasksForAllTaskStates();
 
-        $expectedJobIds = [];
-
-        foreach ($jobs as $jobIndex => $job) {
-            if (in_array($jobIndex, $expectedJobIndices)) {
-                $expectedJobIds[] = $job->getId();
-            }
-        }
+        $expectedJobIds = $this->createExpectedJobIdsFromExpectedJobIndices($jobs, $expectedJobIndices);
 
         $jobStates = $stateService->fetchCollection($jobStateNames);
         $taskStates = $stateService->fetchCollection($taskStateNames);
@@ -69,6 +63,9 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
         $this->assertEquals($expectedJobIds, $this->getJobIds($retrievedJobs));
     }
 
+    /**
+     * @return array
+     */
     public function getByStatesAndTaskStatesDataProvider()
     {
         return [
@@ -107,9 +104,7 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
                 'taskStateNames' => [
                     TaskService::IN_PROGRESS_STATE,
                 ],
-                'expectedJobIndices' => [
-                    7
-                ],
+                'expectedJobIndices' => [7],
             ],
             'job-states[in-progress, cancelled], task-states[completed]' => [
                 'jobStateNames' => [
@@ -119,9 +114,64 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
                 'taskStateNames' => [
                     TaskService::COMPLETED_STATE,
                 ],
-                'expectedJobIndices' => [
-                    1, 7
+                'expectedJobIndices' => [1, 7],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getIdsByStateDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param string $stateName
+     * @param int[] $expectedJobIndices
+     */
+    public function testGetIdsByState($jobValuesCollection, $stateName, $expectedJobIndices)
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $state = $stateService->fetch($stateName);
+
+        /* @var Job[] $jobs */
+        $jobs = [];
+
+        foreach ($jobValuesCollection as $jobValues) {
+            $jobs[] = $this->jobFactory->create($jobValues);
+        }
+
+        $expectedJobIds = $this->createExpectedJobIdsFromExpectedJobIndices($jobs, $expectedJobIndices);
+        $retrievedIds = $this->jobRepository->getIdsByState($state);
+
+        $this->assertEquals($expectedJobIds, $retrievedIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function getIdsByStateDataProvider()
+    {
+        return [
+            'no jobs' => [
+                'jobValuesCollection' => [],
+                'stateName' => JobService::CANCELLED_STATE,
+                'expectedJobIndices' => [],
+            ],
+            'cancelled' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
+                        JobFactory::KEY_STATE => JobService::REJECTED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://2.example.com/',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
                 ],
+                'stateName' => JobService::CANCELLED_STATE,
+                'expectedJobIndices' => [0, 2],
             ],
         ];
     }
@@ -189,5 +239,24 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
         }
 
         return $jobIds;
+    }
+
+    /**
+     * @param Job[] $jobs
+     * @param int[] $expectedJobIndices
+     *
+     * @return int[]
+     */
+    private function createExpectedJobIdsFromExpectedJobIndices($jobs, $expectedJobIndices)
+    {
+        $expectedJobIds = [];
+
+        foreach ($jobs as $jobIndex => $job) {
+            if (in_array($jobIndex, $expectedJobIndices)) {
+                $expectedJobIds[] = $job->getId();
+            }
+        }
+
+        return $expectedJobIds;
     }
 }

@@ -55,14 +55,8 @@ class JobRepository extends EntityRepository
 
         $result = $queryBuilder->getQuery()->getResult();
 
-        $taskIds = array();
-        foreach ($result as $taskId) {
-            $taskIds[] = $taskId['id'];
-        }
-
-        return $taskIds;
+        return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
-
 
     /**
      * @param State $state
