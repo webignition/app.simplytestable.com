@@ -19,6 +19,10 @@ class JobRepository extends EntityRepository
      */
     public function getByStatesAndTaskStates($jobStates = [], $taskStates = [])
     {
+        if (empty($jobStates) || empty($taskStates)) {
+            return [];
+        }
+
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->join('Job.tasks', 'Tasks');
         $queryBuilder->select('DISTINCT Job');
@@ -28,9 +32,9 @@ class JobRepository extends EntityRepository
                 ->setParameter('JobStates', array_values($jobStates));
         }
 
-        if (count($jobStates)) {
+        if (count($taskStates)) {
             $queryBuilder->andWhere('Tasks.state IN (:TaskStates)')
-                ->setParameter('TaskStates', $taskStates);
+                ->setParameter('TaskStates', array_values($taskStates));
         }
 
         return $queryBuilder->getQuery()->getResult();
