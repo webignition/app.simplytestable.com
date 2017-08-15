@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Repository;
 
+use Doctrine\DBAL\Types\Type as DoctrineType;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
@@ -10,74 +11,14 @@ use SimplyTestable\ApiBundle\Entity\User;
 
 class JobRepository extends EntityRepository
 {
-
-
-
-
     /**
-     *
-     * @param $limit int
-     * @return array
-     */
-    public function findAllByUserOrderedByIdDesc(User $user, $limit = null)
-    {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job');
-
-        $where = 'Job.user = :User';
-
-        $queryBuilder->where($where);
-        $queryBuilder->setMaxResults($limit);
-        $queryBuilder->orderBy('Job.id', 'DESC');
-
-        $queryBuilder->setParameter('User', $user);
-        return $queryBuilder->getQuery()->getResult();
-    }
-
-
-    public function findAllByUserAndNotTypeAndNotStatesOrderedByIdDesc(User $user, $limit = null, $excludeTypes = array(), $excludeStates = array()) {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job');
-
-        $where = 'Job.user = :User';
-
-        if (is_array($excludeTypes) && count($excludeTypes) > 0) {
-            $typeExclusionParts = array();
-
-            foreach ($excludeTypes as $typeIndex => $type) {
-                $typeExclusionParts[] = 'Job.type != :Type' .  $typeIndex;
-                $queryBuilder->setParameter('Type' .  $typeIndex, $type);
-            }
-
-            $where .= ' AND ('.implode(' AND ', $typeExclusionParts).')';
-        }
-
-        if (is_array($excludeStates) && count($excludeStates) > 0) {
-            $stateExclusionParts = array();
-
-            foreach ($excludeStates as $stateIndex => $state) {
-                $stateExclusionParts[] = 'Job.state != :State' .  $stateIndex;
-                $queryBuilder->setParameter('State' .  $stateIndex, $state);
-            }
-
-            $where .= ' AND ('.implode(' AND ', $stateExclusionParts).')';
-        }
-
-        $queryBuilder->where($where);
-        $queryBuilder->setMaxResults($limit);
-        $queryBuilder->orderBy('Job.id', 'DESC');
-
-        $queryBuilder->setParameter('User', $user);
-        return $queryBuilder->getQuery()->getResult();
-    }
-
-    /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
+     * @param WebSite $website
      * @param array $users
+     *
      * @return Job
      */
-    public function findLatestByWebsiteAndUsers(WebSite $website, $users = array()) {
+    public function findLatestByWebsiteAndUsers(WebSite $website, $users = [])
+    {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('Job');
 
@@ -108,48 +49,14 @@ class JobRepository extends EntityRepository
         return (count($result) > 0) ? $result[0] : null;
     }
 
-
-    /**
-     *
-     * @param array $jobStates
-     * @param State $taskState
-     * @return array
-     */
-    public function getByStateAndTaskState($jobStates, State $taskState) {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->join('Job.tasks', 'Tasks');
-        $queryBuilder->select('DISTINCT Job');
-
-        $where = 'Tasks.state = :TaskState';
-
-        if (is_array($jobStates)) {
-            $stateWhere = '';
-            $stateCount = count($jobStates);
-
-            foreach ($jobStates as $stateIndex => $jobState) {
-                $stateWhere .= 'Job.state = :JobState' . $stateIndex;
-                if ($stateIndex < $stateCount - 1) {
-                    $stateWhere .= ' OR ';
-                }
-                $queryBuilder->setParameter('JobState'.$stateIndex, $jobState);
-            }
-
-            $where .= ' AND ('.$stateWhere.')';
-        }
-
-        $queryBuilder->where($where);
-
-        $queryBuilder->setParameter('TaskState', $taskState);
-        return $queryBuilder->getQuery()->getResult();
-    }
-
-
     /**
      * @param State[] $jobStates
      * @param State[] $taskStates
+     *
      * @return Job[]
      */
-    public function getByStatesAndTaskStates($jobStates = [], $taskStates = []) {
+    public function getByStatesAndTaskStates($jobStates = [], $taskStates = [])
+    {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->join('Job.tasks', 'Tasks');
         $queryBuilder->select('DISTINCT Job');
@@ -167,14 +74,13 @@ class JobRepository extends EntityRepository
         return $queryBuilder->getQuery()->getResult();
     }
 
-
-
     /**
-     *
      * @param State $state
-     * @return array
+     *
+     * @return int[]
      */
-    public function getIdsByState(State $state) {
+    public function getIdsByState(State $state)
+    {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('Job.id');
         $queryBuilder->where('Job.state = :State');
@@ -193,11 +99,12 @@ class JobRepository extends EntityRepository
 
 
     /**
-     *
      * @param State $state
+     *
      * @return int
      */
-    public function getCountByState(State $state) {
+    public function getCountByState(State $state)
+    {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('COUNT(Job.id)');
         $queryBuilder->where('Job.state = :State');
@@ -209,62 +116,38 @@ class JobRepository extends EntityRepository
         return (int)$result[0][1];
     }
 
-
     /**
+     * @param User $user
+     * @param JobType $jobType
+     * @param WebSite $website
      *
-     * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
-     * @param array $jobStates
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @return int
      */
-    public function getNewestIdByWebsiteAndStateAndUser(WebSite $website, $jobStates, User $user) {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job.id');
-
-        $where = 'Job.website = :Website and Job.user = :User';
-
-        if (is_array($jobStates)) {
-            $stateWhere = '';
-            $stateCount = count($jobStates);
-
-            foreach ($jobStates as $stateIndex => $jobState) {
-                $stateWhere .= 'Job.state = :JobState' . $stateIndex;
-                if ($stateIndex < $stateCount - 1) {
-                    $stateWhere .= ' OR ';
-                }
-                $queryBuilder->setParameter('JobState'.$stateIndex, $jobState);
-            }
-
-            $where .= ' AND ('.$stateWhere.')';
-        }
-
-        $queryBuilder->where($where);
-        $queryBuilder->setMaxResults(1);
-        $queryBuilder->orderBy('Job.id', 'desc');
-
-        $queryBuilder->setParameter('Website', $website);
-        $queryBuilder->setParameter('User', $user);
-        $result = $queryBuilder->getQuery()->getResult();
-
-        return (count($result)) ? (int)$result[0]['id'] : null;
-    }
-
-
-    /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $jobType
-     * * @param \SimplyTestable\ApiBundle\Entity\WebSite $website
-     * @return int
-     */
-    public function getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth(User $user, JobType $jobType, WebSite $website) {
+    public function getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth(
+        User $user,
+        JobType $jobType,
+        WebSite $website
+    ) {
         $now = new \ExpressiveDate();
 
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('count(Job.id)');
         $queryBuilder->join('Job.timePeriod', 'TimePeriod');
 
-        $queryBuilder->where('Job.user = :User AND Job.type = :JobType AND Job.website = :Website AND (TimePeriod.startDateTime >= :StartOfMonth and TimePeriod.startDateTime <= :EndOfMonth)');
+        $userPredicates = 'Job.user = :User';
+        $typePredicates = 'Job.type = :JobType';
+        $websitePredicates = 'Job.website = :Website';
+        $timePeriodPredicates = 'TimePeriod.startDateTime >= :StartOfMonth AND TimePeriod.startDateTime <= :EndOfMonth';
+
+        $queryBuilder->where(
+            sprintf(
+                '%s AND %s AND %s AND (%s)',
+                $userPredicates,
+                $typePredicates,
+                $websitePredicates,
+                $timePeriodPredicates
+            )
+        );
 
         $queryBuilder->setParameter('User', $user);
         $queryBuilder->setParameter('JobType', $jobType);
@@ -277,15 +160,15 @@ class JobRepository extends EntityRepository
         return (int)$result[0][1];
     }
 
-
     /**
+     * @param User $user
+     * @param JobType $type
+     * @param State[] $excludeStates
      *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $type
-     * @param array $jobStates
-     * @return array
+     * @return int[]
      */
-    public function getIdsByUserAndTypeAndNotStates(User $user, JobType $type, $excludeStates = array()) {
+    public function getIdsByUserAndTypeAndNotStates(User $user, JobType $type, $excludeStates = [])
+    {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('Job.id');
 
@@ -308,8 +191,14 @@ class JobRepository extends EntityRepository
         return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
 
-
-    private function getSingleFieldCollectionFromResult($result, $fieldName) {
+    /**
+     * @param array $result
+     * @param string $fieldName
+     *
+     * @return array
+     */
+    private function getSingleFieldCollectionFromResult($result, $fieldName)
+    {
         $collection = array();
 
         foreach ($result as $resultItem) {
@@ -319,18 +208,18 @@ class JobRepository extends EntityRepository
         return $collection;
     }
 
-
     /**
-     *
      * @param int $jobId
-     * @return boolean
+     *
+     * @return bool
      */
-    public function getIsPublicByJobId($jobId) {
+    public function getIsPublicByJobId($jobId)
+    {
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('Job.isPublic');
 
         $queryBuilder->where('Job.id = :JobId');
-        $queryBuilder->setParameter('JobId', $jobId, \Doctrine\DBAL\Types\Type::INTEGER);
+        $queryBuilder->setParameter('JobId', $jobId, DoctrineType::INTEGER);
 
         $result = $queryBuilder->getQuery()->getResult();
 
@@ -339,46 +228,5 @@ class JobRepository extends EntityRepository
         }
 
         return $result[0]['isPublic'] === true;
-    }
-
-
-    public function findAllByUserAndTypeAndStates(User $user, $jobTypes, $limit = null, $includeStates = array()) {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job');
-
-        $where = 'Job.user = :User';
-
-        $typeWhereParts = array();
-        foreach ($jobTypes as $typeIndex => $jobType) {
-            $typeWhereParts[] = 'Job.type = :Type' . $typeIndex;
-            $queryBuilder->setParameter('Type' . $typeIndex, $jobType);
-        }
-
-        $where .= ' AND ('.  implode(' OR ', $typeWhereParts).')';
-
-        if (is_array($includeStates)) {
-            $stateWhere = '';
-            $stateCount = count($includeStates);
-
-            foreach ($includeStates as $stateIndex => $jobState) {
-                $stateWhere .= 'Job.state = :JobState' . $stateIndex;
-                if ($stateIndex < $stateCount - 1) {
-                    $stateWhere .= ' OR ';
-                }
-                $queryBuilder->setParameter('JobState'.$stateIndex, $jobState);
-            }
-
-            $where .= ' AND ('.$stateWhere.')';
-        }
-
-        $queryBuilder->where($where);
-        $queryBuilder->orderBy('Job.id', 'desc');
-
-        if (!is_null($limit)) {
-            $queryBuilder->setMaxResults($limit);
-        }
-
-        $queryBuilder->setParameter('User', $user);
-        return $queryBuilder->getQuery()->getResult();
     }
 }
