@@ -115,7 +115,7 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
             $output->write('Checking job ['.$jobId.'] ['.$completedJobCount.' of '.count($jobIdsToCheck).'] ... ');
 
             $job = $jobService->getById($jobId);
-            $urlCount = $taskService->getEntityRepository()->findUrlCountByJob($job);
+            $urlCount = $taskService->getUrlCountByJob($job);
 
             if ($urlCount <= $urlLimit) {
                 $output->writeln('ok');
