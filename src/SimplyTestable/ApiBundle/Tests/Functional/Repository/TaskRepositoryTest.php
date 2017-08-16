@@ -256,7 +256,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
                 'taskStateName' => TaskService::COMPLETED_STATE,
                 'expectedUrls' => [],
             ],
-            'nfoo' => [
+            'found' => [
                 'jobValues' => [
                     JobFactory::KEY_TEST_TYPES => [
                         TaskTypeService::HTML_VALIDATION_TYPE,
@@ -272,6 +272,39 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
                     'http://example.com/one',
                     'http://example.com/foo bar',
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider findUrlExistsByJobAndUrlDataProvider
+     *
+     * @param string $url
+     * @param bool $expectedExists
+     */
+    public function testFindUrlExistsByJobAndUrl($url, $expectedExists)
+    {
+        $job = $this->jobFactory->createResolveAndPrepare();
+
+        $this->assertEquals(
+            $expectedExists,
+            $this->taskRepository->findUrlExistsByJobAndUrl($job, $url)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function findUrlExistsByJobAndUrlDataProvider()
+    {
+        return [
+            'exists' => [
+                'url' => 'http://example.com/one',
+                'expectedExists' => true,
+            ],
+            'does not exist' => [
+                'url' => 'http://example.com/foo',
+                'expectedExists' => false,
             ],
         ];
     }
