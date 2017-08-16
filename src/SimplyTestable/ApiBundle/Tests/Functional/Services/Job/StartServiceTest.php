@@ -71,7 +71,6 @@ class StartServiceTest extends BaseSimplyTestableTestCase
      * @param string $jobTypeName
      * @param string $isLimitReachedMethodName
      * @param $isLimitReachedReturnValue
-     * @param string $getConstraintMethodName
      * @param $isUserCreditLimitReached
      * @param string $constraintName
      * @param array $expectedException
@@ -82,7 +81,6 @@ class StartServiceTest extends BaseSimplyTestableTestCase
         $jobTypeName,
         $isLimitReachedMethodName,
         $isLimitReachedReturnValue,
-        $getConstraintMethodName,
         $isUserCreditLimitReached,
         $constraintName,
         $expectedException
@@ -111,7 +109,6 @@ class StartServiceTest extends BaseSimplyTestableTestCase
             $jobType,
             [
                 $isLimitReachedMethodName => $isLimitReachedReturnValue,
-                $getConstraintMethodName => $constraint,
                 'isUserCreditLimitReached' => $isUserCreditLimitReached
             ]
         );
@@ -141,7 +138,6 @@ class StartServiceTest extends BaseSimplyTestableTestCase
                 'jobTypeName' => 'Full site',
                 'isLimitReachedMethodName' => 'isFullSiteJobLimitReachedForWebSite',
                 'isLimitReachedReturnValue' => true,
-                'getConstraintMethodName' =>  'getFullSiteJobLimitConstraint',
                 'isCreditLimitReached' => false,
                 'constraintName' => JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME,
                 'expectedException' => [
@@ -156,7 +152,6 @@ class StartServiceTest extends BaseSimplyTestableTestCase
                 'jobTypeName' => 'Single URL',
                 'isLimitReachedMethodName' => 'isSingleUrlLimitReachedForWebsite',
                 'isLimitReachedReturnValue' => true,
-                'getConstraintMethodName' =>  'getSingleUrlJobLimitConstraint',
                 'isCreditLimitReached' => false,
                 'constraintName' => JobUserAccountPlanEnforcementService::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME,
                 'expectedException' => [
@@ -171,7 +166,6 @@ class StartServiceTest extends BaseSimplyTestableTestCase
                 'jobTypeName' => 'Full site',
                 'isLimitReachedMethodName' => 'isFullSiteJobLimitReachedForWebSite',
                 'isLimitReachedReturnValue' => false,
-                'getConstraintMethodName' =>  'getCreditsPerMonthConstraint',
                 'isCreditLimitReached' => true,
                 'constraintName' => JobUserAccountPlanEnforcementService::CREDITS_PER_MONTH_CONSTRAINT_NAME,
                 'expectedException' => [

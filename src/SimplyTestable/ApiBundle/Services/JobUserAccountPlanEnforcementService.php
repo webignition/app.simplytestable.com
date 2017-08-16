@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Services;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 
 class JobUserAccountPlanEnforcementService
 {
@@ -185,15 +184,5 @@ class JobUserAccountPlanEnforcementService
         }
 
         return $this->getCreditsUsedThisMonth() >= $constraint->getLimit();
-    }
-
-    /**
-     * @return AccountPlanConstraint
-     */
-    public function getCreditsPerMonthConstraint()
-    {
-        return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(
-            self::CREDITS_PER_MONTH_CONSTRAINT_NAME
-        );
     }
 }
