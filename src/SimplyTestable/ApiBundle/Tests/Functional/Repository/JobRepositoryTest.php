@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -263,6 +264,229 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
                     ],
                 ],
                 'stateName' => JobService::CANCELLED_STATE,
+                'expectedCount' => 2,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getJobCountByUserAndJobTypeAndWebsiteForPeriodDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param string $userName
+     * @param string $jobTypeName
+     * @param string $websiteUrl
+     * @param string $periodStart
+     * @param string $periodEnd
+     * @param int $expectedCount
+     */
+    public function testGetJobCountByUserAndJobTypeAndWebsiteForPeriod(
+        $jobValuesCollection,
+        $userName,
+        $jobTypeName,
+        $websiteUrl,
+        $periodStart,
+        $periodEnd,
+        $expectedCount
+    ) {
+        /**
+        $startDateTime = new \DateTime('first day of this month');
+        $endDateTime = new \DateTime('last day of this month');
+         */
+
+        $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
+        $user = $users[$userName];
+
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
+        $jobType = $jobTypeService->getByName($jobTypeName);
+        $website = $websiteService->fetch($websiteUrl);
+
+        foreach ($jobValuesCollection as $jobValues) {
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+
+            $this->jobFactory->create($jobValues);
+        }
+
+        $count = $this->jobRepository->getJobCountByUserAndJobTypeAndWebsiteForPeriod(
+            $user,
+            $jobType,
+            $website,
+            $periodStart,
+            $periodEnd
+        );
+
+        $this->assertEquals($expectedCount, $count);
+    }
+
+    /**
+     * @return array
+     */
+    public function getJobCountByUserAndJobTypeAndWebsiteForPeriodDataProvider()
+    {
+        return [
+            'no jobs' => [
+                'jobValuesCollection' => [],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'websiteUrl' => 'http://example.com/',
+                'periodStart' => '2017-01-01',
+                'periodEnd' => '2017-01-01 23:59:59',
+                'expectedCount' => 0,
+            ],
+            'no matching jobs' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'websiteUrl' => 'http://example.com/',
+                'periodStart' => '2017-03-01',
+                'periodEnd' => '2017-03-01',
+                'expectedCount' => 0,
+            ],
+            'no matching jobs for user' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'private',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'websiteUrl' => 'http://example.com/',
+                'periodStart' => '2017-01-01',
+                'periodEnd' => '2017-02-01 23:59:59',
+                'expectedCount' => 0,
+            ],
+            'no matching jobs for job type' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::SINGLE_URL_NAME,
+                'websiteUrl' => 'http://example.com/',
+                'periodStart' => '2017-01-01',
+                'periodEnd' => '2017-02-01 23:59:59',
+                'expectedCount' => 0,
+            ],
+            'no matching jobs for website' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'websiteUrl' => 'http://foo.example.com/',
+                'periodStart' => '2017-01-01',
+                'periodEnd' => '2017-02-01 23:59:59',
+                'expectedCount' => 0,
+            ],
+            'single match: first job' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'websiteUrl' => 'http://example.com/',
+                'periodStart' => '2017-01-01',
+                'periodEnd' => '2017-01-01 23:59:59',
+                'expectedCount' => 1,
+            ],
+            'single match: second job' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'websiteUrl' => 'http://example.com/',
+                'periodStart' => '2017-02-01',
+                'periodEnd' => '2017-02-01 23:59:59',
+                'expectedCount' => 1,
+            ],
+            'two matches' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-01-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-01-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TIME_PERIOD_START => '2017-02-01',
+                        JobFactory::KEY_TIME_PERIOD_END => '2017-02-01 23:59:59',
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'websiteUrl' => 'http://example.com/',
+                'periodStart' => '2017-01-01',
+                'periodEnd' => '2017-02-01 23:59:59',
                 'expectedCount' => 2,
             ],
         ];

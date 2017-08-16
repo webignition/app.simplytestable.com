@@ -80,16 +80,18 @@ class JobRepository extends EntityRepository
      * @param User $user
      * @param JobType $jobType
      * @param WebSite $website
+     * @param string $periodStart
+     * @param string $periodEnd
      *
      * @return int
      */
-    public function getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth(
+    public function getJobCountByUserAndJobTypeAndWebsiteForPeriod(
         User $user,
         JobType $jobType,
-        WebSite $website
+        WebSite $website,
+        $periodStart,
+        $periodEnd
     ) {
-        $now = new \ExpressiveDate();
-
         $queryBuilder = $this->createQueryBuilder('Job');
         $queryBuilder->select('count(Job.id)');
         $queryBuilder->join('Job.timePeriod', 'TimePeriod');
@@ -97,7 +99,7 @@ class JobRepository extends EntityRepository
         $userPredicates = 'Job.user = :User';
         $typePredicates = 'Job.type = :JobType';
         $websitePredicates = 'Job.website = :Website';
-        $timePeriodPredicates = 'TimePeriod.startDateTime >= :StartOfMonth AND TimePeriod.startDateTime <= :EndOfMonth';
+        $timePeriodPredicates = 'TimePeriod.startDateTime >= :PeriodStart AND TimePeriod.startDateTime <= :PeriodEnd';
 
         $queryBuilder->where(
             sprintf(
@@ -112,8 +114,8 @@ class JobRepository extends EntityRepository
         $queryBuilder->setParameter('User', $user);
         $queryBuilder->setParameter('JobType', $jobType);
         $queryBuilder->setParameter('Website', $website);
-        $queryBuilder->setParameter('StartOfMonth', $now->format('Y-m-01'));
-        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()).' 23:59:59');
+        $queryBuilder->setParameter('PeriodStart', $periodStart);
+        $queryBuilder->setParameter('PeriodEnd', $periodEnd);
 
         $result = $queryBuilder->getQuery()->getResult();
 
