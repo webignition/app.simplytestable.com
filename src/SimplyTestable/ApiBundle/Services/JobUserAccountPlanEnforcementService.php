@@ -79,27 +79,11 @@ class JobUserAccountPlanEnforcementService
      */
     public function isFullSiteJobLimitReachedForWebSite(WebSite $website)
     {
-        $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
-        $plan = $userAccountPlan->getPlan();
-
-        $fullSiteJobsPerSiteConstraint = $plan->getConstraintNamed(
-            self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME
+        return $this->isJobLimitReachedForWebsite(
+            $website,
+            self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME,
+            JobTypeService::FULL_SITE_NAME
         );
-
-        if (empty($fullSiteJobsPerSiteConstraint)) {
-            return false;
-        }
-
-        $jobRepository = $this->jobService->getEntityRepository();
-        $jobType = $this->jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
-
-        $currentCount = $jobRepository->getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth(
-            $this->user,
-            $jobType,
-            $website
-        );
-
-        return $currentCount >= $fullSiteJobsPerSiteConstraint->getLimit();
     }
 
     /**
@@ -109,14 +93,33 @@ class JobUserAccountPlanEnforcementService
      */
     public function isSingleUrlLimitReachedForWebsite(WebSite $website)
     {
-        $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+        return $this->isJobLimitReachedForWebsite(
+            $website,
+            self::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME,
+            JobTypeService::SINGLE_URL_NAME
+        );
+    }
 
-        if (!$userAccountPlan->getPlan()->hasConstraintNamed(self::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME)) {
+    /**
+     * @param WebSite $website
+     * @param string $constraintName
+     * @param string $jobTypeName
+     *
+     * @return bool
+     */
+    private function isJobLimitReachedForWebsite(WebSite $website, $constraintName, $jobTypeName)
+    {
+        $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+        $plan = $userAccountPlan->getPlan();
+
+        $constraint = $plan->getConstraintNamed($constraintName);
+
+        if (empty($constraint)) {
             return false;
         }
 
         $jobRepository = $this->jobService->getEntityRepository();
-        $jobType = $this->jobTypeService->getByName(JobTypeService::SINGLE_URL_NAME);
+        $jobType = $this->jobTypeService->getByName($jobTypeName);
 
         $currentCount = $jobRepository->getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth(
             $this->user,
@@ -124,13 +127,8 @@ class JobUserAccountPlanEnforcementService
             $website
         );
 
-        if ($currentCount === 0) {
-            return false;
-        }
-
-        return $currentCount >= $this->getSingleUrlJobLimitConstraint()->getLimit();
+        return $currentCount >= $constraint->getLimit();
     }
-
 
     /**
      * @param $urlCount

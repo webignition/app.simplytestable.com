@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -28,28 +29,24 @@ class JobUserAccountPlanEnforcementServiceTest extends BaseSimplyTestableTestCas
     }
 
     /**
-     * @dataProvider isFullSiteJobLimitReachedForWebSiteDataProvider
+     * @dataProvider isJobLimitReachedForWebsiteDataProvider
      *
      * @param string $userName
      * @param array $jobValuesCollection
      * @param string $websiteUrl
-     * @param bool $expectedIsLimitReached
+     * @param bool $expectedIsFullSiteLimitReached
+     * @param bool $expectedIsSingleUrlLimitReached
      */
-    public function testIsFullSiteJobLimitReachedForWebSite(
+    public function testIsJobLimitReachedForWebsite(
         $userName,
         $jobValuesCollection,
         $websiteUrl,
-        $expectedIsLimitReached
+        $expectedIsFullSiteLimitReached,
+        $expectedIsSingleUrlLimitReached
     ) {
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
-
-        $startDateTime = new \DateTime('first day of this month');
-        $endDateTime = new \DateTime('last day of this month');
-        $timePeriod = new TimePeriod();
-        $timePeriod->setStartDateTime($startDateTime);
-        $timePeriod->setEndDateTime($endDateTime);
 
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
@@ -60,7 +57,7 @@ class JobUserAccountPlanEnforcementServiceTest extends BaseSimplyTestableTestCas
             $jobValues[JobFactory::KEY_USER] = $user;
             $job = $jobFactory->create($jobValues);
 
-            $job->setTimePeriod($timePeriod);
+            $job->setTimePeriod($this->createTimePeriod());
             $jobService->persistAndFlush($job);
         }
 
@@ -69,44 +66,103 @@ class JobUserAccountPlanEnforcementServiceTest extends BaseSimplyTestableTestCas
         $this->jobUserAccountPlanEnforcementService->setUser($user);
 
         $this->assertEquals(
-            $expectedIsLimitReached,
+            $expectedIsFullSiteLimitReached,
             $this->jobUserAccountPlanEnforcementService->isFullSiteJobLimitReachedForWebSite($website)
+        );
+
+        $this->assertEquals(
+            $expectedIsSingleUrlLimitReached,
+            $this->jobUserAccountPlanEnforcementService->isSingleUrlLimitReachedForWebsite($website)
         );
     }
 
     /**
      * @return array
      */
-    public function isFullSiteJobLimitReachedForWebSiteDataProvider()
+    public function isJobLimitReachedForWebsiteDataProvider()
     {
         return [
-            'limit not reached' => [
+            'no limits not reached' => [
                 'userName' => 'public',
                 'jobValuesCollection' => [],
                 'websiteUrl' => 'http://example.com/',
-                'expectedIsLimitReached' => false,
+                'expectedIsFullSiteLimitReached' => false,
+                'expectedIsSingleUrlLimitReached' => false,
             ],
-            'no limit' => [
+            'no limits' => [
                 'userName' => 'private',
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
                     ],
                 ],
                 'websiteUrl' => 'http://example.com/',
-                'expectedIsLimitReached' => false,
+                'expectedIsFullSiteLimitReached' => false,
+                'expectedIsSingleUrlLimitReached' => false,
             ],
-            'limit reached' => [
+            'full site limit reached' => [
                 'userName' => 'public',
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
-                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
                     ],
                 ],
                 'websiteUrl' => 'http://example.com/',
-                'expectedIsLimitReached' => true,
+                'expectedIsFullSiteLimitReached' => true,
+                'expectedIsSingleUrlLimitReached' => false,
+            ],
+            'single url limit reached' => [
+                'userName' => 'public',
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+                    ],
+                ],
+                'websiteUrl' => 'http://example.com/',
+                'expectedIsFullSiteLimitReached' => false,
+                'expectedIsSingleUrlLimitReached' => true,
+            ],
+            'full site and single url limit reached' => [
+                'userName' => 'public',
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+                    ],
+                    [
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://example.com/',
+                        JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+                    ],
+                ],
+                'websiteUrl' => 'http://example.com/',
+                'expectedIsFullSiteLimitReached' => true,
+                'expectedIsSingleUrlLimitReached' => true,
             ],
         ];
+    }
+
+    /**
+     * @return TimePeriod
+     */
+    private function createTimePeriod()
+    {
+        $startDateTime = new \DateTime('first day of this month');
+        $endDateTime = new \DateTime('last day of this month');
+        $timePeriod = new TimePeriod();
+        $timePeriod->setStartDateTime($startDateTime);
+        $timePeriod->setEndDateTime($endDateTime);
+
+        $entityManger = $this->container->get('doctrine.orm.entity_manager');
+        $entityManger->persist($timePeriod);
+        $entityManger->flush();
+
+        return $timePeriod;
     }
 }
