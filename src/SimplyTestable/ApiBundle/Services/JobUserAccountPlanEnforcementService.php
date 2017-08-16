@@ -80,8 +80,13 @@ class JobUserAccountPlanEnforcementService
     public function isFullSiteJobLimitReachedForWebSite(WebSite $website)
     {
         $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+        $plan = $userAccountPlan->getPlan();
 
-        if (!$userAccountPlan->getPlan()->hasConstraintNamed(self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME)) {
+        $fullSiteJobsPerSiteConstraint = $plan->getConstraintNamed(
+            self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME
+        );
+
+        if (empty($fullSiteJobsPerSiteConstraint)) {
             return false;
         }
 
@@ -94,11 +99,7 @@ class JobUserAccountPlanEnforcementService
             $website
         );
 
-        if ($currentCount === 0) {
-            return false;
-        }
-
-        return $currentCount >= $this->getFullSiteJobLimitConstraint()->getLimit();
+        return $currentCount >= $fullSiteJobsPerSiteConstraint->getLimit();
     }
 
     /**
