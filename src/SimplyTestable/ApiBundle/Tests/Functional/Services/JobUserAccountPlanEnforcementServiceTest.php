@@ -2,11 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -218,6 +219,101 @@ class JobUserAccountPlanEnforcementServiceTest extends BaseSimplyTestableTestCas
                 'urlCount' => 11,
                 'removeLimit' => false,
                 'expectedIsJobUrlLimitReached' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCreditsUsedThisMonthDataProvider
+     *
+     * @param $taskStateNames
+     */
+    public function testGetCreditsUsedThisMonth($jobValues, $taskStateNames, $expectedCreditsUsed)
+    {
+        $jobFactory = new JobFactory($this->container);
+
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $user = $userService->getPublicUser();
+        $job = $jobFactory->createResolveAndPrepare($jobValues);
+        $tasks = $job->getTasks();
+
+        foreach ($taskStateNames as $taskStateIndex => $taskStateName) {
+            $taskState = $stateService->fetch($taskStateName);
+
+            /* @var Task $task */
+            $task = $tasks->get($taskStateIndex);
+            $task->setState($taskState);
+            $task->setTimePeriod($this->createTimePeriod());
+
+            $entityManager->persist($task);
+            $entityManager->flush($task);
+        }
+
+        $this->jobUserAccountPlanEnforcementService->setUser($user);
+        $creditsUsed = $this->jobUserAccountPlanEnforcementService->getCreditsUsedThisMonth();
+
+        $this->assertEquals($expectedCreditsUsed, $creditsUsed);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCreditsUsedThisMonthDataProvider()
+    {
+        return [
+            'no credits used' => [
+                'jobValues' => [],
+                'taskStateNames' => [],
+                'expectedCreditsUsed' => 0,
+            ],
+            'one credit used' => [
+                'jobValues' => [],
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                ],
+                'expectedCreditsUsed' => 1,
+            ],
+            'five credits used' => [
+                'jobValues' => [
+                    JobFactory::KEY_TEST_TYPES => [
+                        TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskTypeService::CSS_VALIDATION_TYPE,
+                    ],
+                ],
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                    TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+                    TaskService::TASK_SKIPPED_STATE,
+                ],
+                'expectedCreditsUsed' => 5,
+            ],
+            'ten credits used' => [
+                'jobValues' => [
+                    JobFactory::KEY_TEST_TYPES => [
+                        TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskTypeService::CSS_VALIDATION_TYPE,
+                        TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
+                        TaskTypeService::LINK_INTEGRITY_TYPE,
+                    ],
+                ],
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                    TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+                    TaskService::TASK_SKIPPED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+                    TaskService::TASK_SKIPPED_STATE,
+                ],
+                'expectedCreditsUsed' => 10,
             ],
         ];
     }

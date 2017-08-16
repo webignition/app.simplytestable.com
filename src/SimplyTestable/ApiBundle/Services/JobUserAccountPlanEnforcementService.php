@@ -153,7 +153,6 @@ class JobUserAccountPlanEnforcementService
         return $urlCount > $constraint->getLimit();
     }
 
-
     /**
      * @return int
      */
@@ -161,13 +160,13 @@ class JobUserAccountPlanEnforcementService
     {
         return $this->taskService->getEntityRepository()->getCountByUsersAndStatesForCurrentMonth(
             $this->teamService->getPeopleForUser($this->user),
-            array(
+            [
                 $this->taskService->getCompletedState(),
                 $this->taskService->getFailedNoRetryAvailableState(),
                 $this->taskService->getFailedRetryAvailableState(),
                 $this->taskService->getFailedRetryLimitReachedState(),
                 $this->taskService->getSkippedState(),
-            )
+            ]
         );
     }
 
