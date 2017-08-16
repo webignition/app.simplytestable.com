@@ -255,7 +255,7 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
      */
     private function getUrlsToKeep(Job $job, $limit, TaskService $taskService)
     {
-        $urls = $taskService->getEntityRepository()->findUrlsByJob($job);
+        $urls = $taskService->getUrlsByJob($job);
         $tempUrlsToKeep = array_slice($urls, 0, $limit);
         $urlsToKeep = array();
 
