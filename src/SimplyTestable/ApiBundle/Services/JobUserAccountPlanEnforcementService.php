@@ -171,18 +171,20 @@ class JobUserAccountPlanEnforcementService
     }
 
     /**
-     *
-     * @return boolean
+     * @return bool
      */
     public function isUserCreditLimitReached()
     {
         $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+        $plan = $userAccountPlan->getPlan();
 
-        if (!$userAccountPlan->getPlan()->hasConstraintNamed(self::CREDITS_PER_MONTH_CONSTRAINT_NAME)) {
+        $constraint = $plan->getConstraintNamed(self::CREDITS_PER_MONTH_CONSTRAINT_NAME);
+
+        if (empty($constraint)) {
             return false;
         }
 
-        return $this->getCreditsUsedThisMonth() >= $this->getCreditsPerMonthConstraint()->getLimit();
+        return $this->getCreditsUsedThisMonth() >= $constraint->getLimit();
     }
 
     /**

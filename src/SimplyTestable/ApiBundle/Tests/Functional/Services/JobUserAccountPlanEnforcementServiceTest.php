@@ -8,7 +8,9 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\ConstraintFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
@@ -226,7 +228,9 @@ class JobUserAccountPlanEnforcementServiceTest extends BaseSimplyTestableTestCas
     /**
      * @dataProvider getCreditsUsedThisMonthDataProvider
      *
-     * @param $taskStateNames
+     * @param array $jobValues
+     * @param string[] $taskStateNames
+     * @param int $expectedCreditsUsed
      */
     public function testGetCreditsUsedThisMonth($jobValues, $taskStateNames, $expectedCreditsUsed)
     {
@@ -314,6 +318,132 @@ class JobUserAccountPlanEnforcementServiceTest extends BaseSimplyTestableTestCas
                     TaskService::TASK_SKIPPED_STATE,
                 ],
                 'expectedCreditsUsed' => 10,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider isUserCreditLimitReachedDataProvider
+     *
+     * @param string[] $taskStateNames
+     * @param array $planValues
+     * @param bool $expectedIsLimitReached
+     */
+    public function testIsUserCreditLimitReached($taskStateNames, $planValues, $expectedIsLimitReached)
+    {
+        $planFactory = new PlanFactory($this->container);
+        $jobFactory = new JobFactory($this->container);
+
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $user = $userService->getPublicUser();
+        $plan = $planFactory->create($planValues);
+        $userAccountPlanService->subscribe($user, $plan);
+
+        $job = $jobFactory->createResolveAndPrepare();
+        $tasks = $job->getTasks();
+
+        foreach ($taskStateNames as $taskStateIndex => $taskStateName) {
+            $taskState = $stateService->fetch($taskStateName);
+
+            /* @var Task $task */
+            $task = $tasks->get($taskStateIndex);
+            $task->setState($taskState);
+            $task->setTimePeriod($this->createTimePeriod());
+
+            $entityManager->persist($task);
+            $entityManager->flush($task);
+        }
+
+        $this->jobUserAccountPlanEnforcementService->setUser($user);
+
+        $this->assertEquals(
+            $expectedIsLimitReached,
+            $this->jobUserAccountPlanEnforcementService->isUserCreditLimitReached()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function isUserCreditLimitReachedDataProvider()
+    {
+        $creditsPerMonthConstraintName = JobUserAccountPlanEnforcementService::CREDITS_PER_MONTH_CONSTRAINT_NAME;
+        $jobUrlLimitConstraintName = JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME;
+
+        return [
+            'no limit' => [
+                'taskStateNames' => [],
+                'planValues' => [
+                    PlanFactory::KEY_NAME => 'Plan',
+                    PlanFactory::KEY_CONSTRAINTS => [
+                        [
+                            ConstraintFactory::KEY_NAME => $jobUrlLimitConstraintName,
+                            ConstraintFactory::KEY_LIMIT => 1,
+                        ],
+                    ],
+                ],
+                'expectedIsLimitReached' => false,
+            ],
+            'limit not reached; no credits used' => [
+                'taskStateNames' => [],
+                'planValues' => [
+                    PlanFactory::KEY_NAME => 'Plan',
+                    PlanFactory::KEY_CONSTRAINTS => [
+                        [
+                            ConstraintFactory::KEY_NAME => $jobUrlLimitConstraintName,
+                            ConstraintFactory::KEY_LIMIT => 1,
+                        ],
+                        [
+                            ConstraintFactory::KEY_NAME => $creditsPerMonthConstraintName,
+                            ConstraintFactory::KEY_LIMIT => 1,
+                        ],
+                    ],
+                ],
+                'expectedIsLimitReached' => false,
+            ],
+            'limit not reached; some credits used' => [
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                ],
+                'planValues' => [
+                    PlanFactory::KEY_NAME => 'Plan',
+                    PlanFactory::KEY_CONSTRAINTS => [
+                        [
+                            ConstraintFactory::KEY_NAME => $jobUrlLimitConstraintName,
+                            ConstraintFactory::KEY_LIMIT => 20,
+                        ],
+                        [
+                            ConstraintFactory::KEY_NAME => $creditsPerMonthConstraintName,
+                            ConstraintFactory::KEY_LIMIT => 10,
+                        ],
+                    ],
+                ],
+                'expectedIsLimitReached' => false,
+            ],
+            'limit reached' => [
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                    TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                ],
+                'planValues' => [
+                    PlanFactory::KEY_NAME => 'Plan',
+                    PlanFactory::KEY_CONSTRAINTS => [
+                        [
+                            ConstraintFactory::KEY_NAME => $jobUrlLimitConstraintName,
+                            ConstraintFactory::KEY_LIMIT => 20,
+                        ],
+                        [
+                            ConstraintFactory::KEY_NAME => $creditsPerMonthConstraintName,
+                            ConstraintFactory::KEY_LIMIT => 2,
+                        ],
+                    ],
+                ],
+                'expectedIsLimitReached' => true,
             ],
         ];
     }
