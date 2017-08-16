@@ -78,6 +78,11 @@ class JobPreparationService
     private $stateService;
 
     /**
+     * @var UserAccountPlanService
+     */
+    private $userAccountPlanService;
+
+    /**
      * @param JobService $jobService
      * @param TaskService $taskService
      * @param JobTypeService $jobTypeService
@@ -88,6 +93,7 @@ class JobPreparationService
      * @param JobFactoryService $resqueJobFactoryService
      * @param UrlFinder $urlFinder
      * @param StateService $stateService
+     * @param UserAccountPlanService $userAccountPlanService
      */
     public function __construct(
         JobService $jobService,
@@ -99,7 +105,8 @@ class JobPreparationService
         QueueService $resqueQueueService,
         JobFactoryService $resqueJobFactoryService,
         UrlFinder $urlFinder,
-        StateService $stateService
+        StateService $stateService,
+        UserAccountPlanService $userAccountPlanService
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
@@ -111,6 +118,7 @@ class JobPreparationService
         $this->resqueJobFactoryService = $resqueJobFactoryService;
         $this->urlFinder = $urlFinder;
         $this->stateService = $stateService;
+        $this->userAccountPlanService = $userAccountPlanService;
     }
 
     /**
@@ -135,27 +143,31 @@ class JobPreparationService
             );
         }
 
-        $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
 
+        $user = $job->getUser();
+
+        $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
         $job->setState($jobPreparingState);
         $this->jobService->persistAndFlush($job);
 
         $this->processedUrls = array();
 
-        $this->jobUserAccountPlanEnforcementService->setUser($job->getUser());
-        $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit();
-
-        $urls = $this->collectUrlsForJob(
-            $job,
-            $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()->getLimit()
+        $userAccountPlan = $this->userAccountPlanService->getForUser($user);
+        $plan = $userAccountPlan->getPlan();
+        $urlsPerJobConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME
         );
+
+        $this->jobUserAccountPlanEnforcementService->setUser($user);
+
+        $urls = $this->collectUrlsForJob($job, $urlsPerJobConstraint->getLimit());
 
         if (empty($urls)) {
             $jobFailedNoSitemapState = $this->stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
 
             $job->setState($jobFailedNoSitemapState);
 
-            if (!$this->userService->isPublicUser($job->getUser())) {
+            if (!$this->userService->isPublicUser($user)) {
                 if (!$this->crawlJobContainerService->hasForJob($job)) {
                     $crawlJobContainer = $this->crawlJobContainerService->getForJob($job);
                     $this->crawlJobContainerService->prepare($crawlJobContainer);
@@ -165,14 +177,12 @@ class JobPreparationService
             $this->jobService->persistAndFlush($job);
         } else {
             if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
-                $constraint = $this->jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint();
-
                 $this->jobService->addAmmendment(
                     $job,
                     'plan-url-limit-reached:discovered-url-count-' . count($urls),
-                    $constraint
+                    $urlsPerJobConstraint
                 );
-                $urls = array_slice($urls, 0, $constraint->getLimit());
+                $urls = array_slice($urls, 0, $urlsPerJobConstraint->getLimit());
             }
 
             $this->prepareTasksFromCollectedUrls($job, $urls);

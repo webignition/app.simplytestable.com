@@ -169,6 +169,7 @@ services:
         jobService: "@simplytestable.services.jobservice"
         taskService: "@simplytestable.services.taskservice"
         teamService: "@simplytestable.services.teamservice"
+        jobTypeService: '@simplytestable.services.jobtypeservice'
 
   simplytestable.services.jobRejectionReasonService:
     class:   SimplyTestable\ApiBundle\Services\JobRejectionReasonService
@@ -188,6 +189,7 @@ services:
         resqueJobFactoryService: "@simplytestable.services.resque.jobFactoryService"
         urlFinder: '@simplytestable.services.urlfinder'
         stateService: '@simplytestable.services.stateservice'
+        userAccountPlanService: '@simplytestable.services.useraccountplanservice'
 
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
@@ -209,6 +211,7 @@ services:
         jobService: "@simplytestable.services.jobservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         stateService: '@simplytestable.services.stateservice'
+        userAccountPlanService: '@simplytestable.services.useraccountplanservice'
 
   simplytestable.services.taskPreprocessorServiceFactory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService
@@ -387,6 +390,7 @@ services:
         userService: "@simplytestable.services.userservice"
         resqueQueueService: "@simplytestable.services.resque.queueservice"
         stateService: '@simplytestable.services.stateservice'
+        userAccountPlanService: '@simplytestable.services.useraccountplanservice'
 
   simplytestable.services.scheduledjob.cronmodifier.validationservice:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService

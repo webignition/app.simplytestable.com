@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -670,16 +671,27 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
     private function setJobTypeConstraintLimits()
     {
         $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobUserAccountPlanEnforcementService = $this->container->get(
+            'simplytestable.services.jobuseraccountplanenforcementservice'
+        );
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
-        $jobUserAccountPlanEnforcementService =
-            $this->container->get('simplytestable.services.jobuseraccountplanenforcementservice');
+        $user = $userService->getPublicUser();
+        $userAccountPlan = $userAccountPlanService->getForUser($user);
+        $plan = $userAccountPlan->getPlan();
 
-        $jobUserAccountPlanEnforcementService->setUser($this->getUserService()->getPublicUser());
+        $jobUserAccountPlanEnforcementService->setUser($user);
 
-        $fullSiteJobsPerSiteConstraint = $jobUserAccountPlanEnforcementService->getFullSiteJobLimitConstraint();
+        $fullSiteJobsPerSiteConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME
+        );
+
+        $singleUrlJobsPerUrlConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME
+        );
+
         $fullSiteJobsPerSiteConstraint->setLimit(10);
-
-        $singleUrlJobsPerUrlConstraint = $jobUserAccountPlanEnforcementService->getSingleUrlJobLimitConstraint();
         $singleUrlJobsPerUrlConstraint->setLimit(10);
 
         $jobService->getManager()->persist($fullSiteJobsPerSiteConstraint);

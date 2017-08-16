@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\Maintenance;
 
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -66,9 +67,14 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
             $output->writeln('<comment>This is a DRY RUN, no data will be written</comment>');
         }
 
-        $publicUser = $userService->getPublicUser();
-        $publicUserPlan = $userAccountPlanService->getForUser($publicUser);
-        $urlLimit = $publicUserPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
+        $user = $userService->getPublicUser();
+        $userAccountPlan = $userAccountPlanService->getForUser($user);
+        $plan = $userAccountPlan->getPlan();
+        $urlsPerJobConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME
+        );
+
+        $urlLimit = $urlsPerJobConstraint->getLimit();
 
         $output->writeln('<info>Public user urls_per_job limit is: '.$urlLimit.'</info>');
 
@@ -81,7 +87,7 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
         $output->write('Finding public user jobs to check ... ');
 
         $jobIdsToCheck = $jobService->getEntityRepository()->getIdsByUserAndTypeAndNotStates(
-            $publicUser,
+            $user,
             $jobTypeService->getByName('full site'),
             [
                 $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE),
@@ -113,11 +119,11 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
             }
 
             if (!$this->hasPlanUrlLimitReachedAmmendment($job)) {
-                $jobUserAccountPlanEnforcementService->setUser($publicUser);
+                $jobUserAccountPlanEnforcementService->setUser($user);
                 $jobService->addAmmendment(
                     $job,
                     'plan-url-limit-reached:discovered-url-count-' . $urlCount,
-                    $jobUserAccountPlanEnforcementService->getJobUrlLimitConstraint()
+                    $urlsPerJobConstraint
                 );
                 $jobService->getManager()->flush();
             }
