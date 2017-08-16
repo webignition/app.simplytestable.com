@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
@@ -132,12 +133,7 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $state = $stateService->fetch($stateName);
 
-        /* @var Job[] $jobs */
-        $jobs = [];
-
-        foreach ($jobValuesCollection as $jobValues) {
-            $jobs[] = $this->jobFactory->create($jobValues);
-        }
+        $jobs = $this->createJobs($jobValuesCollection);
 
         $expectedJobIds = $this->createExpectedJobIdsFromExpectedJobIndices($jobs, $expectedJobIndices);
         $retrievedIds = $this->jobRepository->getIdsByState($state);
@@ -189,12 +185,7 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $state = $stateService->fetch($stateName);
 
-        /* @var Job[] $jobs */
-        $jobs = [];
-
-        foreach ($jobValuesCollection as $jobValues) {
-            $jobs[] = $this->jobFactory->create($jobValues);
-        }
+        $this->createJobs($jobValuesCollection);
 
         $count = $this->jobRepository->getCountByState($state);
 
@@ -289,11 +280,6 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
         $periodEnd,
         $expectedCount
     ) {
-        /**
-        $startDateTime = new \DateTime('first day of this month');
-        $endDateTime = new \DateTime('last day of this month');
-         */
-
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
 
@@ -303,11 +289,7 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
         $jobType = $jobTypeService->getByName($jobTypeName);
         $website = $websiteService->fetch($websiteUrl);
 
-        foreach ($jobValuesCollection as $jobValues) {
-            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
-
-            $this->jobFactory->create($jobValues);
-        }
+        $this->createJobs($jobValuesCollection, $users);
 
         $count = $this->jobRepository->getJobCountByUserAndJobTypeAndWebsiteForPeriod(
             $user,
@@ -493,6 +475,184 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
     }
 
     /**
+     * @dataProvider getIdsByUserAndTypeAndNotStatesDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param string $userName
+     * @param string $jobTypeName
+     * @param string[] $excludeStateNames
+     * @param int[] $expectedJobIndices
+     */
+    public function testGetIdsByUserAndTypeAndNotStates(
+        $jobValuesCollection,
+        $userName,
+        $jobTypeName,
+        $excludeStateNames,
+        $expectedJobIndices
+    ) {
+        $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
+        $user = $users[$userName];
+
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $jobType = $jobTypeService->getByName($jobTypeName);
+        $excludeStates = $stateService->fetchCollection($excludeStateNames);
+
+        $jobs = $this->createJobs($jobValuesCollection, $users);
+
+        $jobIds = $this->jobRepository->getIdsByUserAndTypeAndNotStates(
+            $user,
+            $jobType,
+            $excludeStates
+        );
+
+        $expectedJobIds = $this->createExpectedJobIdsFromExpectedJobIndices($jobs, $expectedJobIndices);
+
+        $this->assertEquals($expectedJobIds, $jobIds);
+    }
+
+    public function getIdsByUserAndTypeAndNotStatesDataProvider()
+    {
+        return [
+            'no jobs' => [
+                'jobValuesCollection' => [],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'excludeStateNames' => [],
+                'expectedJobIndices' => [],
+            ],
+            'no matching jobs' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'excludeStateNames' => [],
+                'expectedJobIndices' => [],
+            ],
+            'match, no state exclusion' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'public',
+                'jobTypeName' => JobTypeService::SINGLE_URL_NAME,
+                'excludeStateNames' => [],
+                'expectedJobIndices' => [1],
+            ],
+            'match, with state exclusion' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'userName' => 'private',
+                'jobTypeName' => JobTypeService::FULL_SITE_NAME,
+                'excludeStateNames' => [
+                    JobService::CANCELLED_STATE
+                ],
+                'expectedJobIndices' => [1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getIsPublicByJobIdDataProvider
+     *
+     * @param array $jobValues
+     * @param bool $callSetPublic
+     * @param bool $expectedIsPublic
+     */
+    public function testGetIsPublicByJobId($jobValues, $callSetPublic, $expectedIsPublic)
+    {
+        $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
+
+        if (empty($jobValues)) {
+            $jobId = 1;
+        } else {
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+            $job = $this->jobFactory->create($jobValues);
+            $jobId = $job->getId();
+
+            if ($callSetPublic) {
+                $job->setIsPublic(true);
+
+                $jobService = $this->container->get('simplytestable.services.jobservice');
+                $jobService->persistAndFlush($job);
+            }
+        }
+
+        $isPublic = $this->jobRepository->getIsPublicByJobId($jobId);
+
+        $this->assertEquals($expectedIsPublic, $isPublic);
+    }
+
+    /**
+     * @return array
+     */
+    public function getIsPublicByJobIdDataProvider()
+    {
+        return [
+            'no jobs' => [
+                'jobValues' => [],
+                'callSetPublic' => false,
+                'expectedIsPublic' => false,
+            ],
+            'public job is public' => [
+                'jobValues' => [
+                    JobFactory::KEY_USER => 'public',
+                ],
+                'callSetPublic' => false,
+                'expectedIsPublic' => true,
+            ],
+            'private job is not public' => [
+                'jobValuesCollection' => [
+                    JobFactory::KEY_USER => 'private',
+                ],
+                'callSetPublic' => false,
+                'expectedIsPublic' => false,
+            ],
+            'private job made public is not public' => [
+                'jobValuesCollection' => [
+                    JobFactory::KEY_USER => 'private',
+                ],
+                'callSetPublic' => true,
+                'expectedIsPublic' => true,
+            ],
+        ];
+    }
+
+    /**
      * @return Job[]
      */
     private function createJobsForAllJobStatesWithTasksForAllTaskStates()
@@ -574,5 +734,26 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
         }
 
         return $expectedJobIds;
+    }
+
+    /**
+     * @param array $jobValuesCollection
+     * @param User[] $users
+     *
+     * @return Job[]
+     */
+    public function createJobs($jobValuesCollection, $users = [])
+    {
+        $jobs = [];
+
+        foreach ($jobValuesCollection as $jobValues) {
+            if (isset($jobValues[JobFactory::KEY_USER])) {
+                $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+            }
+
+            $jobs[] = $this->jobFactory->create($jobValues);
+        }
+
+        return $jobs;
     }
 }

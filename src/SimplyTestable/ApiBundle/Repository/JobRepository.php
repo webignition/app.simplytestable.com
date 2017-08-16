@@ -136,10 +136,14 @@ class JobRepository extends EntityRepository
 
         $where = 'Job.user = :User and Job.type = :Type';
 
+        $stateIndex = 0;
+
         if (is_array($excludeStates)) {
-            foreach ($excludeStates as $stateIndex => $state) {
+            foreach ($excludeStates as $state) {
                 $where .= ' AND Job.state != :State' . $stateIndex;
                 $queryBuilder->setParameter('State'.$stateIndex, $state);
+
+                $stateIndex++;
             }
         }
 
@@ -185,7 +189,7 @@ class JobRepository extends EntityRepository
 
         $result = $queryBuilder->getQuery()->getResult();
 
-        if (count($result) === 0) {
+        if (empty($result)) {
             return false;
         }
 
