@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
@@ -305,6 +306,113 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
             'does not exist' => [
                 'url' => 'http://example.com/foo',
                 'expectedExists' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCountByTaskTypeAndStateDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param string[] $taskStateNames
+     * @param string $taskTypeName
+     * @param string $taskStateName
+     * @param int $expectedCount
+     */
+    public function testGetCountByTaskTypeAndState(
+        $jobValuesCollection,
+        $taskStateNames,
+        $taskTypeName,
+        $taskStateName,
+        $expectedCount
+    ) {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+
+        $tasks = [];
+
+        foreach ($jobValuesCollection as $jobValues) {
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+
+            $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+            $tasks = array_merge($tasks, $job->getTasks()->toArray());
+        }
+
+        foreach ($taskStateNames as $taskStateIndex => $stateName) {
+            $task = $tasks[$taskStateIndex];
+            $task->setState($stateService->fetch($stateName));
+
+            $entityManager->persist($task);
+            $entityManager->flush($task);
+        }
+
+        $taskType = $taskTypeService->getByName($taskTypeName);
+        $state = $stateService->fetch($taskStateName);
+
+        $this->assertEquals(
+            $expectedCount,
+            $this->taskRepository->getCountByTaskTypeAndState($taskType, $state)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getCountByTaskTypeAndStateDataProvider()
+    {
+        return [
+            'none' => [
+                'jobValuesCollection' => [],
+                'taskStateNames' => [],
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'taskStateName' => TaskService::COMPLETED_STATE,
+                'expectedCount' => 0,
+            ],
+            'many' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                    ],
+                ],
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                ],
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'taskStateName' => TaskService::COMPLETED_STATE,
+                'expectedCount' => 6,
             ],
         ];
     }
