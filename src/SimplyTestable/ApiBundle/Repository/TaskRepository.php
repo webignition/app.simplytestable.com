@@ -3,70 +3,78 @@ namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
 
 class TaskRepository extends EntityRepository
-{    
-
+{
     /**
-     * Get the total number of URLs covered by a Job
-     * 
-     * @return int 
+     * @param Job $job
+     *
+     * @return int
      */
     public function findUrlCountByJob(Job $job)
-    {       
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(DISTINCT Task.url) as url_total');
         $queryBuilder->where('Task.job = :Job');
         $queryBuilder->setParameter('Job', $job);
-        
+
         $result = $queryBuilder->getQuery()->getResult();
+
         return (int)($result[0]['url_total']);
-    }    
-    
+    }
+
     /**
-     *
      * @param Job $job
-     * @return array
+     *
+     * @return string[]
      */
     public function findUrlsByJob(Job $job)
     {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('DISTINCT Task.url');
         $queryBuilder->where('Task.job = :Job');
-        $queryBuilder->setParameter('Job', $job);        
-        
+        $queryBuilder->setParameter('Job', $job);
+
         return $queryBuilder->getQuery()->getArrayResult();
     }
-    
-    public function findUrlsByJobAndState(Job $job, State $state) {        
+
+    /**
+     * @param Job $job
+     * @param State $state
+     *
+     * @return string[]
+     */
+    public function findUrlsByJobAndState(Job $job, State $state)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('DISTINCT Task.url');
         $queryBuilder->where('Task.job = :Job AND Task.state = :State');
         $queryBuilder->setParameter('Job', $job);
-        $queryBuilder->setParameter('State', $state);     
-        
+        $queryBuilder->setParameter('State', $state);
+
         $urls = array();
-        $result = $queryBuilder->getQuery()->getResult();        
-        
+        $result = $queryBuilder->getQuery()->getResult();
+
         foreach ($result as $item) {
             $urls[] = $item['url'];
         }
-        
+
         return $urls;
-    }  
-    
+    }
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
+     * @param Job $job
      * @param string $url
-     * @return boolean
+     *
+     * @return bool
      */
-    public function findUrlExistsByJobAndUrl(Job $job, $url) {        
+    public function findUrlExistsByJobAndUrl(Job $job, $url)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('COUNT(Task.url)');
         $queryBuilder->where('Task.job = :Job AND Task.url = :Url');
@@ -77,14 +85,12 @@ class TaskRepository extends EntityRepository
 
         return $result[0][1] > 0;
     }
-    
-    
-    
+
     /**
-     *
      * @param TaskType $taskType
      * @param State $state
-     * @return integer 
+     *
+     * @return int
      */
     public function getCountByTaskTypeAndState(TaskType $taskType, State $state)
     {
@@ -95,17 +101,17 @@ class TaskRepository extends EntityRepository
         $queryBuilder->andWhere('Task.state = :State');
         $queryBuilder->setParameter('Type', $taskType);
         $queryBuilder->setParameter('State', $state);
-        
+
         $result = $queryBuilder->getQuery()->getResult();
-        return (int)($result[0]['task_type_total']);        
+
+        return (int)($result[0]['task_type_total']);
     }
-    
-    
+
     /**
-     *
      * @param Job $job
      * @param State $state
-     * @return integer 
+     *
+     * @return int
      */
     public function getCountByJobAndState(Job $job, State $state)
     {
@@ -116,46 +122,45 @@ class TaskRepository extends EntityRepository
         $queryBuilder->andWhere('Task.state = :State');
         $queryBuilder->setParameter('Job', $job);
         $queryBuilder->setParameter('State', $state);
-        
+
         $result = $queryBuilder->getQuery()->getResult();
-        return (int)($result[0]['task_total']);        
-    }  
-    
-    
+
+        return (int)($result[0]['task_total']);
+    }
+
     /**
-     *
      * @param Job $job
-     * @param State $state
-     * @return array 
+     * @param State[] $states
+     *
+     * @return Task[]
      */
     public function getByJobAndStates(Job $job, $states)
     {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task');
-        
+
         $where = 'Task.job = :Job AND ';
-        $stateWhereParts = '';        
+        $stateWhereParts = '';
 
         foreach ($states as $stateIndex => $state) {
             $stateWhereParts[] = 'Task.state = :State' . $stateIndex;
             $queryBuilder->setParameter('State'.$stateIndex, $state);
         }
-        
+
         $where .= '(' . implode(' OR ', $stateWhereParts) . ')';
 
-        
-        $queryBuilder->where($where);        
+
+        $queryBuilder->where($where);
 
         $queryBuilder->setParameter('Job', $job);
-        
-        return $queryBuilder->getQuery()->getResult();      
-    }      
-    
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 
     /**
-     *
      * @param State $state
-     * @return integer 
+     *
+     * @return int
      */
     public function getCountByState(State $state)
     {
@@ -164,39 +169,38 @@ class TaskRepository extends EntityRepository
         $queryBuilder->select('count(DISTINCT Task.id) as task_total');
         $queryBuilder->where('Task.state = :State');
         $queryBuilder->setParameter('State', $state);
-        
+
         $result = $queryBuilder->getQuery()->getResult();
-        return (int)($result[0]['task_total']);        
-    }     
-    
-    
+
+        return (int)($result[0]['task_total']);
+    }
+
     /**
-     *
      * @param State $state
-     * @return integer 
+     *
+     * @return int[]
      */
     public function getIdsByState(State $state)
     {
-        $queryBuilder = $this->createQueryBuilder('Task');   
+        $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task.id');
         $queryBuilder->where('Task.state = :State');
         $queryBuilder->setParameter('State', $state);
-        
+
         $result = $queryBuilder->getQuery()->getResult();
-        
+
         $taskIds = array();
         foreach ($result as $taskId) {
             $taskIds[] = $taskId['id'];
         }
-        
-        return $taskIds;      
-    }    
-    
-    
+
+        return $taskIds;
+    }
+
     /**
-     *
      * @param Job $job
-     * @return integer 
+     *
+     * @return int
      */
     public function getCountByJob(Job $job)
     {
@@ -205,39 +209,57 @@ class TaskRepository extends EntityRepository
         $queryBuilder->select('count(DISTINCT Task.id) as task_total');
         $queryBuilder->where('Task.job = :Job');
         $queryBuilder->setParameter('Job', $job);
-        
-        $result = $queryBuilder->getQuery()->getResult();
-        return (int)($result[0]['task_total']);        
-    }      
-   
 
-    public function getCollectionById($taskIds = array()) {
+        $result = $queryBuilder->getQuery()->getResult();
+        return (int)($result[0]['task_total']);
+    }
+
+    /**
+     * @param int[] $taskIds
+     *
+     * @return Task[]
+     */
+    public function getCollectionById($taskIds = [])
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task');
-        
+
         if (count($taskIds)) {
             $queryBuilder->where('Task.id IN ('.implode(',', $taskIds).')');
-        }        
-        
-        return $queryBuilder->getQuery()->getResult();      
-    }    
-    
-    public function getCollectionByJobAndId(Job $job, $taskIds = array()) {
+        }
+
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param Job $job
+     * @param int[] $taskIds
+     *
+     * @return Task[]
+     */
+    public function getCollectionByJobAndId(Job $job, $taskIds = [])
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task');
         $queryBuilder->where('Task.job = :Job');
-        
+
         if (count($taskIds)) {
             $queryBuilder->andWhere('Task.id IN ('.implode(',', $taskIds).')');
-        }        
-        
+        }
+
         $queryBuilder->setParameter('Job', $job);
-        
-        return $queryBuilder->getQuery()->getResult();      
+
+        return $queryBuilder->getQuery()->getResult();
     }
 
-
-    public function getOutputCollectionByJobAndState(Job $job, State $state) {
+    /**
+     * @param Job $job
+     * @param State $state
+     *
+     * @return TaskOutput[]
+     */
+    public function getOutputCollectionByJobAndState(Job $job, State $state)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
 
@@ -256,42 +278,43 @@ class TaskRepository extends EntityRepository
 
         return $rawTaskOutputs;
     }
-    
-    
+
     /**
-     *
      * @param Job $job
      * @param int $limit
-     * @return array 
+     *
+     * @return int[]
      */
-    public function getIdsByJob(Job $job, $limit = 0) {
+    public function getIdsByJob(Job $job, $limit = 0)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task.id');
-        $queryBuilder->where('Task.job = :Job');        
+        $queryBuilder->where('Task.job = :Job');
         $queryBuilder->setParameter('Job', $job);
 
         if ($limit > 0) {
             $queryBuilder->setMaxResults($limit);
         }
-        
+
         $result = $queryBuilder->getQuery()->getResult();
-        
+
         $taskIds = array();
         foreach ($result as $taskId) {
             $taskIds[] = $taskId['id'];
         }
-        
+
         return $taskIds;
     }
-
 
     /**
      * @param Job $job
      * @param State[] $taskStates
      * @param int $limit
+     *
      * @return int[]
      */
-    public function getIdsByJobAndTaskStates(Job $job, $taskStates = [], $limit = 0) {
+    public function getIdsByJobAndTaskStates(Job $job, $taskStates = [], $limit = 0)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task.id');
         $queryBuilder->where('Task.job = :Job');
@@ -316,147 +339,153 @@ class TaskRepository extends EntityRepository
         return $taskIds;
     }
 
-    
     /**
-     *
      * @param Job $job
-     * @return array 
+     * @param string[] $urlSet
+     *
+     * @return int[]
      */
-    public function getIdsByJobAndUrlExclusionSet(Job $job, $urlSet) {
+    public function getIdsByJobAndUrlExclusionSet(Job $job, $urlSet)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task.id');
-        
+
         $urlParameterList = array();
         foreach ($urlSet as $urlIndex => $url) {
             $urlParameterList[] = ':Url' . $urlIndex.'';
         }
-        
-        $queryBuilder->where('Task.job = :Job AND Task.url NOT IN ('.implode(', ', $urlParameterList).')');        
-        
+
+        $queryBuilder->where('Task.job = :Job AND Task.url NOT IN ('.implode(', ', $urlParameterList).')');
+
         $queryBuilder->setParameter('Job', $job);
         foreach ($urlSet as $urlIndex => $url) {
             $queryBuilder->setParameter('Url' . $urlIndex, $url);
-        }        
-        
-        $repostitoryResult = $queryBuilder->getQuery()->getResult();
-        
+        }
+
+        $result = $queryBuilder->getQuery()->getResult();
+
         $taskIds = array();
-        foreach ($repostitoryResult as $taskId) {
+        foreach ($result as $taskId) {
             $taskIds[] = $taskId['id'];
         }
-        
+
         return $taskIds;
-    }    
-    
-    
+    }
+
     /**
-     *
      * @param Job $job
+     *
      * @return int
      */
-    public function getErroredCountByJob(Job $job, $excludeStates = null) {        
+    public function getErroredCountByJob(Job $job, $excludeStates = null)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('count(Task.id)');
-        
+
         $where = 'Task.job = :Job AND TaskOutput.errorCount > :ErrorCount';
-        
+
         if (is_array($excludeStates)) {
             foreach ($excludeStates as $stateIndex => $state) {
                 $where .= ' AND Task.state != :State' . $stateIndex;
                 $queryBuilder->setParameter('State'.$stateIndex, $state);
             }
         }
-        
+
         $queryBuilder->where($where);
 
-        $queryBuilder->setParameter('Job', $job);        
-        $queryBuilder->setParameter('ErrorCount', 0);  
-        
+        $queryBuilder->setParameter('Job', $job);
+        $queryBuilder->setParameter('ErrorCount', 0);
+
         $result = $queryBuilder->getQuery()->getResult();
-        
+
         return (int)$result[0][1];
     }
-    
 
     /**
-     *
      * @param Job $job
+     *
      * @return int
-     */    
-    public function getErrorCountByJob(Job $job) {        
+     */
+    public function getErrorCountByJob(Job $job)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('sum(TaskOutput.errorCount)');
-        
+
         $where = 'Task.job = :Job AND TaskOutput.errorCount > :ErrorCount';
-        
+
         $queryBuilder->where($where);
 
-        $queryBuilder->setParameter('Job', $job);        
-        $queryBuilder->setParameter('ErrorCount', 0);  
-        
+        $queryBuilder->setParameter('Job', $job);
+        $queryBuilder->setParameter('ErrorCount', 0);
+
         $result = $queryBuilder->getQuery()->getResult();
-        
+
         return (int)$result[0][1];
     }
-    
-    
+
     /**
-     *
      * @param Job $job
+     *
      * @return int
      */
-    public function getWarningedCountByJob(Job $job, $excludeStates = null) {        
+    public function getWarningedCountByJob(Job $job, $excludeStates = null)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('count(Task.id)');
-        
+
         $where = 'Task.job = :Job AND TaskOutput.warningCount > :WarningCount';
-        
+
         if (is_array($excludeStates)) {
             foreach ($excludeStates as $stateIndex => $state) {
                 $where .= ' AND Task.state != :State' . $stateIndex;
                 $queryBuilder->setParameter('State'.$stateIndex, $state);
             }
         }
-        
+
         $queryBuilder->where($where);
 
-        $queryBuilder->setParameter('Job', $job);        
-        $queryBuilder->setParameter('WarningCount', 0);  
-        
+        $queryBuilder->setParameter('Job', $job);
+        $queryBuilder->setParameter('WarningCount', 0);
+
         $result = $queryBuilder->getQuery()->getResult();
-        
+
         return (int)$result[0][1];
     }
-    
-    
+
     /**
-     *
      * @param Job $job
+     *
      * @return int
-     */    
-    public function getWarningCountByJob(Job $job) {        
+     */
+    public function getWarningCountByJob(Job $job)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('sum(TaskOutput.warningCount)');
-        
+
         $where = 'Task.job = :Job AND TaskOutput.warningCount > :WarningCount';
-        
+
         $queryBuilder->where($where);
 
-        $queryBuilder->setParameter('Job', $job);        
-        $queryBuilder->setParameter('WarningCount', 0);  
-        
+        $queryBuilder->setParameter('Job', $job);
+        $queryBuilder->setParameter('WarningCount', 0);
+
         $result = $queryBuilder->getQuery()->getResult();
-        
+
         return (int)$result[0][1];
-    }    
-    
-    
-    
-    public function getTaskCountByState(Job $job, $states) {
+    }
+
+    /**
+     * @param Job $job
+     * @param State[] $states
+     *
+     * @return int
+     */
+    public function getTaskCountByState(Job $job, $states)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('count(Task.id)');
 
@@ -465,18 +494,25 @@ class TaskRepository extends EntityRepository
         foreach ($states as $stateIndex => $state) {
             $stateConditions[] = '(Task.state = :State'.$stateIndex.') ';
             $queryBuilder->setParameter('State'.$stateIndex, $state);
-        }        
-        
+        }
+
         $queryBuilder->where('(Task.job = :Job AND ('.implode('OR', $stateConditions).'))');
         $queryBuilder->setParameter('Job', $job);
-        
+
         $result = $queryBuilder->getQuery()->getResult();
-        
+
         return (int)$result[0][1];
-    } 
-    
-    
-    public function getCollectionByUrlSetAndTaskTypeAndStates($urlSet, TaskType $taskType, $states) {
+    }
+
+    /**
+     * @param string[] $urlSet
+     * @param TaskType $taskType
+     * @param State[] $states
+     *
+     * @return Task[]
+     */
+    public function getCollectionByUrlSetAndTaskTypeAndStates($urlSet, TaskType $taskType, $states)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task');
 
@@ -485,95 +521,107 @@ class TaskRepository extends EntityRepository
         foreach ($states as $stateIndex => $state) {
             $stateConditions[] = '(Task.state = :State'.$stateIndex.') ';
             $queryBuilder->setParameter('State'.$stateIndex, $state);
-        }        
-        
+        }
+
         $urlConditions = array();
-        
+
         foreach ($urlSet as $urlIndex => $url) {
             $urlConditions[] = 'Task.url = :Url' . $urlIndex;
             $queryBuilder->setParameter('Url' . $urlIndex, $url);
         }
-        
-        $queryBuilder->where('('.implode(' OR ', $urlConditions).') and Task.type = :TaskType AND ('.implode('OR ', $stateConditions).')');        
-        
+
+        $queryBuilder->where(
+            '('.implode(' OR ', $urlConditions).') and Task.type = :TaskType AND ('.implode('OR ', $stateConditions).')'
+        );
+
         $queryBuilder->setParameter('TaskType', $taskType);
-        return $queryBuilder->getQuery()->getResult();       
+        return $queryBuilder->getQuery()->getResult();
     }
-    
-    
-    public function findUsedTaskOutputIds() {
+
+    /**
+     * @return int[]
+     */
+    public function findUsedTaskOutputIds()
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
-        $queryBuilder->select('DISTINCT TaskOutput.id as TaskOutputId');        
-       
-        $result = $queryBuilder->getQuery()->getResult(); 
-        
+        $queryBuilder->select('DISTINCT TaskOutput.id as TaskOutputId');
+
+        $result = $queryBuilder->getQuery()->getResult();
+
         if (count($result) === 0) {
             return array();
         }
-        
+
         $ids = array();
-        
+
         foreach ($result as $taskOutputIdResult) {
             $ids[] = $taskOutputIdResult['TaskOutputId'];
         }
-        
-        return $ids;      
-    }    
-    
-    
-    public function getTaskOutputByType(TaskType $type) {        
+
+        return $ids;
+    }
+
+    /**
+     * @param TaskType $type
+     *
+     * @return int[]
+     */
+    public function getTaskOutputByType(TaskType $type)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
-        $queryBuilder->select('DISTINCT TaskOutput.id as TaskOutputId');        
+        $queryBuilder->select('DISTINCT TaskOutput.id as TaskOutputId');
         $queryBuilder->where('Task.type = :Type');
         $queryBuilder->setParameter('Type', $type);
-        $queryBuilder->orderBy('TaskOutputId','ASC');
-        
-        $result = $queryBuilder->getQuery()->getResult(); 
+        $queryBuilder->orderBy('TaskOutputId', 'ASC');
+
+        $result = $queryBuilder->getQuery()->getResult();
 
         if (count($result) === 0) {
-            return array();
+            return [];
         }
-        
-        $ids = array();
-        
+
+        $ids = [];
+
         foreach ($result as $taskOutputIdResult) {
             $ids[] = $taskOutputIdResult['TaskOutputId'];
         }
-        
-        return $ids;        
-    } 
-    
-    
-    /**
-     * 
-     * @param \DateTime $sinceDatetime
-     * @return int
-     */
-    public function getThroughputSince(\DateTime $sinceDatetime) {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->join('Task.timePeriod', 'TimePeriod');
-        $queryBuilder->select('COUNT(Task.id)');        
-        $queryBuilder->where('TimePeriod.endDateTime > :SinceDateTime');
-        $queryBuilder->setParameter('SinceDateTime', $sinceDatetime);
-        
-        $result = $queryBuilder->getQuery()->getResult(); 
-        
-        return (int)$result[0][1];       
+
+        return $ids;
     }
 
+    /**
+     * @param \DateTime $sinceDatetime
+     *
+     * @return int
+     */
+    public function getThroughputSince(\DateTime $sinceDatetime)
+    {
+        $queryBuilder = $this->createQueryBuilder('Task');
+        $queryBuilder->join('Task.timePeriod', 'TimePeriod');
+        $queryBuilder->select('COUNT(Task.id)');
+        $queryBuilder->where('TimePeriod.endDateTime > :SinceDateTime');
+        $queryBuilder->setParameter('SinceDateTime', $sinceDatetime);
+
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return (int)$result[0][1];
+    }
 
     /**
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
-     * @return TaskOutput[]
+     * @param Task $task
+     * @param int $limit
+     *
+     * @return string[]
      */
-    public function findOutputByJobAndType(\SimplyTestable\ApiBundle\Entity\Task\Task $task, $limit = null) {
+    public function findOutputByJobAndType(Task $task, $limit = null)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->join('Task.job', 'Job');
         $queryBuilder->join('Task.timePeriod', 'TimePeriod');
-        
+
         $queryBuilder->select('TaskOutput.output');
         $queryBuilder->where('Job = :Job AND Task.type = :Type');
         $queryBuilder->orderBy('TaskOutput.id', 'DESC');
@@ -581,59 +629,66 @@ class TaskRepository extends EntityRepository
         if (!is_null($limit)) {
             $queryBuilder->setMaxResults(100);
         }
-        
+
         $queryBuilder->setParameter('Job', $task->getJob());
         $queryBuilder->setParameter('Type', $task->getType());
-        
-        $result = $queryBuilder->getQuery()->getResult();        
+
+        $result = $queryBuilder->getQuery()->getResult();
         $rawTaskOutputs = array();
-        
+
         foreach ($result as $item) {
             $rawTaskOutputs[] = $item['output'];
         }
-        
+
         return $rawTaskOutputs;
-    }    
-    
-    
-    public function getCountByUserAndStatesForCurrentMonth(User $user, $states) {
+    }
+
+    /**
+     * @param User $user
+     * @param State[] $states
+     *
+     * @return int
+     */
+    public function getCountByUserAndStatesForCurrentMonth(User $user, $states)
+    {
         $now = new \ExpressiveDate();
-        
+
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('COUNT(Task.id)');
         $queryBuilder->join('Task.timePeriod', 'TimePeriod');
         $queryBuilder->join('Task.job', 'Job');
-        
+
         $where = 'Job.user = :User AND (TimePeriod.startDateTime >= :StartOfMonth and TimePeriod.startDateTime <= :EndOfMonth)';
-        
+
         if (is_array($states)) {
             $stateWhereParts = array();
-          
+
             foreach ($states as $stateIndex => $state) {
                 $stateWhereParts[] = ' Task.state = :State'.$stateIndex.' ';
                 $queryBuilder->setParameter('State'.$stateIndex, $state);
             }
-            
+
             $where .= ' AND ('.  implode('OR', $stateWhereParts).')';
-        }        
-        
+        }
+
         $queryBuilder->where($where);
         $queryBuilder->setParameter('User', $user);
         $queryBuilder->setParameter('StartOfMonth', $now->format('Y-m-01'));
-        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()).' 23:59:59');        
-        
-        $result = $queryBuilder->getQuery()->getResult();
-        
-        return (int)$result[0][1];   
-    }
+        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()).' 23:59:59');
 
+        $result = $queryBuilder->getQuery()->getResult();
+
+        return (int)$result[0][1];
+    }
 
     /**
      * @param User[] $users
      * @param State[] $states
+     *
      * @return int
      */
-    public function getCountByUsersAndStatesForCurrentMonth($users, $states) {
+    public function getCountByUsersAndStatesForCurrentMonth($users, $states)
+    {
         $now = new \ExpressiveDate();
 
         $queryBuilder = $this->createQueryBuilder('Task');
