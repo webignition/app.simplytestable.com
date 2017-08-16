@@ -119,11 +119,15 @@ class JobUserAccountPlanEnforcementService
 
         $jobRepository = $this->jobService->getEntityRepository();
         $jobType = $this->jobTypeService->getByName($jobTypeName);
+        $startDateTime = new \DateTime('first day of this month');
+        $endDateTime = new \DateTime('last day of this month');
 
-        $currentCount = $jobRepository->getJobCountByUserAndJobTypeAndWebsiteForCurrentMonth(
+        $currentCount = $jobRepository->getJobCountByUserAndJobTypeAndWebsiteForPeriod(
             $this->user,
             $jobType,
-            $website
+            $website,
+            $startDateTime->format('Y-m-01'),
+            $endDateTime->format('Y-m-d 23:59:59')
         );
 
         return $currentCount >= $constraint->getLimit();

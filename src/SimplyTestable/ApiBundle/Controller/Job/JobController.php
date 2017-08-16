@@ -37,10 +37,12 @@ class JobController extends BaseJobController
         if ($userHasTeam || $userBelongsToTeam) {
             $team = $teamService->getForUser($this->getUser());
 
-            $latestJob = $jobService->getEntityRepository()->findLatestByWebsiteAndUsers(
-                $website,
-                $teamService->getPeople($team)
-            );
+            $latestJob = $jobService->getEntityRepository()->findOneBy([
+                'website' => $website,
+                'user' => $teamService->getPeople($team),
+            ], [
+                'id' => 'DESC',
+            ]);
 
             if ($latestJob instanceof Job) {
                 return $this->createRedirectToJobStatus(
@@ -51,12 +53,12 @@ class JobController extends BaseJobController
         }
 
         if (!$userService->isPublicUser($this->getUser())) {
-            $latestJob = $jobService->getEntityRepository()->findLatestByWebsiteAndUsers(
-                $website,
-                array(
-                    $this->getUser()
-                )
-            );
+            $latestJob = $jobService->getEntityRepository()->findOneBy([
+                'website' => $website,
+                'user' => $this->getUser(),
+            ], [
+                'id' => 'DESC',
+            ]);
 
             if (!is_null($latestJob)) {
                 return $this->createRedirectToJobStatus(
@@ -66,12 +68,12 @@ class JobController extends BaseJobController
             }
         }
 
-        $latestJob = $jobService->getEntityRepository()->findLatestByWebsiteAndUsers(
-            $website,
-            [
-                $userService->getPublicUser()
-            ]
-        );
+        $latestJob = $jobService->getEntityRepository()->findOneBy([
+            'website' => $website,
+            'user' => $userService->getPublicUser()
+        ], [
+            'id' => 'DESC',
+        ]);
 
         if (is_null($latestJob)) {
             $response = new Response();

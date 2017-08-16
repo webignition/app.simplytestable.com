@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Maintenance;
 
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -60,6 +61,10 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
         $jobUserAccountPlanEnforcementService = $this->getContainer()->get(
             'simplytestable.services.jobuseraccountplanenforcementservice'
         );
+        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+
+        /* @var JobRepository $jobRepository */
+        $jobRepository = $entityManager->getRepository(Job::class);
 
         $isDryRun = $this->input->getOption('dry-run') == 'true';
 
@@ -86,13 +91,13 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
 
         $output->write('Finding public user jobs to check ... ');
 
-        $jobIdsToCheck = $jobService->getEntityRepository()->getIdsByUserAndTypeAndNotStates(
+        $jobIdsToCheck = $jobRepository->getIdsByUserAndTypeAndNotStates(
             $user,
             $jobTypeService->getByName('full site'),
-            [
-                $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE),
-                $stateService->fetch(JobService::REJECTED_STATE),
-            ]
+            $stateService->fetchCollection([
+                JobService::FAILED_NO_SITEMAP_STATE,
+                JobService::REJECTED_STATE
+            ])
         );
 
         $output->writeln(count($jobIdsToCheck).' found');

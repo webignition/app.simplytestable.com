@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,6 +28,8 @@ class JobFactory
     const KEY_USER = 'user';
     const KEY_STATE = 'state';
     const KEY_TASK_STATES = 'task-states';
+    const KEY_TIME_PERIOD_START = 'time-period-start';
+    const KEY_TIME_PERIOD_END = 'time-period-end';
 
     /**
      * @var array
@@ -116,6 +119,8 @@ class JobFactory
 
     /**
      * @param array $jobValues
+     * @param bool $ignoreState
+     *
      * @return Job
      */
     public function create($jobValues = [], $ignoreState = false)
@@ -157,6 +162,15 @@ class JobFactory
         if (isset($jobValues[self::KEY_STATE]) && !$ignoreState) {
             $state = $stateService->fetch($jobValues[self::KEY_STATE]);
             $job->setState($state);
+            $jobService->persistAndFlush($job);
+        }
+
+        if (isset($jobValues[self::KEY_TIME_PERIOD_START]) && isset($jobValues[self::KEY_TIME_PERIOD_END])) {
+            $timePeriod = new TimePeriod();
+            $timePeriod->setStartDateTime(new \DateTime($jobValues[self::KEY_TIME_PERIOD_START]));
+            $timePeriod->setEndDateTime(new \DateTime($jobValues[self::KEY_TIME_PERIOD_END]));
+
+            $job->setTimePeriod($timePeriod);
             $jobService->persistAndFlush($job);
         }
 

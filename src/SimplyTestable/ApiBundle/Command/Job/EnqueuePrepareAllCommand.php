@@ -3,24 +3,20 @@ namespace SimplyTestable\ApiBundle\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
-use SimplyTestable\ApiBundle\Entity\TimePeriod;
-
-use webignition\NormalisedUrl\NormalisedUrl;
 
 class EnqueuePrepareAllCommand extends BaseCommand
 {
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -30,23 +26,33 @@ class EnqueuePrepareAllCommand extends BaseCommand
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function execute(InputInterface $input, OutputInterface $output)
     {
+        $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
         $stateService = $this->getContainer()->get('simplytestable.services.stateservice');
+        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+
+        /* @var JobRepository $jobRepository */
+        $jobRepository = $entityManager->getRepository(Job::class);
+
         $jobStartingState = $stateService->fetch(JobService::STARTING_STATE);
 
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $jobIds = $this->getJobService()->getEntityRepository()->getIdsByState($jobStartingState);
+        $jobIds = $jobRepository->getIdsByState($jobStartingState);
         $output->writeln(count($jobIds).' new jobs to prepare');
 
         foreach ($jobIds as $jobId) {
             $output->writeln('Enqueuing prepare for job '.$jobId);
 
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
+            $resqueQueueService->enqueue(
+                $resqueJobFactory->create(
                     'job-prepare',
                     ['id' => $jobId]
                 )
@@ -54,32 +60,5 @@ class EnqueuePrepareAllCommand extends BaseCommand
         }
 
         return 0;
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobService
-     */
-    private function getJobService() {
-        return $this->getContainer()->get('simplytestable.services.jobservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
-     */
-    private function getResqueQueueService() {
-        return $this->getContainer()->get('simplytestable.services.resque.queueService');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
-     */
-    private function getResqueJobFactoryService() {
-        return $this->getContainer()->get('simplytestable.services.resque.jobFactoryService');
     }
 }
