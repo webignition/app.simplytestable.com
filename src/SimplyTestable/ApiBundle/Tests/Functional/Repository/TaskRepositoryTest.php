@@ -4,13 +4,13 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
-use Guzzle\Http\Message\Response as GuzzleResponse;
 
 class TaskRepositoryTest extends BaseSimplyTestableTestCase
 {
@@ -206,6 +206,71 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
                     [
                         'url' => 'http://example.com/5',
                     ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider findUrlsByJobAndStateDataProvider
+     *
+     * @param array $jobValues
+     * @param string[] $taskStateNames
+     * @param string $taskStateName
+     * @param string[] $expectedUrls
+     */
+    public function testFindUrlsByJobAndState($jobValues, $taskStateNames, $taskStateName, $expectedUrls)
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+        $tasks = $job->getTasks();
+
+        foreach ($taskStateNames as $taskStateIndex => $stateName) {
+            /* @var Task $task */
+            $task = $tasks->get($taskStateIndex);
+            $task->setState($stateService->fetch($stateName));
+
+            $entityManager->persist($task);
+            $entityManager->flush($task);
+        }
+
+        $urls = $this->taskRepository->findUrlsByJobAndState($job, $stateService->fetch($taskStateName));
+
+        $this->assertEquals(
+            $expectedUrls,
+            $urls
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function findUrlsByJobAndStateDataProvider()
+    {
+        return [
+            'none found' => [
+                'jobValues' => [],
+                'taskStateNames' => [],
+                'taskStateName' => TaskService::COMPLETED_STATE,
+                'expectedUrls' => [],
+            ],
+            'nfoo' => [
+                'jobValues' => [
+                    JobFactory::KEY_TEST_TYPES => [
+                        TaskTypeService::HTML_VALIDATION_TYPE,
+                    ],
+                ],
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::COMPLETED_STATE,
+                ],
+                'taskStateName' => TaskService::COMPLETED_STATE,
+                'expectedUrls' => [
+                    'http://example.com/one',
+                    'http://example.com/foo bar',
                 ],
             ],
         ];
