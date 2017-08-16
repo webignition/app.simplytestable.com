@@ -190,16 +190,6 @@ class JobUserAccountPlanEnforcementService
     /**
      * @return AccountPlanConstraint
      */
-    public function getJobUrlLimitConstraint()
-    {
-        return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(
-            self::URLS_PER_JOB_CONSTRAINT_NAME
-        );
-    }
-
-    /**
-     * @return AccountPlanConstraint
-     */
     public function getCreditsPerMonthConstraint()
     {
         return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(

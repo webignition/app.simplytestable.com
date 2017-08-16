@@ -189,6 +189,7 @@ services:
         resqueJobFactoryService: "@simplytestable.services.resque.jobFactoryService"
         urlFinder: '@simplytestable.services.urlfinder'
         stateService: '@simplytestable.services.stateservice'
+        userAccountPlanService: '@simplytestable.services.useraccountplanservice'
 
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
