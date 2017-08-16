@@ -190,16 +190,6 @@ class JobUserAccountPlanEnforcementService
     /**
      * @return AccountPlanConstraint
      */
-    public function getFullSiteJobLimitConstraint()
-    {
-        return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(
-            self::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME
-        );
-    }
-
-    /**
-     * @return AccountPlanConstraint
-     */
     public function getSingleUrlJobLimitConstraint()
     {
         return $this->userAccountPlanService->getForUser($this->user)->getPlan()->getConstraintNamed(

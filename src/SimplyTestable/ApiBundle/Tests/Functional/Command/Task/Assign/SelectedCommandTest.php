@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Controller\Job\JobController;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -222,12 +223,21 @@ class SelectedCommandTest extends BaseSimplyTestableTestCase
             'simplytestable.services.jobuseraccountplanenforcementservice'
         );
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
-        $jobUserAccountPlanEnforcementService->setUser($userService->getPublicUser());
+        $user = $userService->getPublicUser();
+        $userAccountPlan = $userAccountPlanService->getForUser($user);
+        $plan = $userAccountPlan->getPlan();
 
-        $fullSiteJobsPerSiteConstraint = $jobUserAccountPlanEnforcementService->getFullSiteJobLimitConstraint();
+        $jobUserAccountPlanEnforcementService->setUser($user);
 
-        $singleUrlJobsPerUrlConstraint = $jobUserAccountPlanEnforcementService->getSingleUrlJobLimitConstraint();
+        $fullSiteJobsPerSiteConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME
+        );
+
+        $singleUrlJobsPerUrlConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME
+        );
 
         $fullSiteJobsPerSiteConstraint->setLimit(2);
         $singleUrlJobsPerUrlConstraint->setLimit(2);

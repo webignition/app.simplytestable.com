@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobUserAccountPlanE
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 abstract class LimitTest extends ServiceTest
@@ -97,11 +98,21 @@ abstract class LimitTest extends ServiceTest
     {
         // Set full-site and single-page limits to different values to help verify that the correct constraint and
         // limit has been enforced
-        $fullSiteJobsPerSiteConstraint =
-            $this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint();
 
-        $singleUrlJobsPerUrlConstraint =
-            $this->getJobUserAccountPlanEnforcementService()->getSingleUrlJobLimitConstraint();
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+
+        $user = $userService->getPublicUser();
+        $userAccountPlan = $userAccountPlanService->getForUser($user);
+        $plan = $userAccountPlan->getPlan();
+
+        $fullSiteJobsPerSiteConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME
+        );
+
+        $singleUrlJobsPerUrlConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME
+        );
 
         $fullSiteJobsPerSiteConstraint->setLimit(self::FULL_SITE_JOBS_PER_SITE_LIMIT);
         $singleUrlJobsPerUrlConstraint->setLimit(self::SINGLE_URL_JOBS_PER_URL_LIMIT);
@@ -112,10 +123,25 @@ abstract class LimitTest extends ServiceTest
 
     private function getJobTypeCreateLimit()
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+
+        $user = $userService->getPublicUser();
+        $userAccountPlan = $userAccountPlanService->getForUser($user);
+        $plan = $userAccountPlan->getPlan();
+
+        $fullSiteJobsPerSiteConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME
+        );
+
+        $singleUrlJobsPerUrlConstraint = $plan->getConstraintNamed(
+            JobUserAccountPlanEnforcementService::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME
+        );
+
         if ($this->isFullSiteLimitTest()) {
-            return $this->getJobUserAccountPlanEnforcementService()->getFullSiteJobLimitConstraint()->getLimit();
+            return $fullSiteJobsPerSiteConstraint->getLimit();
         }
 
-        return $this->getJobUserAccountPlanEnforcementService()->getSingleUrlJobLimitConstraint()->getLimit();
+        return $singleUrlJobsPerUrlConstraint->getLimit();
     }
 }

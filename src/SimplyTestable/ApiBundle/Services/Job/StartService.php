@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
     as UserAccountPlanEnforcementException;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 
@@ -46,12 +47,18 @@ class StartService
     private $stateService;
 
     /**
+     * @var UserAccountPlanService
+     */
+    private $userAccountPlanService;
+
+    /**
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param JobTypeService $jobTypeService
      * @param JobService $jobService
      * @param UserService $userService
      * @param ResqueQueueService $resqueQueueService
      * @param StateService $stateService
+     * @param UserAccountPlanService $userAccountPlanService
      */
     public function __construct(
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
@@ -59,7 +66,8 @@ class StartService
         JobService $jobService,
         UserService $userService,
         ResqueQueueService $resqueQueueService,
-        StateService $stateService
+        StateService $stateService,
+        UserAccountPlanService $userAccountPlanService
     ) {
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->jobTypeService = $jobTypeService;
@@ -67,6 +75,7 @@ class StartService
         $this->userService = $userService;
         $this->resqueQueueService = $resqueQueueService;
         $this->stateService = $stateService;
+        $this->userAccountPlanService = $userAccountPlanService;
     }
 
     /**
@@ -90,29 +99,47 @@ class StartService
 
         if (JobTypeService::FULL_SITE_NAME == $jobConfiguration->getType()->getName()) {
             if ($this->jobUserAccountPlanEnforcementService->isFullSiteJobLimitReachedForWebSite($website)) {
+                $userAccountPlan = $this->userAccountPlanService->getForUser($jobConfiguration->getUser());
+                $plan = $userAccountPlan->getPlan();
+                $constraint = $plan->getConstraintNamed(
+                    JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME
+                );
+
                 throw new UserAccountPlanEnforcementException(
                     'Full site job limit reached for website',
                     UserAccountPlanEnforcementException::CODE_FULL_SITE_JOB_LIMIT_REACHED,
-                    $this->jobUserAccountPlanEnforcementService->getFullSiteJobLimitConstraint()
+                    $constraint
                 );
             }
         }
 
         if (JobTypeService::SINGLE_URL_NAME == $jobConfiguration->getType()->getName()) {
+            $userAccountPlan = $this->userAccountPlanService->getForUser($jobConfiguration->getUser());
+            $plan = $userAccountPlan->getPlan();
+            $constraint = $plan->getConstraintNamed(
+                JobUserAccountPlanEnforcementService::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME
+            );
+
             if ($this->jobUserAccountPlanEnforcementService->isSingleUrlLimitReachedForWebsite($website)) {
                 throw new UserAccountPlanEnforcementException(
                     'Single URL job limit reached for website',
                     UserAccountPlanEnforcementException::CODE_SINGLE_URL_JOB_LIMIT_REACHED,
-                    $this->jobUserAccountPlanEnforcementService->getSingleUrlJobLimitConstraint()
+                    $constraint
                 );
             }
         }
 
         if ($this->jobUserAccountPlanEnforcementService->isUserCreditLimitReached()) {
+            $userAccountPlan = $this->userAccountPlanService->getForUser($jobConfiguration->getUser());
+            $plan = $userAccountPlan->getPlan();
+            $constraint = $plan->getConstraintNamed(
+                JobUserAccountPlanEnforcementService::CREDITS_PER_MONTH_CONSTRAINT_NAME
+            );
+
             throw new UserAccountPlanEnforcementException(
                 'Credit limit reached',
                 UserAccountPlanEnforcementException::CODE_CREDIT_LIMIT_REACHED,
-                $this->jobUserAccountPlanEnforcementService->getCreditsPerMonthConstraint()
+                $constraint
             );
         }
 
