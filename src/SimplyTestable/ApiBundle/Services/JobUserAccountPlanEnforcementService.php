@@ -142,12 +142,15 @@ class JobUserAccountPlanEnforcementService
         }
 
         $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+        $plan = $userAccountPlan->getPlan();
 
-        if (!$userAccountPlan->getPlan()->hasConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME)) {
+        $constraint = $plan->getConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME);
+
+        if (empty($constraint)) {
             return false;
         }
 
-        return $urlCount > $this->getJobUrlLimitConstraint()->getLimit();
+        return $urlCount > $constraint->getLimit();
     }
 
 

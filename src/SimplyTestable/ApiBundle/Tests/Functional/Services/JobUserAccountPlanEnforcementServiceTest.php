@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
@@ -144,6 +146,78 @@ class JobUserAccountPlanEnforcementServiceTest extends BaseSimplyTestableTestCas
                 'websiteUrl' => 'http://example.com/',
                 'expectedIsFullSiteLimitReached' => true,
                 'expectedIsSingleUrlLimitReached' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider isJobUrlLimitReachedDataProvider
+     *
+     * @param string $userName
+     * @param int $urlCount
+     * @param bool $removeLimit
+     * @param bool $expectedIsJobUrlLimitReached
+     */
+    public function testIsJobUrlLimitReached(
+        $userName,
+        $urlCount,
+        $removeLimit,
+        $expectedIsJobUrlLimitReached
+    ) {
+        $userFactory = new UserFactory($this->container);
+        $users = $userFactory->createPublicAndPrivateUserSet();
+        $user = $users[$userName];
+
+        if ($removeLimit) {
+            $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+            $userAccountPlan = $userAccountPlanService->getForUser($user);
+            $plan = $userAccountPlan->getPlan();
+
+            $constraint = $plan->getConstraintNamed(JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME);
+            $plan->removeConstraint($constraint);
+
+            $entityManager = $this->container->get('doctrine.orm.entity_manager');
+            $entityManager->persist($plan);
+            $entityManager->flush();
+        }
+
+        $this->jobUserAccountPlanEnforcementService->setUser($user);
+
+        $this->assertEquals(
+            $expectedIsJobUrlLimitReached,
+            $this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($urlCount)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function isJobUrlLimitReachedDataProvider()
+    {
+        return [
+            'urlCount zero' => [
+                'userName' => 'public',
+                'urlCount' => 0,
+                'removeLimit' => false,
+                'expectedIsJobUrlLimitReached' => false,
+            ],
+            'no limit' => [
+                'userName' => 'public',
+                'urlCount' => 11,
+                'removeLimit' => true,
+                'expectedIsJobUrlLimitReached' => false,
+            ],
+            'limit not reached' => [
+                'userName' => 'public',
+                'urlCount' => 1,
+                'removeLimit' => false,
+                'expectedIsJobUrlLimitReached' => false,
+            ],
+            'limit reached' => [
+                'userName' => 'public',
+                'urlCount' => 11,
+                'removeLimit' => false,
+                'expectedIsJobUrlLimitReached' => true,
             ],
         ];
     }
