@@ -412,7 +412,10 @@ class JobService extends EntityService
      */
     public function getEntityRepository()
     {
-        return parent::getEntityRepository();
+        /* @var JobRepository $jobRepository */
+        $jobRepository = parent::getEntityRepository();
+
+        return $jobRepository;
     }
 
     /**
