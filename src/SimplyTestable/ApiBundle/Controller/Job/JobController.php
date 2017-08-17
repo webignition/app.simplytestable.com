@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -319,9 +320,20 @@ class JobController extends BaseJobController
             return $response;
         }
 
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskRepository = $entityManager->getRepository(Task::class);
+
         $taskIds = $this->getRequestTaskIds($request);
 
-        $tasks = $this->getTaskService()->getEntityRepository()->getCollectionByJobAndId($job, $taskIds);
+        $taskFindByCriteria = [
+            'job' => $job,
+        ];
+
+        if (!empty($taskIds)) {
+            $taskFindByCriteria['id'] = $taskIds;
+        }
+
+        $tasks = $taskRepository->findBy($taskFindByCriteria);
 
         foreach ($tasks as $task) {
             /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
