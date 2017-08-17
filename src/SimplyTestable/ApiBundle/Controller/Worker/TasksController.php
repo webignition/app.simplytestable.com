@@ -9,6 +9,8 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\StateService;
 
 use SimplyTestable\ApiBundle\Controller\ApiController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class TasksController extends ApiController {
 
@@ -27,7 +29,7 @@ class TasksController extends ApiController {
     }
 
 
-    public function requestAction()
+    public function requestAction(Request $request)
     {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -37,11 +39,15 @@ class TasksController extends ApiController {
             return $this->sendServiceUnavailableResponse();
         }
 
+        $workerService = $this->container->get('simplytestable.services.workerservice');
+
         $worker_hostname = $this->getArguments('requestAction')->get('worker_hostname');
 
-        if (!($this->getWorkerService()->has($worker_hostname))) {
+        $workerHostname = $request->request->get('worker_hostname');
+
+        if (!($workerService->has($workerHostname))) {
             return $this->sendFailureResponse([
-                'X-Message' => 'Invalid hostname "' . $worker_hostname . '"'
+                'X-Message' => sprintf('Invalid hostname "%s"', $workerHostname)
             ]);
         }
 
