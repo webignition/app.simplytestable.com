@@ -1,7 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Parameter;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
@@ -94,17 +96,13 @@ class TaskRepository extends EntityRepository
      */
     public function getCountByTaskTypeAndState(TaskType $taskType, State $state)
     {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->setMaxResults(1);
-        $queryBuilder->select('count(DISTINCT Task.id) as task_type_total');
-        $queryBuilder->where('Task.type = :Type');
-        $queryBuilder->andWhere('Task.state = :State');
-        $queryBuilder->setParameter('Type', $taskType);
-        $queryBuilder->setParameter('State', $state);
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        return (int)($result[0]['task_type_total']);
+        return $this->getCountBy(
+            'Task.type = :Type AND Task.state = :State',
+            new ArrayCollection([
+                new Parameter('Type', $taskType),
+                new Parameter('State', $state),
+            ])
+        );
     }
 
     /**
@@ -115,16 +113,45 @@ class TaskRepository extends EntityRepository
      */
     public function getCountByJobAndState(Job $job, State $state)
     {
+        return $this->getCountBy(
+            'Task.job = :Job AND Task.state = :State',
+            new ArrayCollection([
+                new Parameter('Job', $job),
+                new Parameter('State', $state),
+            ])
+        );
+    }
+
+    /**
+     * @param Job $job
+     *
+     * @return int
+     */
+    public function getCountByJob(Job $job)
+    {
+        return $this->getCountBy(
+            'Task.job = :Job',
+            new ArrayCollection([
+                new Parameter('Job', $job),
+            ])
+        );
+    }
+
+    /**
+     * @param string $wherePredicates
+     * @param ArrayCollection $parameters
+     *
+     * @return int
+     */
+    private function getCountBy($wherePredicates, ArrayCollection $parameters)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(DISTINCT Task.id) as task_total');
-        $queryBuilder->where('Task.job = :Job');
-        $queryBuilder->andWhere('Task.state = :State');
-        $queryBuilder->setParameter('Job', $job);
-        $queryBuilder->setParameter('State', $state);
+        $queryBuilder->where($wherePredicates);
+        $queryBuilder->setParameters($parameters);
 
         $result = $queryBuilder->getQuery()->getResult();
-
         return (int)($result[0]['task_total']);
     }
 
@@ -148,23 +175,6 @@ class TaskRepository extends EntityRepository
         }
 
         return $taskIds;
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return int
-     */
-    public function getCountByJob(Job $job)
-    {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->setMaxResults(1);
-        $queryBuilder->select('count(DISTINCT Task.id) as task_total');
-        $queryBuilder->where('Task.job = :Job');
-        $queryBuilder->setParameter('Job', $job);
-
-        $result = $queryBuilder->getQuery()->getResult();
-        return (int)($result[0]['task_total']);
     }
 
     /**
