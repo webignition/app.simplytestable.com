@@ -9,6 +9,7 @@ class WorkerFactory
 {
     const KEY_HOSTNAME = 'hostname';
     const KEY_TOKEN = 'token';
+    const KEY_STATE = 'state';
 
     /**
      * @var ContainerInterface
@@ -37,6 +38,10 @@ class WorkerFactory
             $workerValues[self::KEY_TOKEN] = null;
         }
 
+        if (!isset($workerValues[self::KEY_STATE])) {
+            $workerValues[self::KEY_STATE] = 'worker-active';
+        }
+
         $workerService = $this->container->get('simplytestable.services.workerservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
@@ -44,7 +49,7 @@ class WorkerFactory
         $worker->setToken($workerValues[self::KEY_TOKEN]);
         $workerService->persistAndFlush($worker);
 
-        $worker->setState($stateService->fetch('worker-active'));
+        $worker->setState($stateService->fetch($workerValues[self::KEY_STATE]));
 
         $workerService->persistAndFlush($worker);
 

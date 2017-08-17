@@ -2,33 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Worker;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputDefinition;
-use SimplyTestable\ApiBundle\Services\WorkerService;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\StateService;
-
 use SimplyTestable\ApiBundle\Controller\ApiController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
-class TasksController extends ApiController {
-
-    public function __construct() {
-        $this->setInputDefinitions([
-            'requestAction' => new InputDefinition([
-                new InputArgument('worker_hostname', InputArgument::REQUIRED, 'Hostname of worker making request'),
-                new InputArgument('worker_token', InputArgument::REQUIRED, 'Requesting worker\'s auth token'),
-                new InputArgument('limit', InputArgument::OPTIONAL, 'Number of tasks to request')
-            ])
-        ]);
-
-        $this->setRequestTypes(array(
-            'requestAction' => \Guzzle\Http\Message\Request::POST
-        ));
-    }
-
-
+class TasksController extends ApiController
+{
     public function requestAction(Request $request)
     {
         if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
@@ -40,8 +20,11 @@ class TasksController extends ApiController {
         }
 
         $workerService = $this->container->get('simplytestable.services.workerservice');
-
-        $worker_hostname = $this->getArguments('requestAction')->get('worker_hostname');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $taskQueueService = $this->container->get('simplytestable.services.task.queueservice');
 
         $workerHostname = $request->request->get('worker_hostname');
 
@@ -51,24 +34,24 @@ class TasksController extends ApiController {
             ]);
         }
 
-        $worker = $this->getWorkerService()->get($worker_hostname);
+        $worker = $workerService->get($workerHostname);
 
-        if (!$worker->getState()->equals($this->getStateService()->fetch('worker-active'))) {
+        if ('worker-active' !== $worker->getState()->getName()) {
             return $this->sendFailureResponse([
                 'X-Message' => 'Worker is not active',
                 'X-Retryable' => '1'
             ]);
         }
 
-        $worker_token = $this->getArguments('requestAction')->get('worker_token');
+        $workerToken = $request->request->get('token');
 
-        if ($worker->getToken() != $worker_token) {
+        if ($worker->getToken() !== $workerToken) {
             return $this->sendFailureResponse([
                 'X-Message' => 'Invalid token'
             ]);
         }
 
-        $limit = filter_var($this->getArguments('requestAction')->get('limit'), FILTER_VALIDATE_INT, array(
+        $limit = filter_var($request->request->get('limit'), FILTER_VALIDATE_INT, array(
             'options' => array(
                 'default' => 0,
                 'min_range' => 0
@@ -79,83 +62,39 @@ class TasksController extends ApiController {
             return $this->sendResponse();
         }
 
-        if ($this->getResqueQueueService()->contains('task-assign-collection', ['worker' => $worker_hostname])) {
+        if ($resqueQueueService->contains('task-assign-collection', ['worker' => $workerHostname])) {
             return $this->sendResponse();
         }
 
-        $this->getTaskQueueService()->setLimit($limit);
-        $taskIds = $this->getTaskQueueService()->getNext();
+        $taskQueueService->setLimit($limit);
+        $taskIds = $taskQueueService->getNext();
 
-        if (count($taskIds) == 0) {
+        if (empty($taskIds)) {
             return $this->sendResponse();
         }
 
-        $tasks = $this->getTaskService()->getEntityRepository()->getCollectionById($taskIds);
+        $taskRepository = $entityManager->getRepository(Task::class);
+
+        $tasks = $taskRepository->findBy([
+            'id' => $taskIds,
+        ]);
 
         foreach ($tasks as $task) {
-            $task->setState($this->getTaskService()->getQueuedForAssignmentState());
-            $this->getTaskService()->persistAndFlush($task);
+            $task->setState($stateService->fetch(TaskService::QUEUED_FOR_ASSIGNMENT_STATE));
+            $entityManager->persist($task);
+            $entityManager->flush($task);
         }
 
-        $this->getResqueQueueService()->enqueue(
-            $this->getResqueJobFactoryService()->create(
+        $resqueQueueService->enqueue(
+            $resqueJobFactory->create(
                 'task-assign-collection',
                 [
                     'ids' => implode(',', $taskIds),
-                    'worker' => $worker_hostname
+                    'worker' => $workerHostname,
                 ]
             )
         );
 
         return $this->sendResponse();
     }
-
-    /**
-     *
-     * @return TaskService
-     */
-    private function getTaskService() {
-        return $this->container->get('simplytestable.services.taskservice');
-    }
-
-    /**
-     *
-     * @return StateService
-     */
-    private function getStateService() {
-        return $this->container->get('simplytestable.services.stateservice');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
-     */
-    private function getResqueQueueService() {
-        return $this->get('simplytestable.services.resque.queueService');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
-     */
-    private function getResqueJobFactoryService() {
-        return $this->get('simplytestable.services.resque.jobFactoryService');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Task\QueueService
-     */
-    private function getTaskQueueService() {
-        return $this->get('simplytestable.services.task.queueservice');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WorkerService
-     */
-    private function getWorkerService() {
-        return $this->container->get('simplytestable.services.workerservice');
-    }
 }
-
