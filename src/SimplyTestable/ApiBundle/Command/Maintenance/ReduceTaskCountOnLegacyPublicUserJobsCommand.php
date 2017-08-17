@@ -133,7 +133,7 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
                 $jobService->getManager()->flush();
             }
 
-            $taskCount = $taskService->getEntityRepository()->getCountByJob($job);
+            $taskCount = $taskService->getCountByJob($job);
             $output->write('Has ['.$urlCount.'] urls and ['.$taskCount.'] tasks, ');
 
             $urlsToKeep = $this->getUrlsToKeep($job, $urlLimit, $taskService);
