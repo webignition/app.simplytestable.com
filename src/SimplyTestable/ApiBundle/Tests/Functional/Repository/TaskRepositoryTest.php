@@ -538,4 +538,130 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider getIdsByStateDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param string[] $taskStateNames
+     * @param string $taskStateName
+     * @param int[] $expectedTaskIndices
+     */
+    public function testGetIdsByState(
+        $jobValuesCollection,
+        $taskStateNames,
+        $taskStateName,
+        $expectedTaskIndices
+    ) {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobs = [];
+        $tasks = [];
+
+        foreach ($jobValuesCollection as $jobValues) {
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+
+            $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+            $tasks = array_merge($tasks, $job->getTasks()->toArray());
+            $jobs[] = $job;
+        }
+
+        foreach ($taskStateNames as $taskStateIndex => $stateName) {
+            $task = $tasks[$taskStateIndex];
+            $task->setState($stateService->fetch($stateName));
+
+            $entityManager->persist($task);
+            $entityManager->flush($task);
+        }
+
+        $expectedTaskIds = [];
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (in_array($taskIndex, $expectedTaskIndices)) {
+                $expectedTaskIds[] = $task->getId();
+            }
+        }
+
+        $state = $stateService->fetch($taskStateName);
+
+        $this->assertEquals(
+            $expectedTaskIds,
+            $this->taskRepository->getIdsByState($state)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getIdsByStateDataProvider()
+    {
+        return [
+            'completed' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                ],
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                ],
+                'taskStateName' => TaskService::COMPLETED_STATE,
+                'expectedTaskIndices' => [0, 1],
+            ],
+            'cancelled' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                ],
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                ],
+                'taskStateName' => TaskService::CANCELLED_STATE,
+                'expectedTaskIndices' => [3, 4, 5],
+            ],
+        ];
+    }
 }
