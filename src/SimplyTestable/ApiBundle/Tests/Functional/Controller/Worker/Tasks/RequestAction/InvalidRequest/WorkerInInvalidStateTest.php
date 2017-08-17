@@ -14,7 +14,10 @@ class WorkerInInvalidStateTest extends InvalidRequestTest
     protected function preCall()
     {
         $workerFactory = new WorkerFactory($this->container);
-        $worker = $workerFactory->create('worker.example.com', 'foo');
+        $worker = $workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => 'worker.example.com',
+            WorkerFactory::KEY_TOKEN => 'foo',
+        ]);
 
         $worker->setState($this->getStateService()->fetch('worker-offline'));
         $this->getWorkerService()->persistAndFlush($worker);

@@ -22,7 +22,10 @@ class NoTasksTest extends ValidRequestTest
     public function preCall()
     {
         $workerFactory = new WorkerFactory($this->container);
-        $workerFactory->create(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
+        $workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => self::WORKER_HOSTNAME,
+            WorkerFactory::KEY_TOKEN => self::WORKER_TOKEN,
+        ]);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
 
