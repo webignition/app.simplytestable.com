@@ -45,7 +45,12 @@ class SelectedCommand extends BaseCommand
 
         $output->writeln('Attempting to assign tasks '.  implode(',', $taskIds));
 
-        $tasks = $taskService->getEntityRepository()->getCollectionById($taskIds);
+        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $taskRepository = $entityManager->getRepository(Task::class);
+
+        $tasks = $taskRepository->findBy([
+            'id' => $taskIds,
+        ]);
 
         foreach ($tasks as $taskIndex => $task) {
             /* @var $task Task */
@@ -88,7 +93,6 @@ class SelectedCommand extends BaseCommand
         $response = $workerTaskAssignmentService->assignCollection($tasks, $workers);
         if ($response === 0) {
             $output->writeln('ok');
-            $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
             $startedTasks = array();
             foreach ($tasks as $task) {

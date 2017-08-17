@@ -178,23 +178,6 @@ class TaskRepository extends EntityRepository
     }
 
     /**
-     * @param int[] $taskIds
-     *
-     * @return Task[]
-     */
-    public function getCollectionById($taskIds = [])
-    {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->select('Task');
-
-        if (count($taskIds)) {
-            $queryBuilder->where('Task.id IN ('.implode(',', $taskIds).')');
-        }
-
-        return $queryBuilder->getQuery()->getResult();
-    }
-
-    /**
      * @param Job $job
      * @param int[] $taskIds
      *

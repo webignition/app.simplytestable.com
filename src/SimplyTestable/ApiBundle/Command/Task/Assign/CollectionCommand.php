@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Command\Task\Assign;
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,13 +40,16 @@ class CollectionCommand extends BaseCommand
 
         $taskIds = explode(',', $input->getArgument('ids'));
 
-        $taskService = $this->getContainer()->get('simplytestable.services.taskservice');
-
-        $tasks = $taskService->getEntityRepository()->getCollectionById($taskIds);
-
-        if (count($taskIds) === 0) {
+        if (empty($taskIds)) {
             return self::RETURN_CODE_OK;
         }
+
+        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $taskRepository = $entityManager->getRepository(Task::class);
+
+        $tasks = $taskRepository->findBy([
+            'id' => $taskIds,
+        ]);
 
         $taskPreprocessorFactory = $this->getContainer()->get('simplytestable.services.taskPreprocessorServiceFactory');
 
@@ -109,8 +113,6 @@ class CollectionCommand extends BaseCommand
 
         $response = $workerTaskAssignmentService->assignCollection($tasks, $workers);
         if ($response === 0) {
-            $entityManager = $this->getContainer()->get('doctrine')->getManager();
-
             /* @var Job $job */
             $job = $tasks[0]->getJob();
             if ($job->getState()->getName() == 'job-queued') {
