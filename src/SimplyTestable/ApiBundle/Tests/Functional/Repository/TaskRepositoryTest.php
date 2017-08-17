@@ -331,7 +331,6 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
-
         $tasks = [];
 
         foreach ($jobValuesCollection as $jobValues) {
@@ -413,6 +412,129 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'taskStateName' => TaskService::COMPLETED_STATE,
                 'expectedCount' => 6,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCountByJobAndStateDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param string[] $taskStateNames
+     * @param int $jobIndex
+     * @param string $taskStateName
+     * @param int $expectedCount
+     */
+    public function testGetCountByJobAndState(
+        $jobValuesCollection,
+        $taskStateNames,
+        $jobIndex,
+        $taskStateName,
+        $expectedCount
+    ) {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobs = [];
+        $tasks = [];
+
+        foreach ($jobValuesCollection as $jobValues) {
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+
+            $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+            $tasks = array_merge($tasks, $job->getTasks()->toArray());
+            $jobs[] = $job;
+        }
+
+        foreach ($taskStateNames as $taskStateIndex => $stateName) {
+            $task = $tasks[$taskStateIndex];
+            $task->setState($stateService->fetch($stateName));
+
+            $entityManager->persist($task);
+            $entityManager->flush($task);
+        }
+
+        $job = $jobs[$jobIndex];
+        $state = $stateService->fetch($taskStateName);
+
+        $this->assertEquals(
+            $expectedCount,
+            $this->taskRepository->getCountByJobAndState($job, $state)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getCountByJobAndStateDataProvider()
+    {
+        return [
+            'first job' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                ],
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::CANCELLED_STATE,
+                ],
+                'jobIndex' => 0,
+                'taskStateName' => TaskService::COMPLETED_STATE,
+                'expectedCount' => 3,
+            ],
+            'second job' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                        ],
+                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                    ],
+                ],
+                'taskStateNames' => [
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::COMPLETED_STATE,
+                    TaskService::CANCELLED_STATE,
+                ],
+                'jobIndex' => 1,
+                'taskStateName' => TaskService::COMPLETED_STATE,
+                'expectedCount' => 2,
             ],
         ];
     }
