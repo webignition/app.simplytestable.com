@@ -38,7 +38,9 @@ class StatusControllerTest extends BaseControllerJsonTestCase
         $jobFactory = new JobFactory($this->container);
 
         foreach ($workerHostnames as $workerHostname) {
-            $workerFactory->create($workerHostname);
+            $workerFactory->create([
+                WorkerFactory::KEY_HOSTNAME => $workerHostname,
+            ]);
         }
 
         foreach ($jobValuesCollection as $jobValues) {

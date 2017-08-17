@@ -14,6 +14,8 @@ class WorkerTokenTest extends InvalidRequestTest
     protected function preCall()
     {
         $workerFactory = new WorkerFactory($this->container);
-        $workerFactory->create('worker.example.com');
+        $workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => 'worker.example.com',
+        ]);
     }
 }

@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class WorkerFactory
 {
+    const KEY_HOSTNAME = 'hostname';
+    const KEY_TOKEN = 'token';
+
     /**
      * @var ContainerInterface
      */
@@ -21,22 +24,24 @@ class WorkerFactory
     }
 
     /**
-     * @param string|null $hostname
-     * @param string|null $token
-     *
+     * @param array $workerValues
      * @return Worker
      */
-    public function create($hostname = null, $token = null)
+    public function create($workerValues = [])
     {
-        if (is_null($hostname)) {
-            $hostname = md5(time()) . '.worker.simplytestable.com';
+        if (!isset($workerValues[self::KEY_HOSTNAME])) {
+            $workerValues[self::KEY_HOSTNAME] = md5(time()) . '.worker.simplytestable.com';
+        }
+
+        if (!isset($workerValues[self::KEY_TOKEN])) {
+            $workerValues[self::KEY_TOKEN] = null;
         }
 
         $workerService = $this->container->get('simplytestable.services.workerservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
-        $worker = $workerService->get($hostname);
-        $worker->setToken($token);
+        $worker = $workerService->get($workerValues[self::KEY_HOSTNAME]);
+        $worker->setToken($workerValues[self::KEY_TOKEN]);
         $workerService->persistAndFlush($worker);
 
         $worker->setState($stateService->fetch('worker-active'));
@@ -56,7 +61,9 @@ class WorkerFactory
         $workers = array();
 
         for ($workerIndex = 0; $workerIndex < $requestedWorkerCount; $workerIndex++) {
-            $workers[] = $this->create('worker'.$workerIndex.'.worker.simplytestable.com');
+            $workers[] = $this->create([
+                self::KEY_HOSTNAME => 'worker'.$workerIndex.'.worker.simplytestable.com',
+            ]);
         }
 
         return $workers;

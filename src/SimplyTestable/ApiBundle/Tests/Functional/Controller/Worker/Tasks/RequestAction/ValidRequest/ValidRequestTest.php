@@ -39,7 +39,10 @@ abstract class ValidRequestTest extends RequestTest
     protected function preCall()
     {
         $workerFactory = new WorkerFactory($this->container);
-        $workerFactory->create(self::WORKER_HOSTNAME, self::WORKER_TOKEN);
+        $workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => self::WORKER_HOSTNAME,
+            WorkerFactory::KEY_TOKEN => self::WORKER_TOKEN,
+        ]);
     }
 
     protected function preController()

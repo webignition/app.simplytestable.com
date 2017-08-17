@@ -94,9 +94,17 @@ class CollectionCommandTest extends BaseSimplyTestableTestCase
             HttpFixtureFactory::createNotFoundResponse(),
         ]);
 
-        $this->workerFactory->create('hydrogen.worker.simplytestable.com');
-        $this->workerFactory->create('lithium.worker.simplytestable.com');
-        $this->workerFactory->create('helium.worker.simplytestable.com');
+        $this->workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => 'hydrogen.worker.example.com',
+        ]);
+
+        $this->workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => 'lithium.worker.example.com',
+        ]);
+
+        $this->workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => 'helium.worker.example.com',
+        ]);
 
         $returnCode = $this->command->run(new ArrayInput([
             'ids' => implode(',', $job->getTaskIds())
@@ -144,7 +152,9 @@ class CollectionCommandTest extends BaseSimplyTestableTestCase
         ]);
 
         $this->workerFactory->create();
-        $worker = $this->workerFactory->create('worker.example.com');
+        $worker = $this->workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => 'worker.example.com',
+        ]);
 
         $returnCode = $this->command->run(new ArrayInput([
             'ids' => implode(',', $job->getTaskIds()),

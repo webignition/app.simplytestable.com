@@ -94,9 +94,17 @@ class SelectedCommandTest extends BaseSimplyTestableTestCase
             HttpFixtureFactory::createNotFoundResponse(),
         ]);
 
-        $this->workerFactory->create('hydrogen.worker.simplytestable.com');
-        $this->workerFactory->create('lithium.worker.simplytestable.com');
-        $this->workerFactory->create('helium.worker.simplytestable.com');
+        $this->workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => 'hydrogen.worker.example.com',
+        ]);
+
+        $this->workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => 'lithium.worker.example.com',
+        ]);
+
+        $this->workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => 'helium.worker.example.com',
+        ]);
 
         $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
 
