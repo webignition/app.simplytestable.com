@@ -241,8 +241,8 @@ class TaskRepository extends EntityRepository
         $queryBuilder->setParameter('Job', $job);
 
         if (count($taskStates)) {
-            $queryBuilder->andWhere('Task.state IN (:TaskStates)')
-                ->setParameter('TaskStates', $taskStates);
+            $queryBuilder->andWhere('Task.state IN (:TaskStates)');
+            $queryBuilder->setParameter('TaskStates', $taskStates);
         }
 
         if ($limit > 0) {

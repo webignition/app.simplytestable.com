@@ -23,6 +23,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetIdsByStateDataProvider;
     use TaskRepositoryTestDataProviders\GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider;
     use TaskRepositoryTestDataProviders\GetOutputCollectionByJobAndStateDataProvider;
+    use TaskRepositoryTestDataProviders\GetIdsByJobAndTaskStatesDataProvider;
 
     /**
      * @var TaskRepository
@@ -386,6 +387,46 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
 
         $this->assertNotEmpty($taskIds);
         $this->assertEquals($taskIds, $this->taskRepository->getIdsByJob($job));
+    }
+
+    /**
+     * @dataProvider getIdsByJobAndTaskStatesDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param int $jobIndex
+     * @param int $limit
+     * @param string[] $taskStateNames
+     * @param int[] $expectedTaskIndices
+     */
+    public function testGetIdsByJobAndTaskStates(
+        $jobValuesCollection,
+        $jobIndex,
+        $limit,
+        $taskStateNames,
+        $expectedTaskIndices
+    ) {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $tasks = $this->getTasksFromJobCollection($jobs);
+
+        $expectedTaskIds = [];
+        foreach ($tasks as $taskIndex => $task) {
+            if (in_array($taskIndex, $expectedTaskIndices)) {
+                $expectedTaskIds[] = $task->getId();
+            }
+        }
+
+        $job = $jobs[$jobIndex];
+
+        $states = $stateService->fetchCollection($taskStateNames);
+
+        $retrievedTaskIds = $this->taskRepository->getIdsByJobAndTaskStates($job, $states, $limit);
+
+        $this->assertEquals($expectedTaskIds, $retrievedTaskIds);
     }
 
     /**
