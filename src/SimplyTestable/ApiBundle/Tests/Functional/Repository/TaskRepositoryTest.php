@@ -26,6 +26,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetIdsByJobAndTaskStatesDataProvider;
     use TaskRepositoryTestDataProviders\GetIdsByJobAndUrlExclusionSetDataProvider;
     use TaskRepositoryTestDataProviders\GetErroredCountByJobDataProvider;
+    use TaskRepositoryTestDataProviders\GetErrorCountByJobDataProvider;
 
     /**
      * @var TaskRepository
@@ -506,6 +507,42 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $erroredCount = $this->taskRepository->getErroredCountByJob($job, $statesToExclude);
 
         $this->assertEquals($expectedErroredCount, $erroredCount);
+    }
+
+    /**
+     * @dataProvider getErrorCountByJobDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param array $taskOutputValuesCollection
+     * @param int $jobIndex
+     * @param int $expectedErrorCount
+     */
+    public function testGetErrorCountByJob(
+        $jobValuesCollection,
+        $taskOutputValuesCollection,
+        $jobIndex,
+        $expectedErrorCount
+    ) {
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $job = $jobs[$jobIndex];
+        $tasks = $this->getTasksFromJobCollection($jobs);
+
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $errorCount = $this->taskRepository->getErrorCountByJob($job);
+
+        $this->assertEquals($expectedErrorCount, $errorCount);
     }
 
     /**
