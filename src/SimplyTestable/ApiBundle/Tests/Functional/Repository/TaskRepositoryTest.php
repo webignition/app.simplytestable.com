@@ -374,6 +374,20 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $this->assertEquals($expectedTaskOutputValues, $retrievedRawTaskOutputCollection);
     }
 
+    public function testGetIdsByJob()
+    {
+        $job = $this->jobFactory->createResolveAndPrepare();
+        $tasks = $job->getTasks();
+
+        $taskIds = [];
+        foreach ($tasks as $task) {
+            $taskIds[] = $task->getId();
+        }
+
+        $this->assertNotEmpty($taskIds);
+        $this->assertEquals($taskIds, $this->taskRepository->getIdsByJob($job));
+    }
+
     /**
      * @param array $jobValuesCollection
      * @param User[] $users
