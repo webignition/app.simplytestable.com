@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
@@ -30,6 +31,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetWarningedCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetWarningCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetTaskCountByStateDataProvider;
+    use TaskRepositoryTestDataProviders\GetTaskOutputByTypeDataProvider;
 
     /**
      * @var TaskRepository
@@ -647,6 +649,58 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $taskCount = $this->taskRepository->getTaskCountByState($job, $states);
 
         $this->assertEquals($expectedTaskCount, $taskCount);
+    }
+
+    /**
+     * @dataProvider getTaskOutputByTypeDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param array $taskOutputValuesCollection
+     * @param string $taskTypeName
+     * @param int[] $expectedOutputIndices
+     */
+    public function testGetTaskOutputByType(
+        $jobValuesCollection,
+        $taskOutputValuesCollection,
+        $taskTypeName,
+        $expectedOutputIndices
+    ) {
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $taskType = $taskTypeService->getByName($taskTypeName);
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $tasks = $this->getTasksFromJobCollection($jobs);
+
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $taskOutputRepository = $entityManager->getRepository(Output::class);
+        $taskOutputs = $taskOutputRepository->findAll();
+
+        $expectedOutputIds = [];
+
+        foreach ($taskOutputs as $taskOutputIndex => $taskOutput) {
+            if (in_array($taskOutputIndex, $expectedOutputIndices)) {
+                $expectedOutputIds[] = $taskOutput->getId();
+            }
+        }
+
+        $retrievedOutputIds = $this->taskRepository->getTaskOutputByType($taskType);
+
+        $this->assertEquals($expectedOutputIds, $retrievedOutputIds);
     }
 
     /**
