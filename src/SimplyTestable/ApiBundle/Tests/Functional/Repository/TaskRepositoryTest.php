@@ -28,6 +28,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetErroredCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetErrorCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetWarningedCountByJobDataProvider;
+    use TaskRepositoryTestDataProviders\GetWarningCountByJobDataProvider;
 
     /**
      * @var TaskRepository
@@ -585,6 +586,42 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $warningedCount = $this->taskRepository->getWarningedCountByJob($job, $statesToExclude);
 
         $this->assertEquals($expectedWarningedCount, $warningedCount);
+    }
+
+    /**
+     * @dataProvider getWarningCountByJobDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param array $taskOutputValuesCollection
+     * @param int $jobIndex
+     * @param int $expectedWarningCount
+     */
+    public function testGetWarningCountByJob(
+        $jobValuesCollection,
+        $taskOutputValuesCollection,
+        $jobIndex,
+        $expectedWarningCount
+    ) {
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $job = $jobs[$jobIndex];
+        $tasks = $this->getTasksFromJobCollection($jobs);
+
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $warningCount = $this->taskRepository->getWarningCountByJob($job);
+
+        $this->assertEquals($expectedWarningCount, $warningCount);
     }
 
     /**
