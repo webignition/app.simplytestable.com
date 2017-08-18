@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
@@ -330,6 +331,49 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $this->assertEquals($expectedTaskIds, $taskIds);
     }
 
+
+    /**
+     * @dataProvider getOutputCollectionByJobAndStateDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param array $taskOutputValuesCollection
+     * @param int $jobIndex
+     * @param string $taskStateName
+     * @param string[] $expectedTaskOutputValues
+     */
+    public function testGetOutputCollectionByJobAndState(
+        $jobValuesCollection,
+        $taskOutputValuesCollection,
+        $jobIndex,
+        $taskStateName,
+        $expectedTaskOutputValues
+    ) {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $state = $stateService->fetch($taskStateName);
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $tasks = $this->getTasksFromJobCollection($jobs);
+
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $job = $jobs[$jobIndex];
+
+        $retrievedRawTaskOutputCollection = $this->taskRepository->getOutputCollectionByJobAndState($job, $state);
+
+        $this->assertEquals($expectedTaskOutputValues, $retrievedRawTaskOutputCollection);
+    }
+
     /**
      * @param array $jobValuesCollection
      * @param User[] $users
@@ -343,8 +387,10 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         }
 
         foreach ($jobValuesCollection as $jobValuesIndex => $jobValues) {
-            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
-            $jobValuesCollection[$jobValuesIndex] = $jobValues;
+            if (isset($jobValues[JobFactory::KEY_USER])) {
+                $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+                $jobValuesCollection[$jobValuesIndex] = $jobValues;
+            }
         }
 
         return $jobValuesCollection;
