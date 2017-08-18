@@ -443,23 +443,31 @@ class TaskRepository extends EntityRepository
 
         $stateConditions = array();
 
-        foreach ($states as $stateIndex => $state) {
-            $stateConditions[] = '(Task.state = :State'.$stateIndex.') ';
+        $stateIndex = 0;
+        foreach ($states as $state) {
+            $stateConditions[] = '(Task.state = :State'.$stateIndex.')';
             $queryBuilder->setParameter('State'.$stateIndex, $state);
+            $stateIndex++;
         }
 
         $urlConditions = array();
 
-        foreach ($urlSet as $urlIndex => $url) {
+        $urlIndex = 0;
+        foreach ($urlSet as $url) {
             $urlConditions[] = 'Task.url = :Url' . $urlIndex;
             $queryBuilder->setParameter('Url' . $urlIndex, $url);
+            $urlIndex++;
         }
 
-        $queryBuilder->where(
-            '('.implode(' OR ', $urlConditions).') and Task.type = :TaskType AND ('.implode('OR ', $stateConditions).')'
-        );
+        $queryBuilder->where(sprintf(
+            'Task.type = :TaskType AND (%s) AND (%s)',
+            implode(' OR ', $urlConditions),
+            implode(' OR ', $stateConditions)
+
+        ));
 
         $queryBuilder->setParameter('TaskType', $taskType);
+
         return $queryBuilder->getQuery()->getResult();
     }
 

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -610,6 +611,279 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
                 ],
                 'taskStateName' => TaskService::CANCELLED_STATE,
                 'expectedTaskIndices' => [3, 4, 5],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCollectionByUrlSetAndTaskTypeAndStatesDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param string[] $taskStateNamesToSet
+     * @param array $prepareHttpFixturesCollection
+     * @param string[] $urlSet
+     * @param string $taskTypeName
+     * @param string[] $stateNames
+     * @param int[] $expectedTaskIndices
+     */
+    public function testGetCollectionByUrlSetAndTaskTypeAndStates(
+        $jobValuesCollection,
+        $taskStateNamesToSet,
+        $prepareHttpFixturesCollection,
+        $urlSet,
+        $taskTypeName,
+        $stateNames,
+        $expectedTaskIndices
+    ) {
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $taskType = $taskTypeService->getByName($taskTypeName);
+        $taskStatesToSet = $stateService->fetchCollection($taskStateNamesToSet);
+        $states = $stateService->fetchCollection($stateNames);
+
+        /* @var Job[] $jobs */
+        $jobs = [];
+
+        /* @var Task[] $tasks */
+        $tasks = [];
+
+        foreach ($jobValuesCollection as $jobIndex => $jobValues) {
+            $prepareHttpFixtures = isset($prepareHttpFixturesCollection[$jobIndex])
+                ? $prepareHttpFixturesCollection[$jobIndex]
+                : null;
+
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+            $job = $this->jobFactory->createResolveAndPrepare($jobValues, [
+                'prepare' => $prepareHttpFixtures,
+            ]);
+
+            $tasks = array_merge($tasks, $job->getTasks()->toArray());
+            $jobs[] = $job;
+        }
+
+        $expectedTaskIds = [];
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (in_array($taskIndex, $expectedTaskIndices)) {
+                $expectedTaskIds[] = $task->getId();
+            }
+
+            if (isset($taskStateNamesToSet[$taskIndex])) {
+                $task->setState($taskStatesToSet[$taskStateNamesToSet[$taskIndex]]);
+
+                $entityManager->persist($task);
+                $entityManager->flush($task);
+            }
+        }
+
+        $retrievedTasks = $this->taskRepository->getCollectionByUrlSetAndTaskTypeAndStates($urlSet, $taskType, $states);
+
+        $taskIds = [];
+
+        foreach ($retrievedTasks as $retrievedTask) {
+            $taskIds[] = $retrievedTask->getId();
+        }
+
+        $this->assertEquals($expectedTaskIds, $taskIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCollectionByUrlSetAndTaskTypeAndStatesDataProvider()
+    {
+        return [
+            'multiple jobs, single url, html validation task type, queued state' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                    ],
+                ],
+                'taskStateNamesToSet' => [
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::QUEUED_STATE,
+                ],
+                'prepareHttpFixturesCollection' => [
+                    [
+                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                        HttpFixtureFactory::createSuccessResponse(
+                            'application/xml',
+                            SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])
+                        ),
+                    ],
+                    [
+                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                        HttpFixtureFactory::createSuccessResponse(
+                            'application/xml',
+                            SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])
+                        ),
+                    ],
+                ],
+                'urlSet' => [
+                    'http://example.com/foo bar',
+                ],
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'taskStateNames' => [
+                    TaskService::QUEUED_STATE,
+                ],
+                'expectedTaskIndices' => [0, 6],
+            ],
+            'multiple jobs, single url, css validation task type, queued state and cancelled state' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                    ],
+                ],
+                'taskStateNamesToSet' => [
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                ],
+                'prepareHttpFixturesCollection' => [
+                    [
+                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                        HttpFixtureFactory::createSuccessResponse(
+                            'application/xml',
+                            SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])
+                        ),
+                    ],
+                    [
+                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                        HttpFixtureFactory::createSuccessResponse(
+                            'application/xml',
+                            SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])
+                        ),
+                    ],
+                ],
+                'urlSet' => [
+                    'http://example.com/foo bar',
+                ],
+                'taskTypeName' => TaskTypeService::CSS_VALIDATION_TYPE,
+                'taskStateNames' => [
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                ],
+                'expectedTaskIndices' => [1, 7],
+            ],
+            'multiple jobs, two urls, html validation task type, queued state and cancelled state' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                            TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                    ],
+                ],
+                'taskStateNamesToSet' => [
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                ],
+                'prepareHttpFixturesCollection' => [
+                    [
+                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                        HttpFixtureFactory::createSuccessResponse(
+                            'application/xml',
+                            SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])
+                        ),
+                    ],
+                    [
+                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                        HttpFixtureFactory::createSuccessResponse(
+                            'application/xml',
+                            SitemapFixtureFactory::generate([
+                                'http://example.com/foo bar',
+                                'http://example.com/foo%20bar',
+                                'http://example.com/foo%2520bar',
+                            ])
+                        ),
+                    ],
+                ],
+                'urlSet' => [
+                    'http://example.com/foo bar',
+                    'http://example.com/foo%20bar',
+                ],
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'taskStateNames' => [
+                    TaskService::QUEUED_STATE,
+                    TaskService::CANCELLED_STATE,
+                ],
+                'expectedTaskIndices' => [0, 2, 6, 8],
             ],
         ];
     }
