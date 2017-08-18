@@ -29,6 +29,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetErrorCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetWarningedCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetWarningCountByJobDataProvider;
+    use TaskRepositoryTestDataProviders\GetTaskCountByStateDataProvider;
 
     /**
      * @var TaskRepository
@@ -622,6 +623,30 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $warningCount = $this->taskRepository->getWarningCountByJob($job);
 
         $this->assertEquals($expectedWarningCount, $warningCount);
+    }
+
+    /**
+     * @dataProvider getTaskCountByStateDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param int $jobIndex
+     * @param string[] $stateNames
+     * @param int $expectedTaskCount
+     */
+    public function testGetTaskCountByState($jobValuesCollection, $jobIndex, $stateNames, $expectedTaskCount)
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $states = $stateService->fetchCollection($stateNames);
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $job = $jobs[$jobIndex];
+
+        $taskCount = $this->taskRepository->getTaskCountByState($job, $states);
+
+        $this->assertEquals($expectedTaskCount, $taskCount);
     }
 
     /**

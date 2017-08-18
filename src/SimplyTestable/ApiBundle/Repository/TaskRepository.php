@@ -415,9 +415,11 @@ class TaskRepository extends EntityRepository
 
         $stateConditions = array();
 
-        foreach ($states as $stateIndex => $state) {
+        $stateIndex = 0;
+        foreach ($states as $state) {
             $stateConditions[] = '(Task.state = :State'.$stateIndex.') ';
             $queryBuilder->setParameter('State'.$stateIndex, $state);
+            $stateIndex++;
         }
 
         $queryBuilder->where('(Task.job = :Job AND ('.implode('OR', $stateConditions).'))');
