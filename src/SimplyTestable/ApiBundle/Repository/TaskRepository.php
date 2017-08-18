@@ -206,20 +206,15 @@ class TaskRepository extends EntityRepository
 
     /**
      * @param Job $job
-     * @param int $limit
      *
      * @return int[]
      */
-    public function getIdsByJob(Job $job, $limit = 0)
+    public function getIdsByJob(Job $job)
     {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task.id');
         $queryBuilder->where('Task.job = :Job');
         $queryBuilder->setParameter('Job', $job);
-
-        if ($limit > 0) {
-            $queryBuilder->setMaxResults($limit);
-        }
 
         $result = $queryBuilder->getQuery()->getResult();
 
