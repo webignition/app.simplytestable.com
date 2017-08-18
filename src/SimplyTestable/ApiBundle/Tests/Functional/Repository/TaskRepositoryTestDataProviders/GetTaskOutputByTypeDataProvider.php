@@ -89,6 +89,23 @@ trait GetTaskOutputByTypeDataProvider
                 'taskTypeName' => TaskTypeService::CSS_VALIDATION_TYPE,
                 'expectedOutputIndices' => [4, 8, 12],
             ],
+            'none' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TEST_TYPES => [
+                            TaskTypeService::HTML_VALIDATION_TYPE,
+                        ],
+                    ],
+                ],
+                'taskOutputValuesCollection' => [
+                    [],
+                    [],
+                    [],
+                ],
+                'taskTypeName' => TaskTypeService::CSS_VALIDATION_TYPE,
+                'expectedOutputIndices' => [],
+            ],
         ];
     }
 }

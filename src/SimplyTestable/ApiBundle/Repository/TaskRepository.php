@@ -488,11 +488,11 @@ class TaskRepository extends EntityRepository
 
         $result = $queryBuilder->getQuery()->getResult();
 
-        if (count($result) === 0) {
-            return [];
-        }
-
         $ids = [];
+
+        if (empty($result)) {
+            return $ids;
+        }
 
         foreach ($result as $taskOutputIdResult) {
             $ids[] = $taskOutputIdResult['TaskOutputId'];
