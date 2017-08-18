@@ -5,17 +5,22 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
-use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 
 class TaskRepositoryTest extends BaseSimplyTestableTestCase
 {
+    use TaskRepositoryTestDataProviders\FindUrlCountByJobDataProvider;
+    use TaskRepositoryTestDataProviders\FindUrlsByJobDataProvider;
+    use TaskRepositoryTestDataProviders\GetCountByJobDataProvider;
+    use TaskRepositoryTestDataProviders\FindUrlsByJobAndStateDataProvider;
+    use TaskRepositoryTestDataProviders\GetCountByTaskTypeAndStateDataProvider;
+    use TaskRepositoryTestDataProviders\GetCountByJobAndStateDataProvider;
+    use TaskRepositoryTestDataProviders\GetIdsByStateDataProvider;
+    use TaskRepositoryTestDataProviders\GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider;
+
     /**
      * @var TaskRepository
      */
@@ -44,20 +49,16 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     }
 
     /**
-     * @dataProvider findUrlCountByJobFindUrlsByJobGetCountByJobDataProvider
+     * @dataProvider findUrlCountByJobDataProvider
      *
      * @param array $jobValues
      * @param array $prepareHttpFixtures
      * @param int $expectedUrlCount
-     * @param array $expectedUrls
-     * @param int $expectedTaskCount
      */
-    public function testFindUrlCountByJobFindUrlsByJobGetCountByJob(
+    public function testFindUrlCountByJob(
         $jobValues,
         $prepareHttpFixtures,
-        $expectedUrlCount,
-        $expectedUrls,
-        $expectedTaskCount
+        $expectedUrlCount
     ) {
         $fixtures = [];
 
@@ -71,95 +72,58 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
             $expectedUrlCount,
             $this->taskRepository->findUrlCountByJob($job)
         );
+    }
+
+    /**
+     * @dataProvider findUrlsByJobDataProvider
+     *
+     * @param array $jobValues
+     * @param array $prepareHttpFixtures
+     * @param array $expectedUrls
+     */
+    public function testFindUrlsByJob(
+        $jobValues,
+        $prepareHttpFixtures,
+        $expectedUrls
+    ) {
+        $fixtures = [];
+
+        if (!empty($prepareHttpFixtures)) {
+            $fixtures['prepare'] = $prepareHttpFixtures;
+        }
+
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues, $fixtures);
 
         $this->assertEquals(
             $expectedUrls,
             $this->taskRepository->findUrlsByJob($job)
         );
+    }
+
+    /**
+     * @dataProvider getCountByJobDataProvider
+     *
+     * @param array $jobValues
+     * @param array $prepareHttpFixtures
+     * @param int $expectedTaskCount
+     */
+    public function testGetCountByJob(
+        $jobValues,
+        $prepareHttpFixtures,
+        $expectedTaskCount
+    ) {
+        $fixtures = [];
+
+        if (!empty($prepareHttpFixtures)) {
+            $fixtures['prepare'] = $prepareHttpFixtures;
+        }
+
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues, $fixtures);
 
         $this->assertEquals(
             $expectedTaskCount,
             $this->taskRepository->getCountByJob($job)
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function findUrlCountByJobFindUrlsByJobGetCountByJobDataProvider()
-    {
-        return [
-            'three' => [
-                'jobValues' => [
-                    JobFactory::KEY_TEST_TYPES => [
-                        TaskTypeService::HTML_VALIDATION_TYPE,
-                    ],
-                ],
-                'prepareHttpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/xml',
-                        SitemapFixtureFactory::generate([
-                            'http://example.com/1',
-                            'http://example.com/2',
-                            'http://example.com/3',
-                        ])
-                    ),
-                ],
-                'expectedUrlCount' => 3,
-                'expectedUrls' => [
-                    [
-                        'url' => 'http://example.com/1',
-                    ],
-                    [
-                        'url' => 'http://example.com/2',
-                    ],
-                    [
-                        'url' => 'http://example.com/3',
-                    ],
-                ],
-                'expectedTaskCount' => 3,
-            ],
-            'five' => [
-                'jobValues' => [
-                    JobFactory::KEY_TEST_TYPES => [
-                        TaskTypeService::HTML_VALIDATION_TYPE,
-                    ],
-                ],
-                'prepareHttpFixtures' => [
-                    HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                    HttpFixtureFactory::createSuccessResponse(
-                        'application/xml',
-                        SitemapFixtureFactory::generate([
-                            'http://example.com/1',
-                            'http://example.com/2',
-                            'http://example.com/3',
-                            'http://example.com/4',
-                            'http://example.com/5',
-                        ])
-                    ),
-                ],
-                'expectedUrlCount' => 5,
-                'expectedUrls' => [
-                    [
-                        'url' => 'http://example.com/1',
-                    ],
-                    [
-                        'url' => 'http://example.com/2',
-                    ],
-                    [
-                        'url' => 'http://example.com/3',
-                    ],
-                    [
-                        'url' => 'http://example.com/4',
-                    ],
-                    [
-                        'url' => 'http://example.com/5',
-                    ],
-                ],
-                'expectedTaskCount' => 5,
-            ],
-        ];
     }
 
     /**
@@ -193,38 +157,6 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
             $expectedUrls,
             $urls
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function findUrlsByJobAndStateDataProvider()
-    {
-        return [
-            'none found' => [
-                'jobValues' => [],
-                'taskStateNames' => [],
-                'taskStateName' => TaskService::COMPLETED_STATE,
-                'expectedUrls' => [],
-            ],
-            'found' => [
-                'jobValues' => [
-                    JobFactory::KEY_TEST_TYPES => [
-                        TaskTypeService::HTML_VALIDATION_TYPE,
-                    ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::COMPLETED_STATE,
-                ],
-                'taskStateName' => TaskService::COMPLETED_STATE,
-                'expectedUrls' => [
-                    'http://example.com/one',
-                    'http://example.com/foo bar',
-                ],
-            ],
-        ];
     }
 
     /**
@@ -308,65 +240,6 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     }
 
     /**
-     * @return array
-     */
-    public function getCountByTaskTypeAndStateDataProvider()
-    {
-        return [
-            'none' => [
-                'jobValuesCollection' => [],
-                'taskStateNames' => [],
-                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
-                'taskStateName' => TaskService::COMPLETED_STATE,
-                'expectedCount' => 0,
-            ],
-            'many' => [
-                'jobValuesCollection' => [
-                    [
-                        JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                    [
-                        JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                    [
-                        JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
-                    ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                ],
-                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
-                'taskStateName' => TaskService::COMPLETED_STATE,
-                'expectedCount' => 6,
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider getCountByJobAndStateDataProvider
      *
      * @param array $jobValuesCollection
@@ -412,81 +285,6 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
             $expectedCount,
             $this->taskRepository->getCountByJobAndState($job, $state)
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function getCountByJobAndStateDataProvider()
-    {
-        return [
-            'first job' => [
-                'jobValuesCollection' => [
-                    [
-                        JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                    [
-                        JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
-                ],
-                'jobIndex' => 0,
-                'taskStateName' => TaskService::COMPLETED_STATE,
-                'expectedCount' => 3,
-            ],
-            'second job' => [
-                'jobValuesCollection' => [
-                    [
-                        JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                    [
-                        JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
-                ],
-                'jobIndex' => 1,
-                'taskStateName' => TaskService::COMPLETED_STATE,
-                'expectedCount' => 2,
-            ],
-        ];
     }
 
     /**
@@ -540,79 +338,6 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
             $expectedTaskIds,
             $this->taskRepository->getIdsByState($state)
         );
-    }
-
-    /**
-     * @return array
-     */
-    public function getIdsByStateDataProvider()
-    {
-        return [
-            'completed' => [
-                'jobValuesCollection' => [
-                    [
-                        JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                    [
-                        JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                ],
-                'taskStateName' => TaskService::COMPLETED_STATE,
-                'expectedTaskIndices' => [0, 1],
-            ],
-            'cancelled' => [
-                'jobValuesCollection' => [
-                    [
-                        JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                    [
-                        JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                        ],
-                        JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                    ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                    TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                ],
-                'taskStateName' => TaskService::CANCELLED_STATE,
-                'expectedTaskIndices' => [3, 4, 5],
-            ],
-        ];
     }
 
     /**
@@ -689,202 +414,5 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         }
 
         $this->assertEquals($expectedTaskIds, $taskIds);
-    }
-
-    /**
-     * @return array
-     */
-    public function getCollectionByUrlSetAndTaskTypeAndStatesDataProvider()
-    {
-        return [
-            'multiple jobs, single url, html validation task type, queued state' => [
-                'jobValuesCollection' => [
-                    [
-                        JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                    ],
-                    [
-                        JobFactory::KEY_USER => 'private',
-                    ],
-                ],
-                'taskStateNamesToSet' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::QUEUED_STATE,
-                ],
-                'prepareHttpFixturesCollection' => [
-                    [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
-                    ],
-                    [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
-                    ],
-                ],
-                'urlSet' => [
-                    'http://example.com/foo bar',
-                ],
-                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
-                'taskStateNames' => [
-                    TaskService::QUEUED_STATE,
-                ],
-                'expectedTaskIndices' => [0, 6],
-            ],
-            'multiple jobs, single url, css validation task type, queued state and cancelled state' => [
-                'jobValuesCollection' => [
-                    [
-                        JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                    ],
-                    [
-                        JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                    ],
-                ],
-                'taskStateNamesToSet' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                ],
-                'prepareHttpFixturesCollection' => [
-                    [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
-                    ],
-                    [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
-                    ],
-                ],
-                'urlSet' => [
-                    'http://example.com/foo bar',
-                ],
-                'taskTypeName' => TaskTypeService::CSS_VALIDATION_TYPE,
-                'taskStateNames' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                ],
-                'expectedTaskIndices' => [1, 7],
-            ],
-            'multiple jobs, two urls, html validation task type, queued state and cancelled state' => [
-                'jobValuesCollection' => [
-                    [
-                        JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                    ],
-                    [
-                        JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TEST_TYPES => [
-                            TaskTypeService::HTML_VALIDATION_TYPE,
-                            TaskTypeService::CSS_VALIDATION_TYPE,
-                        ],
-                    ],
-                ],
-                'taskStateNamesToSet' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                ],
-                'prepareHttpFixturesCollection' => [
-                    [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
-                    ],
-                    [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
-                    ],
-                ],
-                'urlSet' => [
-                    'http://example.com/foo bar',
-                    'http://example.com/foo%20bar',
-                ],
-                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
-                'taskStateNames' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                ],
-                'expectedTaskIndices' => [0, 2, 6, 8],
-            ],
-        ];
     }
 }
