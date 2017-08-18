@@ -10,6 +10,7 @@ class TaskOutputFactory
 {
     const KEY_OUTPUT = 'output';
     const KEY_ERROR_COUNT = 'error-count';
+    const KEY_WARNING_COUNT = 'warning-count';
 
     /**
      * @var ContainerInterface
@@ -42,6 +43,10 @@ class TaskOutputFactory
 
         if (isset($taskOutputValues[self::KEY_ERROR_COUNT])) {
             $output->setErrorCount($taskOutputValues[self::KEY_ERROR_COUNT]);
+        }
+
+        if (isset($taskOutputValues[self::KEY_WARNING_COUNT])) {
+            $output->setWarningCount($taskOutputValues[self::KEY_WARNING_COUNT]);
         }
 
         $task->setOutput($output);

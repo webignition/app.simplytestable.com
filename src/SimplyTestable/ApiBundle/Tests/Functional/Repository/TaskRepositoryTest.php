@@ -27,6 +27,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetIdsByJobAndUrlExclusionSetDataProvider;
     use TaskRepositoryTestDataProviders\GetErroredCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetErrorCountByJobDataProvider;
+    use TaskRepositoryTestDataProviders\GetWarningedCountByJobDataProvider;
 
     /**
      * @var TaskRepository
@@ -543,6 +544,47 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $errorCount = $this->taskRepository->getErrorCountByJob($job);
 
         $this->assertEquals($expectedErrorCount, $errorCount);
+    }
+
+    /**
+     * @dataProvider getWarningedCountByJobDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param array $taskOutputValuesCollection
+     * @param int $jobIndex
+     * @param string[] $stateNamesToExclude
+     * @param int $expectedWarningedCount
+     */
+    public function testGetWarningedCountByJob(
+        $jobValuesCollection,
+        $taskOutputValuesCollection,
+        $jobIndex,
+        $stateNamesToExclude,
+        $expectedWarningedCount
+    ) {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $job = $jobs[$jobIndex];
+        $tasks = $this->getTasksFromJobCollection($jobs);
+        $statesToExclude = $stateService->fetchCollection($stateNamesToExclude);
+
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $warningedCount = $this->taskRepository->getWarningedCountByJob($job, $statesToExclude);
+
+        $this->assertEquals($expectedWarningedCount, $warningedCount);
     }
 
     /**

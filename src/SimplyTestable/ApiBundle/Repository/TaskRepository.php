@@ -352,28 +352,27 @@ class TaskRepository extends EntityRepository
 
     /**
      * @param Job $job
+     * @param State[] $statesToExclude
      *
      * @return int
      */
-    public function getWarningedCountByJob(Job $job, $excludeStates = null)
+    public function getWarningedCountByJob(Job $job, $statesToExclude)
     {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('count(Task.id)');
 
-        $where = 'Task.job = :Job AND TaskOutput.warningCount > :WarningCount';
+        $where = 'Task.job = :Job AND TaskOutput.warningCount > 0';
 
-        if (is_array($excludeStates)) {
-            foreach ($excludeStates as $stateIndex => $state) {
-                $where .= ' AND Task.state != :State' . $stateIndex;
-                $queryBuilder->setParameter('State'.$stateIndex, $state);
-            }
+        $stateIndex = 0;
+        foreach ($statesToExclude as $state) {
+            $where .= ' AND Task.state != :State' . $stateIndex;
+            $queryBuilder->setParameter('State'.$stateIndex, $state);
+            $stateIndex++;
         }
 
         $queryBuilder->where($where);
-
         $queryBuilder->setParameter('Job', $job);
-        $queryBuilder->setParameter('WarningCount', 0);
 
         $result = $queryBuilder->getQuery()->getResult();
 
