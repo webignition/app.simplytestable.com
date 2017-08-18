@@ -17,7 +17,6 @@ trait GetCountByTaskTypeAndStateDataProvider
         return [
             'none' => [
                 'jobValuesCollection' => [],
-                'taskStateNames' => [],
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'taskStateName' => TaskService::COMPLETED_STATE,
                 'expectedCount' => 0,
@@ -31,6 +30,14 @@ trait GetCountByTaskTypeAndStateDataProvider
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                        ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
@@ -38,6 +45,11 @@ trait GetCountByTaskTypeAndStateDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                        ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
@@ -45,21 +57,12 @@ trait GetCountByTaskTypeAndStateDataProvider
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                        ],
                     ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
                 ],
                 'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
                 'taskStateName' => TaskService::COMPLETED_STATE,

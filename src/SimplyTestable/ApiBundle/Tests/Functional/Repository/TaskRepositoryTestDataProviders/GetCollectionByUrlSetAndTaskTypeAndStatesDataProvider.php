@@ -24,44 +24,50 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::QUEUED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::QUEUED_STATE,
+                        ],
                     ],
                 ],
-                'taskStateNamesToSet' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::QUEUED_STATE,
-                ],
-                'prepareHttpFixturesCollection' => [
+                'httpFixturesCollection' => [
                     [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
+                        'prepare' => [
+                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                            HttpFixtureFactory::createSuccessResponse(
+                                'application/xml',
+                                SitemapFixtureFactory::generate([
+                                    'http://example.com/foo bar',
+                                    'http://example.com/foo%20bar',
+                                    'http://example.com/foo%2520bar',
+                                ])
+                            ),
+                        ],
                     ],
                     [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
+                        'prepare' => [
+                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                            HttpFixtureFactory::createSuccessResponse(
+                                'application/xml',
+                                SitemapFixtureFactory::generate([
+                                    'http://example.com/foo bar',
+                                    'http://example.com/foo%20bar',
+                                    'http://example.com/foo%2520bar',
+                                ])
+                            ),
+                        ],
                     ],
                 ],
                 'urlSet' => [
@@ -81,6 +87,14 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
@@ -88,44 +102,42 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
                     ],
                 ],
-                'taskStateNamesToSet' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                ],
-                'prepareHttpFixturesCollection' => [
+                'httpFixturesCollection' => [
                     [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
+                        'prepare' => [
+                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                            HttpFixtureFactory::createSuccessResponse(
+                                'application/xml',
+                                SitemapFixtureFactory::generate([
+                                    'http://example.com/foo bar',
+                                    'http://example.com/foo%20bar',
+                                    'http://example.com/foo%2520bar',
+                                ])
+                            ),
+                        ],
                     ],
                     [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
+                        'prepare' => [
+                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                            HttpFixtureFactory::createSuccessResponse(
+                                'application/xml',
+                                SitemapFixtureFactory::generate([
+                                    'http://example.com/foo bar',
+                                    'http://example.com/foo%20bar',
+                                    'http://example.com/foo%2520bar',
+                                ])
+                            ),
+                        ],
                     ],
                 ],
                 'urlSet' => [
@@ -146,6 +158,14 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
@@ -153,44 +173,42 @@ trait GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
                     ],
                 ],
-                'taskStateNamesToSet' => [
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::QUEUED_STATE,
-                    TaskService::CANCELLED_STATE,
-                ],
-                'prepareHttpFixturesCollection' => [
+                'httpFixturesCollection' => [
                     [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
+                        'prepare' => [
+                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                            HttpFixtureFactory::createSuccessResponse(
+                                'application/xml',
+                                SitemapFixtureFactory::generate([
+                                    'http://example.com/foo bar',
+                                    'http://example.com/foo%20bar',
+                                    'http://example.com/foo%2520bar',
+                                ])
+                            ),
+                        ],
                     ],
                     [
-                        HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
-                        HttpFixtureFactory::createSuccessResponse(
-                            'application/xml',
-                            SitemapFixtureFactory::generate([
-                                'http://example.com/foo bar',
-                                'http://example.com/foo%20bar',
-                                'http://example.com/foo%2520bar',
-                            ])
-                        ),
+                        'prepare' => [
+                            HttpFixtureFactory::createSuccessResponse('text/plain', 'sitemap: sitemap.xml'),
+                            HttpFixtureFactory::createSuccessResponse(
+                                'application/xml',
+                                SitemapFixtureFactory::generate([
+                                    'http://example.com/foo bar',
+                                    'http://example.com/foo%20bar',
+                                    'http://example.com/foo%2520bar',
+                                ])
+                            ),
+                        ],
                     ],
                 ],
                 'urlSet' => [

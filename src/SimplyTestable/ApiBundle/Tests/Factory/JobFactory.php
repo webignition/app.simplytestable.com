@@ -106,6 +106,27 @@ class JobFactory
     }
 
     /**
+     * @param array $jobValuesCollection
+     * @param array $httpFixturesCollection
+     *
+     * @return Job[]
+     */
+    public function createResolveAndPrepareCollection($jobValuesCollection, $httpFixturesCollection = [])
+    {
+        $jobs = [];
+
+        foreach ($jobValuesCollection as $jobIndex => $jobValues) {
+            $httpFixtures = isset($httpFixturesCollection[$jobIndex])
+                ? $httpFixturesCollection[$jobIndex]
+                : [];
+
+            $jobs[] = $this->createResolveAndPrepare($jobValues, $httpFixtures);
+        }
+
+        return $jobs;
+    }
+
+    /**
      * @param array $jobValues
      *
      * @return Job

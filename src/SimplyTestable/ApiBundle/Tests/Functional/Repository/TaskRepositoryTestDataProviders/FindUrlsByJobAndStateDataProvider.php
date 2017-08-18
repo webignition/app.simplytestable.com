@@ -16,7 +16,6 @@ trait FindUrlsByJobAndStateDataProvider
         return [
             'none found' => [
                 'jobValues' => [],
-                'taskStateNames' => [],
                 'taskStateName' => TaskService::COMPLETED_STATE,
                 'expectedUrls' => [],
             ],
@@ -25,11 +24,11 @@ trait FindUrlsByJobAndStateDataProvider
                     JobFactory::KEY_TEST_TYPES => [
                         TaskTypeService::HTML_VALIDATION_TYPE,
                     ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::COMPLETED_STATE,
+                    JobFactory::KEY_TASK_STATES => [
+                        TaskService::COMPLETED_STATE,
+                        TaskService::CANCELLED_STATE,
+                        TaskService::COMPLETED_STATE,
+                    ],
                 ],
                 'taskStateName' => TaskService::COMPLETED_STATE,
                 'expectedUrls' => [

@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
 trait GetCountByJobAndStateDataProvider
 {
-
     /**
      * @return array
      */
@@ -25,6 +24,14 @@ trait GetCountByJobAndStateDataProvider
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
@@ -32,18 +39,12 @@ trait GetCountByJobAndStateDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
                     ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
                 ],
                 'jobIndex' => 0,
                 'taskStateName' => TaskService::COMPLETED_STATE,
@@ -58,6 +59,14 @@ trait GetCountByJobAndStateDataProvider
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::CANCELLED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
@@ -65,18 +74,12 @@ trait GetCountByJobAndStateDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::QUEUED_STATE,
+                        ],
                     ],
-                ],
-                'taskStateNames' => [
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::CANCELLED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::COMPLETED_STATE,
-                    TaskService::CANCELLED_STATE,
                 ],
                 'jobIndex' => 1,
                 'taskStateName' => TaskService::COMPLETED_STATE,

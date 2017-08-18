@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -20,6 +21,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetCountByJobAndStateDataProvider;
     use TaskRepositoryTestDataProviders\GetIdsByStateDataProvider;
     use TaskRepositoryTestDataProviders\GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider;
+    use TaskRepositoryTestDataProviders\GetOutputCollectionByJobAndStateDataProvider;
 
     /**
      * @var TaskRepository
@@ -130,26 +132,14 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
      * @dataProvider findUrlsByJobAndStateDataProvider
      *
      * @param array $jobValues
-     * @param string[] $taskStateNames
      * @param string $taskStateName
      * @param string[] $expectedUrls
      */
-    public function testFindUrlsByJobAndState($jobValues, $taskStateNames, $taskStateName, $expectedUrls)
+    public function testFindUrlsByJobAndState($jobValues, $taskStateName, $expectedUrls)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $job = $this->jobFactory->createResolveAndPrepare($jobValues);
-        $tasks = $job->getTasks();
-
-        foreach ($taskStateNames as $taskStateIndex => $stateName) {
-            /* @var Task $task */
-            $task = $tasks->get($taskStateIndex);
-            $task->setState($stateService->fetch($stateName));
-
-            $entityManager->persist($task);
-            $entityManager->flush($task);
-        }
 
         $urls = $this->taskRepository->findUrlsByJobAndState($job, $stateService->fetch($taskStateName));
 
@@ -196,39 +186,24 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
      * @dataProvider getCountByTaskTypeAndStateDataProvider
      *
      * @param array $jobValuesCollection
-     * @param string[] $taskStateNames
      * @param string $taskTypeName
      * @param string $taskStateName
      * @param int $expectedCount
      */
     public function testGetCountByTaskTypeAndState(
         $jobValuesCollection,
-        $taskStateNames,
         $taskTypeName,
         $taskStateName,
         $expectedCount
     ) {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
-        $tasks = [];
 
-        foreach ($jobValuesCollection as $jobValues) {
-            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
 
-            $job = $this->jobFactory->createResolveAndPrepare($jobValues);
-            $tasks = array_merge($tasks, $job->getTasks()->toArray());
-        }
-
-        foreach ($taskStateNames as $taskStateIndex => $stateName) {
-            $task = $tasks[$taskStateIndex];
-            $task->setState($stateService->fetch($stateName));
-
-            $entityManager->persist($task);
-            $entityManager->flush($task);
-        }
+        $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
         $taskType = $taskTypeService->getByName($taskTypeName);
         $state = $stateService->fetch($taskStateName);
@@ -243,42 +218,24 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
      * @dataProvider getCountByJobAndStateDataProvider
      *
      * @param array $jobValuesCollection
-     * @param string[] $taskStateNames
      * @param int $jobIndex
      * @param string $taskStateName
      * @param int $expectedCount
      */
     public function testGetCountByJobAndState(
         $jobValuesCollection,
-        $taskStateNames,
         $jobIndex,
         $taskStateName,
         $expectedCount
     ) {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
         $users = $this->userFactory->createPublicAndPrivateUserSet();
-        $jobs = [];
-        $tasks = [];
 
-        foreach ($jobValuesCollection as $jobValues) {
-            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
 
-            $job = $this->jobFactory->createResolveAndPrepare($jobValues);
-            $tasks = array_merge($tasks, $job->getTasks()->toArray());
-            $jobs[] = $job;
-        }
-
-        foreach ($taskStateNames as $taskStateIndex => $stateName) {
-            $task = $tasks[$taskStateIndex];
-            $task->setState($stateService->fetch($stateName));
-
-            $entityManager->persist($task);
-            $entityManager->flush($task);
-        }
-
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
         $job = $jobs[$jobIndex];
+
         $state = $stateService->fetch($taskStateName);
 
         $this->assertEquals(
@@ -291,39 +248,21 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
      * @dataProvider getIdsByStateDataProvider
      *
      * @param array $jobValuesCollection
-     * @param string[] $taskStateNames
      * @param string $taskStateName
      * @param int[] $expectedTaskIndices
      */
     public function testGetIdsByState(
         $jobValuesCollection,
-        $taskStateNames,
         $taskStateName,
         $expectedTaskIndices
     ) {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
         $users = $this->userFactory->createPublicAndPrivateUserSet();
-        $jobs = [];
-        $tasks = [];
 
-        foreach ($jobValuesCollection as $jobValues) {
-            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
 
-            $job = $this->jobFactory->createResolveAndPrepare($jobValues);
-            $tasks = array_merge($tasks, $job->getTasks()->toArray());
-            $jobs[] = $job;
-        }
-
-        foreach ($taskStateNames as $taskStateIndex => $stateName) {
-            $task = $tasks[$taskStateIndex];
-            $task->setState($stateService->fetch($stateName));
-
-            $entityManager->persist($task);
-            $entityManager->flush($task);
-        }
-
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $tasks = $this->getTasksFromJobCollection($jobs);
         $expectedTaskIds = [];
 
         foreach ($tasks as $taskIndex => $task) {
@@ -344,8 +283,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
      * @dataProvider getCollectionByUrlSetAndTaskTypeAndStatesDataProvider
      *
      * @param array $jobValuesCollection
-     * @param string[] $taskStateNamesToSet
-     * @param array $prepareHttpFixturesCollection
+     * @param array $httpFixturesCollection
      * @param string[] $urlSet
      * @param string $taskTypeName
      * @param string[] $stateNames
@@ -353,8 +291,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
      */
     public function testGetCollectionByUrlSetAndTaskTypeAndStates(
         $jobValuesCollection,
-        $taskStateNamesToSet,
-        $prepareHttpFixturesCollection,
+        $httpFixturesCollection,
         $urlSet,
         $taskTypeName,
         $stateNames,
@@ -364,44 +301,21 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
 
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $taskType = $taskTypeService->getByName($taskTypeName);
-        $taskStatesToSet = $stateService->fetchCollection($taskStateNamesToSet);
         $states = $stateService->fetchCollection($stateNames);
 
-        /* @var Job[] $jobs */
-        $jobs = [];
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
 
-        /* @var Task[] $tasks */
-        $tasks = [];
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection, $httpFixturesCollection);
 
-        foreach ($jobValuesCollection as $jobIndex => $jobValues) {
-            $prepareHttpFixtures = isset($prepareHttpFixturesCollection[$jobIndex])
-                ? $prepareHttpFixturesCollection[$jobIndex]
-                : null;
-
-            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
-            $job = $this->jobFactory->createResolveAndPrepare($jobValues, [
-                'prepare' => $prepareHttpFixtures,
-            ]);
-
-            $tasks = array_merge($tasks, $job->getTasks()->toArray());
-            $jobs[] = $job;
-        }
+        $tasks = $this->getTasksFromJobCollection($jobs);
 
         $expectedTaskIds = [];
 
         foreach ($tasks as $taskIndex => $task) {
             if (in_array($taskIndex, $expectedTaskIndices)) {
                 $expectedTaskIds[] = $task->getId();
-            }
-
-            if (isset($taskStateNamesToSet[$taskIndex])) {
-                $task->setState($taskStatesToSet[$taskStateNamesToSet[$taskIndex]]);
-
-                $entityManager->persist($task);
-                $entityManager->flush($task);
             }
         }
 
@@ -414,5 +328,41 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         }
 
         $this->assertEquals($expectedTaskIds, $taskIds);
+    }
+
+    /**
+     * @param array $jobValuesCollection
+     * @param User[] $users
+     *
+     * @return array
+     */
+    private function populateJobValuesCollectionUsers($jobValuesCollection, $users)
+    {
+        if (empty($users)) {
+            return $jobValuesCollection;
+        }
+
+        foreach ($jobValuesCollection as $jobValuesIndex => $jobValues) {
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+            $jobValuesCollection[$jobValuesIndex] = $jobValues;
+        }
+
+        return $jobValuesCollection;
+    }
+
+    /**
+     * @param Job[] $jobs
+     *
+     * @return Task[]
+     */
+    private function getTasksFromJobCollection($jobs)
+    {
+        $tasks = [];
+
+        foreach ($jobs as $job) {
+            $tasks = array_merge($tasks, $job->getTasks()->toArray());
+        }
+
+        return $tasks;
     }
 }
