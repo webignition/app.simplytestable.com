@@ -25,6 +25,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetOutputCollectionByJobAndStateDataProvider;
     use TaskRepositoryTestDataProviders\GetIdsByJobAndTaskStatesDataProvider;
     use TaskRepositoryTestDataProviders\GetIdsByJobAndUrlExclusionSetDataProvider;
+    use TaskRepositoryTestDataProviders\GetErroredCountByJobDataProvider;
 
     /**
      * @var TaskRepository
@@ -464,6 +465,47 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $retrievedTaskIds = $this->taskRepository->getIdsByJobAndUrlExclusionSet($job, $urlExclusionSet);
 
         $this->assertEquals($expectedTaskIds, $retrievedTaskIds);
+    }
+
+    /**
+     * @dataProvider getErroredCountByJobDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param array $taskOutputValuesCollection
+     * @param int $jobIndex
+     * @param string[] $stateNamesToExclude
+     * @param int $expectedErroredCount
+     */
+    public function testGetErroredCountByJob(
+        $jobValuesCollection,
+        $taskOutputValuesCollection,
+        $jobIndex,
+        $stateNamesToExclude,
+        $expectedErroredCount
+    ) {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $job = $jobs[$jobIndex];
+        $tasks = $this->getTasksFromJobCollection($jobs);
+        $statesToExclude = $stateService->fetchCollection($stateNamesToExclude);
+
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $erroredCount = $this->taskRepository->getErroredCountByJob($job, $statesToExclude);
+
+        $this->assertEquals($expectedErroredCount, $erroredCount);
     }
 
     /**

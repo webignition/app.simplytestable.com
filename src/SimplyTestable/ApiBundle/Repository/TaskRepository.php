@@ -299,28 +299,28 @@ class TaskRepository extends EntityRepository
 
     /**
      * @param Job $job
+     * @param State[] $statesToExclude
      *
      * @return int
      */
-    public function getErroredCountByJob(Job $job, $excludeStates = null)
+    public function getErroredCountByJob(Job $job, $statesToExclude)
     {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('count(Task.id)');
 
-        $where = 'Task.job = :Job AND TaskOutput.errorCount > :ErrorCount';
+        $wherePredicates = 'Task.job = :Job AND TaskOutput.errorCount > 0';
 
-        if (is_array($excludeStates)) {
-            foreach ($excludeStates as $stateIndex => $state) {
-                $where .= ' AND Task.state != :State' . $stateIndex;
-                $queryBuilder->setParameter('State'.$stateIndex, $state);
-            }
+        $stateIndex = 0;
+        foreach ($statesToExclude as $state) {
+            $wherePredicates .= ' AND Task.state != :State' . $stateIndex;
+            $queryBuilder->setParameter('State'.$stateIndex, $state);
+            $stateIndex++;
         }
 
-        $queryBuilder->where($where);
+        $queryBuilder->where($wherePredicates);
 
         $queryBuilder->setParameter('Job', $job);
-        $queryBuilder->setParameter('ErrorCount', 0);
 
         $result = $queryBuilder->getQuery()->getResult();
 
