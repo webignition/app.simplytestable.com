@@ -275,7 +275,12 @@ class TaskRepository extends EntityRepository
             $urlParameterList[] = ':Url' . $urlIndex.'';
         }
 
-        $queryBuilder->where('Task.job = :Job AND Task.url NOT IN ('.implode(', ', $urlParameterList).')');
+        $wherePredicates = 'Task.job = :Job';
+        if (!empty($urlSet)) {
+            $wherePredicates .= ' AND Task.url NOT IN ('.implode(', ', $urlParameterList).')';
+        }
+
+        $queryBuilder->where($wherePredicates);
 
         $queryBuilder->setParameter('Job', $job);
         foreach ($urlSet as $urlIndex => $url) {
