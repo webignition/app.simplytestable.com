@@ -34,6 +34,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetTaskCountByStateDataProvider;
     use TaskRepositoryTestDataProviders\GetTaskOutputByTypeDataProvider;
     use TaskRepositoryTestDataProviders\GetThroughputSinceDataProvider;
+    use TaskRepositoryTestDataProviders\FindOutputByJobAndTypeDataProvider;
 
     /**
      * @var TaskRepository
@@ -736,6 +737,54 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $throughput = $this->taskRepository->getThroughputSince($sinceDateTime);
 
         $this->assertEquals($expectedThroughput, $throughput);
+    }
+
+    /**
+     * @dataProvider findOutputByJobAndTypeDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param \DateTime[] $taskEndDateTimeCollection
+     * @param array $taskOutputValuesCollection
+     * @param int $taskIndex
+     * @param bool $limit
+     * @param string $expectedRawTaskOutputs
+     */
+    public function testFindOutputByJobAndType(
+        $jobValuesCollection,
+        $taskEndDateTimeCollection,
+        $taskOutputValuesCollection,
+        $taskIndex,
+        $limit,
+        $expectedRawTaskOutputs
+    ) {
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $tasks = $this->getTasksFromJobCollection($jobs);
+        $selectedTask = $tasks[$taskIndex];
+
+        $taskFactory = new TaskFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskEndDateTimeCollection[$taskIndex])) {
+                $taskFactory->setEndDateTime($task, $taskEndDateTimeCollection[$taskIndex]);
+            }
+        }
+
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $retrievedRawTaskOutputs = $this->taskRepository->findOutputByJobAndType($selectedTask, $limit);
+
+        $this->assertEquals($expectedRawTaskOutputs, $retrievedRawTaskOutputs);
     }
 
     /**
