@@ -554,44 +554,6 @@ class TaskRepository extends EntityRepository
     }
 
     /**
-     * @param User $user
-     * @param State[] $states
-     *
-     * @return int
-     */
-    public function getCountByUserAndStatesForCurrentMonth(User $user, $states)
-    {
-        $now = new \ExpressiveDate();
-
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->select('COUNT(Task.id)');
-        $queryBuilder->join('Task.timePeriod', 'TimePeriod');
-        $queryBuilder->join('Task.job', 'Job');
-
-        $where = 'Job.user = :User AND (TimePeriod.startDateTime >= :StartOfMonth and TimePeriod.startDateTime <= :EndOfMonth)';
-
-        if (is_array($states)) {
-            $stateWhereParts = array();
-
-            foreach ($states as $stateIndex => $state) {
-                $stateWhereParts[] = ' Task.state = :State'.$stateIndex.' ';
-                $queryBuilder->setParameter('State'.$stateIndex, $state);
-            }
-
-            $where .= ' AND ('.  implode('OR', $stateWhereParts).')';
-        }
-
-        $queryBuilder->where($where);
-        $queryBuilder->setParameter('User', $user);
-        $queryBuilder->setParameter('StartOfMonth', $now->format('Y-m-01'));
-        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()).' 23:59:59');
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        return (int)$result[0][1];
-    }
-
-    /**
      * @param User[] $users
      * @param State[] $states
      *
