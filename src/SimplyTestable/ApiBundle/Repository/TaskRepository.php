@@ -113,24 +113,13 @@ class TaskRepository extends EntityRepository
      */
     public function getCountByJobAndStates(Job $job, $states)
     {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->select('count(Task.id)');
-
-        $stateConditions = array();
-
-        $stateIndex = 0;
-        foreach ($states as $state) {
-            $stateConditions[] = '(Task.state = :State'.$stateIndex.') ';
-            $queryBuilder->setParameter('State'.$stateIndex, $state);
-            $stateIndex++;
-        }
-
-        $queryBuilder->where('(Task.job = :Job AND ('.implode('OR', $stateConditions).'))');
-        $queryBuilder->setParameter('Job', $job);
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        return (int)$result[0][1];
+        return $this->getCountBy(
+            'Task.job = :Job AND Task.state IN (:State)',
+            new ArrayCollection([
+                new Parameter('Job', $job),
+                new Parameter('State', $states),
+            ])
+        );
     }
 
     /**
