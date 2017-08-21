@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\TaskFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -32,6 +33,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetWarningCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetTaskCountByStateDataProvider;
     use TaskRepositoryTestDataProviders\GetTaskOutputByTypeDataProvider;
+    use TaskRepositoryTestDataProviders\GetThroughputSinceDataProvider;
 
     /**
      * @var TaskRepository
@@ -701,6 +703,39 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $retrievedOutputIds = $this->taskRepository->getTaskOutputByType($taskType);
 
         $this->assertEquals($expectedOutputIds, $retrievedOutputIds);
+    }
+
+    /**
+     * @dataProvider getThroughputSinceDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param \DateTime[] $taskEndDateTimeCollection
+     * @param \DateTime $sinceDateTime
+     * @param int $expectedThroughput
+     */
+    public function testGetThroughputSince(
+        $jobValuesCollection,
+        $taskEndDateTimeCollection,
+        $sinceDateTime,
+        $expectedThroughput
+    ) {
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $tasks = $this->getTasksFromJobCollection($jobs);
+
+        $taskFactory = new TaskFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskEndDateTimeCollection[$taskIndex])) {
+                $taskFactory->setEndDateTime($task, $taskEndDateTimeCollection[$taskIndex]);
+            }
+        }
+
+        $throughput = $this->taskRepository->getThroughputSince($sinceDateTime);
+
+        $this->assertEquals($expectedThroughput, $throughput);
     }
 
     /**
