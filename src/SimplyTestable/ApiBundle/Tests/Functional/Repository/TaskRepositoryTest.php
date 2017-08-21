@@ -21,7 +21,6 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\FindUrlsByJobAndStateDataProvider;
     use TaskRepositoryTestDataProviders\GetCountByTaskTypeAndStateDataProvider;
-    use TaskRepositoryTestDataProviders\GetCountByJobAndStateDataProvider;
     use TaskRepositoryTestDataProviders\GetIdsByStateDataProvider;
     use TaskRepositoryTestDataProviders\GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider;
     use TaskRepositoryTestDataProviders\GetOutputCollectionByJobAndStateDataProvider;
@@ -224,36 +223,6 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $this->assertEquals(
             $expectedCount,
             $this->taskRepository->getCountByTaskTypeAndState($taskType, $state)
-        );
-    }
-
-    /**
-     * @dataProvider getCountByJobAndStateDataProvider
-     *
-     * @param array $jobValuesCollection
-     * @param int $jobIndex
-     * @param string $taskStateName
-     * @param int $expectedCount
-     */
-    public function testGetCountByJobAndState(
-        $jobValuesCollection,
-        $jobIndex,
-        $taskStateName,
-        $expectedCount
-    ) {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $users = $this->userFactory->createPublicAndPrivateUserSet();
-
-        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
-
-        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
-        $job = $jobs[$jobIndex];
-
-        $state = $stateService->fetch($taskStateName);
-
-        $this->assertEquals(
-            $expectedCount,
-            $this->taskRepository->getCountByJobAndState($job, $state)
         );
     }
 

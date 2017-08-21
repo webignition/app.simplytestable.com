@@ -4,9 +4,11 @@ namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Controller\ApiController;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -109,8 +111,9 @@ abstract class BaseJobController extends ApiController
      */
     protected function populateJob(Job $job)
     {
-        $this->getTaskService()->getCountByJobAndState($job, $this->getTaskService()->getCompletedState());
-        $job->setUrlCount($this->container->get('simplytestable.services.taskservice')->getUrlCountByJob($job));
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
+        $job->setUrlCount($taskService->getUrlCountByJob($job));
 
         return $job;
     }
@@ -123,15 +126,16 @@ abstract class BaseJobController extends ApiController
      */
     private function getTaskCountByState(Job $job, $taskStates)
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $entityManager->getRepository(Task::class);
+
         $taskCountByState = [];
 
         foreach ($taskStates as $taskState) {
             $taskStateShortName = str_replace('task-', '', $taskState->getName());
-
-            $taskCountByState[$taskStateShortName] = $this->getTaskService()->getCountByJobAndState(
-                $job,
-                $taskState
-            );
+            $taskCountByState[$taskStateShortName] = $taskRepository->getTaskCountByState($job, [$taskState]);
         }
 
         return $taskCountByState;

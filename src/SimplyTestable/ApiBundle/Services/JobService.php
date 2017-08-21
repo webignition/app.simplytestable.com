@@ -271,15 +271,12 @@ class JobService extends EntityService
      */
     public function hasIncompleteTasks(Job $job)
     {
-        $incompleteTaskStates = $this->taskService->getIncompleteStates();
-        foreach ($incompleteTaskStates as $state) {
-            $taskCount = $this->taskService->getCountByJobAndState($job, $state);
-            if ($taskCount > 0) {
-                return true;
-            }
-        }
+        $incompleteTaskCount = $this->taskService->getEntityRepository()->getTaskCountByState(
+            $job,
+            $this->taskService->getIncompleteStates()
+        );
 
-        return false;
+        return $incompleteTaskCount > 0;
     }
 
     /**
