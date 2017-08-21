@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
@@ -874,6 +875,97 @@ class JobServiceTest extends BaseSimplyTestableTestCase
                 'user' => 'private',
                 'reason' => 'plan-constraint-limit-reached',
                 'constraintName' => 'credits_per_month',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCountOfTasksWithErrorsDataProvider
+     *
+     * @param $jobValues
+     * @param $taskOutputValuesCollection
+     * @param $expectedCount
+     */
+    public function testGetCountOfTasksWithErrors($jobValues, $taskOutputValuesCollection, $expectedCount)
+    {
+        $userFactory = new UserFactory($this->container);
+        $users = $userFactory->createPublicAndPrivateUserSet();
+
+        if (isset($jobValues[JobFactory::KEY_USER])) {
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+        }
+
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+        $tasks = $job->getTasks()->toArray();
+
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $this->assertEquals(
+            $expectedCount,
+            $this->jobService->getCountOfTasksWithErrors($job)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getCountOfTasksWithErrorsDataProvider()
+    {
+        return [
+            'no output' => [
+                'jobValues' => [],
+                'taskOutputValuesCollection' => [],
+                'expectedCount' => 0,
+            ],
+            'all tasks cancelled or awaiting cancellation' => [
+                'jobValues' => [
+                    JobFactory::KEY_TASK_STATES => [
+                        TaskService::CANCELLED_STATE,
+                        TaskService::CANCELLED_STATE,
+                        TaskService::AWAITING_CANCELLATION_STATE
+                    ],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                    ],
+                ],
+                'expectedCount' => 0,
+            ],
+            'tasks have errors' => [
+                'jobValues' => [
+                    JobFactory::KEY_TASK_STATES => [
+                        TaskService::COMPLETED_STATE,
+                        TaskService::COMPLETED_STATE,
+                        TaskService::COMPLETED_STATE
+                    ],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 3,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 4,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 0,
+                    ],
+                ],
+                'expectedCount' => 2,
             ],
         ];
     }
