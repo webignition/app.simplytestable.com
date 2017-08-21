@@ -55,10 +55,15 @@ class ResolveWebsiteCommand extends BaseCommand
 
             $this->getJobPreparationService()->prepare($job);
 
+            $taskIds = [];
+            foreach ($job->getTasks() as $task) {
+                $taskIds[] = $task->getId();
+            }
+
             $this->getResqueQueueService()->enqueue(
                 $this->getResqueJobFactoryService()->create(
                     'task-assign-collection',
-                    ['ids' => implode(',', $this->getTaskService()->getEntityRepository()->getIdsByJob($job))]
+                    ['ids' => implode(',', $taskIds)]
                 )
             );
         } else {

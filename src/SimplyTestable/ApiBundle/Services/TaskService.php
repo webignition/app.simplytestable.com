@@ -595,28 +595,6 @@ class TaskService extends EntityService {
         return $this->getEntityRepository()->getCountByTaskTypeAndState($taskType, $state);
     }
 
-
-    /**
-     *
-     * @param Job $job
-     * @param State $state
-     * @return int
-     */
-    public function getCountByJobAndState(Job $job, State $state) {
-        return $this->getEntityRepository()->getCountByJobAndState($job, $state);
-    }
-
-    /**
-     *
-     * @param Job $job
-     * @param State $state
-     * @return int
-     */
-    public function getByJobAndStates(Job $job, $states) {
-        return $this->getEntityRepository()->getByJobAndStates($job, $states);
-    }
-
-
     /**
      *
      * @param Job $job
@@ -634,24 +612,6 @@ class TaskService extends EntityService {
     public function getAvailableStateNames() {
         return $this->availableStateNames;
     }
-
-    /**
-     *
-     * @return boolean
-     */
-    public function hasQueuedTasks() {
-        return $this->getQueuedCount() > 0;
-    }
-
-
-    /**
-     *
-     * @return int
-     */
-    public function getQueuedCount() {
-        return $this->getEntityRepository()->getCountByState($this->getQueuedState());
-    }
-
 
     /**
      *

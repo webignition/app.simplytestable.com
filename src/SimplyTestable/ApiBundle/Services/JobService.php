@@ -271,15 +271,12 @@ class JobService extends EntityService
      */
     public function hasIncompleteTasks(Job $job)
     {
-        $incompleteTaskStates = $this->taskService->getIncompleteStates();
-        foreach ($incompleteTaskStates as $state) {
-            $taskCount = $this->taskService->getCountByJobAndState($job, $state);
-            if ($taskCount > 0) {
-                return true;
-            }
-        }
+        $incompleteTaskCount = $this->taskService->getEntityRepository()->getCountByJobAndStates(
+            $job,
+            $this->taskService->getIncompleteStates()
+        );
 
-        return false;
+        return $incompleteTaskCount > 0;
     }
 
     /**
@@ -344,7 +341,7 @@ class JobService extends EntityService
             $this->taskService->getAwaitingCancellationState()
         ];
 
-        return $this->taskService->getEntityRepository()->getErroredCountByJob($job, $excludeStates);
+        return $this->taskService->getEntityRepository()->getCountWithErrorsByJob($job, $excludeStates);
     }
 
     /**
@@ -359,7 +356,7 @@ class JobService extends EntityService
             $this->taskService->getAwaitingCancellationState()
         ];
 
-        return $this->taskService->getEntityRepository()->getWarningedCountByJob($job, $excludeStates);
+        return $this->taskService->getEntityRepository()->getCountWithWarningsByJob($job, $excludeStates);
     }
 
     /**
@@ -374,7 +371,7 @@ class JobService extends EntityService
             $this->taskService->getAwaitingCancellationState()
         ];
 
-        return $this->taskService->getEntityRepository()->getTaskCountByState($job, $states);
+        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, $states);
     }
 
     /**
@@ -388,7 +385,7 @@ class JobService extends EntityService
             $this->taskService->getSkippedState()
         ];
 
-        return $this->taskService->getEntityRepository()->getTaskCountByState($job, $states);
+        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, $states);
     }
 
     /**

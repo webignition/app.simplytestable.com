@@ -115,7 +115,7 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
             $output->write('Checking job ['.$jobId.'] ['.$completedJobCount.' of '.count($jobIdsToCheck).'] ... ');
 
             $job = $jobService->getById($jobId);
-            $urlCount = $taskService->getEntityRepository()->findUrlCountByJob($job);
+            $urlCount = $taskService->getUrlCountByJob($job);
 
             if ($urlCount <= $urlLimit) {
                 $output->writeln('ok');
@@ -133,7 +133,7 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
                 $jobService->getManager()->flush();
             }
 
-            $taskCount = $taskService->getEntityRepository()->getCountByJob($job);
+            $taskCount = $taskService->getCountByJob($job);
             $output->write('Has ['.$urlCount.'] urls and ['.$taskCount.'] tasks, ');
 
             $urlsToKeep = $this->getUrlsToKeep($job, $urlLimit, $taskService);
@@ -255,7 +255,7 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
      */
     private function getUrlsToKeep(Job $job, $limit, TaskService $taskService)
     {
-        $urls = $taskService->getEntityRepository()->findUrlsByJob($job);
+        $urls = $taskService->getUrlsByJob($job);
         $tempUrlsToKeep = array_slice($urls, 0, $limit);
         $urlsToKeep = array();
 

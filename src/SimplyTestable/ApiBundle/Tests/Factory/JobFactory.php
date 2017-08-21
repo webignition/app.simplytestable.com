@@ -30,6 +30,7 @@ class JobFactory
     const KEY_TASK_STATES = 'task-states';
     const KEY_TIME_PERIOD_START = 'time-period-start';
     const KEY_TIME_PERIOD_END = 'time-period-end';
+    const KEY_DOMAIN = 'domain';
 
     /**
      * @var array
@@ -103,6 +104,31 @@ class JobFactory
         }
 
         return $job;
+    }
+
+    /**
+     * @param array $jobValuesCollection
+     * @param array $httpFixturesCollection
+     *
+     * @return Job[]
+     */
+    public function createResolveAndPrepareCollection($jobValuesCollection, $httpFixturesCollection = [])
+    {
+        $jobs = [];
+
+        foreach ($jobValuesCollection as $jobIndex => $jobValues) {
+            $httpFixtures = isset($httpFixturesCollection[$jobIndex])
+                ? $httpFixturesCollection[$jobIndex]
+                : [];
+
+            $domain = isset($jobValues[self::KEY_DOMAIN])
+                ? $jobValues[self::KEY_DOMAIN]
+                : self::DEFAULT_DOMAIN;
+
+            $jobs[] = $this->createResolveAndPrepare($jobValues, $httpFixtures, $domain);
+        }
+
+        return $jobs;
     }
 
     /**
