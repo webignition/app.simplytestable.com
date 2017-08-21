@@ -499,43 +499,33 @@ class TaskRepository extends EntityRepository
     /**
      * @param User[] $users
      * @param State[] $states
+     * @param string $periodStart
+     * @param string $periodEnd
      *
      * @return int
      */
-    public function getCountByUsersAndStatesForCurrentMonth($users, $states)
+    public function getCountByUsersAndStatesForPeriod($users, $states, $periodStart, $periodEnd)
     {
-        $now = new \ExpressiveDate();
-
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('COUNT(Task.id)');
         $queryBuilder->join('Task.timePeriod', 'TimePeriod');
         $queryBuilder->join('Task.job', 'Job');
 
-        $where = ' (TimePeriod.startDateTime >= :StartOfMonth and TimePeriod.startDateTime <= :EndOfMonth)';
+        $userPredicates = '(Job.user IN (:Users))';
+        $statePredicates = '(Task.state IN (:States))';
+        $timePeriodPredicates = '(TimePeriod.startDateTime >= :PeriodStart and TimePeriod.startDateTime <= :PeriodEnd)';
 
-        $userWhereParts = array();
+        $queryBuilder->where(sprintf(
+            '%s AND %s AND %s',
+            $timePeriodPredicates,
+            $userPredicates,
+            $statePredicates
+        ));
 
-        foreach ($users as $userIndex => $user) {
-            $userWhereParts[] = ' Job.user = :User'.$userIndex.' ';
-            $queryBuilder->setParameter('User'.$userIndex, $user);
-        }
-
-        $where .= ' AND ('.  implode('OR', $userWhereParts).')';
-
-        if (is_array($states)) {
-            $stateWhereParts = array();
-
-            foreach ($states as $stateIndex => $state) {
-                $stateWhereParts[] = ' Task.state = :State'.$stateIndex.' ';
-                $queryBuilder->setParameter('State'.$stateIndex, $state);
-            }
-
-            $where .= ' AND ('.  implode('OR', $stateWhereParts).')';
-        }
-
-        $queryBuilder->where($where);
-        $queryBuilder->setParameter('StartOfMonth', $now->format('Y-m-01'));
-        $queryBuilder->setParameter('EndOfMonth', $now->format('Y-m-'.$now->getDaysInMonth()).' 23:59:59');
+        $queryBuilder->setParameter('Users', $users);
+        $queryBuilder->setParameter('States', $states);
+        $queryBuilder->setParameter('PeriodStart', $periodStart);
+        $queryBuilder->setParameter('PeriodEnd', $periodEnd);
 
         $result = $queryBuilder->getQuery()->getResult();
 

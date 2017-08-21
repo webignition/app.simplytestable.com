@@ -34,6 +34,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetTaskOutputByTypeDataProvider;
     use TaskRepositoryTestDataProviders\GetThroughputSinceDataProvider;
     use TaskRepositoryTestDataProviders\FindOutputByJobAndTypeDataProvider;
+    use TaskRepositoryTestDataProviders\GetCountByUsersAndStateForPeriodDataProvider;
 
     /**
      * @var TaskRepository
@@ -754,6 +755,55 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $retrievedRawTaskOutputs = $this->taskRepository->findOutputByJobAndType($selectedTask, $limit);
 
         $this->assertEquals($expectedRawTaskOutputs, $retrievedRawTaskOutputs);
+    }
+
+    /**
+     * @dataProvider getCountByUsersAndStatesForPeriodDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param \DateTime[] $taskEndDateTimeCollection
+     * @param string[] $userNames
+     * @param string[] $stateNames
+     * @param string $periodStart
+     * @param string $periodEnd
+     * @param int $expectedCount
+     */
+    public function testGetCountByUsersAndStatesForPeriod(
+        $jobValuesCollection,
+        $taskEndDateTimeCollection,
+        $userNames,
+        $stateNames,
+        $periodStart,
+        $periodEnd,
+        $expectedCount
+    ) {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $allUsers = $this->userFactory->createPublicPrivateAndTeamUserSet();
+        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $allUsers);
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+        $tasks = $this->getTasksFromJobCollection($jobs);
+
+        $taskFactory = new TaskFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskEndDateTimeCollection[$taskIndex])) {
+                $taskFactory->setEndDateTime($task, $taskEndDateTimeCollection[$taskIndex]);
+            }
+        }
+
+        $users = [];
+        foreach ($allUsers as $userIdentifier => $user) {
+            if (in_array($userIdentifier, $userNames)) {
+                $users[] = $user;
+            }
+        }
+
+        $states = $stateService->fetchCollection($stateNames);
+
+        $count = $this->taskRepository->getCountByUsersAndStatesForPeriod($users, $states, $periodStart, $periodEnd);
+
+        $this->assertEquals($expectedCount, $count);
     }
 
     /**

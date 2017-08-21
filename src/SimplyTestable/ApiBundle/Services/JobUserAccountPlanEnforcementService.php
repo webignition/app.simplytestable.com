@@ -161,7 +161,10 @@ class JobUserAccountPlanEnforcementService
      */
     public function getCreditsUsedThisMonth()
     {
-        return $this->taskService->getEntityRepository()->getCountByUsersAndStatesForCurrentMonth(
+        $startDateTime = new \DateTime('first day of this month');
+        $endDateTime = new \DateTime('last day of this month');
+
+        return $this->taskService->getEntityRepository()->getCountByUsersAndStatesForPeriod(
             $this->teamService->getPeopleForUser($this->user),
             [
                 $this->taskService->getCompletedState(),
@@ -169,7 +172,9 @@ class JobUserAccountPlanEnforcementService
                 $this->taskService->getFailedRetryAvailableState(),
                 $this->taskService->getFailedRetryLimitReachedState(),
                 $this->taskService->getSkippedState(),
-            ]
+            ],
+            $startDateTime->format('Y-m-01'),
+            $endDateTime->format('Y-m-d 23:59:59')
         );
     }
 
