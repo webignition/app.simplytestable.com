@@ -13,6 +13,20 @@ use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
 
 class TaskRepository extends EntityRepository
 {
+    const ISSUE_TYPE_ERROR = 'error';
+    const ISSUE_TYPE_WARNING = 'warning';
+
+    const FIELD_NAME_ERROR_COUNT = 'errorCount';
+    const FIELD_NAME_WARNING_COUNT = 'warningCount';
+
+    /**
+     * @var array
+     */
+    private $issueTypeToIssueCountFieldNameMap = [
+        self::ISSUE_TYPE_ERROR => self::FIELD_NAME_ERROR_COUNT,
+        self::ISSUE_TYPE_WARNING => self::FIELD_NAME_WARNING_COUNT,
+    ];
+
     /**
      * @param Job $job
      *
@@ -281,34 +295,14 @@ class TaskRepository extends EntityRepository
 
     /**
      * @param Job $job
+     * @param string $issueType
      * @param State[] $statesToExclude
-     *
      * @return int
      */
-    public function getCountWithErrorsByJob(Job $job, $statesToExclude)
+    public function getCountWithIssuesByJob($job, $issueType, $statesToExclude)
     {
-        return $this->getCountWithIssuesByJob($job, 'errorCount', $statesToExclude);
-    }
+        $fieldName = $this->issueTypeToIssueCountFieldNameMap[$issueType];
 
-    /**
-     * @param Job $job
-     * @param State[] $statesToExclude
-     *
-     * @return int
-     */
-    public function getCountWithWarningsByJob(Job $job, $statesToExclude)
-    {
-        return $this->getCountWithIssuesByJob($job, 'warningCount', $statesToExclude);
-    }
-
-    /**
-     * @param Job $job
-     * @param string $fieldName
-     * @param State[] $statesToExclude
-     * @return int
-     */
-    private function getCountWithIssuesByJob($job, $fieldName, $statesToExclude)
-    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('count(Task.id)');

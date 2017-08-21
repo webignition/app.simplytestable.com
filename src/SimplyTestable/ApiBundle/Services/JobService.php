@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Services;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
@@ -12,6 +11,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 
 class JobService extends EntityService
 {
@@ -334,14 +334,9 @@ class JobService extends EntityService
      *
      * @return int
      */
-    public function getErroredTaskCount(Job $job)
+    public function getCountOfTasksWithErrors(Job $job)
     {
-        $excludeStates = [
-            $this->taskService->getCancelledState(),
-            $this->taskService->getAwaitingCancellationState()
-        ];
-
-        return $this->taskService->getEntityRepository()->getCountWithErrorsByJob($job, $excludeStates);
+        return $this->getCountOfTasksWithIssues($job, TaskRepository::ISSUE_TYPE_ERROR);
     }
 
     /**
@@ -349,15 +344,31 @@ class JobService extends EntityService
      *
      * @return int
      */
-    public function getWarningedTaskCount(Job $job)
+    public function getCountOfTasksWithWarnings(Job $job)
     {
-        $excludeStates = [
+        return $this->getCountOfTasksWithIssues($job, TaskRepository::ISSUE_TYPE_WARNING);
+    }
+
+    /**
+     * @param Job $job
+     * @param string $issueType
+     *
+     * @return int
+     */
+    private function getCountOfTasksWithIssues(Job $job, $issueType)
+    {
+        $statesToExclude = [
             $this->taskService->getCancelledState(),
             $this->taskService->getAwaitingCancellationState()
         ];
 
-        return $this->taskService->getEntityRepository()->getCountWithWarningsByJob($job, $excludeStates);
+        return $this->taskService->getEntityRepository()->getCountWithIssuesByJob(
+            $job,
+            $issueType,
+            $statesToExclude
+        );
     }
+
 
     /**
      * @param Job $job
@@ -366,12 +377,13 @@ class JobService extends EntityService
      */
     public function getCancelledTaskCount(Job $job)
     {
-        $states = [
-            $this->taskService->getCancelledState(),
-            $this->taskService->getAwaitingCancellationState()
-        ];
-
-        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, $states);
+        return $this->taskService->getEntityRepository()->getCountByJobAndStates(
+            $job,
+            [
+                $this->taskService->getCancelledState(),
+                $this->taskService->getAwaitingCancellationState()
+            ]
+        );
     }
 
     /**
@@ -381,11 +393,9 @@ class JobService extends EntityService
      */
     public function getSkippedTaskCount(Job $job)
     {
-        $states = [
+        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, [
             $this->taskService->getSkippedState()
-        ];
-
-        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, $states);
+        ]);
     }
 
     /**

@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
@@ -713,6 +714,7 @@ class JobServiceTest extends BaseSimplyTestableTestCase
             JobService::RESOLVING_STATE,
             JobService::RESOLVED_STATE,
         ];
+
         $zeroTaskStates = [
             JobService::STARTING_STATE,
             JobService::RESOLVING_STATE,
@@ -720,7 +722,6 @@ class JobServiceTest extends BaseSimplyTestableTestCase
         ];
 
         $completedTasksStates = [
-            JobService::IN_PROGRESS_STATE,
             JobService::PREPARING_STATE,
             JobService::QUEUED_STATE,
         ];
@@ -874,6 +875,275 @@ class JobServiceTest extends BaseSimplyTestableTestCase
                 'user' => 'private',
                 'reason' => 'plan-constraint-limit-reached',
                 'constraintName' => 'credits_per_month',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCountOfTasksWithIssuesDataProvider
+     *
+     * @param array $jobValues
+     * @param array $taskOutputValuesCollection
+     * @param int $expectedCountOfTasksWithErrors
+     * @param int $expectedCountOfTasksWithWarnings
+     */
+    public function testGetCountOfTasksWithIssues(
+        $jobValues,
+        $taskOutputValuesCollection,
+        $expectedCountOfTasksWithErrors,
+        $expectedCountOfTasksWithWarnings
+    ) {
+        $userFactory = new UserFactory($this->container);
+        $users = $userFactory->createPublicAndPrivateUserSet();
+
+        if (isset($jobValues[JobFactory::KEY_USER])) {
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+        }
+
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+        $tasks = $job->getTasks()->toArray();
+
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $this->assertEquals(
+            $expectedCountOfTasksWithErrors,
+            $this->jobService->getCountOfTasksWithErrors($job)
+        );
+
+        $this->assertEquals(
+            $expectedCountOfTasksWithWarnings,
+            $this->jobService->getCountOfTasksWithWarnings($job)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getCountOfTasksWithIssuesDataProvider()
+    {
+        return [
+            'no output' => [
+                'jobValues' => [],
+                'taskOutputValuesCollection' => [],
+                'expectedCountOfTasksWithErrors' => 0,
+                'expectedCountOfTasksWithWarnings' => 0,
+            ],
+            'all tasks cancelled or awaiting cancellation' => [
+                'jobValues' => [
+                    JobFactory::KEY_TASK_STATES => [
+                        TaskService::CANCELLED_STATE,
+                        TaskService::CANCELLED_STATE,
+                        TaskService::AWAITING_CANCELLATION_STATE
+                    ],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
+                    ],
+                ],
+                'expectedCountOfTasksWithErrors' => 0,
+                'expectedCountOfTasksWithWarnings' => 0,
+            ],
+            'tasks have errors' => [
+                'jobValues' => [
+                    JobFactory::KEY_TASK_STATES => [
+                        TaskService::COMPLETED_STATE,
+                        TaskService::COMPLETED_STATE,
+                        TaskService::COMPLETED_STATE
+                    ],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 3,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 5,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 4,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_ERROR_COUNT => 0,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 3,
+                    ],
+                ],
+                'expectedCountOfTasksWithErrors' => 2,
+                'expectedCountOfTasksWithWarnings' => 3,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCancelledTaskCountDataProvider
+     *
+     * @param $jobValues
+     * @param $expectedCount
+     */
+    public function testGetCancelledTaskCount($jobValues, $expectedCount)
+    {
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+
+        $this->assertEquals(
+            $expectedCount,
+            $this->jobService->getCancelledTaskCount($job)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getCancelledTaskCountDataProvider()
+    {
+        return [
+            'no cancelled tasks' => [
+                'jobValues' => [],
+                'expectedCount' => 0,
+            ],
+            'has cancelled tasks' => [
+                'jobValues' => [
+                    JobFactory::KEY_TASK_STATES => [
+                        TaskService::AWAITING_CANCELLATION_STATE,
+                        TaskService::CANCELLED_STATE,
+                        TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'expectedCount' => 2,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getSkippedTaskCountDataProvider
+     *
+     * @param $jobValues
+     * @param $expectedCount
+     */
+    public function testGetSkippedTaskCount($jobValues, $expectedCount)
+    {
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+
+        $this->assertEquals(
+            $expectedCount,
+            $this->jobService->getSkippedTaskCount($job)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getSkippedTaskCountDataProvider()
+    {
+        return [
+            'no skipped tasks' => [
+                'jobValues' => [],
+                'expectedCount' => 0,
+            ],
+            'has skipped tasks' => [
+                'jobValues' => [
+                    JobFactory::KEY_TASK_STATES => [
+                        TaskService::CANCELLED_STATE,
+                        TaskService::TASK_SKIPPED_STATE,
+                        TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'expectedCount' => 1,
+            ],
+        ];
+    }
+
+    public function testGetFinishedStateNames()
+    {
+        $this->assertEquals(
+            [
+                JobService::REJECTED_STATE,
+                JobService::CANCELLED_STATE,
+                JobService::COMPLETED_STATE,
+                JobService::FAILED_NO_SITEMAP_STATE,
+            ],
+            $this->jobService->getFinishedStateNames()
+        );
+    }
+
+    /**
+     * @dataProvider getIsPublicDataProvider
+     *
+     * @param array $jobValues
+     * @param bool $callSetPublic
+     * @param bool $expectedIsPublic
+     */
+    public function testGetIsPublic($jobValues, $callSetPublic, $expectedIsPublic)
+    {
+        $userFactory = new UserFactory($this->container);
+
+        $users = $userFactory->createPublicPrivateAndTeamUserSet();
+
+        if (empty($jobValues)) {
+            $jobId = 1;
+        } else {
+            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+            $job = $this->jobFactory->create($jobValues);
+            $jobId = $job->getId();
+
+            if ($callSetPublic) {
+                $job->setIsPublic(true);
+
+                $jobService = $this->container->get('simplytestable.services.jobservice');
+                $jobService->persistAndFlush($job);
+            }
+        }
+
+        $isPublic = $this->jobService->getIsPublic($jobId);
+
+        $this->assertEquals($expectedIsPublic, $isPublic);
+    }
+
+    /**
+     * @return array
+     */
+    public function getIsPublicDataProvider()
+    {
+        return [
+            'no jobs' => [
+                'jobValues' => [],
+                'callSetPublic' => false,
+                'expectedIsPublic' => false,
+            ],
+            'public job is public' => [
+                'jobValues' => [
+                    JobFactory::KEY_USER => 'public',
+                ],
+                'callSetPublic' => false,
+                'expectedIsPublic' => true,
+            ],
+            'private job is not public' => [
+                'jobValuesCollection' => [
+                    JobFactory::KEY_USER => 'private',
+                ],
+                'callSetPublic' => false,
+                'expectedIsPublic' => false,
+            ],
+            'private job made public is not public' => [
+                'jobValuesCollection' => [
+                    JobFactory::KEY_USER => 'private',
+                ],
+                'callSetPublic' => true,
+                'expectedIsPublic' => true,
             ],
         ];
     }
