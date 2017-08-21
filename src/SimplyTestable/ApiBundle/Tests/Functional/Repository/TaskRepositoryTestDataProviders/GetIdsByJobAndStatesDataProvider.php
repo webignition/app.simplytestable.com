@@ -7,12 +7,12 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-trait GetIdsByJobAndTaskStatesDataProvider
+trait GetIdsByJobAndStatesDataProvider
 {
     /**
      * @return array
      */
-    public function getIdsByJobAndTaskStatesDataProvider()
+    public function getIdsByJobAndStatesDataProvider()
     {
         return [
             'job zero' => [
@@ -107,12 +107,12 @@ trait GetIdsByJobAndTaskStatesDataProvider
                     ],
                 ],
                 'jobIndex' => 0,
-                'limit' => 3,
+                'limit' => 2,
                 'taskStateNames' => [
                     TaskService::COMPLETED_STATE,
                     TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE
                 ],
-                'expectedTaskIds' => [0, 1, 2],
+                'expectedTaskIds' => [0, 1],
             ],
         ];
     }

@@ -24,7 +24,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetIdsByStateDataProvider;
     use TaskRepositoryTestDataProviders\GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider;
     use TaskRepositoryTestDataProviders\GetOutputCollectionByJobAndStateDataProvider;
-    use TaskRepositoryTestDataProviders\GetIdsByJobAndTaskStatesDataProvider;
+    use TaskRepositoryTestDataProviders\GetIdsByJobAndStatesDataProvider;
     use TaskRepositoryTestDataProviders\GetIdsByJobAndUrlExclusionSetDataProvider;
     use TaskRepositoryTestDataProviders\GetErroredCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetErrorCountByJobDataProvider;
@@ -370,7 +370,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     }
 
     /**
-     * @dataProvider getIdsByJobAndTaskStatesDataProvider
+     * @dataProvider getIdsByJobAndStatesDataProvider
      *
      * @param array $jobValuesCollection
      * @param int $jobIndex
@@ -378,7 +378,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
      * @param string[] $taskStateNames
      * @param int[] $expectedTaskIndices
      */
-    public function testGetIdsByJobAndTaskStates(
+    public function testGetIdsByJobAndStates(
         $jobValuesCollection,
         $jobIndex,
         $limit,
@@ -404,7 +404,7 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
 
         $states = $stateService->fetchCollection($taskStateNames);
 
-        $retrievedTaskIds = $this->taskRepository->getIdsByJobAndTaskStates($job, $states, $limit);
+        $retrievedTaskIds = $this->taskRepository->getIdsByJobAndStates($job, $states, $limit);
 
         $this->assertEquals($expectedTaskIds, $retrievedTaskIds);
     }

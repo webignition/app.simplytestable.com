@@ -162,14 +162,35 @@ class TaskRepository extends EntityRepository
      */
     public function getIdsByState(State $state)
     {
+        return $this->getIdsBy(
+            'Task.state = :State',
+            new ArrayCollection([
+                new Parameter('State', $state),
+            ])
+        );
+    }
+
+    /**
+     * @param string $wherePredicates
+     * @param ArrayCollection $parameters
+     *
+     * @return int[]
+     */
+    private function getIdsBy($wherePredicates, ArrayCollection $parameters, $limit = null)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task.id');
-        $queryBuilder->where('Task.state = :State');
-        $queryBuilder->setParameter('State', $state);
+        $queryBuilder->where($wherePredicates);
+        $queryBuilder->where($wherePredicates);
+        $queryBuilder->setParameters($parameters);
+
+        if (!empty($limit)) {
+            $queryBuilder->setMaxResults($limit);
+        }
 
         $result = $queryBuilder->getQuery()->getResult();
 
-        $taskIds = array();
+        $taskIds = [];
         foreach ($result as $taskId) {
             $taskIds[] = $taskId['id'];
         }
@@ -211,52 +232,31 @@ class TaskRepository extends EntityRepository
      */
     public function getIdsByJob(Job $job)
     {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->select('Task.id');
-        $queryBuilder->where('Task.job = :Job');
-        $queryBuilder->setParameter('Job', $job);
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        $taskIds = array();
-        foreach ($result as $taskId) {
-            $taskIds[] = $taskId['id'];
-        }
-
-        return $taskIds;
+        return $this->getIdsBy(
+            'Task.job = :Job',
+            new ArrayCollection([
+                new Parameter('Job', $job),
+            ])
+        );
     }
 
     /**
      * @param Job $job
-     * @param State[] $taskStates
+     * @param State[] $states
      * @param int $limit
      *
      * @return int[]
      */
-    public function getIdsByJobAndTaskStates(Job $job, $taskStates = [], $limit = 0)
+    public function getIdsByJobAndStates(Job $job, $states = [], $limit = 0)
     {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->select('Task.id');
-        $queryBuilder->where('Task.job = :Job');
-        $queryBuilder->setParameter('Job', $job);
-
-        if (count($taskStates)) {
-            $queryBuilder->andWhere('Task.state IN (:TaskStates)');
-            $queryBuilder->setParameter('TaskStates', $taskStates);
-        }
-
-        if ($limit > 0) {
-            $queryBuilder->setMaxResults($limit);
-        }
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        $taskIds = array();
-        foreach ($result as $taskId) {
-            $taskIds[] = $taskId['id'];
-        }
-
-        return $taskIds;
+        return $this->getIdsBy(
+            'Task.job = :Job AND Task.state IN (:State)',
+            new ArrayCollection([
+                new Parameter('Job', $job),
+                new Parameter('State', $states),
+            ]),
+            $limit
+        );
     }
 
     /**
@@ -267,34 +267,17 @@ class TaskRepository extends EntityRepository
      */
     public function getIdsByJobAndUrlExclusionSet(Job $job, $urlSet)
     {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->select('Task.id');
-
-        $urlParameterList = array();
-        foreach ($urlSet as $urlIndex => $url) {
-            $urlParameterList[] = ':Url' . $urlIndex.'';
-        }
-
         $wherePredicates = 'Task.job = :Job';
+        $parameters = new ArrayCollection([
+            new Parameter('Job', $job),
+        ]);
+
         if (!empty($urlSet)) {
-            $wherePredicates .= ' AND Task.url NOT IN ('.implode(', ', $urlParameterList).')';
+            $wherePredicates .= ' AND Task.url NOT IN (:UrlSet)';
+            $parameters->add(new Parameter('UrlSet', $urlSet));
         }
 
-        $queryBuilder->where($wherePredicates);
-
-        $queryBuilder->setParameter('Job', $job);
-        foreach ($urlSet as $urlIndex => $url) {
-            $queryBuilder->setParameter('Url' . $urlIndex, $url);
-        }
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        $taskIds = array();
-        foreach ($result as $taskId) {
-            $taskIds[] = $taskId['id'];
-        }
-
-        return $taskIds;
+        return $this->getIdsBy($wherePredicates, $parameters);
     }
 
     /**

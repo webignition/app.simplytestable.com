@@ -73,7 +73,7 @@ class QueueService
 
         $jobTaskIds = [];
         foreach ($incompleteJobsWithQueuedTasks as $job) {
-            $taskIdsForJob = $this->taskService->getEntityRepository()->getIdsByJobAndTaskStates(
+            $taskIdsForJob = $this->taskService->getEntityRepository()->getIdsByJobAndStates(
                 $job,
                 [$this->taskQueuedState],
                 $this->limit
