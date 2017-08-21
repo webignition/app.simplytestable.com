@@ -135,7 +135,7 @@ abstract class BaseJobController extends ApiController
 
         foreach ($taskStates as $taskState) {
             $taskStateShortName = str_replace('task-', '', $taskState->getName());
-            $taskCountByState[$taskStateShortName] = $taskRepository->getTaskCountByState($job, [$taskState]);
+            $taskCountByState[$taskStateShortName] = $taskRepository->getCountByJobAndStates($job, [$taskState]);
         }
 
         return $taskCountByState;

@@ -7,12 +7,12 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-trait GetTaskCountByStateDataProvider
+trait GetCountByJobAndStatesDataProvider
 {
     /**
      * @return array
      */
-    public function getTaskCountByStateDataProvider()
+    public function getCountByJobAndStatesDataProvider()
     {
         return [
             'first job' => [

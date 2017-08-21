@@ -271,7 +271,7 @@ class JobService extends EntityService
      */
     public function hasIncompleteTasks(Job $job)
     {
-        $incompleteTaskCount = $this->taskService->getEntityRepository()->getTaskCountByState(
+        $incompleteTaskCount = $this->taskService->getEntityRepository()->getCountByJobAndStates(
             $job,
             $this->taskService->getIncompleteStates()
         );
@@ -371,7 +371,7 @@ class JobService extends EntityService
             $this->taskService->getAwaitingCancellationState()
         ];
 
-        return $this->taskService->getEntityRepository()->getTaskCountByState($job, $states);
+        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, $states);
     }
 
     /**
@@ -385,7 +385,7 @@ class JobService extends EntityService
             $this->taskService->getSkippedState()
         ];
 
-        return $this->taskService->getEntityRepository()->getTaskCountByState($job, $states);
+        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, $states);
     }
 
     /**

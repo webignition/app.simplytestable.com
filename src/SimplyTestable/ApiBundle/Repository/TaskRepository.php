@@ -111,7 +111,7 @@ class TaskRepository extends EntityRepository
      *
      * @return int
      */
-    public function getTaskCountByState(Job $job, $states)
+    public function getCountByJobAndStates(Job $job, $states)
     {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('count(Task.id)');
