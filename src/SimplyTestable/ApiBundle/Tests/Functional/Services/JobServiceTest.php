@@ -988,4 +988,82 @@ class JobServiceTest extends BaseSimplyTestableTestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider getCancelledTaskCountDataProvider
+     *
+     * @param $jobValues
+     * @param $expectedCount
+     */
+    public function testGetCancelledTaskCount($jobValues, $expectedCount)
+    {
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+
+        $this->assertEquals(
+            $expectedCount,
+            $this->jobService->getCancelledTaskCount($job)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getCancelledTaskCountDataProvider()
+    {
+        return [
+            'no cancelled tasks' => [
+                'jobValues' => [],
+                'expectedCount' => 0,
+            ],
+            'has cancelled tasks' => [
+                'jobValues' => [
+                    JobFactory::KEY_TASK_STATES => [
+                        TaskService::AWAITING_CANCELLATION_STATE,
+                        TaskService::CANCELLED_STATE,
+                        TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'expectedCount' => 2,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getSkippedTaskCountDataProvider
+     *
+     * @param $jobValues
+     * @param $expectedCount
+     */
+    public function testGetSkippedTaskCount($jobValues, $expectedCount)
+    {
+        $job = $this->jobFactory->createResolveAndPrepare($jobValues);
+
+        $this->assertEquals(
+            $expectedCount,
+            $this->jobService->getCancelledTaskCount($job)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getSkippedTaskCountDataProvider()
+    {
+        return [
+            'no skipped tasks' => [
+                'jobValues' => [],
+                'expectedCount' => 0,
+            ],
+            'has skipped tasks' => [
+                'jobValues' => [
+                    JobFactory::KEY_TASK_STATES => [
+                        TaskService::CANCELLED_STATE,
+                        TaskService::TASK_SKIPPED_STATE,
+                        TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'expectedCount' => 1,
+            ],
+        ];
+    }
 }

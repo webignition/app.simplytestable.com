@@ -377,12 +377,13 @@ class JobService extends EntityService
      */
     public function getCancelledTaskCount(Job $job)
     {
-        $states = [
-            $this->taskService->getCancelledState(),
-            $this->taskService->getAwaitingCancellationState()
-        ];
-
-        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, $states);
+        return $this->taskService->getEntityRepository()->getCountByJobAndStates(
+            $job,
+            [
+                $this->taskService->getCancelledState(),
+                $this->taskService->getAwaitingCancellationState()
+            ]
+        );
     }
 
     /**
@@ -392,11 +393,9 @@ class JobService extends EntityService
      */
     public function getSkippedTaskCount(Job $job)
     {
-        $states = [
+        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, [
             $this->taskService->getSkippedState()
-        ];
-
-        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, $states);
+        ]);
     }
 
     /**
