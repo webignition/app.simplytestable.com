@@ -316,16 +316,35 @@ class TaskRepository extends EntityRepository
      */
     public function getErrorCountByJob(Job $job)
     {
+        return $this->getIssueCountByJob($job, 'errorCount');
+    }
+
+    /**
+     * @param Job $job
+     *
+     * @return int
+     */
+    public function getWarningCountByJob(Job $job)
+    {
+        return $this->getIssueCountByJob($job, 'warningCount');
+    }
+
+    /**
+     * @param Job $job
+     *
+     * @return int
+     */
+    private function getIssueCountByJob($job, $fieldName)
+    {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
-        $queryBuilder->select('sum(TaskOutput.errorCount)');
+        $queryBuilder->select(sprintf('sum(TaskOutput.%s)', $fieldName));
 
-        $where = 'Task.job = :Job AND TaskOutput.errorCount > :ErrorCount';
-
-        $queryBuilder->where($where);
-
+        $queryBuilder->where(sprintf(
+            'Task.job = :Job AND TaskOutput.%s > 0',
+            $fieldName
+        ));
         $queryBuilder->setParameter('Job', $job);
-        $queryBuilder->setParameter('ErrorCount', 0);
 
         $result = $queryBuilder->getQuery()->getResult();
 
@@ -355,29 +374,6 @@ class TaskRepository extends EntityRepository
 
         $queryBuilder->where($where);
         $queryBuilder->setParameter('Job', $job);
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        return (int)$result[0][1];
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return int
-     */
-    public function getWarningCountByJob(Job $job)
-    {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->join('Task.output', 'TaskOutput');
-        $queryBuilder->select('sum(TaskOutput.warningCount)');
-
-        $where = 'Task.job = :Job AND TaskOutput.warningCount > :WarningCount';
-
-        $queryBuilder->where($where);
-
-        $queryBuilder->setParameter('Job', $job);
-        $queryBuilder->setParameter('WarningCount', 0);
 
         $result = $queryBuilder->getQuery()->getResult();
 
