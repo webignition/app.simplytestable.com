@@ -285,24 +285,45 @@ class TaskRepository extends EntityRepository
      *
      * @return int
      */
-    public function getErroredCountByJob(Job $job, $statesToExclude)
+    public function getCountWithErrorsByJob(Job $job, $statesToExclude)
+    {
+        return $this->getCountWithIssuesByJob($job, 'errorCount', $statesToExclude);
+    }
+
+    /**
+     * @param Job $job
+     * @param State[] $statesToExclude
+     *
+     * @return int
+     */
+    public function getCountWithWarningsByJob(Job $job, $statesToExclude)
+    {
+        return $this->getCountWithIssuesByJob($job, 'warningCount', $statesToExclude);
+    }
+
+    /**
+     * @param Job $job
+     * @param string $fieldName
+     * @param State[] $statesToExclude
+     * @return int
+     */
+    private function getCountWithIssuesByJob($job, $fieldName, $statesToExclude)
     {
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->join('Task.output', 'TaskOutput');
         $queryBuilder->select('count(Task.id)');
 
-        $wherePredicates = 'Task.job = :Job AND TaskOutput.errorCount > 0';
-
-        $stateIndex = 0;
-        foreach ($statesToExclude as $state) {
-            $wherePredicates .= ' AND Task.state != :State' . $stateIndex;
-            $queryBuilder->setParameter('State'.$stateIndex, $state);
-            $stateIndex++;
+        $wherePredicates = sprintf('Task.job = :Job AND TaskOutput.%s > 0', $fieldName);
+        if (!empty($statesToExclude)) {
+            $wherePredicates .= ' AND Task.state NOT IN (:StatesToExclude)';
         }
 
         $queryBuilder->where($wherePredicates);
-
         $queryBuilder->setParameter('Job', $job);
+
+        if (!empty($statesToExclude)) {
+            $queryBuilder->setParameter('StatesToExclude', $statesToExclude);
+        }
 
         $result = $queryBuilder->getQuery()->getResult();
 
@@ -344,35 +365,6 @@ class TaskRepository extends EntityRepository
             'Task.job = :Job AND TaskOutput.%s > 0',
             $fieldName
         ));
-        $queryBuilder->setParameter('Job', $job);
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        return (int)$result[0][1];
-    }
-
-    /**
-     * @param Job $job
-     * @param State[] $statesToExclude
-     *
-     * @return int
-     */
-    public function getWarningedCountByJob(Job $job, $statesToExclude)
-    {
-        $queryBuilder = $this->createQueryBuilder('Task');
-        $queryBuilder->join('Task.output', 'TaskOutput');
-        $queryBuilder->select('count(Task.id)');
-
-        $where = 'Task.job = :Job AND TaskOutput.warningCount > 0';
-
-        $stateIndex = 0;
-        foreach ($statesToExclude as $state) {
-            $where .= ' AND Task.state != :State' . $stateIndex;
-            $queryBuilder->setParameter('State'.$stateIndex, $state);
-            $stateIndex++;
-        }
-
-        $queryBuilder->where($where);
         $queryBuilder->setParameter('Job', $job);
 
         $result = $queryBuilder->getQuery()->getResult();

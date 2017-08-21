@@ -6,12 +6,12 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
 
-trait GetErroredCountByJobDataProvider
+trait GetCountWithWarningsByJobDataProvider
 {
     /**
      * @return array
      */
-    public function getErroredCountByJobDataProvider()
+    public function getCountWithWarningsByJobDataProvider()
     {
         return [
             'job zero, no state exclusion' => [
@@ -25,29 +25,27 @@ trait GetErroredCountByJobDataProvider
                 ],
                 'taskOutputValuesCollection' => [
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 3,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 3,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 2,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 2,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 0,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 0,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 0,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 0,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                 ],
                 'jobIndex' => 0,
-                'stateNamesToExclude' => [
-
-                ],
-                'expectedErroredCount' => 3,
+                'stateNamesToExclude' => [],
+                'expectedCountWithWarnings' => 3,
             ],
             'job one, no state exclusion' => [
                 'jobValuesCollection' => [
@@ -60,29 +58,27 @@ trait GetErroredCountByJobDataProvider
                 ],
                 'taskOutputValuesCollection' => [
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 3,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 3,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 2,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 2,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 0,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 0,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 0,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 0,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                 ],
                 'jobIndex' => 1,
-                'stateNamesToExclude' => [
-
-                ],
-                'expectedErroredCount' => 1,
+                'stateNamesToExclude' => [],
+                'expectedCountWithWarnings' => 1,
             ],
             'job zero, with state exclusion' => [
                 'jobValuesCollection' => [
@@ -100,22 +96,22 @@ trait GetErroredCountByJobDataProvider
                 ],
                 'taskOutputValuesCollection' => [
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 3,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 3,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 2,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 2,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 0,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 0,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 0,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 0,
                     ],
                     [
-                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                 ],
                 'jobIndex' => 0,
@@ -123,7 +119,7 @@ trait GetErroredCountByJobDataProvider
                     TaskService::QUEUED_STATE,
                     TaskService::CANCELLED_STATE,
                 ],
-                'expectedErroredCount' => 1,
+                'expectedCountWithWarnings' => 1,
             ],
         ];
     }
