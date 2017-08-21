@@ -1066,4 +1066,17 @@ class JobServiceTest extends BaseSimplyTestableTestCase
             ],
         ];
     }
+
+    public function testGetFinishedStateNames()
+    {
+        $this->assertEquals(
+            [
+                JobService::REJECTED_STATE,
+                JobService::CANCELLED_STATE,
+                JobService::COMPLETED_STATE,
+                JobService::FAILED_NO_SITEMAP_STATE,
+            ],
+            $this->jobService->getFinishedStateNames()
+        );
+    }
 }
