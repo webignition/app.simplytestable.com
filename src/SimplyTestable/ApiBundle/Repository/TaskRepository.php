@@ -181,7 +181,6 @@ class TaskRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task.id');
         $queryBuilder->where($wherePredicates);
-        $queryBuilder->where($wherePredicates);
         $queryBuilder->setParameters($parameters);
 
         if (!empty($limit)) {
