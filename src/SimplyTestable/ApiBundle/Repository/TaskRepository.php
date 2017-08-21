@@ -352,6 +352,7 @@ class TaskRepository extends EntityRepository
 
     /**
      * @param Job $job
+     * @param string $fieldName
      *
      * @return int
      */
