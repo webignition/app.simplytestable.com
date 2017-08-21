@@ -43,7 +43,7 @@ class TasksController extends ApiController
             ]);
         }
 
-        $workerToken = $request->request->get('token');
+        $workerToken = $request->request->get('worker_token');
 
         if ($worker->getToken() !== $workerToken) {
             return $this->sendFailureResponse([

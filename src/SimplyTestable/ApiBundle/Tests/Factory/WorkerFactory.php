@@ -35,7 +35,7 @@ class WorkerFactory
         }
 
         if (!isset($workerValues[self::KEY_TOKEN])) {
-            $workerValues[self::KEY_TOKEN] = null;
+            $workerValues[self::KEY_TOKEN] = md5(microtime(true));
         }
 
         if (!isset($workerValues[self::KEY_STATE])) {

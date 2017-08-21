@@ -36,7 +36,7 @@ class IsSetTest extends CommandTest
         foreach ($this->workers as $worker) {
             $this->activationRequests[$worker->getHostname()] = $this->getWorkerActivationRequestService()->create(
                 $worker,
-                $worker->getHostname() . '.activation-token'
+                $worker->getToken()
             );
         }
 

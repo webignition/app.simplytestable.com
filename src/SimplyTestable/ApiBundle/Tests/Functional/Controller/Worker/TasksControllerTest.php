@@ -161,7 +161,7 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
             [],
             [
                 'worker_hostname' => $worker->getHostname(),
-                'worker_token' => 'foo',
+                'worker_token' => 'bar',
             ]
         );
         $tasksController = $this->createTasksController($request);
