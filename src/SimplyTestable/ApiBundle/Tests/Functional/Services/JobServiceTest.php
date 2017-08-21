@@ -1040,7 +1040,7 @@ class JobServiceTest extends BaseSimplyTestableTestCase
 
         $this->assertEquals(
             $expectedCount,
-            $this->jobService->getCancelledTaskCount($job)
+            $this->jobService->getSkippedTaskCount($job)
         );
     }
 
