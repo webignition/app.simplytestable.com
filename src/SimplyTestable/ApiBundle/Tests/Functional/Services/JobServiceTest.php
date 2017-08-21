@@ -880,14 +880,19 @@ class JobServiceTest extends BaseSimplyTestableTestCase
     }
 
     /**
-     * @dataProvider getCountOfTasksWithErrorsDataProvider
+     * @dataProvider getCountOfTasksWithIssuesDataProvider
      *
-     * @param $jobValues
-     * @param $taskOutputValuesCollection
-     * @param $expectedCount
+     * @param array $jobValues
+     * @param array $taskOutputValuesCollection
+     * @param int $expectedCountOfTasksWithErrors
+     * @param int $expectedCountOfTasksWithWarnings
      */
-    public function testGetCountOfTasksWithErrors($jobValues, $taskOutputValuesCollection, $expectedCount)
-    {
+    public function testGetCountOfTasksWithIssues(
+        $jobValues,
+        $taskOutputValuesCollection,
+        $expectedCountOfTasksWithErrors,
+        $expectedCountOfTasksWithWarnings
+    ) {
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
 
@@ -909,21 +914,27 @@ class JobServiceTest extends BaseSimplyTestableTestCase
         }
 
         $this->assertEquals(
-            $expectedCount,
+            $expectedCountOfTasksWithErrors,
             $this->jobService->getCountOfTasksWithErrors($job)
+        );
+
+        $this->assertEquals(
+            $expectedCountOfTasksWithWarnings,
+            $this->jobService->getCountOfTasksWithWarnings($job)
         );
     }
 
     /**
      * @return array
      */
-    public function getCountOfTasksWithErrorsDataProvider()
+    public function getCountOfTasksWithIssuesDataProvider()
     {
         return [
             'no output' => [
                 'jobValues' => [],
                 'taskOutputValuesCollection' => [],
-                'expectedCount' => 0,
+                'expectedCountOfTasksWithErrors' => 0,
+                'expectedCountOfTasksWithWarnings' => 0,
             ],
             'all tasks cancelled or awaiting cancellation' => [
                 'jobValues' => [
@@ -936,15 +947,19 @@ class JobServiceTest extends BaseSimplyTestableTestCase
                 'taskOutputValuesCollection' => [
                     [
                         TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                     [
                         TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                     [
                         TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                 ],
-                'expectedCount' => 0,
+                'expectedCountOfTasksWithErrors' => 0,
+                'expectedCountOfTasksWithWarnings' => 0,
             ],
             'tasks have errors' => [
                 'jobValues' => [
@@ -957,15 +972,19 @@ class JobServiceTest extends BaseSimplyTestableTestCase
                 'taskOutputValuesCollection' => [
                     [
                         TaskOutputFactory::KEY_ERROR_COUNT => 3,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 5,
                     ],
                     [
                         TaskOutputFactory::KEY_ERROR_COUNT => 4,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 1,
                     ],
                     [
                         TaskOutputFactory::KEY_ERROR_COUNT => 0,
+                        TaskOutputFactory::KEY_WARNING_COUNT => 3,
                     ],
                 ],
-                'expectedCount' => 2,
+                'expectedCountOfTasksWithErrors' => 2,
+                'expectedCountOfTasksWithWarnings' => 3,
             ],
         ];
     }

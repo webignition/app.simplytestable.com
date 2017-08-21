@@ -65,7 +65,7 @@ abstract class BaseJobController extends ApiController
             'errored_task_count' => $jobService->getCountOfTasksWithErrors($job),
             'cancelled_task_count' => $jobService->getCancelledTaskCount($job),
             'skipped_task_count' => $jobService->getSkippedTaskCount($job),
-            'warninged_task_count' => $jobService->getWarningedTaskCount($job),
+            'warninged_task_count' => $jobService->getCountOfTasksWithWarnings($job),
             'task_type_options' => $jobTaskTypeOptions,
             'type' => $job->getPublicSerializedType(),
             'is_public' => $isPublic,
