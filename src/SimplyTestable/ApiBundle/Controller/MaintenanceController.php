@@ -6,8 +6,9 @@ use SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand;
 use SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand;
 use SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand;
 use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
-use SimplyTestable\ApiBundle\Command\Task\Assign\SelectedCommand as AssignSelectedCommand;
 use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
+use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
+use SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -48,7 +49,8 @@ class MaintenanceController extends ApiController
         $commands = [
             DisableReadOnlyCommand::class,
             EnqueuePrepareAllCommand::class,
-            AssignSelectedCommand::class,
+            RequeueQueuedForAssignmentCommand::class,
+            TaskNotificationCommand::class,
             EnqueueCancellationForAwaitingCancellationCommand::class,
         ];
 

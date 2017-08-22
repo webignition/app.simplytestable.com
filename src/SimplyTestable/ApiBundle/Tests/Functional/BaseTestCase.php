@@ -8,7 +8,6 @@ use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
 use SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand;
 use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
-use SimplyTestable\ApiBundle\Command\Task\Assign\SelectedCommand;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -64,7 +63,6 @@ abstract class BaseTestCase extends WebTestCase
             new DisableReadOnlyCommand(),
             new EnableReadOnlyCommand(),
             new PrepareCommand(),
-            new SelectedCommand(),
             new CollectionCommand(),
             new ResolveWebsiteCommand()
         ), $this->getAdditionalCommands());
