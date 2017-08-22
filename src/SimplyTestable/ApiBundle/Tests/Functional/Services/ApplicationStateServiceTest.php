@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
+use phpmock\functions\FixedValueFunction;
+use phpmock\MockBuilder;
 use phpmock\mockery\PHPMockery;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -21,41 +23,6 @@ class ApplicationStateServiceTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-    }
-
-    public function testSetStateResourceWriteFailure()
-    {
-        PHPMockery::mock(
-            'SimplyTestable\ApiBundle\Services',
-            'file_put_contents'
-        )->andReturn(
-            false
-        );
-
-        $returnValue = $this->applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-
-        $this->assertFalse($returnValue);
-
-        \Mockery::close();
-    }
-
-    public function testGetStateInvalidState()
-    {
-        PHPMockery::mock(
-            'SimplyTestable\ApiBundle\Services',
-            'file_get_contents'
-        )->andReturn(
-            'foo'
-        );
-
-        $state = $this->applicationStateService->getState();
-
-        $this->assertEquals(
-            ApplicationStateService::DEFAULT_STATE,
-            $state
-        );
-
-        \Mockery::close();
     }
 
     /**
