@@ -45,6 +45,7 @@ class CancelCommandTest extends BaseTest
         $this->assertReturnCode(-3, array(
             'id' => 1
         ));
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');
     }
 
     public function testCancelValidTaskReturnsStatusCode0()

@@ -45,6 +45,7 @@ class ExceptionCasesTest extends CommandTest
         $this->assertReturnCode(2, array(
             'id' => 1
         ));
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');
     }
 
     public function testHttpClientErrorPerformingResolution()

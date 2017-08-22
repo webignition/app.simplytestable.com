@@ -50,6 +50,8 @@ class WorkerActivateVerifyCommandTest extends BaseSimplyTestableTestCase
             WorkerActivateVerifyCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
             $returnCode
         );
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
     /**

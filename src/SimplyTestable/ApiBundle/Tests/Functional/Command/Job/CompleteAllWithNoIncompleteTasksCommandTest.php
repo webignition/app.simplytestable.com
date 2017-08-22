@@ -54,6 +54,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');
         $this->assertReturnCode(self::RETURN_CODE_IN_MAINTENANCE_MODE);
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');
     }
 
     public function testWithNoJobs()

@@ -49,6 +49,8 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase
         ]), new BufferedOutput());
 
         $this->assertEquals(PrepareCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
     public function testRunWithJobInWrongState()
