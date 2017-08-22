@@ -120,14 +120,6 @@ class ApplicationStateService
     }
 
     /**
-     * @param string $stateResourcePath
-     */
-    public function setStateResourcePath($stateResourcePath)
-    {
-        $this->stateResourcePath = $stateResourcePath;
-    }
-
-    /**
      * @param string $state
      * @return boolean
      */

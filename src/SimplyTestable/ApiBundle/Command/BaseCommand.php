@@ -40,7 +40,6 @@ abstract class BaseCommand extends ContainerAwareCommand
             $this->applicationStateService = $this->getContainer()->get(
                 'simplytestable.services.applicationStateService'
             );
-            $this->applicationStateService->setStateResourcePath($this->getStateResourcePath());
         }
 
         return $this->applicationStateService;

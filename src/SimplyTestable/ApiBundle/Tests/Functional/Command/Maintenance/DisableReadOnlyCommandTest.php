@@ -41,7 +41,6 @@ class DisableReadOnlyCommandTest extends ConsoleCommandTestCase {
      */
     protected function getApplicationStateService() {
         $applicationStateService = $this->container->get('simplytestable.services.applicationStateService');
-        $applicationStateService->setStateResourcePath($this->getStateResourcePath());
 
         return $applicationStateService;
     }

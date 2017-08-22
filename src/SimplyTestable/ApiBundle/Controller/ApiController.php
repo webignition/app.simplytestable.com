@@ -270,7 +270,6 @@ abstract class ApiController extends Controller
     protected function getApplicationStateService() {
         if (is_null($this->applicationStateService)) {
             $this->applicationStateService = $this->get('simplytestable.services.applicationStateService');
-            $this->applicationStateService->setStateResourcePath($this->getStateResourcePath());
         }
 
         return $this->applicationStateService;
