@@ -30,6 +30,8 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
 
         $response = $tasksController->requestAction($request);
         $this->assertEquals(503, $response->getStatusCode());
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
     public function testRequest()

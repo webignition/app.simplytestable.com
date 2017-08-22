@@ -54,6 +54,8 @@ class CollectionCommandTest extends BaseSimplyTestableTestCase
         ]), new BufferedOutput());
 
         $this->assertEquals(-1, $returnCode);
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
     public function testRunWithNoWorkers()

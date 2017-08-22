@@ -9,6 +9,7 @@ class CancelCollectionCommandTest extends BaseTest {
         $this->assertReturnCode(1, array(
             'ids' => implode(',', array(1,2,3))
         ));
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');
     }
 
 }

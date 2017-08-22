@@ -42,6 +42,8 @@ class RequeueQueuedForAssignmentCommandTest extends BaseSimplyTestableTestCase
             RequeueQueuedForAssignmentCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
             $returnCode
         );
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
     public function testRunInMaintenanceBackupReadOnlyMode()
@@ -56,6 +58,8 @@ class RequeueQueuedForAssignmentCommandTest extends BaseSimplyTestableTestCase
             RequeueQueuedForAssignmentCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
             $returnCode
         );
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
     /**

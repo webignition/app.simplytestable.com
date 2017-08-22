@@ -43,6 +43,8 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
         $response = $this->jobController->cancelAction('foo', 1);
         $this->assertEquals(503, $response->getStatusCode());
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
     /**

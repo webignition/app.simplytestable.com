@@ -26,4 +26,9 @@ class MaintenanceModeTest extends WithoutScheduledJobTest {
             'id' => $this->getScheduledJobId()
         ]));
     }
+
+    protected function tearDown()
+    {
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');
+    }
 }

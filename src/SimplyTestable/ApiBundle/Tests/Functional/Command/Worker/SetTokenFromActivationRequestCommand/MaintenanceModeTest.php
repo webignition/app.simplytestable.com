@@ -7,6 +7,7 @@ class MaintenanceModeTest extends CommandTest {
     public function testReturnCode() {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');
         $this->assertEquals(1, $this->executeCommand($this->getCommandName()));
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');
     }
 
 }

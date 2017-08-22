@@ -49,7 +49,6 @@ abstract class BaseTestCase extends WebTestCase
             $this->application->add($command);
         }
 
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
         $this->container->get('doctrine')->getConnection()->beginTransaction();
     }
 
@@ -181,11 +180,11 @@ abstract class BaseTestCase extends WebTestCase
         return $path;
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         parent::tearDown();
 
-//        $this->container->get('doctrine')->getConnection()->close();
+        $this->container->get('doctrine')->getConnection()->close();
 
         $refl = new \ReflectionObject($this);
         foreach ($refl->getProperties() as $prop) {

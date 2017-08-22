@@ -28,6 +28,7 @@ class MigrateNormaliseJsLintOutputCommandTest extends ConsoleCommandTestCase {
     public function testRunCommandInMaintenanceReadOnlyModeReturnsStatusCode1() {
         $this->executeCommand('simplytestable:maintenance:enable-read-only');
         $this->assertReturnCode(1);
+        $this->executeCommand('simplytestable:maintenance:disable-read-only');
     }
 
 }
