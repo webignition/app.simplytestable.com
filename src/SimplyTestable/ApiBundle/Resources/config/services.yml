@@ -422,3 +422,8 @@ services:
     arguments:
       teamService: '@simplytestable.services.teamservice'
       entityManager: '@doctrine.orm.entity_manager'
+
+  simplytestable.services.resourcelocator:
+    class:  SimplyTestable\ApiBundle\Services\ResourceLocator
+    arguments:
+      kernel: '@kernel'
