@@ -31,8 +31,6 @@ class ContainerFactory
     public static function createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
     {
         $applicationStateService = \Mockery::mock(ApplicationStateService::class);
-        $applicationStateService
-            ->shouldReceive('setStateResourcePath');
 
         $applicationStateService
             ->shouldReceive('isInMaintenanceReadOnlyState')
@@ -52,7 +50,7 @@ class ContainerFactory
             ->andReturn('test');
 
         return static::create([
-            'simplytestable.services.applicationStateService' => $applicationStateService,
+            'simplytestable.services.applicationstateservice' => $applicationStateService,
             'kernel' => $kernel,
         ]);
     }
