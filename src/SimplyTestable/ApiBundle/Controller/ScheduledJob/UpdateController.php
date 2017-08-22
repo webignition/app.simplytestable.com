@@ -20,13 +20,15 @@ class UpdateController extends ScheduledJobController {
     private $request;
 
     public function updateAction(Request $request, $id) {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+
         $this->request = $request;
 
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 
-        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 

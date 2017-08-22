@@ -25,7 +25,9 @@ class ResolveWebsiteCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
+
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 

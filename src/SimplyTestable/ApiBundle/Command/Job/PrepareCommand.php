@@ -33,7 +33,7 @@ class PrepareCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getApplicationStateService();
+        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
         $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
         $logger = $this->getContainer()->get('logger');

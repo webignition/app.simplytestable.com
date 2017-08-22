@@ -14,7 +14,7 @@ class SetTokenFromActivationRequestCommand extends BaseCommand {
 
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
-    
+
     protected function configure()
     {
         $this
@@ -24,8 +24,10 @@ class SetTokenFromActivationRequestCommand extends BaseCommand {
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
-    {         
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+    {
+        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
+
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
@@ -41,21 +43,21 @@ class SetTokenFromActivationRequestCommand extends BaseCommand {
 
         return self::RETURN_CODE_OK;
     }
-    
-    
+
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\WorkerService
      */
     private function getWorkerService() {
         return $this->getContainer()->get('simplytestable.services.workerservice');
-    }  
-    
+    }
+
 
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
-     */    
+     */
     private function getWorkerActivationRequestService() {
         return $this->getContainer()->get('simplytestable.services.workeractivationrequestservice');
     }

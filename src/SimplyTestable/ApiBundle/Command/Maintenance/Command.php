@@ -13,7 +13,9 @@ abstract class Command extends BaseCommand
 
     protected function setState(OutputInterface $output, $state)
     {
-        if ($this->getApplicationStateService()->setState($state)) {
+        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
+
+        if ($applicationStateService->setState($state)) {
             $output->writeln('Set application state to "'.$state.'"');
             return 0;
         }

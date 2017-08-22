@@ -32,8 +32,10 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $isInMaintenanceReadOnlyState = $this->getApplicationStateService()->isInMaintenanceReadOnlyState();
-        $isInMaintenanceBackupReadOnlyState = $this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState();
+        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
+
+        $isInMaintenanceReadOnlyState = $applicationStateService->isInMaintenanceReadOnlyState();
+        $isInMaintenanceBackupReadOnlyState = $applicationStateService->isInMaintenanceBackupReadOnlyState();
 
         $isInReadOnlyState = $isInMaintenanceReadOnlyState || $isInMaintenanceBackupReadOnlyState;
 

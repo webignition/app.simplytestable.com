@@ -19,6 +19,7 @@ class StatusController extends ApiController
         $taskService = $this->container->get('simplytestable.services.taskservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
 
         $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
 
@@ -34,7 +35,7 @@ class StatusController extends ApiController
         }
 
         return $this->sendResponse([
-            'state' => $this->getApplicationStateService()->getState(),
+            'state' => $applicationStateService->getState(),
             'workers' => $workerSummary,
             'version' => $this->getLatestGitHash(),
             'task_throughput_per_minute' => $taskService->getEntityRepository()->getThroughputSince(

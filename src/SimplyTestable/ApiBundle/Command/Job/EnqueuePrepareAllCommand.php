@@ -35,13 +35,14 @@ class EnqueuePrepareAllCommand extends BaseCommand
         $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
         $stateService = $this->getContainer()->get('simplytestable.services.stateservice');
         $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
 
         /* @var JobRepository $jobRepository */
         $jobRepository = $entityManager->getRepository(Job::class);
 
         $jobStartingState = $stateService->fetch(JobService::STARTING_STATE);
 
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
