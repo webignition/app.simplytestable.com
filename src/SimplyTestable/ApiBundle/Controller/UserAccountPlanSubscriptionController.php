@@ -15,11 +15,13 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
 
     public function subscribeAction($email_canonical, $plan_name)
     {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 
-        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 
@@ -61,7 +63,9 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
     }
 
     public function associateCardAction($email_canonical, $stripe_card_token) {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 

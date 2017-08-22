@@ -205,8 +205,10 @@ class JobController extends BaseJobController
      */
     public function cancelAction($site_root_url, $test_id)
     {
-        $isInMaintenanceReadOnlyState = $this->getApplicationStateService()->isInMaintenanceReadOnlyState();
-        $isInMaintenanceBackupReadOnlyState = $this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState();
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+
+        $isInMaintenanceReadOnlyState = $applicationStateService->isInMaintenanceReadOnlyState();
+        $isInMaintenanceBackupReadOnlyState = $applicationStateService->isInMaintenanceBackupReadOnlyState();
 
         if ($isInMaintenanceReadOnlyState || $isInMaintenanceBackupReadOnlyState) {
             return $this->sendServiceUnavailableResponse();

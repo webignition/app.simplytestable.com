@@ -29,11 +29,13 @@ class UserCreationController extends AbstractUserController
 
     public function createAction()
     {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 
-        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 
@@ -92,11 +94,13 @@ class UserCreationController extends AbstractUserController
 
 
     public function activateAction($token = null) {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 
-        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 

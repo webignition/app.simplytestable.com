@@ -32,7 +32,9 @@ class ExecuteCommand extends BaseCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
+
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             if (!$this->getResqueQueueService()->contains('scheduled-job', ['id' => (int)$input->getArgument('id')])) {
                 $this->getResqueQueueService()->enqueue(
                     $this->getResqueQueueService()->getJobFactoryService()->create(

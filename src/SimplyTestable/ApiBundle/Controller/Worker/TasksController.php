@@ -11,11 +11,13 @@ class TasksController extends ApiController
 {
     public function requestAction(Request $request)
     {
-        if ($this->getApplicationStateService()->isInMaintenanceReadOnlyState()) {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+
+        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 
-        if ($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState()) {
+        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 

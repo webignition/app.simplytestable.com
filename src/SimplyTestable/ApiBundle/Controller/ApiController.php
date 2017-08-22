@@ -36,13 +36,6 @@ abstract class ApiController extends Controller
 
     /**
      *
-     * @var \SimplyTestable\ApiBundle\Services\ApplicationStateServic
-     */
-    private $applicationStateService;
-
-
-    /**
-     *
      * @return \SimplyTestable\ApiBundle\Services\UserService
      */
     protected function getUserService() {
@@ -260,32 +253,5 @@ abstract class ApiController extends Controller
      */
     protected function getRequestValues($httpMethod = \Guzzle\Http\Message\Request::GET) {
         return ($httpMethod == \Guzzle\Http\Message\Request::POST) ? $this->container->get('request')->request : $this->container->get('request')->query;
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\ApplicationStateService
-     */
-    protected function getApplicationStateService() {
-        if (is_null($this->applicationStateService)) {
-            $this->applicationStateService = $this->get('simplytestable.services.applicationStateService');
-            $this->applicationStateService->setStateResourcePath($this->getStateResourcePath());
-        }
-
-        return $this->applicationStateService;
-    }
-
-
-    /**
-     *
-     * @return string
-     */
-    private function getStateResourcePath() {
-        return $this
-                ->container
-                ->get('kernel')
-                ->locateResource('@SimplyTestableApiBundle/Resources/config/state/')
-            . $this->get('kernel')->getEnvironment();
     }
 }

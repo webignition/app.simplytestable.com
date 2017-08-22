@@ -28,31 +28,11 @@ class DisableReadOnlyCommandTest extends ConsoleCommandTestCase {
     }
 
     public function testDisableReadOnly() {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+
         $this->assertReturnCode(0);
-        $this->assertEquals('active', $this->getApplicationStateService()->getState());
-        $this->assertTrue($this->getApplicationStateService()->isInActiveState());
-        $this->assertFalse($this->getApplicationStateService()->isInMaintenanceReadOnlyState());
+        $this->assertEquals('active', $applicationStateService->getState());
+        $this->assertTrue($applicationStateService->isInActiveState());
+        $this->assertFalse($applicationStateService->isInMaintenanceReadOnlyState());
     }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\ApplicationStateService
-     */
-    protected function getApplicationStateService() {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationStateService');
-        $applicationStateService->setStateResourcePath($this->getStateResourcePath());
-
-        return $applicationStateService;
-    }
-
-
-    /**
-     *
-     * @return string
-     */
-    private function getStateResourcePath() {
-        return $this->container->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config/state') . self::STATE_FILE_RELATIVE_PATH;
-    }
-
 }
