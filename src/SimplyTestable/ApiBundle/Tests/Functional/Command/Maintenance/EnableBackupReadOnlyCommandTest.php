@@ -28,31 +28,12 @@ class EnableBackupReadOnlyCommandTest extends ConsoleCommandTestCase {
     }
 
     public function testEnableBackupReadOnly() {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+
         $this->assertReturnCode(0);
-        $this->assertEquals('maintenance-backup-read-only', $this->getApplicationStateService()->getState());
-        $this->assertFalse($this->getApplicationStateService()->isInActiveState());
-        $this->assertFalse($this->getApplicationStateService()->isInMaintenanceReadOnlyState());
-        $this->assertTrue($this->getApplicationStateService()->isInMaintenanceBackupReadOnlyState());
+        $this->assertEquals('maintenance-backup-read-only', $applicationStateService->getState());
+        $this->assertFalse($applicationStateService->isInActiveState());
+        $this->assertFalse($applicationStateService->isInMaintenanceReadOnlyState());
+        $this->assertTrue($applicationStateService->isInMaintenanceBackupReadOnlyState());
     }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\ApplicationStateService
-     */
-    protected function getApplicationStateService() {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationStateService');
-
-        return $applicationStateService;
-    }
-
-
-    /**
-     *
-     * @return string
-     */
-    private function getStateResourcePath() {
-        return $this->container->get('kernel')->locateResource('@SimplyTestableApiBundle/Resources/config/state') . self::STATE_FILE_RELATIVE_PATH;
-    }
-
 }
