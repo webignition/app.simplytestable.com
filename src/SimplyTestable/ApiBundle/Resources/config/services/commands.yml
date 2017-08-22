@@ -1,0 +1,5 @@
+services:
+  simplytestable.command.cron.run:
+    class:  SimplyTestable\ApiBundle\Command\Cron\RunCommand
+    tags:
+      - { name: console.command }
