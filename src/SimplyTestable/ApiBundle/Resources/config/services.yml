@@ -143,6 +143,9 @@ services:
 
   simplytestable.services.applicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
+    arguments:
+      resourceLocator: '@simplytestable.services.resourcelocator'
+      kernel: '@kernel'
 
   simplytestable.services.accountPlanService:
     class:   SimplyTestable\ApiBundle\Services\AccountPlanService
