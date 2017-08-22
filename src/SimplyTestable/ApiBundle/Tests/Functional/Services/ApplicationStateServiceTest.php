@@ -37,6 +37,8 @@ class ApplicationStateServiceTest extends BaseSimplyTestableTestCase
 
         $this->assertTrue($returnValue);
         $this->assertEquals($expectedState, $this->applicationStateService->getState());
+
+        $this->applicationStateService->setState(ApplicationStateService::DEFAULT_STATE);
     }
 
     /**
@@ -100,6 +102,8 @@ class ApplicationStateServiceTest extends BaseSimplyTestableTestCase
             $expectedIsInMaintenanceBackupReadOnlyState,
             $this->applicationStateService->isInMaintenanceBackupReadOnlyState()
         );
+
+        $this->applicationStateService->setState(ApplicationStateService::DEFAULT_STATE);
     }
 
     /**
