@@ -1,3 +1,6 @@
+imports:
+    - { resource: services/commands.yml }
+
 services:
   simplytestable.session.handler:
     class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
