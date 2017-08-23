@@ -28,7 +28,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       resqueQueueService: '@simplytestable.services.resque.queueservice'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactoryservice'
+      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       jobService: '@simplytestable.services.jobservice'
       jobPreparationService: '@simplytestable.services.jobpreparationservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
