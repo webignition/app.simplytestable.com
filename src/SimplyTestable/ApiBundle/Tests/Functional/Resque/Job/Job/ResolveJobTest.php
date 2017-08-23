@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\Job;
 
-use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
+use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -24,7 +24,7 @@ class ResolveJobTest extends BaseSimplyTestableTestCase
 
         $maintenanceController->disableReadOnlyAction();
 
-        $this->assertEquals(PrepareCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
+        $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
     }
 
     /**
