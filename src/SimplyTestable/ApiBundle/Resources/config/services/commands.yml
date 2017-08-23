@@ -3,3 +3,11 @@ services:
     class:  SimplyTestable\ApiBundle\Command\Cron\RunCommand
     tags:
       - { name: console.command }
+
+  simplytestable.command.job.completealwithnoincompletetasks:
+    class:  SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      jobService: '@simplytestable.services.jobservice'
+    tags:
+      - { name: console.command }
