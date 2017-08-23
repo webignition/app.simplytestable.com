@@ -28,7 +28,7 @@ class WebHookController extends ApiController {
         $stripeEvent = $this->getStripeEventService()->create($stripeId, $requestData->type, $requestData->livemode, $requestBody, $user);
 
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
 
         $resqueQueueService->enqueue(
             $resqueJobFactory->create(

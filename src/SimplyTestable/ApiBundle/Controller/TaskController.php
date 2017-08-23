@@ -35,7 +35,7 @@ class TaskController extends ApiController
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
 
         $completeRequest = $this->container->get('simplytestable.services.request.factory.task.complete')->create();
         if (!$completeRequest->isValid()) {

@@ -20,7 +20,7 @@ class EnqueueCommand extends BaseCommand {
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
+        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactory');
 
         $startNotice = 'simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] start';
 

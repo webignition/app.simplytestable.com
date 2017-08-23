@@ -35,26 +35,26 @@ class QueueService
     private $logger;
 
     /**
-     * @var JobFactoryService
+     * @var JobFactory
      */
-    private $jobFactoryService;
+    private $jobFactory;
 
     /**
      * @param Resque $resque
      * @param string $environment
      * @param LoggerInterface $logger
-     * @param JobFactoryService $jobFactoryService
+     * @param JobFactory $jobFactoryService
      */
     public function __construct(
         Resque $resque,
         $environment = 'prod',
         LoggerInterface $logger,
-        JobFactoryService $jobFactoryService
+        JobFactory $jobFactoryService
     ) {
         $this->resque = $resque;
         $this->environment = $environment;
         $this->logger = $logger;
-        $this->jobFactoryService = $jobFactoryService;
+        $this->jobFactory = $jobFactoryService;
     }
 
     /**
@@ -105,7 +105,7 @@ class QueueService
      */
     private function match(ResqueJob $job, $queue, $args)
     {
-        if (!$this->jobFactoryService->getJobClassName($queue) == $job->job->payload['class']) {
+        if (!$this->jobFactory->getJobClassName($queue) == $job->job->payload['class']) {
             return false;
         }
 
@@ -176,13 +176,5 @@ class QueueService
     public function getResque()
     {
         return $this->resque;
-    }
-
-    /**
-     * @return JobFactoryService
-     */
-    public function getJobFactoryService()
-    {
-        return $this->jobFactoryService;
     }
 }

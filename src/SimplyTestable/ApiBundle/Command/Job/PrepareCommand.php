@@ -35,7 +35,7 @@ class PrepareCommand extends BaseCommand
     {
         $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
         $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
+        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactory');
         $logger = $this->getContainer()->get('logger');
         $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
         $jobPreparationService = $this->getContainer()->get('simplytestable.services.jobpreparationservice');

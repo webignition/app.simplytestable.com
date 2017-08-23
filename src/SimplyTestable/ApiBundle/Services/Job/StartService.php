@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
     as UserAccountPlanEnforcementException;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -52,6 +53,11 @@ class StartService
     private $userAccountPlanService;
 
     /**
+     * @var ResqueJobFactory
+     */
+    private $resqueJobFactory;
+
+    /**
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param JobTypeService $jobTypeService
      * @param JobService $jobService
@@ -59,6 +65,7 @@ class StartService
      * @param ResqueQueueService $resqueQueueService
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
+     * @param ResqueJobFactory $resqueJobFactory
      */
     public function __construct(
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
@@ -67,7 +74,8 @@ class StartService
         UserService $userService,
         ResqueQueueService $resqueQueueService,
         StateService $stateService,
-        UserAccountPlanService $userAccountPlanService
+        UserAccountPlanService $userAccountPlanService,
+        ResqueJobFactory $resqueJobFactory
     ) {
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->jobTypeService = $jobTypeService;
@@ -76,6 +84,7 @@ class StartService
         $this->resqueQueueService = $resqueQueueService;
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
+        $this->resqueJobFactory = $resqueJobFactory;
     }
 
     /**
@@ -158,7 +167,7 @@ class StartService
         }
 
         $this->resqueQueueService->enqueue(
-            $this->resqueQueueService->getJobFactoryService()->create(
+            $this->resqueJobFactory->create(
                 'job-resolve',
                 ['id' => $job->getId()]
             )

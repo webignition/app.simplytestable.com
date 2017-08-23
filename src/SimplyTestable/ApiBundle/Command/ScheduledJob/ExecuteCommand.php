@@ -36,7 +36,7 @@ class ExecuteCommand extends BaseCommand
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
-            $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
+            $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactory');
 
             if (!$resqueQueueService->contains('scheduled-job', ['id' => (int)$input->getArgument('id')])) {
                 $resqueQueueService->enqueue(

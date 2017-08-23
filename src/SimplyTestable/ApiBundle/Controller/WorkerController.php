@@ -42,7 +42,7 @@ class WorkerController extends ApiController
         }
 
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
 
         $worker = $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname'));
         if ($this->getWorkerRequestActivationService()->has($worker)) {

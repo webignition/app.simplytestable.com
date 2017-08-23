@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Command\Job;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactoryService as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use Symfony\Component\Console\Command\Command;

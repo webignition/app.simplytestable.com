@@ -91,7 +91,7 @@ class CollectionCommand extends BaseCommand
         }
 
         $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueService');
-        $resqueJobFactoryService = $this->getContainer()->get('simplytestable.services.resque.jobFactoryService');
+        $resqueJobFactoryService = $this->getContainer()->get('simplytestable.services.resque.jobFactory');
 
         if (count($workers) === 0) {
             $this->getLogger()->error("TaskAssignCollectionCommand::execute: Cannot assign, no workers.");

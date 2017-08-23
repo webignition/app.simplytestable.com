@@ -32,7 +32,7 @@ class ResolveWebsiteCommand extends BaseCommand
         }
 
         $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
+        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactory');
 
         $job = $this->getJobService()->getById((int)$input->getArgument('id'));
 

@@ -4,7 +4,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Resque\QueueService
 
 class ArgsTest extends ServiceTest {
 
-    private $args = ['1,2,3'];
+    private $args = [
+        'ids' => ['1,2,3'],
+    ];
 
     protected function getCreateQueueName() {
         return 'task-assign-collection';

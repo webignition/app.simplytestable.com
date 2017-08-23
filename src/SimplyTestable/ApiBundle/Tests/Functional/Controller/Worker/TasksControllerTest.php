@@ -229,7 +229,7 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
         $jobFactory = new JobFactory($this->container);
 
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
