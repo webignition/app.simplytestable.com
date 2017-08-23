@@ -4,6 +4,17 @@ services:
     tags:
       - { name: console.command }
 
+  simplytestable.command.job.enqueueprepareall:
+    class:  SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand
+    arguments:
+      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueJobFactory: '@simplytestable.services.resque.jobfactoryservice'
+      stateService: '@simplytestable.services.stateservice'
+      entityManager: '@doctrine.orm.entity_manager'
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+    tags:
+      - { name: console.command }
+
   simplytestable.command.job.completealwithnoincompletetasks:
     class:  SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand
     arguments:
