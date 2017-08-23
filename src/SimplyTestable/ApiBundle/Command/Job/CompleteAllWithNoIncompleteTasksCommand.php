@@ -1,21 +1,46 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Job;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CompleteAllWithNoIncompleteTasksCommand extends BaseCommand
+class CompleteAllWithNoIncompleteTasksCommand extends Command
 {
+    const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
     const RETURN_CODE_NO_MATCHING_JOBS = 2;
 
     /**
-     * @var InputInterface
+     * @var ApplicationStateService
      */
-    protected $input;
+    private $applicationStateService;
+
+    /**
+     * @var JobService
+     */
+    private $jobService;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param JobService $jobService
+     * @param string $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        JobService $jobService,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->jobService = $jobService;
+    }
 
     /**
      * {@inheritdoc}
@@ -29,7 +54,8 @@ class CompleteAllWithNoIncompleteTasksCommand extends BaseCommand
                 'dry-run',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'Run through the process without writing any data'
+                'Run through the process without writing any data',
+                false
             )
         ;
     }
@@ -39,35 +65,22 @@ class CompleteAllWithNoIncompleteTasksCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $this->input = $input;
+        $isDryRun = filter_var($input->getOption('dry-run'), FILTER_VALIDATE_BOOLEAN);
 
-        if ($this->isDryRun()) {
+        if ($isDryRun) {
             $output->writeln('<comment>This is a DRY RUN, no data will be written</comment>');
         }
 
         $output->write('Finding matching jobs (unfinished with more than zero tasks all finished) ... ');
 
-        $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
+        $jobs = $this->jobService->getUnfinishedJobsWithTasksAndNoIncompleteTasks();
+        $jobs = $this->removeCrawlJobsFromJobCollection($jobs);
 
-        $jobs = $jobService->getUnfinishedJobsWithTasksAndNoIncompleteTasks();
-
-        // Exclude crawl jobs
-        $jobTypeService = $this->getContainer()->get('simplytestable.services.jobtypeservice');
-        $crawlJobType = $jobTypeService->getByName(JobTypeService::CRAWL_NAME);
-
-        foreach ($jobs as $jobIndex => $job) {
-            if ($job->getType() === $crawlJobType) {
-                unset($jobs[$jobIndex]);
-            }
-        }
-
-        if (count($jobs) === 0) {
+        if (empty($jobs)) {
             $output->writeln('None found. Done.');
 
             return self::RETURN_CODE_NO_MATCHING_JOBS;
@@ -79,19 +92,27 @@ class CompleteAllWithNoIncompleteTasksCommand extends BaseCommand
         foreach ($jobs as $job) {
             $output->writeln('['.$job->getId().'] ');
 
-            if ($this->isDryRun() === false) {
-                $jobService->complete($job);
+            if (false === $isDryRun) {
+                $this->jobService->complete($job);
             }
         }
 
-        return 0;
+        return self::RETURN_CODE_OK;
     }
 
     /**
-     * @return int
+     * @param Job[] $jobs
+     *
+     * @return Job[] $jobs
      */
-    protected function isDryRun()
+    private function removeCrawlJobsFromJobCollection($jobs)
     {
-        return $this->input->getOption('dry-run') == 'true';
+        foreach ($jobs as $jobIndex => $job) {
+            if (JobTypeService::CRAWL_NAME === $job->getType()->getName()) {
+                unset($jobs[$jobIndex]);
+            }
+        }
+
+        return $jobs;
     }
 }

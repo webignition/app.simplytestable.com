@@ -3,24 +3,32 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
-use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
-use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
+class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTestCase
 {
-    const RETURN_CODE_DONE = 0;
-    const RETURN_CODE_IN_MAINTENANCE_MODE = 1;
-    const RETURN_CODE_NO_MATCHING_JOBS = 2;
+    /**
+     * @var CompleteAllWithNoIncompleteTasksCommand
+     */
+    private $command;
 
     /**
      * @var JobFactory
      */
     private $jobFactory;
+
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
     /**
      * {@inheritdoc}
@@ -29,168 +37,240 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends ConsoleCommandTestCase
     {
         parent::setUp();
 
+        $this->command = $this->container->get('simplytestable.command.job.completealwithnoincompletetasks');
         $this->jobFactory = new JobFactory($this->container);
+        $this->userFactory = new UserFactory($this->container);
     }
 
-    /**
-     * @return string
-     */
-    protected function getCommandName()
+    public function testRunInMaintenanceReadOnlyMode()
     {
-        return 'simplytestable:job:complete-all-with-no-incomplete-tasks';
-    }
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->enableReadOnlyAction();
 
-    /**
-     * @return ContainerAwareCommand[]
-     */
-    protected function getAdditionalCommands()
-    {
-        return array(
-            new CompleteAllWithNoIncompleteTasksCommand()
+        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
+
+        $this->assertEquals(
+            CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
+            $returnCode
         );
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
-    public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1()
-    {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
-        $this->assertReturnCode(self::RETURN_CODE_IN_MAINTENANCE_MODE);
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
-    }
-
-    public function testWithNoJobs()
-    {
-        $this->assertReturnCode(self::RETURN_CODE_NO_MATCHING_JOBS);
-    }
-
-    public function testWithOnlyCrawlJobs()
-    {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-
+    /**
+     * @dataProvider runDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param int[] $crawlJobIndices
+     * @param array $commandInput
+     * @param int $expectedReturnCode
+     * @param string[] $expectedJobStateNames
+     */
+    public function testRun(
+        $jobValuesCollection,
+        $crawlJobIndices,
+        $commandInput,
+        $expectedReturnCode,
+        $expectedJobStateNames
+    ) {
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
-        $crawlJobType = $jobTypeService->getByName(JobTypeService::CRAWL_NAME);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $job = $this->jobFactory->createResolveAndPrepare();
-        $job->setType($crawlJobType);
-        $this->setJobTasksCompleted($job);
+        $users = $this->userFactory->createPublicAndPrivateUserSet();
 
-        $this->getJobService()->persistAndFlush($job);
-
-        $this->assertReturnCode(self::RETURN_CODE_NO_MATCHING_JOBS);
-    }
-
-    public function testWithSingleJobWithIncompleteTasks()
-    {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
-
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-
-        $job = $this->jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
-        ]);
-
-        $job->setState($jobInProgressState);
-        $this->getJobService()->persistAndFlush($job);
-
-        $this->assertReturnCode(self::RETURN_CODE_NO_MATCHING_JOBS);
-        $this->assertEquals(JobService::IN_PROGRESS_STATE, $job->getState()->getName());
-    }
-
-    public function testWithSingleJobWithNoIncompleteTasks()
-    {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
-
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $this->jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
-        ]);
-
-        foreach ($job->getTasks() as $task) {
-            $task->setState($this->getTaskService()->getCompletedState());
-        }
-
-        $job->setState($jobInProgressState);
-        $this->getJobService()->persistAndFlush($job);
-
-        $this->assertReturnCode(self::RETURN_CODE_DONE);
-        $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
-    }
-
-    public function testWithCollectionOfJobsWithNoIncompleteTasks()
-    {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-
-        /* @var Job[] $jobs */
-        $jobs = [];
-
-        $jobs[] = $this->jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
-        ], [
-            'prepare' => [
-                HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                HttpFixtureFactory::createStandardSitemapResponse('one.example.com'),
-            ],
-        ]);
-
-        $jobs[] = $this->jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com/',
-        ], [
-            'prepare' => [
-                HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                HttpFixtureFactory::createStandardSitemapResponse('two.example.com'),
-            ],
-        ]);
-
-        foreach ($jobs as $job) {
-            $this->setJobTasksCompleted($job);
-        }
-
-        $this->assertReturnCode(self::RETURN_CODE_DONE);
-
-        foreach ($jobs as $job) {
-            $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
-        }
-    }
-
-    public function testWithCollectionOfJobsSomeWithIncompleteTasksAndSomeWithout()
-    {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-
-        /* @var Job[] $jobs */
-        $jobs = array();
-
-        $jobs[] = $this->jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://one.example.com/',
-        ], [
-            'prepare' => [
-                HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                HttpFixtureFactory::createStandardSitemapResponse('one.example.com'),
-            ],
-        ]);
-
-        $jobs[] = $this->jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://two.example.com/',
-        ], [
-            'prepare' => [
-                HttpFixtureFactory::createStandardRobotsTxtResponse(),
-                HttpFixtureFactory::createStandardSitemapResponse('two.example.com'),
-            ],
-        ]);
-
-        foreach ($jobs[1]->getTasks() as $task) {
-            $task->setState($this->getTaskService()->getCompletedState());
-        }
-        $this->getJobService()->persistAndFlush($jobs[1]);
-
-        $this->assertReturnCode(self::RETURN_CODE_DONE);
-
-        foreach ($jobs as $jobIndex => $job) {
-            if ($jobIndex === 0) {
-                $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
-            } else {
-                $this->assertEquals(JobService::COMPLETED_STATE, $job->getState()->getName());
+        foreach ($jobValuesCollection as $jobValuesIndex => $jobValues) {
+            if (isset($jobValues[JobFactory::KEY_USER])) {
+                $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
+                $jobValuesCollection[$jobValuesIndex] = $jobValues;
             }
         }
+
+        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+
+        $crawlJobType = $jobTypeService->getByName(JobTypeService::CRAWL_NAME);
+
+        foreach ($jobs as $jobIndex => $job) {
+            if (in_array($jobIndex, $crawlJobIndices)) {
+                $job->setType($crawlJobType);
+                $entityManager->persist($job);
+                $entityManager->flush();
+            }
+        }
+
+        $returnCode = $this->command->run(new ArrayInput($commandInput), new BufferedOutput());
+
+        $this->assertEquals($expectedReturnCode, $returnCode);
+
+        foreach ($jobs as $jobIndex => $job) {
+            $expectedStateName = $expectedJobStateNames[$jobIndex];
+            $this->assertEquals($expectedStateName, $job->getState()->getName());
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function runDataProvider()
+    {
+        return [
+            'no jobs' => [
+                'jobValuesCollection' => [],
+                'crawlJobIndices' => [],
+                'commandInput' => [],
+                'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_NO_MATCHING_JOBS,
+                'expectedJobStateNames' => [],
+            ],
+            'jobs with only incomplete tasks' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::IN_PROGRESS_STATE,
+                        ],
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::QUEUED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::IN_PROGRESS_STATE,
+                        ],
+                    ],
+                ],
+                'crawlJobIndices' => [],
+                'commandInput' => [],
+                'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_NO_MATCHING_JOBS,
+                'expectedJobStateNames' => [
+                    JobService::QUEUED_STATE,
+                    JobService::QUEUED_STATE,
+                ],
+            ],
+            'jobs with all mixed complete and incomplete tasks' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::TASK_SKIPPED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::IN_PROGRESS_STATE,
+                        ],
+                    ],
+                ],
+                'crawlJobIndices' => [],
+                'commandInput' => [],
+                'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_NO_MATCHING_JOBS,
+                'expectedJobStateNames' => [
+                    JobService::QUEUED_STATE,
+                    JobService::QUEUED_STATE,
+                ],
+            ],
+            'jobs with some all-complete tasks' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::TASK_SKIPPED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::IN_PROGRESS_STATE,
+                        ],
+                    ],
+                ],
+                'crawlJobIndices' => [],
+                'commandInput' => [],
+                'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_OK,
+                'expectedJobStateNames' => [
+                    JobService::COMPLETED_STATE,
+                    JobService::QUEUED_STATE,
+                ],
+            ],
+            'jobs with some all-complete tasks, dry-run' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::TASK_SKIPPED_STATE,
+                            TaskService::QUEUED_STATE,
+                            TaskService::IN_PROGRESS_STATE,
+                        ],
+                    ],
+                ],
+                'crawlJobIndices' => [],
+                'commandInput' => [
+                    '--dry-run' => true,
+                ],
+                'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_OK,
+                'expectedJobStateNames' => [
+                    JobService::QUEUED_STATE,
+                    JobService::QUEUED_STATE,
+                ],
+            ],
+            'jobs with some all-complete tasks and with crawl jobs' => [
+                'jobValuesCollection' => [
+                    [
+                        JobFactory::KEY_USER => 'public',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',
+                        JobFactory::KEY_DOMAIN => 'foo.example.com',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
+                    ],
+                    [
+                        JobFactory::KEY_USER => 'private',
+                        JobFactory::KEY_SITE_ROOT_URL => 'http://bar.example.com',
+                        JobFactory::KEY_DOMAIN => 'bar.example.com',
+                        JobFactory::KEY_TASK_STATES => [
+                            TaskService::COMPLETED_STATE,
+                            TaskService::COMPLETED_STATE,
+                            TaskService::CANCELLED_STATE,
+                        ],
+                    ],
+                ],
+                'crawlJobIndices' => [1],
+                'commandInput' => [],
+                'expectedReturnCode' => CompleteAllWithNoIncompleteTasksCommand::RETURN_CODE_OK,
+                'expectedJobStateNames' => [
+                    JobService::COMPLETED_STATE,
+                    JobService::QUEUED_STATE,
+                    JobService::COMPLETED_STATE,
+                ],
+            ],
+        ];
     }
 }
