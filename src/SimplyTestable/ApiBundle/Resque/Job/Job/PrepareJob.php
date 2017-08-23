@@ -5,25 +5,41 @@ namespace SimplyTestable\ApiBundle\Resque\Job\Job;
 use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
 
-class PrepareJob extends CommandJob {
-    
+class PrepareJob extends CommandJob
+{
     const QUEUE_NAME = 'job-prepare';
 
-    protected function getQueueName() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getQueueName()
+    {
         return self::QUEUE_NAME;
     }
 
-    public function getCommand() {
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommand()
+    {
         return new PrepareCommand();
     }
 
-    protected function getCommandArgs() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCommandArgs()
+    {
         return [
             'id' => $this->args['id']
         ];
     }
 
-    protected function getIdentifier() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getIdentifier()
+    {
         return $this->args['id'];
     }
 }
