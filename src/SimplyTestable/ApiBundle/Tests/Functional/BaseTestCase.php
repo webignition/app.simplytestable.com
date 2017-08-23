@@ -3,7 +3,6 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand;
-use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
 use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
 use SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand;
 use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
@@ -61,7 +60,6 @@ abstract class BaseTestCase extends WebTestCase
             new LoadDataFixturesDoctrineCommand(),
             new DisableReadOnlyCommand(),
             new EnableReadOnlyCommand(),
-            new PrepareCommand(),
             new CollectionCommand(),
             new ResolveWebsiteCommand()
         ), $this->getAdditionalCommands());
