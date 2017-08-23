@@ -9,6 +9,18 @@ services:
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Job\PrepareJob
             requiredArgs:
               - id
+            serviceIds:
+              - simplytestable.services.applicationstateservice
+              - simplytestable.services.resque.queueservice
+              - simplytestable.services.resque.jobfactory
+              - simplytestable.services.jobservice
+              - simplytestable.services.jobpreparationservice
+              - simplytestable.services.crawljobcontainerservice
+              - logger
+            parameters:
+              predefinedDomainsToIgnore:
+                css-validation: '%css-validation-domains-to-ignore%'
+                js-static-analysis: '%js-static-analysis-domains-to-ignore%'
           job-resolve:
             queue: job-resolve
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob
