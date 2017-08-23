@@ -3,9 +3,6 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Guzzle\Http\Exception\CurlException;
-use SimplyTestable\ApiBundle\Controller\Job\JobController;
-use SimplyTestable\ApiBundle\Controller\Job\JobListController;
-use SimplyTestable\ApiBundle\Controller\Job\StartController as JobStartController;
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController as JobConfigurationCreateController;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController as StripeWebHookController;
 use SimplyTestable\ApiBundle\Controller\TeamInviteController;
@@ -22,7 +19,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
-use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
@@ -30,12 +26,8 @@ use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobRejectionReasonService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
-use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactoryService;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
-use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
@@ -48,7 +40,6 @@ use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
-use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Tests\Factory\ControllerFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\BrowserKit\Cookie;
@@ -72,7 +63,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     const JOBCONFIGURATION_CREATE_CONTROLLER_NAME = JobConfigurationCreateController::class;
 
     const DEFAULT_CANONICAL_URL = 'http://example.com/';
-    const DEFAULT_REQUIRED_SITEMAP_XML_URL_COUNT = 3;
 
     private $requiredSitemapXmlUrlCount = null;
 
@@ -81,14 +71,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         parent::setUp();
         $this->clearRedis();
         $this->requiredSitemapXmlUrlCount = null;
-    }
-
-    public function createPublicUserAccountPlan()
-    {
-        $user = $this->getUserService()->getPublicUser();
-        $plan = $this->getAccountPlanService()->find('public');
-
-        $this->getUserAccountPlanService()->subscribe($user, $plan);
     }
 
     /**
@@ -350,22 +332,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return JobUserAccountPlanEnforcementService
-     */
-    protected function getJobUserAccountPlanEnforcementService()
-    {
-        return $this->container->get('simplytestable.services.jobuseraccountplanenforcementservice');
-    }
-
-    /**
-     * @return WorkerService
-     */
-    protected function getWorkerService()
-    {
-        return $this->container->get('simplytestable.services.workerservice');
-    }
-
-    /**
      * @return TestUserService
      */
     protected function getUserService()
@@ -395,14 +361,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getTaskService()
     {
         return $this->container->get('simplytestable.services.taskservice');
-    }
-
-    /**
-     * @return TaskQueueService
-     */
-    protected function getTaskQueueService()
-    {
-        return $this->container->get('simplytestable.services.task.queueService');
     }
 
     /**
@@ -461,45 +419,13 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return $this->container->get('simplytestable.services.stripeeventservice');
     }
 
-    protected function createPublicUserIfMissing()
-    {
-        if (!$this->getUserService()->exists('public@simplytestable.com')) {
-            $user = new User();
-            $user->setEmail('public@simplytestable.com');
-            $user->setPlainPassword('public');
-            $user->setUsername('public');
-
-            $userManager = $this->container->get('fos_user.user_manager');
-            $userManager->updateUser($user);
-
-            $manipulator = $this->container->get('fos_user.util.user_manipulator');
-            $manipulator->activate($user->getUsername());
-        }
-    }
-
-    protected function createAdminUserIfMissing()
-    {
-        if (!$this->getUserService()->exists('admin@simplytestable.com')) {
-            $user = new User();
-            $user->setEmail($this->container->getParameter('admin_user_email'));
-            $user->setPlainPassword($this->container->getParameter('admin_user_password'));
-            $user->setUsername('admin');
-            $user->addRole('role_admin');
-
-            $userManager = $this->container->get('fos_user.user_manager');
-            $userManager->updateUser($user);
-
-            $manipulator = $this->container->get('fos_user.util.user_manipulator');
-            $manipulator->activate($user->getUsername());
-        }
-    }
-
     /**
      * @param string $name
      *
      * @return Plan
      */
-    protected function createAccountPlan($name = null) {
+    protected function createAccountPlan($name = null)
+    {
         if (is_null($name)) {
             $name = 'test-foo-plan';
         }
