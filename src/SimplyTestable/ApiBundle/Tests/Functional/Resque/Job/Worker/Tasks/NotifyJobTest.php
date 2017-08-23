@@ -3,42 +3,19 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\Worker\Tasks;
 
 use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\AbstractJobTest;
 
-class NotifyJobTest extends BaseSimplyTestableTestCase
+class NotifyJobTest extends AbstractJobTest
 {
     const QUEUE = 'tasks-notify';
 
     public function testRun()
     {
-        $job = $this->createJob(1);
+        $job = $this->createJob([], self::QUEUE);
+        $this->assertInstanceOf(NotifyJob::class, $job);
 
         $returnCode = $job->run([]);
 
         $this->assertEquals(true, $returnCode);
-    }
-
-    /**
-     * @param int $jobId
-     *
-     * @return NotifyJob
-     */
-    private function createJob($jobId)
-    {
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-
-        $job = $resqueJobFactory->create(
-            self::QUEUE,
-            [
-                'id' =>  $jobId,
-            ]
-        );
-
-        $job->setKernelOptions([
-            'kernel.root_dir' => $this->container->getParameter('kernel.root_dir'),
-            'kernel.environment' => $this->container->getParameter('kernel.environment'),
-        ]);
-
-        return $job;
     }
 }

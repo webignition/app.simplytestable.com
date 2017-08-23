@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\Job;
 use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\AbstractJobTest;
 
-class ResolveJobTest extends BaseSimplyTestableTestCase
+class ResolveJobTest extends AbstractJobTest
 {
     const QUEUE = 'job-resolve';
 
@@ -18,36 +18,13 @@ class ResolveJobTest extends BaseSimplyTestableTestCase
 
         $maintenanceController->enableReadOnlyAction();
 
-        $job = $this->createJob(1);
+        $job = $this->createJob(['id' => 1], self::QUEUE);
+        $this->assertInstanceOf(ResolveJob::class, $job);
 
         $returnCode = $job->run([]);
 
         $maintenanceController->disableReadOnlyAction();
 
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
-    }
-
-    /**
-     * @param int $jobId
-     *
-     * @return ResolveJob
-     */
-    private function createJob($jobId)
-    {
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-
-        $job = $resqueJobFactory->create(
-            self::QUEUE,
-            [
-                'id' =>  $jobId,
-            ]
-        );
-
-        $job->setKernelOptions([
-            'kernel.root_dir' => $this->container->getParameter('kernel.root_dir'),
-            'kernel.environment' => $this->container->getParameter('kernel.environment'),
-        ]);
-
-        return $job;
     }
 }

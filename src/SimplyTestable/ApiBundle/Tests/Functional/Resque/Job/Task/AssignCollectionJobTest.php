@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\Task;
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\AbstractJobTest;
 
-class AssignCollectionJobTest extends BaseSimplyTestableTestCase
+class AssignCollectionJobTest extends AbstractJobTest
 {
     const QUEUE = 'task-assign-collection';
 
@@ -23,7 +23,8 @@ class AssignCollectionJobTest extends BaseSimplyTestableTestCase
 
         $maintenanceController->enableReadOnlyAction();
 
-        $job = $this->createJob($args);
+        $job = $this->createJob($args, self::QUEUE);
+        $this->assertInstanceOf(AssignCollectionJob::class, $job);
 
         $returnCode = $job->run([]);
 
@@ -50,27 +51,5 @@ class AssignCollectionJobTest extends BaseSimplyTestableTestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @param array $args
-     *
-     * @return AssignCollectionJob
-     */
-    private function createJob($args)
-    {
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-
-        $job = $resqueJobFactory->create(
-            self::QUEUE,
-            $args
-        );
-
-        $job->setKernelOptions([
-            'kernel.root_dir' => $this->container->getParameter('kernel.root_dir'),
-            'kernel.environment' => $this->container->getParameter('kernel.environment'),
-        ]);
-
-        return $job;
     }
 }

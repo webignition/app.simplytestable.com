@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\Task;
 use SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\AbstractJobTest;
 
-class CancelCollectionJobTest extends BaseSimplyTestableTestCase
+class CancelCollectionJobTest extends AbstractJobTest
 {
     const QUEUE = 'task-cancel-collection';
 
@@ -18,36 +18,13 @@ class CancelCollectionJobTest extends BaseSimplyTestableTestCase
 
         $maintenanceController->enableReadOnlyAction();
 
-        $job = $this->createJob('1,2,3');
+        $job = $this->createJob(['ids' => '1,2,3'], self::QUEUE);
+        $this->assertInstanceOf(CancelCollectionJob::class, $job);
 
         $returnCode = $job->run([]);
 
         $maintenanceController->disableReadOnlyAction();
 
         $this->assertEquals(CollectionCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
-    }
-
-    /**
-     * @param string $ids
-     *
-     * @return CancelCollectionJob
-     */
-    private function createJob($ids)
-    {
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-
-        $job = $resqueJobFactory->create(
-            self::QUEUE,
-            [
-                'ids' =>  $ids,
-            ]
-        );
-
-        $job->setKernelOptions([
-            'kernel.root_dir' => $this->container->getParameter('kernel.root_dir'),
-            'kernel.environment' => $this->container->getParameter('kernel.environment'),
-        ]);
-
-        return $job;
     }
 }
