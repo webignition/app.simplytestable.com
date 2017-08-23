@@ -5,7 +5,6 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Resque\Job\Job;
 use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Resque\Job\Job\PrepareJob;
-use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 class PrepareJobTest extends BaseSimplyTestableTestCase
@@ -19,10 +18,7 @@ class PrepareJobTest extends BaseSimplyTestableTestCase
 
         $maintenanceController->enableReadOnlyAction();
 
-        $jobFactory = new JobFactory($this->container);
-        $job = $jobFactory->create();
-
-        $jobPrepareJob = $this->createJobPrepareJob($job->getId());
+        $jobPrepareJob = $this->createJobPrepareJob(1);
 
         $returnCode = $jobPrepareJob->run([]);
 
