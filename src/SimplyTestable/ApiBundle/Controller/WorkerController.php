@@ -41,6 +41,9 @@ class WorkerController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+
         $worker = $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname'));
         if ($this->getWorkerRequestActivationService()->has($worker)) {
             $activationRequest = $this->getWorkerRequestActivationService()->fetch($worker);
@@ -60,8 +63,8 @@ class WorkerController extends ApiController
         $this->getWorkerRequestActivationService()->persistAndFlush($activationRequest);
 
 
-        $this->getResqueQueueService()->enqueue(
-            $this->getResqueJobFactoryService()->create(
+        $resqueQueueService->enqueue(
+            $resqueJobFactory->create(
                 'worker-activate-verify',
                 ['id' => $activationRequest->getWorker()->getId()]
             )
@@ -102,26 +105,4 @@ class WorkerController extends ApiController
     private function getWorkerRequestActivationService() {
         return $this->container->get('simplytestable.services.workeractivationrequestservice');
     }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
-     */
-    private function getResqueQueueService() {
-        return $this->container->get('simplytestable.services.resque.queueService');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
-     */
-    private function getResqueJobFactoryService() {
-        return $this->container->get('simplytestable.services.resque.jobFactoryService');
-    }
-
-
-
-
 }

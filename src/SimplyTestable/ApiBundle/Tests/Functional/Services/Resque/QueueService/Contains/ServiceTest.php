@@ -16,8 +16,11 @@ abstract class ServiceTest extends BaseServiceTest {
 
         $this->clearRedis();
 
-        $this->getResqueQueueService()->enqueue(
-            $this->getResqueJobFactoryService()->create(
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+
+        $resqueQueueService->enqueue(
+            $resqueJobFactory->create(
                 $this->getCreateQueueName(),
                 $this->getCreateArgs()
             )

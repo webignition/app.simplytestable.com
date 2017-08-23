@@ -42,7 +42,9 @@ class ActionTest extends BaseActionTest {
     }
 
     public function testJobResolveResqueJobIsInQueue() {
-        $this->assertTrue($this->getResqueQueueService()->contains(
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+
+        $this->assertTrue($resqueQueueService->contains(
             'job-resolve',
             ['id' => $this->jobId]
         ));

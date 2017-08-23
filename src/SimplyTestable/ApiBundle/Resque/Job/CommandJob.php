@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -9,7 +10,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 abstract class CommandJob extends Job
 {
     /**
-     * @return ContainerAwareCommand
+     * @return Command
      */
     abstract public function getCommand();
 
@@ -36,21 +37,25 @@ abstract class CommandJob extends Job
     public function run($args)
     {
         $command = $this->getCommand();
-        $command->setContainer($this->getContainer());
+
+        if ($command instanceof ContainerAwareCommand) {
+            $command->setContainer($this->getContainer());
+        }
 
         $input = new ArrayInput($this->getCommandArgs());
         $output = new BufferedOutput();
 
-        $returnCode = ($this->isTestEnvironment()) ? $this->args['returnCode'] : $command->run($input, $output);
+        $useTestReturnCode = $this->isTestEnvironment() && isset($this->args['returnCode']);
+
+        $returnCode = $useTestReturnCode
+            ? $this->args['returnCode']
+            : $command->run($input, $output);
 
         if ($returnCode === 0) {
             return true;
         }
 
-        $logger = $this->getContainer()->get('logger');
-
-        $logger->error(get_class($this) . ': [' . $this->getIdentifier() . '] returned ' . $returnCode);
-        $logger->error(get_class($this) . ': [' . $this->getIdentifier() . '] output ' . trim($output->fetch()));
+        return $this->handleNonZeroReturnCode($returnCode, $output);
     }
 
     /**
@@ -63,5 +68,33 @@ abstract class CommandJob extends Job
         }
 
         return $this->args['kernel.environment'] == 'test';
+    }
+
+    /**
+     * @param int $returnCode
+     * @param BufferedOutput $output
+     *
+     * @return int
+     */
+    private function handleNonZeroReturnCode($returnCode, $output)
+    {
+        $logger = $this->getContainer()->get('logger');
+
+        $logger->error(sprintf(
+            '%s: task [%s] returned %s',
+            get_class($this),
+            $this->getIdentifier(),
+            $returnCode
+        ));
+
+
+        $logger->error(sprintf(
+            '%s: task [%s] output %s',
+            get_class($this),
+            $this->getIdentifier(),
+            trim($output->fetch())
+        ));
+
+        return $returnCode;
     }
 }

@@ -306,6 +306,7 @@ class StartServiceTest extends BaseSimplyTestableTestCase
             'simplytestable.services.resque.queueservice',
             'simplytestable.services.stateservice',
             'simplytestable.services.useraccountplanservice',
+            'simplytestable.services.resque.jobfactory',
         ];
 
         $requiredServices = [];
@@ -327,7 +328,8 @@ class StartServiceTest extends BaseSimplyTestableTestCase
             $requiredServices['simplytestable.services.userservice'],
             $requiredServices['simplytestable.services.resque.queueservice'],
             $requiredServices['simplytestable.services.stateservice'],
-            $requiredServices['simplytestable.services.useraccountplanservice']
+            $requiredServices['simplytestable.services.useraccountplanservice'],
+            $requiredServices['simplytestable.services.resque.jobfactory']
         );
     }
 }

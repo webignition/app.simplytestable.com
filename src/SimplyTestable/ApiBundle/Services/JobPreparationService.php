@@ -7,8 +7,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactoryService;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use webignition\NormalisedUrl\NormalisedUrl;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationServiceException;
@@ -58,16 +56,6 @@ class JobPreparationService
     private $userService;
 
     /**
-     * @var QueueService
-     */
-    private $resqueService;
-
-    /**
-     * @var JobFactoryService
-     */
-    private $resqueJobFactoryService;
-
-    /**
      * @var UrlFinder
      */
     private $urlFinder;
@@ -89,8 +77,6 @@ class JobPreparationService
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param UserService $userService
-     * @param QueueService $resqueQueueService
-     * @param JobFactoryService $resqueJobFactoryService
      * @param UrlFinder $urlFinder
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
@@ -102,8 +88,6 @@ class JobPreparationService
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         CrawlJobContainerService $crawlJobContainerService,
         UserService $userService,
-        QueueService $resqueQueueService,
-        JobFactoryService $resqueJobFactoryService,
         UrlFinder $urlFinder,
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService
@@ -114,8 +98,6 @@ class JobPreparationService
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->userService = $userService;
-        $this->resqueService = $resqueQueueService;
-        $this->resqueJobFactoryService = $resqueJobFactoryService;
         $this->urlFinder = $urlFinder;
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;

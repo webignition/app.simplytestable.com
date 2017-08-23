@@ -13,7 +13,9 @@ class IsNotReenqueuedTest extends CommandTest {
     }
 
     public function testResqueExecuteJobIsEnqueued() {
-        $this->assertTrue($this->getResqueQueueService()->contains('scheduledjob-execute', [
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+
+        $this->assertTrue($resqueQueueService->contains('scheduledjob-execute', [
             'id' => 1
         ]));
     }

@@ -249,6 +249,8 @@ class DefaultTest extends IndexActionTest
 
     public function testValidEventCreatesProcessEventResqueJob()
     {
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+
         $fixture = $this->getFixture(
             $this->getFixturesDataPath(__FUNCTION__). '/StripeEvents/invoice.payment_failed.event.json'
         );
@@ -261,7 +263,7 @@ class DefaultTest extends IndexActionTest
 
         $stripeEvent = $this->getStripeEventService()->getByStripeId($responseObject->stripe_id);
 
-        $this->assertTrue($this->getResqueQueueService()->contains(
+        $this->assertTrue($resqueQueueService->contains(
             'stripe-event',
             array(
                 'stripeId' => $stripeEvent->getStripeId()

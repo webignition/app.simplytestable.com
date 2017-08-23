@@ -5,11 +5,9 @@ use SimplyTestable\ApiBundle\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactoryService as ResqueJobFactoryService;
 
 class EnqueueCommand extends BaseCommand {
-    
+
     protected function configure()
     {
         $this
@@ -21,16 +19,19 @@ class EnqueueCommand extends BaseCommand {
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactory');
+
         $startNotice = 'simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] start';
 
         $output->write($startNotice);
         $this->getLogger()->notice($startNotice);
 
-        if ($this->getResqueQueueService()->contains('scheduledjob-execute', ['id' => (int)$input->getArgument('id')])) {
+        if ($resqueQueueService->contains('scheduledjob-execute', ['id' => (int)$input->getArgument('id')])) {
             $this->getLogger()->notice('simplytestable:scheduledjob:enqueue [' . $input->getArgument('id') . '] already in execute queue');
         } else {
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
+            $resqueQueueService->enqueue(
+                $resqueJobFactory->create(
                     'scheduledjob-execute',
                     ['id' => (int)$input->getArgument('id')]
                 )
@@ -44,23 +45,4 @@ class EnqueueCommand extends BaseCommand {
         $output->writeln($endNotice);
         $this->getLogger()->notice($endNotice);
     }
-
-
-    /**
-     *
-     * @return ResqueQueueService
-     */
-    private function getResqueQueueService() {
-        return $this->getContainer()->get('simplytestable.services.resque.queueService');
-    }
-
-
-    /**
-     *
-     * @return ResqueJobFactoryService
-     */
-    private function getResqueJobFactoryService() {
-        return $this->getContainer()->get('simplytestable.services.resque.jobFactoryService');
-    }
-
 }

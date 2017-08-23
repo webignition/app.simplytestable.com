@@ -5,25 +5,41 @@ namespace SimplyTestable\ApiBundle\Resque\Job\Task;
 use SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
 
-class CancelCollectionJob extends CommandJob {
-
+class CancelCollectionJob extends CommandJob
+{
     const QUEUE_NAME = 'task-cancel-collection';
 
-    protected function getQueueName() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getQueueName()
+    {
         return self::QUEUE_NAME;
     }
 
-    public function getCommand() {
+    /**
+     * {@inheritdoc}
+     */
+    public function getCommand()
+    {
         return new CollectionCommand();
     }
 
-    protected function getCommandArgs() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCommandArgs()
+    {
         return [
             'ids' => $this->args['ids']
         ];
     }
 
-    protected function getIdentifier() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getIdentifier()
+    {
         return $this->args['ids'];
     }
 }

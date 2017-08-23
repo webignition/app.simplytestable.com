@@ -1,0 +1,49 @@
+services:
+  simplytestable.services.resque.jobfactory:
+    class:  SimplyTestable\ApiBundle\Services\Resque\JobFactory
+    public: true
+    arguments:
+        $queues:
+          job-prepare:
+            queue: job-prepare
+            jobClassName: SimplyTestable\ApiBundle\Resque\Job\Job\PrepareJob
+            requiredArgs:
+              - id
+          job-resolve:
+            queue: job-resolve
+            jobClassName: SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob
+            requiredArgs:
+              - id
+          task-assign-collection:
+            queue: task-assign-collection
+            jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob
+            requiredArgs:
+              - ids
+          task-cancel:
+            queue: task-cancel
+            jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob
+            requiredArgs:
+              - id
+          task-cancel-collection:
+            queue: task-cancel-collection
+            jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob
+            requiredArgs:
+              - ids
+          worker-activate-verify:
+            queue: worker-activate-verify
+            jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob
+            requiredArgs:
+              - id
+          stripe-event:
+            queue: stripe-event
+            jobClassName: SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob
+            requiredArgs:
+              - stripeId
+          tasks-notify:
+            queue: tasks-notify
+            jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob
+          scheduledjob-execute:
+            queue: scheduledjob-execute
+            jobClassName: SimplyTestable\ApiBundle\Resque\Job\ScheduledJob\ExecuteJob
+            requiredArgs:
+              - id

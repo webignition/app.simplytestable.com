@@ -1,5 +1,6 @@
 imports:
     - { resource: services/commands.yml }
+    - { resource: services/resque-job-factory.yml }
 
 services:
   simplytestable.session.handler:
@@ -94,12 +95,7 @@ services:
       resque: "@bcc_resque.resque"
       environment: "%kernel.environment%"
       logger: "@logger"
-      jobFactoryService: "@simplytestable.services.resque.jobFactoryService"
-
-  simplytestable.services.resque.jobFactoryService:
-    class:  SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
-    arguments:
-      jobClassMap: "%resque-job-class-map%"
+      jobFactory: "@simplytestable.services.resque.jobfactory"
 
   simplytestable.services.workertaskservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
@@ -191,8 +187,6 @@ services:
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         crawlJobContainerService: "@simplytestable.services.crawljobcontainerservice"
         userService: "@simplytestable.services.userservice"
-        resqueQueueService: "@simplytestable.services.resque.queueService"
-        resqueJobFactoryService: "@simplytestable.services.resque.jobFactoryService"
         urlFinder: '@simplytestable.services.urlfinder'
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
@@ -397,6 +391,7 @@ services:
         resqueQueueService: "@simplytestable.services.resque.queueservice"
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+        resqueJobFactory: '@simplytestable.services.resque.jobfactory'
 
   simplytestable.services.scheduledjob.cronmodifier.validationservice:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService

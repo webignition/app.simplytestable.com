@@ -47,7 +47,7 @@ class EnqueueCancellationForAwaitingCancellationCommand extends BaseCommand
         $output->writeln('Enqueuing for cancellation tasks '.  implode(',', $taskIds));
 
         $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueService');
-        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobFactoryService');
+        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobFactory');
 
         $resqueQueueService->enqueue(
             $resqueJobFactory->create(
