@@ -36,18 +36,18 @@ class PrepareJobTest extends BaseSimplyTestableTestCase
     {
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
 
-        $jobPrepareJob = $resqueJobFactory->create(
+        $job = $resqueJobFactory->create(
             self::QUEUE,
             [
                 'id' =>  $jobId,
             ]
         );
 
-        $jobPrepareJob->setKernelOptions([
+        $job->setKernelOptions([
             'kernel.root_dir' => $this->container->getParameter('kernel.root_dir'),
             'kernel.environment' => $this->container->getParameter('kernel.environment'),
         ]);
 
-        return $jobPrepareJob;
+        return $job;
     }
 }
