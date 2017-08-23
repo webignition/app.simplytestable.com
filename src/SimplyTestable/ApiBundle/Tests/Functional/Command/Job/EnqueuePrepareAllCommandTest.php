@@ -3,62 +3,79 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand;
+use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-class EnqueuePrepareAllCommandTest extends ConsoleCommandTestCase
+class EnqueuePrepareAllCommandTest extends BaseSimplyTestableTestCase
 {
     /**
-      * @return string
+     * @var EnqueuePrepareAllCommand
      */
-    protected function getCommandName()
-    {
-        return 'simplytestable:job:enqueue-prepare-all';
-    }
+    private $command;
 
     /**
-     * @return ContainerAwareCommand[]
+     * {@inheritdoc}
      */
-    protected function getAdditionalCommands()
+    protected function setUp()
     {
-        return array(
-            new EnqueuePrepareAllCommand()
-        );
+        parent::setUp();
+
+        $this->command = $this->container->get('simplytestable.command.job.enqueueprepareall');
     }
 
-    public function testJobsAreEnqueued()
+    public function testRunInMaintenanceReadOnlyMode()
     {
-        $canonicalUrls = array(
-            'http://one.example.com/',
-            'http://two.example.com/'
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->enableReadOnlyAction();
+
+        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
+
+        $this->assertEquals(
+            EnqueuePrepareAllCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
+            $returnCode
         );
+
+        $maintenanceController->disableReadOnlyAction();
+    }
+
+    public function testRun()
+    {
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+
+        $jobValuesCollection = [
+            [
+                JobFactory::KEY_DOMAIN => 'http://foo.example.com/',
+            ],
+            [
+                JobFactory::KEY_DOMAIN => 'http://bar.example.com/',
+            ],
+        ];
 
         $jobFactory = new JobFactory($this->container);
 
         /* @var Job[] $jobs */
-        $jobs = array();
-        foreach ($canonicalUrls as $canonicalUrl) {
-            $jobs[] = $jobFactory->create([
-                JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
-            ]);
+        $jobs = [];
+
+        foreach ($jobValuesCollection as $jobValues) {
+            $jobs[] = $jobFactory->create($jobValues);
         }
 
-        $this->assertReturnCode(0);
+        $this->assertTrue($resqueQueueService->isEmpty('job-prepare'));
+
+        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
+
+        $this->assertEquals(EnqueuePrepareAllCommand::RETURN_CODE_OK, $returnCode);
 
         foreach ($jobs as $job) {
-            $this->assertTrue($this->getResqueQueueService()->contains(
+            $this->assertTrue($resqueQueueService->contains(
                 'job-prepare',
                 ['id' => $job->getId()]
             ));
         }
-    }
-
-    public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1()
-    {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
-        $this->assertReturnCode(1);
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
     }
 }
