@@ -414,22 +414,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return ResqueQueueService
-     */
-    protected function getResqueQueueService()
-    {
-        return $this->container->get('simplytestable.services.resque.queueService');
-    }
-
-    /**
-     * @return JobFactoryService
-     */
-    protected function getResqueJobFactoryService()
-    {
-        return $this->container->get('simplytestable.services.resque.jobFactoryService');
-    }
-
-    /**
      * @return StateService
      */
     protected function getStateService()

@@ -12,6 +12,8 @@ class SingleUrlJobTest extends CommandTest
 {
     public function testCommand()
     {
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+
         $jobFactory = new JobFactory($this->container);
 
         $this->queueHttpFixtures([
@@ -52,7 +54,7 @@ class SingleUrlJobTest extends CommandTest
         $this->assertEquals(2, $tasks->count());
         $this->assertEquals($this->getTaskService()->getQueuedState(), $htmlValidationTask->getState());
         $this->assertTrue(is_array($cssValidationTask->getParameter('domains-to-ignore')));
-        $this->assertTrue($this->getResqueQueueService()->contains(
+        $this->assertTrue($resqueQueueService->contains(
             'task-assign-collection',
             ['ids' => implode(',', $taskIds)]
         ));

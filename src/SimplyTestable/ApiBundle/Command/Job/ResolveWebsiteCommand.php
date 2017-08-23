@@ -31,6 +31,9 @@ class ResolveWebsiteCommand extends BaseCommand
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
+        $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
+
         $job = $this->getJobService()->getById((int)$input->getArgument('id'));
 
         try {
@@ -62,15 +65,15 @@ class ResolveWebsiteCommand extends BaseCommand
                 $taskIds[] = $task->getId();
             }
 
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
+            $resqueQueueService->enqueue(
+                $resqueJobFactory->create(
                     'task-assign-collection',
                     ['ids' => implode(',', $taskIds)]
                 )
             );
         } else {
-            $this->getResqueQueueService()->enqueue(
-                $this->getResqueJobFactoryService()->create(
+            $resqueQueueService->enqueue(
+                $resqueJobFactory->create(
                     'job-prepare',
                     ['id' => $job->getId()]
                 )
@@ -82,43 +85,10 @@ class ResolveWebsiteCommand extends BaseCommand
 
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\TaskService
-     */
-    private function getTaskService() {
-        return $this->getContainer()->get('simplytestable.services.taskservice');
-    }
-
-    /**
-     *
      * @return \SimplyTestable\ApiBundle\Services\JobService
      */
     private function getJobService() {
         return $this->getContainer()->get('simplytestable.services.jobservice');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobTypeService
-     */
-    private function getJobTypeService() {
-        return $this->getContainer()->get('simplytestable.services.jobtypeservice');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
-     */
-    private function getResqueQueueService() {
-        return $this->getContainer()->get('simplytestable.services.resque.queueService');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
-     */
-    private function getResqueJobFactoryService() {
-        return $this->getContainer()->get('simplytestable.services.resque.jobFactoryService');
     }
 
     /**

@@ -10,6 +10,8 @@ class FullSiteJobTest extends CommandTest
 {
     public function testCommand()
     {
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+
         $jobFactory = new JobFactory($this->container);
 
         $this->queueHttpFixtures([
@@ -29,7 +31,7 @@ class FullSiteJobTest extends CommandTest
         $this->assertEquals(0, $returnCode);
         $this->assertEquals(JobService::RESOLVED_STATE, $job->getState()->getName());
         $this->assertEquals(0, $job->getTasks()->count());
-        $this->assertTrue($this->getResqueQueueService()->contains(
+        $this->assertTrue($resqueQueueService->contains(
             'job-prepare',
             array(
                 'id' => $job->getId()

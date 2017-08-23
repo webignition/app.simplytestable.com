@@ -10,8 +10,11 @@ class IsNotEmptyTest extends BaseServiceTest {
         parent::setUp();
         $this->clearRedis();
 
-        $this->getResqueQueueService()->enqueue(
-            $this->getResqueJobFactoryService()->create(
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
+
+        $resqueQueueService->enqueue(
+            $resqueJobFactory->create(
                 'tasks-notify'
             )
         );

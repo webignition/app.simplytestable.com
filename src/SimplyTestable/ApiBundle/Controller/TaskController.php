@@ -5,8 +5,6 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactoryService;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\FactoryService;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
@@ -36,6 +34,8 @@ class TaskController extends ApiController
         }
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactoryservice');
 
         $completeRequest = $this->container->get('simplytestable.services.request.factory.task.complete')->create();
         if (!$completeRequest->isValid()) {
@@ -112,8 +112,8 @@ class TaskController extends ApiController
                     }
                 }
 
-                $this->getResqueQueueService()->enqueue(
-                    $this->getResqueJobFactoryService()->create(
+                $resqueQueueService->enqueue(
+                    $resqueJobFactory->create(
                         'tasks-notify'
                     )
                 );
@@ -193,22 +193,6 @@ class TaskController extends ApiController
     private function getCrawlJobContainerService()
     {
         return $this->container->get('simplytestable.services.crawljobcontainerservice');
-    }
-
-    /**
-     * @return QueueService
-     */
-    private function getResqueQueueService()
-    {
-        return $this->get('simplytestable.services.resque.queueService');
-    }
-
-    /**
-     * @return JobFactoryService
-     */
-    private function getResqueJobFactoryService()
-    {
-        return $this->get('simplytestable.services.resque.jobFactoryService');
     }
 
     /**

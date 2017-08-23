@@ -29,6 +29,8 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
 
     public function testCancellationJobsAreEnqueued()
     {
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+
         $jobFactory = new JobFactory($this->container);
 
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
@@ -44,7 +46,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
         $jobFactory->cancel($job);
 
         $this->assertReturnCode(0);
-        $this->assertTrue($this->getResqueQueueService()->contains(
+        $this->assertTrue($resqueQueueService->contains(
             'task-cancel-collection',
             array(
                 'ids' => implode(',', $job->getTaskIds())

@@ -35,9 +35,12 @@ class ExecuteCommand extends BaseCommand
         $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            if (!$this->getResqueQueueService()->contains('scheduled-job', ['id' => (int)$input->getArgument('id')])) {
-                $this->getResqueQueueService()->enqueue(
-                    $this->getResqueQueueService()->getJobFactoryService()->create(
+            $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
+            $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactoryservice');
+
+            if (!$resqueQueueService->contains('scheduled-job', ['id' => (int)$input->getArgument('id')])) {
+                $resqueQueueService->enqueue(
+                    $resqueJobFactory->create(
                         'scheduledjob-execute',
                         ['id' => (int)$input->getArgument('id')]
                     )
@@ -89,16 +92,6 @@ class ExecuteCommand extends BaseCommand
         $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
         $jobService->reject($job, $reason, $constraint);
     }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Resque\QueueService
-     */
-    private function getResqueQueueService() {
-        return $this->getContainer()->get('simplytestable.services.resque.queueService');
-    }
-
 
     /**
      * @return ScheduledJobService
