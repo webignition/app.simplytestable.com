@@ -18,9 +18,9 @@ class ResolveJobTest extends BaseSimplyTestableTestCase
 
         $maintenanceController->enableReadOnlyAction();
 
-        $jobPrepareJob = $this->createJobResolveJob(1);
+        $job = $this->createJob(1);
 
-        $returnCode = $jobPrepareJob->run([]);
+        $returnCode = $job->run([]);
 
         $maintenanceController->disableReadOnlyAction();
 
@@ -32,7 +32,7 @@ class ResolveJobTest extends BaseSimplyTestableTestCase
      *
      * @return ResolveJob
      */
-    private function createJobResolveJob($jobId)
+    private function createJob($jobId)
     {
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
 
