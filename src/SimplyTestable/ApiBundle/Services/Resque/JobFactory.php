@@ -12,6 +12,7 @@ class JobFactory
     const KEY_SERVICE_IDS = 'serviceIds';
     const KEY_JOB_CLASS_NAME = 'jobClassName';
     const KEY_REQUIRED_ARGS = 'requiredArgs';
+    const KEY_PARAMETERS = 'parameters';
 
     /**
      * @var array
@@ -64,6 +65,11 @@ class JobFactory
 
         if (isset($queueProperties[self::KEY_SERVICE_IDS])) {
             $args[self::KEY_SERVICE_IDS] = $queueProperties[self::KEY_SERVICE_IDS];
+        }
+
+
+        if (isset($queueProperties[self::KEY_PARAMETERS])) {
+            $args[self::KEY_PARAMETERS] = $queueProperties[self::KEY_PARAMETERS];
         }
 
         $jobClassName = $queueProperties[self::KEY_JOB_CLASS_NAME];
