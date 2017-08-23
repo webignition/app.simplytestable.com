@@ -57,6 +57,8 @@ class MaintenanceControllerTest extends BaseSimplyTestableTestCase
 
     public function testLeaveReadOnlyAction()
     {
+        $this->markTestSkipped('Re-implement in 1191');
+
         $this->controller->leaveReadOnlyAction();
 
         $this->assertEquals(
