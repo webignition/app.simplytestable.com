@@ -97,11 +97,6 @@ services:
       logger: "@logger"
       jobFactory: "@simplytestable.services.resque.jobfactory"
 
-  simplytestable.services.resque.jobFactoryService:
-    class:  SimplyTestable\ApiBundle\Services\Resque\JobFactoryService
-    arguments:
-      jobClassMap: "%resque-job-class-map%"
-
   simplytestable.services.workertaskservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
     arguments:
