@@ -22,3 +22,19 @@ services:
       jobService: '@simplytestable.services.jobservice'
     tags:
       - { name: console.command }
+
+  simplytestable.command.job.prepare:
+    class:  SimplyTestable\ApiBundle\Command\Job\PrepareCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueJobFactory: '@simplytestable.services.resque.jobfactoryservice'
+      jobService: '@simplytestable.services.jobservice'
+      jobPreparationService: '@simplytestable.services.jobpreparationservice'
+      crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+      logger: '@logger'
+      predefinedDomainsToIgnore:
+        css-validation: '%css-validation-domains-to-ignore%'
+        js-static-analysis: '%js-static-analysis-domains-to-ignore%'
+    tags:
+      - { name: console.command }
