@@ -23,6 +23,7 @@ before_install:
   - mv --force app/config/config_travis.yml app/config/config_test.yml
   - cp src/SimplyTestable/ApiBundle/Resources/config/parameters.yml.dist.yml src/SimplyTestable/ApiBundle/Resources/config/parameters.yml
   - echo 'active' > src/SimplyTestable/ApiBundle/Resources/config/state/test
+  - mysql -e 'CREATE DATABASE myapp_test;'
 
 install:
   - composer install --prefer-dist
