@@ -25,7 +25,6 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
     use TaskRepositoryTestDataProviders\GetCollectionByUrlSetAndTaskTypeAndStatesDataProvider;
     use TaskRepositoryTestDataProviders\GetOutputCollectionByJobAndStateDataProvider;
     use TaskRepositoryTestDataProviders\GetIdsByJobAndStatesDataProvider;
-    use TaskRepositoryTestDataProviders\GetIdsByJobAndUrlExclusionSetDataProvider;
     use TaskRepositoryTestDataProviders\GetCountWithIssuesByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetErrorCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\GetWarningCountByJobDataProvider;
@@ -405,42 +404,6 @@ class TaskRepositoryTest extends BaseSimplyTestableTestCase
         $states = $stateService->fetchCollection($taskStateNames);
 
         $retrievedTaskIds = $this->taskRepository->getIdsByJobAndStates($job, $states, $limit);
-
-        $this->assertEquals($expectedTaskIds, $retrievedTaskIds);
-    }
-
-    /**
-     * @dataProvider getIdsByJobAndUrlExclusionSetDataProvider
-     *
-     * @param array $jobValuesCollection
-     * @param array $httpFixturesCollection
-     * @param int $jobIndex
-     * @param string[] $urlExclusionSet
-     * @param int[] $expectedTaskIndices
-     */
-    public function testGetIdsByJobAndUrlExclusionSet(
-        $jobValuesCollection,
-        $httpFixturesCollection,
-        $jobIndex,
-        $urlExclusionSet,
-        $expectedTaskIndices
-    ) {
-        $users = $this->userFactory->createPublicAndPrivateUserSet();
-        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
-
-        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection, $httpFixturesCollection);
-        $job = $jobs[$jobIndex];
-
-        $tasks = $this->getTasksFromJobCollection($jobs);
-
-        $expectedTaskIds = [];
-        foreach ($tasks as $taskIndex => $task) {
-            if (in_array($taskIndex, $expectedTaskIndices)) {
-                $expectedTaskIds[] = $task->getId();
-            }
-        }
-
-        $retrievedTaskIds = $this->taskRepository->getIdsByJobAndUrlExclusionSet($job, $urlExclusionSet);
 
         $this->assertEquals($expectedTaskIds, $retrievedTaskIds);
     }
