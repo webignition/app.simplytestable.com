@@ -274,27 +274,6 @@ class TaskRepository extends EntityRepository
 
     /**
      * @param Job $job
-     * @param string[] $urlSet
-     *
-     * @return int[]
-     */
-    public function getIdsByJobAndUrlExclusionSet(Job $job, $urlSet)
-    {
-        $wherePredicates = 'Task.job = :Job';
-        $parameters = new ArrayCollection([
-            new Parameter('Job', $job),
-        ]);
-
-        if (!empty($urlSet)) {
-            $wherePredicates .= ' AND Task.url NOT IN (:UrlSet)';
-            $parameters->add(new Parameter('UrlSet', $urlSet));
-        }
-
-        return $this->getIdsBy($wherePredicates, $parameters);
-    }
-
-    /**
-     * @param Job $job
      * @param string $issueType
      * @param State[] $statesToExclude
      * @return int
