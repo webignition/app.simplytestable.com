@@ -123,41 +123,6 @@ class JobRepository extends EntityRepository
     }
 
     /**
-     * @param User $user
-     * @param JobType $type
-     * @param State[] $excludeStates
-     *
-     * @return int[]
-     */
-    public function getIdsByUserAndTypeAndNotStates(User $user, JobType $type, $excludeStates = [])
-    {
-        $queryBuilder = $this->createQueryBuilder('Job');
-        $queryBuilder->select('Job.id');
-
-        $where = 'Job.user = :User and Job.type = :Type';
-
-        $stateIndex = 0;
-
-        if (is_array($excludeStates)) {
-            foreach ($excludeStates as $state) {
-                $where .= ' AND Job.state != :State' . $stateIndex;
-                $queryBuilder->setParameter('State'.$stateIndex, $state);
-
-                $stateIndex++;
-            }
-        }
-
-        $queryBuilder->where($where);
-        $queryBuilder->orderBy('Job.id', 'asc');
-
-        $queryBuilder->setParameter('User', $user);
-        $queryBuilder->setParameter('Type', $type);
-        $result = $queryBuilder->getQuery()->getResult();
-
-        return $this->getSingleFieldCollectionFromResult($result, 'id');
-    }
-
-    /**
      * @param array $result
      * @param string $fieldName
      *
