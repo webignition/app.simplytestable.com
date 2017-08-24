@@ -38,3 +38,18 @@ services:
         js-static-analysis: '%js-static-analysis-domains-to-ignore%'
     tags:
       - { name: console.command }
+
+  simplytestable.command.job.resolvewebsite:
+    class:  SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      jobService: '@simplytestable.services.jobservice'
+      websiteResolutionService: '@simplytestable.services.jobwebsiteresolutionservice'
+      jobPreparationService: '@simplytestable.services.jobpreparationservice'
+      predefinedDomainsToIgnore:
+        css-validation: '%css-validation-domains-to-ignore%'
+        js-static-analysis: '%js-static-analysis-domains-to-ignore%'
+    tags:
+      - { name: console.command }

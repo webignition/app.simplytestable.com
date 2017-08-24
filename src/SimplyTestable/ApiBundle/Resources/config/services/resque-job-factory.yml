@@ -26,6 +26,17 @@ services:
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob
             requiredArgs:
               - id
+            serviceIds:
+              - simplytestable.services.applicationstateservice
+              - simplytestable.services.resque.queueservice
+              - simplytestable.services.resque.jobfactory
+              - simplytestable.services.jobservice
+              - simplytestable.services.jobwebsiteresolutionservice
+              - simplytestable.services.jobpreparationservice
+            parameters:
+              predefinedDomainsToIgnore:
+                css-validation: '%css-validation-domains-to-ignore%'
+                js-static-analysis: '%js-static-analysis-domains-to-ignore%'
           task-assign-collection:
             queue: task-assign-collection
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob

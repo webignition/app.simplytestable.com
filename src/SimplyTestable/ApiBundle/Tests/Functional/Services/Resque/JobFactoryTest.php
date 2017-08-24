@@ -197,6 +197,33 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                 'expectedQueue' => 'job-resolve',
                 'expectedArgs' => [
                     'id' => 1,
+                    'serviceIds' => [
+                        'simplytestable.services.applicationstateservice',
+                        'simplytestable.services.resque.queueservice',
+                        'simplytestable.services.resque.jobfactory',
+                        'simplytestable.services.jobservice',
+                        'simplytestable.services.jobwebsiteresolutionservice',
+                        'simplytestable.services.jobpreparationservice',
+                    ],
+                    'parameters' => [
+                        'predefinedDomainsToIgnore' => [
+                            'css-validation' => [
+                                'cdnjs.cloudflare.com',
+                                'ajax.googleapis.com',
+                                'netdna.bootstrapcdn.com',
+                                'ajax.aspnetcdn.com',
+                                'static.nrelate.com',
+                            ],
+                            'js-static-analysis' => [
+                                'cdnjs.cloudflare.com',
+                                'ajax.googleapis.com',
+                                'netdna.bootstrapcdn.com',
+                                'ajax.aspnetcdn.com',
+                                'static.nrelate.com',
+                                'connect.facebook.net',
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'task-assign-collection' => [
