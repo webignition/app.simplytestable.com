@@ -74,3 +74,12 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
     tags:
       - { name: console.command }
+
+  simplytestable.command.maintenance.modifyinitialstarttrialperiod:
+    class:  SimplyTestable\ApiBundle\Command\Maintenance\ModifyInitialStartTrialPeriodCommand
+    arguments:
+      accountPlanService: '@simplytestable.services.accountplanservice'
+      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      entityManager: '@doctrine.orm.entity_manager'
+    tags:
+      - { name: console.command }
