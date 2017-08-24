@@ -75,9 +75,12 @@ class ModifyInitialStartTrialPeriodCommandTest extends BaseSimplyTestableTestCas
     /**
      * @dataProvider runDataProvider
      *
+     * @param array $userAccountPlanStartTrialPeriods
+     * @param array $userAccountPlanIsActiveStatuses
      * @param array $args
+     * @param array $expectedStartTrialPeriods
      */
-    public function testRunFoo(
+    public function testRun(
         $userAccountPlanStartTrialPeriods,
         $userAccountPlanIsActiveStatuses,
         $args,
