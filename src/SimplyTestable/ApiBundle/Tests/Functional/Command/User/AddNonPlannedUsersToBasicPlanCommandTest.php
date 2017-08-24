@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\User;
 
+use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
 
@@ -39,9 +40,13 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase
 
     public function testAssignInMaintenanceReadOnlyModeReturnsStatusCode1()
     {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->enableReadOnlyAction();
+
         $this->assertReturnCode(1);
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
     public function testPublicUserIsNotAssignedBasicPlan()

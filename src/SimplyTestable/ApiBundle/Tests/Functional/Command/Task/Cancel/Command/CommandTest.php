@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Cancel\Command;
 
+use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -41,11 +42,15 @@ class CancelCommandTest extends BaseTest
 
     public function testCancelInReadOnlyModeReturnsStatusCodeMinus3()
     {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->enableReadOnlyAction();
+
         $this->assertReturnCode(-3, array(
             'id' => 1
         ));
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
     public function testCancelValidTaskReturnsStatusCode0()

@@ -3,11 +3,14 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\ScheduledJob\ExecuteCommand;
 
 use SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand;
+use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 
 class MaintenanceModeTest extends WithoutScheduledJobTest {
 
     protected function preCall() {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->enableReadOnlyAction();
     }
 
     protected function getExpectedReturnCode() {
@@ -31,6 +34,8 @@ class MaintenanceModeTest extends WithoutScheduledJobTest {
 
     protected function tearDown()
     {
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->disableReadOnlyAction();
     }
 }
