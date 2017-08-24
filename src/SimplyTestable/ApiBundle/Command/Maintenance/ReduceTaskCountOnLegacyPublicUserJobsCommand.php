@@ -1,26 +1,105 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Maintenance;
 
+use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Command\BaseCommand;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 
-class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
+class ReduceTaskCountOnLegacyPublicUserJobsCommand extends Command
 {
     const RETURN_CODE_OK = 0;
-    const TASK_REMOVAL_GROUP_SIZE = 1000;
+    const DEFAULT_TASK_REMOVAL_GROUP_SIZE = 1000;
 
     /**
      * @var InputInterface
      */
     private $input;
+
+    /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
+     * @var UserAccountPlanService
+     */
+    private $userAccountPlanService;
+
+    /**
+     * @var JobService
+     */
+    private $jobService;
+
+    /**
+     * @var JobTypeService
+     */
+    private $jobTypeService;
+
+    /**
+     * @var TaskService
+     */
+    private $taskService;
+
+    /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
+     * @var JobUserAccountPlanEnforcementService
+     */
+    private $jobUserAccountPlanEnforcementService;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @param UserService $userService
+     * @param UserAccountPlanService $userAccountPlanService
+     * @param JobService $jobService
+     * @param JobTypeService $jobTypeService
+     * @param TaskService $taskService
+     * @param StateService $stateService
+     * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
+     * @param EntityManager $entityManager
+     * @param null $name
+     */
+    public function __construct(
+        UserService $userService,
+        UserAccountPlanService $userAccountPlanService,
+        JobService $jobService,
+        JobTypeService $jobTypeService,
+        TaskService $taskService,
+        StateService $stateService,
+        JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
+        EntityManager $entityManager,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->userService = $userService;
+        $this->userAccountPlanService = $userAccountPlanService;
+        $this->jobService = $jobService;
+        $this->jobTypeService = $jobTypeService;
+        $this->taskService = $taskService;
+        $this->stateService = $stateService;
+        $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
+        $this->entityManager = $entityManager;
+    }
 
     /**
      * {@inheritdoc}
@@ -42,7 +121,13 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
                 InputOption::VALUE_OPTIONAL,
                 'Comma-separated list of job ids to ignore'
             )
-            ->setHelp('Reduce task count on legacy public user jobs to conform to plan constraints.');
+            ->addOption(
+                'task-removal-group-size',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'How many tasks to remove at once',
+                self::DEFAULT_TASK_REMOVAL_GROUP_SIZE
+            );
     }
 
     /**
@@ -52,28 +137,17 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
     {
         $this->input = $input;
 
-        $userService = $this->getContainer()->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->getContainer()->get('simplytestable.services.useraccountplanservice');
-        $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
-        $jobTypeService = $this->getContainer()->get('simplytestable.services.jobtypeservice');
-        $taskService = $this->getContainer()->get('simplytestable.services.taskservice');
-        $stateService = $this->getContainer()->get('simplytestable.services.stateservice');
-        $jobUserAccountPlanEnforcementService = $this->getContainer()->get(
-            'simplytestable.services.jobuseraccountplanenforcementservice'
-        );
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-
         /* @var JobRepository $jobRepository */
-        $jobRepository = $entityManager->getRepository(Job::class);
+        $jobRepository = $this->entityManager->getRepository(Job::class);
 
-        $isDryRun = $this->input->getOption('dry-run') == 'true';
+        $isDryRun = filter_var($input->getOption('dry-run'), FILTER_VALIDATE_BOOLEAN);
 
         if ($isDryRun) {
             $output->writeln('<comment>This is a DRY RUN, no data will be written</comment>');
         }
 
-        $user = $userService->getPublicUser();
-        $userAccountPlan = $userAccountPlanService->getForUser($user);
+        $user = $this->userService->getPublicUser();
+        $userAccountPlan = $this->userAccountPlanService->getForUser($user);
         $plan = $userAccountPlan->getPlan();
         $urlsPerJobConstraint = $plan->getConstraintNamed(
             JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME
@@ -83,18 +157,19 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
 
         $output->writeln('<info>Public user urls_per_job limit is: '.$urlLimit.'</info>');
 
-        if ($this->hasJobIdsToIgnore()) {
-            $output->writeln('<info>Ignoring jobs: '.  implode(',', $this->getJobIdsToIgnore()).'</info>');
+        $jobIdsToIgnore = explode(',', $this->input->getOption('job-ids-to-ignore'));
+
+        if (!empty($jobIdsToIgnore)) {
+            $output->writeln('<info>Ignoring jobs: '.  implode(',', $jobIdsToIgnore).'</info>');
         }
 
         $output->writeln('');
-
         $output->write('Finding public user jobs to check ... ');
 
         $jobIdsToCheck = $jobRepository->getIdsByUserAndTypeAndNotStates(
             $user,
-            $jobTypeService->getByName('full site'),
-            $stateService->fetchCollection([
+            $this->jobTypeService->getByName('full site'),
+            $this->stateService->fetchCollection([
                 JobService::FAILED_NO_SITEMAP_STATE,
                 JobService::REJECTED_STATE
             ])
@@ -105,54 +180,62 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
         $totalTasksRemovedCount = 0;
         $completedJobCount = 0;
 
-        foreach ($jobIdsToCheck as $jobId) {
+        foreach ($jobIdsToCheck as $jobIndex => $jobId) {
             $completedJobCount++;
 
-            if ($this->isJobIdIgnored($jobId)) {
+            if (in_array($jobId, $jobIdsToIgnore)) {
                 continue;
             }
 
             $output->write('Checking job ['.$jobId.'] ['.$completedJobCount.' of '.count($jobIdsToCheck).'] ... ');
 
-            $job = $jobService->getById($jobId);
-            $urlCount = $taskService->getUrlCountByJob($job);
+            $job = $this->jobService->getById($jobId);
+            $urlCount = $this->taskService->getUrlCountByJob($job);
 
             if ($urlCount <= $urlLimit) {
                 $output->writeln('ok');
-                $jobService->getManager()->detach($job);
+                $this->jobService->getManager()->detach($job);
                 continue;
             }
 
-            if (!$this->hasPlanUrlLimitReachedAmmendment($job)) {
-                $jobUserAccountPlanEnforcementService->setUser($user);
-                $jobService->addAmmendment(
+            if (!$this->hasPlanUrlLimitReachedAmmendment($job) && !$isDryRun) {
+                $this->jobUserAccountPlanEnforcementService->setUser($user);
+                $this->jobService->addAmmendment(
                     $job,
                     'plan-url-limit-reached:discovered-url-count-' . $urlCount,
                     $urlsPerJobConstraint
                 );
-                $jobService->getManager()->flush();
+                $this->jobService->getManager()->flush();
             }
 
-            $taskCount = $taskService->getCountByJob($job);
+            $taskCount = $this->taskService->getCountByJob($job);
             $output->write('Has ['.$urlCount.'] urls and ['.$taskCount.'] tasks, ');
 
-            $urlsToKeep = $this->getUrlsToKeep($job, $urlLimit, $taskService);
+            $urlsToKeep = $this->getUrlsToKeep($job, $urlLimit, $this->taskService);
 
-            $taskIdsToRemove = $taskService->getEntityRepository()->getIdsByJobAndUrlExclusionSet($job, $urlsToKeep);
+            $taskIdsToRemove = $this->taskService->getEntityRepository()->getIdsByJobAndUrlExclusionSet(
+                $job,
+                $urlsToKeep
+            );
+
             $output->write('removing ['.count($taskIdsToRemove).'] tasks ');
 
-            $taskRemovalGroups = $this->getTaskRemovalGroups($taskIdsToRemove);
+            $taskRemovalGroupSize = $input->getOption('task-removal-group-size');
+
+            $taskRemovalGroups = $this->getTaskRemovalGroups($taskIdsToRemove, $taskRemovalGroupSize);
 
             foreach ($taskRemovalGroups as $taskIdGroupIndex => $taskIdGroup) {
                 foreach ($taskIdGroup as $taskId) {
                     /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
-                    $task = $taskService->getById($taskId);
-                    $taskService->getManager()->remove($task);
-                    $taskService->getManager()->detach($task);
+                    $task = $this->taskService->getById($taskId);
+
+
+                    $this->taskService->getManager()->remove($task);
+                    $this->taskService->getManager()->detach($task);
                 }
 
                 if (!$isDryRun) {
-                    $taskService->getManager()->flush();
+                    $this->taskService->getManager()->flush();
                 }
 
                 $ratioCompleted = ($taskIdGroupIndex + 1) / count($taskRemovalGroups);
@@ -210,22 +293,24 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
 
     /**
      * @param int[] $taskIdsToRemove
+     * @param int $taskRemovalGroupSize
      *
      * @return array
      */
-    private function getTaskRemovalGroups($taskIdsToRemove)
+    private function getTaskRemovalGroups($taskIdsToRemove, $taskRemovalGroupSize)
     {
         $taskRemovalGroups = array();
 
-        if (count($taskIdsToRemove) <= self::TASK_REMOVAL_GROUP_SIZE) {
+        if (count($taskIdsToRemove) <= $taskRemovalGroupSize) {
             $taskRemovalGroups[] = $taskIdsToRemove;
+
             return $taskRemovalGroups;
         }
 
         $currentRemovalGroup = array();
 
         foreach ($taskIdsToRemove as $taskIdIndex => $taskId) {
-            if ($taskIdIndex % self::TASK_REMOVAL_GROUP_SIZE === 0) {
+            if ($taskIdIndex % $taskRemovalGroupSize === 0 && $taskIdIndex > 0) {
                 $taskRemovalGroups[] = $currentRemovalGroup;
                 $currentRemovalGroup = array();
             }
@@ -233,17 +318,9 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
             $currentRemovalGroup[] = $taskId;
         }
 
-        return $taskRemovalGroups;
-    }
+        $taskRemovalGroups[] = $currentRemovalGroup;
 
-    /**
-     * @param int $jobId
-     *
-     * @return bool
-     */
-    private function isJobIdIgnored($jobId)
-    {
-        return in_array($jobId, $this->getJobIdsToIgnore());
+        return $taskRemovalGroups;
     }
 
     /**
@@ -264,25 +341,5 @@ class ReduceTaskCountOnLegacyPublicUserJobsCommand extends BaseCommand
         }
 
         return $urlsToKeep;
-    }
-
-    /**
-     * @return bool
-     */
-    private function hasJobIdsToIgnore()
-    {
-        return !is_null($this->input->getOption('job-ids-to-ignore'));
-    }
-
-    /**
-     * @return array
-     */
-    private function getJobIdsToIgnore()
-    {
-        if (!$this->hasJobIdsToIgnore()) {
-            return array();
-        }
-
-        return explode(',', $this->input->getOption('job-ids-to-ignore'));
     }
 }

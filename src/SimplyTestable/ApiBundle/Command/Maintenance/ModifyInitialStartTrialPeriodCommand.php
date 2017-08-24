@@ -50,11 +50,6 @@ class ModifyInitialStartTrialPeriodCommand extends Command
     }
 
     /**
-     * @var InputInterface
-     */
-    private $input;
-
-    /**
      * {@inheritdoc}
      */
     protected function configure()
@@ -87,8 +82,6 @@ class ModifyInitialStartTrialPeriodCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-
         $isDryRun = filter_var($input->getOption('dry-run'), FILTER_VALIDATE_BOOLEAN);
 
         if ($isDryRun) {
