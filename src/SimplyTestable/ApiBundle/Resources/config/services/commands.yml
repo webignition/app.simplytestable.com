@@ -83,3 +83,17 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
+
+  simplytestable.command.maintenance.reducetaskcountonlegacypublicuserjobs:
+    class:  SimplyTestable\ApiBundle\Command\Maintenance\ReduceTaskCountOnLegacyPublicUserJobsCommand
+    arguments:
+      userService: '@simplytestable.services.userservice'
+      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      jobService: '@simplytestable.services.jobservice'
+      jobTypeService: '@simplytestable.services.jobtypeservice'
+      taskService: '@simplytestable.services.taskservice'
+      stateService: '@simplytestable.services.stateservice'
+      jobUserAccountPlanEnforcementService: '@simplytestable.services.jobuseraccountplanenforcementservice'
+      entityManager: '@doctrine.orm.entity_manager'
+    tags:
+      - { name: console.command }

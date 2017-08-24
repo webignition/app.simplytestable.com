@@ -31,6 +31,7 @@ class JobFactory
     const KEY_TIME_PERIOD_START = 'time-period-start';
     const KEY_TIME_PERIOD_END = 'time-period-end';
     const KEY_DOMAIN = 'domain';
+    const KEY_AMMENDMENTS = 'ammendments';
 
     /**
      * @var array
@@ -198,6 +199,18 @@ class JobFactory
 
             $job->setTimePeriod($timePeriod);
             $jobService->persistAndFlush($job);
+        }
+
+        if (isset($jobValues[self::KEY_AMMENDMENTS])) {
+            $ammendmentFactory = new JobAmmendmentFactory($this->container);
+
+            $ammendmentValuesCollection = $jobValues[self::KEY_AMMENDMENTS];
+
+            foreach ($ammendmentValuesCollection as $ammendmentValues) {
+                $ammendmentValues[JobAmmendmentFactory::KEY_JOB] = $job;
+
+                $ammendmentFactory->create($ammendmentValues);
+            }
         }
 
         return $job;
