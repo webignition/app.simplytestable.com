@@ -27,6 +27,8 @@ class MaintenanceControllerTest extends BaseSimplyTestableTestCase
 
     public function testEnableBackupReadOnlyAction()
     {
+        $this->markTestSkipped('Re-implement in 1191');
+
         $this->controller->enableBackupReadOnlyAction();
 
         $this->assertEquals(
@@ -37,6 +39,8 @@ class MaintenanceControllerTest extends BaseSimplyTestableTestCase
 
     public function testEnableReadOnlyAction()
     {
+        $this->markTestSkipped('Re-implement in 1191');
+
         $this->controller->enableReadOnlyAction();
 
         $this->assertEquals(
@@ -47,6 +51,8 @@ class MaintenanceControllerTest extends BaseSimplyTestableTestCase
 
     public function testDisableReadOnlyAction()
     {
+        $this->markTestSkipped('Re-implement in 1191');
+
         $this->controller->disableReadOnlyAction();
 
         $this->assertEquals(
