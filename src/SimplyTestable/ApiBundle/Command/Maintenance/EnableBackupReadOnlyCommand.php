@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Command\Maintenance;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class EnableBackupReadOnlyCommand extends Command
+class EnableBackupReadOnlyCommand extends AbstractApplicationStateChangeCommand
 {
     /**
      * {@inheritdoc}
@@ -13,18 +13,16 @@ class EnableBackupReadOnlyCommand extends Command
     {
         $this
             ->setName('simplytestable:maintenance:enable-backup-read-only')
-            ->setDescription('Enable read-only mode for backup purposes')
-            ->setHelp('Enable read-only mode for backup purposes');
+            ->setDescription('Enable read-only mode for backup purposes');
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        return parent::setState($output, self::STATE_MAINTENANCE_BACKUP_READ_ONLY);
+        return parent::setState($output, self::STATE_MAINTENANCE_BACKUP_READ_ONLY)
+            ? self::RETURN_CODE_OK
+            : self::RETURN_CODE_FAILURE;
     }
 }

@@ -2,12 +2,18 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Worker\SetTokenFromActivationRequestCommand;
 
+use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+
 class MaintenanceModeTest extends CommandTest {
 
     public function testReturnCode() {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->enableReadOnlyAction();
+
         $this->assertEquals(1, $this->executeCommand($this->getCommandName()));
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
 }

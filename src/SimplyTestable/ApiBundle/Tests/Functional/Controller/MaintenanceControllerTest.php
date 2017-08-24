@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
-use SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand;
-use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
+use SimplyTestable\ApiBundle\Command\Maintenance\AbstractApplicationStateChangeCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
 class MaintenanceControllerTest extends BaseSimplyTestableTestCase
@@ -15,6 +15,11 @@ class MaintenanceControllerTest extends BaseSimplyTestableTestCase
     private $controller;
 
     /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -23,6 +28,8 @@ class MaintenanceControllerTest extends BaseSimplyTestableTestCase
 
         $this->controller = new MaintenanceController();
         $this->controller->setContainer($this->container);
+
+        $this->applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
     }
 
     public function testEnableBackupReadOnlyAction()
@@ -30,8 +37,8 @@ class MaintenanceControllerTest extends BaseSimplyTestableTestCase
         $this->controller->enableBackupReadOnlyAction();
 
         $this->assertEquals(
-            EnableBackupReadOnlyCommand::STATE_MAINTENANCE_BACKUP_READ_ONLY,
-            file_get_contents($this->getStateResourcePath())
+            AbstractApplicationStateChangeCommand::STATE_MAINTENANCE_BACKUP_READ_ONLY,
+            $this->applicationStateService->getState()
         );
     }
 
@@ -40,8 +47,8 @@ class MaintenanceControllerTest extends BaseSimplyTestableTestCase
         $this->controller->enableReadOnlyAction();
 
         $this->assertEquals(
-            EnableReadOnlyCommand::STATE_MAINTENANCE_READ_ONLY,
-            file_get_contents($this->getStateResourcePath())
+            AbstractApplicationStateChangeCommand::STATE_MAINTENANCE_READ_ONLY,
+            $this->applicationStateService->getState()
         );
     }
 
@@ -50,34 +57,18 @@ class MaintenanceControllerTest extends BaseSimplyTestableTestCase
         $this->controller->disableReadOnlyAction();
 
         $this->assertEquals(
-            EnableReadOnlyCommand::STATE_ACTIVE,
-            file_get_contents($this->getStateResourcePath())
+            AbstractApplicationStateChangeCommand::STATE_ACTIVE,
+            $this->applicationStateService->getState()
         );
     }
 
     public function testLeaveReadOnlyAction()
     {
-        $this->markTestSkipped('Re-implement in 1191');
-
         $this->controller->leaveReadOnlyAction();
 
         $this->assertEquals(
-            EnableReadOnlyCommand::STATE_ACTIVE,
-            file_get_contents($this->getStateResourcePath())
-        );
-    }
-
-    /**
-     * @return string
-     */
-    private function getStateResourcePath()
-    {
-        $kernel = $this->container->get('kernel');
-
-        return sprintf(
-            '%s%s',
-            $kernel->locateResource('@SimplyTestableApiBundle/Resources/config/state/'),
-            $kernel->getEnvironment()
+            AbstractApplicationStateChangeCommand::STATE_ACTIVE,
+            $this->applicationStateService->getState()
         );
     }
 }

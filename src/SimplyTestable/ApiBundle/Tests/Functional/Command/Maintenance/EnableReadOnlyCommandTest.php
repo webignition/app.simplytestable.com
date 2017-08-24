@@ -2,27 +2,36 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Maintenance;
 
-use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
+use SimplyTestable\ApiBundle\Command\Maintenance\AbstractApplicationStateChangeCommand;
+use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-class EnableReadOnlyCommandTest extends ConsoleCommandTestCase {
-
-    const STATE_FILE_RELATIVE_PATH = '/test';
-
-    /**
-     *
-     * @return string
-     */
-    protected function getCommandName() {
-        return 'simplytestable:maintenance:enable-read-only';
+class EnableReadOnlyCommandTest extends AbstractApplicationStateChangeTest
+{
+    public function testRetrieveService()
+    {
+        $this->assertInstanceOf(
+            EnableReadOnlyCommand::class,
+            $this->container->get('simplytestable.command.maintenance.enablereadonly')
+        );
     }
 
+    /**
+     * @dataProvider changeApplicationStateDataProvider
+     *
+     * @param bool $setStateReturnValue
+     * @param int $expectedReturnCode
+     */
+    public function testRun($setStateReturnValue, $expectedReturnCode)
+    {
+        $command = new EnableReadOnlyCommand($this->createApplicationStateService(
+            AbstractApplicationStateChangeCommand::STATE_MAINTENANCE_READ_ONLY,
+            $setStateReturnValue
+        ));
 
-    public function testEnableReadOnly() {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $returnCode = $command->run(new ArrayInput([]), new BufferedOutput());
 
-        $this->assertReturnCode(0);
-        $this->assertEquals('maintenance-read-only', $applicationStateService->getState());
-        $this->assertFalse($applicationStateService->isInActiveState());
-        $this->assertTrue($applicationStateService->isInMaintenanceReadOnlyState());
+        $this->assertEquals($expectedReturnCode, $returnCode);
     }
 }

@@ -53,3 +53,24 @@ services:
         js-static-analysis: '%js-static-analysis-domains-to-ignore%'
     tags:
       - { name: console.command }
+
+  simplytestable.command.maintenance.disablereadonly:
+    class:  SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+    tags:
+      - { name: console.command }
+
+  simplytestable.command.maintenance.enablebackupreadonly:
+    class:  SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+    tags:
+      - { name: console.command }
+
+  simplytestable.command.maintenance.enablereadonly:
+    class:  SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+    tags:
+      - { name: console.command }

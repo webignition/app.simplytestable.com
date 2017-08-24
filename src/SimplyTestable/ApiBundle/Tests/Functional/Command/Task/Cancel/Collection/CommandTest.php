@@ -2,14 +2,20 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Cancel\Collection;
 
+use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+
 class CancelCollectionCommandTest extends BaseTest {
 
     public function testCancelInMaintenanceReadOnlyModeReturnsStatusCode1() {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->enableReadOnlyAction();
+
         $this->assertReturnCode(1, array(
             'ids' => implode(',', array(1,2,3))
         ));
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
+
+        $maintenanceController->disableReadOnlyAction();
     }
 
 }

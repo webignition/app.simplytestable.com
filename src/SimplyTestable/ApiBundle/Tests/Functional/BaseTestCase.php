@@ -3,8 +3,6 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand;
-use SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand;
-use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -57,8 +55,6 @@ abstract class BaseTestCase extends WebTestCase
     {
         return array_merge(array(
             new LoadDataFixturesDoctrineCommand(),
-            new DisableReadOnlyCommand(),
-            new EnableReadOnlyCommand(),
             new CollectionCommand(),
         ), $this->getAdditionalCommands());
     }

@@ -10,35 +10,43 @@ use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancella
 use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
 use SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class MaintenanceController extends ApiController
 {
     /**
-     * @return Response
+     * @return JsonResponse
      */
     public function enableBackupReadOnlyAction()
     {
-        return $this->executeCommand(EnableBackupReadOnlyCommand::class);
+        return $this->executeCommand(
+            $this->container->get('simplytestable.command.maintenance.enablebackupreadonly')
+        );
     }
 
     /**
-     * @return Response
+     * @return JsonResponse
      */
     public function enableReadOnlyAction()
     {
-        return $this->executeCommand(EnableReadOnlyCommand::class);
+        return $this->executeCommand(
+            $this->container->get('simplytestable.command.maintenance.enablereadonly')
+        );
     }
 
     /**
-     * @return Response
+     * @return JsonResponse
      */
     public function disableReadOnlyAction()
     {
-        return $this->executeCommand(DisableReadOnlyCommand::class);
+        return $this->executeCommand(
+            $this->container->get('simplytestable.command.maintenance.disablereadonly')
+        );
     }
 
     /**
@@ -47,11 +55,11 @@ class MaintenanceController extends ApiController
     public function leaveReadOnlyAction()
     {
         $commands = [
-            DisableReadOnlyCommand::class,
-            EnqueuePrepareAllCommand::class,
-            RequeueQueuedForAssignmentCommand::class,
-            TaskNotificationCommand::class,
-            EnqueueCancellationForAwaitingCancellationCommand::class,
+            $this->container->get('simplytestable.command.maintenance.disablereadonly'),
+            $this->container->get('simplytestable.command.job.enqueueprepareall'),
+//            RequeueQueuedForAssignmentCommand::class,
+//            TaskNotificationCommand::class,
+//            EnqueueCancellationForAwaitingCancellationCommand::class,
         ];
 
         $responseLines = [];
@@ -70,16 +78,12 @@ class MaintenanceController extends ApiController
     }
 
     /**
-     * @param string $commandClass
+     * @param Command $command
      *
      * @return JsonResponse
      */
-    private function executeCommand($commandClass)
+    private function executeCommand(Command $command)
     {
-        /* @var ContainerAwareCommand $command */
-        $command = new $commandClass;
-        $command->setContainer($this->container);
-
         $output = new BufferedOutput();
         $commandResponse = $command->run(new ArrayInput([]), $output);
 

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task;
 
 use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
+use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -56,8 +57,12 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleComma
 
     public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1()
     {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->enableReadOnlyAction();
+
         $this->assertReturnCode(1);
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
+
+        $maintenanceController->disableReadOnlyAction();
     }
 }

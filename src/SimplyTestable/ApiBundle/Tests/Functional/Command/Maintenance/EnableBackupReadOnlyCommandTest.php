@@ -2,38 +2,36 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Maintenance;
 
-use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
+use SimplyTestable\ApiBundle\Command\Maintenance\AbstractApplicationStateChangeCommand;
+use SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-class EnableBackupReadOnlyCommandTest extends ConsoleCommandTestCase {
-
-    const STATE_FILE_RELATIVE_PATH = '/test';
-
-    /**
-     *
-     * @return string
-     */
-    protected function getCommandName() {
-        return 'simplytestable:maintenance:enable-backup-read-only';
-    }
-
-
-    /**
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
-     */
-    protected function getAdditionalCommands() {
-        return array(
-            new \SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand()
+class EnableBackupReadOnlyCommandTest extends AbstractApplicationStateChangeTest
+{
+    public function testRetrieveService()
+    {
+        $this->assertInstanceOf(
+            EnableBackupReadOnlyCommand::class,
+            $this->container->get('simplytestable.command.maintenance.enablebackupreadonly')
         );
     }
 
-    public function testEnableBackupReadOnly() {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+    /**
+     * @dataProvider changeApplicationStateDataProvider
+     *
+     * @param bool $setStateReturnValue
+     * @param int $expectedReturnCode
+     */
+    public function testRun($setStateReturnValue, $expectedReturnCode)
+    {
+        $command = new EnableBackupReadOnlyCommand($this->createApplicationStateService(
+            AbstractApplicationStateChangeCommand::STATE_MAINTENANCE_BACKUP_READ_ONLY,
+            $setStateReturnValue
+        ));
 
-        $this->assertReturnCode(0);
-        $this->assertEquals('maintenance-backup-read-only', $applicationStateService->getState());
-        $this->assertFalse($applicationStateService->isInActiveState());
-        $this->assertFalse($applicationStateService->isInMaintenanceReadOnlyState());
-        $this->assertTrue($applicationStateService->isInMaintenanceBackupReadOnlyState());
+        $returnCode = $command->run(new ArrayInput([]), new BufferedOutput());
+
+        $this->assertEquals($expectedReturnCode, $returnCode);
     }
 }

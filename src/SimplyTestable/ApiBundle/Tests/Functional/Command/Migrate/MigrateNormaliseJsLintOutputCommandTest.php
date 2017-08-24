@@ -2,33 +2,40 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Migrate;
 
-use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
+use SimplyTestable\ApiBundle\Command\MigrateNormaliseJsLintOutputCommand;
+use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-class MigrateNormaliseJsLintOutputCommandTest extends ConsoleCommandTestCase {
+class MigrateNormaliseJsLintOutputCommandTest extends BaseSimplyTestableTestCase
+{
+    /**
+     * @var MigrateNormaliseJsLintOutputCommand
+     */
+    private $command;
 
     /**
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    protected function getCommandName() {
-        return 'simplytestable:normalise-jslint-output';
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->command = new MigrateNormaliseJsLintOutputCommand();
+        $this->command->setContainer($this->container);
     }
 
+    public function testRunCommandInMaintenanceReadOnlyModeReturnsStatusCode1()
+    {
+        $maintenanceController = new MaintenanceController();
+        $maintenanceController->setContainer($this->container);
+        $maintenanceController->enableReadOnlyAction();
 
-    /**
-     *
-     * @return \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand[]
-     */
-    protected function getAdditionalCommands() {
-        return array(
-            new \SimplyTestable\ApiBundle\Command\MigrateNormaliseJsLintOutputCommand()
-        );
+        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
+
+        $maintenanceController->disableReadOnlyAction();
+
+        $this->assertEquals(1, $returnCode);
     }
-
-    public function testRunCommandInMaintenanceReadOnlyModeReturnsStatusCode1() {
-        $this->executeCommand('simplytestable:maintenance:enable-read-only');
-        $this->assertReturnCode(1);
-        $this->executeCommand('simplytestable:maintenance:disable-read-only');
-    }
-
 }
