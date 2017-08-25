@@ -91,3 +91,11 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
+
+  simplytestable.command.reporting.gettoperrors:
+    class:  SimplyTestable\ApiBundle\Command\Reporting\GetTopErrorsCommand
+    arguments:
+      taskTypeService: '@simplytestable.services.tasktypeservice'
+      entityManager: '@doctrine.orm.entity_manager'
+    tags:
+      - { name: console.command }
