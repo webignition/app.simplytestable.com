@@ -106,7 +106,7 @@ class GetOutputIdsForErrorCommandTest extends BaseSimplyTestableTestCase
      * @param array $args
      * @param int[] $expectedTaskOutputIndices
      */
-    public function testRunFoo(
+    public function testRun(
         $jobValuesCollection,
         $taskOutputValuesCollection,
         $args,
