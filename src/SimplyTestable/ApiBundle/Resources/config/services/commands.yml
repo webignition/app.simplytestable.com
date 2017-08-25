@@ -83,3 +83,11 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
+
+  simplytestable.command.reporting.getoutputidsforerror:
+    class:  SimplyTestable\ApiBundle\Command\Reporting\GetOutputIdsForErrorCommand
+    arguments:
+      taskTypeService: '@simplytestable.services.tasktypeservice'
+      entityManager: '@doctrine.orm.entity_manager'
+    tags:
+      - { name: console.command }
