@@ -68,7 +68,7 @@ class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
      * @param array $args
      * @param int[] $expectedReportData
      */
-    public function testRunFoo(
+    public function testRun(
         $jobValuesCollection,
         $taskOutputValuesCollection,
         $args,
@@ -101,8 +101,6 @@ class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
 
         $reportData = json_decode($commandOutput->fetch(), true);
 
-        ini_set('xdebug.var_display_max_depth', 10);
-        var_dump($expectedReportData, $reportData);
         $this->assertEquals($expectedReportData, $reportData);
     }
 
@@ -114,65 +112,65 @@ class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
         $htmlValidatorOutputFactory = new HtmlValidatorOutputFactory();
 
         return [
-//            'with error content, not normalised, type filter = R' => [
-//                'jobValuesCollection' => [
-//                    [],
-//                ],
-//                'taskOutputValuesCollection' => [
-//                    [
-//                        TaskOutputFactory::KEY_OUTPUT => json_encode($htmlValidatorOutputFactory->create([
-//                            [
-//                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 0,
-//                            ],
-//                            [
-//                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 1,
-//                            ],
-//                        ])),
-//                        TaskOutputFactory::KEY_ERROR_COUNT => 2,
-//                    ],
-//                    [
-//                        TaskOutputFactory::KEY_OUTPUT => 'null',
-//                    ],
-//                    [
-//                        TaskOutputFactory::KEY_OUTPUT => 'null',
-//                    ],
-//                ],
-//                'args' => [
-//                    '--task-type' => 'html validation',
-//                    '--type-filter' =>  'R',
-//                ],
-//                'expectedReportData' => null,
-//            ],
-//            'with error content, not normalised, type filter = R, error only' => [
-//                'jobValuesCollection' => [
-//                    [],
-//                ],
-//                'taskOutputValuesCollection' => [
-//                    [
-//                        TaskOutputFactory::KEY_OUTPUT => json_encode($htmlValidatorOutputFactory->create([
-//                            [
-//                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 0,
-//                            ],
-//                            [
-//                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 1,
-//                            ],
-//                        ])),
-//                        TaskOutputFactory::KEY_ERROR_COUNT => 2,
-//                    ],
-//                    [
-//                        TaskOutputFactory::KEY_OUTPUT => 'null',
-//                    ],
-//                    [
-//                        TaskOutputFactory::KEY_OUTPUT => 'null',
-//                    ],
-//                ],
-//                'args' => [
-//                    '--task-type' => 'html validation',
-//                    '--type-filter' =>  'R',
-//                    '--error-only' => '1',
-//                ],
-//                'expectedReportData' => null,
-//            ],
+            'with error content, not normalised, type filter = R' => [
+                'jobValuesCollection' => [
+                    [],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => json_encode($htmlValidatorOutputFactory->create([
+                            [
+                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 0,
+                            ],
+                            [
+                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 1,
+                            ],
+                        ])),
+                        TaskOutputFactory::KEY_ERROR_COUNT => 2,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'null',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'null',
+                    ],
+                ],
+                'args' => [
+                    '--task-type' => 'html validation',
+                    '--type-filter' =>  'R',
+                ],
+                'expectedReportData' => null,
+            ],
+            'with error content, not normalised, type filter = R, error only' => [
+                'jobValuesCollection' => [
+                    [],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => json_encode($htmlValidatorOutputFactory->create([
+                            [
+                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 0,
+                            ],
+                            [
+                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 1,
+                            ],
+                        ])),
+                        TaskOutputFactory::KEY_ERROR_COUNT => 2,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'null',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'null',
+                    ],
+                ],
+                'args' => [
+                    '--task-type' => 'html validation',
+                    '--type-filter' =>  'R',
+                    '--error-only' => '1',
+                ],
+                'expectedReportData' => null,
+            ],
             'with error content, normalised' => [
                 'jobValuesCollection' => [
                     [],
@@ -233,62 +231,62 @@ class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
                     ],
                 ],
             ],
-//            'with error content, normalised, type filter = N' => [
-//                'jobValuesCollection' => [
-//                    [],
-//                ],
-//                'taskOutputValuesCollection' => [
-//                    [
-//                        TaskOutputFactory::KEY_OUTPUT => json_encode($htmlValidatorOutputFactory->create([
-//                            [
-//                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 0,
-//                            ],
-//                            [
-//                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 1,
-//                            ],
-//                        ])),
-//                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
-//                    ],
-//                    [
-//                        TaskOutputFactory::KEY_OUTPUT => 'null',
-//                    ],
-//                    [
-//                        TaskOutputFactory::KEY_OUTPUT => 'null',
-//                    ],
-//                ],
-//                'args' => [
-//                    '--task-type' => 'html validation',
-//                    '--normalise' => '1',
-//                    '--report-only' => '1',
-//                    '--type-filter' => 'N',
-//                ],
-//                'expectedReportData' => [
-//                    [
-//                        'count' => 1,
-//                        'normal_form' => 'Bad value %0 for attribute %1 on element %2: %3',
-//                        'parameters' => [
-//                            'text/html; charset=UTF-8' => [
-//                                'count' => 1,
-//                                'children' => [
-//                                    'content' => [
-//                                        'count' => 1,
-//                                        'children' => [
-//                                            'meta' => [
-//                                                'count' => 1,
-//                                                'children' => [
-//                                                    'utf-8 is not a valid character encoding name.' => [
-//                                                        'count' => 1,
-//                                                    ],
-//                                                ],
-//                                            ],
-//                                        ],
-//                                    ],
-//                                ],
-//                            ],
-//                        ],
-//                    ],
-//                ],
-//            ],
+            'with error content, normalised, type filter = N' => [
+                'jobValuesCollection' => [
+                    [],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => json_encode($htmlValidatorOutputFactory->create([
+                            [
+                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 0,
+                            ],
+                            [
+                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 1,
+                            ],
+                        ])),
+                        TaskOutputFactory::KEY_ERROR_COUNT => 1,
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'null',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'null',
+                    ],
+                ],
+                'args' => [
+                    '--task-type' => 'html validation',
+                    '--normalise' => '1',
+                    '--report-only' => '1',
+                    '--type-filter' => 'N',
+                ],
+                'expectedReportData' => [
+                    [
+                        'count' => 1,
+                        'normal_form' => 'Bad value %0 for attribute %1 on element %2: %3',
+                        'parameters' => [
+                            'text/html; charset=UTF-8' => [
+                                'count' => 1,
+                                'children' => [
+                                    'content' => [
+                                        'count' => 1,
+                                        'children' => [
+                                            'meta' => [
+                                                'count' => 1,
+                                                'children' => [
+                                                    'utf-8 is not a valid character encoding name.' => [
+                                                        'count' => 1,
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }
