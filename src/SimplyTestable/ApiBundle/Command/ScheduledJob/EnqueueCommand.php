@@ -67,13 +67,15 @@ class EnqueueCommand extends Command
     {
         $scheduleJobId = (int)$input->getArgument('id');
 
-        $startNotice = 'scheduledjob:enqueue [' . $scheduleJobId . '] start';
+        $startNotice = 'simplytestable:scheduledjob:enqueue [' . $scheduleJobId . '] start';
 
         $output->write($startNotice);
         $this->logger->notice($startNotice);
 
         if ($this->resqueQueueService->contains('scheduledjob-execute', ['id' => $scheduleJobId])) {
-            $this->logger->notice('scheduledjob:enqueue [' . $scheduleJobId. '] already in execute queue');
+            $this->logger->notice(
+                'simplytestable:scheduledjob:enqueue [' . $scheduleJobId. '] already in execute queue'
+            );
         } else {
             $this->resqueQueueService->enqueue(
                 $this->resqueJobFactory->create(
@@ -82,7 +84,7 @@ class EnqueueCommand extends Command
                 )
             );
 
-            $this->logger->notice('scheduledjob:enqueue [' . $scheduleJobId . '] enqueuing');
+            $this->logger->notice('simplytestable:scheduledjob:enqueue [' . $scheduleJobId . '] enqueuing');
         }
 
         $endNotice = 'simplytestable:scheduledjob:enqueue [' . $scheduleJobId . '] done';
