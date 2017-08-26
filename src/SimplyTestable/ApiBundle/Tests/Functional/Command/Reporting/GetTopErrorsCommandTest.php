@@ -186,11 +186,8 @@ class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
                             [
                                 HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 1,
                             ],
-                            [
-                                HtmlValidatorOutputFactory::KEY_MESSAGE_INDEX => 2,
-                            ],
                         ])),
-                        TaskOutputFactory::KEY_ERROR_COUNT => 3,
+                        TaskOutputFactory::KEY_ERROR_COUNT => 2,
                     ],
                     [
                         TaskOutputFactory::KEY_OUTPUT => 'null',
@@ -209,20 +206,6 @@ class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
                         'count' => 1,
                         'normal_form' => 'An img element must have an alt attribute, except under certain conditions. '
                             . 'For details, consult guidance on providing text alternatives for images.',
-                    ],
-                    [
-                        'count' => 1,
-                        'normal_form' => 'Attribute %0 not allowed on element %1 at this point.',
-                        'parameters' => [
-                            'pdt' => [
-                                'count' => 1,
-                                'children' => [
-                                    'a' => [
-                                        'count' => 1,
-                                    ],
-                                ]
-                            ],
-                        ],
                     ],
                     [
                         'count' => 1,
