@@ -464,9 +464,10 @@ class GetTopErrorsCommand extends Command
             $frequencyKeyIndex[$frequency][] = $key;
         }
 
+        $frequencyIndex = [];
+
         foreach ($frequencyKeyIndex as $frequency => $keys) {
             sort($keys);
-            $frequencyKeyIndex[$frequency] = $keys;
 
             foreach ($keys as $key) {
                 $frequencyIndex[$key] = $frequency;

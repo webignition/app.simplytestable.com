@@ -68,7 +68,7 @@ class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
      * @param array $args
      * @param int[] $expectedReportData
      */
-    public function testRunFoo(
+    public function testRun(
         $jobValuesCollection,
         $taskOutputValuesCollection,
         $args,
@@ -205,6 +205,11 @@ class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
                 'expectedReportData' => [
                     [
                         'count' => 1,
+                        'normal_form' => 'An img element must have an alt attribute, except under certain conditions. '
+                            . 'For details, consult guidance on providing text alternatives for images.',
+                    ],
+                    [
+                        'count' => 1,
                         'normal_form' => 'Attribute %0 not allowed on element %1 at this point.',
                         'parameters' => [
                             'pdt' => [
@@ -216,11 +221,6 @@ class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
                                 ]
                             ],
                         ],
-                    ],
-                    [
-                        'count' => 1,
-                        'normal_form' => 'An img element must have an alt attribute, except under certain conditions. '
-                                       . 'For details, consult guidance on providing text alternatives for images.',
                     ],
                     [
                         'count' => 1,
