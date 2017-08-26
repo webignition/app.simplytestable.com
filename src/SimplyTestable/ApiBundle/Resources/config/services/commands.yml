@@ -108,3 +108,15 @@ services:
       logger: '@logger'
     tags:
       - { name: console.command }
+
+  simplytestable.command.scheduledjob.execute:
+    class:  SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      entityManager: '@doctrine.orm.entity_manager'
+      jobStartService: '@simplytestable.services.job.startservice'
+      jobService: '@simplytestable.services.jobservice'
+    tags:
+      - { name: console.command }
