@@ -36,7 +36,8 @@ before_script:
   - php app/console --env=test cache:warmup
 
 script:
-  - composer test
+#  - composer test
+  - ./bin/phpunit -c app src/SimplyTestable/ApiBundle/Tests/Functional/Command/Reporting/GetTopErrorsCommandTest.php --filter=testRunFoo
 
 matrix:
   allow_failures:
