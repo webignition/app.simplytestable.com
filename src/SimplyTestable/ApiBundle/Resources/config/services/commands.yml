@@ -99,3 +99,12 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
+
+  simplytestable.command.scheduledjob.enqueue:
+    class:  SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand
+    arguments:
+      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      logger: '@logger'
+    tags:
+      - { name: console.command }
