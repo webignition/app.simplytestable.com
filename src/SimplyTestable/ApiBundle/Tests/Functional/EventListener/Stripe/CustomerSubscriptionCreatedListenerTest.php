@@ -5,30 +5,25 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
-class CustomerSubscriptionCreatedListenerTest extends BaseSimplyTestableTestCase
+class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListenerTest
 {
     /**
      * @dataProvider onCustomerSubscriptionCreatedDataProvider
      *
-     * @param string $stripeEventFixtureName
-     * @param array $stripeEventFixtureModifiers
+     * @param array $stripeEventFixtures
      * @param string $userName
      * @param array $stripeServiceResponses
      * @param array $expectedWebClientRequestData
      */
     public function testOnCustomerSubscriptionCreated(
-        $stripeEventFixtureName,
-        $stripeEventFixtureModifiers,
+        $stripeEventFixtures,
         $userName,
         $stripeServiceResponses,
         $expectedWebClientRequestData
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
         $stripeService = $this->container->get('simplytestable.services.stripeservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
@@ -41,22 +36,14 @@ class CustomerSubscriptionCreatedListenerTest extends BaseSimplyTestableTestCase
             HttpFixtureFactory::createSuccessResponse(),
         ]);
 
-        $stripeEventFixture = StripeEventFixtureFactory::load($stripeEventFixtureName, $stripeEventFixtureModifiers);
-
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
-        $userAccountPlan->setStripeCustomer($stripeEventFixture['data']['object']['customer']);
+        $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEvent = $stripeEventService->create(
-            $stripeEventFixture['id'],
-            $stripeEventFixture['type'],
-            $stripeEventFixture['livemode'],
-            json_encode($stripeEventFixture),
-            $user
-        );
+        $stripeEvent = $this->createStripeEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(
             'stripe_process.' . $stripeEvent->getType(),
@@ -81,20 +68,20 @@ class CustomerSubscriptionCreatedListenerTest extends BaseSimplyTestableTestCase
     {
         return [
             'customer.subscription.created.active' => [
-                'stripeEventFixtureName' => 'customer.subscription.created.active',
-                'stripeEventFixtureModifiers' => [
-                    'data' => [
-                        'object' => [
-                            'customer' => 'stripeCustomerId',
-                            'plan' => [
-                                'name' => 'Foo Plan Name',
-                                'amount' => 10000,
-                                'currency' => 'eur'
+                'stripeEventFixtures' => [
+                    'customer.subscription.created.active' => [
+                        'data' => [
+                            'object' => [
+                                'plan' => [
+                                    'name' => 'Foo Plan Name',
+                                    'amount' => 10000,
+                                    'currency' => 'eur'
+                                ],
+                                'current_period_start' => 1,
+                                'current_period_end' => 2,
                             ],
-                            'current_period_start' => 1,
-                            'current_period_end' => 2,
                         ],
-                    ],
+                    ]
                 ],
                 'user' => 'public',
                 'stripeServiceResponses' => [],
@@ -110,19 +97,20 @@ class CustomerSubscriptionCreatedListenerTest extends BaseSimplyTestableTestCase
                 ],
             ],
             'customer.subscription.created.trialing; active card' => [
-                'stripeEventFixtureName' => 'customer.subscription.created.trialing',
-                'stripeEventFixtureModifiers' => [
-                    'data' => [
-                        'object' => [
-                            'customer' => 'stripeCustomerId',
-                            'plan' => [
-                                'name' => 'Bar Plan Name',
-                                'amount' => 5000,
-                                'currency' => 'gbp',
-                                'trial_period_days' => 10,
+                'stripeEventFixtures' => [
+                    'customer.subscription.created.trialing' => [
+                        'data' => [
+                            'object' => [
+                                'customer' => 'stripeCustomerId',
+                                'plan' => [
+                                    'name' => 'Bar Plan Name',
+                                    'amount' => 5000,
+                                    'currency' => 'gbp',
+                                    'trial_period_days' => 10,
+                                ],
+                                'trial_start' => 3,
+                                'trial_end' => 4,
                             ],
-                            'trial_start' => 3,
-                            'trial_end' => 4,
                         ],
                     ],
                 ],
@@ -149,21 +137,21 @@ class CustomerSubscriptionCreatedListenerTest extends BaseSimplyTestableTestCase
                 ],
             ],
             'customer.subscription.created.trialing; no card' => [
-                'stripeEventFixtureName' => 'customer.subscription.created.trialing',
-                'stripeEventFixtureModifiers' => [
-                    'data' => [
-                        'object' => [
-                            'customer' => 'stripeCustomerId',
-                            'plan' => [
-                                'name' => 'FooBar Plan Name',
-                                'amount' => 5000,
-                                'currency' => 'gbp',
-                                'trial_period_days' => 20,
+                'stripeEventFixtures' => [
+                    'customer.subscription.created.trialing' => [
+                        'data' => [
+                            'object' => [
+                                'plan' => [
+                                    'name' => 'FooBar Plan Name',
+                                    'amount' => 5000,
+                                    'currency' => 'gbp',
+                                    'trial_period_days' => 20,
+                                ],
+                                'trial_start' => 5,
+                                'trial_end' => 6,
                             ],
-                            'trial_start' => 5,
-                            'trial_end' => 6,
                         ],
-                    ],
+                    ]
                 ],
                 'user' => 'private',
                 'stripeServiceResponses' => [

@@ -5,11 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
-class CustomerSubscriptionDeletedListenerTest extends BaseSimplyTestableTestCase
+class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListenerTest
 {
     /**
      * @dataProvider onCustomerSubscriptionDeletedDataProvider
@@ -28,7 +26,6 @@ class CustomerSubscriptionDeletedListenerTest extends BaseSimplyTestableTestCase
         $expectedPlanName
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
         $stripeService = $this->container->get('simplytestable.services.stripeservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
@@ -45,21 +42,10 @@ class CustomerSubscriptionDeletedListenerTest extends BaseSimplyTestableTestCase
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
-        $stripeEvents = [];
+        $userAccountPlan = $userAccountPlanService->getForUser($user);
+        $userAccountPlan->setStripeCustomer('non-empty value');
 
-        foreach ($stripeEventFixtures as $fixtureName => $modifiers) {
-            $stripeEventFixture = StripeEventFixtureFactory::load($fixtureName, $modifiers);
-
-            $stripeEvents[] = $stripeEventService->create(
-                $stripeEventFixture['id'],
-                $stripeEventFixture['type'],
-                $stripeEventFixture['livemode'],
-                json_encode($stripeEventFixture),
-                $user
-            );
-        }
-
-        $stripeEvent = array_pop($stripeEvents);
+        $stripeEvent = $this->createStripeEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(
             'stripe_process.' . $stripeEvent->getType(),
