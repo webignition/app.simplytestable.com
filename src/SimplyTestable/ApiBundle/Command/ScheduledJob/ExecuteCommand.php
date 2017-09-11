@@ -1,19 +1,24 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\ScheduledJob;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
+use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\Job\StartService as JobStartService;
-use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception as UserAccountPlanEnforcementException;
+use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
+    as UserAccountPlanEnforcementException;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 
-class ExecuteCommand extends BaseCommand
+class ExecuteCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
@@ -21,6 +26,67 @@ class ExecuteCommand extends BaseCommand
     const RETURN_CODE_UNROUTABLE = 4;
     const RETURN_CODE_PLAN_LIMIT_REACHED = 5;
 
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var ResqueQueueService
+     */
+    private $resqueQueueService;
+
+    /**
+     * @var ResqueJobFactory
+     */
+    private $resqueJobFactory;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var JobStartService
+     */
+    private $jobStartService;
+
+    /**
+     * @var JobService
+     */
+    private $jobService;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param ResqueQueueService $resqueQueueService
+     * @param ResqueJobFactory $resqueJobFactory
+     * @param  EntityManager $entityManager
+     * @param JobStartService $jobStartService
+     * @param JobService $jobService
+     * @param string|null $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        ResqueQueueService $resqueQueueService,
+        ResqueJobFactory $resqueJobFactory,
+        EntityManager $entityManager,
+        JobStartService $jobStartService,
+        JobService $jobService,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->resqueQueueService = $resqueQueueService;
+        $this->resqueJobFactory = $resqueJobFactory;
+        $this->entityManager = $entityManager;
+        $this->jobStartService = $jobStartService;
+        $this->jobService = $jobService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -30,90 +96,74 @@ class ExecuteCommand extends BaseCommand
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
+        $id = (int)$input->getArgument('id');
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueservice');
-            $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobfactory');
-
-            if (!$resqueQueueService->contains('scheduled-job', ['id' => (int)$input->getArgument('id')])) {
-                $resqueQueueService->enqueue(
-                    $resqueJobFactory->create(
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
+            if (!$this->resqueQueueService->contains('scheduled-job', ['id' => $id])) {
+                $this->resqueQueueService->enqueue(
+                    $this->resqueJobFactory->create(
                         'scheduledjob-execute',
-                        ['id' => (int)$input->getArgument('id')]
+                        ['id' => $id]
                     )
                 );
             }
 
             $output->writeln('In maintenance read-only mode, re-queueing');
+
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        if (!$this->getScheduledJobService()->getEntityRepository()->find($input->getArgument('id'))) {
+        $scheduledJobRepository = $this->entityManager->getRepository(ScheduledJob::class);
+        $scheduledJob = $scheduledJobRepository->find($id);
+
+        if (empty($scheduledJob)) {
             $output->writeln('Scheduled job [' . $input->getArgument('id') . '] does not exist');
+
             return self::RETURN_CODE_INVALID_SCHEDULED_JOB;
         }
 
-        /* @var $scheduledJob ScheduledJob */
-        $scheduledJob = $this->getScheduledJobService()->getEntityRepository()->find($input->getArgument('id'));
-
         try {
-            $this->getJobStartService()->start($scheduledJob->getJobConfiguration());
+            $this->jobStartService->start($scheduledJob->getJobConfiguration());
         } catch (JobStartServiceException $jobStartServiceException) {
-            if ($jobStartServiceException->isUnroutableWebsiteException()) {
-                $this->reject($scheduledJob->getJobConfiguration(), 'unroutable');
-                $output->writeln('Website [' . $scheduledJob->getJobConfiguration()->getWebsite() . '] is unroutable');
-                return self::RETURN_CODE_UNROUTABLE;
-            }
+            $this->reject($scheduledJob->getJobConfiguration(), 'unroutable');
+            $output->writeln('Website [' . $scheduledJob->getJobConfiguration()->getWebsite() . '] is unroutable');
 
-            throw $jobStartServiceException;
+            return self::RETURN_CODE_UNROUTABLE;
         } catch (UserAccountPlanEnforcementException $userAccountPlanEnforcementException) {
-            $this->reject($scheduledJob->getJobConfiguration(), 'plan-constraint-limit-reached', $userAccountPlanEnforcementException->getAccountPlanConstraint());
-            $output->writeln('Plan limit [' . $userAccountPlanEnforcementException->getAccountPlanConstraint()->getName() . '] reached');
+            $this->reject(
+                $scheduledJob->getJobConfiguration(),
+                'plan-constraint-limit-reached',
+                $userAccountPlanEnforcementException->getAccountPlanConstraint()
+            );
+
+            $output->writeln(sprintf(
+                'Plan limit [%s] reached',
+                $userAccountPlanEnforcementException->getAccountPlanConstraint()->getName()
+
+            ));
+
             return self::RETURN_CODE_PLAN_LIMIT_REACHED;
         }
 
         return self::RETURN_CODE_OK;
     }
 
-
     /**
      * @param JobConfiguration $jobConfiguration
      * @param string $reason
      * @param AccountPlanConstraint $constraint
      */
-    private function reject(JobConfiguration $jobConfiguration, $reason, AccountPlanConstraint $constraint = null) {
-        $job = $this->getJobService()->create(
+    private function reject(JobConfiguration $jobConfiguration, $reason, AccountPlanConstraint $constraint = null)
+    {
+        $job = $this->jobService->create(
             $jobConfiguration
         );
 
-        $jobService = $this->getContainer()->get('simplytestable.services.jobservice');
-        $jobService->reject($job, $reason, $constraint);
+        $this->jobService->reject($job, $reason, $constraint);
     }
-
-    /**
-     * @return ScheduledJobService
-     */
-    private function getScheduledJobService() {
-        return $this->getContainer()->get('simplytestable.services.scheduledjob.service');
-    }
-
-
-    /**
-     * @return JobStartService
-     */
-    private function getJobStartService() {
-        return $this->getContainer()->get('simplytestable.services.job.startservice');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobService
-     */
-    private function getJobService() {
-        return $this->getContainer()->get('simplytestable.services.jobservice');
-    }
-
 }
