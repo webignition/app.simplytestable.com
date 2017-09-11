@@ -31,6 +31,7 @@ class CustomerSubscriptionCreatedListenerTest extends BaseSimplyTestableTestCase
         $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
         $stripeService = $this->container->get('simplytestable.services.stripeservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
         foreach ($stripeServiceResponses as $methodName => $responseData) {
             $stripeService->addResponseData($methodName, $responseData);
@@ -46,12 +47,8 @@ class CustomerSubscriptionCreatedListenerTest extends BaseSimplyTestableTestCase
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer($stripeEventFixture['data']['object']['customer']);
-
-
 
         $stripeEvent = $stripeEventService->create(
             $stripeEventFixture['id'],
