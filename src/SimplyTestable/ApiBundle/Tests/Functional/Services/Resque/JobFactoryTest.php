@@ -297,6 +297,14 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                 'expectedQueue' => 'scheduledjob-execute',
                 'expectedArgs' => [
                     'id' => 1,
+                    'serviceIds' => [
+                        'simplytestable.services.applicationstateservice',
+                        'simplytestable.services.resque.queueservice',
+                        'simplytestable.services.resque.jobfactory',
+                        'doctrine.orm.entity_manager',
+                        'simplytestable.services.job.startservice',
+                        'simplytestable.services.jobservice',
+                    ],
                 ],
             ],
         ];
