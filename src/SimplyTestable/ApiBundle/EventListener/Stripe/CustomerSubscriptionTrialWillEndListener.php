@@ -3,9 +3,6 @@
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-use webignition\Model\Stripe\Discount;
-use webignition\Model\Stripe\Event\Customer\Updated as StripeCustomerUpdatedEvent;
-use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 
 class CustomerSubscriptionTrialWillEndListener extends AbstractCustomerSubscriptionListener
 {
