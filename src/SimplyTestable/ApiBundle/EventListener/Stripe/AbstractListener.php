@@ -14,7 +14,7 @@ use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use webignition\Model\Stripe\Customer as StripeCustomer;
 
-abstract class Listener
+abstract class AbstractListener
 {
     /**
      * @var LoggerInterface
