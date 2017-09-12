@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 
-use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -51,24 +50,7 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
         );
 
         $this->assertTrue($stripeEvent->getIsProcessed());
-
-        $httpTransactions = $httpClientService->getHistoryPlugin()->getAll();
-
-        if (empty($expectedWebClientRequestDataCollection)) {
-            $this->assertEmpty($httpTransactions);
-        } else {
-            $this->assertCount(count($expectedWebClientRequestDataCollection), $httpTransactions);
-
-            foreach ($httpTransactions as $requestIndex => $httpTransaction) {
-                /* @var EntityEnclosingRequestInterface $request */
-                $request = $httpTransaction['request'];
-
-                $this->assertEquals(
-                    $expectedWebClientRequestDataCollection[$requestIndex],
-                    $request->getPostFields()->getAll()
-                );
-            }
-        }
+        $this->assertWebClientRequests($httpClientService, $expectedWebClientRequestDataCollection);
     }
 
     /**

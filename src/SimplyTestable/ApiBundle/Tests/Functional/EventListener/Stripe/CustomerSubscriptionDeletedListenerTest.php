@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 
-use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -12,17 +11,19 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
     /**
      * @dataProvider onCustomerSubscriptionDeletedDataProvider
      *
+     * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
      * @param array $stripeServiceResponses
-     * @param array $expectedWebClientRequestData
+     * @param array $expectedWebClientRequestDataCollection
      * @param string $expectedPlanName
      */
     public function testOnCustomerSubscriptionDeleted(
+        $httpFixtures,
         $stripeEventFixtures,
         $userName,
         $stripeServiceResponses,
-        $expectedWebClientRequestData,
+        $expectedWebClientRequestDataCollection,
         $expectedPlanName
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
@@ -34,9 +35,7 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
             $stripeService->addResponseData($methodName, $responseData);
         }
 
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(),
-        ]);
+        $this->queueHttpFixtures($httpFixtures);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -53,18 +52,7 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
         );
 
         $this->assertTrue($stripeEvent->getIsProcessed());
-
-        /* @var EntityEnclosingRequestInterface $lastHttpRequest */
-        $lastHttpRequest = $httpClientService->getHistoryPlugin()->getLastRequest();
-
-        if (null === $expectedWebClientRequestData) {
-            $this->assertNull($lastHttpRequest);
-        } else {
-            $this->assertEquals(
-                $expectedWebClientRequestData,
-                $lastHttpRequest->getPostFields()->getAll()
-            );
-        }
+        $this->assertWebClientRequests($httpClientService, $expectedWebClientRequestDataCollection);
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
 
@@ -81,6 +69,9 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
     {
         return [
             'customer.subscription.deleted; cancelled during trial' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.deleted' => [
                         'data' => [
@@ -99,17 +90,22 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                 ],
                 'user' => 'public',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.deleted',
-                    'user' => 'public@simplytestable.com',
-                    'plan_name' => 'Foo Plan Name',
-                    'actioned_by' => 'user',
-                    'is_during_trial' => 1,
-                    'trial_days_remaining' => 30,
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.deleted',
+                        'user' => 'public@simplytestable.com',
+                        'plan_name' => 'Foo Plan Name',
+                        'actioned_by' => 'user',
+                        'is_during_trial' => 1,
+                        'trial_days_remaining' => 30,
+                    ],
                 ],
                 'expectedPlanName' => 'public',
             ],
             'customer.subscription.deleted; cancelled during trial with non-relevant invoice payment failed' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'invoice.payment_failed' => [
                         'data' => [
@@ -141,17 +137,22 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                 ],
                 'user' => 'public',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.deleted',
-                    'user' => 'public@simplytestable.com',
-                    'plan_name' => 'Foo Plan Name',
-                    'actioned_by' => 'user',
-                    'is_during_trial' => 1,
-                    'trial_days_remaining' => 30,
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.deleted',
+                        'user' => 'public@simplytestable.com',
+                        'plan_name' => 'Foo Plan Name',
+                        'actioned_by' => 'user',
+                        'is_during_trial' => 1,
+                        'trial_days_remaining' => 30,
+                    ],
                 ],
                 'expectedPlanName' => 'public',
             ],
             'customer.subscription.deleted; invoice payment failed' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'invoice.payment_failed' => [],
                     'customer.subscription.deleted' => [
@@ -171,15 +172,20 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                 ],
                 'user' => 'public',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.deleted',
-                    'user' => 'public@simplytestable.com',
-                    'plan_name' => 'Foo Plan Name',
-                    'actioned_by' => 'system',
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.deleted',
+                        'user' => 'public@simplytestable.com',
+                        'plan_name' => 'Foo Plan Name',
+                        'actioned_by' => 'system',
+                    ],
                 ],
                 'expectedPlanName' => 'basic',
             ],
             'customer.subscription.deleted; user cancelled after trial' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.deleted' => [
                         'data' => [
@@ -198,16 +204,21 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                 ],
                 'user' => 'public',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.deleted',
-                    'user' => 'public@simplytestable.com',
-                    'plan_name' => 'Foo Plan Name',
-                    'actioned_by' => 'user',
-                    'is_during_trial' => 0,
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.deleted',
+                        'user' => 'public@simplytestable.com',
+                        'plan_name' => 'Foo Plan Name',
+                        'actioned_by' => 'user',
+                        'is_during_trial' => 0,
+                    ],
                 ],
                 'expectedPlanName' => 'public',
             ],
             'customer.subscription.deleted; trial to active' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.statuschange' => [
                         'data' => [
@@ -236,7 +247,7 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                 ],
                 'user' => 'public',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => null,
+                'expectedWebClientRequestDataCollection' => [],
                 'expectedPlanName' => 'public',
             ],
         ];

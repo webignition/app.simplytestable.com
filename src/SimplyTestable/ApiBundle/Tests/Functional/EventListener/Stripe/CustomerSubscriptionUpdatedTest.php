@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 
-use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -12,16 +11,18 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
     /**
      * @dataProvider onCustomerSubscriptionUpdatedDataProvider
      *
+     * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
      * @param array $stripeServiceResponses
-     * @param array $expectedWebClientRequestData
+     * @param array $expectedWebClientRequestDataCollection
      */
     public function testOnCustomerSubscriptionUpdated(
+        $httpFixtures,
         $stripeEventFixtures,
         $userName,
         $stripeServiceResponses,
-        $expectedWebClientRequestData
+        $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
@@ -32,9 +33,7 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
             $stripeService->addResponseData($methodName, $responseData);
         }
 
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(),
-        ]);
+        $this->queueHttpFixtures($httpFixtures);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -51,18 +50,7 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
         );
 
         $this->assertTrue($stripeEvent->getIsProcessed());
-
-        /* @var EntityEnclosingRequestInterface $lastHttpRequest */
-        $lastHttpRequest = $httpClientService->getHistoryPlugin()->getLastRequest();
-
-        if (null === $expectedWebClientRequestData) {
-            $this->assertNull($lastHttpRequest);
-        } else {
-            $this->assertEquals(
-                $expectedWebClientRequestData,
-                $lastHttpRequest->getPostFields()->getAll()
-            );
-        }
+        $this->assertWebClientRequests($httpClientService, $expectedWebClientRequestDataCollection);
     }
 
     /**
@@ -72,6 +60,9 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
     {
         return [
             'customer.subscription.updated.planchange; without discount; status active' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.planchange' => [
                         'data' => [
@@ -95,18 +86,23 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
                 'user' => 'public',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.updated',
-                    'user' => 'public@simplytestable.com',
-                    'is_plan_change' => 1,
-                    'currency' => 'eur',
-                    'old_plan' => 'Old Plan Name',
-                    'new_plan' => 'New Plan Name',
-                    'new_amount' => 10000,
-                    'subscription_status' => 'active',
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.updated',
+                        'user' => 'public@simplytestable.com',
+                        'is_plan_change' => 1,
+                        'currency' => 'eur',
+                        'old_plan' => 'Old Plan Name',
+                        'new_plan' => 'New Plan Name',
+                        'new_amount' => 10000,
+                        'subscription_status' => 'active',
+                    ],
                 ],
             ],
             'customer.subscription.updated.planchange; without discount; status trialing' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.planchange' => [
                         'data' => [
@@ -131,19 +127,24 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
                 'user' => 'private',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.updated',
-                    'user' => 'private@example.com',
-                    'is_plan_change' => 1,
-                    'currency' => 'eur',
-                    'old_plan' => 'Old Plan Name',
-                    'new_plan' => 'New Plan Name',
-                    'new_amount' => 10000,
-                    'subscription_status' => 'trialing',
-                    'trial_end' => 4,
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.updated',
+                        'user' => 'private@example.com',
+                        'is_plan_change' => 1,
+                        'currency' => 'eur',
+                        'old_plan' => 'Old Plan Name',
+                        'new_plan' => 'New Plan Name',
+                        'new_amount' => 10000,
+                        'subscription_status' => 'trialing',
+                        'trial_end' => 4,
+                    ],
                 ],
             ],
             'customer.subscription.updated.planchange; with discount; status active' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.updated' => [
                         'data' => [
@@ -178,18 +179,23 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
                 'user' => 'public',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.updated',
-                    'user' => 'public@simplytestable.com',
-                    'is_plan_change' => 1,
-                    'currency' => 'eur',
-                    'old_plan' => 'Old Plan Name',
-                    'new_plan' => 'New Plan Name',
-                    'new_amount' => 8000,
-                    'subscription_status' => 'active',
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.updated',
+                        'user' => 'public@simplytestable.com',
+                        'is_plan_change' => 1,
+                        'currency' => 'eur',
+                        'old_plan' => 'Old Plan Name',
+                        'new_plan' => 'New Plan Name',
+                        'new_amount' => 8000,
+                        'subscription_status' => 'active',
+                    ],
                 ],
             ],
             'customer.subscription.updated.planchange; with discount; status trialing' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.updated' => [
                         'data' => [
@@ -225,19 +231,24 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
                 'user' => 'private',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.updated',
-                    'user' => 'private@example.com',
-                    'is_plan_change' => 1,
-                    'currency' => 'eur',
-                    'old_plan' => 'Old Plan Name',
-                    'new_plan' => 'New Plan Name',
-                    'new_amount' => 8000,
-                    'subscription_status' => 'trialing',
-                    'trial_end' => 4,
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.updated',
+                        'user' => 'private@example.com',
+                        'is_plan_change' => 1,
+                        'currency' => 'eur',
+                        'old_plan' => 'Old Plan Name',
+                        'new_plan' => 'New Plan Name',
+                        'new_amount' => 8000,
+                        'subscription_status' => 'trialing',
+                        'trial_end' => 4,
+                    ],
                 ],
             ],
             'customer.subscription.updated.statuschange; trialing to active, no card' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.statuschange' => [
                         'data' => [
@@ -257,19 +268,24 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
                 'user' => 'private',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.updated',
-                    'user' => 'private@example.com',
-                    'is_status_change' => 1,
-                    'previous_subscription_status' => 'trialing',
-                    'subscription_status' => 'active',
-                    'plan_name' => 'Plan Name',
-                    'plan_amount' => 10000,
-                    'has_card' => 0,
-                    'currency' => 'eur',
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.updated',
+                        'user' => 'private@example.com',
+                        'is_status_change' => 1,
+                        'previous_subscription_status' => 'trialing',
+                        'subscription_status' => 'active',
+                        'plan_name' => 'Plan Name',
+                        'plan_amount' => 10000,
+                        'has_card' => 0,
+                        'currency' => 'eur',
+                    ],
                 ],
             ],
             'customer.subscription.updated.statuschange; trialing to active, has card' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.statuschange' => [
                         'data' => [
@@ -298,19 +314,24 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                         ]
                     ],
                 ],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.updated',
-                    'user' => 'private@example.com',
-                    'is_status_change' => 1,
-                    'previous_subscription_status' => 'trialing',
-                    'subscription_status' => 'active',
-                    'plan_name' => 'Plan Name',
-                    'plan_amount' => 10000,
-                    'has_card' => 1,
-                    'currency' => 'eur',
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.updated',
+                        'user' => 'private@example.com',
+                        'is_status_change' => 1,
+                        'previous_subscription_status' => 'trialing',
+                        'subscription_status' => 'active',
+                        'plan_name' => 'Plan Name',
+                        'plan_amount' => 10000,
+                        'has_card' => 1,
+                        'currency' => 'eur',
+                    ],
                 ],
             ],
             'customer.subscription.updated.statuschange; not trialing to active' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.updated.statuschange' => [
                         'data' => [
@@ -325,7 +346,7 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
                 ],
                 'user' => 'private',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => null,
+                'expectedWebClientRequestDataCollection' => [],
             ],
         ];
     }

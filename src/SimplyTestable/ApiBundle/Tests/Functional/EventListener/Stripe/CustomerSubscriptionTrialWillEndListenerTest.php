@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 
-use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -12,16 +11,18 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
     /**
      * @dataProvider onCustomerSubscriptionTrialWillEndDataProvider
      *
+     * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
      * @param array $stripeServiceResponses
-     * @param array $expectedWebClientRequestData
+     * @param array $expectedWebClientRequestDataCollection
      */
     public function testOnCustomerSubscriptionTrialWillEnd(
+        $httpFixtures,
         $stripeEventFixtures,
         $userName,
         $stripeServiceResponses,
-        $expectedWebClientRequestData
+        $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
@@ -32,9 +33,7 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
             $stripeService->addResponseData($methodName, $responseData);
         }
 
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(),
-        ]);
+        $this->queueHttpFixtures($httpFixtures);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -51,14 +50,7 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
         );
 
         $this->assertTrue($stripeEvent->getIsProcessed());
-
-        /* @var EntityEnclosingRequestInterface $lastHttpRequest */
-        $lastHttpRequest = $httpClientService->getHistoryPlugin()->getLastRequest();
-
-        $this->assertEquals(
-            $expectedWebClientRequestData,
-            $lastHttpRequest->getPostFields()->getAll()
-        );
+        $this->assertWebClientRequests($httpClientService, $expectedWebClientRequestDataCollection);
     }
 
     /**
@@ -68,6 +60,9 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
     {
         return [
             'customer.subscription.trial_will_end; without discount' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.subscription.trial_will_end' => [
                         'data' => [
@@ -85,17 +80,22 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
                 ],
                 'user' => 'public',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.trial_will_end',
-                    'user' => 'public@simplytestable.com',
-                    'trial_end' => 4,
-                    'has_card' => 0,
-                    'plan_amount' => 10000,
-                    'plan_name' => 'Foo Plan Name',
-                    'plan_currency' => 'eur',
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.trial_will_end',
+                        'user' => 'public@simplytestable.com',
+                        'trial_end' => 4,
+                        'has_card' => 0,
+                        'plan_amount' => 10000,
+                        'plan_name' => 'Foo Plan Name',
+                        'plan_currency' => 'eur',
+                    ],
                 ],
             ],
             'customer.subscription.trial_will_end; with discount of 20% and has card' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.updated' => [
                         'data' => [
@@ -133,17 +133,22 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
                         ]
                     ],
                 ],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.trial_will_end',
-                    'user' => 'private@example.com',
-                    'trial_end' => 4,
-                    'has_card' => 1,
-                    'plan_amount' => 8000,
-                    'plan_name' => 'Foo Plan Name',
-                    'plan_currency' => 'usd',
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.trial_will_end',
+                        'user' => 'private@example.com',
+                        'trial_end' => 4,
+                        'has_card' => 1,
+                        'plan_amount' => 8000,
+                        'plan_name' => 'Foo Plan Name',
+                        'plan_currency' => 'usd',
+                    ],
                 ],
             ],
             'customer.subscription.trial_will_end; with discount of 30%' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(),
+                ],
                 'stripeEventFixtures' => [
                     'customer.updated' => [
                         'data' => [
@@ -172,14 +177,16 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
                 ],
                 'user' => 'private',
                 'stripeServiceResponses' => [],
-                'expectedWebClientRequestData' => [
-                    'event' =>  'customer.subscription.trial_will_end',
-                    'user' => 'private@example.com',
-                    'trial_end' => 4,
-                    'has_card' => 0,
-                    'plan_amount' => 233,
-                    'plan_name' => 'Foo Plan Name',
-                    'plan_currency' => 'usd',
+                'expectedWebClientRequestDataCollection' => [
+                    [
+                        'event' =>  'customer.subscription.trial_will_end',
+                        'user' => 'private@example.com',
+                        'trial_end' => 4,
+                        'has_card' => 0,
+                        'plan_amount' => 233,
+                        'plan_name' => 'Foo Plan Name',
+                        'plan_currency' => 'usd',
+                    ],
                 ],
             ],
         ];
