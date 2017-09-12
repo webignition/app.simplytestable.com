@@ -95,7 +95,7 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
                     'plan_currency' => 'eur',
                 ],
             ],
-            'customer.subscription.trial_will_end; with discount of 20%' => [
+            'customer.subscription.trial_will_end; with discount of 20% and has card' => [
                 'stripeEventFixtures' => [
                     'customer.updated' => [
                         'data' => [
@@ -123,12 +123,21 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
                     ],
                 ],
                 'user' => 'private',
-                'stripeServiceResponses' => [],
+                'stripeServiceResponses' => [
+                    'getCustomer' => [
+                        'active_card' => [
+                            'exp_month' => '01',
+                            'exp_year' => '99',
+                            'last4' => '1234',
+                            'type' => 'Foo'
+                        ]
+                    ],
+                ],
                 'expectedWebClientRequestData' => [
                     'event' =>  'customer.subscription.trial_will_end',
                     'user' => 'private@example.com',
                     'trial_end' => 4,
-                    'has_card' => 0,
+                    'has_card' => 1,
                     'plan_amount' => 8000,
                     'plan_name' => 'Foo Plan Name',
                     'plan_currency' => 'usd',
