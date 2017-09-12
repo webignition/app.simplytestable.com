@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 
-class CustomerSubscriptionCreatedListener extends CustomerSubscriptionListener
+class CustomerSubscriptionCreatedListener extends AbstractCustomerSubscriptionListener
 {
     /**
      * @param DispatchableEvent $event

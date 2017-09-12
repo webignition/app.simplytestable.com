@@ -7,7 +7,7 @@ use webignition\Model\Stripe\Discount;
 use webignition\Model\Stripe\Event\Customer\Updated as StripeCustomerUpdatedEvent;
 use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 
-class CustomerSubscriptionTrialWillEndListener extends CustomerSubscriptionListener
+class CustomerSubscriptionTrialWillEndListener extends AbstractCustomerSubscriptionListener
 {
     /**
      * @param DispatchableEvent $event

@@ -8,7 +8,7 @@ use webignition\Model\Stripe\Event\Event;
 use webignition\Model\Stripe\Invoice\Invoice;
 use webignition\Model\Stripe\Subscription;
 
-class CustomerSubscriptionDeletedListener extends CustomerSubscriptionListener
+class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionListener
 {
     /**
      * @param DispatchableEvent $event

@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 
-class InvoicePaymentSucceededListener extends InvoiceListener
+class InvoicePaymentSucceededListener extends AbstractInvoiceListener
 {
     /**
      * @param DispatchableEvent $event

@@ -7,7 +7,7 @@ use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice;
 use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 
-class InvoicePaymentFailedListener extends InvoiceListener
+class InvoicePaymentFailedListener extends AbstractInvoiceListener
 {
     /**
      * @param DispatchableEvent $event

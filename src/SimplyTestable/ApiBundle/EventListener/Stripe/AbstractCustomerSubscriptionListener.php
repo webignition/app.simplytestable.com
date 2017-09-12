@@ -6,7 +6,7 @@ use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 use webignition\Model\Stripe\Discount as StripeDiscountModel;
 use webignition\Model\Stripe\Event\Customer\Updated as StripeCustomerUpdatedEvent;
 
-abstract class CustomerSubscriptionListener extends Listener
+abstract class AbstractCustomerSubscriptionListener extends Listener
 {
     /**
      * @return StripeSubscriptionModel

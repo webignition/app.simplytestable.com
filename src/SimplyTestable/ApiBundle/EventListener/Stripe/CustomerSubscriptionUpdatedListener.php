@@ -9,7 +9,7 @@ use webignition\Model\Stripe\Event\Customer\Updated as StripeCustomerUpdatedEven
 use webignition\Model\Stripe\Event\Data as StripeEventData;
 use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 
-class CustomerSubscriptionUpdatedListener extends CustomerSubscriptionListener
+class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionListener
 {
     /**
      * @param DispatchableEvent $event
