@@ -2,62 +2,74 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
+use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+use SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice;
+use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 
 class InvoicePaymentFailedListener extends InvoiceListener
 {
-
-    public function onInvoicePaymentFailed(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
+    /**
+     * @param DispatchableEvent $event
+     */
+    public function onInvoicePaymentFailed(DispatchableEvent $event)
+    {
         $this->setEvent($event);
 
         if ($this->getStripeCustomer()->hasCard() === false) {
             $this->markEntityProcessed();
+
             return;
         }
-        
+
         $invoice = $this->getStripeInvoice();
-        
+
         $webClientData = array_merge($this->getDefaultWebClientData(), array(
             'lines' => $invoice->getLinesSummary(),
             'invoice_id' => $invoice->getId(),
-            'total' => $invoice->getTotal(),            
+            'total' => $invoice->getTotal(),
             'amount_due' => $invoice->getAmountDue(),
             'currency' => $invoice->getCurrency()
         ));
-        
-        $this->issueWebClientEvent($webClientData);       
+
+        $this->issueWebClientEvent($webClientData);
         $this->markEntityProcessed();
-        
-        if ($this->hasRelatedCustomerSubscriptionDeletedEvent($invoice)) {
-            $eventEntity = $this->getCustomerSubscriptionDeletedEvent($invoice);            
+
+        $customerSubscriptionDeletedEvent = $this->getCustomerSubscriptionDeletedEvent($invoice);
+
+        if (!empty($customerSubscriptionDeletedEvent)) {
             $this->dispatcher->dispatch(
-                    'stripe_process.' . $eventEntity->getType(),
-                    new DispatchableEvent($eventEntity)
+                'stripe_process.' . $customerSubscriptionDeletedEvent->getType(),
+                new DispatchableEvent($customerSubscriptionDeletedEvent)
             );
         }
     }
-    
-    
-    private function getCustomerSubscriptionDeletedEvent(\SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice) {
+
+    /**
+     * @param Invoice $invoice
+     *
+     * @return StripeEvent|null
+     */
+    private function getCustomerSubscriptionDeletedEvent(Invoice $invoice)
+    {
         $subscriptionLineItems = $invoice->getSubscriptionLines();
         if (count($subscriptionLineItems) == 0) {
-        return null;  
+            return null;
         }
-        
+
         $subscriptionDeletedEvents = $this->getStripeEventService()->getForUserAndType(
             $this->getEventEntity()->getUser(),
             'customer.subscription.deleted'
         );
-        
+
         if (count($subscriptionDeletedEvents) == 0) {
-        return null;  
+            return null;
         }
-        
-        
+
         foreach ($subscriptionDeletedEvents as $subscriptionDeletedEvent) {
-            /* @var $eventSubscription \webignition\Model\Stripe\Subscription */
+            /* @var StripeSubscriptionModel $deletedEventSubscription */
             $deletedEventSubscription = $subscriptionDeletedEvent->getStripeEventObject()->getDataObject()->getObject();
-            
+
             foreach ($subscriptionLineItems as $lineItem) {
                 /* @var $lineItem \webignition\Model\Stripe\Invoice\LineItem\Subscription */
                 if ($deletedEventSubscription->getId() == $lineItem->getId()) {
@@ -65,17 +77,7 @@ class InvoicePaymentFailedListener extends InvoiceListener
                 }
             }
         }
-        
-        return null;        
-    }
-    
-    
-    /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice
-     * @return boolean
-     */
-    private function hasRelatedCustomerSubscriptionDeletedEvent(\SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice $invoice) {
-        return !is_null($this->getCustomerSubscriptionDeletedEvent($invoice));
+
+        return null;
     }
 }
