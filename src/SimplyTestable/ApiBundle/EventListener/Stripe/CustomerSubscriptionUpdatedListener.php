@@ -34,7 +34,7 @@ class CustomerSubscriptionUpdatedListener extends CustomerSubscriptionListener
                     'is_plan_change' => 1,
                     'old_plan' => $oldPlan->getName(),
                     'new_plan' => $stripeSubscription->getPlan()->getName(),
-                    'new_amount' => $this->getPlanAmount(),
+                    'new_amount' => $this->getPlanAmount($stripeSubscription),
                     'subscription_status' => $stripeSubscription->getStatus()
                 ]
             );
@@ -73,7 +73,7 @@ class CustomerSubscriptionUpdatedListener extends CustomerSubscriptionListener
                     'previous_subscription_status' => $previousSubscription->getStatus(),
                     'subscription_status' => $stripeSubscription->getStatus(),
                     'plan_name' => $stripeSubscription->getPlan()->getName(),
-                    'plan_amount' => $this->getPlanAmount(),
+                    'plan_amount' => $this->getPlanAmount($stripeSubscription),
                     'has_card' => (int)$stripeCustomer->hasCard()
                 ]
             );
@@ -85,48 +85,5 @@ class CustomerSubscriptionUpdatedListener extends CustomerSubscriptionListener
             $this->issueWebClientEvent($webClientEventData);
             $this->markEntityProcessed();
         }
-    }
-
-    /**
-     * @return int
-     */
-    private function getPlanAmount()
-    {
-        $stripeSubscriptionPlanAmount = $this->getStripeSubscription()->getPlan()->getAmount();
-        $customerDiscount = $this->getCustomerDiscount();
-
-        if (!empty($customerDiscount)) {
-            $percentOff = $customerDiscount->getCoupon()->getPercentOff();
-
-            return (int)round($stripeSubscriptionPlanAmount * ((100 - $percentOff) / 100));
-        }
-
-        return $stripeSubscriptionPlanAmount;
-    }
-
-    /**
-     * @return null|Discount
-     */
-    private function getCustomerDiscount()
-    {
-        $events = $this->getStripeEventService()->getForUserAndType(
-            $this->getEventEntity()->getUser(),
-            [
-                'customer.created',
-                'customer.updated',
-            ]
-        );
-
-        foreach ($events as $event) {
-            /* @var StripeCustomerUpdatedEvent $stripeCustomerUpdatedEvent */
-            $stripeCustomerUpdatedEvent = $event->getStripeEventObject();
-            $eventCustomer = $stripeCustomerUpdatedEvent->getCustomer();
-
-            if ($eventCustomer->hasDiscount()) {
-                return $eventCustomer->getDiscount();
-            }
-        }
-
-        return null;
     }
 }
