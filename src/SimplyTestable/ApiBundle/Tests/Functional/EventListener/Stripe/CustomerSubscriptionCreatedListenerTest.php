@@ -2,12 +2,123 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 
+use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+use SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\StripeService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Tests\Factory\CurlExceptionFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 
 class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListenerTest
 {
+    public function testOnCustomerSubscriptionCreatedWebClientRequestFailure()
+    {
+        $eventDispatcher = $this->container->get('event_dispatcher');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        $this->queueHttpFixtures([
+            CurlExceptionFactory::create('Operation timed out', 28),
+        ]);
+
+        $user = $userService->getPublicUser();
+
+        $userAccountPlan = $userAccountPlanService->getForUser($user);
+        $userAccountPlan->setStripeCustomer('non-empty value');
+
+        $stripeEvent = $this->createStripeEvents([
+            'customer.subscription.created.active' => [
+                'data' => [],
+            ]
+        ], $user);
+
+        $eventDispatcher->dispatch(
+            'stripe_process.' . $stripeEvent->getType(),
+            new DispatchableEvent($stripeEvent)
+        );
+
+        $this->assertTrue($stripeEvent->getIsProcessed());
+    }
+
+    /**
+     * @dataProvider webClientPropertiesDataProvider
+     *
+     * @param array $webClientProperties
+     */
+    public function testOnCustomerSubscriptionCreatedWebClientSubscriberUrlInvalid($webClientProperties)
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->getPublicUser();
+
+        $logger = \Mockery::mock(LoggerInterface::class);
+        $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);
+        $stripeService = \Mockery::mock(StripeService::class);
+        $stripeEventService = \Mockery::mock(StripeEventService::class);
+        $userAccountPlanService = \Mockery::mock(UserAccountPlanService::class);
+        $httpClientService = \Mockery::mock(HttpClientService::class);
+        $accountPlanService = \Mockery::mock(AccountPlanService::class);
+
+        $stripeEventService
+            ->shouldReceive('getForUserAndType')
+            ->andReturn([]);
+
+        $stripeEventService
+            ->shouldReceive('persistAndFlush');
+
+        $listener = new CustomerSubscriptionCreatedListener(
+            $logger,
+            $eventDispatcher,
+            $stripeService,
+            $stripeEventService,
+            $userAccountPlanService,
+            $httpClientService,
+            $accountPlanService,
+            $webClientProperties
+        );
+
+        $stripeEvent = new StripeEvent();
+        $stripeEvent->setUser($user);
+        $stripeEvent->setStripeEventData(
+            json_encode(StripeEventFixtureFactory::load('customer.subscription.created.active'))
+        );
+
+        $dispatchableEvent = new DispatchableEvent($stripeEvent);
+
+        $listener->onCustomerSubscriptionCreated($dispatchableEvent);
+    }
+
+    /**
+     * @return array
+     */
+    public function webClientPropertiesDataProvider()
+    {
+        return [
+            'no urls' => [
+                'webClientProperties' => [],
+            ],
+            'no base url' => [
+                'webClientProperties' => [
+                    'urls' => [],
+                ],
+            ],
+            'no stripe event controller' => [
+                'webClientProperties' => [
+                    'urls' => [
+                        'base' => 'http://example.com/',
+                    ],
+                ],
+            ],
+        ];
+    }
+
     /**
      * @dataProvider onCustomerSubscriptionCreatedDataProvider
      *

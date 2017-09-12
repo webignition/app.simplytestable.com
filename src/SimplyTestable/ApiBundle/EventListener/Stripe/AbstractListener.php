@@ -153,6 +153,11 @@ abstract class AbstractListener
         $this->getStripeEventService()->persistAndFlush($this->getEventEntity());
     }
 
+    /**
+     * @param array $data
+     *
+     * @return bool
+     */
     protected function issueWebClientEvent($data)
     {
         $subscriberUrl = $this->getWebClientSubscriberUrl();
