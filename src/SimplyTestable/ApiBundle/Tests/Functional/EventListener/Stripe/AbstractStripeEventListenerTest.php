@@ -51,7 +51,7 @@ abstract class AbstractStripeEventListenerTest extends BaseSimplyTestableTestCas
 
                 $this->assertEquals(
                     $expectedWebClientRequestDataCollection[$requestIndex],
-                    $request->getPostFields()->getAll()
+                    $request->getPostFields()->toArray()
                 );
             }
         }
