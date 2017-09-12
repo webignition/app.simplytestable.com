@@ -17,7 +17,7 @@ class CustomerSubscriptionTrialWillEndListenerTest extends AbstractStripeEventLi
      * @param array $stripeServiceResponses
      * @param array $expectedWebClientRequestData
      */
-    public function testOnCustomerSubscriptionTrialWillEndDataProvider(
+    public function testOnCustomerSubscriptionTrialWillEnd(
         $stripeEventFixtures,
         $userName,
         $stripeServiceResponses,
