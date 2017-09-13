@@ -1,18 +1,64 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Stripe\Event;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
+use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
+use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProcessCommand extends BaseCommand
+class ProcessCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
     const RETURN_CODE_EVENT_HAS_NO_USER = 3;
+
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param EntityManager $entityManager
+     * @param LoggerInterface $logger
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string|null $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        EntityManager $entityManager,
+        LoggerInterface $logger,
+        EventDispatcherInterface $eventDispatcher,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->entityManager = $entityManager;
+        $this->logger = $logger;
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     /**
      * {@inheritdoc}
@@ -31,22 +77,22 @@ class ProcessCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $stripeEventService = $this->getContainer()->get('simplytestable.services.stripeeventservice');
-
-        $eventEntity = $stripeEventService->getByStripeId($input->getArgument('stripeId'));
+        $stripeEventRepository = $this->entityManager->getRepository(StripeEvent::class);
+        $eventEntity = $stripeEventRepository->findOneBy([
+            'stripeId' => $input->getArgument('stripeId'),
+        ]);
 
         if (!$eventEntity->hasUser()) {
-            $this->getLogger()->error('Stripe\Event\ProcessCommand: event has no user');
+            $this->logger->error('Stripe\Event\ProcessCommand: event has no user');
+
             return self::RETURN_CODE_EVENT_HAS_NO_USER;
         }
 
-        $this->getContainer()->get('event_dispatcher')->dispatch(
+        $this->eventDispatcher->dispatch(
             'stripe_process.' . $eventEntity->getType(),
             new DispatchableEvent($eventEntity)
         );
