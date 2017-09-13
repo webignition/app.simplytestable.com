@@ -62,6 +62,11 @@ services:
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob
             requiredArgs:
               - stripeId
+            serviceIds:
+              - simplytestable.services.applicationstateservice
+              - doctrine.orm.entity_manager
+              - logger
+              - event_dispatcher
           tasks-notify:
             queue: tasks-notify
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob

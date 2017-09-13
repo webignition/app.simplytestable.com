@@ -279,6 +279,12 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                 'expectedQueue' => 'stripe-event',
                 'expectedArgs' => [
                     'stripeId' => 'evt_2c6KUnrLeIFqQv',
+                    'serviceIds' => [
+                        'simplytestable.services.applicationstateservice',
+                        'doctrine.orm.entity_manager',
+                        'logger',
+                        'event_dispatcher',
+                    ],
                 ],
             ],
             'tasks-notify' => [
