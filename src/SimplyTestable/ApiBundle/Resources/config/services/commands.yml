@@ -120,3 +120,14 @@ services:
       jobService: '@simplytestable.services.jobservice'
     tags:
       - { name: console.command }
+
+
+  simplytestable.command.stripe.event.process:
+    class:  SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      entityManager: '@doctrine.orm.entity_manager'
+      logger: '@logger'
+      eventDispatcher: '@event_dispatcher'
+    tags:
+      - { name: console.command }
