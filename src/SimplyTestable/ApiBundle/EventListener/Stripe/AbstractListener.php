@@ -14,7 +14,7 @@ use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use webignition\Model\Stripe\Customer as StripeCustomer;
 
-abstract class Listener
+abstract class AbstractListener
 {
     /**
      * @var LoggerInterface
@@ -153,6 +153,11 @@ abstract class Listener
         $this->getStripeEventService()->persistAndFlush($this->getEventEntity());
     }
 
+    /**
+     * @param array $data
+     *
+     * @return bool
+     */
     protected function issueWebClientEvent($data)
     {
         $subscriberUrl = $this->getWebClientSubscriberUrl();

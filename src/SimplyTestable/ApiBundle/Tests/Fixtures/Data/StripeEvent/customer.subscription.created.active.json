@@ -1,0 +1,41 @@
+{
+  "created": 1326853478,
+  "livemode": false,
+  "id": "evt_00000000000000",
+  "type": "customer.subscription.created",
+  "object": "event",
+  "request": null,
+  "data": {
+    "object": {
+      "id": "sub_00000000000000",
+      "plan": {
+        "interval": "month",
+        "name": "Basic",
+        "created": 1371118751,
+        "amount": 900,
+        "currency": "gbp",
+        "id": "basic_00000000000000",
+        "object": "plan",
+        "livemode": false,
+        "interval_count": 1,
+        "trial_period_days": null,
+        "metadata": {
+        }
+      },
+      "object": "subscription",
+      "start": 1392757613,
+      "status": "active",
+      "customer": "{{stripe_customer}}",
+      "cancel_at_period_end": false,
+      "current_period_start": 1392757613,
+      "current_period_end": 1395176813,
+      "ended_at": null,
+      "trial_start": null,
+      "trial_end": null,
+      "canceled_at": null,
+      "quantity": 1,
+      "application_fee_percent": null,
+      "discount": null
+    }
+  }
+}

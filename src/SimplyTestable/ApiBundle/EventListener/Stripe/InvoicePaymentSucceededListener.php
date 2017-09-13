@@ -2,24 +2,30 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-class InvoicePaymentSucceededListener extends InvoiceListener
+use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+
+class InvoicePaymentSucceededListener extends AbstractInvoiceListener
 {
-    
-    public function onInvoicePaymentSucceeded(\SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent $event) {
+    /**
+     * @param DispatchableEvent $event
+     */
+    public function onInvoicePaymentSucceeded(DispatchableEvent $event)
+    {
         $this->setEvent($event);
-        
+
         $invoice = $this->getStripeInvoice();
 
         if ($invoice->getTotal() === 0 && $invoice->getAmountDue() === 0) {
             $this->markEntityProcessed();
+
             return;
         }
 
         $webClientEventData = [
             'lines' => $invoice->getLinesSummary(),
-            'subtotal' => $invoice->getSubtotal(),
-            'total' => $invoice->getTotal(),
-            'amount_due' => $invoice->getAmountDue(),
+            'subtotal' => (string)$invoice->getSubtotal(),
+            'total' => (string)$invoice->getTotal(),
+            'amount_due' => (string)$invoice->getAmountDue(),
             'invoice_id' => $invoice->getId(),
             'has_discount' => (int)$invoice->hasDiscount(),
             'currency' => $invoice->getCurrency()
@@ -36,7 +42,7 @@ class InvoicePaymentSucceededListener extends InvoiceListener
         }
 
         $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), $webClientEventData));
-        
-        $this->markEntityProcessed();        
-    }  
+
+        $this->markEntityProcessed();
+    }
 }

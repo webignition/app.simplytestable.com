@@ -1,0 +1,184 @@
+{
+    "id": "evt_4cLPsxfYedI7Cd",
+    "created": 1408432065,
+    "livemode": false,
+    "type": "customer.updated",
+    "data": {
+        "object": {
+            "object": "customer",
+            "created": 1407929093,
+            "id": "{{stripe_customer}}",
+            "livemode": false,
+            "description": null,
+            "email": "webignition@gmail.com",
+            "delinquent": false,
+            "metadata": {
+            },
+            "subscriptions": {
+                "object": "list",
+                "total_count": 1,
+                "has_more": false,
+                "url": "/v1/customers/cus_4aACyO4kB8UDrm/subscriptions",
+                "data": [
+                    {
+                        "id": "sub_4aAC7YTVV9P8VL",
+                        "plan": {
+                            "interval": "month",
+                            "name": "Agency",
+                            "created": 1370600333,
+                            "amount": 1900,
+                            "currency": "gbp",
+                            "id": "agency-19",
+                            "object": "plan",
+                            "livemode": false,
+                            "interval_count": 1,
+                            "trial_period_days": 30,
+                            "metadata": {
+                            },
+                            "statement_description": null
+                        },
+                        "object": "subscription",
+                        "start": 1408432065,
+                        "status": "trialing",
+                        "customer": "{{stripe_customer}}",
+                        "cancel_at_period_end": false,
+                        "current_period_start": 1407929095,
+                        "current_period_end": 1410921934,
+                        "ended_at": null,
+                        "trial_start": 1407929095,
+                        "trial_end": 1410921934,
+                        "canceled_at": null,
+                        "quantity": 1,
+                        "application_fee_percent": null,
+                        "discount": null,
+                        "metadata": {
+                        }
+                    }
+                ],
+                "count": 1
+            },
+            "discount": {
+                "coupon": {
+                    "id": "TMS",
+                    "created": 1407422003,
+                    "percent_off": 20,
+                    "amount_off": null,
+                    "currency": null,
+                    "object": "coupon",
+                    "livemode": false,
+                    "duration": "forever",
+                    "redeem_by": null,
+                    "max_redemptions": null,
+                    "times_redeemed": 11,
+                    "duration_in_months": null,
+                    "valid": true,
+                    "metadata": {
+                    }
+                },
+                "start": 1407929093,
+                "object": "discount",
+                "customer": "{{stripe_customer}}",
+                "subscription": null,
+                "end": null
+            },
+            "account_balance": -612,
+            "currency": "gbp",
+            "cards": {
+                "object": "list",
+                "total_count": 1,
+                "has_more": false,
+                "url": "/v1/customers/cus_4aACyO4kB8UDrm/cards",
+                "data": [
+                    {
+                        "id": "card_4abZgQegQ4ii52",
+                        "object": "card",
+                        "last4": "4242",
+                        "brand": "Visa",
+                        "funding": "credit",
+                        "exp_month": 2,
+                        "exp_year": 2022,
+                        "fingerprint": "7y5WDQllCuyzj32D",
+                        "country": "US",
+                        "name": "Jon Cram",
+                        "address_line1": "20 Hathaway Gardens",
+                        "address_line2": null,
+                        "address_city": "Basingstoke",
+                        "address_state": "Hampshire",
+                        "address_zip": "RG24 9BF",
+                        "address_country": "GB",
+                        "cvc_check": "pass",
+                        "address_line1_check": "pass",
+                        "address_zip_check": "pass",
+                        "customer": "{{stripe_customer}}",
+                        "type": "Visa"
+                    }
+                ],
+                "count": 1
+            },
+            "default_card": "card_4abZgQegQ4ii52",
+            "active_card": {
+                "id": "card_4abZgQegQ4ii52",
+                "object": "card",
+                "last4": "4242",
+                "brand": "Visa",
+                "funding": "credit",
+                "exp_month": 2,
+                "exp_year": 2022,
+                "fingerprint": "7y5WDQllCuyzj32D",
+                "country": "US",
+                "name": "Jon Cram",
+                "address_line1": "20 Hathaway Gardens",
+                "address_line2": null,
+                "address_city": "Basingstoke",
+                "address_state": "Hampshire",
+                "address_zip": "RG24 9BF",
+                "address_country": "GB",
+                "cvc_check": "pass",
+                "address_line1_check": "pass",
+                "address_zip_check": "pass",
+                "customer": "{{stripe_customer}}",
+                "type": "Visa"
+            },
+            "subscription": {
+                "id": "sub_4aAC7YTVV9P8VL",
+                "plan": {
+                    "interval": "month",
+                    "name": "Agency",
+                    "created": 1370600333,
+                    "amount": 1900,
+                    "currency": "gbp",
+                    "id": "agency-19",
+                    "object": "plan",
+                    "livemode": false,
+                    "interval_count": 1,
+                    "trial_period_days": 30,
+                    "metadata": {
+                    },
+                    "statement_description": null
+                },
+                "object": "subscription",
+                "start": 1408432065,
+                "status": "trialing",
+                "customer": "{{stripe_customer}}",
+                "cancel_at_period_end": false,
+                "current_period_start": 1407929095,
+                "current_period_end": 1410921934,
+                "ended_at": null,
+                "trial_start": 1407929095,
+                "trial_end": 1410921934,
+                "canceled_at": null,
+                "quantity": 1,
+                "application_fee_percent": null,
+                "discount": null,
+                "metadata": {
+                }
+            }
+        },
+        "previous_attributes": {
+            "account_balance": 0
+        }
+    },
+    "object": "event",
+    "pending_webhooks": 1,
+    "request": "iar_4cLPRPfMIleyMM"
+}
