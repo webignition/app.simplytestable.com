@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCase
 {
@@ -91,9 +93,10 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
         $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
         $taskController->completeAction();
 
-        $this->executeCommand('simplytestable:task:assigncollection', array(
+        $taskAssignCollectionCommand = $this->container->get('simplytestable.command.task.assigncollection');
+        $taskAssignCollectionCommand->run(new ArrayInput([
             'ids' => $tasks[1]->getId()
-        ));
+        ]), new BufferedOutput());
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => $now->format('Y-m-d H:i:s'),
@@ -193,9 +196,10 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
         $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
         $taskController->completeAction();
 
-        $this->executeCommand('simplytestable:task:assigncollection', array(
+        $taskAssignCollectionCommand = $this->container->get('simplytestable.command.task.assigncollection');
+        $taskAssignCollectionCommand->run(new ArrayInput([
             'ids' => $tasks[1]->getId()
-        ));
+        ]), new BufferedOutput());
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => $now->format('Y-m-d H:i:s'),

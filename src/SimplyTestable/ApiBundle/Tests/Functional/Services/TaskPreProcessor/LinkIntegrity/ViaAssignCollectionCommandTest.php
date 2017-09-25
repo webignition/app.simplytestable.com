@@ -3,6 +3,8 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TaskPreProcessor\LinkIntegrity;
 
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class ViaAssignCollectionCommandTest extends PreProcessorTest
 {
@@ -16,9 +18,10 @@ class ViaAssignCollectionCommandTest extends PreProcessorTest
         $workerFactory = new WorkerFactory($this->container);
         $workerFactory->create();
 
-        $this->executeCommand('simplytestable:task:assigncollection', array(
+        $taskAssignCollectionCommand = $this->container->get('simplytestable.command.task.assigncollection');
+        $taskAssignCollectionCommand->run(new ArrayInput([
             'ids' => $task->getId()
-        ));
+        ]), new BufferedOutput());
     }
 
     protected function getCompletedTaskOutput()
