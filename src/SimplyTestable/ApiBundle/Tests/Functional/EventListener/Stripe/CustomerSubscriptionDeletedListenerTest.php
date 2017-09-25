@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListenerTest
@@ -44,7 +45,8 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEvent = $this->createStripeEvents($stripeEventFixtures, $user);
+        $stripeEventFactory = new StripeEventFactory($this->container);
+        $stripeEvent = $stripeEventFactory->createEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(
             'stripe_process.' . $stripeEvent->getType(),
