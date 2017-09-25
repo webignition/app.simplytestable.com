@@ -67,8 +67,10 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
             JobFactory::KEY_USER => $ownerUser,
-            JobFactory::KEY_TASK_STATES => [
-                TaskService::IN_PROGRESS_STATE,
+            JobFactory::KEY_TASKS => [
+                [
+                    JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
+                ],
             ],
         ]);
 

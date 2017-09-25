@@ -27,11 +27,13 @@ class JobFactory
     const KEY_PARAMETERS = 'parameters';
     const KEY_USER = 'user';
     const KEY_STATE = 'state';
-    const KEY_TASK_STATES = 'task-states';
     const KEY_TIME_PERIOD_START = 'time-period-start';
     const KEY_TIME_PERIOD_END = 'time-period-end';
     const KEY_DOMAIN = 'domain';
     const KEY_AMMENDMENTS = 'ammendments';
+    const KEY_TASKS = 'tasks';
+    const KEY_TASK_STATE = 'state';
+    const KEY_TASK_WORKER_HOSTNAME = 'worker-hostname';
 
     /**
      * @var array
@@ -74,6 +76,7 @@ class JobFactory
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $taskService = $this->container->get('simplytestable.services.taskservice');
+        $workerService = $this->container->get('simplytestable.services.workerservice');
 
         $ignoreState = true;
 
@@ -89,17 +92,34 @@ class JobFactory
             $jobService->persistAndFlush($job);
         }
 
-        if (isset($jobValues[self::KEY_TASK_STATES])) {
-            $stateNames = $jobValues[self::KEY_TASK_STATES];
+        if (isset($jobValues[self::KEY_TASKS])) {
+            $taskValuesCollection = $jobValues[self::KEY_TASKS];
 
             /* @var Task[] $tasks */
             $tasks = $job->getTasks();
 
             foreach ($tasks as $taskIndex => $task) {
-                if (isset($stateNames[$taskIndex])) {
-                    $stateName = $stateNames[$taskIndex];
-                    $task->setState($stateService->fetch($stateName));
-                    $taskService->persistAndFlush($task);
+                $taskIsUpdated = false;
+
+                if (isset($taskValuesCollection[$taskIndex])) {
+                    $taskValues = $taskValuesCollection[$taskIndex];
+
+                    if (isset($taskValues[self::KEY_TASK_STATE])) {
+                        $stateName = $taskValues[self::KEY_TASK_STATE];
+                        $task->setState($stateService->fetch($stateName));
+                        $taskIsUpdated = true;
+                    }
+
+                    if (isset($taskValues[self::KEY_TASK_WORKER_HOSTNAME])) {
+                        $workerHostname = $taskValues[self::KEY_TASK_WORKER_HOSTNAME];
+                        $worker = $workerService->fetch($workerHostname);
+                        $task->setWorker($worker);
+                        $taskIsUpdated = true;
+                    }
+
+                    if ($taskIsUpdated) {
+                        $taskService->persistAndFlush($task);
+                    }
                 }
             }
         }
