@@ -1,16 +1,15 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Stripe\Event;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
-
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-class UpdateDataCommand extends BaseCommand
+class UpdateDataCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
@@ -31,19 +30,27 @@ class UpdateDataCommand extends BaseCommand
     private $stripeEventService;
 
     /**
+     * @var string
+     */
+    private $stripeKey;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param StripeEventService $stripeEventService
+     * @param string $stripeKey
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         StripeEventService $stripeEventService,
+        $stripeKey,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->stripeEventService = $stripeEventService;
+        $this->stripeKey = $stripeKey;
     }
 
     /**
@@ -72,7 +79,7 @@ class UpdateDataCommand extends BaseCommand
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $isDryRun = $this->input->getOption('dry-run') == 'true';
+        $isDryRun = $input->getOption('dry-run') == 'true';
 
         if ($isDryRun) {
             $output->writeln('<comment>This is a DRY RUN, no data will be written</comment>');
@@ -87,10 +94,11 @@ class UpdateDataCommand extends BaseCommand
             $cliCommand = sprintf(
                 'curl https://api.stripe.com/v1/events/%s -u %s: 2>/dev/null',
                 $event->getStripeId(),
-                $this->getContainer()->getParameter('stripe_key')
+                $this->stripeKey
             );
 
             $response = json_decode(shell_exec($cliCommand));
+
             if (isset($response->error)) {
                 $output->writeln('<error>'.$response->error->message.'</error>');
                 continue;

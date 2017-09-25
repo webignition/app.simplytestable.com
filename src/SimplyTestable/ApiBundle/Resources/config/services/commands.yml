@@ -121,7 +121,6 @@ services:
     tags:
       - { name: console.command }
 
-
   simplytestable.command.stripe.event.process:
     class:  SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand
     arguments:
@@ -129,5 +128,14 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
       logger: '@logger'
       eventDispatcher: '@event_dispatcher'
+    tags:
+      - { name: console.command }
+
+  simplytestable.command.stripe.event.updatedata:
+    class:  SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      stripeEventService: '@simplytestable.services.stripeeventservice'
+      stripeKey: '%stripe_key%'
     tags:
       - { name: console.command }
