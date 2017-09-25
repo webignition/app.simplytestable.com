@@ -3,7 +3,8 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task\Assign;
 
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -36,8 +37,7 @@ class CollectionCommandTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->command = new CollectionCommand();
-        $this->command->setContainer($this->container);
+        $this->command = $this->container->get('simplytestable.command.task.assigncollection');
 
         $this->workerFactory = new WorkerFactory($this->container);
         $this->jobFactory = new JobFactory($this->container);
@@ -45,21 +45,45 @@ class CollectionCommandTest extends BaseSimplyTestableTestCase
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableReadOnlyAction();
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([
             'ids' => '1,2,3'
         ]), new BufferedOutput());
 
-        $this->assertEquals(-1, $returnCode);
+        $this->assertEquals(CollectionCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
 
-        $maintenanceController->disableReadOnlyAction();
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
-    public function testRunWithNoWorkers()
+    public function testRunNoTaskIds()
     {
+        $returnCode = $this->command->run(new ArrayInput([
+            'ids' => ''
+        ]), new BufferedOutput());
+
+        $this->assertEquals(CollectionCommand::RETURN_CODE_OK, $returnCode);
+    }
+
+    /**
+     * @dataProvider runDataProvider
+     *
+     * @param array $httpFixtures
+     * @param array $workerValuesCollection
+     * @param array $additionalArgs
+     * @param int $expectedReturnCode
+     * @param array $expectedTaskValuesCollection
+     * @param bool $expectedTaskAssignCollectionQueueIsEmpty
+     */
+    public function testRunFoo(
+        $httpFixtures,
+        $workerValuesCollection,
+        $additionalArgs,
+        $expectedReturnCode,
+        $expectedTaskValuesCollection,
+        $expectedTaskAssignCollectionQueueIsEmpty
+    ) {
         $userService = $this->container->get('simplytestable.services.userservice');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
 
@@ -67,107 +91,156 @@ class CollectionCommandTest extends BaseSimplyTestableTestCase
 
         $userService->setUser($userService->getPublicUser());
 
-        $returnCode = $this->command->run(new ArrayInput([
-            'ids' => implode(',', $job->getTaskIds())
-        ]), new BufferedOutput());
+        $this->queueHttpFixtures($httpFixtures);
 
-        $this->assertEquals(1, $returnCode);
-
-        $this->assertTrue($resqueQueueService->contains(
-            'task-assign-collection',
-            [
-                'ids' => implode(',', $job->getTaskIds())
-            ]
-        ));
-    }
-
-    public function testRunWithNoWorkersAvailable()
-    {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-
-        $job = $this->jobFactory->createResolveAndPrepare();
-
-        $userService->setUser($userService->getPublicUser());
-
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createNotFoundResponse(),
-            HttpFixtureFactory::createNotFoundResponse(),
-            HttpFixtureFactory::createNotFoundResponse(),
-        ]);
-
-        $this->workerFactory->create([
-            WorkerFactory::KEY_HOSTNAME => 'hydrogen.worker.example.com',
-        ]);
-
-        $this->workerFactory->create([
-            WorkerFactory::KEY_HOSTNAME => 'lithium.worker.example.com',
-        ]);
-
-        $this->workerFactory->create([
-            WorkerFactory::KEY_HOSTNAME => 'helium.worker.example.com',
-        ]);
-
-        $returnCode = $this->command->run(new ArrayInput([
-            'ids' => implode(',', $job->getTaskIds())
-        ]), new BufferedOutput());
-
-        $this->assertEquals(2, $returnCode);
-
-        $this->assertTrue($resqueQueueService->contains(
-            'task-assign-collection',
-            [
-                'ids' => implode(',', $job->getTaskIds())
-            ]
-        ));
-    }
-
-    public function testAssignToSpecificWorker()
-    {
-        $userService = $this->container->get('simplytestable.services.userservice');
-
-        $job = $this->jobFactory->createResolveAndPrepare();
-
-        $userService->setUser($userService->getPublicUser());
-
-        $this->queueHttpFixtures([
-            HttpFixtureFactory::createSuccessResponse(
-                'application/json',
-                json_encode([
-                    [
-                        'id' => 1,
-                        'url' => 'http://example.com/one',
-                        'type' => 'html validation',
-                    ],
-                    [
-                        'id' => 2,
-                        'url' => 'http://example.com/bar%20foo',
-                        'type' => 'html validation',
-                    ],
-                    [
-                        'id' => 3,
-                        'url' => 'http://example.com/foo bar',
-                        'type' => 'html validation',
-                    ],
-                ])
-            )
-        ]);
-
-        $this->workerFactory->create();
-        $worker = $this->workerFactory->create([
-            WorkerFactory::KEY_HOSTNAME => 'worker.example.com',
-        ]);
-
-        $returnCode = $this->command->run(new ArrayInput([
-            'ids' => implode(',', $job->getTaskIds()),
-            'worker' => $worker->getHostname()
-        ]), new BufferedOutput());
-
-        $this->assertEquals(0, $returnCode);
-
-        foreach ($job->getTasks() as $task) {
-            $this->assertEquals($worker->getHostname(), $task->getWorker()->getHostname());
-            $this->assertEquals(TaskService::IN_PROGRESS_STATE, $task->getState()->getName());
+        foreach ($workerValuesCollection as $workerValues) {
+            $this->workerFactory->create($workerValues);
         }
+
+        $returnCode = $this->command->run(
+            new ArrayInput(
+                array_merge([
+                    'ids' => implode(',', $job->getTaskIds())
+                ], $additionalArgs)
+            ),
+            new BufferedOutput()
+        );
+
+        $this->assertEquals($expectedReturnCode, $returnCode);
+
+        /* @var Task $task */
+        foreach ($job->getTasks() as $taskIndex => $task) {
+            $expectedTaskValues = $expectedTaskValuesCollection[$taskIndex];
+
+            if (empty($expectedTaskValues['worker'])) {
+                $this->assertNull($task->getWorker());
+            } else {
+                $this->assertEquals($expectedTaskValues['worker']['hostname'], $task->getWorker()->getHostname());
+            }
+
+            $this->assertEquals($expectedTaskValues['state'], $task->getState()->getName());
+        }
+
+        if ($expectedTaskAssignCollectionQueueIsEmpty) {
+            $this->assertTrue($resqueQueueService->isEmpty('task-assign-collection'));
+        } else {
+            $this->assertTrue($resqueQueueService->contains(
+                'task-assign-collection',
+                [
+                    'ids' => implode(',', $job->getTaskIds())
+                ]
+            ));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function runDataProvider()
+    {
+        return [
+            'no workers' => [
+                'httpFixtures' => [],
+                'workerValuesCollection' => [],
+                'additionalArgs' => [],
+                'expectedReturnCode' => CollectionCommand::RETURN_CODE_FAILED_NO_WORKERS,
+                'expectedTaskValuesCollection' => [
+                    [
+                        'worker' => null,
+                        'state' => TaskService::QUEUED_STATE,
+                    ],
+                    [
+                        'worker' => null,
+                        'state' => TaskService::QUEUED_STATE,
+                    ],
+                    [
+                        'worker' => null,
+                        'state' => TaskService::QUEUED_STATE,
+                    ],
+                ],
+                'expectedTaskAssignCollectionQueueIsEmpty' => false,
+            ],
+            'no workers available' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createNotFoundResponse(),
+                ],
+                'workerValuesCollection' => [
+                    [
+                        WorkerFactory::KEY_HOSTNAME => 'hydrogen.worker.example.com',
+                    ],
+                ],
+                'additionalArgs' => [],
+                'expectedReturnCode' => 2,
+                'expectedTaskValuesCollection' => [
+                    [
+                        'worker' => null,
+                        'state' => TaskService::QUEUED_STATE,
+                    ],
+                    [
+                        'worker' => null,
+                        'state' => TaskService::QUEUED_STATE,
+                    ],
+                    [
+                        'worker' => null,
+                        'state' => TaskService::QUEUED_STATE,
+                    ],
+                ],
+                'expectedTaskAssignCollectionQueueIsEmpty' => false,
+            ],
+            'assign to specific worker' => [
+                'httpFixtures' => [
+                    HttpFixtureFactory::createSuccessResponse(
+                        'application/json',
+                        json_encode([
+                            [
+                                'id' => 1,
+                                'url' => 'http://example.com/one',
+                                'type' => 'html validation',
+                            ],
+                            [
+                                'id' => 2,
+                                'url' => 'http://example.com/bar%20foo',
+                                'type' => 'html validation',
+                            ],
+                            [
+                                'id' => 3,
+                                'url' => 'http://example.com/foo bar',
+                                'type' => 'html validation',
+                            ],
+                        ])
+                    ),
+                ],
+                'workerValuesCollection' => [
+                    [
+                        WorkerFactory::KEY_HOSTNAME => 'hydrogen.worker.example.com',
+                    ],
+                ],
+                'additionalArgs' => [
+                    'worker' => 'hydrogen.worker.example.com',
+                ],
+                'expectedReturnCode' => CollectionCommand::RETURN_CODE_OK,
+                'expectedTaskValuesCollection' => [
+                    [
+                        'worker' => [
+                            'hostname' => 'hydrogen.worker.example.com'
+                        ],
+                        'state' => TaskService::IN_PROGRESS_STATE,
+                    ],
+                    [
+                        'worker' => [
+                            'hostname' => 'hydrogen.worker.example.com'
+                        ],
+                        'state' => TaskService::IN_PROGRESS_STATE,
+                    ],
+                    [
+                        'worker' => [
+                            'hostname' => 'hydrogen.worker.example.com'
+                        ],
+                        'state' => TaskService::IN_PROGRESS_STATE,
+                    ],
+                ],
+                'expectedTaskAssignCollectionQueueIsEmpty' => true,
+            ],
+        ];
     }
 }

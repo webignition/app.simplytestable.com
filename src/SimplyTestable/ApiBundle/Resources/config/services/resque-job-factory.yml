@@ -42,6 +42,16 @@ services:
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob
             requiredArgs:
               - ids
+            serviceIds:
+              - simplytestable.services.applicationstateservice
+              - doctrine.orm.entity_manager
+              - simplytestable.services.taskpreprocessorservicefactory
+              - simplytestable.services.workerservice
+              - simplytestable.services.resque.queueservice
+              - simplytestable.services.resque.jobfactory
+              - simplytestable.services.stateservice
+              - simplytestable.services.workertaskassignmentservice
+              - logger
           task-cancel:
             queue: task-cancel
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob

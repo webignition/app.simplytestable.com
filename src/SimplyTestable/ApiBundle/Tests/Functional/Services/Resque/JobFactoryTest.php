@@ -235,6 +235,17 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                 'expectedQueue' => 'task-assign-collection',
                 'expectedArgs' => [
                     'ids' => '1,2,3',
+                    'serviceIds' => [
+                        'simplytestable.services.applicationstateservice',
+                        'doctrine.orm.entity_manager',
+                        'simplytestable.services.taskpreprocessorservicefactory',
+                        'simplytestable.services.workerservice',
+                        'simplytestable.services.resque.queueservice',
+                        'simplytestable.services.resque.jobfactory',
+                        'simplytestable.services.stateservice',
+                        'simplytestable.services.workertaskassignmentservice',
+                        'logger',
+                    ],
                 ],
             ],
             'task-cancel' => [

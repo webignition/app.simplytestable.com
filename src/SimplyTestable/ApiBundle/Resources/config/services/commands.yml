@@ -139,3 +139,18 @@ services:
       stripeKey: '%stripe_key%'
     tags:
       - { name: console.command }
+
+  simplytestable.command.task.assigncollection:
+    class:  SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      entityManager: '@doctrine.orm.entity_manager'
+      taskPreProcessorFactory: '@simplytestable.services.taskpreprocessorservicefactory'
+      workerService: '@simplytestable.services.workerservice'
+      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      stateService: '@simplytestable.services.stateservice'
+      workerTaskAssignmentService: '@simplytestable.services.workertaskassignmentservice'
+      logger: '@logger'
+    tags:
+      - { name: console.command }

@@ -1,20 +1,110 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Task\Assign;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
-
+use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService as TaskPreProcessorFactoryService;
+use SimplyTestable\ApiBundle\Services\WorkerService;
+use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CollectionCommand extends BaseCommand
+class CollectionCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_FAILED_NO_WORKERS = 1;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = -1;
+
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var TaskPreProcessorFactoryService
+     */
+    private $taskPreprocessorFactory;
+
+    /**
+     * @var WorkerService
+     */
+    private $workerService;
+
+    /**
+     * @var ResqueQueueService
+     */
+    private $resqueQueueService;
+
+    /**
+     * @var ResqueJobFactory
+     */
+    private $resqueJobFactory;
+
+    /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
+     * @var WorkerTaskAssignmentService
+     */
+    private $workerTaskAssignmentService;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param EntityManager $entityManager
+     * @param TaskPreProcessorFactoryService $taskPreProcessorFactory
+     * @param WorkerService $workerService
+     * @param ResqueQueueService $resqueQueueService
+     * @param ResqueJobFactory $resqueJobFactory
+     * @param StateService $stateService
+     * @param WorkerTaskAssignmentService $workerTaskAssignmentService
+     * @param LoggerInterface $logger
+     * @param string|null $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        EntityManager $entityManager,
+        TaskPreProcessorFactoryService $taskPreProcessorFactory,
+        WorkerService $workerService,
+        ResqueQueueService $resqueQueueService,
+        ResqueJobFactory $resqueJobFactory,
+        StateService $stateService,
+        WorkerTaskAssignmentService $workerTaskAssignmentService,
+        LoggerInterface $logger,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->entityManager = $entityManager;
+        $this->taskPreprocessorFactory = $taskPreProcessorFactory;
+        $this->workerService = $workerService;
+        $this->resqueQueueService = $resqueQueueService;
+        $this->resqueJobFactory = $resqueJobFactory;
+        $this->stateService = $stateService;
+        $this->workerTaskAssignmentService = $workerTaskAssignmentService;
+        $this->logger = $logger;
+    }
 
     /**
      * {@inheritdoc}
@@ -34,33 +124,28 @@ class CollectionCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $taskIds = explode(',', $input->getArgument('ids'));
+        $taskIds = array_filter(explode(',', $input->getArgument('ids')));
 
         if (empty($taskIds)) {
             return self::RETURN_CODE_OK;
         }
 
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-        $taskRepository = $entityManager->getRepository(Task::class);
+        $taskRepository = $this->entityManager->getRepository(Task::class);
 
         $tasks = $taskRepository->findBy([
             'id' => $taskIds,
         ]);
 
-        $taskPreprocessorFactory = $this->getContainer()->get('simplytestable.services.taskPreprocessorServiceFactory');
-
         foreach ($tasks as $taskIndex => $task) {
-            if ($taskPreprocessorFactory->hasPreprocessor($task)) {
+            if ($this->taskPreprocessorFactory->hasPreprocessor($task)) {
                 $preProcessorResponse = false;
 
                 try {
-                    $preProcessorResponse = $taskPreprocessorFactory->getPreprocessor($task)->process($task);
+                    $preProcessorResponse = $this->taskPreprocessorFactory->getPreprocessor($task)->process($task);
                 } catch (\Exception $e) {
                 }
 
@@ -74,8 +159,7 @@ class CollectionCommand extends BaseCommand
             return self::RETURN_CODE_OK;
         }
 
-        $workerService = $this->getContainer()->get('simplytestable.services.workerservice');
-        $activeWorkers = $workerService->getActiveCollection();
+        $activeWorkers = $this->workerService->getActiveCollection();
         $workers = [];
 
         if (is_null($input->getArgument('worker'))) {
@@ -90,48 +174,42 @@ class CollectionCommand extends BaseCommand
             }
         }
 
-        $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueService');
-        $resqueJobFactoryService = $this->getContainer()->get('simplytestable.services.resque.jobFactory');
-
         if (count($workers) === 0) {
-            $this->getLogger()->error("TaskAssignCollectionCommand::execute: Cannot assign, no workers.");
-
-            $resqueQueueService->enqueue(
-                $resqueJobFactoryService->create(
-                    'task-assign-collection',
-                    ['ids' => implode(',', $taskIds)]
-                )
-            );
+            $this->logger->error("TaskAssignCollectionCommand::execute: Cannot assign, no workers.");
+            $this->requeueAssignment($taskIds);
 
             return self::RETURN_CODE_FAILED_NO_WORKERS;
         }
 
-        $stateService = $this->getContainer()->get('simplytestable.services.stateservice');
-        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
+        $jobInProgressState = $this->stateService->fetch(JobService::IN_PROGRESS_STATE);
 
-        $workerTaskAssignmentService = $this->getContainer()->get(
-            'simplytestable.services.workertaskassignmentservice'
-        );
-
-        $response = $workerTaskAssignmentService->assignCollection($tasks, $workers);
+        $response = $this->workerTaskAssignmentService->assignCollection($tasks, $workers);
         if ($response === 0) {
             /* @var Job $job */
             $job = $tasks[0]->getJob();
             if ($job->getState()->getName() == 'job-queued') {
                 $job->setState($jobInProgressState);
-                $entityManager->persist($job);
+                $this->entityManager->persist($job);
             }
 
-            $entityManager->flush();
+            $this->entityManager->flush();
         } else {
-            $resqueQueueService->enqueue(
-                $resqueJobFactoryService->create(
-                    'task-assign-collection',
-                    ['ids' => implode(',', $taskIds)]
-                )
-            );
+            $this->requeueAssignment($taskIds);
         }
 
         return $response;
+    }
+
+    /**
+     * @param int[] $taskIds
+     */
+    private function requeueAssignment($taskIds)
+    {
+        $this->resqueQueueService->enqueue(
+            $this->resqueJobFactory->create(
+                'task-assign-collection',
+                ['ids' => implode(',', $taskIds)]
+            )
+        );
     }
 }
