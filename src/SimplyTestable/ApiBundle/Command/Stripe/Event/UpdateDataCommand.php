@@ -1,52 +1,104 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Stripe\Event;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
-
+use SimplyTestable\ApiBundle\Entity\Stripe\Event;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
-class UpdateDataCommand extends BaseCommand
+class UpdateDataCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
 
     /**
-     *
      * @var InputInterface
      */
     private $input;
 
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var StripeEventService
+     */
+    private $stripeEventService;
+
+    /**
+     * @var string
+     */
+    private $stripeKey;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param StripeEventService $stripeEventService
+     * @param string $stripeKey
+     * @param string|null $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        StripeEventService $stripeEventService,
+        $stripeKey,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->stripeEventService = $stripeEventService;
+        $this->stripeKey = $stripeKey;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
             ->setName('simplytestable:stripe:event:updatedata')
             ->setDescription('Retrieve all stripe event data from stripe and refresh local cache')
-            ->addOption('dry-run', null, InputOption::VALUE_OPTIONAL, 'Run through the process without writing any data')
+            ->addOption(
+                'dry-run',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Run through the process without writing any data'
+            )
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $this->input = $input;
+        $isDryRun = $input->getOption('dry-run') == 'true';
 
-        if ($this->isDryRun()) {
+        if ($isDryRun) {
             $output->writeln('<comment>This is a DRY RUN, no data will be written</comment>');
         }
 
-        $events = $this->getStripeEventService()->getEntityRepository()->findAll();
+        $events = $this->stripeEventService->getEntityRepository()->findAll();
 
         foreach ($events as $event) {
-            $output->write('Retrieving ' . $event->getStripeId().' ... ');
+            /* @var Event $event */
+            $output->write('Retrieving ' . $event->getStripeId() . ' ... ');
 
-            $response = json_decode(shell_exec('curl https://api.stripe.com/v1/events/'. $event->getStripeId() .' -u ' . $this->getContainer()->getParameter('stripe_key').': 2>/dev/null'));
+            $cliCommand = sprintf(
+                'curl https://api.stripe.com/v1/events/%s -u %s: 2>/dev/null',
+                $event->getStripeId(),
+                $this->stripeKey
+            );
+
+            $response = json_decode(shell_exec($cliCommand));
+
             if (isset($response->error)) {
                 $output->writeln('<error>'.$response->error->message.'</error>');
                 continue;
@@ -63,30 +115,13 @@ class UpdateDataCommand extends BaseCommand
 
             $event->setStripeEventData(json_encode($response));
 
-            if (!$this->isDryRun()) {
-                $this->getStripeEventService()->persistAndFlush($event);
+            if (!$isDryRun) {
+                $this->stripeEventService->persistAndFlush($event);
             }
 
             $output->writeln('<info>done</info>');
         }
 
         return self::RETURN_CODE_OK;
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\StripeEventService
-     */
-    private function getStripeEventService() {
-        return $this->getContainer()->get('simplytestable.services.stripeeventservice');
-    }
-
-
-    /**
-     *
-     * @return int
-     */
-    protected function isDryRun() {
-        return $this->input->getOption('dry-run') == 'true';
     }
 }

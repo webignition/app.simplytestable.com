@@ -7,7 +7,7 @@ use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -78,7 +78,6 @@ class ProcessCommandTest extends BaseSimplyTestableTestCase
     public function testRun($fixtureName, $expectedEventName)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
@@ -93,21 +92,16 @@ class ProcessCommandTest extends BaseSimplyTestableTestCase
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer($stripeCustomer);
 
-        $fixture = StripeEventFixtureFactory::load($fixtureName, [
-            'data' => [
-                'object' => [
-                    'customer' => $stripeCustomer,
+        $stripeEventFactory = new StripeEventFactory($this->container);
+        $stripeEvent = $stripeEventFactory->createEvents([
+            $fixtureName => [
+                'data' => [
+                    'object' => [
+                        'customer' => $stripeCustomer,
+                    ],
                 ],
-            ],
-        ]);
-
-        $stripeEvent = $stripeEventService->create(
-            $fixture['id'],
-            $fixture['type'],
-            $fixture['livemode'],
-            json_encode($fixture),
-            $user
-        );
+            ]
+        ], $user);
 
         /* @var MockInterface|EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);

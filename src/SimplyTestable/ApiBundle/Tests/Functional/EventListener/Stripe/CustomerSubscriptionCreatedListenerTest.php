@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Tests\Factory\CurlExceptionFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -34,7 +35,9 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEvent = $this->createStripeEvents([
+        $stripeEventFactory = new StripeEventFactory($this->container);
+
+        $stripeEvent = $stripeEventFactory->createEvents([
             'customer.subscription.created.active' => [
                 'data' => [],
             ]
@@ -153,7 +156,8 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $userAccountPlan->setStripeCustomer('non-empty value');
 
-        $stripeEvent = $this->createStripeEvents($stripeEventFixtures, $user);
+        $stripeEventFactory = new StripeEventFactory($this->container);
+        $stripeEvent = $stripeEventFactory->createEvents($stripeEventFixtures, $user);
 
         $eventDispatcher->dispatch(
             'stripe_process.' . $stripeEvent->getType(),
