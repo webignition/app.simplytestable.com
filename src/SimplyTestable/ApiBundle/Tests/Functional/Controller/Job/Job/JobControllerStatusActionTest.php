@@ -162,8 +162,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
             ),
         ]);
 
-        $taskAssignCollectionCommand = new CollectionCommand();
-        $taskAssignCollectionCommand->setContainer($this->container);
+        $taskAssignCollectionCommand = $this->container->get('simplytestable.command.task.assigncollection');
 
         $taskAssignCollectionCommand->run(new ArrayInput([
             'ids' => $task->getId()

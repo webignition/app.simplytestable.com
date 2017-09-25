@@ -8,6 +8,8 @@ use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 abstract class PreprocessorTest extends BaseSimplyTestableTestCase
 {
@@ -79,9 +81,10 @@ abstract class PreprocessorTest extends BaseSimplyTestableTestCase
         $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
         $taskController->completeAction();
 
-        $this->executeCommand('simplytestable:task:assigncollection', array(
+        $taskAssignCollectionCommand = $this->container->get('simplytestable.command.task.assigncollection');
+        $taskAssignCollectionCommand->run(new ArrayInput([
             'ids' => $this->tasks->get(1)->getId()
-        ));
+        ]), new BufferedOutput());
     }
 
     public function testOnethTaskIsInProgressAfterAssigning()

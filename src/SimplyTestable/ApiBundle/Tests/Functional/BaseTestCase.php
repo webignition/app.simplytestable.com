@@ -3,7 +3,6 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand;
-use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -55,7 +54,6 @@ abstract class BaseTestCase extends WebTestCase
     {
         return array_merge(array(
             new LoadDataFixturesDoctrineCommand(),
-            new CollectionCommand(),
         ), $this->getAdditionalCommands());
     }
 
