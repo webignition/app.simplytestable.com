@@ -62,6 +62,11 @@ services:
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob
             requiredArgs:
               - ids
+            serviceIds:
+              - simplytestable.services.applicationstateservice
+              - simplytestable.services.taskservice
+              - simplytestable.services.workertaskcancellationservice
+              - logger
           worker-activate-verify:
             queue: worker-activate-verify
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob
