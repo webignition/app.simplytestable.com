@@ -1,20 +1,48 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputArgument;
+use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
-use SimplyTestable\ApiBundle\Command\BaseCommand;
 
-class SetTokenFromActivationRequestCommand extends BaseCommand {
-
+class SetTokenFromActivationRequestCommand extends Command
+{
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param EntityManager $entityManager
+     * @param string|null $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        EntityManager $entityManager,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -23,42 +51,34 @@ class SetTokenFromActivationRequestCommand extends BaseCommand {
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $workers = $this->getWorkerService()->getEntityRepository()->findAll();
+        $workerRepository = $this->entityManager->getRepository(Worker::class);
+        $workerActivationRequestRepository = $this->entityManager->getRepository(WorkerActivationRequest::class);
+
+        /* @var Worker[] $workers */
+        $workers = $workerRepository->findAll();
 
         foreach ($workers as $worker) {
-            /* @var $worker Worker */
-            if (is_null($worker->getToken()) && $this->getWorkerActivationRequestService()->has($worker)) {
-                $worker->setToken($this->getWorkerActivationRequestService()->fetch($worker)->getToken());
-                $this->getWorkerService()->persistAndFlush($worker);
+            $workerActivationRequest = $workerActivationRequestRepository->findOneBy([
+                'worker' => $worker,
+            ]);
+
+            if (!$worker->hasToken() && !empty($workerActivationRequest)) {
+                $worker->setToken($workerActivationRequest->getToken());
+
+                $this->entityManager->persist($worker);
+                $this->entityManager->flush($worker);
             }
         }
 
         return self::RETURN_CODE_OK;
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WorkerService
-     */
-    private function getWorkerService() {
-        return $this->getContainer()->get('simplytestable.services.workerservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
-     */
-    private function getWorkerActivationRequestService() {
-        return $this->getContainer()->get('simplytestable.services.workeractivationrequestservice');
     }
 }

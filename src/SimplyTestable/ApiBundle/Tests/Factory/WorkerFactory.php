@@ -34,11 +34,11 @@ class WorkerFactory
             $workerValues[self::KEY_HOSTNAME] = md5(time()) . '.worker.simplytestable.com';
         }
 
-        if (!isset($workerValues[self::KEY_TOKEN])) {
+        if (!array_key_exists(self::KEY_TOKEN, $workerValues)) {
             $workerValues[self::KEY_TOKEN] = md5(microtime(true));
         }
 
-        if (!isset($workerValues[self::KEY_STATE])) {
+        if (!array_key_exists(self::KEY_STATE, $workerValues)) {
             $workerValues[self::KEY_STATE] = 'worker-active';
         }
 
