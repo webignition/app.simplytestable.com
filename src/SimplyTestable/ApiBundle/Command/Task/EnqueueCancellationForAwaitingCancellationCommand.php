@@ -1,15 +1,71 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Task;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
-
+use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class EnqueueCancellationForAwaitingCancellationCommand extends BaseCommand
+class EnqueueCancellationForAwaitingCancellationCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
+
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
+     * @var ResqueQueueService
+     */
+    private $resqueQueueService;
+
+    /**
+     * @var ResqueJobFactory
+     */
+    private $resqueJobFactory;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param EntityManager $entityManager
+     * @param StateService $stateService
+     * @param ResqueQueueService $resqueQueueService
+     * @param ResqueJobFactory $resqueJobFactory
+     * @param string|null $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        EntityManager $entityManager,
+        StateService $stateService,
+        ResqueQueueService $resqueQueueService,
+        ResqueJobFactory $resqueJobFactory,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->entityManager = $entityManager;
+        $this->stateService = $stateService;
+        $this->resqueQueueService = $resqueQueueService;
+        $this->resqueJobFactory = $resqueJobFactory;
+    }
 
     /**
      * {@inheritdoc}
@@ -18,8 +74,7 @@ class EnqueueCancellationForAwaitingCancellationCommand extends BaseCommand
     {
         $this
             ->setName('simplytestable:task:enqueue-cancellation-for-awaiting-cancellation')
-            ->setDescription('Enqueue resque jobs for cancelling tasks that are awaiting cancellation')
-            ->setHelp('Enqueue resque jobs for cancelling tasks that are awaiting cancellation');
+            ->setDescription('Enqueue resque jobs for cancelling tasks that are awaiting cancellation');
     }
 
     /**
@@ -27,30 +82,27 @@ class EnqueueCancellationForAwaitingCancellationCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $taskService = $this->getContainer()->get('simplytestable.services.taskservice');
+        $taskRepository = $this->entityManager->getRepository(Task::class);
+        $taskAwaitingCancellationState = $this->stateService->fetch(TaskService::AWAITING_CANCELLATION_STATE);
 
-        $taskIds = $taskService->getEntityRepository()->getIdsByState(
-            $taskService->getAwaitingCancellationState()
+        $taskIds = $taskRepository->getIdsByState(
+            $taskAwaitingCancellationState
         );
 
         $output->writeln(count($taskIds).' tasks to enqueue for cancellation');
-        if (count($taskIds) === 0) {
+
+        if (empty($taskIds)) {
             return self::RETURN_CODE_OK;
         }
 
         $output->writeln('Enqueuing for cancellation tasks '.  implode(',', $taskIds));
 
-        $resqueQueueService = $this->getContainer()->get('simplytestable.services.resque.queueService');
-        $resqueJobFactory = $this->getContainer()->get('simplytestable.services.resque.jobFactory');
-
-        $resqueQueueService->enqueue(
-            $resqueJobFactory->create(
+        $this->resqueQueueService->enqueue(
+            $this->resqueJobFactory->create(
                 'task-cancel-collection',
                 ['ids' => implode(',', $taskIds)]
             )

@@ -3,66 +3,116 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Task;
 
 use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\ConsoleCommandTestCase;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-class EnqueueCancellationForAwaitingCancellationCommandTest extends ConsoleCommandTestCase
+class EnqueueCancellationForAwaitingCancellationCommandTest extends BaseSimplyTestableTestCase
 {
     /**
-     * @return string
+     * @var EnqueueCancellationForAwaitingCancellationCommand
      */
-    protected function getCommandName()
-    {
-        return 'simplytestable:task:enqueue-cancellation-for-awaiting-cancellation';
-    }
+    private $command;
 
     /**
-     * @return ContainerAwareCommand[]
+     * {@inheritdoc}
      */
-    protected function getAdditionalCommands()
+    protected function setUp()
     {
-        return array(
-            new EnqueueCancellationForAwaitingCancellationCommand()
+        parent::setUp();
+
+        $this->command = $this->container->get(
+            'simplytestable.command.task.enqueuecancellationforawaitingcancellationcommand'
         );
     }
 
-    public function testCancellationJobsAreEnqueued()
+    public function testRunInMaintenanceReadOnlyMode()
+    {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
+
+        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
+
+        $this->assertEquals(
+            EnqueueCancellationForAwaitingCancellationCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
+            $returnCode
+        );
+
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+    }
+
+    /**
+     * @dataProvider runDataProvider
+     *
+     * @param array $jobValues
+     * @param bool $expectedResqueQueueIsEmpty
+     * @param int[] $expectedTaskIndices
+     */
+    public function testRun($jobValues, $expectedResqueQueueIsEmpty, $expectedTaskIndices)
     {
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
 
         $jobFactory = new JobFactory($this->container);
+        $job = $jobFactory->createResolveAndPrepare($jobValues);
 
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
-        $job = $jobFactory->createResolveAndPrepare();
+        $expectedTaskIds = [];
 
-        foreach ($job->getTasks() as $task) {
-            $task->setState($this->getTaskService()->getInProgressState());
-            $this->getTaskService()->getManager()->persist($task);
+        foreach ($job->getTaskIds() as $taskIndex => $taskId) {
+            if (in_array($taskIndex, $expectedTaskIndices)) {
+                $expectedTaskIds[] = $taskId;
+            }
         }
 
-        $this->getTaskService()->getManager()->flush();
-        $this->getJobService()->getManager()->refresh($job);
-        $jobFactory->cancel($job);
+        $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
 
-        $this->assertReturnCode(0);
-        $this->assertTrue($resqueQueueService->contains(
-            'task-cancel-collection',
-            array(
-                'ids' => implode(',', $job->getTaskIds())
-            )
-        ));
+        $this->assertEquals(EnqueueCancellationForAwaitingCancellationCommand::RETURN_CODE_OK, $returnCode);
+
+        $this->assertEquals(
+            $expectedResqueQueueIsEmpty,
+            $resqueQueueService->isEmpty('task-cancel-collection')
+        );
+
+        if (!$expectedResqueQueueIsEmpty) {
+            $this->assertTrue($resqueQueueService->contains(
+                'task-cancel-collection',
+                array(
+                    'ids' => implode(',', $expectedTaskIds)
+                )
+            ));
+        }
     }
 
-    public function testExecuteInMaintenanceReadOnlyModeReturnsStatusCode1()
+    /**
+     * @return array
+     */
+    public function runDataProvider()
     {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableReadOnlyAction();
-
-        $this->assertReturnCode(1);
-
-        $maintenanceController->disableReadOnlyAction();
+        return [
+            'no tasks awaiting cancellation' => [
+                'jobValues' => [],
+                'expectedResqueQueueIsEmpty' => true,
+                'expectedTaskIndices' => [],
+            ],
+            'some tasks awaiting cancellation' => [
+                'jobValues' => [
+                    JobFactory::KEY_TASKS => [
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                        ],
+                    ],
+                ],
+                'expectedResqueQueueIsEmpty' => false,
+                'expectedTaskIndices' => [0, 2],
+            ],
+        ];
     }
 }
