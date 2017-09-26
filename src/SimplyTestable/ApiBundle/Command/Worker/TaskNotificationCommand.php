@@ -1,16 +1,34 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
-use Symfony\Component\Console\Input\InputArgument;
+use SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Command\BaseCommand;
 
-class TaskNotificationCommand extends BaseCommand {
-
+class TaskNotificationCommand extends Command
+{
     const RETURN_CODE_OK = 0;
 
+    /**
+     * @var TaskNotificationService
+     */
+    private $workerTaskNotificationService;
+
+    /**
+     * @param TaskNotificationService $workerTaskNotificationService
+     * @param string|null $name
+     */
+    public function __construct(TaskNotificationService $workerTaskNotificationService, $name = null)
+    {
+        parent::__construct($name);
+
+        $this->workerTaskNotificationService = $workerTaskNotificationService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -19,17 +37,13 @@ class TaskNotificationCommand extends BaseCommand {
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        $this->getWorkerTaskNotificationService()->notify();
-        return self::RETURN_CODE_OK;
-    }
-    
-    
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
+     * {@inheritdoc}
      */
-    private function getWorkerTaskNotificationService() {
-        return $this->getContainer()->get('simplytestable.services.worker.taskNotificationService');
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->workerTaskNotificationService->notify();
+
+        return self::RETURN_CODE_OK;
     }
 }
