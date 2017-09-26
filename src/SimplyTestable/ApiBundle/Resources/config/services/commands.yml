@@ -184,3 +184,12 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
+
+  simplytestable.command.user.addnonplanneduserstobascicplan:
+    class:  SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      entityManager: '@doctrine.orm.entity_manager'
+    tags:
+      - { name: console.command }
