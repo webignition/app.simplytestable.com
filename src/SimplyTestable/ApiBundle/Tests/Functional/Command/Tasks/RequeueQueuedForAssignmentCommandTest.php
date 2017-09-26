@@ -26,8 +26,7 @@ class RequeueQueuedForAssignmentCommandTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->command = new RequeueQueuedForAssignmentCommand();
-        $this->command->setContainer($this->container);
+        $this->command = $this->container->get('simplytestable.command.tasks.requeuequeuedforassignment');
     }
 
     public function testRunInMaintenanceReadOnlyMode()

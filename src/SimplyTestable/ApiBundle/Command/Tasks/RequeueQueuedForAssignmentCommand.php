@@ -1,9 +1,11 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Tasks;
 
+use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Command\BaseCommand;
-
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,14 +19,47 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
     const DESCRIPTION = 'Change the state of all "queued-for-assignment" tasks to "queued"';
 
     /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
+     * @var EntityManager
+     */
+    private $entityManager;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param StateService $stateService
+     * @param EntityManager $entityManager
+     * @param string|null $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        StateService $stateService,
+        EntityManager $entityManager,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->stateService = $stateService;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function configure()
     {
         $this
             ->setName(self::NAME)
-            ->setDescription(self::DESCRIPTION)
-            ->setHelp(self::DESCRIPTION);
+            ->setDescription(self::DESCRIPTION);
     }
 
     /**
@@ -32,10 +67,8 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        $isInMaintenanceReadOnlyState = $applicationStateService->isInMaintenanceReadOnlyState();
-        $isInMaintenanceBackupReadOnlyState = $applicationStateService->isInMaintenanceBackupReadOnlyState();
+        $isInMaintenanceReadOnlyState = $this->applicationStateService->isInMaintenanceReadOnlyState();
+        $isInMaintenanceBackupReadOnlyState = $this->applicationStateService->isInMaintenanceBackupReadOnlyState();
 
         $isInReadOnlyState = $isInMaintenanceReadOnlyState || $isInMaintenanceBackupReadOnlyState;
 
@@ -43,14 +76,11 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $stateService = $this->getContainer()->get('simplytestable.services.stateservice');
-        $taskService = $this->getContainer()->get('simplytestable.services.taskservice');
-        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-
-        $taskQueuedForAssignmentState = $stateService->fetch(TaskService::QUEUED_FOR_ASSIGNMENT_STATE);
+        $taskQueuedForAssignmentState = $this->stateService->fetch(TaskService::QUEUED_FOR_ASSIGNMENT_STATE);
+        $taskRepository = $this->entityManager->getRepository(Task::class);
 
         /* @var Task[] $tasks */
-        $tasks = $taskService->getEntityRepository()->findBy([
+        $tasks = $taskRepository->findBy([
             'state' => $taskQueuedForAssignmentState,
         ]);
 
@@ -58,14 +88,14 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
             return self::RETURN_CODE_OK;
         }
 
-        $taskQueuedState = $stateService->fetch(TaskService::QUEUED_STATE);
+        $taskQueuedState = $this->stateService->fetch(TaskService::QUEUED_STATE);
 
         foreach ($tasks as $task) {
             $task->setState($taskQueuedState);
-            $entityManager->persist($task);
+            $this->entityManager->persist($task);
         }
 
-        $entityManager->flush();
+        $this->entityManager->flush();
 
         return self::RETURN_CODE_OK;
     }

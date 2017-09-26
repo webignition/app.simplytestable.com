@@ -175,3 +175,12 @@ services:
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
     tags:
       - { name: console.command }
+
+  simplytestable.command.tasks.requeuequeuedforassignment:
+    class:  SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      stateService: '@simplytestable.services.stateservice'
+      entityManager: '@doctrine.orm.entity_manager'
+    tags:
+      - { name: console.command }
