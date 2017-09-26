@@ -87,13 +87,6 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                 ],
                 'expectedExceptionMessage' => 'Required argument "ids" is missing',
             ],
-            'task-cancel' => [
-                'queue' => 'task-cancel',
-                'args' => [
-                    'foo' => 'bar',
-                ],
-                'expectedExceptionMessage' => 'Required argument "id" is missing',
-            ],
             'task-cancel-collection' => [
                 'queue' => 'task-cancel-collection',
                 'args' => [
@@ -248,17 +241,6 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                     ],
                 ],
             ],
-            'task-cancel' => [
-                'queue' => 'task-cancel',
-                'args' => [
-                    'id' => 1,
-                ],
-                'expectedJobClass' => CancelJob::class,
-                'expectedQueue' => 'task-cancel',
-                'expectedArgs' => [
-                    'id' => 1,
-                ],
-            ],
             'task-cancel-collection' => [
                 'queue' => 'task-cancel-collection',
                 'args' => [
@@ -363,10 +345,6 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
             'task-assign-collection' => [
                 'queue' => 'task-assign-collection',
                 'expectedJobClassName' => 'SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob',
-            ],
-            'task-cancel' => [
-                'queue' => 'task-cancel',
-                'expectedJobClassName' => 'SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob',
             ],
             'task-cancel-collection' => [
                 'queue' => 'task-cancel-collection',
