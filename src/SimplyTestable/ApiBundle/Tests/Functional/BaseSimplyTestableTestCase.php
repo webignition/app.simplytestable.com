@@ -223,17 +223,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         return $this->createController($controllerName, $methodName, $postData, $queryData);
     }
 
-    /**
-     * @param string $url
-     * @return int
-     */
-    protected function getJobIdFromUrl($url)
-    {
-        $urlParts = explode('/', $url);
-
-        return (int)$urlParts[count($urlParts) - 2];
-    }
-
     protected function setJobTasksCompleted(Job $job)
     {
         foreach ($job->getTasks() as $task) {

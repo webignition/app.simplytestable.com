@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Start\StartAction\FullSite\SingleJob;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Start\StartAction\FullSite\ActionTest as BaseActionTest;
 
 class ActionTest extends BaseActionTest {
@@ -13,12 +14,10 @@ class ActionTest extends BaseActionTest {
      */
     private $response;
 
-
     /**
-     * @var int
+     * @var Job
      */
-    private $jobId;
-
+    private $job;
 
     protected function setUp() {
         parent::setUp();
@@ -28,7 +27,8 @@ class ActionTest extends BaseActionTest {
             $this->container->get('request'),
             self::CANONICAL_URL
         );
-        $this->jobId = $this->getJobIdFromUrl($this->response->getTargetUrl());
+//        $this->jobId = $this->getJobIdFromUrl($this->response->getTargetUrl());
+        $this->job = $this->getJobFromResponse($this->response);
     }
 
 
@@ -38,7 +38,7 @@ class ActionTest extends BaseActionTest {
 
 
     public function testJobId() {
-        $this->assertGreaterThan(0, $this->jobId);
+        $this->assertGreaterThan(0, $this->job->getId());
     }
 
     public function testJobResolveResqueJobIsInQueue() {
@@ -46,7 +46,7 @@ class ActionTest extends BaseActionTest {
 
         $this->assertTrue($resqueQueueService->contains(
             'job-resolve',
-            ['id' => $this->jobId]
+            ['id' => $this->job->getId()]
         ));
     }
 
