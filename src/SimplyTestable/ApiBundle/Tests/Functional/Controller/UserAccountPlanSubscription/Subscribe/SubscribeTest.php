@@ -58,7 +58,9 @@ class SubscribeTest extends BaseControllerJsonTestCase
     {
         $email = 'user-' . $currentPlan . '-to-' . $newPlan . '@example.com';
 
-        $user = $this->userFactory->create($email);
+        $user = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => $email,
+        ]);
         $this->getUserService()->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find($currentPlan));

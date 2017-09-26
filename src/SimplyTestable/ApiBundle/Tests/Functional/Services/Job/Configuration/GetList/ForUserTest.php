@@ -43,8 +43,12 @@ class ForUserTest extends ServiceTest
 
         $userFactory = new UserFactory($this->container);
 
-        $this->user1 = $userFactory->createAndActivateUser('user1@example.com');
-        $this->user2 = $userFactory->createAndActivateUser('user2@example.com');
+        $this->user1 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+        $this->user2 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
 
         $this->getJobConfigurationService()->setUser($this->user1);
         for ($jobConfigurationIndex = 0; $jobConfigurationIndex < self::JOB_CONFIGURATION_COUNT; $jobConfigurationIndex++) {

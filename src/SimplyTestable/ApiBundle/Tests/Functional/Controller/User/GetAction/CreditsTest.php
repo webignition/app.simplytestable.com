@@ -35,9 +35,15 @@ class CreditsTest extends BaseControllerJsonTestCase
 
         $userFactory = new UserFactory($this->container);
 
-        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
-        $this->member1 = $userFactory->createAndActivateUser('member1@example.com');
-        $this->member2 = $userFactory->createAndActivateUser('member2@example.com');
+        $this->leader = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $this->member1 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'member1@example.com',
+        ]);
+        $this->member2 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'member2@example.com',
+        ]);
 
         $team = $this->getTeamService()->create('Foo', $this->leader);
         $this->getTeamMemberService()->add($team, $this->member1);

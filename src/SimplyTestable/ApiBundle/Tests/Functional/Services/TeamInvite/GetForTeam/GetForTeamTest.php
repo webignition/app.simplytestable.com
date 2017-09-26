@@ -25,7 +25,9 @@ class GetForTeamTest extends ServiceTest
 
     public function testTeamWithNoInvitesReturnsEmptyCollection()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo1',
@@ -37,7 +39,9 @@ class GetForTeamTest extends ServiceTest
 
     public function testTeamWithInvitesReturnsInvites()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create(

@@ -30,9 +30,15 @@ abstract class TeamTest extends EmptyNewLabelTest {
 
         $userFactory = new UserFactory($this->container);
 
-        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
-        $this->member1 = $userFactory->createAndActivateUser('user1@example.com');
-        $this->member2 = $userFactory->createAndActivateUser('user2@example.com');
+        $this->leader = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $this->member1 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+        $this->member2 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',

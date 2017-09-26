@@ -55,8 +55,10 @@ class ForTeamWithMatchTest extends ServiceTest
 
         $userFactory = new UserFactory($this->container);
 
-        $leader = $userFactory->createAndActivateUser('leader@example.com');
-        $member = $userFactory->createAndActivateUser('user@example.com');
+        $leader = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $member = $userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',

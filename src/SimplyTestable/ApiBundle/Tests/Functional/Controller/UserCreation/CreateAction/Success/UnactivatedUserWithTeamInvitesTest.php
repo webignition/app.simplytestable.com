@@ -62,7 +62,9 @@ class UnactivatedUserWithTeamInvitesTest extends SuccessTest {
 
         $userFactory = new UserFactory($this->container);
 
-        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $leader = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $this->getTeamService()->create('Foo', $leader);
         $this->getUserService()->setUser($leader);
 

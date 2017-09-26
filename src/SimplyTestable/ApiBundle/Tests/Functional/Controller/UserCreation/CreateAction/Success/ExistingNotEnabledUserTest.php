@@ -27,9 +27,9 @@ class ExistingNotEnabledUserTest extends SuccessTest {
 
         $userFactory = new UserFactory($this->container);
 
-        $userFactory->create(self::DEFAULT_EMAIL);
-
-        $this->assertTrue($this->getUserService()->exists(self::DEFAULT_EMAIL));
+        $userFactory->create([
+            UserFactory::KEY_EMAIL => self::DEFAULT_EMAIL,
+        ]);
 
         $methodName = $this->getActionNameFromRouter();
         $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName();

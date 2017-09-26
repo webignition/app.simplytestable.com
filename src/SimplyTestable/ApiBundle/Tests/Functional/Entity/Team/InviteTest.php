@@ -17,7 +17,9 @@ class InviteTest extends BaseSimplyTestableTestCase
         $userFactory = new UserFactory($this->container);
 
         $team = new Team();
-        $team->setLeader($userFactory->createAndActivateUser('team-leader@example.com'));
+        $team->setLeader($userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'team-leader@example.com',
+        ]));
         $team->setName('Foo');
 
         $this->getManager()->persist($team);
@@ -25,7 +27,9 @@ class InviteTest extends BaseSimplyTestableTestCase
 
         $invite = new Invite();
         $invite->setTeam($team);
-        $invite->setUser($userFactory->createAndActivateUser('team-member@example.com'));
+        $invite->setUser($userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'team-member@example.com',
+        ]));
         $invite->setToken(self::TOKEN);
 
         $this->getManager()->persist($invite);

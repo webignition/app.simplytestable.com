@@ -19,8 +19,12 @@ class GetByTokenTest extends ActionTest {
     public function testTokenReturnsInvite() {
         $userFactory = new UserFactory($this->container);
 
-        $inviter = $userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $userFactory->createAndActivateUser('invitee@example.com');
+        $inviter = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',

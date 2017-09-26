@@ -23,8 +23,12 @@ class GetTest extends ActionTest
     }
 
     public function testInviterIsNotTeamLeaderReturnsBadResponse() {
-        $inviter = $this->userFactory->createAndActivateUser('user1@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('user2@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getUserService()->setUser($inviter);
 
@@ -39,7 +43,9 @@ class GetTest extends ActionTest
 
 
     public function testInviteeIsNotAUserCreatesUserAndCreatesInvite() {
-        $inviter = $this->userFactory->createAndActivateUser('leader@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
         $team = $this->getTeamService()->create(
             'Foo',
             $inviter
@@ -68,8 +74,12 @@ class GetTest extends ActionTest
 
 
     public function testInviteeIsTeamLeaderReturnsBadResponse() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getUserService()->setUser($inviter);
 
@@ -94,9 +104,15 @@ class GetTest extends ActionTest
 
 
     public function testInviteeIsAlreadyOnADifferentTeamReturnsBadResponse() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $leaderTeam = $this->getTeamService()->create(
             'Foo1',
@@ -123,8 +139,12 @@ class GetTest extends ActionTest
 
 
     public function testGetNewInviteReturnsInvite() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',
@@ -144,8 +164,12 @@ class GetTest extends ActionTest
 
 
     public function testGetExistingInviteReturnsInvite() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',
@@ -164,7 +188,9 @@ class GetTest extends ActionTest
 
 
     public function testInvitePublicUserReturnsBadRequest() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',
@@ -184,7 +210,9 @@ class GetTest extends ActionTest
 
 
     public function testInviteAdminUserReturnsBadRequest() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',
@@ -204,8 +232,12 @@ class GetTest extends ActionTest
 
 
     public function testInviteUserOnPremiumPlanReturnsBadRequest() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getUserAccountPlanService()->subscribe($invitee, $this->getAccountPlanService()->find('personal'));
 
@@ -227,8 +259,12 @@ class GetTest extends ActionTest
 
 
     public function testTokenIsExposed() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',

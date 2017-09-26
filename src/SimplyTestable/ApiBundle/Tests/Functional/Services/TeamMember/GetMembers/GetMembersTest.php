@@ -11,9 +11,16 @@ class GetMembersTest extends ServiceTest
     {
         $userFactory = new UserFactory($this->container);
 
-        $leader = $userFactory->createAndActivateUser('leader@example.com');
-        $member1 = $userFactory->createAndActivateUser('member1@example.com');
-        $member2 = $userFactory->createAndActivateUser('member2@example.com');
+        $leader = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+
+        $member1 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'member1@example.com',
+        ]);
+        $member2 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'member2@example.com',
+        ]);
 
         $team = $this->getTeamService()->create('Foo', $leader);
 

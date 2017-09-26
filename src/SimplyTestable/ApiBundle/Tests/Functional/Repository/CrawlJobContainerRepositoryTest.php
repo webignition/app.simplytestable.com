@@ -172,7 +172,9 @@ class CrawlJobContainerRepositoryTest extends BaseSimplyTestableTestCase
         /* @var User[] $users */
         $users = [];
         foreach ($userEmails as $email) {
-            $users[$email] = $this->userFactory->create($email);
+            $users[$email] = $this->userFactory->create([
+                UserFactory::KEY_EMAIL => $email,
+            ]);
         }
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');

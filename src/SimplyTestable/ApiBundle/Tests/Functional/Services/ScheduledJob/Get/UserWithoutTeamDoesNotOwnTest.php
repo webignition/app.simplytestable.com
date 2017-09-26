@@ -22,8 +22,12 @@ class UserWithoutTeamDoesNotOwnTest extends IsNotRetrievedTest {
     protected function setUpPreCreate() {
         $userFactory = new UserFactory($this->container);
 
-        $this->user1 = $userFactory->createAndActivateUser('user1@example.com');
-        $this->user2 = $userFactory->createAndActivateUser('user2@example.com');
+        $this->user1 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+        $this->user2 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
     }
 
     protected function getJobConfigurationOwner()

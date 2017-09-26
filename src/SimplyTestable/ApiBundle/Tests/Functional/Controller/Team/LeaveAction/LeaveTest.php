@@ -23,7 +23,9 @@ class LeaveTest extends ActionTest
     }
 
     public function testLeaderReturnsBadRequest() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $this->getTeamService()->create('Foo', $leader);
 
@@ -50,7 +52,9 @@ class LeaveTest extends ActionTest
 
 
     public function testUserInTeamLeavesTeam() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create('Foo', $leader);

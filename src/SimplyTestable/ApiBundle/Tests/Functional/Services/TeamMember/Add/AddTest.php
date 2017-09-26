@@ -25,7 +25,9 @@ class CreateTest extends ServiceTest
 
     public function testUserAlreadyOnTeamThrowsTeamMemberServiceException()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',
@@ -47,7 +49,9 @@ class CreateTest extends ServiceTest
 
     public function testUserNotAlreadyOnTeamIsAdded()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',

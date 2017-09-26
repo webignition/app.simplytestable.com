@@ -22,7 +22,9 @@ class TeamMemberTest extends ServiceTest
 
         $userFactory = new UserFactory($this->container);
 
-        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $leader = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',

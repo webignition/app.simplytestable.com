@@ -38,7 +38,9 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase
     {
         $email = 'user1@example.com';
 
-        $this->userFactory->createAndActivateUser($email);
+        $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email,
+        ]);
 
         $controller = $this->getUserEmailChangeController('getAction');
 
@@ -55,7 +57,9 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase
         $email = 'user1@example.com';
         $newEmail = 'user1-new@example.com';
 
-        $user = $this->userFactory->createAndActivateUser($email);
+        $user = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email,
+        ]);
         $this->getUserService()->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), $newEmail);

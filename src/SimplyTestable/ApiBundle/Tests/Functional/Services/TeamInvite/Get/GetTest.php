@@ -25,8 +25,12 @@ class GetTest extends ServiceTest
 
     public function testInviterIsNotTeamLeaderThrowsTeamInviteServiceException()
     {
-        $user1 = $this->userFactory->createAndActivateUser('user1@example.com');
-        $user2 = $this->userFactory->createAndActivateUser('user2@example.com');
+        $user1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+        $user2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
 
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception',
@@ -42,8 +46,12 @@ class GetTest extends ServiceTest
 
     public function testInviteeHasTeamThrowsTeamInviteServiceException()
     {
-        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader1@example.com',
+        ]);
+        $leader2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader2@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo1',
@@ -69,9 +77,13 @@ class GetTest extends ServiceTest
 
     public function testInviteeIsAlreadyInDifferentTeamThrowsTeamInviteServiceException()
     {
-        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
-        $user = $this->userFactory->createAndActivateUser('user@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader1@example.com',
+        ]);
+        $leader2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader2@example.com',
+        ]);
+        $user = $this->userFactory->createAndActivateUser();
 
         $team1 = $this->getTeamService()->create(
             'Foo1',
@@ -99,8 +111,10 @@ class GetTest extends ServiceTest
 
     public function testGetNewInviteReturnsInvite()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
-        $user = $this->userFactory->createAndActivateUser('user@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create(
             'Foo1',
@@ -119,8 +133,10 @@ class GetTest extends ServiceTest
 
     public function testGetExistingInviteReturnsExistingInvite()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
-        $user = $this->userFactory->createAndActivateUser('user@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create(
             'Foo1',

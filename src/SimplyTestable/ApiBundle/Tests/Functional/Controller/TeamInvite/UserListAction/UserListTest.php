@@ -23,7 +23,9 @@ class UserListTest extends ActionTest
     }
 
     public function testNoInvitesReturnsEmptyCollection() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $this->getUserService()->setUser($leader);
 
         $this->getTeamService()->create(
@@ -39,8 +41,12 @@ class UserListTest extends ActionTest
     }
 
     public function testHasInvitesReturnsInviteCollection() {
-        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader1@example.com',
+        ]);
+        $leader2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader2@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
@@ -78,8 +84,12 @@ class UserListTest extends ActionTest
 
 
     public function testUserOnPremiumPlanListsNoInvites() {
-        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader1@example.com',
+        ]);
+        $leader2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader2@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($user);
