@@ -92,7 +92,9 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
 
     public function testTeamMemberSummaryExcludesTeamStripeCustomer() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $this->getUserService()->setUser($leader);
 
         $this->getUserAccountPlanService()->subscribe($leader, $this->getAccountPlanService()->find('personal'));

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ListAction;
 
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
 
@@ -35,7 +36,9 @@ class ListTest extends ActionTest
     }
 
     public function testNoInvitesReturnsEmptyCollection() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $this->getUserService()->setUser($leader);
 
         $this->getTeamService()->create(
@@ -52,7 +55,9 @@ class ListTest extends ActionTest
 
 
     public function testHasInvitesReturnsInviteCollection() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $this->getUserService()->setUser($leader);
@@ -82,9 +87,15 @@ class ListTest extends ActionTest
 
 
     public function testPremiumIndividualUsersExcludedFromInviteList() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
-        $user1 = $this->userFactory->createAndActivateUser('user1@example.com');
-        $user2 = $this->userFactory->createAndActivateUser('user2@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $user1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+        $user2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
 
         $this->getUserService()->setUser($leader);
 

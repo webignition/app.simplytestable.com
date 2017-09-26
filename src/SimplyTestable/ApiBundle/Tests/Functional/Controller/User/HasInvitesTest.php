@@ -48,7 +48,9 @@ class HasInvitesTest extends BaseControllerJsonTestCase
 
     public function testUserWithInvites()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $user = $this->userFactory->create();
 
         $this->getTeamService()->create('Foo', $leader);

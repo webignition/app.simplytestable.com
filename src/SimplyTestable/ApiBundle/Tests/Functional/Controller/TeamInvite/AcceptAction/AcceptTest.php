@@ -38,7 +38,9 @@ class AcceptTest extends ActionTest
     }
 
     public function testUserHasNoInviteReturnsBadResponse() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $this->getTeamService()->create(
             'Foo',
             $leader
@@ -61,8 +63,12 @@ class AcceptTest extends ActionTest
 
 
     public function testInviteIsAccepted() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',
@@ -86,8 +92,12 @@ class AcceptTest extends ActionTest
 
 
     public function testAcceptedInviteRemovesAllInvites() {
-        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader1@example.com',
+        ]);
+        $leader2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader2@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create(
@@ -122,9 +132,12 @@ class AcceptTest extends ActionTest
 
 
     public function testUserWithPremiumPlanCannotAcceptInvite() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
-
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
         $this->getTeamService()->create(
             'Foo',
             $inviter

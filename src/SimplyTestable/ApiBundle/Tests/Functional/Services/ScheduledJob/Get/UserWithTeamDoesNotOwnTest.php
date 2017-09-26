@@ -22,8 +22,12 @@ class UserWithTeamDoesNotOwnTest extends IsNotRetrievedTest {
     protected function setUpPreCreate() {
         $userFactory = new UserFactory($this->container);
 
-        $leader = $userFactory->createAndActivateUser('leader@example.com');
-        $this->member = $userFactory->createAndActivateUser('member@example.com');
+        $leader = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $this->member = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'member@example.com',
+        ]);
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',

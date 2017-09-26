@@ -13,7 +13,9 @@ class TeamTest extends BaseSimplyTestableTestCase
         $userFactory = new UserFactory($this->container);
 
         $team = new Team();
-        $team->setLeader($userFactory->createAndActivateUser('user@example.com'));
+        $team->setLeader($userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user@example.com',
+        ]));
         $team->setName('Foo');
 
         $this->getManager()->persist($team);

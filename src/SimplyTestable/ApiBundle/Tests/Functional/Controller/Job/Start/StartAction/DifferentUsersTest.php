@@ -18,8 +18,12 @@ class DifferentUsersTest extends ActionTest {
 
         $userFactory = new UserFactory($this->container);
 
-        $user1 = $userFactory->createAndActivateUser('user1@example.com');
-        $user2 = $userFactory->createAndActivateUser('user2@example.com');
+        $user1 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+        $user2 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
 
         $methodName = $this->getActionNameFromRouter([
             'site_root_url' => self::DEFAULT_CANONICAL_URL

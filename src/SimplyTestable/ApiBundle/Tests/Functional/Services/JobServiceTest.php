@@ -74,7 +74,9 @@ class JobServiceTest extends BaseSimplyTestableTestCase
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
-        $user = $userFactory->create($userEmail);
+        $user = $userFactory->create([
+            UserFactory::KEY_EMAIL => $userEmail,
+        ]);
         $website = $websiteService->fetch($url);
         $jobType = $jobTypeService->getByName($jobTypeName);
 

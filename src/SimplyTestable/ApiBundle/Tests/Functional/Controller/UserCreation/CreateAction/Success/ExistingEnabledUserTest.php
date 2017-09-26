@@ -27,7 +27,9 @@ class ExistingEnabledUserTest extends SuccessTest {
 
         $userFactory = new UserFactory($this->container);
 
-        $userFactory->createAndActivateUser(self::DEFAULT_EMAIL);
+        $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => self::DEFAULT_EMAIL,
+        ]);
 
         $this->assertTrue($this->getUserService()->exists(self::DEFAULT_EMAIL));
 

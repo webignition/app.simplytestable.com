@@ -34,7 +34,9 @@ class GetTest extends ActionTest
 
 
     public function testInviteeIsNotAUserReturnsBadRequest() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $this->getUserService()->setUser($leader);
 
         $this->getTeamService()->create('Foo', $leader);
@@ -48,7 +50,9 @@ class GetTest extends ActionTest
 
 
     public function testInviteeDoesNotHaveAnInviteReturnsBadRequest() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
         $this->getUserService()->setUser($leader);
 
@@ -63,8 +67,12 @@ class GetTest extends ActionTest
 
 
     public function testInviteIsNotForUsersTeamReturnsBadRequest() {
-        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader1@example.com',
+        ]);
+        $leader2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader2@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create('Foo1', $leader1);
@@ -83,7 +91,9 @@ class GetTest extends ActionTest
 
 
     public function testInviteIsRemoved() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create('Foo', $leader);

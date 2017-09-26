@@ -126,7 +126,7 @@ class RejectTest extends ActionTest
         $userFactory = new UserFactory($this->container);
 
         $creditsPerMonth = 3;
-        $user = $userFactory->create('user-basic@example.com');
+        $user = $userFactory->create();
 
         $this->getAccountPlanService()
             ->find('basic')

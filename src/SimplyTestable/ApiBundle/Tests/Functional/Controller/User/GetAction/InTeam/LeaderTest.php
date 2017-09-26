@@ -28,7 +28,9 @@ class LeaderTest extends InTeamTest {
     protected function preGetUser() {
         $userFactory = new UserFactory($this->container);
 
-        $this->user = $userFactory->createAndActivateUser('leader@example.com');
+        $this->user = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $this->getTeamService()->create('Foo', $this->user);
     }
 }

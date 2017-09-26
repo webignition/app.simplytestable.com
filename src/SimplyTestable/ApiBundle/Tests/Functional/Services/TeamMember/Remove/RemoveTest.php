@@ -31,7 +31,9 @@ class RemoveTest extends ServiceTest
 
     public function testRemoveUserThatIsOnATeamReturnsTrue()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',
@@ -47,7 +49,9 @@ class RemoveTest extends ServiceTest
 
     public function testRemoveUserThatIsOnATeamRemovesTheUser()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',

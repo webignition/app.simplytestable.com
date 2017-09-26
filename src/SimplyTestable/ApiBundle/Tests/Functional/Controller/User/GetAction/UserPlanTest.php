@@ -155,7 +155,9 @@ class UserPlanTest extends BaseControllerJsonTestCase
 
     public function testGetTeamPlanForTeamMember()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',

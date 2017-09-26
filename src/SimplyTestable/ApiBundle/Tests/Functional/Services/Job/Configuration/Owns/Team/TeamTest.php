@@ -32,8 +32,10 @@ abstract class TeamTest extends ServiceTest {
 
         $userFactory = new UserFactory($this->container);
 
-        $this->leader = $userFactory->createAndActivateUser('leader@example.com');
-        $this->member = $userFactory->createAndActivateUser('user@example.com');
+        $this->leader = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $this->member = $userFactory->createAndActivateUser();
 
         $this->getTeamMemberService()->add($this->getTeamService()->create(
             'Foo',

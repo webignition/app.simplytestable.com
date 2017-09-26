@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
 {
@@ -73,8 +74,12 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
 
         /* @var User[] $users */
         $users = [
-            $this->userFactory->create('user0@example.com'),
-            $this->userFactory->create('user1@example.com'),
+            $this->userFactory->create([
+                UserFactory::KEY_EMAIL => 'user0@example.com',
+            ]),
+            $this->userFactory->create([
+                UserFactory::KEY_EMAIL => 'user1@example.com',
+            ]),
         ];
 
         $expectedCrawlJobContainerIds = [

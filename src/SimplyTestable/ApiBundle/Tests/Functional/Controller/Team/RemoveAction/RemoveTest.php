@@ -23,7 +23,9 @@ class RemoveTest extends ActionTest
     }
 
     public function testMemberIsNotUserReturnsBadRequest() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',
@@ -41,8 +43,12 @@ class RemoveTest extends ActionTest
 
 
     public function testLeaderIsNotALeaderReturnsBadRequest() {
-        $user1 = $this->userFactory->createAndActivateUser('user1@example.com');
-        $user2 = $this->userFactory->createAndActivateUser('user2@example.com');
+        $user1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+        $user2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
 
         $this->getUserService()->setUser($user1);
 
@@ -57,8 +63,12 @@ class RemoveTest extends ActionTest
 
 
     public function testUserIsNotInLeadersTeamThrowsTeamServiceException() {
-        $leader1 = $this->userFactory->createAndActivateUser('leader1@example.com');
-        $leader2 = $this->userFactory->createAndActivateUser('leader2@example.com');
+        $leader1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader1@example.com',
+        ]);
+        $leader2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader2@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $team1 = $this->getTeamService()->create('Foo1', $leader1);
@@ -79,7 +89,9 @@ class RemoveTest extends ActionTest
 
 
     public function testRemovesUserFromTeam() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create('Foo', $leader);

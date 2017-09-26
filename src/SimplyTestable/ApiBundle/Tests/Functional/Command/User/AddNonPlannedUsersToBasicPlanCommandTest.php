@@ -74,11 +74,10 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase
         $users = array();
 
         foreach ($userEmailAddresses as $userEmailAddress) {
-            $user = $this->userFactory->create($userEmailAddress);
-
-            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
-            $this->getManager()->remove($userAccountPlan);
-            $this->getManager()->flush();
+            $user = $this->userFactory->create([
+                UserFactory::KEY_EMAIL => $userEmailAddress,
+                UserFactory::KEY_PLAN_NAME => null,
+            ]);
 
             $users[] = $user;
         }
@@ -96,9 +95,12 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase
 
     public function testRegularUsersWithoutPlansAreAssignedTheBasicPlanWhenSomeUsersHavePlans()
     {
-        $user1 = $this->userFactory->create('user1@example.com');
-
         $fooPlan = $this->createAccountPlan('test-foo-plan');
+
+        $user1 = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+            UserFactory::KEY_PLAN_NAME => 'test-foo-plan',
+        ]);
 
         $this->getUserAccountPlanService()->subscribe($user1, $fooPlan);
 
@@ -110,11 +112,10 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends ConsoleCommandTestCase
         $users = array();
 
         foreach ($userEmailAddresses as $userEmailAddress) {
-            $user = $this->userFactory->create($userEmailAddress);
-
-            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
-            $this->getManager()->remove($userAccountPlan);
-            $this->getManager()->flush();
+            $user = $this->userFactory->create([
+                UserFactory::KEY_EMAIL => $userEmailAddress,
+                UserFactory::KEY_PLAN_NAME => null,
+            ]);
 
             $users[] = $user;
         }

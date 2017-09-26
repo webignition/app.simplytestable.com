@@ -174,7 +174,9 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         /* @var Job[] $jobs */
         $jobs = [];
         foreach ($jobCollectionData as $jobValues) {
-            $user = $userFactory->create($jobValues['user']);
+            $user = $userFactory->create([
+                UserFactory::KEY_EMAIL => $jobValues['user'],
+            ]);
             $jobValues['user'] = $user;
 
             $job = $this->jobFactory->createResolveAndPrepare($jobValues);

@@ -23,9 +23,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
 
     public function testWithNotEnabledUser()
     {
-        $email = 'user1@example.com';
-
-        $user = $this->userFactory->create($email);
+        $user = $this->userFactory->create();
         $this->getUserService()->setUser($user);
 
         $controller = $this->getUserEmailChangeController('createAction');
@@ -55,7 +53,9 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
     {
         $email = 'user1@example.com';
 
-        $user = $this->userFactory->createAndActivateUser($email);
+        $user = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email,
+        ]);
         $this->getUserService()->setUser($user);
         $controller = $this->getUserEmailChangeController('createAction');
 
@@ -70,10 +70,14 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
     public function testWhereNewEmailIsExistingUser()
     {
         $email1 = 'user1@example.com';
-        $user1 = $this->userFactory->createAndActivateUser($email1);
+        $user1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email1,
+        ]);
 
         $email2 = 'user2@example.com';
-        $user2 = $this->userFactory->createAndActivateUser($email2);
+        $user2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email2,
+        ]);
 
         $this->getUserService()->setUser($user1);
 
@@ -91,14 +95,18 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
     {
         $email1 = 'user1@example.com';
 
-        $user1 = $this->userFactory->createAndActivateUser($email1);
+        $user1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email1,
+        ]);
         $this->getUserService()->setUser($user1);
 
         $controller = $this->getUserEmailChangeController('createAction');
         $controller->createAction($user1->getEmail(), 'user1-new@example.com');
 
         $email2 = 'user2@example.com';
-        $user2 = $this->userFactory->createAndActivateUser($email2);
+        $user2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email2,
+        ]);
 
         $this->getUserService()->setUser($user2);
 
@@ -115,7 +123,9 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
     {
         $email = 'user1@example.com';
 
-        $user = $this->userFactory->createAndActivateUser($email);
+        $user = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email,
+        ]);
         $this->getUserService()->setUser($user);
 
         $controller = $this->getUserEmailChangeController('createAction');
@@ -135,7 +145,9 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
         try {
             $email = 'user1@example.com';
 
-            $user = $this->userFactory->createAndActivateUser($email);
+            $user = $this->userFactory->createAndActivateUser([
+                UserFactory::KEY_EMAIL => $email,
+            ]);
             $this->getUserService()->setUser($user);
 
             $controller = $this->getUserEmailChangeController('createAction');
@@ -151,10 +163,14 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
     public function testForDifferentUser()
     {
         $email1 = 'user1@example.com';
-        $user1 = $this->userFactory->createAndActivateUser($email1);
+        $user1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email1,
+        ]);
 
         $email2 = 'user2@example.com';
-        $user2 = $this->userFactory->createAndActivateUser($email2);
+        $user2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email2,
+        ]);
 
         $this->getUserService()->setUser($user1);
 
@@ -172,7 +188,9 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
     {
         $email = 'user1@example.com';
 
-        $user = $this->userFactory->createAndActivateUser($email);
+        $user = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => $email,
+        ]);
         $this->getUserService()->setUser($user);
 
         $controller = $this->getUserEmailChangeController('createAction');

@@ -39,7 +39,9 @@ class DeclineTest extends ActionTest
 
 
     public function testUserHasNoInviteReturnsOk() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $this->getTeamService()->create(
             'Foo',
             $leader
@@ -62,8 +64,12 @@ class DeclineTest extends ActionTest
 
 
     public function testInviteIsDeclined() {
-        $inviter = $this->userFactory->createAndActivateUser('inviter@example.com');
-        $invitee = $this->userFactory->createAndActivateUser('invitee@example.com');
+        $inviter = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
+        $invitee = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',

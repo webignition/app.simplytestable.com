@@ -24,7 +24,9 @@ class NotAcceptedTest extends HasInviteTest {
     protected function preGetUser() {
         $userFactory = new UserFactory($this->container);
 
-        $leader = $userFactory->createAndActivateUser('leader@example.com');
+        $leader = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $this->getTeamService()->create('Foo', $leader);
 
         $this->user = $userFactory->createAndActivateUser();

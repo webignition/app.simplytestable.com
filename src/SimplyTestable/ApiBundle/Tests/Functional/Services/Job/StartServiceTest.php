@@ -91,7 +91,10 @@ class StartServiceTest extends BaseSimplyTestableTestCase
         );
 
         $userFactory = new UserFactory($this->container);
-        $user = $userFactory->create($user, $plan);
+        $user = $userFactory->create([
+            UserFactory::KEY_EMAIL => $user,
+            UserFactory::KEY_PLAN_NAME => $plan,
+        ]);
 
         $jobUserAccountPlanEnforcementService->setUser($user);
         $jobType = $this->jobTypeService->getByName($jobTypeName);
@@ -215,7 +218,9 @@ class StartServiceTest extends BaseSimplyTestableTestCase
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
 
         $userFactory = new UserFactory($this->container);
-        $user = $userFactory->create($userEmail);
+        $user = $userFactory->create([
+            UserFactory::KEY_EMAIL => $userEmail,
+        ]);
 
         $jobType = $this->jobTypeService->getByName($jobTypeName);
         $website = $this->websiteService->fetch($url);

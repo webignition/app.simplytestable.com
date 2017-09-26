@@ -37,7 +37,9 @@ class RemoveTest extends ActionTest {
 
         $userFactory = new UserFactory($this->container);
 
-        $this->invitee = $userFactory->createAndActivateUser('invitee@example.com');
+        $this->invitee = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee@example.com',
+        ]);
 
         $this->getUserService()->setUser($this->invitee);
 
@@ -68,7 +70,9 @@ class RemoveTest extends ActionTest {
         $this->scheduledJobs[] = $this->getScheduledJobService()->create($this->jobConfigurations[0], '* * * * *', true);
         $this->scheduledJobs[] = $this->getScheduledJobService()->create($this->jobConfigurations[1], '* * * * 1', true);
 
-        $inviter = $userFactory->createAndActivateUser('inviter@example.com');
+        $inviter = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'inviter@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',

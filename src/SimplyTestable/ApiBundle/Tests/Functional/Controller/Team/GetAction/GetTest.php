@@ -33,7 +33,9 @@ class GetTest extends ActionTest
 
 
     public function testWithLeaderOnly() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',
@@ -58,9 +60,15 @@ class GetTest extends ActionTest
     }
 
     public function testGetAsLeader() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
-        $member1 = $this->userFactory->createAndActivateUser('member1@example.com');
-        $member2 = $this->userFactory->createAndActivateUser('member2@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $member1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'member1@example.com',
+        ]);
+        $member2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'member2@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',
@@ -96,9 +104,15 @@ class GetTest extends ActionTest
 
 
     public function testGetAsMember() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
-        $member1 = $this->userFactory->createAndActivateUser('member1@example.com');
-        $member2 = $this->userFactory->createAndActivateUser('member2@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
+        $member1 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'member1@example.com',
+        ]);
+        $member2 = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'member2@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',

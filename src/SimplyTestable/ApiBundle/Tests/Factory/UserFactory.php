@@ -7,7 +7,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserFactory
 {
-    const DEFAULT_USER_EMAIL = 'user@example.com';
+    const DEFAULT_EMAIL = 'user@example.com';
+    const DEFAULT_PLAN_NAME = 'basic';
+
+    const KEY_EMAIL = 'email';
+    const KEY_PLAN_NAME = 'plan-name';
+
+    /**
+     * @var array
+     */
+    private $defaultUserValues = [
+        self::KEY_EMAIL => self::DEFAULT_EMAIL,
+        self::KEY_PLAN_NAME => self::DEFAULT_PLAN_NAME,
+    ];
 
     /**
      * @var ContainerInterface
@@ -23,43 +35,50 @@ class UserFactory
     }
 
     /**
-     * @param string $email
-     * @param string $planName
+     * @param array $userValues
      *
      * @return User
      */
-    public function createAndActivateUser($email = self::DEFAULT_USER_EMAIL, $planName = 'basic')
+    public function createAndActivateUser($userValues = [])
     {
-        $user = $this->create($email, $planName);
+        $user = $this->create($userValues);
         $this->activate($user);
 
         return $user;
     }
 
     /**
-     * @param string $email
-     * @param string $planName
+     * @param array $userValues
      *
      * @return User
      */
-    public function create($email = self::DEFAULT_USER_EMAIL, $planName = 'basic')
+    public function create($userValues = [])
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
 
-        if ($userService->exists($email)) {
+        foreach ($this->defaultUserValues as $key => $value) {
+            if (!array_key_exists($key, $userValues)) {
+                $userValues[$key] = $value;
+            }
+        }
+
+        if ($userService->exists($userValues[self::KEY_EMAIL])) {
             /* @var User $user */
-            $user = $userService->findUserByEmail($email);
+            $user = $userService->findUserByEmail($userValues[self::KEY_EMAIL]);
 
             return $user;
         }
 
-        $user = $userService->create($email, 'password');
-        $userAccountPlanService->subscribe(
-            $user,
-            $accountPlanService->find($planName)
-        );
+        $user = $userService->create($userValues[self::KEY_EMAIL], 'password');
+
+        if (isset($userValues[self::KEY_PLAN_NAME])) {
+            $userAccountPlanService->subscribe(
+                $user,
+                $accountPlanService->find($userValues[self::KEY_PLAN_NAME])
+            );
+        }
 
         return $user;
     }
@@ -84,9 +103,15 @@ class UserFactory
         $users = array_merge(
             $this->createPublicAndPrivateUserSet(),
             [
-                'leader' => $this->createAndActivateUser('leader@example.com'),
-                'member1' => $this->createAndActivateUser('member1@example.com'),
-                'member2' => $this->createAndActivateUser('member2@example.com'),
+                'leader' => $this->createAndActivateUser([
+                    self::KEY_EMAIL => 'leader@example.com',
+                ]),
+                'member1' => $this->createAndActivateUser([
+                    self::KEY_EMAIL => 'member1@example.com',
+                ]),
+                'member2' => $this->createAndActivateUser([
+                    self::KEY_EMAIL => 'member2@example.com',
+                ]),
             ]
         );
 
@@ -108,7 +133,9 @@ class UserFactory
 
         $users = [
             'public' => $userService->getPublicUser(),
-            'private' => $this->createAndActivateUser('private@example.com'),
+            'private' => $this->createAndActivateUser([
+                self::KEY_EMAIL => 'private@example.com',
+            ]),
         ];
 
         return $users;

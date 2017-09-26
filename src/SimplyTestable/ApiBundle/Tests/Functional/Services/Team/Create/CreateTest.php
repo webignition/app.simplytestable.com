@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\Create;
+namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\Remove;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Team\ServiceTest;
@@ -52,7 +52,9 @@ class CreateTest extends ServiceTest
 
         $this->getTeamService()->create(
             'Foo',
-            $this->userFactory->createAndActivateUser('user2@example.com')
+            $this->userFactory->createAndActivateUser([
+                UserFactory::KEY_EMAIL => 'user2@example.com',
+            ])
         );
     }
 
@@ -79,7 +81,9 @@ class CreateTest extends ServiceTest
 
     public function testUserAlreadyOnTeamThrowsTeamMemberServiceException()
     {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Retrieval;
 
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -44,15 +45,21 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
             JobRetrievalServiceException::CODE_NOT_AUTHORISED
         );
 
-        $user = $this->userFactory->create('user@example.com');
-        $jobOwner = $this->userFactory->create('jobowner@example.com');
+        $user = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => 'user@example.com',
+        ]);
+        $jobOwner = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => 'jobowner@example.com',
+        ]);
 
         $teamService = $this->container->get('simplytestable.services.teamservice');
 
         if ($userTeamStatus == 'leader') {
             $teamService->create('userTeamAsLeader', $user);
         } elseif ($userTeamStatus == 'member') {
-            $userTeamLeader = $this->userFactory->create('userteamleader@example.com');
+            $userTeamLeader = $this->userFactory->create([
+                UserFactory::KEY_EMAIL => 'userteamleader@example.com',
+            ]);
             $userTeam = $teamService->create('userTeamAsMember', $userTeamLeader);
             $teamService->getMemberService()->add($userTeam, $user);
         }
@@ -60,7 +67,9 @@ class RetrievalServiceTest extends BaseSimplyTestableTestCase
         if ($jobOwnerTeamStatus == 'leader') {
             $teamService->create('ownerTeam', $jobOwner);
         } elseif ($jobOwnerTeamStatus == 'member') {
-            $jobOwnerTeamLeader = $this->userFactory->create('jobownerteamleader@example.com');
+            $jobOwnerTeamLeader = $this->userFactory->create([
+                UserFactory::KEY_EMAIL => 'jobownerteamleader@example.com',
+            ]);
             $ownerTeam = $teamService->create('ownerTeamAsMember', $jobOwnerTeamLeader);
             $teamService->getMemberService()->add($ownerTeam, $jobOwner);
         }

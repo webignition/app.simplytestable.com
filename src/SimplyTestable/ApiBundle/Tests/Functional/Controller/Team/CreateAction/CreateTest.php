@@ -23,7 +23,9 @@ class CreateTest extends ActionTest
     }
 
     public function testRequestAsTeamLeaderReturnsExistingTeam() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $this->getTeamService()->create(
             'Foo',
@@ -47,7 +49,9 @@ class CreateTest extends ActionTest
 
 
     public function testRequestAsTeamMemberReturnsExistingTeam() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
 
         $team = $this->getTeamService()->create(
             'Foo',
@@ -130,7 +134,9 @@ class CreateTest extends ActionTest
 
 
     public function testUserInvitesDeletedOnTeamCreate() {
-        $leader = $this->userFactory->createAndActivateUser('leader@example.com');
+        $leader = $this->userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'leader@example.com',
+        ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $this->getTeamService()->create('Foo1', $leader);
