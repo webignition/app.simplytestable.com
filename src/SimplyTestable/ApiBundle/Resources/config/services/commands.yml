@@ -201,3 +201,10 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
+
+  simplytestable.command.worker.tasknotification:
+    class:  SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand
+    arguments:
+      workerTaskNotificationService: '@simplytestable.services.worker.tasknotificationservice'
+    tags:
+      - { name: console.command }

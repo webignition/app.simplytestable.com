@@ -291,7 +291,11 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                 'args' => [],
                 'expectedJobClass' => NotifyJob::class,
                 'expectedQueue' => 'tasks-notify',
-                'expectedArgs' => [],
+                'expectedArgs' => [
+                    'serviceIds' => [
+                        'simplytestable.services.worker.tasknotificationservice',
+                    ],
+                ],
             ],
             'scheduledjob-execute' => [
                 'queue' => 'scheduledjob-execute',
