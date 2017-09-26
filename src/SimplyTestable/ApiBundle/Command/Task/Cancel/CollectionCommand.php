@@ -1,46 +1,92 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Task\Cancel;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
-
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Psr\Log\LoggerInterface;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 
-class CollectionCommand extends BaseCommand
+class CollectionCommand extends \Symfony\Component\Console\Command\Command
 {
+    const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var TaskService
+     */
+    private $taskService;
+
+    /**
+     * @var WorkerTaskCancellationService
+     */
+    private $workerTaskCancellationService;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param TaskService $taskService
+     * @param WorkerTaskCancellationService $workerTaskCancellationService
+     * @param LoggerInterface $logger
+     * @param string|null $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        TaskService $taskService,
+        WorkerTaskCancellationService $workerTaskCancellationService,
+        LoggerInterface $logger,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->taskService = $taskService;
+        $this->workerTaskCancellationService = $workerTaskCancellationService;
+        $this->logger = $logger;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
             ->setName('simplytestable:task:cancelcollection')
             ->setDescription('Cancel a collection of tasks')
-            ->addArgument('ids', InputArgument::REQUIRED, 'comma-separated list of ids of tasks to cancel')
-            ->setHelp(<<<EOF
-Cancel a collection of tasks
-EOF
-        );
+            ->addArgument(
+                'ids',
+                InputArgument::REQUIRED,
+                'comma-separated list of ids of tasks to cancel'
+            );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $this->getContainer()->get('logger')->info('TaskCancelCollectionCommand::execute: raw ids ['.$input->getArgument('ids').']');
+        $this->logger->info('TaskCancelCollectionCommand::execute: raw ids ['.$input->getArgument('ids').']');
 
-        $taskIds = explode(',', $input->getArgument('ids'));
+        $taskIds = array_filter(explode(',', $input->getArgument('ids')));
 
         $taskIdsByWorker = array();
         foreach ($taskIds as $taskId) {
-            $task = $this->getTaskService()->getById($taskId);
+            $task = $this->taskService->getById($taskId);
 
             if ($task->hasWorker()) {
                 if (!isset($taskIdsByWorker[$task->getWorker()->getHostname()])) {
@@ -49,30 +95,14 @@ EOF
 
                 $taskIdsByWorker[$task->getWorker()->getHostname()][] = $task;
             } else {
-                $this->getTaskService()->cancel($task);
+                $this->taskService->cancel($task);
             }
         }
 
         foreach ($taskIdsByWorker as $tasks) {
-            $this->getWorkerTaskCancellationService()->cancelCollection($tasks);
+            $this->workerTaskCancellationService->cancelCollection($tasks);
         }
-    }
 
-
-    /**
-     *
-     * @return SimplyTestable\ApiBundle\Services\TaskService
-     */
-    private function getTaskService() {
-        return $this->getContainer()->get('simplytestable.services.taskservice');
-    }
-
-
-    /**
-     *
-     * @return SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
-     */
-    private function getWorkerTaskCancellationService() {
-        return $this->getContainer()->get('simplytestable.services.workertaskcancellationservice');
+        return self::RETURN_CODE_OK;
     }
 }
