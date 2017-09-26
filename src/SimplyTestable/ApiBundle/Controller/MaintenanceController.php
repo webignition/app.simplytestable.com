@@ -57,7 +57,7 @@ class MaintenanceController extends ApiController
         $commands = [
             $this->container->get('simplytestable.command.maintenance.disablereadonly'),
             $this->container->get('simplytestable.command.job.enqueueprepareall'),
-//            RequeueQueuedForAssignmentCommand::class,
+            $this->container->get('simplytestable.command.tasks.requeuequeuedforassignment'),
 //            TaskNotificationCommand::class,
             $this->container->get('simplytestable.command.task.enqueuecancellationforawaitingcancellationcommand'),
         ];
