@@ -52,11 +52,6 @@ services:
               - simplytestable.services.stateservice
               - simplytestable.services.workertaskassignmentservice
               - logger
-          task-cancel:
-            queue: task-cancel
-            jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob
-            requiredArgs:
-              - id
           task-cancel-collection:
             queue: task-cancel-collection
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob
