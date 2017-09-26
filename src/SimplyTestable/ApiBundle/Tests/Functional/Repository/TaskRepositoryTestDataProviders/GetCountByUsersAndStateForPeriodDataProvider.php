@@ -17,10 +17,16 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::CANCELLED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::QUEUED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
                         ],
                     ],
                 ],
@@ -43,10 +49,16 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::CANCELLED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::QUEUED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
                         ],
                     ],
                 ],
@@ -69,10 +81,16 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::CANCELLED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::QUEUED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
                         ],
                     ],
                 ],
@@ -96,42 +114,72 @@ trait GetCountByUsersAndStateForPeriodDataProvider
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::CANCELLED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::QUEUED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::AWAITING_CANCELLATION_STATE,
-                            TaskService::TASK_SKIPPED_STATE,
-                            TaskService::IN_PROGRESS_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'leader',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'member1',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::QUEUED_STATE,
-                            TaskService::QUEUED_STATE,
-                            TaskService::QUEUED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'member2',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::IN_PROGRESS_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
                         ],
                     ],
                 ],

@@ -154,3 +154,13 @@ services:
       logger: '@logger'
     tags:
       - { name: console.command }
+
+  simplytestable.command.task.cancelcollection:
+    class:  SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      taskService: '@simplytestable.services.taskservice'
+      workerTaskCancellationService: '@simplytestable.services.workertaskcancellationservice'
+      logger: '@logger'
+    tags:
+      - { name: console.command }

@@ -24,10 +24,16 @@ trait FindUrlsByJobAndStateDataProvider
                     JobFactory::KEY_TEST_TYPES => [
                         TaskTypeService::HTML_VALIDATION_TYPE,
                     ],
-                    JobFactory::KEY_TASK_STATES => [
-                        TaskService::COMPLETED_STATE,
-                        TaskService::CANCELLED_STATE,
-                        TaskService::COMPLETED_STATE,
+                    JobFactory::KEY_TASKS => [
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                        ],
                     ],
                 ],
                 'taskStateName' => TaskService::COMPLETED_STATE,

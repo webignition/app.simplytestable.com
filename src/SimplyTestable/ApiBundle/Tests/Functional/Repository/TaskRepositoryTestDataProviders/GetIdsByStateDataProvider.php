@@ -24,13 +24,25 @@ trait GetIdsByStateDataProvider
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::QUEUED_STATE,
-                            TaskService::CANCELLED_STATE,
-                            TaskService::CANCELLED_STATE,
-                            TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
                         ],
                     ],
                     [
@@ -39,10 +51,16 @@ trait GetIdsByStateDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                            ],
                         ],
                     ],
                 ],
@@ -58,13 +76,25 @@ trait GetIdsByStateDataProvider
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::QUEUED_STATE,
-                            TaskService::CANCELLED_STATE,
-                            TaskService::CANCELLED_STATE,
-                            TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
                         ],
                     ],
                     [
@@ -73,10 +103,16 @@ trait GetIdsByStateDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                            ],
                         ],
                     ],
                 ],

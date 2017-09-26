@@ -938,10 +938,16 @@ class JobServiceTest extends BaseSimplyTestableTestCase
             ],
             'all tasks cancelled or awaiting cancellation' => [
                 'jobValues' => [
-                    JobFactory::KEY_TASK_STATES => [
-                        TaskService::CANCELLED_STATE,
-                        TaskService::CANCELLED_STATE,
-                        TaskService::AWAITING_CANCELLATION_STATE
+                    JobFactory::KEY_TASKS => [
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                        ],
                     ],
                 ],
                 'taskOutputValuesCollection' => [
@@ -963,10 +969,16 @@ class JobServiceTest extends BaseSimplyTestableTestCase
             ],
             'tasks have errors' => [
                 'jobValues' => [
-                    JobFactory::KEY_TASK_STATES => [
-                        TaskService::COMPLETED_STATE,
-                        TaskService::COMPLETED_STATE,
-                        TaskService::COMPLETED_STATE
+                    JobFactory::KEY_TASKS => [
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                        ],
                     ],
                 ],
                 'taskOutputValuesCollection' => [
@@ -1017,10 +1029,16 @@ class JobServiceTest extends BaseSimplyTestableTestCase
             ],
             'has cancelled tasks' => [
                 'jobValues' => [
-                    JobFactory::KEY_TASK_STATES => [
-                        TaskService::AWAITING_CANCELLATION_STATE,
-                        TaskService::CANCELLED_STATE,
-                        TaskService::COMPLETED_STATE,
+                    JobFactory::KEY_TASKS => [
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                        ],
                     ],
                 ],
                 'expectedCount' => 2,
@@ -1056,10 +1074,16 @@ class JobServiceTest extends BaseSimplyTestableTestCase
             ],
             'has skipped tasks' => [
                 'jobValues' => [
-                    JobFactory::KEY_TASK_STATES => [
-                        TaskService::CANCELLED_STATE,
-                        TaskService::TASK_SKIPPED_STATE,
-                        TaskService::COMPLETED_STATE,
+                    JobFactory::KEY_TASKS => [
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                        ],
+                        [
+                            JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                        ],
                     ],
                 ],
                 'expectedCount' => 1,

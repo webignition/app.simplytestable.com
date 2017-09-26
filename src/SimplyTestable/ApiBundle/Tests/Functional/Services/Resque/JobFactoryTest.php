@@ -268,6 +268,12 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                 'expectedQueue' => 'task-cancel-collection',
                 'expectedArgs' => [
                     'ids' => '1,2,3',
+                    'serviceIds' => [
+                        'simplytestable.services.applicationstateservice',
+                        'simplytestable.services.taskservice',
+                        'simplytestable.services.workertaskcancellationservice',
+                        'logger',
+                    ],
                 ],
             ],
             'worker-activate-verify' => [

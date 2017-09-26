@@ -125,18 +125,30 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
-                            TaskService::QUEUED_STATE,
-                            TaskService::IN_PROGRESS_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::QUEUED_STATE,
-                            TaskService::QUEUED_STATE,
-                            TaskService::IN_PROGRESS_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
+                            ],
                         ],
                     ],
                 ],
@@ -152,18 +164,30 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::QUEUED_STATE,
-                            TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::TASK_SKIPPED_STATE,
-                            TaskService::QUEUED_STATE,
-                            TaskService::IN_PROGRESS_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
+                            ],
                         ],
                     ],
                 ],
@@ -179,18 +203,30 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::TASK_SKIPPED_STATE,
-                            TaskService::QUEUED_STATE,
-                            TaskService::IN_PROGRESS_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
+                            ],
                         ],
                     ],
                 ],
@@ -206,18 +242,30 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::TASK_SKIPPED_STATE,
-                            TaskService::QUEUED_STATE,
-                            TaskService::IN_PROGRESS_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::QUEUED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::IN_PROGRESS_STATE,
+                            ],
                         ],
                     ],
                 ],
@@ -235,30 +283,48 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends BaseSimplyTestableTest
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_USER => 'public',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',
                         JobFactory::KEY_DOMAIN => 'foo.example.com',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_USER => 'private',
                         JobFactory::KEY_SITE_ROOT_URL => 'http://bar.example.com',
                         JobFactory::KEY_DOMAIN => 'bar.example.com',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::CANCELLED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
                         ],
                     ],
                 ],

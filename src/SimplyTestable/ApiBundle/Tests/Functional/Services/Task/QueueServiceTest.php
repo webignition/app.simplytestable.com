@@ -131,16 +131,34 @@ class QueueServiceTest extends BaseSimplyTestableTestCase
                             TaskTypeService::CSS_VALIDATION_TYPE,
                             TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
                         ],
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::CANCELLED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::AWAITING_CANCELLATION_STATE,
-                            TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
-                            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
-                            TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
-                            TaskService::TASK_SKIPPED_STATE,
-                            TaskService::TASK_SKIPPED_STATE,
-                            TaskService::TASK_SKIPPED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::TASK_SKIPPED_STATE,
+                            ],
                         ],
                     ],
                 ],
@@ -220,15 +238,21 @@ class QueueServiceTest extends BaseSimplyTestableTestCase
                 'jobValuesCollection' => [
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://0.example.com/',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::CANCELLED_STATE,
-                            TaskService::COMPLETED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::CANCELLED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
                         ],
                     ],
                     [
                         JobFactory::KEY_SITE_ROOT_URL => 'http://1.example.com/',
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::AWAITING_CANCELLATION_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::AWAITING_CANCELLATION_STATE,
+                            ],
                         ],
                     ],
                 ],

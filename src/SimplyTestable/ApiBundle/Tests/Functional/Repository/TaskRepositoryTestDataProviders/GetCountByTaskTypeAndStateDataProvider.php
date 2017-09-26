@@ -30,13 +30,25 @@ trait GetCountByTaskTypeAndStateDataProvider
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
                         ],
                     ],
                     [
@@ -45,10 +57,16 @@ trait GetCountByTaskTypeAndStateDataProvider
                             TaskTypeService::HTML_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::COMPLETED_STATE,
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
                         ],
                     ],
                     [
@@ -57,10 +75,16 @@ trait GetCountByTaskTypeAndStateDataProvider
                             TaskTypeService::CSS_VALIDATION_TYPE,
                         ],
                         JobFactory::KEY_STATE => JobService::CANCELLED_STATE,
-                        JobFactory::KEY_TASK_STATES => [
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
-                            TaskService::COMPLETED_STATE,
+                        JobFactory::KEY_TASKS => [
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
+                            [
+                                JobFactory::KEY_TASK_STATE => TaskService::COMPLETED_STATE,
+                            ],
                         ],
                     ],
                 ],
