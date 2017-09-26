@@ -58,8 +58,10 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
         $response = $this->jobController->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
 
         $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
+
         if ($expectedResponseStatusCode === 302) {
-            $this->assertEquals($job->getId(), $this->getJobIdFromUrl($response->getTargetUrl()));
+            $jobFromResponse = $this->getJobFromResponse($response);
+            $this->assertEquals($job->getId(), $jobFromResponse->getId());
         }
 
         $this->assertEquals($expectedIsPublic, $job->getIsPublic());
