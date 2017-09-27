@@ -2,16 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Migrate;
 
-use SimplyTestable\ApiBundle\Command\MigrateCanonicaliseTaskOutputCommand;
+use SimplyTestable\ApiBundle\Command\Migrate\CanonicaliseTaskOutputCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class MigrateCanonicaliseTaskOutputCommandTest extends BaseSimplyTestableTestCase
+class CanonicaliseTaskOutputCommandTest extends BaseSimplyTestableTestCase
 {
     /**
-     * @var MigrateCanonicaliseTaskOutputCommand
+     * @var CanonicaliseTaskOutputCommand
      */
     private $command;
 
@@ -22,7 +22,7 @@ class MigrateCanonicaliseTaskOutputCommandTest extends BaseSimplyTestableTestCas
     {
         parent::setUp();
 
-        $this->command = new MigrateCanonicaliseTaskOutputCommand();
+        $this->command = new CanonicaliseTaskOutputCommand();
         $this->command->setContainer($this->container);
     }
 
