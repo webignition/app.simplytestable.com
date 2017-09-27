@@ -216,3 +216,11 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
+
+  simplytestable.command.migrate.canonicalisetaskoutput:
+    class:  SimplyTestable\ApiBundle\Command\Migrate\CanonicaliseTaskOutputCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      entityManager: '@doctrine.orm.entity_manager'
+    tags:
+      - { name: console.command }
