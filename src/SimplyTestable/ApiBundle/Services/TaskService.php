@@ -487,7 +487,10 @@ class TaskService extends EntityService {
         }
 
         $output->generateHash();
-        $existingOutput = $this->getTaskOutputEntityRepository()->findOutputByhash($output->getHash());
+
+        $existingOutput = $this->getTaskOutputEntityRepository()->findOneBy([
+            'hash' => $output->getHash(),
+        ]);
 
         if (!is_null($existingOutput)) {
             $output = $existingOutput;

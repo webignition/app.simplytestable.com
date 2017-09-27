@@ -69,23 +69,6 @@ class TaskOutputRepository extends EntityRepository
         return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
 
-
-    public function findOutputByhash($hash) {
-        $queryBuilder = $this->createQueryBuilder('TaskOutput');
-        $queryBuilder->setMaxResults(1);
-        $queryBuilder->select('TaskOutput');
-        $queryBuilder->where('TaskOutput.hash = :Hash');
-        $queryBuilder->setParameter('Hash', $hash);
-
-        $result = $queryBuilder->getQuery()->getResult();
-        if (count($result) === 0) {
-            return null;
-        }
-
-        return $result[0];
-    }
-
-
     public function findHashlessOutputIds($limit = null) {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');
 
