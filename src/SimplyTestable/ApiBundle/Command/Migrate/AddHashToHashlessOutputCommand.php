@@ -60,6 +60,7 @@ class AddHashToHashlessOutputCommand extends Command
     {
         if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
+
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
@@ -95,9 +96,8 @@ class AddHashToHashlessOutputCommand extends Command
 
             ));
 
-            $taskOutput->generateHash();
-
             if (!$isDryRun) {
+                $taskOutput->generateHash();
                 $this->entityManager->persist($taskOutput);
                 $this->entityManager->flush();
             }
