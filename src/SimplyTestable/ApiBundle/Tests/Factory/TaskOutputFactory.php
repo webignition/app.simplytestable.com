@@ -50,7 +50,7 @@ class TaskOutputFactory
             $output->setWarningCount($taskOutputValues[self::KEY_WARNING_COUNT]);
         }
 
-        if (isset($taskOutputValues[self::KEY_HASH])) {
+        if (array_key_exists(self::KEY_HASH, $taskOutputValues)) {
             $output->setHash($taskOutputValues[self::KEY_HASH]);
         } else {
             $output->generateHash();
