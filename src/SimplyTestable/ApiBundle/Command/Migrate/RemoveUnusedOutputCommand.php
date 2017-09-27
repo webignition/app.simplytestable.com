@@ -1,6 +1,8 @@
 <?php
-namespace SimplyTestable\ApiBundle\Command;
 
+namespace SimplyTestable\ApiBundle\Command\Migrate;
+
+use SimplyTestable\ApiBundle\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -8,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 
-class MigrateRemoveUnusedOutputCommand extends BaseCommand
+class RemoveUnusedOutputCommand extends BaseCommand
 {
     const DEFAULT_FLUSH_THRESHOLD = 100;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
