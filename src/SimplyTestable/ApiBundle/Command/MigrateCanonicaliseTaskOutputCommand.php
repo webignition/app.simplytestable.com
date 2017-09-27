@@ -64,7 +64,7 @@ class MigrateCanonicaliseTaskOutputCommand extends BaseCommand
         $updatedHashCount = 0;
 
         foreach ($duplicateHashes as $duplicateHash) {
-            $outputIds = $this->getTaskOutputRepository()->findIdsBy($duplicateHash);
+            $outputIds = $this->getTaskOutputRepository()->findIdsByHash($duplicateHash);
 
             $updatedHashCount++;
             $output->writeln('['.(count($outputIds) - 1) . '] duplicates found for '.$duplicateHash.' ('.(count($duplicateHashes) - $updatedHashCount).' remaining)');
