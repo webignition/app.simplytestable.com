@@ -41,12 +41,23 @@ class TaskOutputRepository extends EntityRepository
         return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
 
-
-    public function findUnusedIds($limit) {
+    /**
+     * @param int $limit
+     *
+     * @return int[]
+     */
+    public function findUnusedIds($limit)
+    {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');
         $queryBuilder->select('DISTINCT TaskOutput.id');
 
-        $queryBuilder->leftJoin('SimplyTestable\ApiBundle\Entity\Task\Task', 'Task', 'WITH', 'TaskOutput.id = Task.output');
+        $queryBuilder->leftJoin(
+            Task::class,
+            'Task',
+            'WITH',
+            'TaskOutput.id = Task.output'
+        );
+
         $queryBuilder->where('Task.output IS NULL');
 
         if (is_int($limit) && $limit > 0) {
@@ -56,14 +67,6 @@ class TaskOutputRepository extends EntityRepository
         $result = $queryBuilder->getQuery()->getResult();
 
         return $this->getSingleFieldCollectionFromResult($result, 'id');
-
-/**
- *
-SELECT DISTINCT TaskOutput.id
-FROM  `TaskOutput`
-LEFT JOIN Task ON Task.output_id = TaskOutput.id
-WHERE Task.output_id IS NULL
- */
     }
 
 
@@ -102,7 +105,14 @@ WHERE Task.output_id IS NULL
         return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
 
-    private function getSingleFieldCollectionFromResult($result, $fieldName) {
+    /**
+     * @param array $result
+     * @param string $fieldName
+     *
+     * @return array
+     */
+    private function getSingleFieldCollectionFromResult($result, $fieldName)
+    {
         $collection = array();
 
         foreach ($result as $resultItem) {
@@ -111,7 +121,6 @@ WHERE Task.output_id IS NULL
 
         return $collection;
     }
-
 
     public function findDuplicateHashes($limit = null) {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');
