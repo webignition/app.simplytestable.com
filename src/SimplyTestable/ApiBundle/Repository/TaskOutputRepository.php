@@ -69,10 +69,16 @@ class TaskOutputRepository extends EntityRepository
         return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
 
-    public function findHashlessOutputIds($limit = null) {
+    /**
+     * @param int|null $limit
+     *
+     * @return int[]
+     */
+    public function findHashlessOutputIds($limit = null)
+    {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');
 
-        if(is_int($limit) && $limit > 0) {
+        if (is_int($limit) && $limit > 0) {
             $queryBuilder->setMaxResults($limit);
         }
 
@@ -81,28 +87,7 @@ class TaskOutputRepository extends EntityRepository
 
         $result = $queryBuilder->getQuery()->getResult();
 
-        if (count($result) === 0) {
-            return array();
-        }
-
         return $this->getSingleFieldCollectionFromResult($result, 'id');
-    }
-
-    /**
-     * @param array $result
-     * @param string $fieldName
-     *
-     * @return array
-     */
-    private function getSingleFieldCollectionFromResult($result, $fieldName)
-    {
-        $collection = array();
-
-        foreach ($result as $resultItem) {
-            $collection[] = $resultItem[$fieldName];
-        }
-
-        return $collection;
     }
 
     public function findDuplicateHashes($limit = null) {
@@ -165,5 +150,22 @@ class TaskOutputRepository extends EntityRepository
         sort($ids);
 
         return $ids;
+    }
+
+    /**
+     * @param array $result
+     * @param string $fieldName
+     *
+     * @return array
+     */
+    private function getSingleFieldCollectionFromResult($result, $fieldName)
+    {
+        $collection = array();
+
+        foreach ($result as $resultItem) {
+            $collection[] = $resultItem[$fieldName];
+        }
+
+        return $collection;
     }
 }

@@ -206,7 +206,6 @@ class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
             }
         }
 
-        $taskIdsToRemoveOutputFor = [];
         $expectedTaskOutputIds = [];
         foreach ($tasks as $taskIndex => $task) {
             if (in_array($taskIndex, $expectedTaskOutputIndices)) {
@@ -270,6 +269,152 @@ class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
                     [],
                     [],
                     [],
+                ],
+                'taskIndicesToRemoveOutputFor' => [0, 1, 2],
+                'limit' => 2,
+                'expectedTaskOutputIndices' => [0, 1],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider findHashlessOutputIdsDataProvider
+     *
+     * @param array $jobValuesCollection
+     * @param array $taskOutputValuesCollection
+     * @param int[] $taskOutputIdsToRemoveHashFor
+     * @param int $limit
+     * @param int [] $expectedTaskOutputIndices
+     */
+    public function testFindHashlessOutputIds(
+        $jobValuesCollection,
+        $taskOutputValuesCollection,
+        $taskOutputIdsToRemoveHashFor,
+        $limit,
+        $expectedTaskOutputIndices
+    ) {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $jobFactory = new JobFactory($this->container);
+        $taskOutputFactory = new TaskOutputFactory($this->container);
+
+        $jobs = $jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
+
+        /* @var Task[] $tasks */
+        $tasks = [];
+
+        foreach ($jobs as $job) {
+            $tasks = array_merge($tasks, $job->getTasks()->toArray());
+        }
+
+        foreach ($tasks as $taskIndex => $task) {
+            if (isset($taskOutputValuesCollection[$taskIndex]) && !is_null($taskOutputValuesCollection[$taskIndex])) {
+                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
+                $taskOutputFactory->create($task, $taskOutputValues);
+            }
+        }
+
+        $expectedTaskOutputIds = [];
+        foreach ($tasks as $taskIndex => $task) {
+            if (in_array($taskIndex, $expectedTaskOutputIndices)) {
+                if ($task->hasOutput()) {
+                    $taskOutputId = $task->getOutput()->getId();
+
+                    if (!in_array($taskOutputId, $expectedTaskOutputIds)) {
+                        $expectedTaskOutputIds[] = $task->getOutput()->getId();
+                    }
+                }
+            }
+
+            if (in_array($taskIndex, $taskOutputIdsToRemoveHashFor)) {
+                $output = $task->getOutput();
+                $output->setHash(null);
+
+                $entityManager->persist($output);
+                $entityManager->flush($output);
+            }
+        }
+
+        $taskOutputIds = $this->taskOutputRepository->findHashlessOutputIds($limit);
+
+        $this->assertCount(count($expectedTaskOutputIndices), $expectedTaskOutputIds);
+        $this->assertEquals($expectedTaskOutputIds, $taskOutputIds);
+    }
+
+    public function findHashlessOutputIdsDataProvider()
+    {
+        return [
+            'no hashless output' => [
+                'jobValuesCollection' => [
+                    [],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'foo',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'bar',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'foobar',
+                    ],
+                ],
+                'taskOutputIdsToRemoveHashFor' => [],
+                'limit' => null,
+                'expectedTaskOutputIndices' => [],
+            ],
+            'single hashless output' => [
+                'jobValuesCollection' => [
+                    [],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'foo',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'bar',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'foobar',
+                    ],
+                ],
+                'taskOutputIdsToRemoveHashFor' => [1],
+                'limit' => null,
+                'expectedTaskOutputIndices' => [1],
+            ],
+            'all hashless output' => [
+                'jobValuesCollection' => [
+                    [],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'foo',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'bar',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'foobar',
+                    ],
+                ],
+                'taskOutputIdsToRemoveHashFor' => [0, 1, 2],
+                'limit' => null,
+                'expectedTaskOutputIndices' => [0, 1, 2],
+            ],
+            'with limit' => [
+                'jobValuesCollection' => [
+                    [],
+                ],
+                'taskOutputValuesCollection' => [
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'foo',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'bar',
+                    ],
+                    [
+                        TaskOutputFactory::KEY_OUTPUT => 'foobar',
+                    ],
                 ],
                 'taskIndicesToRemoveOutputFor' => [0, 1, 2],
                 'limit' => 2,

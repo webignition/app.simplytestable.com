@@ -49,6 +49,8 @@ class TaskOutputFactory
             $output->setWarningCount($taskOutputValues[self::KEY_WARNING_COUNT]);
         }
 
+        $output->generateHash();
+
         $task->setOutput($output);
 
         $entityManager->persist($task);
