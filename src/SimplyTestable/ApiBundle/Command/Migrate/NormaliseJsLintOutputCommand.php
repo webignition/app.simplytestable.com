@@ -2,64 +2,86 @@
 
 namespace SimplyTestable\ApiBundle\Command\Migrate;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
-use Symfony\Component\Console\Input\InputArgument;
+use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Entity\Task\Output;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use SimplyTestable\WebClientBundle\Entity\Task\Output as TaskOutput;
-
-class NormaliseJsLintOutputCommand extends BaseCommand
+class NormaliseJsLintOutputCommand extends Command
 {
+    const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
     /**
-     *
-     * @var \Doctrine\ORM\EntityManager
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var EntityManager
      */
     private $entityManager;
 
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Repository\TaskRepository
+     * @param ApplicationStateService $applicationStateService
+     * @param EntityManager $entityManager
+     * @param string|null $name
      */
-    private $taskRepository;
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        EntityManager $entityManager,
+        $name = null
+    ) {
+        parent::__construct($name);
 
+        $this->applicationStateService = $applicationStateService;
+        $this->entityManager = $entityManager;
+    }
 
     /**
-     *
-     * @var \Doctrine\ORM\EntityRepository
+     * {@inheritdoc}
      */
-    private $taskOutputRepository;
-
     protected function configure()
     {
         $this
             ->setName('simplytestable:migrate:normalise-jslint-output')
-            ->setDescription('Normalise the tmp paths in JSLint output and truncate JSLint fragment lines to 256 characters')
+            ->setDescription(
+                'Normalise the tmp paths in JSLint output and truncate JSLint fragment lines to 256 characters'
+            )
             ->addOption('limit')
             ->addOption('dry-run')
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
+
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
+        $isDryRun = $input->getOption('dry-run');
+
         $output->writeln('Finding jslint output ...');
-        // "statusLine":"\/tmp\/d64dc5dca841a048946621b935e540a3:13060:1358494120.1354"
 
-        $jsStaticAnalysisType = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->findOneBy(array(
-            'name' => 'JS static analysis'
-        ));
+        $taskTypeRepository = $this->entityManager->getRepository(Type::class);
+        $taskRepository = $this->entityManager->getRepository(Task::class);
+        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
 
-        $jsLintOutputIds = $this->getTaskRepository()->getTaskOutputByType($jsStaticAnalysisType);
+        $jsStaticAnalysisType = $taskTypeRepository->findOneBy([
+            'name' => TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
+        ]);
+
+        $jsLintOutputIds = $taskRepository->getTaskOutputByType($jsStaticAnalysisType);
 
         $output->writeln('['.count($jsLintOutputIds).'] outputs to examine');
 
@@ -72,12 +94,14 @@ class NormaliseJsLintOutputCommand extends BaseCommand
 
         foreach ($jsLintOutputIds as $jsLintOutputId) {
             $processedJsLintOutputCount++;
-            $output->writeln('Examining ' . $jsLintOutputId.' ('.($jsLintOutputCount - $processedJsLintOutputCount).' remaining)');
-
-            /* @var $taskOutput TaskOutput */
-            $taskOutput = $this->getTaskOutputRepository()->findOneBy(array(
-                'id' => (int)$jsLintOutputId
+            $output->writeln(sprintf(
+                'Examining %s (%s remaining)',
+                $jsLintOutputId,
+                ($jsLintOutputCount - $processedJsLintOutputCount)
             ));
+
+            /* @var Output $taskOutput */
+            $taskOutput = $taskOutputRepository->find((int)$jsLintOutputId);
 
             $beforeLength = strlen($taskOutput->getOutput());
 
@@ -92,22 +116,36 @@ class NormaliseJsLintOutputCommand extends BaseCommand
             $tmpReferenceFixCount = 0;
             $fragmentLengthFixCount = 0;
 
-            if (preg_match_all('/"statusLine":"\\\\\/tmp\\\\\/[a-z0-9]{32}:[0-9]+:[0-9]+\.[0-9]+/', $taskOutput->getOutput(), $matches)) {
+            $statusLinePattern = '/"statusLine":"\\\\\/tmp\\\\\/[a-z0-9]{32}:[0-9]+:[0-9]+\.[0-9]+/';
+
+            if (preg_match_all($statusLinePattern, $taskOutput->getOutput(), $matches)) {
                 $output->write('    Fixing tmp file references ['.count($matches[0]).'] ... ');
 
                 foreach ($jsLintObject as $sourcePath => $sourcePathOutput) {
                     // \/tmp\/b8d64d0bc142b3f670cc0611b0aebcae:113:1358342896.7425
                     // \/tmp\/dac78adf714a30493e2def48b5234dcf:308:1358373039.394 is OK
-                    if (preg_match('/^\/tmp\/[a-z0-9]{32}:[0-9]+:[0-9]+\.[0-9]+$/', $sourcePathOutput->statusLine)) {
-                        $sourcePathOutput->statusLine = substr($sourcePathOutput->statusLine, 0, strpos($sourcePathOutput->statusLine, ':'));
+
+                    $tmpPathPattern = '/^\/tmp\/[a-z0-9]{32}:[0-9]+:[0-9]+\.[0-9]+$/';
+
+                    if (preg_match($tmpPathPattern, $sourcePathOutput->statusLine)) {
+                        $sourcePathOutput->statusLine = substr(
+                            $sourcePathOutput->statusLine,
+                            0,
+                            strpos($sourcePathOutput->statusLine, ':')
+                        );
                         $tmpReferenceFixCount++;
                     }
 
-                    if (preg_match('/^\/tmp\/[a-z0-9]{32}:[0-9]+:[0-9]+\.[0-9]+ is OK.$/', $sourcePathOutput->statusLine)) {
-                        $sourcePathOutput->statusLine = substr($sourcePathOutput->statusLine, 0, strpos($sourcePathOutput->statusLine, ':'));
+                    $tmpPathOkPattern = '/^\/tmp\/[a-z0-9]{32}:[0-9]+:[0-9]+\.[0-9]+ is OK.$/';
+
+                    if (preg_match($tmpPathOkPattern, $sourcePathOutput->statusLine)) {
+                        $sourcePathOutput->statusLine = substr(
+                            $sourcePathOutput->statusLine,
+                            0,
+                            strpos($sourcePathOutput->statusLine, ':')
+                        );
                         $tmpReferenceFixCount++;
                     }
-
                 }
 
                 $output->writeln('fixed '.$tmpReferenceFixCount.' tmp file references');
@@ -151,7 +189,7 @@ class NormaliseJsLintOutputCommand extends BaseCommand
                     $output->writeln('    Reduced output by '.$reductionInK.'Kb');
                 }
 
-                if (!$this->isDryRun($input)) {
+                if (!$isDryRun) {
                     $this->entityManager->persist($taskOutput);
                     $this->entityManager->flush();
                 }
@@ -177,74 +215,6 @@ class NormaliseJsLintOutputCommand extends BaseCommand
             $output->writeln('Reduced total output by '.$totalReductionInK.'Kb');
         }
 
-        return true;
-    }
-
-
-
-
-
-    /**
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @return int
-     */
-    private function isDryRun(InputInterface $input) {
-        return $input->getOption('dry-run');
-    }
-
-
-    /**
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @return int
-     */
-    private function getLimit(InputInterface $input) {
-        if ($input->getOption('limit') === false) {
-            return 0;
-        }
-
-        $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT);
-
-        return ($limit <= 0) ? 0 : $limit;
-    }
-
-
-    /**
-     *
-     * @return \Doctrine\ORM\EntityManager
-     */
-    private function getManager() {
-        if (is_null($this->entityManager)) {
-            $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
-        }
-
-        return  $this->entityManager;
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TaskRepository
-     */
-    private function getTaskRepository() {
-        if (is_null($this->taskRepository)) {
-            $this->taskRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task');
-        }
-
-        return $this->taskRepository;
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TaskOutputRepository
-     */
-    private function getTaskOutputRepository() {
-        if (is_null($this->taskOutputRepository)) {
-            $this->taskOutputRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
-        }
-
-        return $this->taskOutputRepository;
+        return self::RETURN_CODE_OK;
     }
 }
