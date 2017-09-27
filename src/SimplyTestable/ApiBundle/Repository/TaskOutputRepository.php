@@ -131,29 +131,6 @@ class TaskOutputRepository extends EntityRepository
         return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
 
-
-    public function findIdsNotIn($excludeIds) {
-        $queryBuilder = $this->createQueryBuilder('TaskOutput');
-        $queryBuilder->select('TaskOutput.id');
-        $queryBuilder->where('TaskOutput.id NOT IN ('.  implode(',', $excludeIds).')');
-
-        $result = $queryBuilder->getQuery()->getResult();
-
-        if (count($result) === 0) {
-            return array();
-        }
-
-        $ids = array();
-
-        foreach ($result as $taskOutputIdResult) {
-            $ids[] = $taskOutputIdResult['id'];
-        }
-
-        sort($ids);
-
-        return $ids;
-    }
-
     /**
      * @param array $result
      * @param string $fieldName
