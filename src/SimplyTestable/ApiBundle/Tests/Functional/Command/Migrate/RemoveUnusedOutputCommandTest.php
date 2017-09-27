@@ -2,16 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Migrate;
 
-use SimplyTestable\ApiBundle\Command\MigrateNormaliseJsLintOutputCommand;
+use SimplyTestable\ApiBundle\Command\Migrate\RemoveUnusedOutputCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class MigrateNormaliseJsLintOutputCommandTest extends BaseSimplyTestableTestCase
+class RemoveUnusedOutputCommandTest extends BaseSimplyTestableTestCase
 {
     /**
-     * @var MigrateNormaliseJsLintOutputCommand
+     * @var RemoveUnusedOutputCommand
      */
     private $command;
 
@@ -22,7 +22,7 @@ class MigrateNormaliseJsLintOutputCommandTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->command = new MigrateNormaliseJsLintOutputCommand();
+        $this->command = new RemoveUnusedOutputCommand();
         $this->command->setContainer($this->container);
     }
 

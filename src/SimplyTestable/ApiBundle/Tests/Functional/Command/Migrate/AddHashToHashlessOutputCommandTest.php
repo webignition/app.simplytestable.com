@@ -2,16 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Migrate;
 
-use SimplyTestable\ApiBundle\Command\MigrateRemoveUnusedOutputCommand;
+use SimplyTestable\ApiBundle\Command\Migrate\AddHashToHashlessOutputCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class MigrateRemoveUnusedOutputCommandTest extends BaseSimplyTestableTestCase
+class AddHashToHashlessOutputCommandTest extends BaseSimplyTestableTestCase
 {
     /**
-     * @var MigrateRemoveUnusedOutputCommand
+     * @var AddHashToHashlessOutputCommand
      */
     private $command;
 
@@ -22,7 +22,7 @@ class MigrateRemoveUnusedOutputCommandTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->command = new MigrateRemoveUnusedOutputCommand();
+        $this->command = new AddHashToHashlessOutputCommand();
         $this->command->setContainer($this->container);
     }
 

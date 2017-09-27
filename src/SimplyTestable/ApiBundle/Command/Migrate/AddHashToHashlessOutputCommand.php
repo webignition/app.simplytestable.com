@@ -1,6 +1,8 @@
 <?php
-namespace SimplyTestable\ApiBundle\Command;
 
+namespace SimplyTestable\ApiBundle\Command\Migrate;
+
+use SimplyTestable\ApiBundle\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -8,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use SimplyTestable\WebClientBundle\Entity\Task\Output as TaskOutput;
 
-class MigrateAddHashToHashlessOutputCommand extends BaseCommand
+class AddHashToHashlessOutputCommand extends BaseCommand
 {
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
@@ -27,7 +29,7 @@ class MigrateAddHashToHashlessOutputCommand extends BaseCommand
     protected function configure()
     {
         $this
-            ->setName('simplytestable:add-hash-to-hashless-output')
+            ->setName('simplytestable:migrate:add-hash-to-hashless-output')
             ->setDescription('Set the hash property on TaskOutput objects that have no hash set')
             ->addOption('limit')
             ->addOption('dry-run')

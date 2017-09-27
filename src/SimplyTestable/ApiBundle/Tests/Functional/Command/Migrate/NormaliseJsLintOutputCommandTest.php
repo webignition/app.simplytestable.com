@@ -2,16 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Migrate;
 
-use SimplyTestable\ApiBundle\Command\MigrateAddHashToHashlessOutputCommand;
+use SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class MigrateAddHashToHashlessOutputCommandTest extends BaseSimplyTestableTestCase
+class NormaliseJsLintOutputCommandTest extends BaseSimplyTestableTestCase
 {
     /**
-     * @var MigrateAddHashToHashlessOutputCommand
+     * @var NormaliseJsLintOutputCommand
      */
     private $command;
 
@@ -22,7 +22,7 @@ class MigrateAddHashToHashlessOutputCommandTest extends BaseSimplyTestableTestCa
     {
         parent::setUp();
 
-        $this->command = new MigrateAddHashToHashlessOutputCommand();
+        $this->command = new NormaliseJsLintOutputCommand();
         $this->command->setContainer($this->container);
     }
 

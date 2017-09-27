@@ -1,6 +1,8 @@
 <?php
-namespace SimplyTestable\ApiBundle\Command;
 
+namespace SimplyTestable\ApiBundle\Command\Migrate;
+
+use SimplyTestable\ApiBundle\Command\BaseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -8,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use SimplyTestable\WebClientBundle\Entity\Task\Output as TaskOutput;
 
-class MigrateNormaliseJsLintOutputCommand extends BaseCommand
+class NormaliseJsLintOutputCommand extends BaseCommand
 {
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
@@ -34,7 +36,7 @@ class MigrateNormaliseJsLintOutputCommand extends BaseCommand
     protected function configure()
     {
         $this
-            ->setName('simplytestable:normalise-jslint-output')
+            ->setName('simplytestable:migrate:normalise-jslint-output')
             ->setDescription('Normalise the tmp paths in JSLint output and truncate JSLint fragment lines to 256 characters')
             ->addOption('limit')
             ->addOption('dry-run')
