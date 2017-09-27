@@ -11,6 +11,7 @@ class TaskOutputFactory
     const KEY_OUTPUT = 'output';
     const KEY_ERROR_COUNT = 'error-count';
     const KEY_WARNING_COUNT = 'warning-count';
+    const KEY_HASH = 'hash';
 
     /**
      * @var ContainerInterface
@@ -49,7 +50,11 @@ class TaskOutputFactory
             $output->setWarningCount($taskOutputValues[self::KEY_WARNING_COUNT]);
         }
 
-        $output->generateHash();
+        if (isset($taskOutputValues[self::KEY_HASH])) {
+            $output->setHash($taskOutputValues[self::KEY_HASH]);
+        } else {
+            $output->generateHash();
+        }
 
         $task->setOutput($output);
 

@@ -114,21 +114,21 @@ class TaskOutputRepository extends EntityRepository
         return $this->getSingleFieldCollectionFromResult($result, 'hash');
     }
 
-    public function findIdsBy($hash) {
+    /**
+     * @param string $hash
+     *
+     * @return int[]
+     */
+    public function findIdsByHash($hash)
+    {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');
         $queryBuilder->select('TaskOutput.id');
         $queryBuilder->where('TaskOutput.hash = :Hash');
         $queryBuilder->setParameter('Hash', $hash);
 
-        $ids = array();
-
         $result = $queryBuilder->getQuery()->getResult();
 
-        foreach ($result as $idResult) {
-            $ids[] = $idResult['id'];
-        }
-
-        return $ids;
+        return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
 
 
