@@ -2,30 +2,47 @@
 
 namespace SimplyTestable\ApiBundle\Command\Migrate;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
-use Symfony\Component\Console\Input\InputArgument;
+use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Entity\Task\Output;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use SimplyTestable\WebClientBundle\Entity\Task\Output as TaskOutput;
-
-class AddHashToHashlessOutputCommand extends BaseCommand
+class AddHashToHashlessOutputCommand extends Command
 {
+    const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
     /**
-     *
-     * @var \Doctrine\ORM\EntityManager
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var EntityManager
      */
     private $entityManager;
 
     /**
-     *
-     * @var \Doctrine\ORM\EntityRepository
+     * @param ApplicationStateService $applicationStateService
+     * @param EntityManager $entityManager
+     * @param string|null $name
      */
-    private $taskOutputRepository;
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        EntityManager $entityManager,
+        $name = null
+    ) {
+        parent::__construct($name);
 
+        $this->applicationStateService = $applicationStateService;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -36,21 +53,28 @@ class AddHashToHashlessOutputCommand extends BaseCommand
         ;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $output->writeln('Finding hashless output ...');
-        $hashlessOutputIds = $this->getTaskOutputRepository()->findHashlessOutputIds($this->getLimit($input));
+        $isDryRun = $input->getOption('dry-run');
 
-        if (count($hashlessOutputIds) === 0) {
+        $output->writeln('Finding hashless output ...');
+
+        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
+        $hashlessOutputIds = $taskOutputRepository->findHashlessOutputIds($this->getLimit($input));
+        $hashlessOutputCount = count($hashlessOutputIds);
+
+        if (empty($hashlessOutputIds)) {
             $output->writeln('No task outputs require a hash to be set. Done.');
-            return true;
+
+            return self::RETURN_CODE_OK;
         }
 
         $output->writeln(count($hashlessOutputIds).' outputs require a hash to be set.');
@@ -58,41 +82,39 @@ class AddHashToHashlessOutputCommand extends BaseCommand
         $processedTaskOutputCount = 0;
 
         foreach ($hashlessOutputIds as $hashlessOutputId) {
-            $taskOutput = $this->getTaskOutputRepository()->find($hashlessOutputId);
+            /* @var Output $taskOutput */
+            $taskOutput = $taskOutputRepository->find($hashlessOutputId);
 
-            /* @var $output TaskOutput */
             $processedTaskOutputCount++;
-            $output->writeln('Setting hash for ['.$taskOutput->getId().'] ('.(count($hashlessOutputIds) - $processedTaskOutputCount).' remaining)');
+            $remainingTaskCount = $hashlessOutputCount - $processedTaskOutputCount;
+
+            $output->writeln(sprintf(
+                'Setting hash for [%s] (%s remaining)',
+                $taskOutput->getId(),
+                $remainingTaskCount
+
+            ));
+
             $taskOutput->generateHash();
 
-            if (!$this->isDryRun($input)) {
-                $this->getManager()->persist($taskOutput);
-                $this->getManager()->flush();
+            if (!$isDryRun) {
+                $this->entityManager->persist($taskOutput);
+                $this->entityManager->flush();
             }
 
-            $this->getManager()->detach($taskOutput);
+            $this->entityManager->detach($taskOutput);
         }
 
-        return true;
+        return self::RETURN_CODE_OK;
     }
 
-
     /**
+     * @param InputInterface $input
      *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
      * @return int
      */
-    private function isDryRun(InputInterface $input) {
-        return $input->getOption('dry-run');
-    }
-
-
-    /**
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @return int
-     */
-    private function getLimit(InputInterface $input) {
+    private function getLimit(InputInterface $input)
+    {
         if ($input->getOption('limit') === false) {
             return 0;
         }
@@ -100,31 +122,5 @@ class AddHashToHashlessOutputCommand extends BaseCommand
         $limit = filter_var($input->getOption('limit'), FILTER_VALIDATE_INT);
 
         return ($limit <= 0) ? 0 : $limit;
-    }
-
-
-    /**
-     *
-     * @return \Doctrine\ORM\EntityManager
-     */
-    private function getManager() {
-        if (is_null($this->entityManager)) {
-            $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
-        }
-
-        return  $this->entityManager;
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TaskOutputRepository
-     */
-    private function getTaskOutputRepository() {
-        if (is_null($this->taskOutputRepository)) {
-            $this->taskOutputRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
-        }
-
-        return $this->taskOutputRepository;
     }
 }
