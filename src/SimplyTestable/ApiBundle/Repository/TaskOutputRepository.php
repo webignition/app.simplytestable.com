@@ -90,10 +90,16 @@ class TaskOutputRepository extends EntityRepository
         return $this->getSingleFieldCollectionFromResult($result, 'id');
     }
 
-    public function findDuplicateHashes($limit = null) {
+    /**
+     * @param int|null $limit
+     *
+     * @return string[]
+     */
+    public function findDuplicateHashes($limit = null)
+    {
         $queryBuilder = $this->createQueryBuilder('TaskOutput');
 
-        if(is_int($limit) && $limit > 0) {
+        if (is_int($limit) && $limit > 0) {
             $queryBuilder->setMaxResults($limit);
         }
 
@@ -104,10 +110,6 @@ class TaskOutputRepository extends EntityRepository
         $queryBuilder->where('TaskOutput.hash IS NOT NULL');
 
         $result = $queryBuilder->getQuery()->getResult();
-
-        if (count($result) === 0) {
-            return array();
-        }
 
         return $this->getSingleFieldCollectionFromResult($result, 'hash');
     }
