@@ -224,3 +224,10 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
+  simplytestable.command.migrate.normalisejslintoutput:
+    class:  SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      entityManager: '@doctrine.orm.entity_manager'
+    tags:
+      - { name: console.command }

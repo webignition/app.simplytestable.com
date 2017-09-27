@@ -3,7 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Migrate;
 
 use SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand;
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -22,20 +22,21 @@ class NormaliseJsLintOutputCommandTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->command = new NormaliseJsLintOutputCommand();
-        $this->command->setContainer($this->container);
+        $this->command = $this->container->get('simplytestable.command.migrate.normalisejslintoutput');
     }
 
     public function testRunCommandInMaintenanceReadOnlyModeReturnsStatusCode1()
     {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableReadOnlyAction();
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
 
-        $maintenanceController->disableReadOnlyAction();
+        $this->assertEquals(
+            NormaliseJsLintOutputCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
+            $returnCode
+        );
 
-        $this->assertEquals(1, $returnCode);
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 }
