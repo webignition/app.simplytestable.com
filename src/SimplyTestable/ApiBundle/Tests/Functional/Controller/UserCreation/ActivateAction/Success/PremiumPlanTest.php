@@ -2,6 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\ActivateAction\Success;
 
+use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+
 class PremiumPlanTest extends SuccessTest {
 
     const USER_EMAIL = 'user@example.com';
@@ -12,13 +15,11 @@ class PremiumPlanTest extends SuccessTest {
     protected function setUp() {
         parent::setUp();
 
-        $this->getUserCreationController('createAction', array(
-            'email' => self::USER_EMAIL,
-            'password' => self::USER_PASSWORD,
-            'plan' => self::USER_PLAN
-        ))->createAction();
-
-        $this->user = $this->getUserService()->findUserByEmail(self::USER_EMAIL);
+        $userFactory = new UserFactory($this->container);
+        $this->user = $userFactory->create([
+            UserFactory::KEY_EMAIL => self::USER_EMAIL,
+            UserFactory::KEY_PLAN_NAME => self::USER_PLAN,
+        ]);
 
         $methodName = $this->getActionNameFromRouter();
         $this->response = $this->getCurrentController()->$methodName($this->user->getConfirmationToken());

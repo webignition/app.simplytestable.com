@@ -8,7 +8,6 @@ use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController as StripeWebHoo
 use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
 use SimplyTestable\ApiBundle\Controller\UserController;
-use SimplyTestable\ApiBundle\Controller\UserCreationController;
 use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
 use SimplyTestable\ApiBundle\Controller\UserPasswordResetController;
 use SimplyTestable\ApiBundle\Controller\UserStripeEventController;
@@ -51,7 +50,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 {
     const ROUTER_MATCH_CONTROLLER_KEY = '_controller';
 
-    const USER_CREATION_CONTROLLER_NAME = UserCreationController::class;
     const USER_PASSWORD_RESET_CONTROLLER_NAME = UserPasswordResetController::class;
     const USER_EMAIL_CHANGE_CONTROLLER_NAME = UserEmailChangeController::class;
     const USER_CONTROLLER_NAME = UserController::class;
@@ -80,18 +78,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     {
         return $this->container->get('doctrine')->getManager();
     }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     * @return UserCreationController
-     */
-    protected function getUserCreationController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(self::USER_CREATION_CONTROLLER_NAME, $methodName, $postData, $queryData);
-    }
-
 
     /**
      * @param string $methodName

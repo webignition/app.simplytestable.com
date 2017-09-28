@@ -7,29 +7,6 @@ use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class UnactivatedUserWithTeamInvitesTest extends SuccessTest {
 
-//
-//
-//    public function testWithUnactivatedUserThatHasTeamInviteSetsChosenPassword() {
-//        $leader = $this->createAndActivateUser('leader@example.com');
-//        $this->getTeamService()->create('Foo', $leader);
-//        $this->getUserService()->setUser($leader);
-//
-//        $this->getTeamInviteController('getAction')->getAction('user@example.com');
-//
-//        $tempUser = $this->getUserService()->findUserByEmail('user@example.com');
-//        $tempUserPassword = $tempUser->getPassword();
-//
-//        $this->getUserCreationController('createAction', array(
-//            'email' => rawurldecode('user@example.com'),
-//            'password' => 'foobar'
-//        ))->createAction();
-//
-//        $user = $this->getUserService()->findUserByEmail('user@example.com');
-//
-//        $this->assertEquals($tempUser->getId(), $user->getId());
-//        $this->assertFalse($tempUserPassword == $user->getPassword());
-//    }
-
     const DEFAULT_EMAIL = 'user@example.com';
     const DEFAULT_PASSWORD = 'password';
 
