@@ -231,3 +231,11 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
+
+  simplytestable.command.migrate.removeunusedoutput:
+    class:  SimplyTestable\ApiBundle\Command\Migrate\RemoveUnusedOutputCommand
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      entityManager: '@doctrine.orm.entity_manager'
+    tags:
+      - { name: console.command }

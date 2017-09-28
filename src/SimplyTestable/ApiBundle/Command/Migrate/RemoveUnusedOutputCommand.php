@@ -2,39 +2,49 @@
 
 namespace SimplyTestable\ApiBundle\Command\Migrate;
 
-use SimplyTestable\ApiBundle\Command\BaseCommand;
-use Symfony\Component\Console\Input\InputArgument;
+use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Entity\Task\Output;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use SimplyTestable\ApiBundle\Entity\Task\Task;
-
-class RemoveUnusedOutputCommand extends BaseCommand
+class RemoveUnusedOutputCommand extends Command
 {
     const DEFAULT_FLUSH_THRESHOLD = 100;
+
+    const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
 
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
 
     /**
-     *
-     * @var \Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     private $entityManager;
 
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param EntityManager $entityManager
+     * @param string|null $name
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        EntityManager $entityManager,
+        $name = null
+    ) {
+        parent::__construct($name);
+
+        $this->applicationStateService = $applicationStateService;
+        $this->entityManager = $entityManager;
+    }
 
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Repository\TaskRepository
+     * {@inheritdoc}
      */
-    private $taskRepository;
-
-    /**
-     *
-     * @var \Doctrine\ORM\EntityRepository
-     */
-    private $taskOutputRepository;
-
     protected function configure()
     {
         $this
@@ -42,26 +52,30 @@ class RemoveUnusedOutputCommand extends BaseCommand
             ->setDescription('Remove output not linked to any task')
             ->addOption('limit')
             ->addOption('flush-threshold')
-            ->addOption('dry-run')
-        ;
+            ->addOption('dry-run');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationStateService = $this->getContainer()->get('simplytestable.services.applicationstateservice');
-
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+        if ($this->applicationStateService->isInMaintenanceReadOnlyState()) {
             $output->writeln('In maintenance-read-only mode, I can\'t do that right now');
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
+        $isDryRun = $input->getOption('dry-run');
+
         $output->writeln('Finding unused output ...');
 
-        $unusedTaskOutputIds = $this->getTaskOutputRepository()->findUnusedIds($this->getLimit($input));
+        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
+        $unusedTaskOutputIds = $taskOutputRepository->findUnusedIds($this->getLimit($input));
 
-        if (count($unusedTaskOutputIds) === 0) {
+        if (empty($unusedTaskOutputIds)) {
             $output->writeln('No unused task outputs found. Done.');
-            return true;
+
+            return self::RETURN_CODE_OK;
         }
 
         $output->writeln('['.count($unusedTaskOutputIds).'] outputs found');
@@ -71,42 +85,48 @@ class RemoveUnusedOutputCommand extends BaseCommand
         $persistCount = 0;
 
         foreach ($unusedTaskOutputIds as $unusedTaskOutputId) {
-            $taskOutputToRemove = $this->getTaskOutputRepository()->find($unusedTaskOutputId);
+            $taskOutputToRemove = $taskOutputRepository->find($unusedTaskOutputId);
 
             $processedTaskOutputCount++;
-            $output->writeln('Removing output ['.$unusedTaskOutputId.'] ('.(count($unusedTaskOutputIds) - $processedTaskOutputCount).' remaining)');
+            $output->writeln(sprintf(
+                'Removing output [%s] (%s remaining)',
+                $unusedTaskOutputId,
+                (count($unusedTaskOutputIds) - $processedTaskOutputCount)
+            ));
 
-            $this->getManager()->remove($taskOutputToRemove);
+            if (!$isDryRun) {
+                $this->entityManager->remove($taskOutputToRemove);
+            }
+
             $persistCount++;
 
             if ($persistCount == $flushThreshold) {
                 $output->writeln('***** Flushing *****');
                 $persistCount = 0;
 
-                if (!$this->isDryRun($input)) {
-                    $this->getManager()->flush();
+                if (!$isDryRun) {
+                    $this->entityManager->flush();
                 }
             }
         }
 
-            if ($persistCount > 0) {
-                $output->writeln('***** Flushing *****');
-                if (!$this->isDryRun($input)) {
-                    $this->getManager()->flush();
-                }
+        if ($persistCount > 0) {
+            $output->writeln('***** Flushing *****');
+            if (!$isDryRun) {
+                $this->entityManager->flush();
             }
+        }
 
-        return true;
+        return self::RETURN_CODE_OK;
     }
 
-
-
     /**
+     * @param InputInterface $input
      *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
      * @return int
      */
-    private function getLimit(InputInterface $input) {
+    private function getLimit(InputInterface $input)
+    {
         if ($input->getOption('limit') === false) {
             return 0;
         }
@@ -116,77 +136,32 @@ class RemoveUnusedOutputCommand extends BaseCommand
         return ($limit <= 0) ? 0 : $limit;
     }
 
-/**
-     *
+    /**
      * @param InputInterface $input
+     *
      * @return int
      */
-    private function getFlushTreshold($input) {
-        return $this->getIntegerOptionWithDefault($input, 'flush-threshold', self::DEFAULT_FLUSH_THRESHOLD);
+    private function getFlushTreshold($input)
+    {
+        return $this->getIntegerOptionWithDefault(
+            $input,
+            'flush-threshold',
+            self::DEFAULT_FLUSH_THRESHOLD
+        );
     }
 
-
     /**
-     *
      * @param InputInterface $input
+     *
      * @return int
      */
-    private function getIntegerOptionWithDefault($input, $optionName, $defaultValue) {
+    private function getIntegerOptionWithDefault($input, $optionName, $defaultValue)
+    {
         $value = $input->getOption($optionName);
         if ($value <= 0) {
             return $defaultValue;
         }
 
         return (int)$value;
-    }
-
-
-    /**
-     *
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @return int
-     */
-    private function isDryRun(InputInterface $input) {
-        return $input->getOption('dry-run');
-    }
-
-
-    /**
-     *
-     * @return \Doctrine\ORM\EntityManager
-     */
-    private function getManager() {
-        if (is_null($this->entityManager)) {
-            $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
-        }
-
-        return  $this->entityManager;
-    }
-
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TaskRepository
-     */
-    private function getTaskRepository() {
-        if (is_null($this->taskRepository)) {
-            $this->taskRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Task');
-        }
-
-        return $this->taskRepository;
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TaskOutputRepository
-     */
-    private function getTaskOutputRepository() {
-        if (is_null($this->taskOutputRepository)) {
-            $this->taskOutputRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
-        }
-
-        return $this->taskOutputRepository;
     }
 }
