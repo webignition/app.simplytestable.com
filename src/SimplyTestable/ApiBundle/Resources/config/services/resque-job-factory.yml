@@ -67,6 +67,10 @@ services:
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob
             requiredArgs:
               - id
+            serviceIds:
+              - simplytestable.services.applicationstateservice
+              - doctrine.orm.entity_manager
+              - simplytestable.services.workeractivationrequestservice
           stripe-event:
             queue: stripe-event
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob

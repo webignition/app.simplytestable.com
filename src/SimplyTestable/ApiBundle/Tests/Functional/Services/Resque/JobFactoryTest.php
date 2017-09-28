@@ -267,6 +267,11 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                 'expectedQueue' => 'worker-activate-verify',
                 'expectedArgs' => [
                     'id' => 1,
+                    'serviceIds' => [
+                        'simplytestable.services.applicationstateservice',
+                        'doctrine.orm.entity_manager',
+                        'simplytestable.services.workeractivationrequestservice',
+                    ],
                 ],
             ],
             'stripe-event' => [
