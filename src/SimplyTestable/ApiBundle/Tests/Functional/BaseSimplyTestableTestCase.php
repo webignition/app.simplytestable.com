@@ -64,13 +64,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 
     const DEFAULT_CANONICAL_URL = 'http://example.com/';
 
-    private $requiredSitemapXmlUrlCount = null;
-
     protected function setUp()
     {
         parent::setUp();
         $this->clearRedis();
-        $this->requiredSitemapXmlUrlCount = null;
     }
 
     /**
