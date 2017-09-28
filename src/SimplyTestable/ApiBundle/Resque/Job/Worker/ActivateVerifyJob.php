@@ -2,8 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job\Worker;
 
-use SimplyTestable\ApiBundle\Command\WorkerActivateVerifyCommand;
+use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 
 class ActivateVerifyJob extends CommandJob
 {
@@ -22,7 +25,20 @@ class ActivateVerifyJob extends CommandJob
      */
     public function getCommand()
     {
-        return new WorkerActivateVerifyCommand();
+        /* @var ApplicationStateService $applicationStateService */
+        $applicationStateService = $this->getContainer()->get($this->args['serviceIds'][0]);
+
+        /* @var EntityManager $entityManager */
+        $entityManager = $this->getContainer()->get($this->args['serviceIds'][1]);
+
+        /* @var WorkerActivationRequestService $workerActivationRequestService */
+        $workerActivationRequestService = $this->getContainer()->get($this->args['serviceIds'][2]);
+
+        return new ActivateVerifyCommand(
+            $applicationStateService,
+            $entityManager,
+            $workerActivationRequestService
+        );
     }
 
     /**

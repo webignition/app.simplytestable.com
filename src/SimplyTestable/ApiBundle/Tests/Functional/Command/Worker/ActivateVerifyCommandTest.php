@@ -1,9 +1,9 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Functional\Command;
+namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Worker;
 
-use SimplyTestable\ApiBundle\Command\WorkerActivateVerifyCommand;
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+use SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -11,10 +11,10 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Guzzle\Http\Message\Response as GuzzleResponse;
 
-class WorkerActivateVerifyCommandTest extends BaseSimplyTestableTestCase
+class ActivateVerifyCommandTest extends BaseSimplyTestableTestCase
 {
     /**
-     * @var WorkerActivateVerifyCommand
+     * @var ActivateVerifyCommand
      */
     private $command;
 
@@ -30,28 +30,25 @@ class WorkerActivateVerifyCommandTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->command = new WorkerActivateVerifyCommand();
-        $this->command->setContainer($this->container);
-
+        $this->command = $this->container->get('simplytestable.command.worker.activateverify');
         $this->workerFactory = new WorkerFactory($this->container);
     }
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableReadOnlyAction();
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => 1,
         ]), new BufferedOutput());
 
         $this->assertEquals(
-            WorkerActivateVerifyCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
+            ActivateVerifyCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE,
             $returnCode
         );
 
-        $maintenanceController->disableReadOnlyAction();
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**
