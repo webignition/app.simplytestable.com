@@ -2,9 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional;
 
-use Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand;
 use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -12,7 +10,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Console\Tester\CommandTester;
 
 abstract class BaseTestCase extends WebTestCase
 {
@@ -40,45 +37,7 @@ abstract class BaseTestCase extends WebTestCase
         $this->application = new Application(self::$kernel);
         $this->application->setAutoExit(false);
 
-        foreach ($this->getCommands() as $command) {
-            $this->application->add($command);
-        }
-
         $this->container->get('doctrine')->getConnection()->beginTransaction();
-    }
-
-    /**
-     * @return ContainerAwareCommand[]
-     */
-    protected function getCommands()
-    {
-        return array_merge(array(
-            new LoadDataFixturesDoctrineCommand(),
-        ), $this->getAdditionalCommands());
-    }
-
-    /**
-     * @return ContainerAwareCommand[]
-     */
-    protected function getAdditionalCommands()
-    {
-        return array();
-    }
-
-    /**
-     * @param string $name
-     * @param array $arguments
-     *
-     * @return int
-     */
-    protected function executeCommand($name, $arguments = array())
-    {
-        $command = $this->application->find($name);
-        $commandTester = new CommandTester($command);
-
-        $arguments['command'] = $command->getName();
-
-        return $commandTester->execute($arguments);
     }
 
     protected function clearRedis()
