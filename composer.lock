@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "01831c005ca9467604650a78c2269caa",
+    "content-hash": "62d69fd07110474763326e4a03b9d30e",
     "packages": [
         {
             "name": "bcc/resque-bundle",
@@ -1498,23 +1498,23 @@
         },
         {
             "name": "hobnob/xml-stream-reader",
-            "version": "1.0.3",
+            "version": "v1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hobnob/xmlStreamReader.git",
-                "reference": "3f130f937c94accb6b7c6e30de3d736ff7d1b0ce"
+                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hobnob/xmlStreamReader/zipball/3f130f937c94accb6b7c6e30de3d736ff7d1b0ce",
-                "reference": "3f130f937c94accb6b7c6e30de3d736ff7d1b0ce",
+                "url": "https://api.github.com/repos/hobnob/xmlStreamReader/zipball/fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
+                "reference": "fc26cbc5d5802fa5db7d46277ae6cc9bf4c4ee3e",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*"
+                "phpunit/phpunit": "4.*"
             },
             "type": "library",
             "autoload": {
@@ -1538,7 +1538,7 @@
                 "stream",
                 "xml"
             ],
-            "time": "2013-07-04T08:07:40+00:00"
+            "time": "2015-03-10T15:52:44+00:00"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -2477,20 +2477,26 @@
         },
         {
             "name": "simplepie/simplepie",
-            "version": "1.3.1",
+            "version": "1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/simplepie/simplepie.git",
-                "reference": "ce53709778bc1e2e4deda1651b66e5081398d5cc"
+                "reference": "5de5551953f95feef12cf355a7a26a70f94aa3ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/simplepie/simplepie/zipball/ce53709778bc1e2e4deda1651b66e5081398d5cc",
-                "reference": "ce53709778bc1e2e4deda1651b66e5081398d5cc",
+                "url": "https://api.github.com/repos/simplepie/simplepie/zipball/5de5551953f95feef12cf355a7a26a70f94aa3ab",
+                "reference": "5de5551953f95feef12cf355a7a26a70f94aa3ab",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.2.0"
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4 || ~5"
+            },
+            "suggest": {
+                "mf2/mf2": "Microformat module that allows for parsing HTML for microformats"
             },
             "type": "library",
             "autoload": {
@@ -2527,7 +2533,7 @@
                 "feeds",
                 "rss"
             ],
-            "time": "2012-10-30T17:54:03+00:00"
+            "time": "2017-04-17T07:29:31+00:00"
         },
         {
             "name": "stripe/stripe-php",
@@ -3459,16 +3465,16 @@
         },
         {
             "name": "webignition/robots-txt-file",
-            "version": "0.3",
+            "version": "2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/robots-txt-file.git",
-                "reference": "a5acc3788f10ae771f31cda702f9663c32384c2e"
+                "reference": "2ad8f7cde005a5d5c3c31e7b858dbb3e2a2ac397"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/robots-txt-file/zipball/a5acc3788f10ae771f31cda702f9663c32384c2e",
-                "reference": "a5acc3788f10ae771f31cda702f9663c32384c2e",
+                "url": "https://api.github.com/repos/webignition/robots-txt-file/zipball/2ad8f7cde005a5d5c3c31e7b858dbb3e2a2ac397",
+                "reference": "2ad8f7cde005a5d5c3c31e7b858dbb3e2a2ac397",
                 "shasum": ""
             },
             "require": {
@@ -3502,85 +3508,38 @@
                 "parser",
                 "robots.txt"
             ],
-            "time": "2017-05-05T13:48:43+00:00"
-        },
-        {
-            "name": "webignition/robots-txt-parser",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webignition/robots-txt-parser.git",
-                "reference": "331bf86f7370b7b3650561068055cdd7494de079"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webignition/robots-txt-parser/zipball/331bf86f7370b7b3650561068055cdd7494de079",
-                "reference": "331bf86f7370b7b3650561068055cdd7494de079",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "webignition/robots-txt-file": ">=0.1,<1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jon Cram",
-                    "email": "jon@webignition.net"
-                }
-            ],
-            "description": "Parser for robots.txt files",
-            "homepage": "https://github.com/webignition/robots-txt-parser",
-            "keywords": [
-                "parser",
-                "robots.txt"
-            ],
-            "abandoned": "webignition/robots-txt-file",
-            "time": "2014-09-23T17:26:49+00:00"
+            "time": "2017-05-09T16:52:05+00:00"
         },
         {
             "name": "webignition/sitemap-model",
-            "version": "1.0.4",
+            "version": "1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/sitemap-model.git",
-                "reference": "9f0d6fce621703cdccef7e0037e81d9612392240"
+                "reference": "3648cb52c8ade7994733585b93a75341086dea5a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/9f0d6fce621703cdccef7e0037e81d9612392240",
-                "reference": "9f0d6fce621703cdccef7e0037e81d9612392240",
+                "url": "https://api.github.com/repos/webignition/sitemap-model/zipball/3648cb52c8ade7994733585b93a75341086dea5a",
+                "reference": "3648cb52c8ade7994733585b93a75341086dea5a",
                 "shasum": ""
             },
             "require": {
-                "hobnob/xml-stream-reader": "1.0.3",
+                "hobnob/xml-stream-reader": "1.0.8",
                 "php": ">=5.4.0",
-                "simplepie/simplepie": "*",
+                "simplepie/simplepie": "1.5",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/web-resource-model": ">=1.1.7,<2.0"
+                "webignition/web-resource-model": "1.1.9"
             },
             "require-dev": {
                 "guzzle/guzzle": ">=3.8.1,<4",
-                "phpunit/phpunit": "3.7.*",
-                "symfony/class-loader": "*"
+                "phpunit/phpunit": "~4",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "webignition\\Tests": "tests/",
-                    "": "src/"
+                "psr-4": {
+                    "webignition\\WebResource\\Sitemap\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3598,7 +3557,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2014-04-03T07:15:43+00:00"
+            "time": "2017-09-30T10:38:31+00:00"
         },
         {
             "name": "webignition/string-parser",
@@ -3844,16 +3803,16 @@
         },
         {
             "name": "webignition/web-resource-model",
-            "version": "1.1.8",
+            "version": "1.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-resource-model.git",
-                "reference": "bbf61f997d52126105f90c308cbcdf9713d91611"
+                "reference": "08e6dc46608cfe9754ca84991eefd23842536cb7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-resource-model/zipball/bbf61f997d52126105f90c308cbcdf9713d91611",
-                "reference": "bbf61f997d52126105f90c308cbcdf9713d91611",
+                "url": "https://api.github.com/repos/webignition/web-resource-model/zipball/08e6dc46608cfe9754ca84991eefd23842536cb7",
+                "reference": "08e6dc46608cfe9754ca84991eefd23842536cb7",
                 "shasum": ""
             },
             "require": {
@@ -3863,8 +3822,7 @@
                 "webignition/internet-media-type": ">=0.4.6,<2.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "3.7.*",
-                "symfony/class-loader": "*"
+                "phpunit/phpunit": "~4.0"
             },
             "type": "library",
             "autoload": {
@@ -3889,7 +3847,7 @@
                 "modem",
                 "web"
             ],
-            "time": "2014-04-23T11:55:54+00:00"
+            "time": "2015-02-19T22:53:21+00:00"
         },
         {
             "name": "webignition/web-resource-service",
@@ -3985,38 +3943,38 @@
         },
         {
             "name": "webignition/website-sitemap-finder",
-            "version": "1.0.2",
+            "version": "1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "02fcff12887a17b1de5c49ec3ccb849ae01f0948"
+                "reference": "fa89a4676d2698269709f2d91517b1e4bd4373ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/02fcff12887a17b1de5c49ec3ccb849ae01f0948",
-                "reference": "02fcff12887a17b1de5c49ec3ccb849ae01f0948",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/fa89a4676d2698269709f2d91517b1e4bd4373ad",
+                "reference": "fa89a4676d2698269709f2d91517b1e4bd4373ad",
                 "shasum": ""
             },
             "require": {
-                "guzzle/guzzle": ">=3.8.1",
-                "php": ">=5.4.0",
-                "symfony/event-dispatcher": ">=2.1",
+                "guzzle/guzzle": ">=3.8.1,<4",
+                "php": ">=5.6.0",
                 "webignition/absolute-url-deriver": ">=1.3.3,<2.0",
                 "webignition/cookie-url-matcher": ">=0.1,<1.0",
                 "webignition/internet-media-type": ">=0.1,<2.0",
-                "webignition/robots-txt-parser": ">=1.0.2,<2.0",
-                "webignition/sitemap-model": ">=1.0.4,<2.0",
+                "webignition/robots-txt-file": "2.0",
+                "webignition/sitemap-model": "1.1",
                 "webignition/url": ">=0.1,<2.0",
-                "webignition/website-sitemap-retriever": ">=1.0.1,<2.0"
+                "webignition/web-resource-service": "1.0.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.0"
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
-                    "webignition\\Tests": "tests/",
-                    "": "src/"
+                "psr-4": {
+                    "webignition\\WebsiteSitemapFinder\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -4034,53 +3992,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2014-09-23T17:30:49+00:00"
-        },
-        {
-            "name": "webignition/website-sitemap-retriever",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/webignition/website-sitemap-retriever.git",
-                "reference": "b4e948f6ac456bf0278babd5c88c2d35df7ff732"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-retriever/zipball/b4e948f6ac456bf0278babd5c88c2d35df7ff732",
-                "reference": "b4e948f6ac456bf0278babd5c88c2d35df7ff732",
-                "shasum": ""
-            },
-            "require": {
-                "guzzle/guzzle": ">=3.8.1",
-                "php": ">=5.4.0",
-                "symfony/event-dispatcher": ">=2.1",
-                "webignition/cookie-url-matcher": ">=0.1,<1.0",
-                "webignition/internet-media-type": ">=0.1,<2.0",
-                "webignition/sitemap-model": ">=1.0.4,<2.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "webignition\\Tests": "tests/",
-                    "": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jon Cram",
-                    "email": "jon@webignition.net"
-                }
-            ],
-            "description": "Given a URL, retrieve a website sitemap",
-            "homepage": "https://github.com/webignition/website-sitemap-retriever",
-            "keywords": [
-                "Sitemap"
-            ],
-            "time": "2014-04-03T07:29:42+00:00"
+            "time": "2017-10-03T15:36:17+00:00"
         },
         {
             "name": "xrstf/ip-utils",

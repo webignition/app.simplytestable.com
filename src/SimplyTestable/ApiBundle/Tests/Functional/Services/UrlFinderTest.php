@@ -30,11 +30,16 @@ class UrlFinderTest extends BaseSimplyTestableTestCase
     ) {
         $this->queueHttpFixtures($httpFixtures);
 
+        $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
+        $webResourceService->getConfiguration()->disableRetryWithUrlEncodingDisabled();
+
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $website = $websiteService->fetch($websiteUrl);
 
         $urlFinder = new UrlFinder(
             $this->container->get('simplytestable.services.httpclientservice'),
+            $webResourceService,
+            $this->container->get('simplytestable.services.sitemapfactory'),
             $sitemapRetrieverTimeout
         );
 
@@ -53,6 +58,7 @@ class UrlFinderTest extends BaseSimplyTestableTestCase
                 'websiteUrl' => 'http://example.com',
                 'parameters' => [],
                 'httpFixtures' => [
+                    HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
@@ -278,7 +284,49 @@ class UrlFinderTest extends BaseSimplyTestableTestCase
                     'http://example.com/eleven',
                     'http://example.com/twelve',
                 ],
-                'sitemapRetrieverTimeout' => 0.00001,
+                'sitemapRetrieverTimeout' => 0.0001,
+            ],
+            'from multiple sitemaps; url soft limit reached' => [
+                'websiteUrl' => 'http://example.com',
+                'parameters' => [],
+                'httpFixtures' => [
+                    HttpFixtureFactory::createStandardRobotsTxtResponse(),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::load('example.com-index-50-sitemaps')
+                    ),
+                    HttpFixtureFactory::createSuccessResponse(
+                        'text/xml',
+                        SitemapFixtureFactory::generate([
+                            'http://example.com/one',
+                            'http://example.com/two',
+                            'http://example.com/three',
+                            'http://example.com/four',
+                            'http://example.com/five',
+                            'http://example.com/six',
+                            'http://example.com/seven',
+                            'http://example.com/eight',
+                            'http://example.com/nine',
+                            'http://example.com/ten',
+                            'http://example.com/eleven',
+                            'http://example.com/twelve',
+                        ])
+                    ),
+                ],
+                'expectedUrlSet' => [
+                    'http://example.com/one',
+                    'http://example.com/two',
+                    'http://example.com/three',
+                    'http://example.com/four',
+                    'http://example.com/five',
+                    'http://example.com/six',
+                    'http://example.com/seven',
+                    'http://example.com/eight',
+                    'http://example.com/nine',
+                    'http://example.com/ten',
+                    'http://example.com/eleven',
+                    'http://example.com/twelve',
+                ],
             ],
             'from atom feed with cookies' => [
                 'websiteUrl' => 'http://example.com',
