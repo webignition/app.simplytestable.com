@@ -83,6 +83,9 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase
         $expectedHasCrawlJob,
         $expectedTaskCount
     ) {
+        $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
+        $webResourceService->getConfiguration()->disableRetryWithUrlEncodingDisabled();
+
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
 
@@ -141,7 +144,6 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedReturnCode' => PrepareCommand::RETURN_CODE_OK,
                 'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
@@ -157,7 +159,6 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
-                    HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedReturnCode' => PrepareCommand::RETURN_CODE_OK,
                 'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
@@ -168,7 +169,6 @@ class PrepareCommandTest extends BaseSimplyTestableTestCase
                 'user' => 'private',
                 'jobValues' => [],
                 'httpFixtures' => [
-                    HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
