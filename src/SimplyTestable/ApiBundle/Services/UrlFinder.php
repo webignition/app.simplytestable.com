@@ -144,6 +144,7 @@ class UrlFinder
     private function getUrlsFromSitemap(WebSite $website, $softLimit, $parameters)
     {
         $baseRequest = $this->httpClientService->getRequest();
+        $baseRequest->setUrl($website->getCanonicalUrl());
         $this->httpClientService->prepareRequest(
             $baseRequest,
             $parameters
