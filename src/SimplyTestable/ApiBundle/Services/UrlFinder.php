@@ -2,16 +2,14 @@
 
 namespace SimplyTestable\ApiBundle\Services;
 
-use Guzzle\Common\Exception\InvalidArgumentException;
-use Guzzle\Http\Exception\RequestException;
 use SimplyTestable\ApiBundle\Entity\WebSite;
-use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\Url\Url;
+use webignition\WebResource\Service\Service as WebResourceService;
+use webignition\WebResource\Sitemap\Factory as SitemapFactory;
 use webignition\WebResource\Sitemap\Sitemap;
 use webignition\WebsiteRssFeedFinder\WebsiteRssFeedFinder;
+use webignition\WebsiteSitemapFinder\Configuration as WebsiteSitemapFinderConfiguration;
 use webignition\WebsiteSitemapFinder\WebsiteSitemapFinder;
-use webignition\WebsiteSitemapRetriever\Configuration\Configuration as SitemapRetrieverConfiguration;
-use webignition\WebsiteSitemapRetriever\WebsiteSitemapRetriever;
 
 class UrlFinder
 {
@@ -24,17 +22,41 @@ class UrlFinder
     private $httpClientService;
 
     /**
+     * @var WebResourceService
+     */
+    private $webResourceService;
+
+    /**
+     * @var SitemapFactory
+     */
+    private $sitemapFactory;
+
+    /**
      * @var int|float
      */
     private $sitemapRetrieverTotalTransferTimeout;
 
     /**
+     * @var float
+     */
+    private $sitemapRetrieverTotalTransferTime;
+
+    /**
      * @param HttpClientService $httpClientService
+     * @param WebResourceService $webResourceService
+     * @param SitemapFactory $sitemapFactory
      * @param float|null $sitemapRetrieverTotalTransferTimeout
      */
-    public function __construct(HttpClientService $httpClientService, $sitemapRetrieverTotalTransferTimeout = null)
-    {
+    public function __construct(
+        HttpClientService $httpClientService,
+        WebResourceService $webResourceService,
+        SitemapFactory $sitemapFactory,
+        $sitemapRetrieverTotalTransferTimeout = null
+    ) {
         $this->httpClientService = $httpClientService;
+        $this->webResourceService = $webResourceService;
+        $this->sitemapFactory = $sitemapFactory;
+
         $this->sitemapRetrieverTotalTransferTimeout = (empty($sitemapRetrieverTotalTransferTimeout))
             ? self::DEFAULT_SITEMAP_RETRIEVER_TOTAL_TRANSFER_TIMEOUT
             : $sitemapRetrieverTotalTransferTimeout;
@@ -52,6 +74,8 @@ class UrlFinder
      */
     public function getUrls(WebSite $website, $softLimit, $parameters = [])
     {
+        $this->sitemapRetrieverTotalTransferTime = 0;
+
         return $this->filterUrlsToWebsiteHost(
             $website,
             $this->collectUrls($website, $softLimit, $parameters)
@@ -92,6 +116,7 @@ class UrlFinder
     private function collectUrls(WebSite $website, $softLimit, $parameters)
     {
         $urlsFromSitemap = $this->getUrlsFromSitemap($website, $softLimit, $parameters);
+
         if (count($urlsFromSitemap)) {
             return $urlsFromSitemap;
         }
@@ -118,23 +143,31 @@ class UrlFinder
      */
     private function getUrlsFromSitemap(WebSite $website, $softLimit, $parameters)
     {
-        $sitemapFinder = $this->createSitemapFinder();
-        $sitemapFinder->getConfiguration()->setRootUrl($website->getCanonicalUrl());
-        $sitemapFinder->getUrlLimitListener()->setSoftLimit($softLimit);
-
+        $baseRequest = $this->httpClientService->getRequest();
+        $baseRequest->setUrl($website->getCanonicalUrl());
         $this->httpClientService->prepareRequest(
-            $sitemapFinder->getConfiguration()->getBaseRequest(),
+            $baseRequest,
             $parameters
         );
 
-        if (isset($parameters[self::PARAMETER_KEY_COOKIES])) {
-            $sitemapFinder->getConfiguration()->setCookies($parameters[self::PARAMETER_KEY_COOKIES]);
-            $sitemapFinder->getSitemapRetriever()->getConfiguration()->setCookies(
-                $parameters[self::PARAMETER_KEY_COOKIES]
-            );
+        $configuration = new WebsiteSitemapFinderConfiguration([
+            WebsiteSitemapFinderConfiguration::KEY_ROOT_URL => $website->getCanonicalUrl(),
+            WebsiteSitemapFinderConfiguration::KEY_BASE_REQUEST => $baseRequest,
+        ]);
+
+        $sitemapFinder = new WebsiteSitemapFinder($configuration);
+
+        $sitemapUrls = $sitemapFinder->findSitemapUrls();
+        $sitemaps = [];
+
+        foreach ($sitemapUrls as $sitemapUrl) {
+            $sitemap = $this->retrieveSitemap($sitemapUrl, $parameters);
+
+            if (!empty($sitemap)) {
+                $sitemaps[] = $sitemap;
+            }
         }
 
-        $sitemaps = $sitemapFinder->getSitemaps();
         if (empty($sitemaps)) {
             return [];
         }
@@ -144,44 +177,76 @@ class UrlFinder
             if (count($urls) < $softLimit) {
                 $urls = array_merge(
                     $urls,
-                    $this->getUrlsFromSingleSitemap($sitemap, $softLimit, count($urls))
+                    $this->getUrlsFromSingleSitemap($sitemap, $parameters, $softLimit, count($urls))
                 );
             }
-
         }
 
         return $urls;
     }
 
     /**
+     * @param string $url
+     * @param array $parameters
+     * @return null|Sitemap
+     */
+    private function retrieveSitemap($url, $parameters)
+    {
+        try {
+            $request = $this->httpClientService->getRequest($url);
+            $this->httpClientService->prepareRequest(
+                $request,
+                $parameters
+            );
+
+            $sitemapResource = $this->webResourceService->get($request);
+            $sitemap = $this->sitemapFactory->create($sitemapResource->getHttpResponse());
+
+            return $sitemap;
+
+        } catch (\Exception $exception) {
+            return null;
+        }
+    }
+
+    /**
      * @param Sitemap $sitemap
+     * @param array $parameters
      * @param int $softLimit
      * @param int $count
-     *
      * @return string[]
      */
-    private function getUrlsFromSingleSitemap(Sitemap $sitemap, $softLimit, $count)
+    private function getUrlsFromSingleSitemap(Sitemap $sitemap, $parameters, $softLimit, $count)
     {
         if (!$sitemap->isIndex()) {
             return $sitemap->getUrls();
         }
 
-        $urls = array();
-        foreach ($sitemap->getChildren() as $childSitemap) {
-            if (!is_null($softLimit)  && ($count + count($urls) >= $softLimit)) {
-                return $urls;
+        $childSitemapUrls = $sitemap->getUrls();
+
+        $totalTransferTime = 0;
+        $totalTransferTimeExceeded = false;
+
+        $urls = [];
+
+        foreach ($childSitemapUrls as $childSitemapUrl) {
+            if ($totalTransferTimeExceeded) {
+                continue;
             }
 
-            /* @var $childSitemap Sitemap */
-            if (is_null($childSitemap->getContent())) {
-                $sitemapRetriever = new WebsiteSitemapRetriever();
-                $sitemapRetriever->getConfiguration()->setBaseRequest($this->httpClientService->getRequest());
-                $sitemapRetriever->getConfiguration()->disableRetrieveChildSitemaps();
-                $sitemapRetriever->retrieve($childSitemap);
+            if (!is_null($softLimit) && ($count + count($urls) >= $softLimit)) {
+                continue;
             }
 
-            $childSitemapUrls = $this->getUrlsFromSingleSitemap($childSitemap, $softLimit, $count + count($urls));
-            $urls = array_merge($urls, $childSitemapUrls);
+            $timeBeforeTransfer = microtime(true);
+
+            $childSitemap = $this->retrieveSitemap($childSitemapUrl, $parameters);
+
+            $transferTime = microtime(true) - $timeBeforeTransfer;
+            $totalTransferTime += $transferTime;
+            $totalTransferTimeExceeded = $totalTransferTime > $this->sitemapRetrieverTotalTransferTimeout;
+
+            $urls = array_merge($urls, $childSitemap->getUrls());
         }
 
         return $urls;
@@ -198,56 +263,11 @@ class UrlFinder
         $feedFinder = $this->createWebsiteRssFeedFinder($website, $parameters);
         $feedUrls = $feedFinder->getRssFeedUrls();
 
-        if (is_null($feedUrls)) {
-            return array();
-        }
-
-        $urlsFromFeed = array();
-
-        foreach ($feedUrls as $feedUrl) {
-            $urlsFromFeed = array_merge($urlsFromFeed, $this->getUrlsFromNewsFeed($feedUrl, $parameters));
-        }
-
-        return $urlsFromFeed;
-    }
-
-    /**
-     *
-     * @param string $feedUrl
-     * @param array $parameters
-     *
-     * @return array
-     */
-    private function getUrlsFromNewsFeed($feedUrl, $parameters)
-    {
-        try {
-            $request = $this->httpClientService->getRequest($feedUrl);
-
-            $this->httpClientService->prepareRequest($request, $parameters);
-
-            $response = $request->send();
-        } catch (RequestException $requestException) {
-            return [];
-        } catch (InvalidArgumentException $e) {
+        if (empty($feedUrls)) {
             return [];
         }
 
-        $simplepie = new \SimplePie();
-        $simplepie->set_raw_data($response->getBody(true));
-        @$simplepie->init();
-
-        $items = $simplepie->get_items();
-
-        $urls = [];
-        foreach ($items as $item) {
-            /* @var $item \SimplePie_Item */
-            $url = new NormalisedUrl($item->get_permalink());
-            if (!in_array((string)$url, $urls)) {
-                $urls[] = (string)$url;
-            }
-        }
-
-        return $urls;
+        return $this->getUrlsFromNewsFeeds($feedUrls, $parameters);
     }
 
     /**
@@ -259,44 +279,34 @@ class UrlFinder
     private function getUrlsFromAtomFeed(WebSite $website, $parameters)
     {
         $feedFinder = $this->createWebsiteRssFeedFinder($website, $parameters);
-
         $feedUrls = $feedFinder->getAtomFeedUrls();
+
         if (empty($feedUrls)) {
             return [];
         }
 
-        $urlsFromFeed = [];
-
-        foreach ($feedUrls as $feedUrl) {
-            $urlsFromFeed = array_merge(
-                $urlsFromFeed,
-                $this->getUrlsFromNewsFeed($feedUrl, $parameters)
-            );
-        }
-
-        return empty($urlsFromFeed)
-            ? []
-            : $urlsFromFeed;
+        return $this->getUrlsFromNewsFeeds($feedUrls, $parameters);
     }
 
     /**
-     * @return WebsiteSitemapFinder
+     * @param string[] $feedUrls
+     * @param array $parameters
+     *
+     * @return string[]
      */
-    private function createSitemapFinder()
+    private function getUrlsFromNewsFeeds($feedUrls, $parameters)
     {
-        $sitemapFinder = new WebsiteSitemapFinder();
-        $sitemapFinder->getConfiguration()->setBaseRequest($this->httpClientService->getRequest());
-        $sitemapFinder->getSitemapRetriever()->getConfiguration()->disableRetrieveChildSitemaps();
+        $urlsFromFeed = [];
 
-        $sitemapFinderRetriever = $sitemapFinder->getSitemapRetriever();
-        $sitemapRetrieverConfiguration = $sitemapFinderRetriever->getConfiguration();
-        $sitemapRetrieverTransferTimeout = $sitemapRetrieverConfiguration->getTotalTransferTimeout();
+        foreach ($feedUrls as $feedUrl) {
+            $newsFeed = $this->retrieveSitemap($feedUrl, $parameters);
 
-        if ($sitemapRetrieverTransferTimeout === SitemapRetrieverConfiguration::DEFAULT_TOTAL_TRANSFER_TIMEOUT) {
-            $sitemapRetrieverConfiguration->setTotalTransferTimeout($this->sitemapRetrieverTotalTransferTimeout);
+            if (!empty($newsFeed)) {
+                $urlsFromFeed = array_merge($urlsFromFeed, $newsFeed->getUrls());
+            }
         }
 
-        return $sitemapFinder;
+        return $urlsFromFeed;
     }
 
     /**

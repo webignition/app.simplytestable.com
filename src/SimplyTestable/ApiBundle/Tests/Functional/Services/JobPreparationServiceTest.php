@@ -150,6 +150,8 @@ class JobPreparationServiceTest extends BaseSimplyTestableTestCase
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
+                    HttpFixtureFactory::createNotFoundResponse(),
+                    HttpFixtureFactory::createNotFoundResponse(),
                 ],
                 'expectedJobState' => JobService::FAILED_NO_SITEMAP_STATE,
                 'expectedHasCrawlJobContainer' => false,
@@ -165,6 +167,8 @@ class JobPreparationServiceTest extends BaseSimplyTestableTestCase
                 ],
                 'user' => 'private',
                 'httpFixtures' => [
+                    HttpFixtureFactory::createNotFoundResponse(),
+                    HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),
                     HttpFixtureFactory::createNotFoundResponse(),

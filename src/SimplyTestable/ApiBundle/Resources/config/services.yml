@@ -414,6 +414,8 @@ services:
     class:  SimplyTestable\ApiBundle\Services\UrlFinder
     arguments:
         httpClientService: "@simplytestable.services.httpClientService"
+        webResourceService: "@simplytestable.services.webresourceservice"
+        sitemapFactory: '@simplytestable.services.sitemapfactory'
 
   simplytestable.services.joblistquerybuilderfactory:
     class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
@@ -425,3 +427,6 @@ services:
     class:  SimplyTestable\ApiBundle\Services\ResourceLocator
     arguments:
       kernel: '@kernel'
+
+  simplytestable.services.sitemapfactory:
+    class:  webignition\WebResource\Sitemap\Factory
