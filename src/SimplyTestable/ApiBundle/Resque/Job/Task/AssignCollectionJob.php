@@ -10,7 +10,7 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService as TaskPreProcessorFactoryService;
+use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
 use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 
@@ -37,7 +37,7 @@ class AssignCollectionJob extends CommandJob
         /* @var EntityManager $entityManager */
         $entityManager = $this->getContainer()->get($this->args['serviceIds'][1]);
 
-        /* @var TaskPreProcessorFactoryService $taskPreProcessorFactory */
+        /* @var TaskPreProcessorFactory $taskPreProcessorFactory */
         $taskPreProcessorFactory = $this->getContainer()->get($this->args['serviceIds'][2]);
 
         /* @var WorkerService $workerService */

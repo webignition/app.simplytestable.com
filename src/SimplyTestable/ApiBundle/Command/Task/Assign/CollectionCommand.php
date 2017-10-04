@@ -10,7 +10,7 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskPreProcessor\FactoryService as TaskPreProcessorFactoryService;
+use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
 use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 use Symfony\Component\Console\Command\Command;
@@ -35,7 +35,7 @@ class CollectionCommand extends Command
     private $entityManager;
 
     /**
-     * @var TaskPreProcessorFactoryService
+     * @var TaskPreProcessorFactory
      */
     private $taskPreprocessorFactory;
 
@@ -72,7 +72,7 @@ class CollectionCommand extends Command
     /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
-     * @param TaskPreProcessorFactoryService $taskPreProcessorFactory
+     * @param TaskPreProcessorFactory $taskPreProcessorFactory
      * @param WorkerService $workerService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
@@ -84,7 +84,7 @@ class CollectionCommand extends Command
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
-        TaskPreProcessorFactoryService $taskPreProcessorFactory,
+        TaskPreProcessorFactory $taskPreProcessorFactory,
         WorkerService $workerService,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
@@ -141,11 +141,13 @@ class CollectionCommand extends Command
         ]);
 
         foreach ($tasks as $taskIndex => $task) {
-            if ($this->taskPreprocessorFactory->hasPreprocessor($task)) {
+            $taskPreprocessor = $this->taskPreprocessorFactory->getPreprocessor($task->getType());
+
+            if (!empty($taskPreprocessor)) {
                 $preProcessorResponse = false;
 
                 try {
-                    $preProcessorResponse = $this->taskPreprocessorFactory->getPreprocessor($task)->process($task);
+                    $preProcessorResponse = $taskPreprocessor->process($task);
                 } catch (\Exception $e) {
                 }
 

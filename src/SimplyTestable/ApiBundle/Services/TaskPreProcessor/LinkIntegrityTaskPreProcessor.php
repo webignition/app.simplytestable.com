@@ -3,16 +3,64 @@ namespace SimplyTestable\ApiBundle\Services\TaskPreProcessor;
 
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\TooManyRedirectsException;
+use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 use webignition\WebResource\Exception\Exception as WebResourceException;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use webignition\InternetMediaType\InternetMediaType;
+use webignition\WebResource\Service\Service as WebResourceService;
 use webignition\WebResource\WebResource;
 use webignition\WebResource\WebPage\WebPage;
 
-class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
+class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 {
+    /**
+     * @var TaskService
+     */
+    private $taskService;
+
+    /**
+     * @var WebResourceService
+     */
+    private $webResourceService;
+
+    /**
+     * @var HttpClientService
+     */
+    private $httpClientService;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(
+        TaskService $taskService,
+        WebResourceService $webResourceService,
+        HttpClientService $httpClientService,
+        LoggerInterface $logger
+    ) {
+        $this->taskService = $taskService;
+        $this->webResourceService = $webResourceService;
+        $this->httpClientService = $httpClientService;
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param Type $taskType
+     *
+     * @return bool
+     */
+    public function handles(Type $taskType)
+    {
+        return $taskType->getName() === TaskTypeService::LINK_INTEGRITY_TYPE;
+    }
+
     /**
      * @param Task $task
      *
@@ -20,18 +68,15 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
      */
     public function process(Task $task)
     {
-        $logger = $this->container->get('logger');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $rawTaskOutputs = $this->taskService->getEntityRepository()->findOutputByJobAndType($task);
 
-        $logger->info('LinkIntegrityTaskPreProcessor::process: task [' . $task->getId() . ']');
-
-        $rawTaskOutputs = $taskService->getEntityRepository()->findOutputByJobAndType($task);
-        if (count($rawTaskOutputs) === 0) {
+        if (empty($rawTaskOutputs)) {
             return false;
         }
 
         $webResource = $this->getWebResource($task);
-        if (is_null($webResource) || !$webResource instanceof WebPage) {
+
+        if (!$webResource instanceof WebPage) {
             return false;
         }
 
@@ -64,11 +109,11 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
             $output->setWarningCount(0);
 
             if (count($linkIntegrityResults) == count($links)) {
-                $taskService->complete(
+                $this->taskService->complete(
                     $task,
                     new \DateTime(),
                     $output,
-                    $taskService->getCompletedState()
+                    $this->taskService->getCompletedState()
                 );
 
                 return true;
@@ -79,8 +124,8 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
             $task->setParameters(json_encode($parameters));
 
             $task->setOutput($output);
-            $taskService->getManager()->persist($task);
-            $taskService->getManager()->flush();
+            $this->taskService->getManager()->persist($task);
+            $this->taskService->getManager()->flush();
         }
 
         return false;
@@ -134,15 +179,13 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
      */
     private function getExistingLinkIntegrityResult($url, $existingLinkIntegrityResults)
     {
-        $logger = $this->container->get('logger');
-
         foreach ($existingLinkIntegrityResults as $linkIntegrityResult) {
             if (is_object($linkIntegrityResult)) {
                 if ($linkIntegrityResult->url == $url) {
                     return $linkIntegrityResult;
                 }
             } else {
-                $logger->error('LinkIntegrityTaskPreProcessor::getExistingLinkIntegrityResult: non-object found');
+                $this->logger->error('LinkIntegrityTaskPreProcessor::getExistingLinkIntegrityResult: non-object found');
             }
         }
     }
@@ -180,10 +223,8 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
      */
     private function isLinkIntegrityError($linkIntegrityResult)
     {
-        $logger = $this->container->get('logger');
-
         if (!is_object($linkIntegrityResult)) {
-            $logger->error('LinkIntegrityTaskPreProcessor::isLinkIntegrityError: non-object found');
+            $this->logger->error('LinkIntegrityTaskPreProcessor::isLinkIntegrityError: non-object found');
             return false;
         }
 
@@ -201,45 +242,42 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
     }
 
     /**
-     *
      * @param Task $task
      *
-     * @return WebResource
+     * @return WebResource|null
      */
     private function getWebResource(Task $task)
     {
-        $logger = $this->container->get('logger');
-
         try {
-            $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+            $httpClient = $this->httpClientService->get();
 
-            $httpClientService->get()->setUserAgent('ST Link integrity task pre-processor');
+            $httpClient->setUserAgent('ST Link integrity task pre-processor');
 
-            $request = $httpClientService->getRequest($task->getUrl());
-            $httpClientService->prepareRequest($request, $task->getParametersArray());
+            $request = $this->httpClientService->getRequest($task->getUrl());
+            $this->httpClientService->prepareRequest($request, $task->getParametersArray());
 
-            $httpClientService->get()->setUserAgent(null);
+            $httpClient->setUserAgent(null);
 
-            $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
-
-            return $webResourceService->get($request);
+            return $this->webResourceService->get($request);
         } catch (WebResourceException $webResourceException) {
-            $logger->error(sprintf(
+            $this->logger->error(sprintf(
                 'LinkIntegrityTaskPreProcessor::getWebResource [%s][http exception][%s]',
                 $task->getUrl(),
                 $webResourceException->getResponse()->getStatusCode()
             ));
         } catch (CurlException $curlException) {
-            $logger->error(sprintf(
+            $this->logger->error(sprintf(
                 'LinkIntegrityTaskPreProcessor::getWebResource [%s][curl exception][%s]',
                 $task->getUrl(),
                 $curlException->getErrorNo()
             ));
         } catch (TooManyRedirectsException $tooManyRedirectsException) {
-            $logger->error(sprintf(
+            $this->logger->error(sprintf(
                 'LinkIntegrityTaskPreProcessor::getWebResource [%s][http exception][too many redirects]',
                 $task->getUrl()
             ));
         }
+
+        return null;
     }
 }

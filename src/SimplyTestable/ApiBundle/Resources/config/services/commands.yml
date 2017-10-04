@@ -145,7 +145,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
-      taskPreProcessorFactory: '@simplytestable.services.taskpreprocessorservicefactory'
+      taskPreProcessorFactory: '@simplytestable.services.taskpreprocessor.factory'
       workerService: '@simplytestable.services.workerservice'
       resqueQueueService: '@simplytestable.services.resque.queueservice'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
