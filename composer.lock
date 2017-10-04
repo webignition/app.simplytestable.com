@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "62d69fd07110474763326e4a03b9d30e",
+    "content-hash": "e8fd1cbede3202bd1ab21e0328fdbb32",
     "packages": [
         {
             "name": "bcc/resque-bundle",
@@ -3943,16 +3943,16 @@
         },
         {
             "name": "webignition/website-sitemap-finder",
-            "version": "1.1",
+            "version": "1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/website-sitemap-finder.git",
-                "reference": "fa89a4676d2698269709f2d91517b1e4bd4373ad"
+                "reference": "55732750365253bab1c96c8a9358cab3fa68beaf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/fa89a4676d2698269709f2d91517b1e4bd4373ad",
-                "reference": "fa89a4676d2698269709f2d91517b1e4bd4373ad",
+                "url": "https://api.github.com/repos/webignition/website-sitemap-finder/zipball/55732750365253bab1c96c8a9358cab3fa68beaf",
+                "reference": "55732750365253bab1c96c8a9358cab3fa68beaf",
                 "shasum": ""
             },
             "require": {
@@ -3992,7 +3992,7 @@
             "keywords": [
                 "Sitemap"
             ],
-            "time": "2017-10-03T15:36:17+00:00"
+            "time": "2017-10-04T11:41:05+00:00"
         },
         {
             "name": "xrstf/ip-utils",

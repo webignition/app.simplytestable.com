@@ -23,7 +23,7 @@
         "doctrine/doctrine-fixtures-bundle": "~2.3",
         "mlpz/postmark-bundle": "*",
         "webignition/internet-media-type":">=0.4.4,<2.0",
-        "webignition/website-sitemap-finder":">=1.1,<2.0",
+        "webignition/website-sitemap-finder":">=1.2,<2.0",
         "webignition/url": ">=1.9.12",
         "webignition/website-rss-feed-finder":">=0.2.1,<1.0",
         "guzzle/guzzle":">=3.8.0,<4",
