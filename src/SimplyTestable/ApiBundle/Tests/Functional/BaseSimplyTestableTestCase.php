@@ -796,8 +796,9 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 
         $this->container->get('session')->set(
             '_security_' . $firewallName,
-            serialize($this->container->get('security.context')->getToken())
+            serialize($this->container->get('security.token_storage')->getToken())
         );
+
         $this->container->get('session')->save();
         $this->client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
     }
