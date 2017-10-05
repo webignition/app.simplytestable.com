@@ -54,11 +54,7 @@ trait FindOutputByJobAndTypeDataProvider
                 ],
                 'taskIndex' => 0,
                 'limit' => false,
-                'expectedRawTaskOutputs' => [
-                    null,
-                    null,
-                    null,
-                ],
+                'expectedRawTaskOutputs' => [],
             ],
             'match job 0' => [
                 'jobValuesCollection' => [

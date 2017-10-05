@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional;
 
-use Guzzle\Http\Exception\CurlException;
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController as JobConfigurationCreateController;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController as StripeWebHookController;
 use SimplyTestable\ApiBundle\Controller\TeamInviteController;
@@ -456,33 +455,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @param string $path
-     *
-     * @return array
-     */
-    protected function getHttpFixtureMessagesFromPath($path)
-    {
-        $messages = array();
-        $fixturesDirectory = new \DirectoryIterator($path);
-
-        $fixturePathnames = array();
-
-        foreach ($fixturesDirectory as $directoryItem) {
-            if ($directoryItem->isFile()) {
-                $fixturePathnames[] = $directoryItem->getPathname();
-            }
-        }
-
-        sort($fixturePathnames);
-
-        foreach ($fixturePathnames as $fixturePathname) {
-            $messages[] = trim(file_get_contents($fixturePathname));
-        }
-
-        return $messages;
-    }
-
-    /**
      * @param $path
      *
      * @return string
@@ -490,66 +462,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getFixture($path)
     {
         return file_get_contents($path);
-    }
-
-    /**
-     *
-     * @param array $items Collection of http messages and/or curl exceptions
-     * @return array
-     */
-    protected function buildHttpFixtureSet($items)
-    {
-        $fixtures = array();
-
-        foreach ($items as $item) {
-            switch ($this->getHttpFixtureItemType($item)) {
-                case 'httpMessage':
-                    $fixtures[] = \Guzzle\Http\Message\Response::fromMessage($item);
-                    break;
-
-                case 'curlException':
-                    $fixtures[] = $this->getCurlExceptionFromCurlMessage($item);
-                    break;
-
-                default:
-                    throw new \LogicException();
-            }
-        }
-
-        return $fixtures;
-    }
-
-    /**
-     * @param string $item
-     * @return string
-     */
-    private function getHttpFixtureItemType($item)
-    {
-        if (substr($item, 0, strlen('HTTP')) == 'HTTP') {
-            return 'httpMessage';
-        }
-
-        return 'curlException';
-    }
-
-    /**
-     *
-     * @param string $curlMessage
-     *
-     * @return CurlException
-     */
-    private function getCurlExceptionFromCurlMessage($curlMessage)
-    {
-        $curlMessageParts = explode(' ', $curlMessage, 2);
-
-        $curlException = new CurlException();
-        if (isset($curlMessageParts[1])) {
-            $curlException->setError($curlMessageParts[1], (int)str_replace('CURL/', '', $curlMessageParts[0]));
-        } else {
-            $curlException->setError('Default Curl Message', (int)str_replace('CURL/', '', $curlMessageParts[0]));
-        }
-
-        return $curlException;
     }
 
     /**

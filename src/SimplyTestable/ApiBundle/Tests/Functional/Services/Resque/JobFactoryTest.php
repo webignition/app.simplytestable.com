@@ -231,7 +231,7 @@ class JobFactoryTest extends BaseSimplyTestableTestCase
                     'serviceIds' => [
                         'simplytestable.services.applicationstateservice',
                         'doctrine.orm.entity_manager',
-                        'simplytestable.services.taskpreprocessorservicefactory',
+                        'simplytestable.services.taskpreprocessor.factory',
                         'simplytestable.services.workerservice',
                         'simplytestable.services.resque.queueservice',
                         'simplytestable.services.resque.jobfactory',

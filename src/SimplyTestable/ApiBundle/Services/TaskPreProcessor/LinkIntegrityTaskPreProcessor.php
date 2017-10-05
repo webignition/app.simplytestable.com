@@ -3,16 +3,66 @@ namespace SimplyTestable\ApiBundle\Services\TaskPreProcessor;
 
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\TooManyRedirectsException;
+use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 use webignition\WebResource\Exception\Exception as WebResourceException;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use webignition\InternetMediaType\InternetMediaType;
+use webignition\WebResource\Service\Service as WebResourceService;
 use webignition\WebResource\WebResource;
 use webignition\WebResource\WebPage\WebPage;
 
-class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
+class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 {
+    const HTTP_USER_AGENT = 'ST Link integrity task pre-processor';
+
+    /**
+     * @var TaskService
+     */
+    private $taskService;
+
+    /**
+     * @var WebResourceService
+     */
+    private $webResourceService;
+
+    /**
+     * @var HttpClientService
+     */
+    private $httpClientService;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    public function __construct(
+        TaskService $taskService,
+        WebResourceService $webResourceService,
+        HttpClientService $httpClientService,
+        LoggerInterface $logger
+    ) {
+        $this->taskService = $taskService;
+        $this->webResourceService = $webResourceService;
+        $this->httpClientService = $httpClientService;
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param Type $taskType
+     *
+     * @return bool
+     */
+    public function handles(Type $taskType)
+    {
+        return $taskType->getName() === TaskTypeService::LINK_INTEGRITY_TYPE;
+    }
+
     /**
      * @param Task $task
      *
@@ -20,70 +70,104 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
      */
     public function process(Task $task)
     {
-        $logger = $this->container->get('logger');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $rawTaskOutputs = $this->taskService->getEntityRepository()->findOutputByJobAndType($task);
 
-        $logger->info('LinkIntegrityTaskPreProcessor::process: task [' . $task->getId() . ']');
-
-        $rawTaskOutputs = $taskService->getEntityRepository()->findOutputByJobAndType($task);
-        if (count($rawTaskOutputs) === 0) {
+        if (empty($rawTaskOutputs)) {
             return false;
         }
 
         $webResource = $this->getWebResource($task);
-        if (is_null($webResource) || !$webResource instanceof WebPage) {
+        if (!$webResource instanceof WebPage) {
             return false;
         }
 
-        $linkFinder = new HtmlDocumentLinkUrlFinder();
-        $linkFinder->setSourceUrl($task->getUrl());
-        $linkFinder->setSourceContent($webResource->getContent());
+        $links = $this->findWebResourceLinks($task, $webResource);
 
-        $links = $linkFinder->getAll();
-        $existingLinkIntegrityResults = $this->getLinkIntegrityResultsFromRawTaskOutputs($rawTaskOutputs);
+        if (empty($links)) {
+            $output = $this->createOutput(null);
+            $this->completeTask($task, $output);
 
-        $linkIntegrityResults = array();
-
-        foreach ($links as $link) {
-            $linkIntegrityResult = $this->getExistingLinkIntegrityResult($link['url'], $existingLinkIntegrityResults);
-            if (!is_null($linkIntegrityResult)) {
-                $linkIntegrityResult->context = $link['element'];
-                $linkIntegrityResults[] = $linkIntegrityResult;
-            }
+            return true;
         }
 
-        if (count($linkIntegrityResults)) {
-            $mediaType = new InternetMediaType();
-            $mediaType->setType('application');
-            $mediaType->setSubtype('json');
+        $existingLinkIntegrityResults = $this->getLinkIntegrityResultsFromRawTaskOutputs($rawTaskOutputs);
 
-            $output = new Output();
-            $output->setOutput(json_encode($linkIntegrityResults));
-            $output->setContentType($mediaType);
-            $output->setErrorCount($this->getErrorCount($linkIntegrityResults));
-            $output->setWarningCount(0);
+        $linkIntegrityResults = $this->getLinkIntegrityResultsFromExistingResults(
+            $links,
+            $existingLinkIntegrityResults
+        );
 
-            if (count($linkIntegrityResults) == count($links)) {
-                $taskService->complete(
-                    $task,
-                    new \DateTime(),
-                    $output,
-                    $taskService->getCompletedState()
-                );
+        $linkCount = count($links);
+        $linkIntegrityResultCount = count($linkIntegrityResults);
+
+        if (!empty($linkIntegrityResults)) {
+            $output = $this->createOutput(json_encode($linkIntegrityResults));
+
+            if ($linkIntegrityResultCount === $linkCount) {
+                $this->completeTask($task, $output);
 
                 return true;
             }
 
-            $parameters = ($task->hasParameters()) ? json_decode($task->getParameters(), true) : array();
+            $parameters = ($task->hasParameters()) ? json_decode($task->getParameters(), true) : [];
             $parameters['excluded-urls'] = $this->getUniqueUrlListFromLinkIntegrityResults($linkIntegrityResults);
             $task->setParameters(json_encode($parameters));
 
             $task->setOutput($output);
-            $taskService->getManager()->persist($task);
-            $taskService->getManager()->flush();
+
+            $this->taskService->persistAndFlush($task);
         }
 
         return false;
+    }
+
+    /**
+     * @param Task $task
+     * @param WebResource $webResource
+     *
+     * @return array
+     */
+    private function findWebResourceLinks(Task $task, WebResource $webResource)
+    {
+        $linkFinder = new HtmlDocumentLinkUrlFinder();
+        $linkFinder->setSourceUrl($task->getUrl());
+        $linkFinder->setSourceContent($webResource->getContent());
+
+        return $linkFinder->getAll();
+    }
+
+    /**
+     * @param string $outputContent
+     *
+     * @return Output
+     */
+    private function createOutput($outputContent)
+    {
+        $mediaType = new InternetMediaType();
+        $mediaType->setType('application');
+        $mediaType->setSubtype('json');
+
+        $output = new Output();
+        $output->setOutput($outputContent);
+        $output->setContentType($mediaType);
+        $output->setErrorCount(0);
+        $output->setWarningCount(0);
+
+        return $output;
+    }
+
+    /**
+     * @param Task $task
+     * @param Output $output
+     */
+    private function completeTask(Task $task, Output $output)
+    {
+        $this->taskService->complete(
+            $task,
+            new \DateTime(),
+            $output,
+            $this->taskService->getCompletedState()
+        );
     }
 
     /**
@@ -93,7 +177,7 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
      */
     private function getUniqueUrlListFromLinkIntegrityResults($linkIntegrityResults)
     {
-        $urls = array();
+        $urls = [];
 
         foreach ($linkIntegrityResults as $linkIntegrityResult) {
             if (!$this->isLinkIntegrityError($linkIntegrityResult) && !in_array($linkIntegrityResult->url, $urls)) {
@@ -105,46 +189,42 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
     }
 
     /**
-     * @param array $linkIntegrityResults
-     * @return int
+     * @param array $links
+     * @param array $existingLinkIntegrityResults
+     *
+     * @return array
      */
-    private function getErrorCount($linkIntegrityResults)
+    private function getLinkIntegrityResultsFromExistingResults($links, $existingLinkIntegrityResults)
     {
-        $errorCount = 0;
+        $linkIntegrityResults = [];
 
-        foreach ($linkIntegrityResults as $linkIntegrityResult) {
-            if ($linkIntegrityResult->type == 'curl') {
-                $errorCount++;
-            }
+        foreach ($links as $link) {
+            $linkIntegrityResult = $this->getExistingLinkIntegrityResult($link['url'], $existingLinkIntegrityResults);
 
-            if ($linkIntegrityResult->type == 'http' && $linkIntegrityResult->state != 200) {
-                $errorCount++;
+            if (!is_null($linkIntegrityResult)) {
+                $linkIntegrityResult->context = $link['element'];
+                $linkIntegrityResults[] = $linkIntegrityResult;
             }
         }
 
-        return $errorCount;
+        return $linkIntegrityResults;
     }
-
 
     /**
      * @param string $url
-     * @param array $existingLinkIntegrityResults
+     * @param \stdClass[] $existingLinkIntegrityResults
      *
      * @return \stdClass
      */
     private function getExistingLinkIntegrityResult($url, $existingLinkIntegrityResults)
     {
-        $logger = $this->container->get('logger');
-
         foreach ($existingLinkIntegrityResults as $linkIntegrityResult) {
-            if (is_object($linkIntegrityResult)) {
-                if ($linkIntegrityResult->url == $url) {
-                    return $linkIntegrityResult;
-                }
-            } else {
-                $logger->error('LinkIntegrityTaskPreProcessor::getExistingLinkIntegrityResult: non-object found');
+            if ($linkIntegrityResult->url == $url) {
+                return $linkIntegrityResult;
             }
         }
+
+        return null;
     }
 
     /**
@@ -154,18 +234,16 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
      */
     private function getLinkIntegrityResultsFromRawTaskOutputs($rawTaskOutputs)
     {
-        $linkIntegrityResults = array();
+        $linkIntegrityResults = [];
 
         foreach ($rawTaskOutputs as $rawTaskOutput) {
             $decodedTaskOutput = json_decode($rawTaskOutput);
 
-            if (!is_array($decodedTaskOutput)) {
-                continue;
-            }
-
-            foreach ($decodedTaskOutput as $linkIntegrityResult) {
-                if (!$this->isLinkIntegrityError($linkIntegrityResult)) {
-                    $linkIntegrityResults[] = $linkIntegrityResult;
+            if (is_array($decodedTaskOutput)) {
+                foreach ($decodedTaskOutput as $linkIntegrityResult) {
+                    if (!$this->isLinkIntegrityError($linkIntegrityResult) && is_object($linkIntegrityResult)) {
+                        $linkIntegrityResults[] = $linkIntegrityResult;
+                    }
                 }
             }
         }
@@ -180,10 +258,9 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
      */
     private function isLinkIntegrityError($linkIntegrityResult)
     {
-        $logger = $this->container->get('logger');
-
         if (!is_object($linkIntegrityResult)) {
-            $logger->error('LinkIntegrityTaskPreProcessor::isLinkIntegrityError: non-object found');
+            $this->logger->error('LinkIntegrityTaskPreProcessor::isLinkIntegrityError: non-object found');
+
             return false;
         }
 
@@ -191,55 +268,46 @@ class LinkIntegrityTaskPreProcessor extends TaskPreProcessor
             return true;
         }
 
-        $isHttpState = in_array(substr($linkIntegrityResult->state, 0, 1), array('3', '4', '5'));
-
-        if ($linkIntegrityResult->type == 'http' && $isHttpState) {
-            return true;
-        }
-
-        return false;
+        return $linkIntegrityResult->state >= 300 && $linkIntegrityResult->state < 600;
     }
 
     /**
-     *
      * @param Task $task
      *
-     * @return WebResource
+     * @return WebResource|null
      */
     private function getWebResource(Task $task)
     {
-        $logger = $this->container->get('logger');
-
         try {
-            $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+            $httpClient = $this->httpClientService->get();
 
-            $httpClientService->get()->setUserAgent('ST Link integrity task pre-processor');
+            $httpClient->setUserAgent(self::HTTP_USER_AGENT);
 
-            $request = $httpClientService->getRequest($task->getUrl());
-            $httpClientService->prepareRequest($request, $task->getParametersArray());
+            $request = $this->httpClientService->getRequest($task->getUrl());
+            $this->httpClientService->prepareRequest($request, $task->getParametersArray());
 
-            $httpClientService->get()->setUserAgent(null);
+            $httpClient->setUserAgent(null);
 
-            $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
-
-            return $webResourceService->get($request);
+            return $this->webResourceService->get($request);
         } catch (WebResourceException $webResourceException) {
-            $logger->error(sprintf(
+            $this->logger->error(sprintf(
                 'LinkIntegrityTaskPreProcessor::getWebResource [%s][http exception][%s]',
                 $task->getUrl(),
                 $webResourceException->getResponse()->getStatusCode()
             ));
         } catch (CurlException $curlException) {
-            $logger->error(sprintf(
+            $this->logger->error(sprintf(
                 'LinkIntegrityTaskPreProcessor::getWebResource [%s][curl exception][%s]',
                 $task->getUrl(),
                 $curlException->getErrorNo()
             ));
         } catch (TooManyRedirectsException $tooManyRedirectsException) {
-            $logger->error(sprintf(
+            $this->logger->error(sprintf(
                 'LinkIntegrityTaskPreProcessor::getWebResource [%s][http exception][too many redirects]',
                 $task->getUrl()
             ));
         }
+
+        return null;
     }
 }
