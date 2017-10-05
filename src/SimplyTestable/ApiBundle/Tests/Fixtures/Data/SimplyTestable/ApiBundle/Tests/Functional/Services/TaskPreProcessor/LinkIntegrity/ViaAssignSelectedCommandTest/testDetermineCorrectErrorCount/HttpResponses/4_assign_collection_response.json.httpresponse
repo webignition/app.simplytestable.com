@@ -1,4 +1,0 @@
-HTTP/1.1 200 OK
-Content-Type: application/json
-
-[{"id":1,"url":"http:\/\/webignition.net\/","state":"queued","type":"HTML validation","parameters":""}]
