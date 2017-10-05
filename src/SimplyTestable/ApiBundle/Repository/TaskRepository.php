@@ -463,7 +463,11 @@ class TaskRepository extends EntityRepository
         $rawTaskOutputs = array();
 
         foreach ($result as $item) {
-            $rawTaskOutputs[] = $item['output'];
+            $rawOutput = $item['output'];
+
+            if (!is_null($rawOutput)) {
+                $rawTaskOutputs[] = $rawOutput;
+            }
         }
 
         return $rawTaskOutputs;
