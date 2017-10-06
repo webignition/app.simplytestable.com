@@ -3,8 +3,10 @@
 namespace SimplyTestable\ApiBundle\Controller\Worker;
 
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Controller\ApiController;
+use SimplyTestable\ApiBundle\Services\WorkerService;
 use Symfony\Component\HttpFoundation\Request;
 
 class TasksController extends ApiController
@@ -29,16 +31,19 @@ class TasksController extends ApiController
         $taskQueueService = $this->container->get('simplytestable.services.task.queueservice');
 
         $workerHostname = $request->request->get('worker_hostname');
+        $workerRepository = $entityManager->getRepository(Worker::class);
 
-        if (!($workerService->has($workerHostname))) {
+        $worker = $workerRepository->findOneBy([
+            'hostname' => $workerHostname,
+        ]);
+
+        if (empty($worker)) {
             return $this->sendFailureResponse([
                 'X-Message' => sprintf('Invalid hostname "%s"', $workerHostname)
             ]);
         }
 
-        $worker = $workerService->get($workerHostname);
-
-        if ('worker-active' !== $worker->getState()->getName()) {
+        if (WorkerService::STATE_ACTIVE !== $worker->getState()->getName()) {
             return $this->sendFailureResponse([
                 'X-Message' => 'Worker is not active',
                 'X-Retryable' => '1'

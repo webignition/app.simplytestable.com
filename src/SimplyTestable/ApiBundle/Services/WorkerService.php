@@ -47,20 +47,6 @@ class WorkerService extends EntityService
     }
 
     /**
-     * @param string $hostname
-     *
-     * @return Worker
-     */
-    public function get($hostname)
-    {
-        if (!$this->has($hostname)) {
-            $this->create($hostname);
-        }
-
-        return $this->fetch($hostname);
-    }
-
-    /**
      * @return bool
      */
     public function has($hostname)
@@ -77,12 +63,15 @@ class WorkerService extends EntityService
     }
 
     /**
+     * @param string $hostname
+     *
      * @return Worker
      */
-    private function create($hostname)
+    public function create($hostname)
     {
         $worker = new Worker();
         $worker->setHostname($hostname);
+
         return $this->persistAndFlush($worker);
     }
 

@@ -42,10 +42,20 @@ class WorkerFactory
             $workerValues[self::KEY_STATE] = 'worker-active';
         }
 
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $workerRepository = $entityManager->getRepository(Worker::class);
         $workerService = $this->container->get('simplytestable.services.workerservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
-        $worker = $workerService->get($workerValues[self::KEY_HOSTNAME]);
+        /* @var Worker $worker */
+        $worker = $workerRepository->findOneBy([
+            'hostname' => $workerValues[self::KEY_HOSTNAME],
+        ]);
+
+        if (empty($worker)) {
+            $worker = $workerService->create($workerValues[self::KEY_HOSTNAME]);
+        }
+
         $worker->setToken($workerValues[self::KEY_TOKEN]);
         $workerService->persistAndFlush($worker);
 
