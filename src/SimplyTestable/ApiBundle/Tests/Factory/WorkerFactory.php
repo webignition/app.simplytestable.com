@@ -44,7 +44,6 @@ class WorkerFactory
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerRepository = $entityManager->getRepository(Worker::class);
-        $workerService = $this->container->get('simplytestable.services.workerservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
         /* @var Worker $worker */

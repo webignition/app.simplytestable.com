@@ -37,8 +37,6 @@ class WorkerActivationRequestFactory
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerRepository = $entityManager->getRepository(Worker::class);
 
-        $workerService = $this->container->get('simplytestable.services.workerservice');
-
         $worker = $workerRepository->findOneBy([
             'name' => $workerActivationRequestValues[self::KEY_HOSTNAME],
         ]);

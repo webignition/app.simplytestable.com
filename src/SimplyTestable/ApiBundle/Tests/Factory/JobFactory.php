@@ -77,7 +77,6 @@ class JobFactory
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $taskService = $this->container->get('simplytestable.services.taskservice');
-        $workerService = $this->container->get('simplytestable.services.workerservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerRepository = $entityManager->getRepository(Worker::class);
 
