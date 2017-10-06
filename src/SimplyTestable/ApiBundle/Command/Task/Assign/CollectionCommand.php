@@ -41,11 +41,6 @@ class CollectionCommand extends Command
     private $taskPreprocessorFactory;
 
     /**
-     * @var WorkerService
-     */
-    private $workerService;
-
-    /**
      * @var ResqueQueueService
      */
     private $resqueQueueService;
@@ -74,7 +69,6 @@ class CollectionCommand extends Command
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
      * @param TaskPreProcessorFactory $taskPreProcessorFactory
-     * @param WorkerService $workerService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
      * @param StateService $stateService
@@ -86,7 +80,6 @@ class CollectionCommand extends Command
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
         TaskPreProcessorFactory $taskPreProcessorFactory,
-        WorkerService $workerService,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
         StateService $stateService,
@@ -99,7 +92,6 @@ class CollectionCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
         $this->taskPreprocessorFactory = $taskPreProcessorFactory;
-        $this->workerService = $workerService;
         $this->resqueQueueService = $resqueQueueService;
         $this->resqueJobFactory = $resqueJobFactory;
         $this->stateService = $stateService;
