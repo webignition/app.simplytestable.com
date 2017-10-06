@@ -11,8 +11,9 @@ use SimplyTestable\ApiBundle\Entity\State;
 
 class WorkerActivationRequestService extends EntityService
 {
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\WorkerActivationRequest';
     const STARTING_STATE = 'worker-activation-request-awaiting-verification';
+    const VERIFIED_STATE = 'worker-activation-request-verified';
+    const FAILED_STATE = 'worker-activation-request-failed';
 
     /**
      * @var LoggerInterface
@@ -61,7 +62,7 @@ class WorkerActivationRequestService extends EntityService
      */
     protected function getEntityName()
     {
-        return self::ENTITY_NAME;
+        return WorkerActivationRequest::class;
     }
 
     /**
@@ -140,36 +141,16 @@ class WorkerActivationRequestService extends EntityService
 
     /**
      * @param Worker $worker
-     *
-     * @return boolean
-     */
-    public function has(Worker $worker)
-    {
-        return !is_null($this->fetch($worker));
-    }
-
-    /**
-     * @param Worker $worker
-     *
-     * @return WorkerActivationRequest
-     */
-    public function fetch(Worker $worker)
-    {
-        return $this->getEntityRepository()->findOneBy(
-            array('worker' => $worker)
-        );
-    }
-
-    /**
-     * @param Worker $worker
      * @param string $token
      *
      * @return WorkerActivationRequest
      */
     public function create(Worker $worker, $token)
     {
+        $state = $this->stateService->fetch(self::STARTING_STATE);
+
         $activationRequest = new WorkerActivationRequest();
-        $activationRequest->setState($this->getStartingState());
+        $activationRequest->setState($state);
         $activationRequest->setWorker($worker);
         $activationRequest->setToken($token);
 

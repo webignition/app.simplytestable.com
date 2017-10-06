@@ -2,36 +2,235 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
-class WorkerControllerTest extends BaseControllerJsonTestCase {
+use SimplyTestable\ApiBundle\Controller\WorkerController;
+use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
+use SimplyTestable\ApiBundle\Services\WorkerService;
+use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-    public function testActivateAction() {
-        $this->assertEquals(200, $this->getWorkerController('activateAction', array(
-            'hostname' => 'test.worker.simplytestable.com',
-            'token' => 'valid-token'
-        ))->activateAction()->getStatusCode());
+class WorkerControllerTest extends BaseSimplyTestableTestCase
+{
+    /**
+     * @var WorkerController
+     */
+    private $workerController;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->workerController = new WorkerController();
+        $this->workerController->setContainer($this->container);
     }
 
-    public function testActivateActionWithMissingHostname() {
-        try {
-            $this->getWorkerController('activateAction', array(
-                'token' => 'valid-token'
-            ))->activateAction()->getStatusCode();
-        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $httpException) {
-            return $this->assertEquals(400, $httpException->getStatusCode());
-        }
+    public function testActivateActionInMaintenanceReadOnlyMode()
+    {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $this->fail('WorkerController::activateAction() didn\'t throw a 400 HttpException for a missing hostname');
+        $response = $this->workerController->activateAction(new RequestStack());
+        $this->assertEquals(503, $response->getStatusCode());
+
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
+
+        $response = $this->workerController->activateAction(new RequestStack());
+        $this->assertEquals(503, $response->getStatusCode());
+
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
-    public function testActivateActionWithMissingToken() {
-        try {
-            $this->getWorkerController('activateAction', array(
-                'hostname' => 'test.worker.simplytestable.com'
-            ))->activateAction()->getStatusCode();
-        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $httpException) {
-            return $this->assertEquals(400, $httpException->getStatusCode());
+    /**
+     * @dataProvider activateActionBadRequestDataProvider
+     *
+     * @param string $hostname
+     * @param string $token
+     * @param string $expectedExceptionMessage
+     */
+    public function testActivateActionBadRequest($hostname, $token, $expectedExceptionMessage)
+    {
+        $request = new Request([], [
+            'hostname' => $hostname,
+            'token' => $token,
+        ]);
+        $requestStack = new RequestStack();
+        $requestStack->push($request);
+
+        $this->setExpectedException(
+            BadRequestHttpException::class,
+            $expectedExceptionMessage
+        );
+
+        $this->workerController->activateAction($requestStack);
+    }
+
+    /**
+     * @return array
+     */
+    public function activateActionBadRequestDataProvider()
+    {
+        return [
+            'no hostname no token' => [
+                'hostname' => null,
+                'token' => null,
+                'expectedExceptionMessage' => '"hostname" missing',
+            ],
+            'has hostname no token' => [
+                'hostname' => 'foo.worker.simplytestable.com',
+                'token' => null,
+                'expectedExceptionMessage' => '"token" missing',
+            ],
+            'no hostname has token' => [
+                'hostname' => null,
+                'token' => 'abcdef',
+                'expectedExceptionMessage' => '"hostname" missing',
+            ],
+            'invalid worker' => [
+                'hostname' => 'foo.worker.simplytestable.com',
+                'token' => 'abcdef',
+                'expectedExceptionMessage' => 'Invalid worker hostname "foo.worker.simplytestable.com"',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider activateActionWorkerInWrongStateDataProvider
+     *
+     * @param string $stateName
+     */
+    public function testActivateActionSuccessWorkerInWrongState($stateName)
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+
+        $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
+
+        $hostname = 'foo.worker.simplytestable.com';
+        $token = 'token';
+
+        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => $hostname,
+            WorkerFactory::KEY_TOKEN => $token,
+            WorkerFactory::KEY_STATE => $stateName,
+        ]);
+
+        $request = new Request([], [
+            'hostname' => $hostname,
+            'token' => $token,
+        ]);
+        $requestStack = new RequestStack();
+        $requestStack->push($request);
+
+        $response = $this->workerController->activateAction($requestStack);
+
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEmpty($workerActivationRequestRepository->findAll());
+        $this->assertTrue($resqueQueueService->isEmpty('worker-activate-verify'));
+    }
+
+    /**
+     * @return array
+     */
+    public function activateActionWorkerInWrongStateDataProvider()
+    {
+        return [
+            WorkerService::STATE_ACTIVE => [
+                'stateName' => WorkerService::STATE_ACTIVE,
+            ],
+            WorkerService::STATE_OFFLINE => [
+                'stateName' => WorkerService::STATE_OFFLINE,
+            ],
+            WorkerService::STATE_DELETED => [
+                'stateName' => WorkerService::STATE_DELETED,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider activateActionSuccessDataProvider
+     *
+     * @param string $existingActivationRequestStateName
+     */
+    public function testActivateActionSuccessFoo($existingActivationRequestStateName)
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
+
+        $this->assertEmpty($workerActivationRequestRepository->findAll());
+
+        $hostname = 'foo.worker.simplytestable.com';
+        $token = 'token';
+
+        $workerFactory = new WorkerFactory($this->container);
+        $worker = $workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => $hostname,
+            WorkerFactory::KEY_TOKEN => $token,
+            WorkerFactory::KEY_STATE => WorkerService::STATE_UNACTIVATED,
+        ]);
+
+        if (!empty($existingActivationRequestStateName)) {
+            $activationRequest = new WorkerActivationRequest();
+            $activationRequest->setState($stateService->fetch($existingActivationRequestStateName));
+            $activationRequest->setWorker($worker);
+            $activationRequest->setToken($token);
+
+            $entityManager->persist($activationRequest);
+            $entityManager->flush();
         }
 
-        $this->fail('WorkerController::activateAction() didn\'t throw a 400 HttpException for a missing token');
+        $request = new Request([], [
+            'hostname' => $hostname,
+            'token' => $token,
+        ]);
+        $requestStack = new RequestStack();
+        $requestStack->push($request);
+
+        $response = $this->workerController->activateAction($requestStack);
+
+        $this->assertTrue($response->isSuccessful());
+
+        $activationRequest = $workerActivationRequestRepository->findOneBy([
+            'worker' => $worker,
+        ]);
+
+        $this->assertInstanceOf(WorkerActivationRequest::class, $activationRequest);
+        $this->assertEquals($worker, $activationRequest->getWorker());
+
+        $this->assertTrue($resqueQueueService->contains(
+            'worker-activate-verify',
+            ['id' => $activationRequest->getWorker()->getId()]
+        ));
+    }
+
+    /**
+     * @return array
+     */
+    public function activateActionSuccessDataProvider()
+    {
+        return [
+            'no existing request' => [
+                'existingActivationRequestStateName' => null,
+            ],
+            WorkerActivationRequestService::STARTING_STATE => [
+                'existingActivationRequestStateName' => WorkerActivationRequestService::STARTING_STATE,
+            ],
+            WorkerActivationRequestService::VERIFIED_STATE => [
+                'existingActivationRequestStateName' => WorkerActivationRequestService::VERIFIED_STATE,
+            ],
+            WorkerActivationRequestService::FAILED_STATE => [
+                'existingActivationRequestStateName' => WorkerActivationRequestService::FAILED_STATE,
+            ],
+        ];
     }
 }

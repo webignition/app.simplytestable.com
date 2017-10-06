@@ -2,36 +2,31 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use SimplyTestable\ApiBundle\Services\WorkerService;
-use SimplyTestable\ApiBundle\Services\WorkerRequestActivationService;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputDefinition;
-use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
-
+use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
+use SimplyTestable\ApiBundle\Services\WorkerService;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class WorkerController extends ApiController
 {
-    public function __construct() {
-        $this->setInputDefinitions(array(
-            'activateAction' => new InputDefinition(array(
-                new InputArgument('hostname', InputArgument::REQUIRED, 'Hostname of the worker to be activated'),
-                new InputArgument('token', InputArgument::REQUIRED, 'Token to pass back to worker to verfiy')
-            ))
-        ));
-
-        $this->setRequestTypes(array(
-            'activateAction' => \Guzzle\Http\Message\Request::POST
-        ));
-    }
-
-
-    public function activateAction()
+    /**
+     * @param RequestStack $requestStack
+     *
+     * @return Response
+     */
+    public function activateAction(RequestStack $requestStack)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+        $workerService = $this->container->get('simplytestable.services.workerservice');
+        $workerRequestActivationService = $this->container->get(
+            'simplytestable.services.workeractivationrequestservice'
+        );
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -41,27 +36,44 @@ class WorkerController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+        $request = $requestStack->getCurrentRequest();
+        $requestData = $request->request;
 
-        $worker = $this->getWorkerService()->get($this->getArguments('activateAction')->get('hostname'));
-        if ($this->getWorkerRequestActivationService()->has($worker)) {
-            $activationRequest = $this->getWorkerRequestActivationService()->fetch($worker);
+        $hostname = trim($requestData->get('hostname'));
 
-            if ($activationRequest->getState()->equals($this->getWorkerRequestActivationService()->getStartingState())) {
-                $activationRequest->setState($this->getWorkerRequestActivationService()->getStartingState());
-                return $this->sendSuccessResponse();
-            }
-
-        } else {
-            $activationRequest = $this->getWorkerRequestActivationService()->create(
-                $worker,
-                $this->getArguments('activateAction')->get('token')
-            );
+        if (empty($hostname)) {
+            throw new BadRequestHttpException('"hostname" missing');
         }
 
-        $this->getWorkerRequestActivationService()->persistAndFlush($activationRequest);
+        $token = trim($requestData->get('token'));
 
+        if (empty($token)) {
+            throw new BadRequestHttpException('"token" missing');
+        }
+
+        $worker = $workerService->fetch($hostname);
+
+        if (empty($worker)) {
+            throw new BadRequestHttpException('Invalid worker hostname "' . $hostname . '"');
+        }
+
+        if (WorkerService::STATE_UNACTIVATED !== $worker->getState()->getName()) {
+            return $this->sendSuccessResponse();
+        }
+
+        $activationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
+        $activationRequest = $activationRequestRepository->findOneBy([
+            'worker' => $worker,
+        ]);
+
+        if (empty($activationRequest)) {
+            $activationRequest = $workerRequestActivationService->create($worker, $token);
+        }
+
+        $activationRequestStartingState = $stateService->fetch(WorkerActivationRequestService::STARTING_STATE);
+        $activationRequest->setState($activationRequestStartingState);
+
+        $workerRequestActivationService->persistAndFlush($activationRequest);
 
         $resqueQueueService->enqueue(
             $resqueJobFactory->create(
@@ -71,38 +83,5 @@ class WorkerController extends ApiController
         );
 
         return $this->sendSuccessResponse();
-    }
-
-
-    /**
-     *
-     * @param Worker $worker
-     * @param string $token
-     * @return \SimplyTestable\ApiBundle\Entity\WorkerActivationRequest
-     */
-    private function getActivationRequest(Worker $worker, $token = null) {
-        if ($this->getWorkerRequestActivationService()->has($worker)) {
-            return $this->getWorkerRequestActivationService()->fetch($worker);
-        }
-
-        return $this->getWorkerRequestActivationService()->create($worker, $token);
-    }
-
-
-    /**
-     *
-     * @return WorkerService
-     */
-    private function getWorkerService() {
-        return $this->container->get('simplytestable.services.workerservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
-     */
-    private function getWorkerRequestActivationService() {
-        return $this->container->get('simplytestable.services.workeractivationrequestservice');
     }
 }
