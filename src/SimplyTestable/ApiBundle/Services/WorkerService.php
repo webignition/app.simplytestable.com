@@ -6,28 +6,33 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 
 
 class WorkerService extends EntityService {
-    
+
+    const STATE_ACTIVE = 'worker-active';
+    const STATE_UNACTIVATED = 'worker-unactivated';
+    const STATE_DELETED = 'worker-deleted';
+    const STATE_OFFLINE = 'worker-offline';
+
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Worker';
-    
+
     /**
      *
-     * @var WorkerActivationRequestSerice 
+     * @var WorkerActivationRequestSerice
      */
     private $workerActivationRequestService;
-    
-    
+
+
     /**
      *
      * @var \SimplyTestable\ApiBundle\Services\HttpClientService
      */
     private $httpClientService;
-    
+
     /**
      *
      * @var \SimplyTestable\ApiBundle\Services\StateService
      */
     private $stateService;
-    
+
     /**
      *
      * @param EntityManager $entityManager
@@ -41,12 +46,12 @@ class WorkerService extends EntityService {
             \SimplyTestable\ApiBundle\Services\StateService $stateService
     ) {
         parent::__construct($entityManager);
-        
+
         $this->workerActivationRequestService = $workerActivationRequestService;
-        $this->httpClientService = $httpClientService; 
+        $this->httpClientService = $httpClientService;
         $this->stateService = $stateService;
-    }    
-    
+    }
+
     /**
      *
      * @return string
@@ -54,8 +59,8 @@ class WorkerService extends EntityService {
     protected function getEntityName() {
         return self::ENTITY_NAME;
     }
-    
-    
+
+
     /**
      *
      * @param int $id
@@ -64,8 +69,8 @@ class WorkerService extends EntityService {
     public function getById($id) {
         return $this->getEntityRepository()->find($id);
     }
-    
-    
+
+
     /**
      *
      * @return Worker
@@ -74,10 +79,10 @@ class WorkerService extends EntityService {
         if (!$this->has($hostname)) {
             $this->create($hostname);
         }
-        
+
         return $this->fetch($hostname);
     }
-    
+
     /**
      *
      * @return boolean
@@ -85,27 +90,27 @@ class WorkerService extends EntityService {
     public function has($hostname) {
         return !is_null($this->fetch($hostname));
     }
-    
-    /**
-     *
-     * @return Worker 
-     */
-    public function fetch($hostname) {
-        return $this->getEntityRepository()->findOneByHostname($hostname);
-    }
-    
-    
+
     /**
      *
      * @return Worker
      */
-    private function create($hostname) {        
-        $worker = new Worker();
-        $worker->setHostname($hostname);        
-        return $this->persistAndFlush($worker);        
+    public function fetch($hostname) {
+        return $this->getEntityRepository()->findOneByHostname($hostname);
     }
-    
-    
+
+
+    /**
+     *
+     * @return Worker
+     */
+    private function create($hostname) {
+        $worker = new Worker();
+        $worker->setHostname($hostname);
+        return $this->persistAndFlush($worker);
+    }
+
+
     /**
      *
      * @param string $hostname
@@ -114,13 +119,13 @@ class WorkerService extends EntityService {
      */
     public function verify($hostname, $token) {
         $activationVerificationUrl = 'http://' . $hostname . '/activate/verify/';
-        
+
         $request = new \HttpRequest($activationVerificationUrl, \Guzzle\Http\Message\Request::POST);
         $request->setPostFields(array('token' => $token));
-        
+
         return $this->httpClient->getResponse($request)->getResponseCode() == 200;
     }
-    
+
     /**
      *
      * @param Worker $worker
@@ -130,48 +135,48 @@ class WorkerService extends EntityService {
         $this->getManager()->persist($worker);
         $this->getManager()->flush();
         return $worker;
-    }  
-    
-    
+    }
+
+
     /**
-     * 
+     *
      * @return int
      */
     public function count() {
         $queryBuilder = $this->getEntityRepository()->createQueryBuilder('Worker');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(DISTINCT Worker.id) as worker_total');
-        
+
         $result = $queryBuilder->getQuery()->getResult();
-        return (int)($result[0]['worker_total']);  
+        return (int)($result[0]['worker_total']);
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param \SimplyTestable\ApiBundle\Entity\Worker $worker
      * @return boolean
      */
     public function isActive(Worker $worker) {
         return $worker->getState()->equals($this->stateService->fetch('worker-active'));
     }
-    
-    
+
+
     /**
      * Get collection of active workers
-     * 
+     *
      * @return Worker[]
      */
     public function getActiveCollection() {
         $workers = $this->getEntityRepository()->findAll();
-        $selectedWorkers = array();        
-        
+        $selectedWorkers = array();
+
         foreach ($workers as $worker) {
             if ($this->isActive($worker)) {
                 $selectedWorkers[] = $worker;
-            }            
+            }
         }
-        
+
         return $selectedWorkers;
-    }     
+    }
 }
