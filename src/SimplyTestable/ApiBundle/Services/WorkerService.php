@@ -47,14 +47,6 @@ class WorkerService extends EntityService
     }
 
     /**
-     * @return bool
-     */
-    public function has($hostname)
-    {
-        return !is_null($this->fetch($hostname));
-    }
-
-    /**
      * @return Worker
      */
     public function fetch($hostname)
