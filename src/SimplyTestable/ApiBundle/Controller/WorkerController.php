@@ -58,7 +58,12 @@ class WorkerController extends ApiController
         ]);
 
         if (empty($worker)) {
-            throw new BadRequestHttpException('Invalid worker hostname "' . $hostname . '"');
+            $worker = new Worker();
+            $worker->setHostname($hostname);
+            $worker->setState($stateService->fetch(WorkerService::STATE_UNACTIVATED));
+
+            $entityManager->persist($worker);
+            $entityManager->flush($worker);
         }
 
         if (WorkerService::STATE_UNACTIVATED !== $worker->getState()->getName()) {

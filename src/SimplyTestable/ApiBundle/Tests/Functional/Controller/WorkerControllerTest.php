@@ -117,11 +117,6 @@ class WorkerControllerTest extends BaseSimplyTestableTestCase
                 'token' => 'abcdef',
                 'expectedExceptionMessage' => '"hostname" missing',
             ],
-            'invalid worker' => [
-                'hostname' => 'foo.worker.simplytestable.com',
-                'token' => 'abcdef',
-                'expectedExceptionMessage' => 'Invalid worker hostname "foo.worker.simplytestable.com"',
-            ],
         ];
     }
 
