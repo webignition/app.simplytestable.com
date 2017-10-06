@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,6 +78,8 @@ class JobFactory
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $taskService = $this->container->get('simplytestable.services.taskservice');
         $workerService = $this->container->get('simplytestable.services.workerservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $workerRepository = $entityManager->getRepository(Worker::class);
 
         $ignoreState = true;
 
@@ -112,7 +115,10 @@ class JobFactory
 
                     if (isset($taskValues[self::KEY_TASK_WORKER_HOSTNAME])) {
                         $workerHostname = $taskValues[self::KEY_TASK_WORKER_HOSTNAME];
-                        $worker = $workerService->fetch($workerHostname);
+                        $worker = $workerRepository->findOneBy([
+                            'hostname' => $workerHostname,
+                        ]);
+
                         $task->setWorker($worker);
                         $taskIsUpdated = true;
                     }

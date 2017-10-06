@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Services\WorkerService;
@@ -19,6 +20,7 @@ class WorkerController extends ApiController
     public function activateAction(Request $request)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $workerService = $this->container->get('simplytestable.services.workerservice');
@@ -50,7 +52,10 @@ class WorkerController extends ApiController
             throw new BadRequestHttpException('"token" missing');
         }
 
-        $worker = $workerService->fetch($hostname);
+        $workerRepository = $entityManager->getRepository(Worker::class);
+        $worker = $workerRepository->findOneBy([
+            'hostname' => $hostname,
+        ]);
 
         if (empty($worker)) {
             throw new BadRequestHttpException('Invalid worker hostname "' . $hostname . '"');

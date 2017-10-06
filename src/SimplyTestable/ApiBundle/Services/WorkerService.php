@@ -47,14 +47,6 @@ class WorkerService extends EntityService
     }
 
     /**
-     * @return Worker
-     */
-    public function fetch($hostname)
-    {
-        return $this->getEntityRepository()->findOneByHostname($hostname);
-    }
-
-    /**
      * @param string $hostname
      *
      * @return Worker

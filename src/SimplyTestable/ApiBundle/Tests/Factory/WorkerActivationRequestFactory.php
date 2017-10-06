@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -33,10 +34,14 @@ class WorkerActivationRequestFactory
         $workerActivationRequestService = $this->container->get(
             'simplytestable.services.workeractivationrequestservice'
         );
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $workerRepository = $entityManager->getRepository(Worker::class);
 
         $workerService = $this->container->get('simplytestable.services.workerservice');
 
-        $worker = $workerService->fetch($workerActivationRequestValues[self::KEY_HOSTNAME]);
+        $worker = $workerRepository->findOneBy([
+            'name' => $workerActivationRequestValues[self::KEY_HOSTNAME],
+        ]);
 
         $workerActivationRequest = $workerActivationRequestService->create(
             $worker,
