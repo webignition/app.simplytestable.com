@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
-use Guzzle\Http\Message\Request;
 use SimplyTestable\ApiBundle\Entity\Worker;
 
 class WorkerService extends EntityService
@@ -18,11 +17,6 @@ class WorkerService extends EntityService
     private $workerActivationRequestService;
 
     /**
-     * @var HttpClientService
-     */
-    private $httpClientService;
-
-    /**
      * @var StateService
      */
     private $stateService;
@@ -31,18 +25,16 @@ class WorkerService extends EntityService
      *
      * @param EntityManager $entityManager
      * @param WorkerActivationRequestService $workerActivationRequestService
-     * @param HttpClientService $httpClientService
+     * @param StateService $stateService
      */
     public function __construct(
         EntityManager $entityManager,
         WorkerActivationRequestService $workerActivationRequestService,
-        HttpClientService $httpClientService,
         StateService $stateService
     ) {
         parent::__construct($entityManager);
 
         $this->workerActivationRequestService = $workerActivationRequestService;
-        $this->httpClientService = $httpClientService;
         $this->stateService = $stateService;
     }
 
