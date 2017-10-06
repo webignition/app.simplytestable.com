@@ -95,22 +95,6 @@ class WorkerService extends EntityService
     }
 
     /**
-     * @param string $hostname
-     * @param string $token
-     *
-     * @return bool
-     */
-    public function verify($hostname, $token)
-    {
-        $activationVerificationUrl = 'http://' . $hostname . '/activate/verify/';
-
-        $request = new \HttpRequest($activationVerificationUrl, Request::POST);
-        $request->setPostFields(array('token' => $token));
-
-        return $this->httpClient->getResponse($request)->getResponseCode() == 200;
-    }
-
-    /**
      * @param Worker $worker
      *
      * @return Worker
