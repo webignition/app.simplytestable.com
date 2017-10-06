@@ -2,39 +2,35 @@
 
 namespace SimplyTestable\ApiBundle\Controller\ScheduledJob;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputDefinition;
-use Guzzle\Http\Message\Request as GuzzleRequest;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurationService;
 use Cron\Validator\CrontabValidator;
 use Cron\Exception\InvalidPatternException;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobException;
-use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class CreateController extends ScheduledJobController {
-
+class CreateController extends ScheduledJobController
+{
     /**
      * @var Request
      */
     private $request;
 
-    public function __construct() {
-        $this->setInputDefinitions(array(
-            'createAction' => new InputDefinition(array(
-                    new InputArgument('job-configuration', InputArgument::REQUIRED, 'label of existing job configuration to use'),
-                    new InputArgument('schedule', InputArgument::REQUIRED, 'cron-formatted schedule'),
-                    new InputArgument('is-recurring', InputArgument::OPTIONAL, 'Is this to recur?')
-                ))
-        ));
-
-        $this->setRequestTypes(array(
-            'createAction' => GuzzleRequest::POST
-        ));
-    }
-
-    public function createAction(Request $request) {
+    /**
+     * @param Request $request
+     *
+     * @return RedirectResponse|Response
+     */
+    public function createAction(Request $request)
+    {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $cronModifierValidationService = $this->container->get(
+            'simplytestable.services.scheduledjob.cronmodifier.validationservice'
+        );
 
         $this->request = $request;
 
@@ -46,7 +42,23 @@ class CreateController extends ScheduledJobController {
             return $this->sendServiceUnavailableResponse();
         }
 
-        if ($this->getUserService()->isSpecialUser($this->getUser())) {
+        $requestData = $request->request;
+
+        $requestJobConfigurationLabel = rawurldecode(trim($requestData->get('job-configuration')));
+
+        if (empty($requestJobConfigurationLabel)) {
+            throw new BadRequestHttpException('"job-configuration" missing');
+        }
+
+        $requestSchedule = rawurldecode(trim($requestData->get('schedule')));
+
+        if (empty($requestSchedule)) {
+            throw new BadRequestHttpException('"schedule" missing');
+        }
+
+        $user = $this->getUser();
+
+        if ($userService->isSpecialUser($user)) {
             return $this->sendFailureResponse([
                 'X-ScheduledJobCreate-Error' => json_encode([
                     'code' => 99,
@@ -55,48 +67,52 @@ class CreateController extends ScheduledJobController {
             ]);
         }
 
-        $this->getScheduledJobService()->setUser($this->getUser());
-        $this->getJobConfigurationService()->setUser($this->getUser());
+        $scheduledJobService->setUser($this->getUser());
+        $jobConfigurationService->setUser($this->getUser());
 
-        $jobConfiguration = $this->getJobConfigurationService()->get($this->request->request->get('job-configuration'));
+        $jobConfiguration = $jobConfigurationService->get($requestJobConfigurationLabel);
 
-        if (is_null($jobConfiguration)) {
+        if (empty($jobConfiguration)) {
             return $this->sendFailureResponse([
                 'X-ScheduledJobCreate-Error' => json_encode([
                     'code' => 98,
-                    'message' => 'Unknown job configuration'
+                    'message' => 'Unknown job configuration "' . $requestJobConfigurationLabel . '"'
                 ])
             ]);
         }
 
         try {
             $scheduleValidator = new CrontabValidator();
-            $scheduleValidator->validate($this->request->request->get('schedule'));
+            $scheduleValidator->validate($requestSchedule);
         } catch (InvalidPatternException $invalidPatternException) {
             return $this->sendFailureResponse([
                 'X-ScheduledJobCreate-Error' => json_encode([
                     'code' => 97,
-                    'message' => 'Malformed schedule'
+                    'message' => 'Malformed schedule "' . $requestSchedule . '"'
                 ])
             ]);
         }
 
+        $requestScheduleModifier = trim($requestData->get('schedule-modifier'));
+        if (empty($requestScheduleModifier)) {
+            $requestScheduleModifier = null;
+        }
 
-        if (!$this->getCronModifierValidationService()->isValid($this->request->request->get('schedule-modifier'))) {
+        if (!$cronModifierValidationService->isValid($requestScheduleModifier)) {
             return $this->sendFailureResponse([
                 'X-ScheduledJobCreate-Error' => json_encode([
                     'code' => 96,
-                    'message' => 'Malformed schedule modifier'
+                    'message' => 'Malformed schedule modifier "' . $requestScheduleModifier . '"'
                 ])
             ]);
         }
 
         try {
-            $scheduledJob = $this->getScheduledJobService()->create(
+            $scheduledJob = $scheduledJobService->create(
                 $jobConfiguration,
                 $this->request->request->get('schedule'),
                 $this->request->request->get('schedule-modifier'),
-                $this->getRequestIsRecurring()
+                $requestData->getBoolean('is-recurring')
             );
 
             return $this->redirect($this->generateUrl(
@@ -112,29 +128,4 @@ class CreateController extends ScheduledJobController {
             ]);
         }
     }
-
-
-    /**
-     * @return boolean
-     */
-    private function getRequestIsRecurring() {
-        return filter_var($this->request->request->get('is-recurring'), FILTER_VALIDATE_BOOLEAN);
-    }
-
-
-    /**
-     * @return JobConfigurationService
-     */
-    protected function getJobConfigurationService() {
-        return $this->get('simplytestable.services.job.configurationservice');
-    }
-
-
-    /**
-     * @return CronModifierValidationService
-     */
-    protected function getCronModifierValidationService() {
-        return $this->get('simplytestable.services.scheduledjob.cronmodifier.validationservice');
-    }
-
 }
