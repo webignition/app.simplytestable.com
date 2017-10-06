@@ -3,11 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController;
-use SimplyTestable\ApiBundle\Controller\UserCreationController;
-use SimplyTestable\ApiBundle\Entity\Job\Type;
-use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,25 +29,34 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
         $this->jobConfigurationCreateController->setContainer($this->container);
     }
 
-//    public function testRequest()
-//    {
-//        $router = $this->container->get('router');
-//        $requestUrl = $router->generate('usercreation_create');
-//
-//        $this->getCrawler([
-//            'url' => $requestUrl,
-//            'method' => 'POST',
-//            'parameters' => [
-//                'email' => 'foo-user@example.com',
-//                'password' => 'foo-password',
-//            ],
-//        ]);
-//
-//        /* @var RedirectResponse $response */
-//        $response = $this->getClientResponse();
-//
-//        $this->assertTrue($response->isSuccessful());
-//    }
+    public function testRequest()
+    {
+        $userFactory = new UserFactory($this->container);
+
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService->setUser($userFactory->create());
+
+        $router = $this->container->get('router');
+        $requestUrl = $router->generate('jobconfiguration_create_create');
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+            'method' => 'POST',
+            'parameters' => [
+                'label' => 'label',
+                'website' => 'website value',
+                'type' => 'type value',
+                'task-configuration' => [
+                    'HTML Validation' => [],
+                ],
+            ],
+        ]);
+
+        /* @var RedirectResponse $response */
+        $response = $this->getClientResponse();
+
+        $this->assertTrue($response->isRedirect('/jobconfiguration/label/'));
+    }
 
     public function testCreateActionInMaintenanceReadOnlyMode()
     {

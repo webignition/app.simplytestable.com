@@ -77,8 +77,6 @@ class CreateController extends JobConfigurationController
             ]);
         }
 
-        $this->request = $request;
-
         $jobConfigurationService->setUser($user);
 
         $website = $websiteService->fetch($requestWebsite);
