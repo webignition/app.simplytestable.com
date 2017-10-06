@@ -234,7 +234,7 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
         );
     }
 
-    public function testCreateActionFoo()
+    public function testCreateAction()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userService = $this->container->get('simplytestable.services.userservice');
@@ -270,5 +270,4 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
 
         $this->assertInstanceOf(JobConfiguration::class, $jobConfiguration);
     }
-
 }
