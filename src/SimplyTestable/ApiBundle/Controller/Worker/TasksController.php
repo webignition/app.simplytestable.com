@@ -23,7 +23,6 @@ class TasksController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
-        $workerService = $this->container->get('simplytestable.services.workerservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
