@@ -62,14 +62,6 @@ services:
         class: %fos_user.model.user.class%
         tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator
 
-  simplytestable.services.workerservice:
-    class:  SimplyTestable\ApiBundle\Services\WorkerService
-    arguments:
-        entityManager: "@doctrine.orm.entity_manager"
-        workeractivationRequestService: "@simplytestable.services.workeractivationrequestservice"
-        httpClientService: "@simplytestable.services.httpClientService"
-        stateService: "@simplytestable.services.stateservice"
-
   simplytestable.controller.action_listener:
     class: SimplyTestable\ApiBundle\EventListener\BeforeListener
     arguments:
@@ -97,21 +89,10 @@ services:
       logger: "@logger"
       jobFactory: "@simplytestable.services.resque.jobfactory"
 
-  simplytestable.services.workertaskservice:
-    class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
-    arguments:
-        logger: "@logger"
-        workerService: "@simplytestable.services.workerservice"
-        stateService: "@simplytestable.services.stateservice"
-        httpClientService: "@simplytestable.services.httpClientService"
-        urlService: "@simplytestable.services.urlService"
-        taskService: "@simplytestable.services.taskservice"
-
   simplytestable.services.workertaskassignmentservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
     arguments:
         logger: "@logger"
-        workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
@@ -121,7 +102,6 @@ services:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
     arguments:
         logger: "@logger"
-        workerService: "@simplytestable.services.workerservice"
         stateService: "@simplytestable.services.stateservice"
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
@@ -370,7 +350,8 @@ services:
   simplytestable.services.worker.taskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
     arguments:
-        workerService: "@simplytestable.services.workerservice"
+        entityManager: '@doctrine.orm.entity_manager'
+        stateService: '@simplytestable.services.stateservice'
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
         logger: "@logger"

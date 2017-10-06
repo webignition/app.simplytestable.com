@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\Worker;
 
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Controller\ApiController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,6 @@ class TasksController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
-        $workerService = $this->container->get('simplytestable.services.workerservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
@@ -29,16 +29,19 @@ class TasksController extends ApiController
         $taskQueueService = $this->container->get('simplytestable.services.task.queueservice');
 
         $workerHostname = $request->request->get('worker_hostname');
+        $workerRepository = $entityManager->getRepository(Worker::class);
 
-        if (!($workerService->has($workerHostname))) {
+        $worker = $workerRepository->findOneBy([
+            'hostname' => $workerHostname,
+        ]);
+
+        if (empty($worker)) {
             return $this->sendFailureResponse([
                 'X-Message' => sprintf('Invalid hostname "%s"', $workerHostname)
             ]);
         }
 
-        $worker = $workerService->get($workerHostname);
-
-        if ('worker-active' !== $worker->getState()->getName()) {
+        if (Worker::STATE_ACTIVE !== $worker->getState()->getName()) {
             return $this->sendFailureResponse([
                 'X-Message' => 'Worker is not active',
                 'X-Retryable' => '1'

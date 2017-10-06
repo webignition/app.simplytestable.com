@@ -3,10 +3,10 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
 use SimplyTestable\ApiBundle\Controller\WorkerController;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
-use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -117,11 +117,6 @@ class WorkerControllerTest extends BaseSimplyTestableTestCase
                 'token' => 'abcdef',
                 'expectedExceptionMessage' => '"hostname" missing',
             ],
-            'invalid worker' => [
-                'hostname' => 'foo.worker.simplytestable.com',
-                'token' => 'abcdef',
-                'expectedExceptionMessage' => 'Invalid worker hostname "foo.worker.simplytestable.com"',
-            ],
         ];
     }
 
@@ -165,14 +160,14 @@ class WorkerControllerTest extends BaseSimplyTestableTestCase
     public function activateActionWorkerInWrongStateDataProvider()
     {
         return [
-            WorkerService::STATE_ACTIVE => [
-                'stateName' => WorkerService::STATE_ACTIVE,
+            Worker::STATE_ACTIVE => [
+                'stateName' => Worker::STATE_ACTIVE,
             ],
-            WorkerService::STATE_OFFLINE => [
-                'stateName' => WorkerService::STATE_OFFLINE,
+            Worker::STATE_OFFLINE => [
+                'stateName' => Worker::STATE_OFFLINE,
             ],
-            WorkerService::STATE_DELETED => [
-                'stateName' => WorkerService::STATE_DELETED,
+            Worker::STATE_DELETED => [
+                'stateName' => Worker::STATE_DELETED,
             ],
         ];
     }
@@ -199,7 +194,7 @@ class WorkerControllerTest extends BaseSimplyTestableTestCase
         $worker = $workerFactory->create([
             WorkerFactory::KEY_HOSTNAME => $hostname,
             WorkerFactory::KEY_TOKEN => $token,
-            WorkerFactory::KEY_STATE => WorkerService::STATE_UNACTIVATED,
+            WorkerFactory::KEY_STATE => Worker::STATE_UNACTIVATED,
         ]);
 
         if (!empty($existingActivationRequestStateName)) {

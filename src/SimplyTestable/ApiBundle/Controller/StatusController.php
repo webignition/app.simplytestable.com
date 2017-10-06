@@ -14,7 +14,6 @@ class StatusController extends ApiController
      */
     public function indexAction()
     {
-        $workerService = $this->container->get('simplytestable.services.workerservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $taskService = $this->container->get('simplytestable.services.taskservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -24,7 +23,8 @@ class StatusController extends ApiController
         $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
 
         /* @var Worker[] $workers */
-        $workers = $workerService->getEntityRepository()->findAll();
+        $workerRepository = $entityManager->getRepository(Worker::class);
+        $workers = $workerRepository->findAll();
 
         $workerSummary = [];
         foreach ($workers as $worker) {

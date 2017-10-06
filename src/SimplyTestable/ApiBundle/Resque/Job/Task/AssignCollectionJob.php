@@ -11,7 +11,6 @@ use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
-use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 
 class AssignCollectionJob extends CommandJob
@@ -40,29 +39,25 @@ class AssignCollectionJob extends CommandJob
         /* @var TaskPreProcessorFactory $taskPreProcessorFactory */
         $taskPreProcessorFactory = $this->getContainer()->get($this->args['serviceIds'][2]);
 
-        /* @var WorkerService $workerService */
-        $workerService = $this->getContainer()->get($this->args['serviceIds'][3]);
-
         /* @var ResqueQueueService $resqueQueueService */
-        $resqueQueueService = $this->getContainer()->get($this->args['serviceIds'][4]);
+        $resqueQueueService = $this->getContainer()->get($this->args['serviceIds'][3]);
 
         /* @var ResqueJobFactory $resqueJobFactory */
-        $resqueJobFactory = $this->getContainer()->get($this->args['serviceIds'][5]);
+        $resqueJobFactory = $this->getContainer()->get($this->args['serviceIds'][4]);
 
         /* @var StateService $stateService */
-        $stateService = $this->getContainer()->get($this->args['serviceIds'][6]);
+        $stateService = $this->getContainer()->get($this->args['serviceIds'][5]);
 
         /* @var WorkerTaskAssignmentService $workerTaskAssignmentService */
-        $workerTaskAssignmentService = $this->getContainer()->get($this->args['serviceIds'][7]);
+        $workerTaskAssignmentService = $this->getContainer()->get($this->args['serviceIds'][6]);
 
         /* @var LoggerInterface $logger */
-        $logger = $this->getContainer()->get($this->args['serviceIds'][8]);
+        $logger = $this->getContainer()->get($this->args['serviceIds'][7]);
 
         return new CollectionCommand(
             $applicationStateService,
             $entityManager,
             $taskPreProcessorFactory,
-            $workerService,
             $resqueQueueService,
             $resqueJobFactory,
             $stateService,

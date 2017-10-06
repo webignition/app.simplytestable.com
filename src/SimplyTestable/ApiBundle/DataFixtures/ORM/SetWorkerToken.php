@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -28,16 +29,21 @@ class SetWorkerToken extends AbstractFixture implements OrderedFixtureInterface,
      */
     public function load(ObjectManager $manager)
     {
-        $workers = $this->getWorkerService()->getEntityRepository()->findAll();
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $workerRepository = $entityManager->getRepository(Worker::class);
+
+        /* @var Worker[] $workers */
+        $workers = $workerRepository->findAll();
 
         foreach ($workers as $worker) {
             if (!$worker->hasToken()) {
                 $worker->setToken(md5(rand()));
-                $this->getWorkerService()->persistAndFlush($worker);
+
+                $entityManager->persist($worker);
+                $entityManager->flush($worker);
             }
         }
     }
-
 
     /**
      * {@inheritDoc}
@@ -45,14 +51,5 @@ class SetWorkerToken extends AbstractFixture implements OrderedFixtureInterface,
     public function getOrder()
     {
         return 10; // the order in which fixtures will be loaded
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\WorkerService
-     */
-    private function getWorkerService() {
-        return $this->container->get('simplytestable.services.workerservice');
     }
 }

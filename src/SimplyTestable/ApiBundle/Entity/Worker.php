@@ -9,43 +9,48 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  */
 class Worker
 {
+    const STATE_ACTIVE = 'worker-active';
+    const STATE_UNACTIVATED = 'worker-unactivated';
+    const STATE_DELETED = 'worker-deleted';
+    const STATE_OFFLINE = 'worker-offline';
+
     /**
-     * 
+     *
      * @var type integer
-     * 
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
+
     /**
      *
-     * @var string 
-     * 
+     * @var string
+     *
      * @ORM\Column(type="string", unique=true, nullable=false)
      */
     protected $hostname;
-    
-    
+
+
     /**
      *
      * @var \Doctrine\Common\Collections\Collection
-     * 
+     *
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="worker")
      */
     protected $tasks;
-    
-    
+
+
     /**
      *
      * @var \SimplyTestable\ApiBundle\Entity\State
-     * 
+     *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=true)
-     * 
+     *
      * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
-     * @SerializerAnnotation\Expose 
+     * @SerializerAnnotation\Expose
      */
     protected $state;
 
@@ -57,26 +62,26 @@ class Worker
      * @ORM\Column(type="string", unique=false, nullable=true)
      */
     private $token;
-    
-    
+
+
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
-    }    
-    
-    
+    }
+
+
     /**
      *
      * @return string
      */
     public function getPublicSerializedState() {
         return str_replace('worker-', '', (string)$this->getState());
-    } 
-    
-    
+    }
+
+
     /**
      * Set state
      *
@@ -92,18 +97,18 @@ class Worker
     /**
      * Get state
      *
-     * @return use SimplyTestable\ApiBundle\Entity\State 
+     * @return use SimplyTestable\ApiBundle\Entity\State
      */
     public function getState()
     {
         return $this->state;
-    }    
+    }
 
-    
+
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -119,14 +124,14 @@ class Worker
     public function setHostname($hostname)
     {
         $this->hostname = $hostname;
-    
+
         return $this;
     }
 
     /**
      * Get hostname
      *
-     * @return string 
+     * @return string
      */
     public function getHostname()
     {
@@ -142,7 +147,7 @@ class Worker
     public function addTask(\SimplyTestable\ApiBundle\Entity\Task\Task $tasks)
     {
         $this->tasks[] = $tasks;
-    
+
         return $this;
     }
 
@@ -165,8 +170,8 @@ class Worker
     {
         return $this->tasks;
     }
-    
-    
+
+
     /**
      *
      * @param Worker $worker

@@ -5,13 +5,13 @@ use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
-use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -38,11 +38,6 @@ class CollectionCommand extends Command
      * @var TaskPreProcessorFactory
      */
     private $taskPreprocessorFactory;
-
-    /**
-     * @var WorkerService
-     */
-    private $workerService;
 
     /**
      * @var ResqueQueueService
@@ -73,7 +68,6 @@ class CollectionCommand extends Command
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
      * @param TaskPreProcessorFactory $taskPreProcessorFactory
-     * @param WorkerService $workerService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
      * @param StateService $stateService
@@ -85,7 +79,6 @@ class CollectionCommand extends Command
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
         TaskPreProcessorFactory $taskPreProcessorFactory,
-        WorkerService $workerService,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
         StateService $stateService,
@@ -98,7 +91,6 @@ class CollectionCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
         $this->taskPreprocessorFactory = $taskPreProcessorFactory;
-        $this->workerService = $workerService;
         $this->resqueQueueService = $resqueQueueService;
         $this->resqueJobFactory = $resqueJobFactory;
         $this->stateService = $stateService;
@@ -161,7 +153,11 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_OK;
         }
 
-        $activeWorkers = $this->workerService->getActiveCollection();
+        $workerRepository = $this->entityManager->getRepository(Worker::class);
+        $activeWorkers = $workerRepository->findBy([
+            'state' => $this->stateService->fetch(Worker::STATE_ACTIVE),
+        ]);
+
         $workers = [];
 
         if (is_null($input->getArgument('worker'))) {
