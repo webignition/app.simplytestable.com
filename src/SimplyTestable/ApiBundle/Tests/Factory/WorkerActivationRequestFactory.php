@@ -37,8 +37,9 @@ class WorkerActivationRequestFactory
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerRepository = $entityManager->getRepository(Worker::class);
 
+        /* @var Worker $worker */
         $worker = $workerRepository->findOneBy([
-            'name' => $workerActivationRequestValues[self::KEY_HOSTNAME],
+            'hostname' => $workerActivationRequestValues[self::KEY_HOSTNAME],
         ]);
 
         $workerActivationRequest = $workerActivationRequestService->create(
