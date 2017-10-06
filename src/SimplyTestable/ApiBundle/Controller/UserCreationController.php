@@ -2,34 +2,29 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputDefinition;
-use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UserCreationController extends AbstractUserController
 {
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
 
-    public function __construct() {
-        $this->setInputDefinitions(array(
-            'createAction' => new InputDefinition(array(
-                new InputArgument('email', InputArgument::REQUIRED, 'User email address'),
-                new InputArgument('password', InputArgument::REQUIRED, 'User password'),
-                new InputArgument('plan', InputArgument::OPTIONAL, 'Plan for user'),
-                new InputArgument('coupon', InputArgument::OPTIONAL, 'Coupon for user')
-            ))
-        ));
-
-        $this->setRequestTypes(array(
-            'createAction' => \Guzzle\Http\Message\Request::POST
-        ));
-    }
-
-    public function createAction()
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function createAction(Request $request)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userPostActivationPropertiesService = $this->container->get(
+            'simplytestable.services.job.userpostactivationpropertiesservice'
+        );
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -39,57 +34,58 @@ class UserCreationController extends AbstractUserController
             return $this->sendServiceUnavailableResponse();
         }
 
-        $email = rawurldecode($this->getArguments('createAction')->get('email'));
-        $password = rawurldecode($this->getArguments('createAction')->get('password'));
+        $requestData = $request->request;
 
-        if ($this->getUserService()->exists($email)) {
-            $user = $this->getUserService()->findUserByEmail($email);
+        $email = rawurldecode(trim($requestData->get('email')));
 
+        if (empty($email)) {
+            throw new BadRequestHttpException('"email" missing');
+        }
+
+        $password = rawurldecode(trim($requestData->get('password')));
+
+        if (empty($password)) {
+            throw new BadRequestHttpException('"password" missing');
+        }
+
+        $user = $userService->findUserByEmail($email);
+
+        if (empty($user)) {
+            $user = $userService->create($email, $password);
+        } else {
             if ($user->isEnabled()) {
-                return $this->redirect($this->generateUrl('user_get', array(
+                return $this->redirect($this->generateUrl('user_get', [
                     'email_canonical' => $email
-                ), true));
+                ], true));
             }
 
             $user->setPlainPassword($password);
-            $this->getUserService()->updatePassword($user);
-        } else {
-            $user = $this->getUserService()->create($email, $password);
+            $userService->updatePassword($user);
         }
 
-        if ($user instanceof User) {
-            $coupon = trim(rawurldecode($this->getArguments('createAction')->get('coupon')));
-            if ($coupon == '') {
-                $coupon = null;
-            }
-
-            $plan = $this->getNewUserPlan();
-            if ($plan->getIsPremium()) {
-                $this->getUserPostActivationPropertiesService()->create(
-                    $user,
-                    $plan,
-                    $coupon
-                );
-            } else {
-                $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan());
-            }
+        $coupon = rawurldecode(trim($requestData->get('coupon')));
+        if (empty($coupon)) {
+            $coupon = null;
         }
 
-        return new \Symfony\Component\HttpFoundation\Response();
-    }
-
-
-    /**
-     *
-     * @return AccountPlan
-     */
-    private function getNewUserPlan() {
-        $planName = $this->getArguments('createAction')->get('plan');
-        if (is_null($planName) || !$this->getAccountPlanService()->has($planName)) {
+        $planName = rawurldecode(trim($requestData->get('plan')));
+        if (empty($planName) || !$accountPlanService->has($planName)) {
             $planName = self::DEFAULT_ACCOUNT_PLAN_NAME;
         }
 
-        return $this->getAccountPlanService()->find($planName);
+        $plan = $accountPlanService->find($planName);
+
+        if ($plan->getIsPremium()) {
+            $userPostActivationPropertiesService->create(
+                $user,
+                $plan,
+                $coupon
+            );
+        } else {
+            $userAccountPlanService->subscribe($user, $plan);
+        }
+
+        return $this->sendSuccessResponse();
     }
 
 
@@ -129,18 +125,8 @@ class UserCreationController extends AbstractUserController
             $this->getUserPostActivationPropertiesService()->getManager()->flush($postActivationProperties);
         }
 
-        return new \Symfony\Component\HttpFoundation\Response();
+        return new Response();
     }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\AccountPlanService
-     */
-    private function getAccountPlanService() {
-        return $this->get('simplytestable.services.accountplanservice');
-    }
-
 
     /**
      *
