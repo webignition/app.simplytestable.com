@@ -5,18 +5,18 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Services\WorkerService;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class WorkerController extends ApiController
 {
     /**
-     * @param RequestStack $requestStack
+     * @param Request $request
      *
      * @return Response
      */
-    public function activateAction(RequestStack $requestStack)
+    public function activateAction(Request $request)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
@@ -36,7 +36,6 @@ class WorkerController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
-        $request = $requestStack->getCurrentRequest();
         $requestData = $request->request;
 
         $hostname = trim($requestData->get('hostname'));
