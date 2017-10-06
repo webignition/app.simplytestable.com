@@ -2,44 +2,35 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
+use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputDefinition;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
-use Guzzle\Http\Message\Request as GuzzleRequest;
-use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class CreateController extends JobConfigurationController {
-
+class CreateController extends JobConfigurationController
+{
     /**
-     * @var Request
+     * @param Request $request
+     *
+     * @return RedirectResponse|Response
      */
-    private $request;
+    public function createAction(Request $request)
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-    public function __construct() {
-        $this->setInputDefinitions(array(
-            'createAction' => new InputDefinition(array(
-                    new InputArgument('label', InputArgument::REQUIRED, 'Identifying unique label for configuration'),
-                    new InputArgument('website', InputArgument::REQUIRED, 'Site or page URL to be tested'),
-                    new InputArgument('type', InputArgument::REQUIRED, 'Job type'),
-                    new InputArgument('task-configuration', InputArgument::REQUIRED, 'Task config; array of [task type name] => [opts]'),
-                    new InputArgument('parameters', InputArgument::OPTIONAL, 'Job parameters string (json)')
-                ))
-        ));
-
-        $this->setRequestTypes(array(
-            'createAction' => GuzzleRequest::POST
-        ));
-    }
-
-    public function createAction(Request $request) {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-
-        $this->request = $request;
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -49,7 +40,35 @@ class CreateController extends JobConfigurationController {
             return $this->sendServiceUnavailableResponse();
         }
 
-        if ($this->getUserService()->isSpecialUser($this->getUser())) {
+        $requestData = $request->request;
+
+        $requestLabel = rawurldecode(trim($requestData->get('label')));
+
+        if (empty($requestLabel)) {
+            throw new BadRequestHttpException('"label" missing');
+        }
+
+        $requestWebsite = rawurldecode(trim($requestData->get('website')));
+
+        if (empty($requestWebsite)) {
+            throw new BadRequestHttpException('"website" missing');
+        }
+
+        $requestType = rawurldecode(trim($requestData->get('type')));
+
+        if (empty($requestType)) {
+            throw new BadRequestHttpException('"type" missing');
+        }
+
+        $requestTaskConfiguration = $requestData->get('task-configuration');
+
+        if (empty($requestTaskConfiguration)) {
+            throw new BadRequestHttpException('"task-configuration" missing');
+        }
+
+        $user = $this->getUser();
+
+        if ($userService->isSpecialUser($user)) {
             return $this->sendFailureResponse([
                 'X-JobConfigurationCreate-Error' => json_encode([
                     'code' => 99,
@@ -58,16 +77,22 @@ class CreateController extends JobConfigurationController {
             ]);
         }
 
-        $this->getJobConfigurationService()->setUser($this->getUser());
+        $this->request = $request;
+
+        $jobConfigurationService->setUser($user);
+
+        $website = $websiteService->fetch($requestWebsite);
+        $jobType = $this->getJobType($entityManager, $requestType);
+        $taskConfigurationCollection = $this->getRequestTaskConfigurationCollection($request, $taskTypeService);
+
+        $jobConfigurationValues = new JobConfigurationValues();
+        $jobConfigurationValues->setWebsite($website);
+        $jobConfigurationValues->setType($jobType);
+        $jobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
+        $jobConfigurationValues->setLabel($requestLabel);
+        $jobConfigurationValues->setParameters($requestData->get('parameters'));
 
         try {
-            $jobConfigurationValues = new JobConfigurationValues();
-            $jobConfigurationValues->setWebsite($this->getRequestWebsite());
-            $jobConfigurationValues->setType($this->getRequestJobType());
-            $jobConfigurationValues->setTaskConfigurationCollection($this->getRequestTaskConfigurationCollection());
-            $jobConfigurationValues->setLabel($this->request->get('label'));
-            $jobConfigurationValues->setParameters($this->request->get('parameters'));
-
             $jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
             return $this->redirect($this->generateUrl(
@@ -82,65 +107,42 @@ class CreateController extends JobConfigurationController {
                 ])
             ]);
         }
-
-
     }
-
-
-    private function getRequestWebsite() {
-        return $this->getWebsiteService()->fetch(
-            trim($this->request->get('website'))
-        );
-    }
-
 
     /**
-     * @return WebSiteService
-     */
-    private function getWebsiteService() {
-        return $this->get('simplytestable.services.websiteservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobTypeService
-     */
-    private function getJobTypeService() {
-        return $this->get('simplytestable.services.jobtypeservice');
-    }
-
-
-    /**
-     * @return \SimplyTestable\ApiBundle\Services\TaskTypeService
-     */
-    private function getTaskTypeService() {
-        return $this->get('simplytestable.services.tasktypeservice');
-    }
-
-
-    /**
+     * @param EntityManager $entityManager
+     * @param string $requestType
      *
      * @return JobType
      */
-    private function getRequestJobType() {
-        if (!$this->getJobTypeService()->has($this->getRequestValue('type'))) {
-            return $this->getJobTypeService()->getDefaultType();
+    private function getJobType(EntityManager $entityManager, $requestType)
+    {
+        $jobTypeRepository = $entityManager->getRepository(JobType::class);
+
+        $jobType = $jobTypeRepository->findOneBy([
+            'name' => $requestType,
+        ]);
+        if (empty($jobType)) {
+            $jobType = $jobTypeRepository->findOneBy([
+                'name' => JobTypeService::FULL_SITE_NAME,
+            ]);
         }
 
-        return $this->getJobTypeService()->getByName($this->getRequestValue('type'));
+        return $jobType;
     }
 
-
     /**
+     * @param Request $request
+     * @param TaskTypeService $taskTypeService
+     *
      * @return TaskConfigurationCollection
      */
-    private function getRequestTaskConfigurationCollection() {
+    private function getRequestTaskConfigurationCollection(Request $request, TaskTypeService $taskTypeService)
+    {
         $adapter = new RequestAdapter();
-        $adapter->setRequest($this->request);
-        $adapter->setTaskTypeService($this->getTaskTypeService());
+        $adapter->setRequest($request);
+        $adapter->setTaskTypeService($taskTypeService);
 
         return $adapter->getCollection();
     }
-
 }
