@@ -10,7 +10,6 @@ use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class WorkerControllerTest extends BaseSimplyTestableTestCase
@@ -31,17 +30,45 @@ class WorkerControllerTest extends BaseSimplyTestableTestCase
         $this->workerController->setContainer($this->container);
     }
 
+    public function testRequest()
+    {
+        $hostname = 'worker-hostname';
+        $token = 'worker-token';
+
+        $workerFactory = new WorkerFactory($this->container);
+        $workerFactory->create([
+            WorkerFactory::KEY_HOSTNAME => $hostname,
+            WorkerFactory::KEY_TOKEN => $token,
+        ]);
+
+        $router = $this->container->get('router');
+        $requestUrl = $router->generate('worker_activate');
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+            'method' => 'POST',
+            'parameters' => [
+                'hostname' => $hostname,
+                'token' => $token,
+            ],
+        ]);
+
+        $response = $this->getClientResponse();
+
+        $this->assertTrue($response->isSuccessful());
+    }
+
     public function testActivateActionInMaintenanceReadOnlyMode()
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $response = $this->workerController->activateAction(new RequestStack());
+        $response = $this->workerController->activateAction(new Request());
         $this->assertEquals(503, $response->getStatusCode());
 
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
 
-        $response = $this->workerController->activateAction(new RequestStack());
+        $response = $this->workerController->activateAction(new Request());
         $this->assertEquals(503, $response->getStatusCode());
 
         $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
@@ -60,15 +87,13 @@ class WorkerControllerTest extends BaseSimplyTestableTestCase
             'hostname' => $hostname,
             'token' => $token,
         ]);
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
 
         $this->setExpectedException(
             BadRequestHttpException::class,
             $expectedExceptionMessage
         );
 
-        $this->workerController->activateAction($requestStack);
+        $this->workerController->activateAction($request);
     }
 
     /**
@@ -126,10 +151,8 @@ class WorkerControllerTest extends BaseSimplyTestableTestCase
             'hostname' => $hostname,
             'token' => $token,
         ]);
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
 
-        $response = $this->workerController->activateAction($requestStack);
+        $response = $this->workerController->activateAction($request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertEmpty($workerActivationRequestRepository->findAll());
@@ -193,10 +216,8 @@ class WorkerControllerTest extends BaseSimplyTestableTestCase
             'hostname' => $hostname,
             'token' => $token,
         ]);
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
 
-        $response = $this->workerController->activateAction($requestStack);
+        $response = $this->workerController->activateAction($request);
 
         $this->assertTrue($response->isSuccessful());
 
