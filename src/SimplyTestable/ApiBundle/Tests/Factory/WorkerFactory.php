@@ -58,11 +58,10 @@ class WorkerFactory
         }
 
         $worker->setToken($workerValues[self::KEY_TOKEN]);
-        $workerService->persistAndFlush($worker);
-
         $worker->setState($stateService->fetch($workerValues[self::KEY_STATE]));
 
-        $workerService->persistAndFlush($worker);
+        $entityManager->persist($worker);
+        $entityManager->flush($worker);
 
         return $worker;
     }

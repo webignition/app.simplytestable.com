@@ -47,20 +47,6 @@ class WorkerService extends EntityService
     }
 
     /**
-     * @param Worker $worker
-     *
-     * @return Worker
-     */
-    public function persistAndFlush(Worker $worker)
-    {
-        $this->getManager()->persist($worker);
-        $this->getManager()->flush();
-
-        return $worker;
-    }
-
-
-    /**
      * @return int
      */
     public function count()
