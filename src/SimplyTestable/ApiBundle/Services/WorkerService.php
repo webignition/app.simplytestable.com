@@ -45,24 +45,4 @@ class WorkerService extends EntityService
     {
         return Worker::class;
     }
-
-    /**
-     * Get collection of active workers
-     *
-     * @return Worker[]
-     */
-    public function getActiveCollection()
-    {
-        /* @var Worker[] $workers */
-        $workers = $this->getEntityRepository()->findAll();
-        $selectedWorkers = array();
-
-        foreach ($workers as $worker) {
-            if (self::STATE_ACTIVE === $worker->getState()->getName()) {
-                $selectedWorkers[] = $worker;
-            }
-        }
-
-        return $selectedWorkers;
-    }
 }

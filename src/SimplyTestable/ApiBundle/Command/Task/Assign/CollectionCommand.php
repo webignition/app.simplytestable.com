@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -161,7 +162,11 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_OK;
         }
 
-        $activeWorkers = $this->workerService->getActiveCollection();
+        $workerRepository = $this->entityManager->getRepository(Worker::class);
+        $activeWorkers = $workerRepository->findBy([
+            'state' => $this->stateService->fetch(WorkerService::STATE_ACTIVE),
+        ]);
+
         $workers = [];
 
         if (is_null($input->getArgument('worker'))) {

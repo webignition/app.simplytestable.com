@@ -369,7 +369,8 @@ services:
   simplytestable.services.worker.taskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
     arguments:
-        workerService: "@simplytestable.services.workerservice"
+        entityManager: '@doctrine.orm.entity_manager'
+        stateService: '@simplytestable.services.stateservice'
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
         logger: "@logger"
