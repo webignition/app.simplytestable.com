@@ -53,7 +53,8 @@ class WorkerFactory
         ]);
 
         if (empty($worker)) {
-            $worker = $workerService->create($workerValues[self::KEY_HOSTNAME]);
+            $worker = new Worker();
+            $worker->setHostname($workerValues[self::KEY_HOSTNAME]);
         }
 
         $worker->setToken($workerValues[self::KEY_TOKEN]);

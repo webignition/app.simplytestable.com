@@ -47,19 +47,6 @@ class WorkerService extends EntityService
     }
 
     /**
-     * @param string $hostname
-     *
-     * @return Worker
-     */
-    public function create($hostname)
-    {
-        $worker = new Worker();
-        $worker->setHostname($hostname);
-
-        return $this->persistAndFlush($worker);
-    }
-
-    /**
      * @param Worker $worker
      *
      * @return Worker
