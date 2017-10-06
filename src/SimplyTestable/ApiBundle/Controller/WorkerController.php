@@ -23,12 +23,10 @@ class WorkerController extends ApiController
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-        $workerService = $this->container->get('simplytestable.services.workerservice');
         $workerRequestActivationService = $this->container->get(
             'simplytestable.services.workeractivationrequestservice'
         );
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
