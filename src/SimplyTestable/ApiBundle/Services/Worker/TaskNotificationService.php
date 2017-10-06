@@ -10,7 +10,6 @@ use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\ClientErrorResponseException;
 use Guzzle\Http\Exception\ServerErrorResponseException;
 use \Psr\Log\LoggerInterface as Logger;
-use SimplyTestable\ApiBundle\Services\WorkerService;
 
 class TaskNotificationService
 {
@@ -63,7 +62,7 @@ class TaskNotificationService
     {
         $workerRepository = $this->entityManager->getRepository(Worker::class);
         $workers = $workerRepository->findBy([
-            'state' => $this->stateService->fetch(WorkerService::STATE_ACTIVE),
+            'state' => $this->stateService->fetch(Worker::STATE_ACTIVE),
         ]);
 
         foreach ($workers as $worker) {

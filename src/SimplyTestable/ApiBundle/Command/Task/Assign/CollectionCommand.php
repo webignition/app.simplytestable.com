@@ -12,7 +12,6 @@ use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory as TaskPreProcessorFactory;
-use SimplyTestable\ApiBundle\Services\WorkerService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -156,7 +155,7 @@ class CollectionCommand extends Command
 
         $workerRepository = $this->entityManager->getRepository(Worker::class);
         $activeWorkers = $workerRepository->findBy([
-            'state' => $this->stateService->fetch(WorkerService::STATE_ACTIVE),
+            'state' => $this->stateService->fetch(Worker::STATE_ACTIVE),
         ]);
 
         $workers = [];

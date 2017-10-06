@@ -5,7 +5,6 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
-use SimplyTestable\ApiBundle\Services\WorkerService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -58,13 +57,13 @@ class WorkerController extends ApiController
         if (empty($worker)) {
             $worker = new Worker();
             $worker->setHostname($hostname);
-            $worker->setState($stateService->fetch(WorkerService::STATE_UNACTIVATED));
+            $worker->setState($stateService->fetch(Worker::STATE_UNACTIVATED));
 
             $entityManager->persist($worker);
             $entityManager->flush($worker);
         }
 
-        if (WorkerService::STATE_UNACTIVATED !== $worker->getState()->getName()) {
+        if (Worker::STATE_UNACTIVATED !== $worker->getState()->getName()) {
             return $this->sendSuccessResponse();
         }
 

@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Controller\ApiController;
-use SimplyTestable\ApiBundle\Services\WorkerService;
 use Symfony\Component\HttpFoundation\Request;
 
 class TasksController extends ApiController
@@ -42,7 +41,7 @@ class TasksController extends ApiController
             ]);
         }
 
-        if (WorkerService::STATE_ACTIVE !== $worker->getState()->getName()) {
+        if (Worker::STATE_ACTIVE !== $worker->getState()->getName()) {
             return $this->sendFailureResponse([
                 'X-Message' => 'Worker is not active',
                 'X-Retryable' => '1'
