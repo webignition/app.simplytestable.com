@@ -55,16 +55,6 @@ class WorkerService extends EntityService
     }
 
     /**
-     * @param $id
-     *
-     * @return null|Worker
-     */
-    public function getById($id)
-    {
-        return $this->getEntityRepository()->find($id);
-    }
-
-    /**
      * @param string $hostname
      *
      * @return Worker
