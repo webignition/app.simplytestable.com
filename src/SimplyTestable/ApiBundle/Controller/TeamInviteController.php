@@ -2,16 +2,22 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurationService;
+use Symfony\Component\HttpFoundation\Response;
 
-class TeamInviteController extends ApiController {
-
+class TeamInviteController extends ApiController
+{
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
 
     /**
@@ -19,8 +25,13 @@ class TeamInviteController extends ApiController {
      */
     private $request;
 
-
-    public function getAction($invitee_email) {
+    /**
+     * @param $invitee_email
+     *
+     * @return Response
+     */
+    public function getAction($invitee_email)
+    {
         $userService = $this->container->get('simplytestable.services.userservice');
 
         if (!$userService->exists($invitee_email)) {
@@ -59,8 +70,13 @@ class TeamInviteController extends ApiController {
         }
     }
 
-
-    public function acceptAction(Request $request) {
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function acceptAction(Request $request)
+    {
         $this->request = $request;
 
         /* @var $team Team */
@@ -105,8 +121,11 @@ class TeamInviteController extends ApiController {
         return $this->sendResponse();
     }
 
-
-    public function listAction() {
+    /**
+     * @return Response
+     */
+    public function listAction()
+    {
         if (!$this->getTeamService()->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamInviteList-Error-Code' => 1,
@@ -128,8 +147,11 @@ class TeamInviteController extends ApiController {
         return $this->sendResponse($invites);
     }
 
-
-    public function userListAction() {
+    /**
+     * @return Response
+     */
+    public function userListAction()
+    {
         if ($this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan()->getIsPremium()) {
             return $this->sendResponse([]);
         }
@@ -137,8 +159,13 @@ class TeamInviteController extends ApiController {
         return $this->sendResponse($this->getTeamInviteService()->getForUser($this->getUser()));
     }
 
-
-    public function removeAction($invitee_email) {
+    /**
+     * @param string $invitee_email
+     *
+     * @return Response
+     */
+    public function removeAction($invitee_email)
+    {
         $userService = $this->container->get('simplytestable.services.userservice');
 
         if (!$this->getTeamService()->hasTeam($this->getUser())) {
@@ -174,8 +201,13 @@ class TeamInviteController extends ApiController {
         return $this->sendResponse();
     }
 
-
-    public function declineAction(Request $request) {
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function declineAction(Request $request)
+    {
         $this->request = $request;
 
         $team = $this->getTeamService()->getEntityRepository()->findOneBy([
@@ -190,8 +222,13 @@ class TeamInviteController extends ApiController {
         return $this->sendResponse();
     }
 
-
-    public function getByTokenAction($token) {
+    /**
+     * @param $token
+     *
+     * @return Response
+     */
+    public function getByTokenAction($token)
+    {
         if (!$this->getTeamInviteService()->hasForToken(trim($token))) {
             return $this->sendNotFoundResponse();
         }
@@ -199,8 +236,13 @@ class TeamInviteController extends ApiController {
         return $this->sendResponse($this->getTeamInviteService()->getForToken($token));
     }
 
-
-    public function activateAndAcceptAction(Request $request) {
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function activateAndAcceptAction(Request $request)
+    {
         $userService = $this->container->get('simplytestable.services.userservice');
 
         $this->request = $request;
@@ -232,54 +274,51 @@ class TeamInviteController extends ApiController {
         return $this->sendResponse();
     }
 
-
     /**
      * @return string
      */
-    private function getRequestTeam() {
+    private function getRequestTeam()
+    {
         return trim($this->request->request->get('team'));
     }
 
-
     /**
-     * @return \SimplyTestable\ApiBundle\Services\Team\Service
+     * @return TeamService
      */
-    private function getTeamService() {
+    private function getTeamService()
+    {
         return $this->container->get('simplytestable.services.teamservice');
     }
 
-
     /**
-     * @return \SimplyTestable\ApiBundle\Services\Team\InviteService
+     * @return InviteService
      */
-    private function getTeamInviteService() {
+    private function getTeamInviteService()
+    {
         return $this->container->get('simplytestable.services.teaminviteservice');
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
+     * @return UserAccountPlanService
      */
-    private function getUserAccountPlanService() {
+    private function getUserAccountPlanService()
+    {
         return $this->get('simplytestable.services.useraccountplanservice');
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\AccountPlanService
+     * @return AccountPlanService
      */
-    private function getAccountPlanService() {
+    private function getAccountPlanService()
+    {
         return $this->get('simplytestable.services.accountplanservice');
     }
 
-
     /**
-     *
      * @return Plan
      */
-    private function getNewUserPlan() {
+    private function getNewUserPlan()
+    {
         $planName = $this->getArguments('createAction')->get('plan');
         if (is_null($planName) || !$this->getAccountPlanService()->has($planName)) {
             $planName = self::DEFAULT_ACCOUNT_PLAN_NAME;
@@ -288,28 +327,27 @@ class TeamInviteController extends ApiController {
         return $this->getAccountPlanService()->find($planName);
     }
 
-
     /**
-     *
-     * @return \FOS\UserBundle\Util\UserManipulator
+     * @return UserManipulator
      */
-    protected function getUserManipulator() {
+    protected function getUserManipulator()
+    {
         return $this->get('fos_user.util.user_manipulator');
     }
-
 
     /**
      * @return ScheduledJobService
      */
-    private function getScheduledJobService() {
+    private function getScheduledJobService()
+    {
         return $this->get('simplytestable.services.scheduledjob.service');
     }
-
 
     /**
      * @return JobConfigurationService
      */
-    private function getJobConfigurationService() {
+    private function getJobConfigurationService()
+    {
         return $this->get('simplytestable.services.job.configurationservice');
     }
 }
