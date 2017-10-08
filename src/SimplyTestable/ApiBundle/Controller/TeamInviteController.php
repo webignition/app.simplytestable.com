@@ -81,6 +81,7 @@ class TeamInviteController extends ApiController
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
         $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
 
         $this->request = $request;
 
@@ -115,7 +116,7 @@ class TeamInviteController extends ApiController
 
         $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
 
-        $teamService->getMemberService()->add($invite->getTeam(), $invite->getUser());
+        $teamMemberService->add($invite->getTeam(), $invite->getUser());
 
         $invites = $teamInviteService->getForUser($this->getUser());
 
@@ -264,7 +265,7 @@ class TeamInviteController extends ApiController
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
 
         $this->request = $request;
 
@@ -284,7 +285,7 @@ class TeamInviteController extends ApiController
         $invite->getUser()->setPlainPassword(rawurldecode(trim($this->request->request->get('password'))));
         $userService->updateUser($invite->getUser());
 
-        $teamService->getMemberService()->add($invite->getTeam(), $invite->getUser());
+        $teamMemberService->add($invite->getTeam(), $invite->getUser());
 
         $invites = $teamInviteService->getForUser($invite->getUser());
 
