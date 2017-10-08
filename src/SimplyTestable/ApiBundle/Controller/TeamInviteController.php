@@ -80,11 +80,12 @@ class TeamInviteController extends ApiController
     {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         $this->request = $request;
 
         /* @var $team Team */
-        $team = $this->getTeamService()->getEntityRepository()->findOneBy([
+        $team = $teamService->getEntityRepository()->findOneBy([
             'name' => $this->getRequestTeam()
         ]);
 
@@ -114,7 +115,7 @@ class TeamInviteController extends ApiController
 
         $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
 
-        $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
+        $teamService->getMemberService()->add($invite->getTeam(), $invite->getUser());
 
         $invites = $teamInviteService->getForUser($this->getUser());
 
@@ -132,15 +133,16 @@ class TeamInviteController extends ApiController
     {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
-        if (!$this->getTeamService()->hasTeam($this->getUser())) {
+        if (!$teamService->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamInviteList-Error-Code' => 1,
                 'X-TeamInviteList-Error-Message' => 'User is not a team leader',
             ]);
         }
 
-        $allInvites = $teamInviteService->getForTeam($this->getTeamService()->getForUser($this->getUser()));
+        $allInvites = $teamInviteService->getForTeam($teamService->getForUser($this->getUser()));
         $invites = [];
 
         foreach ($allInvites as $invite) {
@@ -178,8 +180,9 @@ class TeamInviteController extends ApiController
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
-        if (!$this->getTeamService()->hasTeam($this->getUser())) {
+        if (!$teamService->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamInviteRemove-Error-Code' => 1,
                 'X-TeamInviteRemove-Error-Message' => 'User is not a team leader',
@@ -194,7 +197,7 @@ class TeamInviteController extends ApiController
             ]);
         }
 
-        $team = $this->getTeamService()->getForUser($this->getUser());
+        $team = $teamService->getForUser($this->getUser());
 
         $invitee = $userService->findUserBy([
             'email' => $invitee_email
@@ -220,10 +223,11 @@ class TeamInviteController extends ApiController
     public function declineAction(Request $request)
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         $this->request = $request;
 
-        $team = $this->getTeamService()->getEntityRepository()->findOneBy([
+        $team = $teamService->getEntityRepository()->findOneBy([
             'name' => trim($this->request->request->get('team'))
         ]);
 
@@ -260,6 +264,7 @@ class TeamInviteController extends ApiController
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         $this->request = $request;
 
@@ -279,7 +284,7 @@ class TeamInviteController extends ApiController
         $invite->getUser()->setPlainPassword(rawurldecode(trim($this->request->request->get('password'))));
         $userService->updateUser($invite->getUser());
 
-        $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
+        $teamService->getMemberService()->add($invite->getTeam(), $invite->getUser());
 
         $invites = $teamInviteService->getForUser($invite->getUser());
 
@@ -296,14 +301,6 @@ class TeamInviteController extends ApiController
     private function getRequestTeam()
     {
         return trim($this->request->request->get('team'));
-    }
-
-    /**
-     * @return TeamService
-     */
-    private function getTeamService()
-    {
-        return $this->container->get('simplytestable.services.teamservice');
     }
 
     /**
