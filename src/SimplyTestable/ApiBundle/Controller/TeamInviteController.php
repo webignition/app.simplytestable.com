@@ -80,6 +80,7 @@ class TeamInviteController extends ApiController
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
 
         $this->request = $request;
 
@@ -109,8 +110,8 @@ class TeamInviteController extends ApiController
         $scheduledJobService->setUser($this->getUser());
         $scheduledJobService->removeAll();
 
-        $this->getJobConfigurationService()->setUser($this->getUser());
-        $this->getJobConfigurationService()->removeAll();
+        $jobConfigurationService->setUser($this->getUser());
+        $jobConfigurationService->removeAll();
 
         $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
 
@@ -329,13 +330,5 @@ class TeamInviteController extends ApiController
     protected function getUserManipulator()
     {
         return $this->get('fos_user.util.user_manipulator');
-    }
-
-    /**
-     * @return JobConfigurationService
-     */
-    private function getJobConfigurationService()
-    {
-        return $this->get('simplytestable.services.job.configurationservice');
     }
 }
