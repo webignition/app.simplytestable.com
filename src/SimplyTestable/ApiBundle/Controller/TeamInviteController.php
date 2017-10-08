@@ -33,12 +33,13 @@ class TeamInviteController extends ApiController
     public function getAction($invitee_email)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
         if (!$userService->exists($invitee_email)) {
             $user = $userService->create($invitee_email, md5(rand()));
 
             if ($user instanceof User) {
-                $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan());
+                $userAccountPlanService->subscribe($user, $this->getNewUserPlan());
             }
         }
 
@@ -53,7 +54,7 @@ class TeamInviteController extends ApiController
             ]);
         }
 
-        if ($this->getUserAccountPlanService()->getForUser($invitee)->getPlan()->getIsPremium()) {
+        if ($userAccountPlanService->getForUser($invitee)->getPlan()->getIsPremium()) {
             return $this->sendFailureResponse([
                 'X-TeamInviteGet-Error-Code' => 11,
                 'X-TeamInviteGet-Error-Message' => 'Invitee has a premium plan',
@@ -77,6 +78,8 @@ class TeamInviteController extends ApiController
      */
     public function acceptAction(Request $request)
     {
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+
         $this->request = $request;
 
         /* @var $team Team */
@@ -98,7 +101,7 @@ class TeamInviteController extends ApiController
             ]);
         }
 
-        if ($this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan()->getIsPremium()) {
+        if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
             return $this->sendResponse();
         }
 
@@ -126,6 +129,8 @@ class TeamInviteController extends ApiController
      */
     public function listAction()
     {
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+
         if (!$this->getTeamService()->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamInviteList-Error-Code' => 1,
@@ -137,7 +142,7 @@ class TeamInviteController extends ApiController
         $invites = [];
 
         foreach ($allInvites as $invite) {
-            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($invite->getUser());
+            $userAccountPlan = $userAccountPlanService->getForUser($invite->getUser());
 
             if (!$userAccountPlan->getPlan()->getIsPremium()) {
                 $invites[] = $invite;
@@ -152,7 +157,9 @@ class TeamInviteController extends ApiController
      */
     public function userListAction()
     {
-        if ($this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan()->getIsPremium()) {
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+
+        if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
             return $this->sendResponse([]);
         }
 
