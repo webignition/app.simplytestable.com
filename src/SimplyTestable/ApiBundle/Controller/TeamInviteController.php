@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use Symfony\Component\HttpFoundation\Request;
-use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurationService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -80,6 +79,7 @@ class TeamInviteController extends ApiController
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
+        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
 
         $this->request = $request;
 
@@ -106,8 +106,8 @@ class TeamInviteController extends ApiController
             return $this->sendResponse();
         }
 
-        $this->getScheduledJobService()->setUser($this->getUser());
-        $this->getScheduledJobService()->removeAll();
+        $scheduledJobService->setUser($this->getUser());
+        $scheduledJobService->removeAll();
 
         $this->getJobConfigurationService()->setUser($this->getUser());
         $this->getJobConfigurationService()->removeAll();
@@ -329,14 +329,6 @@ class TeamInviteController extends ApiController
     protected function getUserManipulator()
     {
         return $this->get('fos_user.util.user_manipulator');
-    }
-
-    /**
-     * @return ScheduledJobService
-     */
-    private function getScheduledJobService()
-    {
-        return $this->get('simplytestable.services.scheduledjob.service');
     }
 
     /**
