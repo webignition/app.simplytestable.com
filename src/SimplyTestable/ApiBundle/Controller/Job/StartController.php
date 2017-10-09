@@ -6,14 +6,26 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstr
 use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Controller\ApiController;
+use SimplyTestable\ApiBundle\Services\Job\StartService;
+use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception as UserAccountPlanEnforcementException;
+use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
+    as UserAccountPlanEnforcementException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use Symfony\Component\HttpFoundation\Response;
 
-class StartController extends ApiController {
-
-    public function startAction(Request $request, $site_root_url) {
+class StartController extends ApiController
+{
+    /**
+     * @param Request $request
+     * @param string $site_root_url
+     *
+     * @return RedirectResponse|Response
+     * @throws JobStartServiceException
+     */
+    public function startAction(Request $request, $site_root_url)
+    {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
@@ -59,8 +71,15 @@ class StartController extends ApiController {
         }
     }
 
-
-    public function retestAction(Request $request, $site_root_url, $test_id) {
+    /**
+     * @param Request $request
+     * @param string $site_root_url
+     * @param int $test_id
+     *
+     * @return RedirectResponse|Response
+     */
+    public function retestAction(Request $request, $site_root_url, $test_id)
+    {
         $job = $this->getJobService()->getById($test_id);
         if (is_null($job)) {
             return $this->sendFailureResponse();
@@ -77,7 +96,9 @@ class StartController extends ApiController {
 
         $taskTypeOptionsArray = array();
         foreach ($job->getTaskTypeOptions() as $taskTypeOptions) {
-            $taskTypeOptionsArray[strtolower($taskTypeOptions->getTaskType()->getName())] = $taskTypeOptions->getOptions();
+            $taskTypeNameKey = strtolower($taskTypeOptions->getTaskType()->getName());
+
+            $taskTypeOptionsArray[$taskTypeNameKey] = $taskTypeOptions->getOptions();
         }
 
         if ($request->request->count()) {
@@ -93,12 +114,26 @@ class StartController extends ApiController {
         return $this->startAction($request, $job->getWebsite()->getCanonicalUrl());
     }
 
-    private function rejectAsUnroutableAndRedirect(JobConfiguration $jobConfiguration) {
+    /**
+     * @param JobConfiguration $jobConfiguration
+     *
+     * @return RedirectResponse
+     */
+    private function rejectAsUnroutableAndRedirect(JobConfiguration $jobConfiguration)
+    {
         return $this->rejectAndRedirect($jobConfiguration, 'unroutable');
     }
 
-
-    private function rejectAsPlanLimitReachedAndRedirect(JobConfiguration $jobConfiguration, AccountPlanConstraint $constraint) {
+    /**
+     * @param JobConfiguration $jobConfiguration
+     * @param AccountPlanConstraint $constraint
+     *
+     * @return RedirectResponse
+     */
+    private function rejectAsPlanLimitReachedAndRedirect(
+        JobConfiguration $jobConfiguration,
+        AccountPlanConstraint $constraint
+    ) {
         return $this->rejectAndRedirect($jobConfiguration, 'plan-constraint-limit-reached', $constraint);
     }
 
@@ -129,47 +164,42 @@ class StartController extends ApiController {
     }
 
     /**
-     *
      * @return boolean
      */
-    private function isTestEnvironment() {
+    private function isTestEnvironment()
+    {
         return $this->get('kernel')->getEnvironment() == 'test';
     }
 
-
     /**
-     *
      * @return \SimplyTestable\ApiBundle\Entity\User
      */
-    public function getUser() {
+    public function getUser()
+    {
         if (!$this->isTestEnvironment()) {
             return parent::getUser();
         }
 
-        if  (is_null($this->getRequestValue('user'))) {
+        if (is_null($this->getRequestValue('user'))) {
             return $this->getUserService()->getPublicUser();
         }
 
         return $this->getUserService()->findUserByEmail($this->getRequestValue('user'));
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobService
+     * @return JobService
      */
-    private function getJobService() {
+    private function getJobService()
+    {
         return $this->get('simplytestable.services.jobservice');
     }
 
     /**
-     * @return \SimplyTestable\ApiBundle\Services\Job\StartService
+     * @return StartService
      */
-    private function getJobStartService() {
+    private function getJobStartService()
+    {
         return $this->get('simplytestable.services.job.startservice');
     }
-
-
-
-
 }
