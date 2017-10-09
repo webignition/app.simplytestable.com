@@ -233,11 +233,12 @@ class TeamInviteController extends ApiController
     public function declineAction(Request $request)
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
 
         $this->request = $request;
 
-        $team = $teamService->getEntityRepository()->findOneBy([
+        $team = $teamRepository->findOneBy([
             'name' => trim($this->request->request->get('team'))
         ]);
 
