@@ -84,16 +84,20 @@ class TeamInviteController extends ApiController
     {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
         $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
 
         $this->request = $request;
 
+        $requestData = $request->request;
+        $requestTeam = $requestData->get('team');
+
         /* @var $team Team */
-        $team = $teamService->getEntityRepository()->findOneBy([
-            'name' => $this->getRequestTeam()
+        $team = $teamRepository->findOneBy([
+            'name' => $requestTeam,
         ]);
 
         if (is_null($team)) {
@@ -300,14 +304,6 @@ class TeamInviteController extends ApiController
         }
 
         return $this->sendResponse();
-    }
-
-    /**
-     * @return string
-     */
-    private function getRequestTeam()
-    {
-        return trim($this->request->request->get('team'));
     }
 
     /**
