@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
@@ -276,6 +275,7 @@ class TeamInviteController extends ApiController
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $userManipulator = $this->container->get('fos_user.util.user_manipulator');
 
         $this->request = $request;
 
@@ -290,7 +290,7 @@ class TeamInviteController extends ApiController
 
         $invite = $teamInviteService->getForToken($token);
 
-        $this->getUserManipulator()->activate($invite->getUser()->getUsername());
+        $userManipulator->activate($invite->getUser()->getUsername());
 
         $invite->getUser()->setPlainPassword(rawurldecode(trim($this->request->request->get('password'))));
         $userService->updateUser($invite->getUser());
@@ -304,13 +304,5 @@ class TeamInviteController extends ApiController
         }
 
         return $this->sendResponse();
-    }
-
-    /**
-     * @return UserManipulator
-     */
-    protected function getUserManipulator()
-    {
-        return $this->get('fos_user.util.user_manipulator');
     }
 }
