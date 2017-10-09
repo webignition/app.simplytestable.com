@@ -42,18 +42,6 @@ abstract class ApiController extends Controller
         return $this->get('simplytestable.services.userservice');
     }
 
-
-    /**
-     * Set collection of InputDefinition objects
-     * key is controller method name
-     * value is InputDefinition
-     *
-     * @param array $inputDefinition Collection of InputDefintions
-     */
-    protected function setInputDefinitions($inputDefinitions) {
-        $this->inputDefinitions = $inputDefinitions;
-    }
-
     /**
      *
      * @param mixed $object
@@ -69,17 +57,6 @@ abstract class ApiController extends Controller
 
         return $response;
     }
-
-    /**
-     *
-     * @param int $requestType
-     * @return \SimplyTestable\ApiBundle\Controller\ApiController
-     */
-    protected function setRequestTypes($requestTypes) {
-        $this->requestTypes = $requestTypes;
-        return $this;
-    }
-
 
     /**
      * @param string $methodName
@@ -127,17 +104,6 @@ abstract class ApiController extends Controller
 
         return $this->requestTypes[$methodName];
     }
-
-
-    /**
-     *
-     * @param string $methodName
-     * @return Response
-     */
-    public function sendMissingRequiredArgumentResponse($methodName) {
-        return $this->sendResponse($this->getInputDefinition($methodName));
-    }
-
 
     /**
      *

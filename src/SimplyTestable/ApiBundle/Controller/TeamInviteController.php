@@ -4,43 +4,55 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use Symfony\Component\HttpFoundation\Request;
-use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
-use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurationService;
+use Symfony\Component\HttpFoundation\Response;
 
-class TeamInviteController extends ApiController {
-
+class TeamInviteController extends ApiController
+{
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
 
     /**
-     * @var Request
+     * @param Request $request
+     * @param string $invitee_email
+     *
+     * @return Response
      */
-    private $request;
+    public function getAction(Request $request, $invitee_email)
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
 
+        if (!$userService->exists($invitee_email)) {
+            $user = $userService->create($invitee_email, md5(rand()));
 
-    public function getAction($invitee_email) {
-        if (!$this->getUserService()->exists($invitee_email)) {
-            $user = $this->getUserService()->create($invitee_email, md5(rand()));
+            $requestData = $request->query;
 
-            if ($user instanceof User) {
-                $this->getUserAccountPlanService()->subscribe($user, $this->getNewUserPlan());
+            $planName = rawurldecode(trim($requestData->get('plan')));
+            if (empty($planName) || !$accountPlanService->has($planName)) {
+                $planName = self::DEFAULT_ACCOUNT_PLAN_NAME;
             }
+
+            $plan = $accountPlanService->find($planName);
+
+            $userAccountPlanService->subscribe($user, $plan);
         }
 
-        $invitee = $this->getUserService()->findUserBy([
+        /* @var User $invitee */
+        $invitee = $userService->findUserBy([
             'email' => $invitee_email
         ]);
 
-        if ($this->getUserService()->isSpecialUser($invitee)) {
+        if ($userService->isSpecialUser($invitee)) {
             return $this->sendFailureResponse([
                 'X-TeamInviteGet-Error-Code' => 10,
                 'X-TeamInviteGet-Error-Message' => 'Special users cannot be invited',
             ]);
         }
 
-        if ($this->getUserAccountPlanService()->getForUser($invitee)->getPlan()->getIsPremium()) {
+        if ($userAccountPlanService->getForUser($invitee)->getPlan()->getIsPremium()) {
             return $this->sendFailureResponse([
                 'X-TeamInviteGet-Error-Code' => 11,
                 'X-TeamInviteGet-Error-Message' => 'Invitee has a premium plan',
@@ -48,7 +60,7 @@ class TeamInviteController extends ApiController {
         }
 
         try {
-            return $this->sendResponse($this->getTeamInviteService()->get($this->getUser(), $invitee));
+            return $this->sendResponse($teamInviteService->get($this->getUser(), $invitee));
         } catch (TeamInviteServiceException $teamInviteServiceException) {
             return $this->sendFailureResponse([
                 'X-TeamInviteGet-Error-Code' => $teamInviteServiceException->getCode(),
@@ -57,13 +69,27 @@ class TeamInviteController extends ApiController {
         }
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function acceptAction(Request $request)
+    {
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
 
-    public function acceptAction(Request $request) {
-        $this->request = $request;
+        $requestData = $request->request;
+        $requestTeam = $requestData->get('team');
 
         /* @var $team Team */
-        $team = $this->getTeamService()->getEntityRepository()->findOneBy([
-            'name' => $this->getRequestTeam()
+        $team = $teamRepository->findOneBy([
+            'name' => $requestTeam,
         ]);
 
         if (is_null($team)) {
@@ -73,50 +99,57 @@ class TeamInviteController extends ApiController {
             ]);
         }
 
-        if (!$this->getTeamInviteService()->hasForTeamAndUser($team, $this->getUser())) {
+        if (!$teamInviteService->hasForTeamAndUser($team, $this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamInviteAccept-Error-Code' => 2,
                 'X-TeamInviteAccept-Error-Message' => 'User has not been invited to join this team',
             ]);
         }
 
-        if ($this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan()->getIsPremium()) {
+        if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
             return $this->sendResponse();
         }
 
-        $this->getScheduledJobService()->setUser($this->getUser());
-        $this->getScheduledJobService()->removeAll();
+        $scheduledJobService->setUser($this->getUser());
+        $scheduledJobService->removeAll();
 
-        $this->getJobConfigurationService()->setUser($this->getUser());
-        $this->getJobConfigurationService()->removeAll();
+        $jobConfigurationService->setUser($this->getUser());
+        $jobConfigurationService->removeAll();
 
-        $invite = $this->getTeamInviteService()->getForTeamAndUser($team, $this->getUser());
+        $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
 
-        $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
+        $teamMemberService->add($invite->getTeam(), $invite->getUser());
 
-        $invites = $this->getTeamInviteService()->getForUser($this->getUser());
+        $invites = $teamInviteService->getForUser($this->getUser());
 
         foreach ($invites as $invite) {
-            $this->getTeamInviteService()->remove($invite);
+            $teamInviteService->remove($invite);
         }
 
         return $this->sendResponse();
     }
 
+    /**
+     * @return Response
+     */
+    public function listAction()
+    {
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
-    public function listAction() {
-        if (!$this->getTeamService()->hasTeam($this->getUser())) {
+        if (!$teamService->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamInviteList-Error-Code' => 1,
                 'X-TeamInviteList-Error-Message' => 'User is not a team leader',
             ]);
         }
 
-        $allInvites = $this->getTeamInviteService()->getForTeam($this->getTeamService()->getForUser($this->getUser()));
+        $allInvites = $teamInviteService->getForTeam($teamService->getForUser($this->getUser()));
         $invites = [];
 
         foreach ($allInvites as $invite) {
-            $userAccountPlan = $this->getUserAccountPlanService()->getForUser($invite->getUser());
+            $userAccountPlan = $userAccountPlanService->getForUser($invite->getUser());
 
             if (!$userAccountPlan->getPlan()->getIsPremium()) {
                 $invites[] = $invite;
@@ -126,18 +159,33 @@ class TeamInviteController extends ApiController {
         return $this->sendResponse($invites);
     }
 
+    /**
+     * @return Response
+     */
+    public function userListAction()
+    {
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
-    public function userListAction() {
-        if ($this->getUserAccountPlanService()->getForUser($this->getUser())->getPlan()->getIsPremium()) {
+        if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
             return $this->sendResponse([]);
         }
 
-        return $this->sendResponse($this->getTeamInviteService()->getForUser($this->getUser()));
+        return $this->sendResponse($teamInviteService->getForUser($this->getUser()));
     }
 
+    /**
+     * @param string $invitee_email
+     *
+     * @return Response
+     */
+    public function removeAction($invitee_email)
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
-    public function removeAction($invitee_email) {
-        if (!$this->getTeamService()->hasTeam($this->getUser())) {
+        if (!$teamService->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamInviteRemove-Error-Code' => 1,
                 'X-TeamInviteRemove-Error-Message' => 'User is not a team leader',
@@ -145,165 +193,112 @@ class TeamInviteController extends ApiController {
         }
 
 
-        if (!$this->getUserService()->exists($invitee_email)) {
+        if (!$userService->exists($invitee_email)) {
             return $this->sendFailureResponse([
                 'X-TeamInviteRemove-Error-Code' => 2,
                 'X-TeamInviteRemove-Error-Message' => 'Invitee is not a user',
             ]);
         }
 
-        $team = $this->getTeamService()->getForUser($this->getUser());
+        $team = $teamService->getForUser($this->getUser());
 
-        $invitee = $this->getUserService()->findUserBy([
+        $invitee = $userService->findUserBy([
             'email' => $invitee_email
         ]);
 
-        if (!$this->getTeamInviteService()->hasForTeamAndUser($team, $invitee)) {
+        if (!$teamInviteService->hasForTeamAndUser($team, $invitee)) {
             return $this->sendFailureResponse([
                 'X-TeamInviteRemove-Error-Code' => 3,
                 'X-TeamInviteRemove-Error-Message' => 'Invitee does not have an invite for this team',
             ]);
         }
 
-        $this->getTeamInviteService()->remove($this->getTeamInviteService()->getForTeamAndUser($team, $invitee));
+        $teamInviteService->remove($teamInviteService->getForTeamAndUser($team, $invitee));
 
         return $this->sendResponse();
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function declineAction(Request $request)
+    {
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
 
-    public function declineAction(Request $request) {
-        $this->request = $request;
+        $requestData = $request->request;
+        $requestTeam = $requestData->get('team');
 
-        $team = $this->getTeamService()->getEntityRepository()->findOneBy([
-            'name' => trim($this->request->request->get('team'))
+        $team = $teamRepository->findOneBy([
+            'name' => $requestTeam,
         ]);
 
-        if ($team instanceof Team && $this->getTeamInviteService()->hasForTeamAndUser($team, $this->getUser())) {
-            $invite = $this->getTeamInviteService()->getForTeamAndUser($team, $this->getUser());
-            $this->getTeamInviteService()->remove($invite);
+        if ($team instanceof Team && $teamInviteService->hasForTeamAndUser($team, $this->getUser())) {
+            $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
+            $teamInviteService->remove($invite);
         }
 
         return $this->sendResponse();
     }
 
+    /**
+     * @param $token
+     *
+     * @return Response
+     */
+    public function getByTokenAction($token)
+    {
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
-    public function getByTokenAction($token) {
-        if (!$this->getTeamInviteService()->hasForToken(trim($token))) {
+        if (!$teamInviteService->hasForToken(trim($token))) {
             return $this->sendNotFoundResponse();
         }
 
-        return $this->sendResponse($this->getTeamInviteService()->getForToken($token));
+        return $this->sendResponse($teamInviteService->getForToken($token));
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function activateAndAcceptAction(Request $request)
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $userManipulator = $this->container->get('fos_user.util.user_manipulator');
 
-    public function activateAndAcceptAction(Request $request) {
-        $this->request = $request;
+        $requestData = $request->request;
+        $token = trim($requestData->get('token'));
 
-        $token = trim($this->request->request->get('token'));
-
-        if (!$this->getTeamInviteService()->hasForToken($token)) {
+        if (!$teamInviteService->hasForToken($token)) {
             return $this->sendFailureResponse([
                 'X-TeamInviteActivateAndAccept-Error-Code' => 1,
                 'X-TeamInviteActivateAndAccept-Error-Message' => 'No invite for token',
             ]);
         }
 
-        $invite = $this->getTeamInviteService()->getForToken($token);
+        $invite = $teamInviteService->getForToken($token);
 
-        $this->getUserManipulator()->activate($invite->getUser()->getUsername());
+        $userManipulator->activate($invite->getUser()->getUsername());
 
-        $invite->getUser()->setPlainPassword(rawurldecode(trim($this->request->request->get('password'))));
-        $this->getUserService()->updateUser($invite->getUser());
+        $password = rawurldecode(trim($requestData->get('password')));
 
-        $this->getTeamService()->getMemberService()->add($invite->getTeam(), $invite->getUser());
+        $invite->getUser()->setPlainPassword($password);
+        $userService->updateUser($invite->getUser());
 
-        $invites = $this->getTeamInviteService()->getForUser($invite->getUser());
+        $teamMemberService->add($invite->getTeam(), $invite->getUser());
+
+        $invites = $teamInviteService->getForUser($invite->getUser());
 
         foreach ($invites as $invite) {
-            $this->getTeamInviteService()->remove($invite);
+            $teamInviteService->remove($invite);
         }
 
         return $this->sendResponse();
-    }
-
-
-    /**
-     * @return string
-     */
-    private function getRequestTeam() {
-        return trim($this->request->request->get('team'));
-    }
-
-
-    /**
-     * @return \SimplyTestable\ApiBundle\Services\Team\Service
-     */
-    private function getTeamService() {
-        return $this->container->get('simplytestable.services.teamservice');
-    }
-
-
-    /**
-     * @return \SimplyTestable\ApiBundle\Services\Team\InviteService
-     */
-    private function getTeamInviteService() {
-        return $this->container->get('simplytestable.services.teaminviteservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
-     */
-    private function getUserAccountPlanService() {
-        return $this->get('simplytestable.services.useraccountplanservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\AccountPlanService
-     */
-    private function getAccountPlanService() {
-        return $this->get('simplytestable.services.accountplanservice');
-    }
-
-
-    /**
-     *
-     * @return Plan
-     */
-    private function getNewUserPlan() {
-        $planName = $this->getArguments('createAction')->get('plan');
-        if (is_null($planName) || !$this->getAccountPlanService()->has($planName)) {
-            $planName = self::DEFAULT_ACCOUNT_PLAN_NAME;
-        }
-
-        return $this->getAccountPlanService()->find($planName);
-    }
-
-
-    /**
-     *
-     * @return \FOS\UserBundle\Util\UserManipulator
-     */
-    protected function getUserManipulator() {
-        return $this->get('fos_user.util.user_manipulator');
-    }
-
-
-    /**
-     * @return ScheduledJobService
-     */
-    private function getScheduledJobService() {
-        return $this->get('simplytestable.services.scheduledjob.service');
-    }
-
-
-    /**
-     * @return JobConfigurationService
-     */
-    private function getJobConfigurationService() {
-        return $this->get('simplytestable.services.job.configurationservice');
     }
 }
