@@ -61,8 +61,6 @@ class StartController extends ApiController
             if ($jobStartServiceException->isUnroutableWebsiteException()) {
                 return $this->rejectAsUnroutableAndRedirect($jobConfiguration);
             }
-
-            throw $jobStartServiceException;
         } catch (UserAccountPlanEnforcementException $userAccountPlanEnforcementException) {
             return $this->rejectAsPlanLimitReachedAndRedirect(
                 $jobConfiguration,
