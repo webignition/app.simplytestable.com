@@ -5,11 +5,8 @@ namespace SimplyTestable\ApiBundle\Controller;
 use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
-use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use Symfony\Component\HttpFoundation\Request;
-use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurationService;
 use Symfony\Component\HttpFoundation\Response;
 
 class TeamInviteController extends ApiController
@@ -22,22 +19,31 @@ class TeamInviteController extends ApiController
     private $request;
 
     /**
-     * @param $invitee_email
+     * @param Request $request
+     * @param string $invitee_email
      *
      * @return Response
      */
-    public function getAction($invitee_email)
+    public function getAction(Request $request, $invitee_email)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
 
         if (!$userService->exists($invitee_email)) {
             $user = $userService->create($invitee_email, md5(rand()));
 
-            if ($user instanceof User) {
-                $userAccountPlanService->subscribe($user, $this->getNewUserPlan());
+            $requestData = $request->query;
+
+            $planName = rawurldecode(trim($requestData->get('plan')));
+            if (empty($planName) || !$accountPlanService->has($planName)) {
+                $planName = self::DEFAULT_ACCOUNT_PLAN_NAME;
             }
+
+            $plan = $accountPlanService->find($planName);
+
+            $userAccountPlanService->subscribe($user, $plan);
         }
 
         /* @var User $invitee */
@@ -302,27 +308,6 @@ class TeamInviteController extends ApiController
     private function getRequestTeam()
     {
         return trim($this->request->request->get('team'));
-    }
-
-    /**
-     * @return AccountPlanService
-     */
-    private function getAccountPlanService()
-    {
-        return $this->get('simplytestable.services.accountplanservice');
-    }
-
-    /**
-     * @return Plan
-     */
-    private function getNewUserPlan()
-    {
-        $planName = $this->getArguments('createAction')->get('plan');
-        if (is_null($planName) || !$this->getAccountPlanService()->has($planName)) {
-            $planName = self::DEFAULT_ACCOUNT_PLAN_NAME;
-        }
-
-        return $this->getAccountPlanService()->find($planName);
     }
 
     /**
