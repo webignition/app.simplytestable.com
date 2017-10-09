@@ -13,11 +13,6 @@ class TeamInviteController extends ApiController
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
 
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @param Request $request
      * @param string $invitee_email
      *
@@ -88,8 +83,6 @@ class TeamInviteController extends ApiController
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
-
-        $this->request = $request;
 
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
@@ -236,10 +229,11 @@ class TeamInviteController extends ApiController
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
 
-        $this->request = $request;
+        $requestData = $request->request;
+        $requestTeam = $requestData->get('team');
 
         $team = $teamRepository->findOneBy([
-            'name' => trim($this->request->request->get('team'))
+            'name' => $requestTeam,
         ]);
 
         if ($team instanceof Team && $teamInviteService->hasForTeamAndUser($team, $this->getUser())) {
@@ -278,9 +272,8 @@ class TeamInviteController extends ApiController
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
 
-        $this->request = $request;
-
-        $token = trim($this->request->request->get('token'));
+        $requestData = $request->request;
+        $token = trim($requestData->get('token'));
 
         if (!$teamInviteService->hasForToken($token)) {
             return $this->sendFailureResponse([
@@ -293,7 +286,9 @@ class TeamInviteController extends ApiController
 
         $userManipulator->activate($invite->getUser()->getUsername());
 
-        $invite->getUser()->setPlainPassword(rawurldecode(trim($this->request->request->get('password'))));
+        $password = rawurldecode(trim($requestData->get('password')));
+
+        $invite->getUser()->setPlainPassword($password);
         $userService->updateUser($invite->getUser());
 
         $teamMemberService->add($invite->getTeam(), $invite->getUser());
