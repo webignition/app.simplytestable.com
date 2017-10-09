@@ -27,6 +27,7 @@ class StartController extends ApiController
     public function startAction(Request $request, $site_root_url)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $jobStartService = $this->container->get('simplytestable.services.job.startservice');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -51,7 +52,7 @@ class StartController extends ApiController
         $jobConfiguration->setUser($this->getUser());
 
         try {
-            $job = $this->getJobStartService()->start($jobConfiguration);
+            $job = $jobStartService->start($jobConfiguration);
 
             return $this->redirect($this->generateUrl('job_job_status', array(
                 'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
@@ -191,13 +192,5 @@ class StartController extends ApiController
     private function getJobService()
     {
         return $this->get('simplytestable.services.jobservice');
-    }
-
-    /**
-     * @return StartService
-     */
-    private function getJobStartService()
-    {
-        return $this->get('simplytestable.services.job.startservice');
     }
 }
