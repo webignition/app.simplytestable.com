@@ -419,3 +419,12 @@ services:
 
   simplytestable.services.sitemapfactory:
     class:  webignition\WebResource\Sitemap\Factory
+
+  simplytestable.services.request.factory.job.start:
+    class:   SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory
+    scope: request
+    arguments:
+        request: '@request'
+        tokenStorage: '@security.token_storage'
+        entityManager: '@doctrine.orm.entity_manager'
+        websiteService: '@simplytestable.services.websiteservice'
