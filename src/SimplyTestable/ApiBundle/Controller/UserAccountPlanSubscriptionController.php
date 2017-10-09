@@ -6,13 +6,6 @@ use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as Use
 
 class UserAccountPlanSubscriptionController extends AbstractUserController
 {
-
-    public function __construct() {
-        $this->setRequestTypes(array(
-            'subscribeAction' => \Guzzle\Http\Message\Request::POST
-        ));
-    }
-
     public function subscribeAction($email_canonical, $plan_name)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');

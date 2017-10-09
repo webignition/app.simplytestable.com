@@ -71,17 +71,6 @@ abstract class ApiController extends Controller
     }
 
     /**
-     *
-     * @param int $requestType
-     * @return \SimplyTestable\ApiBundle\Controller\ApiController
-     */
-    protected function setRequestTypes($requestTypes) {
-        $this->requestTypes = $requestTypes;
-        return $this;
-    }
-
-
-    /**
      * @param string $methodName
      * @return ParameterBag
      */
