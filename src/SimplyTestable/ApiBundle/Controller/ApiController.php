@@ -105,17 +105,6 @@ abstract class ApiController extends Controller
         return $this->requestTypes[$methodName];
     }
 
-
-    /**
-     *
-     * @param string $methodName
-     * @return Response
-     */
-    public function sendMissingRequiredArgumentResponse($methodName) {
-        return $this->sendResponse($this->getInputDefinition($methodName));
-    }
-
-
     /**
      *
      * @return Response
