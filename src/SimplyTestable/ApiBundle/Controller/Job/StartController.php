@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstr
 use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Controller\ApiController;
-use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
