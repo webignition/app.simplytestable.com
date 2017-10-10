@@ -102,12 +102,12 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
         $request = new Request();
         $this->container->get('request_stack')->push($request);
 
-        $response = $this->jobStartController->startAction($request, 'foo');
+        $response = $this->jobStartController->startAction();
         $this->assertEquals(503, $response->getStatusCode());
 
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
 
-        $response = $this->jobStartController->startAction($request, 'foo');
+        $response = $this->jobStartController->startAction();
         $this->assertEquals(503, $response->getStatusCode());
 
         $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
@@ -128,7 +128,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
 
         $this->setUser($userService->getPublicUser());
 
-        $response = $this->jobStartController->startAction($request, $siteRootUrl);
+        $response = $this->jobStartController->startAction();
 
         /* @var Job $job */
         $job = $jobRepository->findAll()[0];
@@ -173,7 +173,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
         ]);
         $jobFactory->cancel($job);
 
-        $response = $this->jobStartController->startAction($request, $siteRootUrl);
+        $response = $this->jobStartController->startAction();
 
         /* @var Job $job */
         $job = $jobRepository->findAll()[1];
@@ -203,7 +203,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
 
         $this->setUser($userService->getPublicUser());
 
-        $response = $this->jobStartController->startAction($request, $siteRootUrl);
+        $response = $this->jobStartController->startAction();
 
         /* @var Job $job */
         $job = $jobRepository->findAll()[0];

@@ -16,13 +16,10 @@ use Symfony\Component\HttpFoundation\Response;
 class StartController extends ApiController
 {
     /**
-     * @param Request $request
-     * @param string $site_root_url
-     *
      * @return RedirectResponse|Response
      * @throws JobStartServiceException
      */
-    public function startAction(Request $request, $site_root_url)
+    public function startAction()
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $jobStartService = $this->container->get('simplytestable.services.job.startservice');
@@ -92,7 +89,7 @@ class StartController extends ApiController
         $request->request->set('test-type-options', $taskTypeOptionsArray);
         $request->attributes->set('site_root_url', $site_root_url);
 
-        return $this->startAction($request, $job->getWebsite()->getCanonicalUrl());
+        return $this->startAction();
     }
 
     /**
