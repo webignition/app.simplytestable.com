@@ -4,32 +4,9 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 abstract class ApiController extends Controller
 {
-
-    /**
-     *
-     * @var ParameterBag
-     */
-    private $arguments;
-
-    /**
-     *
-     * @var array
-     */
-    private $inputDefinitions = array();
-
-
-    /**
-     *
-     * @var array
-     */
-    private $requestTypes = array();
-
-
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\UserService
@@ -52,53 +29,6 @@ abstract class ApiController extends Controller
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
-    }
-
-    /**
-     * @param string $methodName
-     * @return ParameterBag
-     */
-    public function getArguments($methodName) {
-        if (is_null($this->arguments)) {
-            if ($this->getRequestType($methodName) === \Guzzle\Http\Message\Request::POST) {
-                $this->arguments = $this->get('request')->request;
-            } else {
-                $this->arguments = $this->get('request')->query;
-            }
-        }
-
-        return $this->arguments;
-    }
-
-
-    /**
-     * @param string $methodName
-     * @return InputDefinition
-     */
-    public function getInputDefinition($methodName) {
-        if (!isset($this->inputDefinitions[$methodName])) {
-            return new InputDefinition();
-        }
-
-        return $this->inputDefinitions[$methodName];
-    }
-
-
-    /**
-     *
-     * @param string $methodName
-     * @return int
-     */
-    private function getRequestType($methodName) {
-        if (!is_array($this->requestTypes)) {
-            return \Guzzle\Http\Message\Request::GET;
-        }
-
-        if (!isset($this->requestTypes[$methodName])) {
-            return \Guzzle\Http\Message\Request::GET;
-        }
-
-        return $this->requestTypes[$methodName];
     }
 
     /**

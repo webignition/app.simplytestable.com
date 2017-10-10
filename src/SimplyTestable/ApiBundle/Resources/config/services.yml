@@ -62,13 +62,6 @@ services:
         class: %fos_user.model.user.class%
         tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator
 
-  simplytestable.controller.action_listener:
-    class: SimplyTestable\ApiBundle\EventListener\BeforeListener
-    arguments:
-        logger: "@logger"
-    tags:
-      - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
-
   simplytestable.services.workeractivationrequestservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
     arguments:
