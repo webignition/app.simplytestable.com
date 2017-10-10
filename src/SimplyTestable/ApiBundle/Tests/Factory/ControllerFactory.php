@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
-use SimplyTestable\ApiBundle\Controller\Job\JobController;
 use SimplyTestable\ApiBundle\Controller\Job\StartController as JobStartController;
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -65,18 +64,5 @@ class ControllerFactory
         $jobStartController = $this->createController(JobStartController::class, $request);
 
         return $jobStartController;
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return JobController
-     */
-    public function createJobController(Request $request)
-    {
-        /* @var JobController $jobController */
-        $jobController = $this->createController(JobController::class, $request);
-
-        return $jobController;
     }
 }
