@@ -39,6 +39,7 @@ class StartController extends ApiController
         }
 
         $jobStartRequest = $jobStartRequestFactory->create();
+        $jobConfiguration = $jobConfigurationFactory->createFromJobStartRequest($jobStartRequest);
 
         $requestAdapter = new RequestAdapter(
             $request,
