@@ -3,7 +3,6 @@
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
-use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -17,16 +16,15 @@ use Symfony\Component\HttpFoundation\Response;
 class StartController extends ApiController
 {
     /**
-     * @param Request $request
-     * @param string $site_root_url
-     *
      * @return RedirectResponse|Response
      * @throws JobStartServiceException
      */
-    public function startAction(Request $request, $site_root_url)
+    public function startAction()
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $jobStartService = $this->container->get('simplytestable.services.job.startservice');
+        $jobStartRequestFactory = $this->container->get('simplytestable.services.request.factory.job.start');
+        $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -36,15 +34,8 @@ class StartController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
-        $requestAdapter = new RequestAdapter(
-            $request,
-            $this->get('simplytestable.services.websiteservice'),
-            $this->get('simplytestable.services.jobtypeservice'),
-            $this->get('simplytestable.services.tasktypeservice')
-        );
-
-        $jobConfiguration = $requestAdapter->getJobConfiguration();
-        $jobConfiguration->setUser($this->getUser());
+        $jobStartRequest = $jobStartRequestFactory->create();
+        $jobConfiguration = $jobConfigurationFactory->createFromJobStartRequest($jobStartRequest);
 
         try {
             $job = $jobStartService->start($jobConfiguration);
@@ -98,7 +89,7 @@ class StartController extends ApiController
         $request->request->set('test-type-options', $taskTypeOptionsArray);
         $request->attributes->set('site_root_url', $site_root_url);
 
-        return $this->startAction($request, $job->getWebsite()->getCanonicalUrl());
+        return $this->startAction();
     }
 
     /**
