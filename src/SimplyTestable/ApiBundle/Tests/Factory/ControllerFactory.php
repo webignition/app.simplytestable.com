@@ -39,17 +39,4 @@ class ControllerFactory
 
         return $controller;
     }
-
-    /**
-     * @param Request $request
-     *
-     * @return TaskController
-     */
-    public function createTaskController(Request $request)
-    {
-        /* @var TaskController $taskController */
-        $taskController = $this->createController(TaskController::class, $request);
-
-        return $taskController;
-    }
 }
