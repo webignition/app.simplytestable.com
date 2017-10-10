@@ -94,16 +94,4 @@ abstract class ApiController extends Controller
     protected function getSerializer() {
         return $this->container->get('serializer');
     }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\User
-     */
-    public function getUser() {
-        if (!is_null($this->getUserService()->getUser())) {
-            return $this->getUserService()->getUser();
-        }
-
-        return parent::getUser();
-    }
 }
