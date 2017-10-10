@@ -382,7 +382,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory
     scope: request
     arguments:
-        request: "@request"
+        requestStack: "@request_stack"
         stateService: "@simplytestable.services.stateservice"
         taskTypeService: "@simplytestable.services.tasktypeservice"
         taskService: "@simplytestable.services.taskservice"

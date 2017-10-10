@@ -15,6 +15,7 @@ use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\StateFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use webignition\InternetMediaType\InternetMediaType;
 
 class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
@@ -50,7 +51,15 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $expectedWarningCount,
         $expectedTasks
     ) {
-        $completeRequestFactory = new CompleteRequestFactory($request, $stateService, $taskTypeService, $taskService);
+        $requestStack = new RequestStack();
+        $requestStack->push($request);
+
+        $completeRequestFactory = new CompleteRequestFactory(
+            $requestStack,
+            $stateService,
+            $taskTypeService,
+            $taskService
+        );
         $completeRequest = $completeRequestFactory->create();
 
         $this->assertEquals($expectedIsValid, $completeRequest->isValid());
