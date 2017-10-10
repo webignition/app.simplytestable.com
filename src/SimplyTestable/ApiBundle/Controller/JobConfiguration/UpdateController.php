@@ -116,11 +116,13 @@ class UpdateController extends JobConfigurationController {
      * @return JobType
      */
     private function getRequestJobType() {
-        if (!$this->getJobTypeService()->has($this->getRequestValue('type'))) {
+        $requestJobType = $this->request->request->get('type');
+
+        if (!$this->getJobTypeService()->has($requestJobType)) {
             return $this->getJobTypeService()->getDefaultType();
         }
 
-        return $this->getJobTypeService()->getByName($this->getRequestValue('type'));
+        return $this->getJobTypeService()->getByName($requestJobType);
     }
 
 
