@@ -194,8 +194,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
 
         $taskController = new TaskController();
         $taskController->setContainer($this->container);
-        $this->container->set('request', $taskCompleteRequest);
-        $this->container->enterScope('request');
+        $this->container->get('request_stack')->push($taskCompleteRequest);
 
         $taskController->completeAction();
 
@@ -456,8 +455,8 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
                 CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
             ]);
 
-            $this->container->set('request', $taskCompleteRequest);
-            $this->container->enterScope('request');
+            $this->container->get('request_stack')->push($taskCompleteRequest);
+            $this->container->get('simplytestable.services.request.factory.task.complete')->init($taskCompleteRequest);
 
             $taskController->completeAction();
         }

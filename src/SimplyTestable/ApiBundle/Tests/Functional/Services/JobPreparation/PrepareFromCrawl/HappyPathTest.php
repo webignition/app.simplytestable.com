@@ -63,8 +63,9 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
         $taskController = new TaskController();
         $taskController->setContainer($this->container);
-        $this->container->set('request', $taskCompleteRequest);
-        $this->container->enterScope('request');
+
+        $this->container->get('request_stack')->push($taskCompleteRequest);
+        $this->container->get('simplytestable.services.request.factory.task.complete')->init($taskCompleteRequest);
 
         $taskController->completeAction();
 

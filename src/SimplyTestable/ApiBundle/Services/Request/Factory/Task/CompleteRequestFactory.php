@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use webignition\InternetMediaType\InternetMediaType;
 use webignition\InternetMediaType\Parser\Parser as InternetMediaTypeParser;
 
@@ -62,22 +63,32 @@ class CompleteRequestFactory
     private $taskService;
 
     /**
-     * @param Request $request
+     * @param RequestStack $requestStack
      * @param StateService $stateService
      * @param TaskTypeService $taskTypeService
      * @param TaskService $taskService
      */
     public function __construct(
-        Request $request,
+        RequestStack $requestStack,
         StateService $stateService,
         TaskTypeService $taskTypeService,
         TaskService $taskService
     ) {
-        $this->requestParameters = $request->request;
-        $this->routeParams = $request->attributes->get(self::ATTRIBUTE_ROUTE_PARAMS);
+        $request = $requestStack->getCurrentRequest();
+        $this->init($request);
+
         $this->stateService = $stateService;
         $this->taskTypeService = $taskTypeService;
         $this->taskService = $taskService;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function init(Request $request)
+    {
+        $this->requestParameters = $request->request;
+        $this->routeParams = $request->attributes->get(self::ATTRIBUTE_ROUTE_PARAMS);
     }
 
     /**
