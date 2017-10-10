@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Task\CompleteAction;
 
 use Guzzle\Http\Message\Response;
+use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -13,7 +14,6 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
-use Symfony\Component\HttpFoundation\Request;
 
 class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTestCase
 {
@@ -94,6 +94,9 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => '8ffe6fe0d3ad5707d2d89f845727e75a',
         ];
 
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+
         foreach ($completeActionCalls as $completeActionCall) {
             $postData = $completeActionCall['postData'];
             $routeParams = $completeActionCall['routeParams'];
@@ -101,12 +104,13 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
             $expectedParentJobState = $completeActionCall['expectedParentJobState'];
             $expectedTaskStates = $completeActionCall['expectedTaskStates'];
 
-            $taskController = $this->createControllerFactory()->createTaskController(
-                TaskControllerCompleteActionRequestFactory::create(
-                    $postData,
-                    array_merge($defaultRouteParams, $routeParams)
-                )
+            $request = TaskControllerCompleteActionRequestFactory::create(
+                $postData,
+                array_merge($defaultRouteParams, $routeParams)
             );
+
+            $this->container->set('request', $request);
+            $this->container->enterScope('request');
 
             $taskController->completeAction();
 

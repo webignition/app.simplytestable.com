@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Task\CompleteAction;
 
+use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -47,9 +48,12 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             BadRequestHttpException::class
         );
 
-        $taskController = $this->createControllerFactory()->createTaskController(
-            TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
-        );
+        $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
+        $this->container->set('request', $request);
+        $this->container->enterScope('request');
+
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
 
         $taskController->completeAction();
     }
@@ -99,9 +103,12 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             $this->container->get('simplytestable.services.taskservice')->getInProgressState()
         );
 
-        $taskController = $this->createControllerFactory()->createTaskController(
-            TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
-        );
+        $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
+        $this->container->set('request', $request);
+        $this->container->enterScope('request');
+
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
 
         $taskController->completeAction();
     }
@@ -189,9 +196,13 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
             $jobs[] = $job;
         }
 
-        $taskController = $this->createControllerFactory()->createTaskController(
-            TaskControllerCompleteActionRequestFactory::create($postData, $routeParams)
-        );
+        $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
+        $this->container->set('request', $request);
+        $this->container->enterScope('request');
+
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+
         $response = $taskController->completeAction();
 
         $this->assertTrue($response->isSuccessful());

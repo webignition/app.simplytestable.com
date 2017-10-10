@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job;
 
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
+use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
@@ -191,7 +192,11 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
         ]);
 
-        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+        $this->container->set('request', $taskCompleteRequest);
+        $this->container->enterScope('request');
+
         $taskController->completeAction();
 
         $responseJobData = json_decode(
@@ -433,6 +438,10 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
         $job = $this->jobFactory->createResolveAndPrepare();
+
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+
         foreach ($job->getTasks() as $task) {
             $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
                 'end_date_time' => '2012-03-08 17:03:00',
@@ -447,7 +456,9 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
                 CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
             ]);
 
-            $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+            $this->container->set('request', $taskCompleteRequest);
+            $this->container->enterScope('request');
+
             $taskController->completeAction();
         }
 

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\PrepareFromCrawl\NoDiscoveredUrls;
 
+use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
@@ -57,7 +58,11 @@ class ServiceTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
         ]);
 
-        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+        $this->container->set('request', $taskCompleteRequest);
+        $this->container->enterScope('request');
+
         $taskController->completeAction();
     }
 

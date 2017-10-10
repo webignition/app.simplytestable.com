@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job;
 
+use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
@@ -64,7 +65,11 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[0]->getParametersHash(),
         ]);
 
-        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+        $this->container->set('request', $taskCompleteRequest);
+        $this->container->enterScope('request');
+
         $taskController->completeAction();
 
         $tasksActionResponse = $this->jobController->tasksAction(
@@ -90,6 +95,9 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
         $job = $this->jobFactory->createResolveAndPrepare();
 
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+
         foreach ($job->getTasks() as $task) {
             $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
                 'end_date_time' => '2012-03-08 17:03:00',
@@ -104,7 +112,9 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
                 CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $task->getParametersHash(),
             ]);
 
-            $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+            $this->container->set('request', $taskCompleteRequest);
+            $this->container->enterScope('request');
+
             $taskController->completeAction();
         }
 
