@@ -52,17 +52,4 @@ class ControllerFactory
 
         return $taskController;
     }
-
-    /**
-     * @param Request $request
-     *
-     * @return JobStartController
-     */
-    public function createJobStartController(Request $request)
-    {
-        /* @var JobStartController $jobStartController */
-        $jobStartController = $this->createController(JobStartController::class, $request);
-
-        return $jobStartController;
-    }
 }
