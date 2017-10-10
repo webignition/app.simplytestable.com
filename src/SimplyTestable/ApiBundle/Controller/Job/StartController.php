@@ -3,7 +3,6 @@
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
-use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -40,16 +39,6 @@ class StartController extends ApiController
 
         $jobStartRequest = $jobStartRequestFactory->create();
         $jobConfiguration = $jobConfigurationFactory->createFromJobStartRequest($jobStartRequest);
-
-        $requestAdapter = new RequestAdapter(
-            $request,
-            $this->get('simplytestable.services.websiteservice'),
-            $this->get('simplytestable.services.jobtypeservice'),
-            $this->get('simplytestable.services.tasktypeservice')
-        );
-
-        $jobConfiguration = $requestAdapter->getJobConfiguration();
-        $jobConfiguration->setUser($this->getUser());
 
         try {
             $job = $jobStartService->start($jobConfiguration);
