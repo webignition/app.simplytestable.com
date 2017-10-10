@@ -4,11 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputDefinition;
-use SimplyTestable\ApiBundle\Services\RequestService;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 abstract class ApiController extends Controller
@@ -179,45 +175,5 @@ abstract class ApiController extends Controller
         }
 
         return parent::getUser();
-    }
-
-
-    protected function getRequestValue($key, $httpMethod = null) {
-        $availableHttpMethods = array(
-            \Guzzle\Http\Message\Request::GET,
-            \Guzzle\Http\Message\Request::POST
-        );
-
-        $defaultHttpMethod = \Guzzle\Http\Message\Request::GET;
-        $requestedHttpMethods = array();
-
-        if (is_null($httpMethod)) {
-            $requestedHttpMethods = $availableHttpMethods;
-        } else {
-            if (in_array($httpMethod, $availableHttpMethods)) {
-                $requestedHttpMethods[] = $httpMethod;
-            } else {
-                $requestedHttpMethods[] = $defaultHttpMethod;
-            }
-        }
-
-        foreach ($requestedHttpMethods as $requestedHttpMethod) {
-            $requestValues = $this->getRequestValues($requestedHttpMethod);
-            if ($requestValues->has($key)) {
-                return $requestValues->get($key);
-            }
-        }
-
-        return null;
-    }
-
-
-    /**
-     *
-     * @param int $httpMethod
-     * @return type
-     */
-    protected function getRequestValues($httpMethod = \Guzzle\Http\Message\Request::GET) {
-        return ($httpMethod == \Guzzle\Http\Message\Request::POST) ? $this->container->get('request')->request : $this->container->get('request')->query;
     }
 }
