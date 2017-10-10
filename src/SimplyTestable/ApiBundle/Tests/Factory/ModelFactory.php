@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
+use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
@@ -12,6 +14,9 @@ class ModelFactory
     const USER_EMAIL = 'email';
     const WEBSITE_CANONICAL_URL = 'canonical-url';
     const JOB_TYPE_NAME = 'name';
+    const TASK_CONFIGURATION_COLLECTION_TYPE = 'type';
+    const TASK_CONFIGURATION_COLLECTION_OPTIONS = 'options';
+    const TASK_TYPE_NAME = 'name';
 
     /**
      * @param array $userValues
@@ -57,12 +62,43 @@ class ModelFactory
     }
 
     /**
+     * @param array $taskConfigurationCollectionValues
+     *
      * @return TaskConfigurationCollection
      */
-    public static function createTaskConfigurationCollection()
+    public static function createTaskConfigurationCollection($taskConfigurationCollectionValues = [])
     {
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
+        foreach ($taskConfigurationCollectionValues as $taskTypeName => $taskConfigurationValues) {
+            $taskType = self::createTaskType([
+                self::TASK_TYPE_NAME => $taskTypeName,
+            ]);
+
+            $taskConfiguration = new TaskConfiguration();
+            $taskConfiguration->setType($taskType);
+
+            if (isset($taskConfigurationValues[self::TASK_CONFIGURATION_COLLECTION_OPTIONS])) {
+                $taskConfiguration->setOptions($taskConfigurationValues[self::TASK_CONFIGURATION_COLLECTION_OPTIONS]);
+            }
+
+            $taskConfigurationCollection->add($taskConfiguration);
+        }
+
         return $taskConfigurationCollection;
+    }
+
+    /**
+     * @param array $taskTypeValues
+     *
+     * @return TaskType
+     */
+    public static function createTaskType($taskTypeValues)
+    {
+        $taskType = new TaskType();
+
+        $taskType->setName($taskTypeValues[self::TASK_TYPE_NAME]);
+
+        return $taskType;
     }
 }

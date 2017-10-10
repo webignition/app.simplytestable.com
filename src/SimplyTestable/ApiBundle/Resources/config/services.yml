@@ -427,3 +427,6 @@ services:
         tokenStorage: '@security.token_storage'
         entityManager: '@doctrine.orm.entity_manager'
         websiteService: '@simplytestable.services.websiteservice'
+
+  simplytestable.services.jobconfiguration.factory:
+    class:   SimplyTestable\ApiBundle\Services\JobConfigurationFactory
