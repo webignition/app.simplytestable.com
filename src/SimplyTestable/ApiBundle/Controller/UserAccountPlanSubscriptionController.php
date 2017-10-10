@@ -9,7 +9,6 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
     public function subscribeAction($email_canonical, $plan_name)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -18,6 +17,8 @@ class UserAccountPlanSubscriptionController extends AbstractUserController
         if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
+
+        $userService = $this->container->get('simplytestable.services.userservice');
 
         if ($userService->isPublicUser($this->getUser())) {
             return $this->sendFailureResponse();
