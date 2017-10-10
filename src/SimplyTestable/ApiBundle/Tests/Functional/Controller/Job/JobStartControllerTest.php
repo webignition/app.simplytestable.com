@@ -99,12 +99,15 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $response = $this->jobStartController->startAction(new Request(), 'foo');
+        $request = new Request();
+        $this->container->get('request_stack')->push($request);
+
+        $response = $this->jobStartController->startAction($request, 'foo');
         $this->assertEquals(503, $response->getStatusCode());
 
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
 
-        $response = $this->jobStartController->startAction(new Request(), 'foo');
+        $response = $this->jobStartController->startAction($request, 'foo');
         $this->assertEquals(503, $response->getStatusCode());
 
         $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
@@ -121,7 +124,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
 
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
-        $this->container->set('request', $request);
+        $this->container->get('request_stack')->push($request);
 
         $this->setUser($userService->getPublicUser());
 
@@ -162,7 +165,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
 
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
-        $this->container->set('request', $request);
+        $this->container->get('request_stack')->push($request);
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->create([
@@ -196,7 +199,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
 
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
-        $this->container->set('request', $request);
+        $this->container->get('request_stack')->push($request);
 
         $this->setUser($userService->getPublicUser());
 
@@ -275,7 +278,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
         $job = $jobFactory->create($jobValues);
 
         $request = new Request();
-        $this->container->set('request', $request);
+        $this->container->get('request_stack')->push($request);
 
         $this->setUser($userService->getPublicUser());
 

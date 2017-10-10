@@ -27,6 +27,8 @@ class StartController extends ApiController
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $jobStartService = $this->container->get('simplytestable.services.job.startservice');
+        $jobStartRequestFactory = $this->container->get('simplytestable.services.request.factory.job.start');
+        $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
