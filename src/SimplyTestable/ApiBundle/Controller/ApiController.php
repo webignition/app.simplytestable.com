@@ -9,14 +9,6 @@ abstract class ApiController extends Controller
 {
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\UserService
-     */
-    protected function getUserService() {
-        return $this->get('simplytestable.services.userservice');
-    }
-
-    /**
-     *
      * @param mixed $object
      * @param int statusCode
      * @return \Symfony\Component\HttpFoundation\Response

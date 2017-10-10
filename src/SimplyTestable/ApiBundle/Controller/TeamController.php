@@ -31,11 +31,13 @@ class TeamController extends ApiController {
             'members' => $serializedMembers
         ]);
     }
-    
+
     public function createAction(Request $request) {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $this->request = $request;
 
-        if ($this->getUserService()->isSpecialUser($this->getUser())) {
+        if ($userService->isSpecialUser($this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamCreate-Error-Code' => 9,
                 'X-TeamCreate-Error-Message' => 'Special users cannot create teams',
@@ -67,14 +69,16 @@ class TeamController extends ApiController {
 
 
     public function removeAction($member_email) {
-        if (!$this->getUserService()->exists($member_email)) {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        if (!$userService->exists($member_email)) {
             return $this->sendFailureResponse([
                 'X-TeamRemove-Error-Code' => 9,
                 'X-TeamRemove-Error-Message' => 'Member is not a user',
             ]);
         }
 
-        $member = $this->getUserService()->findUserBy([
+        $member = $userService->findUserBy([
             'email' => $member_email
         ]);
 
