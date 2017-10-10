@@ -26,7 +26,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
     public function testForUserWithBasicPlan() {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertFalse(isset($responseObject->stripe_customer));
@@ -34,7 +34,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
     public function testForUserWithPremiumPlan() {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
@@ -44,7 +44,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
     public function testForUserWhereIsActiveIsZero() {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
@@ -56,7 +56,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
     public function testForUserWhereIsActiveIsZeroAndUserHasMany() {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('agency'));
@@ -72,7 +72,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
         $trialDaysRemaining = rand(1, self::DEFAULT_TRIAL_PERIOD);
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
@@ -95,7 +95,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $this->getUserAccountPlanService()->subscribe($leader, $this->getAccountPlanService()->find('personal'));
 
@@ -105,7 +105,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
         $this->getTeamMemberService()->add($team, $member);
 
-        $this->getUserService()->setUser($member);
+        $this->setUser($member);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertFalse(isset($responseObject->stripe_customer));

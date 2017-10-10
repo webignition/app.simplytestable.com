@@ -24,6 +24,7 @@ class ForUserTest extends ServiceTest {
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+        $userService = $this->container->get('simplytestable.services.userservice');
 
         $values = new ConfigurationValues();
         $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
@@ -31,7 +32,7 @@ class ForUserTest extends ServiceTest {
         $values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $values->setLabel(self::LABEL1);
 
-        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
+        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($values);
 
         $values->setLabel(self::LABEL2);

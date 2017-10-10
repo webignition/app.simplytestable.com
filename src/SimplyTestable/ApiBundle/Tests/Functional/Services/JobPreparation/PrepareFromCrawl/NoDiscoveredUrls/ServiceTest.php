@@ -25,7 +25,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $userFactory = new UserFactory($this->container);
 

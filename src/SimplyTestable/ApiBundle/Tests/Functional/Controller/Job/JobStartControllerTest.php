@@ -343,20 +343,4 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
             ],
         ];
     }
-
-    /**
-     * @param User $user
-     */
-    private function setUser(User $user)
-    {
-        $securityTokenStorage = $this->container->get('security.token_storage');
-
-        /* @var MockInterface|TokenInterface */
-        $token = \Mockery::mock(TokenInterface::class);
-        $token
-            ->shouldReceive('getUser')
-            ->andReturn($user);
-
-        $securityTokenStorage->setToken($token);
-    }
 }

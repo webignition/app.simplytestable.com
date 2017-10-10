@@ -47,7 +47,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         $ownerUser = $users[$owner];
         $requesterUser = $users[$requester];
 
-        $this->getUserService()->setUser($ownerUser);
+        $this->setUser($ownerUser);
 
         $jobStateNames = $jobService->getFinishedStateNames();
 
@@ -62,7 +62,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
             $this->jobController->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
         }
 
-        $this->getUserService()->setUser($requesterUser);
+        $this->setUser($requesterUser);
         $response = $this->jobController->latestAction($job->getWebsite()->getCanonicalUrl());
 
         $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
@@ -135,7 +135,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
             $leader
         );
 
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
         $response = $this->jobController->latestAction('http://example.com');
 
         $this->assertEquals(404, $response->getStatusCode());

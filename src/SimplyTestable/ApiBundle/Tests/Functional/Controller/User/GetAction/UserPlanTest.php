@@ -27,7 +27,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
     public function testHasUserPlan()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
 
@@ -38,7 +38,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
     public function testForUserWithBasicPlan()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
 
@@ -49,7 +49,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
     public function testForUserWithPremiumPlan()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
@@ -63,7 +63,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
     public function testRetrieveForUserWhereIsActiveIsZero()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->deactivateAllForUser($user);
 
@@ -75,7 +75,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
     public function testRetrieveForUserWhereIsActiveIsZeroAndUserHasMany()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('agency'));
@@ -91,7 +91,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
     public function testStartTrialPeriodForUserWithBasicPlan()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals(self::DEFAULT_TRIAL_PERIOD, $responseObject->user_plan->start_trial_period);
@@ -101,7 +101,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
     {
         $trialDaysRemaining = rand(1, self::DEFAULT_TRIAL_PERIOD);
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
             $user->getEmail(),
@@ -131,7 +131,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
         $trialDaysRemaining = rand(1, self::DEFAULT_TRIAL_PERIOD);
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
@@ -165,7 +165,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
         );
 
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getTeamMemberService()->add($team, $user);
 

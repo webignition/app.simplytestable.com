@@ -60,7 +60,7 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), $newEmail);
 

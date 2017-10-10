@@ -41,7 +41,7 @@ class RemoveTest extends ActionTest {
             UserFactory::KEY_EMAIL => 'invitee@example.com',
         ]);
 
-        $this->getUserService()->setUser($this->invitee);
+        $this->setUser($this->invitee);
 
         //$methodName = $this->getActionNameFromRouter();
 

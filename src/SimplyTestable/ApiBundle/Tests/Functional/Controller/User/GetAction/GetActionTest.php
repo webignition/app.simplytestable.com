@@ -25,7 +25,7 @@ class GetActionTest extends BaseControllerJsonTestCase
     public function testGetForUserWithBasicPlan()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
 
@@ -35,7 +35,7 @@ class GetActionTest extends BaseControllerJsonTestCase
     public function testGetForUserWithPremiumPlan()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 

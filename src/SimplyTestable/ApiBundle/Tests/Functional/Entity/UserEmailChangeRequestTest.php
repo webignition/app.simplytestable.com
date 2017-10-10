@@ -9,10 +9,12 @@ class UserEmailChangeRequestTest extends BaseSimplyTestableTestCase
 {
     public function testUtf8NewEmail()
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $newEmail = 'foo-ɸ@example.com';
         $userEmailChangeRequest = new UserEmailChangeRequest();
 
-        $userEmailChangeRequest->setUser($this->getUserService()->create('user@example.com', 'password'));
+        $userEmailChangeRequest->setUser($userService->create('user@example.com', 'password'));
         $userEmailChangeRequest->setNewEmail($newEmail);
         $userEmailChangeRequest->setToken('foo-token');
 

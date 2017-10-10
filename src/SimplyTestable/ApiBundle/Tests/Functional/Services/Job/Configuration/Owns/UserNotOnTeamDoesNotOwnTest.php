@@ -8,9 +8,11 @@ use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 class UserNotOnTeamDoesNotOwnTest extends ServiceTest {
 
     public function testReturnsFalseIfUserNotOnTeamDoesNotOwn() {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $userFactory = new UserFactory($this->container);
 
-        $user1 = $this->getUserService()->getPublicUser();
+        $user1 = $userService->getPublicUser();
         $user2 = $userFactory->createAndActivateUser();
 
         $jobConfiguration = new JobConfiguration();

@@ -46,7 +46,7 @@ abstract class HasInviteTest extends BaseControllerJsonTestCase {
 
         $this->user = $this->getUser();
 
-        $this->getUserService()->setUser($this->user);
+        $this->setUser($this->user);
 
         $actionMethod = $this->getActionNameFromRouter();
 

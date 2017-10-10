@@ -50,7 +50,7 @@ class RemoveTest extends ActionTest
             UserFactory::KEY_EMAIL => 'user2@example.com',
         ]);
 
-        $this->getUserService()->setUser($user1);
+        $this->setUser($user1);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -76,7 +76,7 @@ class RemoveTest extends ActionTest
 
         $this->getTeamMemberService()->add($team1, $user);
 
-        $this->getUserService()->setUser($leader2);
+        $this->setUser($leader2);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -99,7 +99,7 @@ class RemoveTest extends ActionTest
 
         $this->assertTrue($this->getTeamMemberService()->contains($team, $user));
 
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $methodName = $this->getActionNameFromRouter();
 

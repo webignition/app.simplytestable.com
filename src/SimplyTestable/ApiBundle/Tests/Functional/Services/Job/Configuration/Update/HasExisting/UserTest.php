@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\U
 class UserTest extends HasExistingTest {
 
     protected function getCurrentUser() {
-        return $this->getUserService()->getPublicUser();
+        $userService = $this->container->get('simplytestable.services.userservice');
+        return $userService->getPublicUser();
     }
 }

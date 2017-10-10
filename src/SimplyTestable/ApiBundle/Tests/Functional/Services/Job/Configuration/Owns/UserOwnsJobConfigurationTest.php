@@ -7,7 +7,8 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 class UserOwnsJobConfigurationTest extends ServiceTest {
 
     public function testReturnsTrueIfServiceUserEqualsJobConfigurationUser() {
-        $user = $this->getUserService()->getPublicUser();
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->getPublicUser();
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setUser($user);

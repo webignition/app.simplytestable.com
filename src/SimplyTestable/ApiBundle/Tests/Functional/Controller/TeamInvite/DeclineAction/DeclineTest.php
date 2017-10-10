@@ -25,7 +25,7 @@ class DeclineTest extends ActionTest
 
     public function testUserDeclinesForNonexistentTeamReturnsOk() {
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController()->$methodName(
@@ -48,7 +48,7 @@ class DeclineTest extends ActionTest
         );
 
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
@@ -78,7 +78,7 @@ class DeclineTest extends ActionTest
 
         $invite = $this->getTeamInviteService()->get($inviter, $invitee);
 
-        $this->getUserService()->setUser($invitee);
+        $this->setUser($invitee);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([

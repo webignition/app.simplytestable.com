@@ -17,7 +17,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
      */
     public function testCrawlJobAmmendmentsArePassedToParentJob()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $userFactory = new UserFactory($this->container);
 

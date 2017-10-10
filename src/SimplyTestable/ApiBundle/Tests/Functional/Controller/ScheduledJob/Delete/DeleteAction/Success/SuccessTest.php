@@ -27,7 +27,7 @@ class SuccessTest extends DeleteTest {
 
         $user = $userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
 

@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 
 class UserController extends AbstractUserController
-{       
+{
     public function getAction() {
         return $this->sendResponse($this->getUserSummary($this->getUser()));
     }
@@ -16,14 +16,14 @@ class UserController extends AbstractUserController
     public function authenticateAction() {
         return new Response('');
     }
-    
-    
-    private function getUserSummary(User $user) {        
+
+
+    private function getUserSummary(User $user) {
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
-        if (is_null($userAccountPlan)) {            
+        if (is_null($userAccountPlan)) {
             $userAccountPlan = $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('basic'));
         }
-        
+
         $userSummary = array(
             'email' => $user->getEmailCanonical(),
             'user_plan' => $userAccountPlan
@@ -42,11 +42,11 @@ class UserController extends AbstractUserController
                 'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()
             );
         }
-        
+
         if ($userAccountPlan->getPlan()->hasConstraintNamed('urls_per_job')) {
-            $planConstraints['urls_per_job'] = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();          
+            $planConstraints['urls_per_job'] = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
         }
-        
+
         $userSummary['plan_constraints'] = $planConstraints;
 
         $userSummary['team_summary'] = [
@@ -77,60 +77,63 @@ class UserController extends AbstractUserController
     private function includeStripeCustomerInUserSummary(User $user, UserAccountPlan $userAccountPlan) {
         return $userAccountPlan->hasStripeCustomer() &&  $user->getId() == $userAccountPlan->getUser()->getId();
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param string $email_canonical
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
-    public function getTokenAction($email_canonical)            
-    {        
-        $user = $this->getUserService()->findUserByEmail($email_canonical);
+    public function getTokenAction($email_canonical)
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->findUserByEmail($email_canonical);
         if (is_null($user)) {
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
         }
-        
-        $token = $this->getUserService()->getConfirmationToken($user);
-        
+
+        $token = $userService->getConfirmationToken($user);
+
         return $this->sendResponse($token);
-    }     
-    
+    }
+
 
     /**
-     * 
+     *
      * @param string $email_canonical
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function isEnabledAction($email_canonical) {
-        $user = $this->getUserService()->findUserByEmail($email_canonical);
-        
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->findUserByEmail($email_canonical);
+
         if (is_null($user)) {
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
         }
-        
+
         if ($user->isEnabled() === false) {
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
         }
-        
+
         return new \Symfony\Component\HttpFoundation\Response('', 200);
-    }    
-    
-    
+    }
+
+
     /**
-     * 
+     *
      * @param string $email_canonical
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function existsAction($email_canonical) {
-        if ($this->getUserService()->exists($email_canonical)) {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        if ($userService->exists($email_canonical)) {
             return new \Symfony\Component\HttpFoundation\Response('', 200);
         }
-        
+
         throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
     }
-    
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\StripeService
@@ -138,25 +141,25 @@ class UserController extends AbstractUserController
     private function getStripeService() {
         return $this->get('simplytestable.services.stripeservice');
     }
-    
+
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\AccountPlanService 
+     * @return \SimplyTestable\ApiBundle\Services\AccountPlanService
      */
     private function getAccountPlanService() {
         return $this->get('simplytestable.services.accountplanservice');
-    }    
-    
-    
+    }
+
+
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService 
+     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
      */
     private function getUserAccountPlanService() {
         return $this->get('simplytestable.services.useraccountplanservice');
     }
-    
-    
+
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
@@ -189,11 +192,13 @@ class UserController extends AbstractUserController
      * @throws \Symfony\Component\HttpKernel\Exception\HttpException
      */
     public function hasInvitesAction($email_canonical) {
-        if (!$this->getUserService()->exists($email_canonical)) {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        if (!$userService->exists($email_canonical)) {
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
         }
 
-        if ($this->getTeamInviteService()->hasAnyForUser($this->getUserService()->findUserByEmail($email_canonical))) {
+        if ($this->getTeamInviteService()->hasAnyForUser($userService->findUserByEmail($email_canonical))) {
             return new \Symfony\Component\HttpFoundation\Response('', 200);
         }
 

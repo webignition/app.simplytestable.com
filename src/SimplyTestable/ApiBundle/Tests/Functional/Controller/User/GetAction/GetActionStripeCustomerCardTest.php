@@ -25,7 +25,7 @@ class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase
     public function testForUserWithBasicPlanAndNeverHadCard()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertFalse(isset($responseObject->stripe_customer));
@@ -36,7 +36,7 @@ class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase
         $card = $this->getRandomCard();
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('basic'));
@@ -65,7 +65,7 @@ class GetActionStripeCustomerCardTest extends BaseControllerJsonTestCase
         $card = $this->getRandomCard();
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 

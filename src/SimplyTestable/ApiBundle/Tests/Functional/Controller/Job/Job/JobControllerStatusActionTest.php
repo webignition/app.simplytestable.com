@@ -52,7 +52,8 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
             ],
         ]);
 
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $response = $this->jobController->statusAction($canonicalUrl, $job->getId());
         $responseJobData = json_decode($response->getContent(), true);
@@ -104,7 +105,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
 
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $parentJob = $this->jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
@@ -135,7 +136,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $job = $this->jobFactory->createResolveAndPrepareStandardCrawlJob([
             JobFactory::KEY_USER => $user,
@@ -220,7 +221,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
         $ownerUser = $users['private'];
         $requesterUser = $users['public'];
 
-        $this->getUserService()->setUser($ownerUser);
+        $this->setUser($ownerUser);
         $canonicalUrl = 'http://example.com/';
 
         $job = $this->jobFactory->create([
@@ -228,7 +229,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
             JobFactory::KEY_USER => $ownerUser,
         ]);
 
-        $this->getUserService()->setUser($requesterUser);
+        $this->setUser($requesterUser);
 
         $response = $this->jobController->statusAction($canonicalUrl, $job->getId());
 
@@ -237,10 +238,12 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
 
     public function testForRejectedDueToPlanFullSiteConstraint()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
         $canonicalUrl = 'http://example.com/';
 
-        $user = $this->getUserService()->getPublicUser();
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->getPublicUser();
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
 
         $fullSiteJobsPerSiteConstraint = $userAccountPlan->getPlan()->getConstraintNamed('full_site_jobs_per_site');
@@ -270,11 +273,13 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
 
     public function testStatusForRejectedDueToPlanSingleUrlConstraint()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $canonicalUrl = 'http://example.com/';
 
-        $user = $this->getUserService()->getPublicUser();
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->getPublicUser();
         $userAccountPlan = $this->getUserAccountPlanService()->getForUser($user);
 
         $singleJobsPerUrlConstraint = $userAccountPlan->getPlan()->getConstraintNamed('single_url_jobs_per_url');
@@ -307,7 +312,8 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
     {
         $this->jobFactory;
 
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare([], [
             'prepare' => [
@@ -350,7 +356,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
 
         $ownerUser = $users[$owner];
 
-        $this->getUserService()->setUser($ownerUser);
+        $this->setUser($ownerUser);
 
         $job = $this->jobFactory->create([
             JobFactory::KEY_SITE_ROOT_URL => 'http://example.com',
@@ -435,7 +441,8 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
      */
     public function testIssueCount($reportedErrorCount, $reportedWarningCount)
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
         $job = $this->jobFactory->createResolveAndPrepare();
 
         $taskController = new TaskController();

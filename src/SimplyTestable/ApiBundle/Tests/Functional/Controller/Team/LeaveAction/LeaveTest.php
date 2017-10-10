@@ -29,7 +29,7 @@ class LeaveTest extends ActionTest
 
         $this->getTeamService()->create('Foo', $leader);
 
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController()->$methodName('user@example.com');
@@ -42,7 +42,7 @@ class LeaveTest extends ActionTest
     public function testUserNotOnTeamReturnsOkResponse() {
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController()->$methodName('user@example.com');
@@ -62,7 +62,7 @@ class LeaveTest extends ActionTest
 
         $this->assertTrue($this->getTeamMemberService()->contains($team, $user));
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController()->$methodName('user@example.com');

@@ -31,7 +31,7 @@ class GetTest extends ActionTest
             UserFactory::KEY_EMAIL => 'invitee@example.com',
         ]);
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -44,6 +44,8 @@ class GetTest extends ActionTest
 
 
     public function testInviteeIsNotAUserCreatesUserAndCreatesInvite() {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $inviter = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'inviter@example.com',
         ]);
@@ -53,15 +55,15 @@ class GetTest extends ActionTest
         );
 
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 
         $response = $this->getCurrentController()->$methodName(new Request(), 'user@example.com');
         $this->assertEquals(200, $response->getStatusCode());
 
-        $this->assertTrue($this->getUserService()->exists('user@example.com'));
-        $user = $this->getUserService()->findUserByEmail('user@example.com');
+        $this->assertTrue($userService->exists('user@example.com'));
+        $user = $userService->findUserByEmail('user@example.com');
 
         $this->assertTrue($this->getTeamInviteService()->hasForTeamAnduser($team, $user));
 
@@ -82,7 +84,7 @@ class GetTest extends ActionTest
             UserFactory::KEY_EMAIL => 'invitee@example.com',
         ]);
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $this->getTeamService()->create(
             'Foo1',
@@ -127,7 +129,7 @@ class GetTest extends ActionTest
             $inviter
         );
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -152,7 +154,7 @@ class GetTest extends ActionTest
             $inviter
         );
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -177,7 +179,7 @@ class GetTest extends ActionTest
             $inviter
         );
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -189,6 +191,8 @@ class GetTest extends ActionTest
 
 
     public function testInvitePublicUserReturnsBadRequest() {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $inviter = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'inviter@example.com',
         ]);
@@ -198,11 +202,11 @@ class GetTest extends ActionTest
             $inviter
         );
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 
-        $response = $this->getCurrentController()->$methodName(new Request(), $this->getUserService()->getPublicUser()->getEmail());
+        $response = $this->getCurrentController()->$methodName(new Request(), $userService->getPublicUser()->getEmail());
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(10, $response->headers->get('X-TeamInviteGet-Error-Code'));
@@ -211,6 +215,8 @@ class GetTest extends ActionTest
 
 
     public function testInviteAdminUserReturnsBadRequest() {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $inviter = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'inviter@example.com',
         ]);
@@ -220,11 +226,11 @@ class GetTest extends ActionTest
             $inviter
         );
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 
-        $response = $this->getCurrentController()->$methodName(new Request(), $this->getUserService()->getAdminUser()->getEmail());
+        $response = $this->getCurrentController()->$methodName(new Request(), $userService->getAdminUser()->getEmail());
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(10, $response->headers->get('X-TeamInviteGet-Error-Code'));
@@ -247,7 +253,7 @@ class GetTest extends ActionTest
             $inviter
         );
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -272,7 +278,7 @@ class GetTest extends ActionTest
             $inviter
         );
 
-        $this->getUserService()->setUser($inviter);
+        $this->setUser($inviter);
 
         $methodName = $this->getActionNameFromRouter();
 

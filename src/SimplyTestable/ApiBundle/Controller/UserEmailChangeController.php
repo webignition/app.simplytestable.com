@@ -7,6 +7,8 @@ use Egulias\EmailValidator\EmailValidator;
 class UserEmailChangeController extends AbstractUserController
 {
     public function createAction($email_canonical, $new_email) {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $email_canonical = $this->getUserEmailChangeRequestService()->canonicalizeEmail($email_canonical);
         $new_email = $this->getUserEmailChangeRequestService()->canonicalizeEmail($new_email);
 
@@ -36,7 +38,7 @@ class UserEmailChangeController extends AbstractUserController
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
         }
 
-        if ($this->getUserService()->exists($new_email)) {
+        if ($userService->exists($new_email)) {
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
         }
 
@@ -51,7 +53,9 @@ class UserEmailChangeController extends AbstractUserController
 
 
     public function getAction($email_canonical) {
-        $user = $this->getUserService()->findUserByEmail($email_canonical);
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        $user = $userService->findUserByEmail($email_canonical);
         if (is_null($user)) {
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
         }
@@ -85,6 +89,8 @@ class UserEmailChangeController extends AbstractUserController
 
 
     public function confirmAction($email_canonical, $token) {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $email_canonical = $this->getUserEmailChangeRequestService()->canonicalizeEmail($email_canonical);
 
         $user = $this->getUser();
@@ -106,7 +112,7 @@ class UserEmailChangeController extends AbstractUserController
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
         }
 
-        if ($this->getUserService()->exists($emailChangeRequest->getNewEmail())) {
+        if ($userService->exists($emailChangeRequest->getNewEmail())) {
             $this->getUserEmailChangeRequestService()->removeForUser($user);
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
         }
@@ -116,7 +122,7 @@ class UserEmailChangeController extends AbstractUserController
         $user->setUsername($emailChangeRequest->getNewEmail());
         $user->setUsernameCanonical($emailChangeRequest->getNewEmail());
 
-        $this->getUserService()->updateUser($user);
+        $userService->updateUser($user);
 
         $this->getUserEmailChangeRequestService()->removeForUser($user);
 

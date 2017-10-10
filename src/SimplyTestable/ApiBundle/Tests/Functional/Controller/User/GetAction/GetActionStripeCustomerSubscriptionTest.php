@@ -14,7 +14,7 @@ class GetActionStripeCustomerSubscriptionTest extends BaseControllerJsonTestCase
         $userFactory = new UserFactory($this->container);
 
         $user = $userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
             $user,

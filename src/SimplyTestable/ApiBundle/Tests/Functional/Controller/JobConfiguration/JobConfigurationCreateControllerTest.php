@@ -32,9 +32,7 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
     public function testRequest()
     {
         $userFactory = new UserFactory($this->container);
-
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $userService->setUser($userFactory->create());
+        $user = $userFactory->create();
 
         $router = $this->container->get('router');
         $requestUrl = $router->generate('jobconfiguration_create_create');
@@ -50,6 +48,7 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
                     'HTML Validation' => [],
                 ],
             ],
+            'user' => $user,
         ]);
 
         /* @var RedirectResponse $response */
@@ -147,7 +146,7 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
         $userService = $this->container->get('simplytestable.services.userservice');
 
         $user = $userService->findUserByEmail($userEmail);
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $request = new Request([], [
             'label' => 'label value',
@@ -188,7 +187,7 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $request = new Request([], [
             'label' => 'label value',
@@ -215,7 +214,7 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $request = new Request([], [
             'label' => 'label value',
@@ -246,7 +245,7 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $label = 'label value';
 

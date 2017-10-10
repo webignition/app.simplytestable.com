@@ -30,7 +30,7 @@ abstract class SuccessTest extends GetTest {
 
         $user = $userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
         $this->getScheduledJobService()->setUser($user);
         $this->getJobConfigurationService()->setUser($user);
 

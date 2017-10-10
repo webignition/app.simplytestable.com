@@ -34,10 +34,10 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
             UserFactory::KEY_EMAIL => $email2,
         ]);
 
-        $this->getUserService()->setUser($user2);
+        $this->setUser($user2);
         $this->getUserEmailChangeController('createAction')->createAction($user2->getEmail(), 'user1-new@example.com');
 
-        $this->getUserService()->setUser($user1);
+        $this->setUser($user1);
 
         try {
             $this->getUserEmailChangeController('confirmAction')->confirmAction($user2->getEmail(), 'token');
@@ -55,7 +55,7 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         try {
             $this->getUserEmailChangeController('confirmAction')->confirmAction($user->getEmail(), 'token');
@@ -73,7 +73,7 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), 'user1-new@example.com');
 
@@ -93,7 +93,7 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email1,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), 'user1-new@example.com');
         $emailChangeRequest = $this->getUserEmailChangeRequestService()->findByUser($user);
@@ -111,20 +111,24 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
 
             $this->fail('Attempt to confirm when email already taken did not generate HTTP 409');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
+            $userService = $this->container->get('simplytestable.services.userservice');
+
             $this->assertEquals(409, $exception->getStatusCode());
-            $this->assertInstanceOf(User::class, $this->getUserService()->findUserByEmail('user1-new@example.com'));
+            $this->assertInstanceOf(User::class, $userService->findUserByEmail('user1-new@example.com'));
         }
     }
 
     public function testExpectedUsage()
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $email = 'user1@example.com';
         $newEmail = 'user1-new@example.com';
 
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), $newEmail);
         $emailChangeRequest = $this->getUserEmailChangeRequestService()->findByUser($user);
@@ -138,7 +142,7 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         $this->getManager()->clear();
 
         $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
-        $this->assertNull($this->getUserService()->findUserByEmail($email));
-        $this->assertInstanceOf(User::class, $this->getUserService()->findUserByEmail($newEmail));
+        $this->assertNull($userService->findUserByEmail($email));
+        $this->assertInstanceOf(User::class, $userService->findUserByEmail($newEmail));
     }
 }

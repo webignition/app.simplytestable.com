@@ -35,7 +35,8 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
     public function testNoOutputForIncompleteTasksWithPartialOutput()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => ['link integrity'],
@@ -91,7 +92,8 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
     public function testFailedNoRetryAvailableTaskOutputIsReturned()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare();
 
@@ -146,7 +148,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         $ownerUser = $users[$owner];
         $requesterUser = $users[$requester];
 
-        $this->getUserService()->setUser($ownerUser);
+        $this->setUser($ownerUser);
         $canonicalUrl = 'http://example.com/';
 
         $job = $this->jobFactory->create([
@@ -158,7 +160,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             $this->jobController->setPublicAction($canonicalUrl, $job->getId());
         }
 
-        $this->getUserService()->setUser($requesterUser);
+        $this->setUser($requesterUser);
 
         $response = $this->jobController->tasksAction(new Request(), $canonicalUrl, $job->getId());
 
@@ -212,7 +214,8 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
      */
     public function testWithRequestTaskIds($requestTaskIdIndices, $expectedTaskDataCollection)
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare();
 

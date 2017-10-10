@@ -48,13 +48,13 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
         $ownerUser = $users[$owner];
         $requesterUser = $users[$requester];
 
-        $this->getUserService()->setUser($ownerUser);
+        $this->setUser($ownerUser);
 
         $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $ownerUser,
         ]);
 
-        $this->getUserService()->setUser($requesterUser);
+        $this->setUser($requesterUser);
         $response = $this->jobController->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
 
         $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());

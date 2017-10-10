@@ -41,7 +41,7 @@ class DefaultTest extends IndexActionTest
     public function testWithStripeInvoicePaymentFailedEventForKnownUser()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
             $user,
@@ -88,7 +88,7 @@ class DefaultTest extends IndexActionTest
     public function testWithStripeCustomerSubscriptionCreatedEventForKnownUser()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
             $user,
@@ -136,7 +136,7 @@ class DefaultTest extends IndexActionTest
     public function testWithStripeInvoiceCreatedEventForKnownUser()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
             $user,
@@ -183,7 +183,7 @@ class DefaultTest extends IndexActionTest
     public function testWithStripeCustomerUpdatedEventForKnownUser()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
             $user,
@@ -213,7 +213,7 @@ class DefaultTest extends IndexActionTest
     public function testStripeEventDataIsPersisted()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
             $user,

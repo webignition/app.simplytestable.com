@@ -67,7 +67,8 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
         $this->values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
         $this->values->setParameters(self::PARAMETERS);
 
-        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
         $this->getJobConfigurationService()->create($this->values);
     }
 

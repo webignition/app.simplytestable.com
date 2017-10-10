@@ -61,7 +61,8 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $ownerUser = $users[$owner];
         $requesterUser = $users[$requester];
 
-        $this->getUserService()->setUser($ownerUser);
+        $this->setUser($ownerUser);
+
         $canonicalUrl = 'http://example.com/';
 
         $job = $this->jobFactory->createResolveAndPrepare([
@@ -74,7 +75,8 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             ],
         ]);
 
-        $this->getUserService()->setUser($requesterUser);
+        $this->setUser($requesterUser);
+
         $response = $this->jobController->cancelAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
 
         $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
@@ -103,14 +105,13 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
 
         $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
         $jobCancelledState = $stateService->fetch(JobService::CANCELLED_STATE);
         $jobQueuedState = $stateService->fetch(JobService::QUEUED_STATE);
 
         $user = $this->userFactory->createAndActivateUser();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $parentJob = $this->jobFactory->create([
             JobFactory::KEY_TEST_TYPES => ['CSS validation', 'JS static analysis'],
@@ -177,7 +178,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $jobCancelledState = $stateService->fetch(JobService::CANCELLED_STATE);
 
         $user = $this->userFactory->createAndActivateUser();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $parentJob = $this->jobFactory->create([
             JobFactory::KEY_TEST_TYPES => ['CSS validation', 'JS static analysis'],

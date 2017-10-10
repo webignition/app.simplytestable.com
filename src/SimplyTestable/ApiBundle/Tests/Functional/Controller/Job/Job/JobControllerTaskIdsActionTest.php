@@ -41,7 +41,7 @@ class JobControllerTaskIdsActionTest extends AbstractJobControllerTest
         $ownerUser = $users[$owner];
         $requesterUser = $users[$requester];
 
-        $this->getUserService()->setUser($ownerUser);
+        $this->setUser($ownerUser);
         $canonicalUrl = 'http://example.com/';
 
         $job = $this->jobFactory->createResolveAndPrepare([
@@ -53,7 +53,7 @@ class JobControllerTaskIdsActionTest extends AbstractJobControllerTest
             $this->jobController->setPublicAction($canonicalUrl, $job->getId());
         }
 
-        $this->getUserService()->setUser($requesterUser);
+        $this->setUser($requesterUser);
 
         $response = $this->jobController->taskIdsAction($canonicalUrl, $job->getId());
 

@@ -25,7 +25,7 @@ class AcceptTest extends ActionTest
 
     public function testUserAcceptsForNonexistentTeamReturnsBadResponse() {
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController()->$methodName(
@@ -47,7 +47,7 @@ class AcceptTest extends ActionTest
         );
 
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
@@ -77,7 +77,7 @@ class AcceptTest extends ActionTest
 
         $invite = $this->getTeamInviteService()->get($inviter, $invitee);
 
-        $this->getUserService()->setUser($invitee);
+        $this->setUser($invitee);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
@@ -115,7 +115,7 @@ class AcceptTest extends ActionTest
 
         $this->assertTrue($this->getTeamInviteService()->hasAnyForUser($user));
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([
@@ -147,7 +147,7 @@ class AcceptTest extends ActionTest
 
         $this->getUserAccountPlanService()->subscribe($invitee, $this->getAccountPlanService()->find('personal'));
 
-        $this->getUserService()->setUser($invitee);
+        $this->setUser($invitee);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController([

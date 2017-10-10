@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\D
 class UserTest extends InvalidLabelTest {
 
     protected function getCurrentUser() {
-        return $this->getUserService()->getPublicUser();
+        $userService = $this->container->get('simplytestable.services.userservice');
+        return $userService->getPublicUser();
     }
 }

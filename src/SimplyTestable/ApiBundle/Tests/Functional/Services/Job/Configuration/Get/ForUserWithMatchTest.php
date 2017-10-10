@@ -70,7 +70,8 @@ class ForUserWithMatchTest extends ServiceTest {
         $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
         $jobConfigurationValues->setParameters('parameters');
 
-        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
         $this->originalConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $this->getManager()->clear();

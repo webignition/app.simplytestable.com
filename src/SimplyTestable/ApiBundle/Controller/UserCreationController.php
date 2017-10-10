@@ -91,6 +91,7 @@ class UserCreationController extends AbstractUserController
 
     public function activateAction($token = null) {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $userService = $this->container->get('simplytestable.services.userservice');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -105,7 +106,7 @@ class UserCreationController extends AbstractUserController
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
         }
 
-        $user = $this->getUserService()->findUserByConfirmationToken($token);
+        $user = $userService->findUserByConfirmationToken($token);
         if (is_null($user)) {
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
         }

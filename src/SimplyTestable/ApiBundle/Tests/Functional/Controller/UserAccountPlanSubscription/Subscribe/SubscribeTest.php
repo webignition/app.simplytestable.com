@@ -27,7 +27,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
         $newPlan = 'basic';
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
             $user->getEmail(),
@@ -61,7 +61,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find($currentPlan));
 
@@ -82,7 +82,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
     public function testPremiumToNonPremiumChangeRetainsStripeCustomerId()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
@@ -101,7 +101,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
         $trialDaysPassed = rand(1, 30);
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
@@ -129,7 +129,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
         $trialDaysPassed = rand(1, 30);
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
@@ -157,7 +157,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
         $trialDaysPassed = 16;
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
@@ -188,7 +188,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
     public function testStripeUserIsRetainedWhenSwitchingFromPremiumToFreeToPremium()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 

@@ -32,11 +32,11 @@ class ScheduledJobCreateControllerTest extends BaseSimplyTestableTestCase
 
     public function testRequest()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $userFactory = new UserFactory($this->container);
-        $userService->setUser($userFactory->create());
+        $user = $userFactory->create();
+        $this->setUser($user);
 
         $this->createJobConfiguration();
 
@@ -50,6 +50,7 @@ class ScheduledJobCreateControllerTest extends BaseSimplyTestableTestCase
                 'job-configuration' => 'job-configuration-label',
                 'schedule' => '* * * * *',
             ],
+            'user' => $user,
         ]);
 
         /* @var RedirectResponse $response */
@@ -130,7 +131,7 @@ class ScheduledJobCreateControllerTest extends BaseSimplyTestableTestCase
         $userService = $this->container->get('simplytestable.services.userservice');
 
         $user = $userService->findUserByEmail($userEmail);
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $request = new Request([], [
             'job-configuration' => 'job configuration label',
@@ -163,12 +164,10 @@ class ScheduledJobCreateControllerTest extends BaseSimplyTestableTestCase
 
     public function testCreateActionUnknownJobConfiguration()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
 
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $request = new Request([], [
             'job-configuration' => 'job configuration label',
@@ -196,7 +195,7 @@ class ScheduledJobCreateControllerTest extends BaseSimplyTestableTestCase
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $this->createJobConfiguration();
 
@@ -237,11 +236,9 @@ class ScheduledJobCreateControllerTest extends BaseSimplyTestableTestCase
 
     public function testCreateActionFailureScheduleJobAlreadyExists()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $this->createJobConfiguration();
 
@@ -268,7 +265,7 @@ class ScheduledJobCreateControllerTest extends BaseSimplyTestableTestCase
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $this->createJobConfiguration();
 
