@@ -49,7 +49,7 @@ class RetrievalServiceTest extends \PHPUnit_Framework_TestCase
     public function retrieveFailureDataProvider()
     {
         $user1 = ModelFactory::createUser([
-            'email' => 'user1@example.com',
+            ModelFactory::USER_EMAIL => 'user1@example.com',
         ]);
 
         return [
