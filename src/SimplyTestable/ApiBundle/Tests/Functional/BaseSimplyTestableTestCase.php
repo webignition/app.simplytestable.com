@@ -38,7 +38,6 @@ use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
-use SimplyTestable\ApiBundle\Tests\Factory\ControllerFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
@@ -703,14 +702,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getRouteParameters()
     {
         return [];
-    }
-
-    /**
-     * @return ControllerFactory
-     */
-    protected function createControllerFactory()
-    {
-        return new ControllerFactory($this->container);
     }
 
     /**
