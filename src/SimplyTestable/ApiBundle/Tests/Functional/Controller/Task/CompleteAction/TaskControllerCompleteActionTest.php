@@ -49,8 +49,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         );
 
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
-        $this->container->set('request', $request);
-        $this->container->enterScope('request');
+        $this->container->get('request_stack')->push($request);
 
         $taskController = new TaskController();
         $taskController->setContainer($this->container);
@@ -104,8 +103,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         );
 
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
-        $this->container->set('request', $request);
-        $this->container->enterScope('request');
+        $this->container->get('request_stack')->push($request);
 
         $taskController = new TaskController();
         $taskController->setContainer($this->container);
@@ -197,8 +195,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         }
 
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
-        $this->container->set('request', $request);
-        $this->container->enterScope('request');
+        $this->container->get('request_stack')->push($request);
 
         $taskController = new TaskController();
         $taskController->setContainer($this->container);

@@ -380,7 +380,6 @@ services:
 
   simplytestable.services.request.factory.task.complete:
     class:   SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory
-    scope: request
     arguments:
         requestStack: "@request_stack"
         stateService: "@simplytestable.services.stateservice"

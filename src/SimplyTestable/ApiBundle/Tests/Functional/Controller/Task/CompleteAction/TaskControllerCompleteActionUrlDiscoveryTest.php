@@ -97,7 +97,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
         $taskController = new TaskController();
         $taskController->setContainer($this->container);
 
-        foreach ($completeActionCalls as $completeActionCall) {
+        foreach ($completeActionCalls as $callIndex => $completeActionCall) {
             $postData = $completeActionCall['postData'];
             $routeParams = $completeActionCall['routeParams'];
             $expectedCrawlJobState = $completeActionCall['expectedCrawlJobState'];
@@ -109,8 +109,8 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTes
                 array_merge($defaultRouteParams, $routeParams)
             );
 
-            $this->container->set('request', $request);
-            $this->container->enterScope('request');
+            $this->container->get('request_stack')->push($request);
+            $this->container->get('simplytestable.services.request.factory.task.complete')->init($request);
 
             $taskController->completeAction();
 
