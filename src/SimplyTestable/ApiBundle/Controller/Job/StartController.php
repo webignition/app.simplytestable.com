@@ -54,9 +54,7 @@ class StartController extends ApiController
                 'test_id' => $job->getId()
             )));
         } catch (JobStartServiceException $jobStartServiceException) {
-            if ($jobStartServiceException->isUnroutableWebsiteException()) {
-                return $this->rejectAsUnroutableAndRedirect($jobConfiguration);
-            }
+            return $this->rejectAsUnroutableAndRedirect($jobConfiguration);
         } catch (UserAccountPlanEnforcementException $userAccountPlanEnforcementException) {
             return $this->rejectAsPlanLimitReachedAndRedirect(
                 $jobConfiguration,
