@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class StartRequestFactory
@@ -54,17 +55,19 @@ class StartRequestFactory
     private $websiteService;
 
     /**
-     * @param Request $request
+     * @param RequestStack $requestStack
      * @param TokenStorageInterface $tokenStorage
      * @param EntityManager $entityManager
      * @param WebSiteService $websiteService
      */
     public function __construct(
-        Request $request,
+        RequestStack $requestStack,
         TokenStorageInterface $tokenStorage,
         EntityManager $entityManager,
         WebSiteService $websiteService
     ) {
+        $request = $requestStack->getCurrentRequest();
+
         $this->request = $request;
         $this->requestAttributes = $request->attributes;
         $this->tokenStorage = $tokenStorage;

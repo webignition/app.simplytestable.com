@@ -422,9 +422,8 @@ services:
 
   simplytestable.services.request.factory.job.start:
     class:   SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory
-    scope: request
     arguments:
-        request: '@request'
+        requestStack: '@request_stack'
         tokenStorage: '@security.token_storage'
         entityManager: '@doctrine.orm.entity_manager'
         websiteService: '@simplytestable.services.websiteservice'

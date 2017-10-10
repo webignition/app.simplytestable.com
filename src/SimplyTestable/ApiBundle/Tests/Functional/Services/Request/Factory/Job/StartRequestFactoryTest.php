@@ -41,8 +41,7 @@ class StartRequestFactoryTest extends BaseSimplyTestableTestCase
 
         $request = new Request($requestQuery, $requestRequest, $requestAttributes);
 
-        $this->container->set('request', $request);
-        $this->container->enterScope('request');
+        $this->container->get('request_stack')->push($request);
 
         $this->setUser($user);
 
