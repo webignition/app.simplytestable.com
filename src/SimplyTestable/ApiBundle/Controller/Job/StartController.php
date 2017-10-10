@@ -38,6 +38,8 @@ class StartController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
+        $jobStartRequest = $jobStartRequestFactory->create();
+
         $requestAdapter = new RequestAdapter(
             $request,
             $this->get('simplytestable.services.websiteservice'),

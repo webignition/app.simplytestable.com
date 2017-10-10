@@ -153,7 +153,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
         $user = $userService->getPublicUser();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $plan = $userAccountPlan->getPlan();
