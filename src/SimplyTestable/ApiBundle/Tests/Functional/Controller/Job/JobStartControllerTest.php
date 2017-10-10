@@ -113,10 +113,11 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
         $jobRepository = $entityManager->getRepository(Job::class);
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
-        $request = new Request();
-        $this->container->set('request', $request);
-
         $siteRootUrl = 'foo';
+
+        $request = new Request();
+        $request->attributes->set('site_root_url', $siteRootUrl);
+        $this->container->set('request', $request);
 
         $response = $this->jobStartController->startAction($request, $siteRootUrl);
 
@@ -151,10 +152,11 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
             JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME
         );
 
-        $request = new Request();
-        $this->container->set('request', $request);
-
         $siteRootUrl = 'http://example.com/';
+
+        $request = new Request();
+        $request->attributes->set('site_root_url', $siteRootUrl);
+        $this->container->set('request', $request);
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->create([
@@ -183,10 +185,11 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
 
-        $request = new Request();
-        $this->container->set('request', $request);
-
         $siteRootUrl = 'http://example.com/';
+
+        $request = new Request();
+        $request->attributes->set('site_root_url', $siteRootUrl);
+        $this->container->set('request', $request);
 
         $response = $this->jobStartController->startAction($request, $siteRootUrl);
 

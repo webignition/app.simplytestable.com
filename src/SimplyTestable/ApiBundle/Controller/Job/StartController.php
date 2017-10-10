@@ -36,10 +36,6 @@ class StartController extends ApiController
             return $this->sendServiceUnavailableResponse();
         }
 
-        if (!$request->attributes->has('site_root_url')) {
-            $request->attributes->set('site_root_url', $site_root_url);
-        }
-
         $requestAdapter = new RequestAdapter(
             $request,
             $this->get('simplytestable.services.websiteservice'),
@@ -102,6 +98,7 @@ class StartController extends ApiController
         $request->request->set('type', $job->getType()->getName());
         $request->request->set('test-types', $taskTypeNames);
         $request->request->set('test-type-options', $taskTypeOptionsArray);
+        $request->attributes->set('site_root_url', $site_root_url);
 
         return $this->startAction($request, $job->getWebsite()->getCanonicalUrl());
     }
