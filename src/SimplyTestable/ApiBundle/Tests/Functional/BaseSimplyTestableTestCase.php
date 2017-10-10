@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional;
 
+use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController as JobConfigurationCreateController;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController as StripeWebHookController;
 use SimplyTestable\ApiBundle\Controller\TeamInviteController;
@@ -43,6 +44,7 @@ use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase
 {
@@ -792,5 +794,21 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 
         $this->container->get('session')->save();
         $this->client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
+    }
+
+    /**
+     * @param User $user
+     */
+    protected function setUser(User $user)
+    {
+        $securityTokenStorage = $this->container->get('security.token_storage');
+
+        /* @var MockInterface|TokenInterface */
+        $token = \Mockery::mock(TokenInterface::class);
+        $token
+            ->shouldReceive('getUser')
+            ->andReturn($user);
+
+        $securityTokenStorage->setToken($token);
     }
 }
