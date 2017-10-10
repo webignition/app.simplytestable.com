@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\PrepareFromCrawl;
 
+use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -11,6 +12,9 @@ use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFa
 
 class ServiceTest extends BaseSimplyTestableTestCase
 {
+    /**
+     *
+     */
     public function testCrawlJobAmmendmentsArePassedToParentJob()
     {
         $this->getUserService()->setUser($this->getUserService()->getPublicUser());
@@ -45,7 +49,11 @@ class ServiceTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
         ]);
 
-        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+        $this->container->set('request', $taskCompleteRequest);
+        $this->container->enterScope('request');
+
         $taskController->completeAction();
 
         $this->assertEquals(

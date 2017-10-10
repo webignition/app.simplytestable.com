@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\PrepareFromCrawl;
 
+use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -60,7 +61,11 @@ class HappyPathTest extends BaseSimplyTestableTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $urlDiscoveryTask->getParametersHash(),
         ]);
 
-        $taskController = $this->createControllerFactory()->createTaskController($taskCompleteRequest);
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+        $this->container->set('request', $taskCompleteRequest);
+        $this->container->enterScope('request');
+
         $taskController->completeAction();
 
         $this->getJobPreparationService()->prepareFromCrawl($this->crawlJobContainer);
