@@ -99,15 +99,9 @@ class StartController extends ApiController
             $taskTypeOptionsArray[$taskTypeNameKey] = $taskTypeOptions->getOptions();
         }
 
-        if ($request->request->count()) {
-            $request->request->set('type', $job->getType()->getName());
-            $request->request->set('test-types', $taskTypeNames);
-            $request->request->set('test-type-options', $taskTypeOptionsArray);
-        } else {
-            $request->query->set('type', $job->getType()->getName());
-            $request->query->set('test-types', $taskTypeNames);
-            $request->query->set('test-type-options', $taskTypeOptionsArray);
-        }
+        $request->request->set('type', $job->getType()->getName());
+        $request->request->set('test-types', $taskTypeNames);
+        $request->request->set('test-type-options', $taskTypeOptionsArray);
 
         return $this->startAction($request, $job->getWebsite()->getCanonicalUrl());
     }
