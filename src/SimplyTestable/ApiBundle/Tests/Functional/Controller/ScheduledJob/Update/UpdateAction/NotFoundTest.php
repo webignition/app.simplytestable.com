@@ -19,7 +19,7 @@ class NotFoundTest extends UpdateTest {
 
         $user = $userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $this->response = $this->getCurrentController()->$methodName(

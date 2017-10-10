@@ -41,7 +41,7 @@ abstract class SuccessTest extends UpdateTest {
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
         $this->getJobConfigurationService()->setUser($user);
 
         $jobConfigurationValues = new JobConfigurationValues();

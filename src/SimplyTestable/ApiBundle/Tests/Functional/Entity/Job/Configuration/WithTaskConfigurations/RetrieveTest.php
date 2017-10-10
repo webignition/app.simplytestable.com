@@ -28,11 +28,12 @@ class RetrieveTest extends WithTaskConfigurationsTest
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $userService = $this->container->get('simplytestable.services.userservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $this->originalConfiguration = new Configuration();
         $this->originalConfiguration->setLabel('foo');
-        $this->originalConfiguration->setUser($this->getUserService()->getPublicUser());
+        $this->originalConfiguration->setUser($userService->getPublicUser());
         $this->originalConfiguration->setWebsite(
             $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
         );

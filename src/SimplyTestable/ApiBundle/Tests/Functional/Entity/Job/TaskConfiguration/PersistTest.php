@@ -18,11 +18,12 @@ class PersistTest extends TaskConfigurationTest
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $userService = $this->container->get('simplytestable.services.userservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setLabel('foo');
-        $jobConfiguration->setUser($this->getUserService()->getPublicUser());
+        $jobConfiguration->setUser($userService->getPublicUser());
         $jobConfiguration->setWebsite(
             $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
         );

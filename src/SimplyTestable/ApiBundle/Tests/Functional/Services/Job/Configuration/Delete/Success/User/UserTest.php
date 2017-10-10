@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Delete\
 class UserTest extends SuccessTest {
 
     protected function getCurrentUser() {
-        return $this->getUserService()->getPublicUser();
+        $userService = $this->container->get('simplytestable.services.userservice');
+        return $userService->getPublicUser();
     }
 }

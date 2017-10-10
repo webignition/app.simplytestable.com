@@ -8,9 +8,11 @@ use SimplyTestable\ApiBundle\Entity\User;
 class UserTest extends BaseSimplyTestableTestCase {
 
     public function testUtf8Email() {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $email = 'ɸ@example.com';
 
-        $user = $this->getUserService()->create($email, 'password');
+        $user = $userService->create($email, 'password');
         $userId = $user->getId();
 
         $this->getManager()->clear();

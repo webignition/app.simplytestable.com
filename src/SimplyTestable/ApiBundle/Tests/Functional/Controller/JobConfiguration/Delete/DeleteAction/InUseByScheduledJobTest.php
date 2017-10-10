@@ -22,7 +22,7 @@ class InUseByScheduledJobTest extends DeleteTest {
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);

@@ -5,7 +5,8 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\G
 class ForUserWithNoMatchTest extends ServiceTest {
 
     public function testNoMatchReturnsNull() {
-        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
         $this->assertNull($this->getJobConfigurationService()->get('foo'));
     }
 }

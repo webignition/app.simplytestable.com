@@ -24,7 +24,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
     public function testWithNotEnabledUser()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $controller = $this->getUserEmailChangeController('createAction');
 
@@ -56,7 +56,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
         $controller = $this->getUserEmailChangeController('createAction');
 
         try {
@@ -79,7 +79,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
             UserFactory::KEY_EMAIL => $email2,
         ]);
 
-        $this->getUserService()->setUser($user1);
+        $this->setUser($user1);
 
         $controller = $this->getUserEmailChangeController('createAction');
 
@@ -98,7 +98,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
         $user1 = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email1,
         ]);
-        $this->getUserService()->setUser($user1);
+        $this->setUser($user1);
 
         $controller = $this->getUserEmailChangeController('createAction');
         $controller->createAction($user1->getEmail(), 'user1-new@example.com');
@@ -108,7 +108,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
             UserFactory::KEY_EMAIL => $email2,
         ]);
 
-        $this->getUserService()->setUser($user2);
+        $this->setUser($user2);
 
         try {
             $controller->createAction($user2->getEmail(), 'user1-new@example.com');
@@ -126,7 +126,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $controller = $this->getUserEmailChangeController('createAction');
 
@@ -148,7 +148,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
             $user = $this->userFactory->createAndActivateUser([
                 UserFactory::KEY_EMAIL => $email,
             ]);
-            $this->getUserService()->setUser($user);
+            $this->setUser($user);
 
             $controller = $this->getUserEmailChangeController('createAction');
             $controller->createAction($user->getEmail(), 'user1-new1@example.com');
@@ -172,7 +172,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
             UserFactory::KEY_EMAIL => $email2,
         ]);
 
-        $this->getUserService()->setUser($user1);
+        $this->setUser($user1);
 
         try {
             $controller = $this->getUserEmailChangeController('createAction');
@@ -191,7 +191,7 @@ class CreateUserEmailChangeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $controller = $this->getUserEmailChangeController('createAction');
         $response = $controller->createAction($user->getEmail(), 'user1-new@example.com');

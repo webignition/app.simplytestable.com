@@ -30,7 +30,8 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
 
     public function testJoinOnComplete()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => ['link integrity'],
@@ -143,7 +144,8 @@ class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCas
 
     public function testJoinGetsCorrectErrorCount()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => ['link integrity'],

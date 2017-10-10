@@ -25,7 +25,8 @@ class NullLabelTest extends ServiceTest {
         $values->setType($fullSiteJobType);
         $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
 
-        $this->getJobConfigurationService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
         $this->getJobConfigurationService()->create($values);
     }
 

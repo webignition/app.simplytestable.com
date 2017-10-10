@@ -32,7 +32,8 @@ abstract class SuccessTest extends ServiceTest
     {
         parent::setUp();
 
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
         $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->createResolveAndPrepare();
 

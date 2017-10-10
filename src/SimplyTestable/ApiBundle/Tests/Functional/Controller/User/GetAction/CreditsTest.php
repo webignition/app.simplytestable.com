@@ -72,7 +72,7 @@ class CreditsTest extends BaseControllerJsonTestCase
 
     public function testLeaderCredits()
     {
-        $this->getUserService()->setUser($this->leader);
+        $this->setUser($this->leader);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
@@ -80,7 +80,7 @@ class CreditsTest extends BaseControllerJsonTestCase
 
     public function testMember1Credits()
     {
-        $this->getUserService()->setUser($this->member1);
+        $this->setUser($this->member1);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
@@ -88,7 +88,7 @@ class CreditsTest extends BaseControllerJsonTestCase
 
     public function testMember2Credits()
     {
-        $this->getUserService()->setUser($this->member2);
+        $this->setUser($this->member2);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
         $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);

@@ -14,7 +14,8 @@ class NotFoundTest extends GetTest {
     protected function setUp() {
         parent::setUp();
 
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $methodName = $this->getActionNameFromRouter();
         $this->response = $this->getCurrentController()->$methodName('foo');

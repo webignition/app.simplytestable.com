@@ -29,7 +29,7 @@ abstract class FailureTest extends UpdateTest {
     protected function setUp() {
         parent::setUp();
 
-        $this->getUserService()->setUser($this->getCurrentUser());
+        $this->setUser($this->getCurrentUser());
         $this->getJobConfigurationService()->setUser($this->getCurrentUser());
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');

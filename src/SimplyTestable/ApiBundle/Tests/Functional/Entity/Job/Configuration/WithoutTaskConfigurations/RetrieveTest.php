@@ -28,13 +28,14 @@ class RetrieveTest extends WithoutTaskConfigurationsTest
         parent::setUp();
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userService = $this->container->get('simplytestable.services.userservice');
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $this->originalConfiguration = new Configuration();
         $this->originalConfiguration->setLabel('foo');
-        $this->originalConfiguration->setUser($this->getUserService()->getPublicUser());
+        $this->originalConfiguration->setUser($userService->getPublicUser());
         $this->originalConfiguration->setWebsite(
             $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
         );

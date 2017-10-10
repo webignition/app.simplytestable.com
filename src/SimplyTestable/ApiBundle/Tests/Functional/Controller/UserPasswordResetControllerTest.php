@@ -44,6 +44,7 @@ class UserPasswordResetControllerTest extends BaseSimplyTestableTestCase
             'parameters' => [
                 'password' => 'new password',
             ],
+            'user' => $user,
         ]);
 
         $response = $this->getClientResponse();

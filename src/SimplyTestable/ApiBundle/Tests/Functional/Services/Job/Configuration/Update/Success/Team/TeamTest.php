@@ -71,7 +71,8 @@ abstract class TeamTest extends SuccessTest {
 
 
     protected function getCurrentUser() {
-        return $this->getUserService()->getPublicUser();
+        $userService = $this->container->get('simplytestable.services.userservice');
+        return $userService->getPublicUser();
     }
 
     protected function getOriginalWebsite() {

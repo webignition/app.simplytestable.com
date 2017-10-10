@@ -24,7 +24,7 @@ class GetTest extends ActionTest
 
     public function testUserWithNoTeamReturnsNotFoundResponse() {
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -42,7 +42,7 @@ class GetTest extends ActionTest
             $leader
         );
 
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -78,7 +78,7 @@ class GetTest extends ActionTest
         $this->getTeamMemberService()->add($team, $member1);
         $this->getTeamMemberService()->add($team, $member2);
 
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -122,7 +122,7 @@ class GetTest extends ActionTest
         $this->getTeamMemberService()->add($team, $member1);
         $this->getTeamMemberService()->add($team, $member2);
 
-        $this->getUserService()->setUser($member1);
+        $this->setUser($member1);
 
         $methodName = $this->getActionNameFromRouter();
 

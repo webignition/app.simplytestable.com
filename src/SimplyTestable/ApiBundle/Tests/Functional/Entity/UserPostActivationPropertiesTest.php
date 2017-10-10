@@ -8,7 +8,8 @@ use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 class UserPostActivationPropertiesTest extends BaseSimplyTestableTestCase {
 
     public function testPersistWithoutCoupon() {
-        $user = $this->getUserService()->create('user@example.com', 'password');
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->create('user@example.com', 'password');
         $plan = $this->createAccountPlan();
 
         $userPostActivationProperties = new UserPostActivationProperties();
@@ -23,7 +24,8 @@ class UserPostActivationPropertiesTest extends BaseSimplyTestableTestCase {
 
 
     public function testPersistWithCoupon() {
-        $user = $this->getUserService()->create('user@example.com', 'password');
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->create('user@example.com', 'password');
         $plan = $this->createAccountPlan();
 
         $userPostActivationProperties = new UserPostActivationProperties();

@@ -24,7 +24,8 @@ class ListActionTest extends BaseControllerJsonTestCase
 
     public function testWithPublicUser()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $response = $this->getUserStripeEventController('listAction')->listAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
@@ -32,7 +33,7 @@ class ListActionTest extends BaseControllerJsonTestCase
 
     public function testWithWrongUser()
     {
-        $this->getUserService()->setUser($this->userFactory->create());
+        $this->setUser($this->userFactory->create());
 
         $response = $this->getUserStripeEventController('listAction')->listAction('user2@example.com', '');
         $this->assertEquals(400, $response->getStatusCode());
@@ -41,7 +42,7 @@ class ListActionTest extends BaseControllerJsonTestCase
     public function testWithNoStripeEvents()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $response = $this->getUserStripeEventController('listAction')->listAction($user->getEmail(), '');
         $this->assertEquals(200, $response->getStatusCode());
@@ -51,7 +52,7 @@ class ListActionTest extends BaseControllerJsonTestCase
     public function testWithStripeEventsAndNoType()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
             $user,
@@ -73,7 +74,7 @@ class ListActionTest extends BaseControllerJsonTestCase
     public function testWithStripeEventsAndCustomerCreatedType()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
             $user,
@@ -94,7 +95,7 @@ class ListActionTest extends BaseControllerJsonTestCase
     public function testWithStripeEventsAndCustomerSubscriptionUpdatedType()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
             $user,

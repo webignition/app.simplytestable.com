@@ -15,7 +15,8 @@ class GetMethodTest extends DeleteTest {
             'Symfony\Component\Routing\Exception\MethodNotAllowedException'
         );
 
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
         $methodName = $this->getActionNameFromRouter();
         $this->getCurrentController()->$methodName(1);
     }

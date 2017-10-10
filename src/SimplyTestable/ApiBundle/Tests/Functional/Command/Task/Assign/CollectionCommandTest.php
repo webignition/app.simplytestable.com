@@ -76,7 +76,7 @@ class CollectionCommandTest extends BaseSimplyTestableTestCase
      * @param array $expectedTaskValuesCollection
      * @param bool $expectedTaskAssignCollectionQueueIsEmpty
      */
-    public function testRunFoo(
+    public function testRun(
         $httpFixtures,
         $workerValuesCollection,
         $additionalArgs,
@@ -84,12 +84,9 @@ class CollectionCommandTest extends BaseSimplyTestableTestCase
         $expectedTaskValuesCollection,
         $expectedTaskAssignCollectionQueueIsEmpty
     ) {
-        $userService = $this->container->get('simplytestable.services.userservice');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
 
         $job = $this->jobFactory->createResolveAndPrepare();
-
-        $userService->setUser($userService->getPublicUser());
 
         $this->queueHttpFixtures($httpFixtures);
 

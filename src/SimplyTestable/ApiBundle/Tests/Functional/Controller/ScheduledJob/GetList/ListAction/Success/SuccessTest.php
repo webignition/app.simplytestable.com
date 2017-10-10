@@ -30,7 +30,7 @@ abstract class SuccessTest extends GetListTest {
 
         $user = $userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
 

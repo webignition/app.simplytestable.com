@@ -26,7 +26,7 @@ class UserListTest extends ActionTest
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $this->getTeamService()->create(
             'Foo',
@@ -49,7 +49,7 @@ class UserListTest extends ActionTest
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getTeamService()->create(
             'Foo1',
@@ -92,7 +92,7 @@ class UserListTest extends ActionTest
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getTeamService()->create(
             'Foo1',

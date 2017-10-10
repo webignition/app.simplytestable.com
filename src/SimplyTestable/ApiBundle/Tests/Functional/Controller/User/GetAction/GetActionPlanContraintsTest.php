@@ -27,7 +27,7 @@ class GetActionPlanContraintsTest extends BaseControllerJsonTestCase
     public function testForUseWithBasicPlan()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
 
@@ -43,7 +43,7 @@ class GetActionPlanContraintsTest extends BaseControllerJsonTestCase
     public function testForUserWithPremiumPlan()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 

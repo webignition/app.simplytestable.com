@@ -22,12 +22,14 @@ class GetTokenTest extends BaseControllerJsonTestCase
     }
 
     public function testGetTokenWithNotEnabledUser() {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $user = $this->userFactory->create();
 
         $controller = $this->getUserController('getTokenAction');
         $response = $controller->getTokenAction($user->getEmail());
 
-        $token = $this->getUserService()->getConfirmationToken($user);
+        $token = $userService->getConfirmationToken($user);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($token, json_decode($response->getContent()));
@@ -47,12 +49,13 @@ class GetTokenTest extends BaseControllerJsonTestCase
 
 
     public function testGetTokenWithEnabledUser() {
+        $userService = $this->container->get('simplytestable.services.userservice');
         $user = $this->userFactory->createAndActivateUser();
 
         $controller = $this->getUserController('getTokenAction');
         $response = $controller->getTokenAction($user->getEmail());
 
-        $token = $this->getUserService()->getConfirmationToken($user);
+        $token = $userService->getConfirmationToken($user);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($token, json_decode($response->getContent()));

@@ -8,9 +8,11 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 class UserAccountPlanTest extends BaseSimplyTestableTestCase {
 
     public function testUtf8StripeCustomer() {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $stripeCustomer = 'test-ɸ';
 
-        $user = $this->getUserService()->create('user@example.com', 'password');
+        $user = $userService->create('user@example.com', 'password');
 
         $plan = $this->createAccountPlan();
 
@@ -31,7 +33,9 @@ class UserAccountPlanTest extends BaseSimplyTestableTestCase {
 
 
     public function testPersist() {
-        $user = $this->getUserService()->create('user@example.com', 'password');
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        $user = $userService->create('user@example.com', 'password');
 
         $plan = $this->createAccountPlan();
 
@@ -46,8 +50,10 @@ class UserAccountPlanTest extends BaseSimplyTestableTestCase {
     }
 
     public function testApplyOnePlanToMultipleUsers() {
-        $user1 = $this->getUserService()->create('user1@example.com', 'password');
-        $user2 = $this->getUserService()->create('user2@example.com', 'password');
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        $user1 = $userService->create('user1@example.com', 'password');
+        $user2 = $userService->create('user2@example.com', 'password');
 
         $plan = $this->createAccountPlan();
 
@@ -69,9 +75,11 @@ class UserAccountPlanTest extends BaseSimplyTestableTestCase {
 
 
     public function testDefaultStartTrialPeriod() {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $defaultStartTrialPeriod = 30;
 
-        $user = $this->getUserService()->create('user@example.com', 'password');
+        $user = $userService->create('user@example.com', 'password');
 
         $plan = $this->createAccountPlan();
 

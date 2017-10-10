@@ -24,7 +24,7 @@ class GetTest extends ActionTest
 
     public function testUserIsNotTeamLeaderReturnsBadRequest() {
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController()->$methodName('user@example.com');
@@ -37,7 +37,7 @@ class GetTest extends ActionTest
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $this->getTeamService()->create('Foo', $leader);
 
@@ -54,7 +54,7 @@ class GetTest extends ActionTest
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $this->getTeamService()->create('Foo', $leader);
 
@@ -80,7 +80,7 @@ class GetTest extends ActionTest
 
         $this->getTeamInviteService()->get($leader1, $user);
 
-        $this->getUserService()->setUser($leader2);
+        $this->setUser($leader2);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController()->$methodName($user->getEmail());
@@ -101,7 +101,7 @@ class GetTest extends ActionTest
 
         $this->assertTrue($this->getTeamInviteService()->hasForTeamAndUser($team, $user));
 
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController()->$methodName($user->getEmail());

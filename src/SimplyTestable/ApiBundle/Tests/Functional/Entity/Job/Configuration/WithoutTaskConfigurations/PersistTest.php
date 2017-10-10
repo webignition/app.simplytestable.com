@@ -19,10 +19,11 @@ class PersistTest extends WithoutTaskConfigurationsTest
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+        $userService = $this->container->get('simplytestable.services.userservice');
 
         $this->configuration = new Configuration();
         $this->configuration->setLabel('foo');
-        $this->configuration->setUser($this->getUserService()->getPublicUser());
+        $this->configuration->setUser($userService->getPublicUser());
         $this->configuration->setWebsite(
             $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
         );

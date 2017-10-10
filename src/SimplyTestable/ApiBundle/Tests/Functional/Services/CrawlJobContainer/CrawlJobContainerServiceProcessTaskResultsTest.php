@@ -182,7 +182,7 @@ class CrawlJobContainerServiceProcessTaskResultsTest extends AbstractCrawlJobCon
         $jobService = $this->container->get('simplytestable.services.jobservice');
 
         $user = $this->userFactory->create();
-        $userService->setUser($user);
+        $this->setUser($user);
 
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_USER => $user,

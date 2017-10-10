@@ -33,10 +33,10 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
             UserFactory::KEY_EMAIL => $email2,
         ]);
 
-        $this->getUserService()->setUser($user2);
+        $this->setUser($user2);
         $this->getUserEmailChangeController('createAction')->createAction($user2->getEmail(), 'user1-new@example.com');
 
-        $this->getUserService()->setUser($user1);
+        $this->setUser($user1);
 
         try {
             $this->getUserEmailChangeController('cancelAction')->cancelAction($user2->getEmail());
@@ -54,7 +54,7 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), 'user1-new@example.com');
         $this->assertNotNull($this->getUserEmailChangeRequestService()->findByUser($user));
@@ -72,7 +72,7 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => $email,
         ]);
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $response = $this->getUserEmailChangeController('cancelAction')->cancelAction($user->getEmail());
 

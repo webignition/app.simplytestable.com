@@ -32,7 +32,7 @@ class CreateTest extends ActionTest
             $leader
         );
 
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -59,7 +59,7 @@ class CreateTest extends ActionTest
         );
 
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getTeamMemberService()->add($team, $user);
 
@@ -79,7 +79,7 @@ class CreateTest extends ActionTest
 
     public function testRequestAsNonLeaderAndNonMemberCreatesNewTeam() {
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->assertNull($this->getTeamService()->getForUser($user));
 
@@ -100,7 +100,8 @@ class CreateTest extends ActionTest
 
 
     public function testPublicUserCannotCreateTeam() {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -117,7 +118,9 @@ class CreateTest extends ActionTest
 
 
     public function testAdminUserCannotCreateTeam() {
-        $this->getUserService()->setUser($this->getUserService()->getAdminUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        $this->setUser($userService->getAdminUser());
 
         $methodName = $this->getActionNameFromRouter();
 
@@ -145,7 +148,7 @@ class CreateTest extends ActionTest
 
         $this->assertTrue($this->getTeamInviteService()->hasAnyForUser($user));
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
 

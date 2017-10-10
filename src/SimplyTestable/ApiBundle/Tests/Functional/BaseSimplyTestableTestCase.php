@@ -34,7 +34,6 @@ use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Services\TestHttpClientService;
 use SimplyTestable\ApiBundle\Services\TestStripeService;
-use SimplyTestable\ApiBundle\Services\TestUserService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -244,7 +243,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getPasswordResetToken(User $user)
     {
         $this->getUserPasswordResetController('getTokenAction')->getTokenAction($user->getEmail());
-        return $this->getUserService()->getConfirmationToken($user);
+
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        return $userService->getConfirmationToken($user);
     }
 
     /**
@@ -301,14 +303,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getJobRejectionReasonService()
     {
         return $this->container->get('simplytestable.services.jobrejectionreasonservice');
-    }
-
-    /**
-     * @return TestUserService
-     */
-    protected function getUserService()
-    {
-        return $this->container->get('simplytestable.services.userservice');
     }
 
     /**
@@ -749,7 +743,9 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         }
 
         if (!isset($options['user'])) {
-            $options['user']  = $this->getUserService()->getPublicUser();
+            $userService = $this->container->get('simplytestable.services.userservice');
+
+            $options['user']  = $userService->getPublicUser();
         }
 
         $this->setRequestUserInSession($options['user']);

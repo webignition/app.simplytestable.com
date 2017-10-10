@@ -24,7 +24,8 @@ class AssociateCardTest extends BaseControllerJsonTestCase
 
     public function testWithPublicUser()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
@@ -33,7 +34,7 @@ class AssociateCardTest extends BaseControllerJsonTestCase
     public function testWithWrongUser()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
@@ -42,7 +43,7 @@ class AssociateCardTest extends BaseControllerJsonTestCase
     public function testWithInvalidStripeCardToken()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
             $user->getEmail(),
@@ -54,7 +55,7 @@ class AssociateCardTest extends BaseControllerJsonTestCase
     public function testWithNoStripeCustomer()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
             $user->getEmail(),
@@ -66,7 +67,7 @@ class AssociateCardTest extends BaseControllerJsonTestCase
     public function testWithValidStripeCustomerandValidStipeCardToken()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
             $user->getEmail(),
@@ -87,7 +88,7 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $stripeErrorCode = 'incorrect_zip';
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
             $user->getEmail(),
@@ -117,7 +118,7 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $stripeErrorCode = 'incorrect_cvc';
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
             $user->getEmail(),

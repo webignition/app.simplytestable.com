@@ -21,7 +21,7 @@ class SuccessTest extends GetTest {
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
 

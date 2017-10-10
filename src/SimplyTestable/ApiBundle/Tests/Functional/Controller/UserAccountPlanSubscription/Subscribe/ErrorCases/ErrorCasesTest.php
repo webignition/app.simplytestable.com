@@ -24,7 +24,8 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
 
     public function testWithPublicUser()
     {
-        $this->getUserService()->setUser($this->getUserService()->getPublicUser());
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
 
         $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
@@ -33,7 +34,7 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
     public function testWithWrongUser()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
@@ -42,7 +43,7 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
     public function testWithCorrectUserAndInvalidPlan()
     {
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
             $user->getEmail(),
@@ -56,7 +57,7 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
         $newPlan = 'personal';
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getStripeService()->setHasInvalidApiKey(true);
 
@@ -77,7 +78,7 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
         $stripeErrorCode = 'card_declined';
 
         $user = $this->userFactory->create();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->getStripeService()->setIssueStripeCardError(true);
         $this->getStripeService()->setNextStripeCardErrorMessage($stripeErrorMessage);

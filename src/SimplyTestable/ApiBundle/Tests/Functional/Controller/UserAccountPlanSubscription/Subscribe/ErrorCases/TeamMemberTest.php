@@ -26,7 +26,7 @@ class TeamMemberTest extends BaseControllerJsonTestCase {
         $user = $userFactory->createAndActivateUser();
         $this->getTeamMemberService()->add($team, $user);
 
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $this->response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($user->getEmail(), 'personal');
     }

@@ -25,7 +25,7 @@ class ListTest extends ActionTest
 
     public function testUserIsNotTeamLeaderReturnsBadRequest() {
         $user = $this->userFactory->createAndActivateUser();
-        $this->getUserService()->setUser($user);
+        $this->setUser($user);
 
         $methodName = $this->getActionNameFromRouter();
         $response = $this->getCurrentController()->$methodName();
@@ -39,7 +39,7 @@ class ListTest extends ActionTest
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $this->getTeamService()->create(
             'Foo',
@@ -60,7 +60,7 @@ class ListTest extends ActionTest
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $this->getTeamService()->create(
             'Foo',
@@ -97,7 +97,7 @@ class ListTest extends ActionTest
             UserFactory::KEY_EMAIL => 'user2@example.com',
         ]);
 
-        $this->getUserService()->setUser($leader);
+        $this->setUser($leader);
 
         $this->getTeamService()->create(
             'Foo',
