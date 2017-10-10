@@ -151,30 +151,6 @@ class StartController extends ApiController
     }
 
     /**
-     * @return boolean
-     */
-    private function isTestEnvironment()
-    {
-        return $this->get('kernel')->getEnvironment() == 'test';
-    }
-
-    /**
-     * @return \SimplyTestable\ApiBundle\Entity\User
-     */
-    public function getUser()
-    {
-        if (!$this->isTestEnvironment()) {
-            return parent::getUser();
-        }
-
-        if (is_null($this->getRequestValue('user'))) {
-            return $this->getUserService()->getPublicUser();
-        }
-
-        return $this->getUserService()->findUserByEmail($this->getRequestValue('user'));
-    }
-
-    /**
      * @return JobService
      */
     private function getJobService()

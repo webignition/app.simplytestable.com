@@ -2,10 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job;
 
+use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Controller\Job\StartController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
@@ -13,6 +15,7 @@ use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class JobStartControllerTest extends BaseSimplyTestableTestCase
 {
@@ -109,6 +112,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
 
     public function testStartActionUnroutableWebsite()
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
@@ -118,6 +122,8 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
         $this->container->set('request', $request);
+
+        $this->setUser($userService->getPublicUser());
 
         $response = $this->jobStartController->startAction($request, $siteRootUrl);
 
@@ -182,6 +188,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
 
     public function testStartActionSuccess()
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
 
@@ -190,6 +197,8 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
         $this->container->set('request', $request);
+
+        $this->setUser($userService->getPublicUser());
 
         $response = $this->jobStartController->startAction($request, $siteRootUrl);
 
@@ -256,8 +265,9 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
      *
      * @param array $jobValues
      */
-    public function testRetestActionFoo($jobValues)
+    public function testRetestAction($jobValues)
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
         $jobFactory = new JobFactory($this->container);
 
         $jobValues[JobFactory::KEY_STATE] = JobService::COMPLETED_STATE;
@@ -266,6 +276,8 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
 
         $request = new Request();
         $this->container->set('request', $request);
+
+        $this->setUser($userService->getPublicUser());
 
         $response = $this->jobStartController->retestAction(
             $request,
@@ -327,5 +339,21 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param User $user
+     */
+    private function setUser(User $user)
+    {
+        $securityTokenStorage = $this->container->get('security.token_storage');
+
+        /* @var MockInterface|TokenInterface */
+        $token = \Mockery::mock(TokenInterface::class);
+        $token
+            ->shouldReceive('getUser')
+            ->andReturn($user);
+
+        $securityTokenStorage->setToken($token);
     }
 }
