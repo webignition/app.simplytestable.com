@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
-use SimplyTestable\ApiBundle\Adapter\Job\Configuration\Start\RequestAdapter;
 use SimplyTestable\ApiBundle\Controller\Job\JobController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
@@ -11,9 +10,12 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Guzzle\Http\Message\Response as GuzzleResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class JobFactory
 {
@@ -178,17 +180,24 @@ class JobFactory
     public function create($jobValues = [], $ignoreState = false)
     {
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $jobStartService = $this->container->get('simplytestable.services.job.startservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
+        $tokenStorage = $this->container->get('security.token_storage');
+        $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
 
         foreach ($this->defaultJobValues as $key => $value) {
             if (!isset($jobValues[$key])) {
                 $jobValues[$key] = $value;
             }
         }
+
+        $token = \Mockery::mock(TokenInterface::class);
+        $token
+            ->shouldReceive('getUser')
+            ->andReturn($jobValues[self::KEY_USER]);
+
+        $tokenStorage->setToken($token);
 
         $request = new Request([], [
             'type' => $jobValues[self::KEY_TYPE],
@@ -199,15 +208,18 @@ class JobFactory
             'site_root_url' => $jobValues[self::KEY_SITE_ROOT_URL],
         ]);
 
-        $requestAdapter = new RequestAdapter(
-            $request,
-            $websiteService,
-            $jobTypeService,
-            $taskTypeService
+        $requestStack = new RequestStack();
+        $requestStack->push($request);
+
+        $jobStartRequestFactory = new StartRequestFactory(
+            $requestStack,
+            $this->container->get('security.token_storage'),
+            $this->container->get('doctrine.orm.entity_manager'),
+            $websiteService
         );
 
-        $jobConfiguration = $requestAdapter->getJobConfiguration();
-        $jobConfiguration->setUser($jobValues[self::KEY_USER]);
+        $jobStartRequest = $jobStartRequestFactory->create();
+        $jobConfiguration = $jobConfigurationFactory->createFromJobStartRequest($jobStartRequest);
 
         $job = $jobStartService->start($jobConfiguration);
 
