@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
+use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class GetUserEmailChangeTest extends BaseControllerJsonTestCase
@@ -12,6 +13,11 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserEmailChangeController
+     */
+    private $userEmailChangeController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -19,15 +25,16 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userEmailChangeController = new UserEmailChangeController();
+        $this->userEmailChangeController->setContainer($this->container);
     }
 
     public function testWithNonExistentUser()
     {
         $email = 'user1@example.com';
-        $controller = $this->getUserEmailChangeController('getAction');
 
         try {
-            $controller->getAction($email);
+            $this->userEmailChangeController->getAction($email);
             $this->fail('Attempt to get for non-existent user did not generate HTTP 404');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertEquals(404, $exception->getStatusCode());
@@ -42,10 +49,8 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase
             UserFactory::KEY_EMAIL => $email,
         ]);
 
-        $controller = $this->getUserEmailChangeController('getAction');
-
         try {
-            $controller->getAction($email);
+            $this->userEmailChangeController->getAction($email);
             $this->fail('Attempt to get where user does not have an email change request did not generate HTTP 404');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertEquals(404, $exception->getStatusCode());
@@ -62,9 +67,9 @@ class GetUserEmailChangeTest extends BaseControllerJsonTestCase
         ]);
         $this->setUser($user);
 
-        $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), $newEmail);
+        $this->userEmailChangeController->createAction($user->getEmail(), $newEmail);
 
-        $response = $this->getUserEmailChangeController('getAction')->getAction($user->getEmail());
+        $response = $this->userEmailChangeController->getAction($user->getEmail());
 
         $this->assertEquals(200, $response->getStatusCode());
 
