@@ -2,6 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\GetList\ListAction\Success;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobTaskConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\GetList\ListAction\GetListTest;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,19 +29,26 @@ class SuccessTest extends GetListTest {
 
         $methodName = $this->getActionNameFromRouter();
 
-        $this->getJobConfigurationCreateController('createAction', [
-            'label' => 'foo',
-            'website' => 'http://example.com/',
-            'type' => 'Full site',
-            'task-configuration' => [
-                'HTML validation' => [],
-                'CSS validation' => [
-                    'domains-to-ignore' => [
-                        'one.cdn.example.com'
-                    ]
-                ]
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory->create([
+            JobConfigurationFactory::KEY_USER => $user,
+            JobConfigurationFactory::KEY_LABEL => 'foo',
+            JobConfigurationFactory::KEY_WEBSITE_URL => 'http://example.com/',
+            JobConfigurationFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+            JobConfigurationFactory::KEY_TASK_CONFIGURATIONS => [
+                [
+                    JobTaskConfigurationFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                ],
+                [
+                    JobTaskConfigurationFactory::KEY_TYPE => TaskTypeService::CSS_VALIDATION_TYPE,
+                    JobTaskConfigurationFactory::KEY_OPTIONS => [
+                        'domains-to-ignore' => [
+                            'one.cdn.example.com'
+                        ]
+                    ],
+                ],
             ],
-            'parameters' => json_encode([
+            JobConfigurationFactory::KEY_PARAMETERS => [
                 'http-auth-username' => 'html-user',
                 'http-auth-password' => 'html-password',
                 'cookies' => [
@@ -46,12 +57,9 @@ class SuccessTest extends GetListTest {
                         'Domain' => '.example.com',
                         'Value' => 'cookie-value'
                     ]
-                ]
-            ])
-        ])->createAction(
-            $this->container->get('request')
-        );
-
+                ],
+            ],
+        ]);
 
         $this->response = $this->getCurrentController()->$methodName('foo');
         $this->decodedResponse = json_decode($this->response->getContent(), true);

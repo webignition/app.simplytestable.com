@@ -16,6 +16,7 @@ class JobConfigurationFactory
     const KEY_USER = 'user';
     const KEY_WEBSITE_URL = 'website-url';
     const KEY_TYPE = 'type';
+    const KEY_PARAMETERS = 'parameters';
     const KEY_TASK_CONFIGURATIONS = 'task-configurations';
 
     /**
@@ -25,6 +26,7 @@ class JobConfigurationFactory
         self::KEY_LABEL => self::DEFAULT_LABEL,
         self::KEY_WEBSITE_URL => self::DEFAULT_WEBSITE_URL,
         self::KEY_TYPE => self::DEFAULT_TYPE,
+
     ];
 
     /**
@@ -67,6 +69,10 @@ class JobConfigurationFactory
         $jobConfiguration->setUser($jobConfigurationValues[self::KEY_USER]);
         $jobConfiguration->setWebsite($website);
         $jobConfiguration->setType($jobType);
+
+        if (isset($jobConfigurationValues[self::KEY_PARAMETERS])) {
+            $jobConfiguration->setParameters(json_encode($jobConfigurationValues[self::KEY_PARAMETERS]));
+        }
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $entityManager->persist($jobConfiguration);
