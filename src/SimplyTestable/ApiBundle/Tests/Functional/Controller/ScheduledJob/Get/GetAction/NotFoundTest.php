@@ -2,9 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Get\GetAction;
 
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\ActionTest;
 use Symfony\Component\HttpFoundation\Response;
 
-class NotFoundTest extends GetTest {
+class NotFoundTest extends ActionTest {
 
     /**
      * @var Response
