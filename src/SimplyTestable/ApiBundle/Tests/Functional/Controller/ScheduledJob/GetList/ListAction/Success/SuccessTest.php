@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\GetList\ListAction\Success;
 
+use SimplyTestable\ApiBundle\Controller\ScheduledJob\GetListController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\ActionTest;
@@ -53,8 +54,10 @@ abstract class SuccessTest extends ActionTest {
             true
         );
 
+        $controller = new GetListController();
+        $controller->setContainer($this->container);
 
-        $this->response = $this->getCurrentController()->$methodName();
+        $this->response = $controller->listAction();
         $this->decodedResponse = json_decode($this->response->getContent(), true);
     }
 

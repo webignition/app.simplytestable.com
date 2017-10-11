@@ -2,11 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Update\UpdateAction\Success;
 
+use SimplyTestable\ApiBundle\Controller\ScheduledJob\UpdateController;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Update\UpdateAction\UpdateTest;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class SuccessTest extends UpdateTest {
@@ -96,11 +98,11 @@ abstract class SuccessTest extends UpdateTest {
 
         $this->preCallController();
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(
-            $this->container->get('request'),
-            $this->getScheduledJobId()
-        );
+        $controller = new UpdateController();
+        $controller->setContainer($this->container);
+
+        $request = new Request([], $this->getRequestPostData());
+        $this->response = $controller->updateAction($request, $this->getScheduledJobId());
 
         $this->getManager()->clear();
 

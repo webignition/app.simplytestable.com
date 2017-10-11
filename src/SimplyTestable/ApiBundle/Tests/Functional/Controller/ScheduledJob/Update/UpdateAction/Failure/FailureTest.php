@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Update\UpdateAction\Failure;
 
+use SimplyTestable\ApiBundle\Controller\ScheduledJob\UpdateController;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Update\UpdateAction\UpdateTest;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class FailureTest extends UpdateTest {
@@ -25,11 +27,11 @@ abstract class FailureTest extends UpdateTest {
 
         $this->preCallController();
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(
-            $this->container->get('request'),
-            $this->getScheduledJobId()
-        );
+        $controller = new UpdateController();
+        $controller->setContainer($this->container);
+
+        $request = new Request([], $this->getRequestPostData());
+        $this->response = $controller->updateAction($request, $this->getScheduledJobId());
     }
 
     protected function getScheduledJobId() {

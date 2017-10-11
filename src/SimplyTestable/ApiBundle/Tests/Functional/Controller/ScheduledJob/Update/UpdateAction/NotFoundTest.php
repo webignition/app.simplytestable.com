@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Update\UpdateAction;
 
+use SimplyTestable\ApiBundle\Controller\ScheduledJob\UpdateController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class NotFoundTest extends UpdateTest {
@@ -18,14 +20,12 @@ class NotFoundTest extends UpdateTest {
         $userFactory = new UserFactory($this->container);
 
         $user = $userFactory->createAndActivateUser();
-
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController()->$methodName(
-            $this->container->get('request'),
-            1
-        );
+        $controller = new UpdateController();
+        $controller->setContainer($this->container);
+
+        $this->response = $controller->updateAction(new Request(), 1);
     }
 
     public function testResponseStatusCode() {
