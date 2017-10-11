@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Controller\UserController;
-use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
 use SimplyTestable\ApiBundle\Controller\WorkerController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
@@ -43,7 +42,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 {
     const ROUTER_MATCH_CONTROLLER_KEY = '_controller';
 
-    const USER_EMAIL_CHANGE_CONTROLLER_NAME = UserEmailChangeController::class;
     const USER_CONTROLLER_NAME = UserController::class;
     const WORKER_CONTROLLER_NAME = WorkerController::class;
     const DEFAULT_CANONICAL_URL = 'http://example.com/';
@@ -60,18 +58,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getManager()
     {
         return $this->container->get('doctrine')->getManager();
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     *
-     * @return UserEmailChangeController
-     */
-    protected function getUserEmailChangeController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(self::USER_EMAIL_CHANGE_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }
 
     /**

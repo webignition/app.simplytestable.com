@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
+use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
@@ -12,6 +13,11 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserEmailChangeController
+     */
+    private $userEmailChangeController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -19,6 +25,8 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userEmailChangeController = new UserEmailChangeController();
+        $this->userEmailChangeController->setContainer($this->container);
     }
 
     public function testForDifferentUser()
@@ -34,12 +42,12 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
         ]);
 
         $this->setUser($user2);
-        $this->getUserEmailChangeController('createAction')->createAction($user2->getEmail(), 'user1-new@example.com');
+        $this->userEmailChangeController->createAction($user2->getEmail(), 'user1-new@example.com');
 
         $this->setUser($user1);
 
         try {
-            $this->getUserEmailChangeController('cancelAction')->cancelAction($user2->getEmail());
+            $this->userEmailChangeController->cancelAction($user2->getEmail());
 
             $this->fail('Attempt to cancel for different user did not generate HTTP 404');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
@@ -56,10 +64,10 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
         ]);
         $this->setUser($user);
 
-        $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), 'user1-new@example.com');
+        $this->userEmailChangeController->createAction($user->getEmail(), 'user1-new@example.com');
         $this->assertNotNull($this->getUserEmailChangeRequestService()->findByUser($user));
 
-        $response = $this->getUserEmailChangeController('cancelAction')->cancelAction($user->getEmail());
+        $response = $this->userEmailChangeController->cancelAction($user->getEmail());
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
@@ -74,7 +82,7 @@ class CancelUserEmailChangeTest extends BaseControllerJsonTestCase
         ]);
         $this->setUser($user);
 
-        $response = $this->getUserEmailChangeController('cancelAction')->cancelAction($user->getEmail());
+        $response = $this->userEmailChangeController->cancelAction($user->getEmail());
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
