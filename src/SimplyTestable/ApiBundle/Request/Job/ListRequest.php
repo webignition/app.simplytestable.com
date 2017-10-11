@@ -7,12 +7,6 @@ use SimplyTestable\ApiBundle\Entity\State;
 
 class ListRequest
 {
-    // exclude-types
-    // exclude-current
-    // exclude-finished
-    // exclude-states
-    // url-filter
-
     /**
      * @var JobType[]
      */
@@ -22,31 +16,6 @@ class ListRequest
      * @var State[]
      */
     private $statesToExclude = [];
-
-    /**
-     * Should be used by factory to form collection of states to exclude
-     * Should be used by factory to form collection of job ids to include/exclude
-     *
-     * if true:
-     * exclude crawl job parent ids
-     * include incomplete states in states to exclude
-     *
-     * if false:
-     * include crawl job parent ids
-     *
-     * @var bool
-     */
-    private $shouldExcludeCurrent;
-
-    /**
-     * Should be used by factory to form collection of states to exclude
-     *
-     * if true:
-     * include complete states in states to exclude
-     *
-     * @var bool
-     */
-    private $shouldExcludeFinished;
 
     /**
      * @var int[]
@@ -106,5 +75,21 @@ class ListRequest
     public function getUrlFilter()
     {
         return $this->urlFilter;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getJobIdsToExclude()
+    {
+        return $this->jobIdsToExclude;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getJobIdsToInclude()
+    {
+        return $this->jobIdsToInclude;
     }
 }
