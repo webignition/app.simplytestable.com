@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction;
 
+use SimplyTestable\ApiBundle\Controller\JobConfiguration\UpdateController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class NotFoundTest extends UpdateTest {
@@ -17,9 +19,11 @@ class NotFoundTest extends UpdateTest {
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->setUser($userService->getPublicUser());
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController()->$methodName(
-            $this->container->get('request'),
+        $controller = new UpdateController();
+        $controller->setContainer($this->container);
+
+        $this->response = $controller->updateAction(
+            new Request(),
             self::LABEL
         );
     }

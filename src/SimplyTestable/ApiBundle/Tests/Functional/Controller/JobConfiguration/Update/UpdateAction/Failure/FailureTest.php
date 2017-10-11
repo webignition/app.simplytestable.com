@@ -2,8 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\Failure;
 
+use SimplyTestable\ApiBundle\Controller\JobConfiguration\UpdateController;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\UpdateTest;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
@@ -52,9 +54,13 @@ abstract class FailureTest extends UpdateTest {
 
         $this->getJobConfigurationService()->create($jobConfigurationValues);
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(
-            $this->container->get('request'),
+        $controller = new UpdateController();
+        $controller->setContainer($this->container);
+
+        $request = new Request([], $this->getRequestPostData());
+
+        $this->response = $controller->updateAction(
+            $request,
             $this->getMethodLabel()
         );
     }
