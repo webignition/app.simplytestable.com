@@ -3,10 +3,10 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\ActivateAction\Failure;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Entity\User;
 
-abstract class FailureTest extends ActionTest {
+abstract class FailureTest extends BaseControllerJsonTestCase {
 
     /**
      * @var User
