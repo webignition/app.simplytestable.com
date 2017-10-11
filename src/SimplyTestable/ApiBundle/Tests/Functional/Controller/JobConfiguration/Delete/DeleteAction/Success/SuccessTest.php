@@ -2,6 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Delete\DeleteAction\Success;
 
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobTaskConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Delete\DeleteAction\DeleteTest;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,19 +33,23 @@ class SuccessTest extends DeleteTest {
 
         $methodName = $this->getActionNameFromRouter();
 
-        $this->getJobConfigurationCreateController('createAction', [
-            'label' => 'foo',
-            'website' => 'http://example.com/',
-            'type' => 'Full site',
-            'task-configuration' => [
-                'HTML validation' => [],
-            ]
-        ])->createAction(
-            $this->container->get('request')
-        );
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfigurationFactory->create([
+            JobConfigurationFactory::KEY_USER => $user,
+            JobConfigurationFactory::KEY_LABEL => self::LABEL,
+            JobConfigurationFactory::KEY_WEBSITE_URL => 'http://example.com/',
+            JobConfigurationFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+            JobConfigurationFactory::KEY_TASK_CONFIGURATIONS => [
+                [
+                    JobTaskConfigurationFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                ],
+            ],
+        ]);
 
-        $this->jobConfiguration = $this->getJobConfigurationService()->get(self::LABEL);
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService->setUser($user);
 
+        $this->jobConfiguration = $jobConfigurationService->get(self::LABEL);
 
         $this->response = $this->getCurrentController()->$methodName(self::LABEL);
     }
