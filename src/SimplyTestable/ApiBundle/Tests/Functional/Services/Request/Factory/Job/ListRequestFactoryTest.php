@@ -43,20 +43,26 @@ class ListRequestFactoryTest extends BaseSimplyTestableTestCase
         $this->assertEquals($expectedUrlFilter, $jobListRequest->getUrlFilter());
 
         $statesToExclude = $jobListRequest->getStatesToExclude();
-        $this->assertCount(count($expectedStateNamesToExclude), $statesToExclude);
+        $stateNamesToExclude = [];
 
-        foreach ($statesToExclude as $stateIndex => $state) {
-            $expectedStateName = $expectedStateNamesToExclude[$stateIndex];
-            $this->assertEquals($expectedStateName, $state->getName());
+        foreach ($statesToExclude as $state) {
+            $stateNamesToExclude[] = $state->getName();
         }
+
+        sort($stateNamesToExclude);
+
+        $this->assertEquals($expectedStateNamesToExclude, $stateNamesToExclude);
 
         $typesToExclude = $jobListRequest->getTypesToExclude();
-        $this->assertCount(count($expectedTypeNamesToExclude), $typesToExclude);
+        $typeNamesToExclude = [];
 
-        foreach ($typesToExclude as $typeIndex => $type) {
-            $expectedTypeName = $expectedTypeNamesToExclude[$typeIndex];
-            $this->assertEquals($expectedTypeName, $type->getName());
+        foreach ($typesToExclude as $type) {
+            $typeNamesToExclude[] = $type->getName();
         }
+
+        sort($typeNamesToExclude);
+
+        $this->assertEquals($expectedTypeNamesToExclude, $typeNamesToExclude);
     }
 
     /**
@@ -82,11 +88,11 @@ class ListRequestFactoryTest extends BaseSimplyTestableTestCase
                 'expectedUrlFilter' => null,
                 'expectedStateNamesToExclude' => [
                     'job-in-progress',
-                    'job-queued',
-                    'job-preparing',
                     'job-new',
-                    'job-resolving',
+                    'job-preparing',
+                    'job-queued',
                     'job-resolved',
+                    'job-resolving',
                 ],
                 'expectedTypeNamesToExclude' => [
                     'crawl',
