@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Delete\DeleteAction;
 
+use SimplyTestable\ApiBundle\Controller\JobConfiguration\DeleteController;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Response;
@@ -38,8 +39,10 @@ class InUseByScheduledJobTest extends DeleteTest {
 
         $this->getScheduledJobService()->create($jobConfiguration);
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController()->$methodName(self::LABEL);
+        $controller = new DeleteController();
+        $controller->setContainer($this->container);
+
+        $this->response = $controller->deleteAction(self::LABEL);
     }
 
     public function testResponseStatusCode() {
