@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Controller\UserController;
-use SimplyTestable\ApiBundle\Controller\WorkerController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -43,7 +42,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     const ROUTER_MATCH_CONTROLLER_KEY = '_controller';
 
     const USER_CONTROLLER_NAME = UserController::class;
-    const WORKER_CONTROLLER_NAME = WorkerController::class;
     const DEFAULT_CANONICAL_URL = 'http://example.com/';
 
     protected function setUp()
@@ -70,18 +68,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getUserController($methodName, $postData = array(), $queryData = array())
     {
         return $this->getController(self::USER_CONTROLLER_NAME, $methodName, $postData, $queryData);
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     *
-     * @return WorkerController
-     */
-    protected function getWorkerController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(self::WORKER_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }
 
     /**
