@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserAccountPlanSubsciption\Subscribe;
 
+use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class SubscribeTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserAccountPlanSubscriptionController
+     */
+    private $userAccountPlanSubscriptionController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,8 @@ class SubscribeTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userAccountPlanSubscriptionController = new UserAccountPlanSubscriptionController();
+        $this->userAccountPlanSubscriptionController->setContainer($this->container);
     }
 
     public function testBasicToBasic()
@@ -29,7 +37,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             $newPlan
         );
@@ -65,7 +73,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find($currentPlan));
 
-        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction(
             $email,
             $newPlan
         );
@@ -113,7 +121,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'agency'
         );
@@ -141,7 +149,7 @@ class SubscribeTest extends BaseControllerJsonTestCase
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'basic'
         );
@@ -169,12 +177,12 @@ class SubscribeTest extends BaseControllerJsonTestCase
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'basic'
         );
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'agency'
         );
@@ -194,12 +202,12 @@ class SubscribeTest extends BaseControllerJsonTestCase
 
         $initialStripeCustomerId = $this->getUserAccountPlanService()->getForUser($user)->getStripeCustomer();
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'basic'
         );
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'agency'
         );

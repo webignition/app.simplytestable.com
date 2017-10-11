@@ -92,7 +92,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($user->getEmail(), 'basic');
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('basic'));
 
         $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertTrue(isset($responseObject->stripe_customer));

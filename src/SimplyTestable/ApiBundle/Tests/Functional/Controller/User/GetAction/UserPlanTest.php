@@ -111,10 +111,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
-            $user->getEmail(),
-            'personal'
-        );
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
         // Mock the fact that the Stripe customer.subscription.trial_end is
         // $trialDaysPassed days from now
@@ -124,10 +121,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
-            $user->getEmail(),
-            'agency'
-        );
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('agency'));
 
         $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertEquals($trialDaysRemaining, $responseObject->user_plan->start_trial_period);
@@ -151,10 +145,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
-            $user->getEmail(),
-            'basic'
-        );
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('basic'));
 
         $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertEquals($trialDaysRemaining, $responseObject->user_plan->start_trial_period);

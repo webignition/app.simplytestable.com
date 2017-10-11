@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController as StripeWebHookController;
-use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
 use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
 use SimplyTestable\ApiBundle\Controller\UserStripeEventController;
@@ -48,7 +47,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 
     const USER_EMAIL_CHANGE_CONTROLLER_NAME = UserEmailChangeController::class;
     const USER_CONTROLLER_NAME = UserController::class;
-    const USER_ACCOUNT_PLAN_SUBSCRIPTION_CONTROLLER_NAME = UserAccountPlanSubscriptionController::class;
     const WORKER_CONTROLLER_NAME = WorkerController::class;
     const STRIPE_WEBHOOK_CONTROLLER_NAME = StripeWebHookController::class;
     const USER_STRIPE_EVENT_CONTROLLER_NAME = UserStripeEventController::class;
@@ -66,23 +64,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getManager()
     {
         return $this->container->get('doctrine')->getManager();
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     *
-     * @return UserAccountPlanSubscriptionController
-     */
-    protected function getUserAccountPlanSubscriptionController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(
-            self::USER_ACCOUNT_PLAN_SUBSCRIPTION_CONTROLLER_NAME,
-            $methodName,
-            $postData,
-            $queryData
-        );
     }
 
     /**

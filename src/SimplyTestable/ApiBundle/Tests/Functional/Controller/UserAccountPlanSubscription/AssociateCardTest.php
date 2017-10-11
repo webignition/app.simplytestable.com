@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserAccountPlanSubsciption;
 
+use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class AssociateCardTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserAccountPlanSubscriptionController
+     */
+    private $userAccountPlanSubscriptionController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,8 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userAccountPlanSubscriptionController = new UserAccountPlanSubscriptionController();
+        $this->userAccountPlanSubscriptionController->setContainer($this->container);
     }
 
     public function testWithPublicUser()
@@ -27,7 +35,11 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->setUser($userService->getPublicUser());
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction('', '');
+        $response = $this->userAccountPlanSubscriptionController->associateCardAction(
+            '',
+            ''
+        );
+
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -36,7 +48,11 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction('', '');
+        $response = $this->userAccountPlanSubscriptionController->associateCardAction(
+            '',
+            ''
+        );
+
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -45,10 +61,11 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+        $response = $this->userAccountPlanSubscriptionController->associateCardAction(
             $user->getEmail(),
             ''
         );
+
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -57,10 +74,11 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+        $response = $this->userAccountPlanSubscriptionController->associateCardAction(
             $user->getEmail(),
             'tok_22SBwowh6VeVgR'
         );
+
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -69,15 +87,16 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'personal'
         );
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+        $response = $this->userAccountPlanSubscriptionController->associateCardAction(
             $user->getEmail(),
             $this->generateStripeCardToken()
         );
+
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -90,7 +109,7 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'personal'
         );
@@ -100,10 +119,11 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $this->getStripeService()->setNextStripeCardErrorParam($stripeErrorParam);
         $this->getStripeService()->setNextStripeCardErrorCode($stripeErrorCode);
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+        $response = $this->userAccountPlanSubscriptionController->associateCardAction(
             $user->getEmail(),
             $this->generateStripeCardToken()
         );
+
         $this->assertEquals(400, $response->getStatusCode());
 
         $this->assertEquals($stripeErrorMessage, $response->headers->get('X-Stripe-Error-Message'));
@@ -120,7 +140,7 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'personal'
         );
@@ -130,7 +150,7 @@ class AssociateCardTest extends BaseControllerJsonTestCase
         $this->getStripeService()->setNextStripeCardErrorParam($stripeErrorParam);
         $this->getStripeService()->setNextStripeCardErrorCode($stripeErrorCode);
 
-        $response = $this->getUserAccountPlanSubscriptionController('associateCardAction')->associateCardAction(
+        $response = $this->userAccountPlanSubscriptionController->associateCardAction(
             $user->getEmail(),
             $this->generateStripeCardToken()
         );

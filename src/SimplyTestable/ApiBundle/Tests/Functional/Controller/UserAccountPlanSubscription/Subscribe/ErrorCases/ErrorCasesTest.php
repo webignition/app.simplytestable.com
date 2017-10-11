@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserAccountPlanSubsciption\Subscribe\ErrorCases;
 
+use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserAccountPlanSubscriptionController
+     */
+    private $userAccountPlanSubscriptionController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,8 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userAccountPlanSubscriptionController = new UserAccountPlanSubscriptionController();
+        $this->userAccountPlanSubscriptionController->setContainer($this->container);
     }
 
     public function testWithPublicUser()
@@ -27,7 +35,7 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->setUser($userService->getPublicUser());
 
-        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '');
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -36,7 +44,7 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction('', '');
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -45,7 +53,7 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             'invalid-plan'
         );
@@ -61,7 +69,7 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
 
         $this->getStripeService()->setHasInvalidApiKey(true);
 
-        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             $newPlan
         );
@@ -85,7 +93,7 @@ class ErrorCasesTest extends BaseControllerJsonTestCase
         $this->getStripeService()->setNextStripeCardErrorParam($stripeErrorParam);
         $this->getStripeService()->setNextStripeCardErrorCode($stripeErrorCode);
 
-        $response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
+        $response = $this->userAccountPlanSubscriptionController->subscribeAction(
             $user->getEmail(),
             $newPlan
         );
