@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class IsEnabledTest extends BaseControllerJsonTestCase
@@ -13,6 +14,11 @@ class IsEnabledTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserController
+     */
+    private $userController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,13 +26,14 @@ class IsEnabledTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userController = new UserController();
+        $this->userController->setContainer($this->container);
     }
 
     public function testExistsWithNotEnabledUser() {
         $user = $this->userFactory->create();
 
-        $controller = $this->getUserController('existsAction');
-        $response = $controller->existsAction($user->getEmail());
+        $response = $this->userController->existsAction($user->getEmail());
 
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -35,8 +42,7 @@ class IsEnabledTest extends BaseControllerJsonTestCase
     public function testExistsWithEnabledUser() {
         $user = $this->userFactory->createAndActivateUser();
 
-        $controller = $this->getUserController('existsAction');
-        $response = $controller->existsAction($user->getEmail());
+        $response = $this->userController->existsAction($user->getEmail());
 
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -46,8 +52,7 @@ class IsEnabledTest extends BaseControllerJsonTestCase
         $email = 'user1@example.com';
 
         try {
-            $controller = $this->getUserController('existsAction');
-            $response = $controller->existsAction($email);
+            $this->userController->existsAction($email);
             $this->fail('Attempt to check existence for non-existent user did not generate HTTP 404');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertEquals(404, $exception->getStatusCode());

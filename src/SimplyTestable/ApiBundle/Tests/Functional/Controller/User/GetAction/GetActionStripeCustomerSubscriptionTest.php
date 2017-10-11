@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -21,7 +22,10 @@ class GetActionStripeCustomerSubscriptionTest extends BaseControllerJsonTestCase
             $this->getAccountPlanService()->find('personal')
         );
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $userController = new UserController();
+        $userController->setContainer($this->container);
+
+        $responseObject = json_decode($userController->getAction()->getContent());
         $this->assertTrue(isset($responseObject->stripe_customer->subscription));
         $this->assertTrue(isset($responseObject->stripe_customer->subscription->plan));
 

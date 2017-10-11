@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -15,6 +16,11 @@ class GetActionPlanContraintsTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserController
+     */
+    private $userController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -22,6 +28,8 @@ class GetActionPlanContraintsTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userController = new UserController();
+        $this->userController->setContainer($this->container);
     }
 
     public function testForUseWithBasicPlan()
@@ -29,7 +37,7 @@ class GetActionPlanContraintsTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
 
         $this->assertInstanceOf('\stdClass', $responseObject->plan_constraints);
         $this->assertTrue(isset($responseObject->plan_constraints->credits));
@@ -47,7 +55,7 @@ class GetActionPlanContraintsTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
 
         $this->assertInstanceOf('\stdClass', $responseObject->plan_constraints);
         $this->assertTrue(isset($responseObject->plan_constraints->credits));

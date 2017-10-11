@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
 class GetTokenTest extends BaseControllerJsonTestCase
@@ -12,6 +13,11 @@ class GetTokenTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserController
+     */
+    private $userController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -19,6 +25,8 @@ class GetTokenTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userController = new UserController();
+        $this->userController->setContainer($this->container);
     }
 
     public function testGetTokenWithNotEnabledUser() {
@@ -26,8 +34,7 @@ class GetTokenTest extends BaseControllerJsonTestCase
 
         $user = $this->userFactory->create();
 
-        $controller = $this->getUserController('getTokenAction');
-        $response = $controller->getTokenAction($user->getEmail());
+        $response = $this->userController->getTokenAction($user->getEmail());
 
         $token = $userService->getConfirmationToken($user);
 
@@ -39,8 +46,7 @@ class GetTokenTest extends BaseControllerJsonTestCase
         $email = 'user1@example.com';
 
         try {
-            $controller = $this->getUserController('getTokenAction');
-            $controller->getTokenAction($email);
+            $this->userController->getTokenAction($email);
             $this->fail('Attempt to get token for non-existent user did not generate HTTP 404');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertEquals(404, $exception->getStatusCode());
@@ -52,8 +58,7 @@ class GetTokenTest extends BaseControllerJsonTestCase
         $userService = $this->container->get('simplytestable.services.userservice');
         $user = $this->userFactory->createAndActivateUser();
 
-        $controller = $this->getUserController('getTokenAction');
-        $response = $controller->getTokenAction($user->getEmail());
+        $response = $this->userController->getTokenAction($user->getEmail());
 
         $token = $userService->getConfirmationToken($user);
 
