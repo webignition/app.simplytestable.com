@@ -23,18 +23,6 @@ abstract class ActionTest extends BaseControllerJsonTestCase {
         return $this->container->get('simplytestable.services.job.configurationservice');
     }
 
-
-
-    /**
-     * @param array $postData
-     * @param array $queryData
-     * @return \SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController
-     */
-    protected function getCurrentController(array $postData = [], array $queryData = []) {
-        return parent::getCurrentController($postData, $queryData);
-    }
-
-
     /**
      *
      * @return array
