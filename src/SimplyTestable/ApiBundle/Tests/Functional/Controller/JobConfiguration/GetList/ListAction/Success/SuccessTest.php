@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\GetList\ListAction\Success;
 
+use SimplyTestable\ApiBundle\Controller\JobConfiguration\GetController;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
@@ -26,8 +27,6 @@ class SuccessTest extends GetListTest {
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();
         $this->setUser($user);
-
-        $methodName = $this->getActionNameFromRouter();
 
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
         $jobConfigurationFactory->create([
@@ -61,7 +60,11 @@ class SuccessTest extends GetListTest {
             ],
         ]);
 
-        $this->response = $this->getCurrentController()->$methodName('foo');
+        $controller = new GetController();
+        $controller->setContainer($this->container);
+
+        $this->response = $controller->getAction('foo');
+
         $this->decodedResponse = json_decode($this->response->getContent(), true);
     }
 
