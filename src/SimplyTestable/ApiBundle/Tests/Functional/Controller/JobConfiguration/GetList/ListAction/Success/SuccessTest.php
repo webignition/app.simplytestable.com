@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\GetList\ListAction\Success;
 
-use SimplyTestable\ApiBundle\Controller\JobConfiguration\GetController;
+use SimplyTestable\ApiBundle\Controller\JobConfiguration\GetListController;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
@@ -60,10 +60,10 @@ class SuccessTest extends GetListTest {
             ],
         ]);
 
-        $controller = new GetController();
+        $controller = new GetListController();
         $controller->setContainer($this->container);
 
-        $this->response = $controller->getAction('foo');
+        $this->response = $controller->listAction('foo');
 
         $this->decodedResponse = json_decode($this->response->getContent(), true);
     }
