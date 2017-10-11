@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserStripeEvent;
 
+use SimplyTestable\ApiBundle\Controller\UserStripeEventController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class ListActionTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserStripeEventController
+     */
+    private $userStripeEventController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,8 @@ class ListActionTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userStripeEventController = new UserStripeEventController();
+        $this->userStripeEventController->setContainer($this->container);
     }
 
     public function testWithPublicUser()
@@ -27,7 +35,7 @@ class ListActionTest extends BaseControllerJsonTestCase
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->setUser($userService->getPublicUser());
 
-        $response = $this->getUserStripeEventController('listAction')->listAction('', '');
+        $response = $this->userStripeEventController->listAction('', '');
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -35,7 +43,7 @@ class ListActionTest extends BaseControllerJsonTestCase
     {
         $this->setUser($this->userFactory->create());
 
-        $response = $this->getUserStripeEventController('listAction')->listAction('user2@example.com', '');
+        $response = $this->userStripeEventController->listAction('user2@example.com', '');
         $this->assertEquals(400, $response->getStatusCode());
     }
 
@@ -44,7 +52,7 @@ class ListActionTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $response = $this->getUserStripeEventController('listAction')->listAction($user->getEmail(), '');
+        $response = $this->userStripeEventController->listAction($user->getEmail(), '');
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals(array(), json_decode($response->getContent()));
     }
@@ -63,7 +71,7 @@ class ListActionTest extends BaseControllerJsonTestCase
             'customer' => $userAccountPlan->getStripeCustomer()
         ), $user);
 
-        $response = $this->getUserStripeEventController('listAction')->listAction($user->getEmail(), '');
+        $response = $this->userStripeEventController->listAction($user->getEmail(), '');
         $this->assertEquals(200, $response->getStatusCode());
 
         $responseObject = json_decode($response->getContent());
@@ -85,7 +93,7 @@ class ListActionTest extends BaseControllerJsonTestCase
             'customer' => $userAccountPlan->getStripeCustomer()
         ), $user);
 
-        $responseObject = json_decode($this->getUserStripeEventController('listAction')->listAction(
+        $responseObject = json_decode($this->userStripeEventController->listAction(
             $user->getEmail(),
             'customer.created'
         )->getContent());
@@ -106,7 +114,7 @@ class ListActionTest extends BaseControllerJsonTestCase
             'customer' => $userAccountPlan->getStripeCustomer()
         ), $user);
 
-        $responseObject = json_decode($this->getUserStripeEventController('listAction')->listAction(
+        $responseObject = json_decode($this->userStripeEventController->listAction(
             $user->getEmail(),
             'customer.subscription.updated'
         )->getContent());

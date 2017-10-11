@@ -6,7 +6,6 @@ use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController as StripeWebHookController;
 use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
-use SimplyTestable\ApiBundle\Controller\UserStripeEventController;
 use SimplyTestable\ApiBundle\Controller\WorkerController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
@@ -49,7 +48,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     const USER_CONTROLLER_NAME = UserController::class;
     const WORKER_CONTROLLER_NAME = WorkerController::class;
     const STRIPE_WEBHOOK_CONTROLLER_NAME = StripeWebHookController::class;
-    const USER_STRIPE_EVENT_CONTROLLER_NAME = UserStripeEventController::class;
     const DEFAULT_CANONICAL_URL = 'http://example.com/';
 
     protected function setUp()
@@ -112,18 +110,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getStripeWebHookController($methodName, $postData = array(), $queryData = array())
     {
         return $this->getController(self::STRIPE_WEBHOOK_CONTROLLER_NAME, $methodName, $postData, $queryData);
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     *
-     * @return UserStripeEventController
-     */
-    protected function getUserStripeEventController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(self::USER_STRIPE_EVENT_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }
 
     /**
