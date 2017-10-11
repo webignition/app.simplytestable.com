@@ -3,10 +3,18 @@
 namespace SimplyTestable\ApiBundle\Controller\Stripe;
 
 use SimplyTestable\ApiBundle\Controller\ApiController;
+use SimplyTestable\ApiBundle\Services\Mail\Service;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use Symfony\Component\HttpFoundation\Response;
 
-class WebHookController extends ApiController {
-
-    public function indexAction() {
+class WebHookController extends ApiController
+{
+    /**
+     * @return Response
+     */
+    public function indexAction()
+    {
         if (!$this->hasEventContent()) {
             return $this->sendFailureResponse();
         }
@@ -25,7 +33,13 @@ class WebHookController extends ApiController {
         $stripeCustomer = $this->getStripeCustomerFromEventData($requestData->data);
         $user = $this->getUserAccountPlanService()->getUserByStripeCustomer($stripeCustomer);
 
-        $stripeEvent = $this->getStripeEventService()->create($stripeId, $requestData->type, $requestData->livemode, $requestBody, $user);
+        $stripeEvent = $this->getStripeEventService()->create(
+            $stripeId,
+            $requestData->type,
+            $requestData->livemode,
+            $requestBody,
+            $user
+        );
 
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
@@ -40,7 +54,13 @@ class WebHookController extends ApiController {
         return $this->sendResponse($stripeEvent);
     }
 
-    private function getStripeCustomerFromEventData(\stdClass $eventData) {
+    /**
+     * @param \stdClass $eventData
+     *
+     * @return null|string
+     */
+    private function getStripeCustomerFromEventData(\stdClass $eventData)
+    {
         if (!isset($eventData->object)) {
             return null;
         }
@@ -56,7 +76,11 @@ class WebHookController extends ApiController {
         }
     }
 
-    private function getEventContent() {
+    /**
+     * @return null|string
+     */
+    private function getEventContent()
+    {
         $requestContent = trim($this->get('request')->getContent());
         if ($this->isStripeEventContent($requestContent)) {
             return $requestContent;
@@ -70,22 +94,21 @@ class WebHookController extends ApiController {
         return null;
     }
 
-
     /**
-     *
-     * @return boolean
+     * @return bool
      */
-    private function hasEventContent() {
+    private function hasEventContent()
+    {
         return !is_null($this->getEventContent());
     }
 
-
     /**
-     *
      * @param string $string
-     * @return boolean
+     *
+     * @return bool
      */
-    private function isStripeEventContent($string) {
+    private function isStripeEventContent($string)
+    {
         if (!$this->isNonEmptyJson($string)) {
             return false;
         }
@@ -98,13 +121,13 @@ class WebHookController extends ApiController {
         return $event->object == 'event';
     }
 
-
     /**
-     *
      * @param string $string
-     * @return boolean
+     *
+     * @return bool
      */
-    private function isNonEmptyJson($string) {
+    private function isNonEmptyJson($string)
+    {
         $string = trim($string);
         if ($string == '') {
             return false;
@@ -113,18 +136,23 @@ class WebHookController extends ApiController {
         return $this->isJson($string);
     }
 
-
     /**
-     *
      * @param string $string
-     * @return boolean
+     *
+     * @return bool
      */
-    private function isJson($string) {
+    private function isJson($string)
+    {
         json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
     }
 
-    private function sendDeveloperWebhookNotification($rawWebhookData, $eventType) {
+    /**
+     * @param string $rawWebhookData
+     * @param string $eventType
+     */
+    private function sendDeveloperWebhookNotification($rawWebhookData, $eventType)
+    {
         $emailSettings = $this->container->getParameter('stripe_webhook_developer_notification');
 
         $message = $this->getMailService()->getNewMessage();
@@ -136,29 +164,27 @@ class WebHookController extends ApiController {
         $this->getMailService()->getSender()->send($message);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
+     * @return UserAccountPlanService
      */
-    private function getUserAccountPlanService() {
+    private function getUserAccountPlanService()
+    {
         return $this->container->get('simplytestable.services.useraccountplanservice');
     }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\StripeEventService
+     * @return StripeEventService
      */
-    private function getStripeEventService() {
+    private function getStripeEventService()
+    {
         return $this->container->get('simplytestable.services.stripeeventservice');
     }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\Mail\Service
+     * @return Service
      */
-    private function getMailService() {
+    private function getMailService()
+    {
         return $this->get('simplytestable.services.mail.service');
     }
-
 }
