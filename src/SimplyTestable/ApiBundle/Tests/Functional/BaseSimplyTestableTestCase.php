@@ -7,7 +7,6 @@ use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController as StripeWebHoo
 use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
 use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
-use SimplyTestable\ApiBundle\Controller\UserPasswordResetController;
 use SimplyTestable\ApiBundle\Controller\UserStripeEventController;
 use SimplyTestable\ApiBundle\Controller\WorkerController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
@@ -47,7 +46,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
 {
     const ROUTER_MATCH_CONTROLLER_KEY = '_controller';
 
-    const USER_PASSWORD_RESET_CONTROLLER_NAME = UserPasswordResetController::class;
     const USER_EMAIL_CHANGE_CONTROLLER_NAME = UserEmailChangeController::class;
     const USER_CONTROLLER_NAME = UserController::class;
     const USER_ACCOUNT_PLAN_SUBSCRIPTION_CONTROLLER_NAME = UserAccountPlanSubscriptionController::class;
@@ -85,18 +83,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
             $postData,
             $queryData
         );
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     *
-     * @return UserPasswordResetController
-     */
-    protected function getUserPasswordResetController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(self::USER_PASSWORD_RESET_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }
 
     /**
@@ -204,20 +190,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         $job->setState($jobInProgressState);
         $job->setTimePeriod(new TimePeriod());
         $this->getJobService()->complete($job);
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return string
-     */
-    protected function getPasswordResetToken(User $user)
-    {
-        $this->getUserPasswordResetController('getTokenAction')->getTokenAction($user->getEmail());
-
-        $userService = $this->container->get('simplytestable.services.userservice');
-
-        return $userService->getConfirmationToken($user);
     }
 
     /**
