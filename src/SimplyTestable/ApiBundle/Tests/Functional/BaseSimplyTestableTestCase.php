@@ -5,7 +5,6 @@ namespace SimplyTestable\ApiBundle\Tests\Functional;
 use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController as JobConfigurationCreateController;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController as StripeWebHookController;
-use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
 use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
@@ -56,7 +55,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     const WORKER_CONTROLLER_NAME = WorkerController::class;
     const STRIPE_WEBHOOK_CONTROLLER_NAME = StripeWebHookController::class;
     const USER_STRIPE_EVENT_CONTROLLER_NAME = UserStripeEventController::class;
-    const TEAM_INVITE_CONTROLLER_NAME = TeamInviteController::class;
     const JOBCONFIGURATION_CREATE_CONTROLLER_NAME = JobConfigurationCreateController::class;
 
     const DEFAULT_CANONICAL_URL = 'http://example.com/';
@@ -73,18 +71,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getManager()
     {
         return $this->container->get('doctrine')->getManager();
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     *
-     * @return TeamInviteController
-     */
-    protected function getTeamInviteController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(self::TEAM_INVITE_CONTROLLER_NAME, $methodName, $postData, $queryData);
     }
 
     /**
