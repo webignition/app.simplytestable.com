@@ -422,3 +422,12 @@ services:
 
   simplytestable.services.jobconfiguration.factory:
     class:   SimplyTestable\ApiBundle\Services\JobConfigurationFactory
+
+  simplytestable.services.request.factory.job.list:
+    class:   SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory
+    arguments:
+        requestStack: '@request_stack'
+        entityManager: '@doctrine.orm.entity_manager'
+        jobService: '@simplytestable.services.jobservice'
+        crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+        tokenStorage: '@security.token_storage'
