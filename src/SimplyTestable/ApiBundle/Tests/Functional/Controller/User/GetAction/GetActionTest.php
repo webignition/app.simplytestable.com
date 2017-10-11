@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class GetActionTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserController
+     */
+    private $userController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,8 @@ class GetActionTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userController = new UserController();
+        $this->userController->setContainer($this->container);
     }
 
     public function testGetForUserWithBasicPlan()
@@ -27,7 +35,7 @@ class GetActionTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
 
         $this->assertEquals($user->getEmail(), $responseObject->email);
     }
@@ -39,7 +47,7 @@ class GetActionTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertEquals($user->getEmail(), $responseObject->email);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User;
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class HasInvitesTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserController
+     */
+    private $userController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,13 +26,14 @@ class HasInvitesTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userController = new UserController();
+        $this->userController->setContainer($this->container);
     }
 
     public function testNonexistentUserHasNoInvites()
     {
         try {
-            $controller = $this->getUserController('hasInvitesAction');
-            $controller->hasInvitesAction('user@example.com');
+            $this->userController->hasInvitesAction('user@example.com');
             $this->fail('Attempt to check for invites for non-existent user did not generate HTTP 404');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertEquals(404, $exception->getStatusCode());
@@ -38,8 +45,7 @@ class HasInvitesTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser();
 
         try {
-            $controller = $this->getUserController('hasInvitesAction');
-            $controller->hasInvitesAction($user->getEmail());
+            $this->userController->hasInvitesAction($user->getEmail());
             $this->fail('Attempt to check for invites for user with no invites did not generate HTTP 404');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
             $this->assertEquals(404, $exception->getStatusCode());
@@ -58,7 +64,7 @@ class HasInvitesTest extends BaseControllerJsonTestCase
 
         $this->assertEquals(
             200,
-            $this->getUserController('hasInvitesAction')->hasInvitesAction($user->getEmail())->getStatusCode()
+            $this->userController->hasInvitesAction($user->getEmail())->getStatusCode()
         );
     }
 }
