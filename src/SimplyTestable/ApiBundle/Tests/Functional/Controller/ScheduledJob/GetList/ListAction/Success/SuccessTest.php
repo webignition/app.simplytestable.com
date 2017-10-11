@@ -4,10 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\GetL
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\GetList\ListAction\GetListTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\ActionTest;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class SuccessTest extends GetListTest {
+abstract class SuccessTest extends ActionTest {
 
     /**
      * @var Response
