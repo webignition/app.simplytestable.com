@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActivateAndAcceptAction;
 
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class ErrorCasesTest extends ActionTest {
+class ErrorCasesTest extends BaseControllerJsonTestCase {
 
     public function testInvalidTokenReturnsBadRequest() {
         $methodName = $this->getActionNameFromRouter();

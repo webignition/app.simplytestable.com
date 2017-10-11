@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\Accept
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
@@ -12,7 +12,7 @@ use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationV
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration as TaskConfiguration;
 
-class RemoveTest extends ActionTest {
+class RemoveTest extends BaseControllerJsonTestCase {
 
 
     /**

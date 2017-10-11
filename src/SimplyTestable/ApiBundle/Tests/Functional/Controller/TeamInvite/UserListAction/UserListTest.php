@@ -3,9 +3,9 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\UserListAction;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class UserListTest extends ActionTest
+class UserListTest extends BaseControllerJsonTestCase
 {
     /**
      * @var UserFactory

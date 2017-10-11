@@ -3,10 +3,10 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\GetAction;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class GetTest extends ActionTest
+class GetTest extends BaseControllerJsonTestCase
 {
     /**
      * @var UserFactory

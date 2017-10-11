@@ -3,9 +3,9 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\GetByTokenAction;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class GetByTokenTest extends ActionTest {
+class GetByTokenTest extends BaseControllerJsonTestCase {
 
     public function testInvalidTokenReturnsNotFoundResponse() {
         $methodName = $this->getActionNameFromRouter();

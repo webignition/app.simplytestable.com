@@ -3,12 +3,12 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActivateAndAcceptAction;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use Symfony\Component\HttpFoundation\Response as SymfonyHttpResponse;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 
-class SuccessTest extends ActionTest {
+class SuccessTest extends BaseControllerJsonTestCase {
 
     /**
      * @var SymfonyHttpResponse
