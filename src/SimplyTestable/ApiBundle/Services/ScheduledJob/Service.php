@@ -238,10 +238,13 @@ class Service extends EntityService {
             }
         }
 
-
         if (!is_null($schedule)) {
             $scheduledJob->getCronJob()->setSchedule($schedule);
             $this->getManager()->persist($scheduledJob->getCronJob());
+        }
+
+        if (!is_null($cronModifier)) {
+            $scheduledJob->setCronModifier($cronModifier);
         }
 
         if (!is_null($jobConfiguration)) {
