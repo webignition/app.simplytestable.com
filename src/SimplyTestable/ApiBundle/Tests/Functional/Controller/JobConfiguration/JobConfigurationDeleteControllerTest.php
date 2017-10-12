@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\DeleteController;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -17,15 +18,13 @@ class JobConfigurationDeleteControllerTest extends BaseSimplyTestableTestCase
     private $jobConfigurationDeleteController;
 
     /**
-     * @var UserFactory
-     */
-    private $userFactory;
-
-    /**
      * @var JobConfiguration
      */
     private $jobConfiguration;
 
+    /**
+     * @var User
+     */
     private $user;
 
     /**
@@ -38,8 +37,8 @@ class JobConfigurationDeleteControllerTest extends BaseSimplyTestableTestCase
         $this->jobConfigurationDeleteController = new DeleteController();
         $this->jobConfigurationDeleteController->setContainer($this->container);
 
-        $this->userFactory = new UserFactory($this->container);
-        $this->user = $this->userFactory->create();
+        $userFactory = new UserFactory($this->container);
+        $this->user = $userFactory->create();
         $this->setUser($this->user);
 
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
@@ -141,5 +140,4 @@ class JobConfigurationDeleteControllerTest extends BaseSimplyTestableTestCase
 
         $this->assertNull($jobConfiguration);
     }
-
 }
