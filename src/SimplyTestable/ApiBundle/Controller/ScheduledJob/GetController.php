@@ -2,14 +2,23 @@
 
 namespace SimplyTestable\ApiBundle\Controller\ScheduledJob;
 
-class GetController extends ScheduledJobController {
+use Symfony\Component\HttpFoundation\Response;
 
-    public function getAction($id) {
-        $this->getScheduledJobService()->setUser($this->getUser());
+class GetController extends ScheduledJobController
+{
+    /**
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function getAction($id)
+    {
+        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService->setUser($this->getUser());
 
-        $scheduledJob = $this->getScheduledJobService()->get($id);
+        $scheduledJob = $scheduledJobService->get($id);
 
-        if (is_null($scheduledJob)) {
+        if (empty($scheduledJob)) {
             return $this->sendNotFoundResponse();
         }
 
@@ -21,5 +30,4 @@ class GetController extends ScheduledJobController {
             'isrecurring' => (int)$scheduledJob->getIsRecurring(),
         ]);
     }
-
 }
