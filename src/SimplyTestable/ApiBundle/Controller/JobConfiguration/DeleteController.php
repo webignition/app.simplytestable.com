@@ -2,12 +2,20 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
+use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use Symfony\Component\HttpFoundation\Response;
 
-class DeleteController extends JobConfigurationController {
-
-    public function deleteAction($label) {
+class DeleteController extends JobConfigurationController
+{
+    /**
+     * @param $label
+     *
+     * @return Response
+     */
+    public function deleteAction($label)
+    {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -26,8 +34,14 @@ class DeleteController extends JobConfigurationController {
             return $this->sendNotFoundResponse();
         }
 
-        if (is_null($this->getScheduledJobService()->getEntityRepository()->findOneBy(['jobConfiguration' => $jobConfiguration]))) {
+        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
+        $scheduledJob = $scheduledJobRepository->findOneBy([
+            'jobConfiguration' => $jobConfiguration,
+        ]);
+
+        if (!empty($scheduledJob)) {
             $this->getJobConfigurationService()->delete($label);
+
             return $this->sendResponse();
         }
 
@@ -38,13 +52,4 @@ class DeleteController extends JobConfigurationController {
             ])
         ]);
     }
-
-
-    /**
-     * @return ScheduledJobService
-     */
-    private function getScheduledJobService() {
-        return $this->container->get('simplytestable.services.scheduledjob.service');
-    }
-
 }
