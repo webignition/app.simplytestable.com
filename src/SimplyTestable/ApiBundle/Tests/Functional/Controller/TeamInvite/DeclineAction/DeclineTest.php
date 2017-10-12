@@ -2,8 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\DeclineAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 class DeclineTest extends BaseControllerJsonTestCase
 {
@@ -13,6 +15,11 @@ class DeclineTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var TeamInviteController
+     */
+    private $teamInviteController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,17 +27,16 @@ class DeclineTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamInviteController = new TeamInviteController();
+        $this->teamInviteController->setContainer($this->container);
     }
-
 
     public function testUserDeclinesForNonexistentTeamReturnsOk() {
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request();
+        $response = $this->teamInviteController->declineAction($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
@@ -50,12 +56,8 @@ class DeclineTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController([
-            'team' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['team' => 'Foo']);
+        $response = $this->teamInviteController->declineAction($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
@@ -76,16 +78,12 @@ class DeclineTest extends BaseControllerJsonTestCase
             $inviter
         );
 
-        $invite = $this->getTeamInviteService()->get($inviter, $invitee);
+        $this->getTeamInviteService()->get($inviter, $invitee);
 
         $this->setUser($invitee);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController([
-            'team' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['team' => 'Foo']);
+        $response = $this->teamInviteController->declineAction($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($invitee));

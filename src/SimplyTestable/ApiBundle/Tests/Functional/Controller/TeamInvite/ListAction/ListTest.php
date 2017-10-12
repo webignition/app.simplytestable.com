@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ListAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class ListTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var TeamInviteController
+     */
+    private $teamInviteController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,14 +26,15 @@ class ListTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamInviteController = new TeamInviteController();
+        $this->teamInviteController->setContainer($this->container);
     }
 
     public function testUserIsNotTeamLeaderReturnsBadRequest() {
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamInviteController->listAction();
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(1, $response->headers->get('X-TeamInviteList-Error-Code'));
@@ -45,8 +52,7 @@ class ListTest extends BaseControllerJsonTestCase
             $leader
         );
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamInviteController->listAction();
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals([], json_decode($response->getContent(), true));
@@ -68,8 +74,7 @@ class ListTest extends BaseControllerJsonTestCase
 
         $invite = $this->getTeamInviteService()->get($leader, $user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamInviteController->listAction();
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -108,8 +113,7 @@ class ListTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->subscribe($user1, $this->getAccountPlanService()->find('personal'));
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamInviteController->listAction();
 
         $this->assertEquals(200, $response->getStatusCode());
 

@@ -2,15 +2,17 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\GetByTokenAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
 class GetByTokenTest extends BaseControllerJsonTestCase {
 
     public function testInvalidTokenReturnsNotFoundResponse() {
-        $methodName = $this->getActionNameFromRouter();
+        $teamInviteController = new TeamInviteController();
+        $teamInviteController->setContainer($this->container);
 
-        $response = $this->getCurrentController()->$methodName('foo');
+        $response = $teamInviteController->getByTokenAction('foo');
 
         $this->assertEquals(404, $response->getStatusCode());
     }
@@ -32,9 +34,11 @@ class GetByTokenTest extends BaseControllerJsonTestCase {
         );
 
         $invite = $this->getTeamInviteService()->get($inviter, $invitee);
-        $methodName = $this->getActionNameFromRouter();
 
-        $response = $this->getCurrentController()->$methodName($invite->getToken());
+        $teamInviteController = new TeamInviteController();
+        $teamInviteController->setContainer($this->container);
+
+        $response = $teamInviteController->getByTokenAction($invite->getToken());
 
         $this->assertEquals(200, $response->getStatusCode());
 

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\AcceptAction\RemoveScheduledJobsAndJobConfigurations;
 
+use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
@@ -11,6 +12,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration as TaskConfiguration;
+use Symfony\Component\HttpFoundation\Request;
 
 class RemoveTest extends BaseControllerJsonTestCase {
 
@@ -88,12 +90,11 @@ class RemoveTest extends BaseControllerJsonTestCase {
             $this->assertNotNull($jobConfiguration->getId());
         }
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->getCurrentController([
-            'team' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $controller = new TeamInviteController();
+        $controller->setContainer($this->container);
+
+        $request = new Request([], ['team' => 'Foo']);
+        $controller->acceptAction($request);
     }
 
     public function testEntitiesAreRemoved() {

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\UserListAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class UserListTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var TeamInviteController
+     */
+    private $teamInviteController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,8 @@ class UserListTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamInviteController = new TeamInviteController();
+        $this->teamInviteController->setContainer($this->container);
     }
 
     public function testNoInvitesReturnsEmptyCollection() {
@@ -33,8 +41,7 @@ class UserListTest extends BaseControllerJsonTestCase
             $leader
         );
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamInviteController->userListAction();
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals([], json_decode($response->getContent(), true));
@@ -64,8 +71,7 @@ class UserListTest extends BaseControllerJsonTestCase
         $invite1 = $this->getTeamInviteService()->get($leader1, $user);
         $invite2 = $this->getTeamInviteService()->get($leader2, $user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamInviteController->userListAction();
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -109,8 +115,7 @@ class UserListTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamInviteController->userListAction();
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals([], json_decode($response->getContent(), true));

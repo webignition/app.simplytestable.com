@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\GetAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,11 @@ class GetTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var TeamInviteController
+     */
+    private $teamInviteController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -21,6 +27,8 @@ class GetTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamInviteController = new TeamInviteController();
+        $this->teamInviteController->setContainer($this->container);
     }
 
     public function testInviterIsNotTeamLeaderReturnsBadResponse() {
@@ -33,9 +41,8 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($inviter);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName(new Request(), $invitee->getEmail());
+        $request = new Request();
+        $response = $this->teamInviteController->getAction($request, $invitee->getEmail());
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(1, $response->headers->get('X-TeamInviteGet-Error-Code'));
@@ -57,9 +64,9 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($inviter);
 
-        $methodName = $this->getActionNameFromRouter();
+        $request = new Request();
+        $response = $this->teamInviteController->getAction($request, 'user@example.com');
 
-        $response = $this->getCurrentController()->$methodName(new Request(), 'user@example.com');
         $this->assertEquals(200, $response->getStatusCode());
 
         $this->assertTrue($userService->exists('user@example.com'));
@@ -96,9 +103,8 @@ class GetTest extends BaseControllerJsonTestCase
             $invitee
         );
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName(new Request(), $invitee->getEmail());
+        $request = new Request();
+        $response = $this->teamInviteController->getAction($request, $invitee->getEmail());
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(2, $response->headers->get('X-TeamInviteGet-Error-Code'));
@@ -131,9 +137,8 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($inviter);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName(new Request(), $invitee->getEmail());
+        $request = new Request();
+        $response = $this->teamInviteController->getAction($request, $invitee->getEmail());
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(3, $response->headers->get('X-TeamInviteGet-Error-Code'));
@@ -156,9 +161,8 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($inviter);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName(new Request(), $invitee->getEmail());
+        $request = new Request();
+        $response = $this->teamInviteController->getAction($request, $invitee->getEmail());
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNotNull(json_decode($response->getContent(), true)['user']);
@@ -181,10 +185,9 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($inviter);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response1 = $this->getCurrentController()->$methodName(new Request(), $invitee->getEmail());
-        $response2 = $this->getCurrentController()->$methodName(new Request(), $invitee->getEmail());
+        $request = new Request();
+        $response1 = $this->teamInviteController->getAction($request, $invitee->getEmail());
+        $response2 = $this->teamInviteController->getAction($request, $invitee->getEmail());
 
         $this->assertEquals(json_decode($response1->getContent(), true)['team'], json_decode($response2->getContent(), true)['team']);
     }
@@ -204,9 +207,8 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($inviter);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName(new Request(), $userService->getPublicUser()->getEmail());
+        $request = new Request();
+        $response = $this->teamInviteController->getAction($request, $userService->getPublicUser()->getEmail());
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(10, $response->headers->get('X-TeamInviteGet-Error-Code'));
@@ -228,9 +230,8 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($inviter);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName(new Request(), $userService->getAdminUser()->getEmail());
+        $request = new Request();
+        $response = $this->teamInviteController->getAction($request, $userService->getAdminUser()->getEmail());
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(10, $response->headers->get('X-TeamInviteGet-Error-Code'));
@@ -255,9 +256,8 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($inviter);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName(new Request(), $invitee->getEmail());
+        $request = new Request();
+        $response = $this->teamInviteController->getAction($request, $invitee->getEmail());
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(11, $response->headers->get('X-TeamInviteGet-Error-Code'));
@@ -280,9 +280,8 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($inviter);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName(new Request(), $invitee->getEmail());
+        $request = new Request();
+        $response = $this->teamInviteController->getAction($request, $invitee->getEmail());
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNotNull(json_decode($response->getContent(), true)['token']);
