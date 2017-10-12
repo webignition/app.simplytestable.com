@@ -4,23 +4,27 @@ namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
-use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
-use SimplyTestable\ApiBundle\Services\WebSiteService;
-use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class UpdateController extends JobConfigurationController {
-
+class UpdateController extends JobConfigurationController
+{
     /**
-     * @var Request
+     * @param Request $request
+     * @param string $label
+     *
+     * @return RedirectResponse|Response
      */
-    private $request;
-
-    public function updateAction(Request $request, $label) {
+    public function updateAction(Request $request, $label)
+    {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-
-        $this->request = $request;
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -30,111 +34,53 @@ class UpdateController extends JobConfigurationController {
             return $this->sendServiceUnavailableResponse();
         }
 
-        $this->getJobConfigurationService()->setUser($this->getUser());
+        $jobConfigurationService->setUser($this->getUser());
 
-        $jobConfiguration = $this->getJobConfigurationService()->get($label);
-        if (is_null($jobConfiguration)) {
+        $jobConfiguration = $jobConfigurationService->get($label);
+        if (empty($jobConfiguration)) {
             return $this->sendNotFoundResponse();
         }
 
-        try {
-            $jobConfigurationValues = $this->getRequestJobConfigurationValues();
+        $newJobConfigurationValues = new JobConfigurationValues();
 
-            $this->getJobConfigurationService()->update(
+        $requestData = $request->request;
+
+        $website = $websiteService->fetch(trim($requestData->get('website')));
+        $jobType = $jobTypeService->getByName(trim($requestData->get('type')));
+
+        if (empty($jobType)) {
+            $jobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+        }
+
+        $adapter = new RequestAdapter();
+        $adapter->setRequest($request);
+        $adapter->setTaskTypeService($taskTypeService);
+
+        $taskConfigurationCollection = $adapter->getCollection();
+
+        $newJobConfigurationValues->setLabel($requestData->get('label'));
+        $newJobConfigurationValues->setParameters($requestData->get('parameters'));
+        $newJobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
+        $newJobConfigurationValues->setWebsite($website);
+        $newJobConfigurationValues->setType($jobType);
+
+        try {
+            $jobConfigurationService->update(
                 $jobConfiguration,
-                $jobConfigurationValues
+                $newJobConfigurationValues
             );
 
             return $this->redirect($this->generateUrl(
                 'jobconfiguration_get_get',
-                ['label' =>
-                    ($jobConfigurationValues->hasEmptyLabel()) ? $jobConfiguration->getLabel(): $jobConfiguration->getLabel()
-                ]
+                ['label' => $jobConfiguration->getLabel()]
             ));
         } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
             return $this->sendFailureResponse([
-                'X-JobConfigurationCreate-Error' => json_encode([
+                'X-JobConfigurationUpdate-Error' => json_encode([
                     'code' => $jobConfigurationServiceException->getCode(),
                     'message' => $jobConfigurationServiceException->getMessage()
                 ])
             ]);
         }
-
-
     }
-
-
-    /**
-     * @return JobConfigurationValues
-     */
-    private function getRequestJobConfigurationValues() {
-        $values = new JobConfigurationValues();
-        $values->setLabel($this->request->request->get('label'));
-        $values->setParameters($this->request->request->get('parameters'));
-        $values->setTaskConfigurationCollection($this->getRequestTaskConfigurationCollection());
-        $values->setWebsite($this->getRequestWebsite());
-        $values->setType($this->getRequestJobType());
-
-        return $values;
-    }
-
-
-    private function getRequestWebsite() {
-        return $this->getWebsiteService()->fetch(
-            trim($this->request->get('website'))
-        );
-    }
-
-
-    /**
-     * @return WebSiteService
-     */
-    private function getWebsiteService() {
-        return $this->get('simplytestable.services.websiteservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\JobTypeService
-     */
-    private function getJobTypeService() {
-        return $this->get('simplytestable.services.jobtypeservice');
-    }
-
-
-    /**
-     * @return \SimplyTestable\ApiBundle\Services\TaskTypeService
-     */
-    private function getTaskTypeService() {
-        return $this->get('simplytestable.services.tasktypeservice');
-    }
-
-
-    /**
-     *
-     * @return JobType
-     */
-    private function getRequestJobType() {
-        $requestJobType = $this->request->request->get('type');
-
-        if (!$this->getJobTypeService()->has($requestJobType)) {
-            return $this->getJobTypeService()->getDefaultType();
-        }
-
-        return $this->getJobTypeService()->getByName($requestJobType);
-    }
-
-
-    /**
-     * @return TaskConfigurationCollection
-     */
-    private function getRequestTaskConfigurationCollection() {
-        $adapter = new RequestAdapter();
-        $adapter->setRequest($this->request);
-        $adapter->setTaskTypeService($this->getTaskTypeService());
-
-        return $adapter->getCollection();
-    }
-
 }
