@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\LeaveAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class LeaveTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var TeamController
+     */
+    private $teamController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,8 @@ class LeaveTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamController = new TeamController();
+        $this->teamController->setContainer($this->container);
     }
 
     public function testLeaderReturnsBadRequest() {
@@ -31,8 +39,7 @@ class LeaveTest extends BaseControllerJsonTestCase
 
         $this->setUser($leader);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName('user@example.com');
+        $response = $this->teamController->leaveAction();
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(9, $response->headers->get('X-TeamLeave-Error-Code'));
@@ -44,8 +51,7 @@ class LeaveTest extends BaseControllerJsonTestCase
 
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName('user@example.com');
+        $response = $this->teamController->leaveAction();
 
         $this->assertEquals(200, $response->getStatusCode());
     }
@@ -64,8 +70,7 @@ class LeaveTest extends BaseControllerJsonTestCase
 
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName('user@example.com');
+        $response = $this->teamController->leaveAction();
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($this->getTeamMemberService()->contains($team, $user));

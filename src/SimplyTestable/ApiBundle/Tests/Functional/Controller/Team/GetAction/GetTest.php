@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\GetAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class GetTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var TeamController
+     */
+    private $teamController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,15 +26,17 @@ class GetTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamController = new TeamController();
+        $this->teamController->setContainer($this->container);
     }
 
     public function testUserWithNoTeamReturnsNotFoundResponse() {
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
+        $response = $this->teamController->getAction();
 
-        $this->assertEquals(404, $this->getCurrentController()->$methodName()->getStatusCode());
+        $this->assertEquals(404, $response->getStatusCode());
     }
 
 
@@ -44,9 +52,7 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($leader);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamController->getAction();
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -80,9 +86,7 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($leader);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamController->getAction();
 
         $this->assertEquals(200, $response->getStatusCode());
 
@@ -124,9 +128,7 @@ class GetTest extends BaseControllerJsonTestCase
 
         $this->setUser($member1);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName();
+        $response = $this->teamController->getAction();
 
         $this->assertEquals(200, $response->getStatusCode());
 

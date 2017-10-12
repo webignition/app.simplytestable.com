@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\RemoveAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -13,6 +14,11 @@ class RemoveTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var TeamController
+     */
+    private $teamController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,8 @@ class RemoveTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamController = new TeamController();
+        $this->teamController->setContainer($this->container);
     }
 
     public function testMemberIsNotUserReturnsBadRequest() {
@@ -32,9 +40,7 @@ class RemoveTest extends BaseControllerJsonTestCase
             $leader
         );
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName('user@example.com');
+        $response = $this->teamController->removeAction('user@example.com');
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(9, $response->headers->get('X-TeamRemove-Error-Code'));
@@ -52,9 +58,7 @@ class RemoveTest extends BaseControllerJsonTestCase
 
         $this->setUser($user1);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName($user2->getEmail());
+        $response = $this->teamController->removeAction($user2->getEmail());
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(5, $response->headers->get('X-TeamRemove-Error-Code'));
@@ -78,9 +82,7 @@ class RemoveTest extends BaseControllerJsonTestCase
 
         $this->setUser($leader2);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName('user@example.com');
+        $response = $this->teamController->removeAction('user@example.com');
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(6, $response->headers->get('X-TeamRemove-Error-Code'));
@@ -101,9 +103,7 @@ class RemoveTest extends BaseControllerJsonTestCase
 
         $this->setUser($leader);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController()->$methodName('user@example.com');
+        $response = $this->teamController->removeAction('user@example.com');
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($this->getTeamMemberService()->contains($team, $user));
