@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Delete\DeleteAction\Success;
 
+use SimplyTestable\ApiBundle\Controller\ScheduledJob\DeleteController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Delete\DeleteAction\DeleteTest;
@@ -26,11 +27,7 @@ class SuccessTest extends DeleteTest {
         $userFactory = new UserFactory($this->container);
 
         $user = $userFactory->createAndActivateUser();
-
         $this->setUser($user);
-
-        $methodName = $this->getActionNameFromRouter();
-
 
         $jobConfiguration = $this->createJobConfiguration([
             'label' => 'foo',
@@ -44,7 +41,11 @@ class SuccessTest extends DeleteTest {
         ], $user);
 
         $this->scheduledJob = $this->getScheduledJobService()->create($jobConfiguration, '* * * * *', true);
-        $this->response = $this->getCurrentController()->$methodName($this->scheduledJob->getId());
+
+        $controller = new DeleteController();
+        $controller->setContainer($this->container);
+
+        $this->response = $controller->deleteAction($this->scheduledJob->getId());
     }
 
     public function testResponseStatusCode() {

@@ -2,9 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\Success;
 
+use SimplyTestable\ApiBundle\Controller\JobConfiguration\UpdateController;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Update\UpdateAction\UpdateTest;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
@@ -53,9 +55,13 @@ abstract class SuccessTest extends UpdateTest {
 
         $this->getJobConfigurationService()->create($jobConfigurationValues);
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController($this->getRequestPostData())->$methodName(
-            $this->container->get('request'),
+        $controller = new UpdateController();
+        $controller->setContainer($this->container);
+
+        $request = new Request([], $this->getRequestPostData());
+
+        $this->response = $controller->updateAction(
+            $request,
             $this->getOriginalLabel()
         );
 

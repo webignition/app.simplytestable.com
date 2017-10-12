@@ -2,15 +2,22 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\AcceptAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
-class AcceptTest extends ActionTest
+class AcceptTest extends BaseControllerJsonTestCase
 {
     /**
      * @var UserFactory
      */
     private $userFactory;
+
+    /**
+     * @var TeamInviteController
+     */
+    private $teamInviteController;
 
     /**
      * {@inheritdoc}
@@ -20,17 +27,16 @@ class AcceptTest extends ActionTest
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamInviteController = new TeamInviteController();
+        $this->teamInviteController->setContainer($this->container);
     }
-
 
     public function testUserAcceptsForNonexistentTeamReturnsBadResponse() {
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['team' => 'Foo']);
+        $response = $this->teamInviteController->acceptAction($request);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(1, $response->headers->get('X-TeamInviteAccept-Error-Code'));
@@ -49,12 +55,8 @@ class AcceptTest extends ActionTest
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController([
-            'team' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['team' => 'Foo']);
+        $response = $this->teamInviteController->acceptAction($request);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(2, $response->headers->get('X-TeamInviteAccept-Error-Code'));
@@ -79,12 +81,8 @@ class AcceptTest extends ActionTest
 
         $this->setUser($invitee);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController([
-            'team' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['team' => 'Foo']);
+        $response = $this->teamInviteController->acceptAction($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNull($invite->getId());
@@ -117,12 +115,8 @@ class AcceptTest extends ActionTest
 
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController([
-            'team' => $invite1->getTeam()->getName()
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['team' => $invite1->getTeam()->getName()]);
+        $this->teamInviteController->acceptAction($request);
 
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
         $this->assertNull($invite1->getId());
@@ -149,12 +143,8 @@ class AcceptTest extends ActionTest
 
         $this->setUser($invitee);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController([
-            'team' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['team' => 'Foo']);
+        $response = $this->teamInviteController->acceptAction($request);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNotNull($invite->getId());

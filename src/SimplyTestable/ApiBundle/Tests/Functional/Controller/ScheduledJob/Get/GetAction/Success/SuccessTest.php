@@ -2,12 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Get\GetAction\Success;
 
+use SimplyTestable\ApiBundle\Controller\ScheduledJob\GetController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Get\GetAction\GetTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\ActionTest;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class SuccessTest extends GetTest {
+abstract class SuccessTest extends ActionTest {
 
     /**
      * @var Response
@@ -52,8 +53,10 @@ abstract class SuccessTest extends GetTest {
             true
         );
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController()->$methodName($this->scheduledJob->getId());
+        $controller = new GetController();
+        $controller->setContainer($this->container);
+
+        $this->response = $controller->getAction($this->scheduledJob->getId());
         $this->decodedResponse = json_decode($this->response->getContent(), true);
     }
 

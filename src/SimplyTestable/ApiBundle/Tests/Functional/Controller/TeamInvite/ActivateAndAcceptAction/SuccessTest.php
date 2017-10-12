@@ -2,13 +2,15 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActivateAndAcceptAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response as SymfonyHttpResponse;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 
-class SuccessTest extends ActionTest {
+class SuccessTest extends BaseControllerJsonTestCase {
 
     /**
      * @var SymfonyHttpResponse
@@ -50,13 +52,14 @@ class SuccessTest extends ActionTest {
         $this->team = $this->getTeamService()->create('Foo', $leader);
         $invite = $this->getTeamInviteService()->get($leader, $this->user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController([
+        $controller = new TeamInviteController();
+        $controller->setContainer($this->container);
+
+        $request = new Request([], [
             'token' => $invite->getToken(),
             'password' => 'foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        ]);
+        $this->response = $controller->activateAndAcceptAction($request);
     }
 
 

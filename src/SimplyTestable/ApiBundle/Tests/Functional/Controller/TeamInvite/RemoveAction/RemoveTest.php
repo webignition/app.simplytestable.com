@@ -2,15 +2,21 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\RemoveAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
-class GetTest extends ActionTest
+class GetTest extends BaseControllerJsonTestCase
 {
     /**
      * @var UserFactory
      */
     private $userFactory;
+
+    /**
+     * @var TeamInviteController
+     */
+    private $teamInviteController;
 
     /**
      * {@inheritdoc}
@@ -20,14 +26,16 @@ class GetTest extends ActionTest
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamInviteController = new TeamInviteController();
+        $this->teamInviteController->setContainer($this->container);
     }
 
     public function testUserIsNotTeamLeaderReturnsBadRequest() {
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName('user@example.com');
+        $response = $this->teamInviteController->removeAction('user@example.com');
+
         $this->assertEquals(1, $response->headers->get('X-TeamInviteRemove-Error-Code'));
         $this->assertEquals('User is not a team leader', $response->headers->get('X-TeamInviteRemove-Error-Message'));
     }
@@ -41,8 +49,7 @@ class GetTest extends ActionTest
 
         $this->getTeamService()->create('Foo', $leader);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName('user@example.com');
+        $response = $this->teamInviteController->removeAction('user@example.com');
 
         $this->assertEquals(2, $response->headers->get('X-TeamInviteRemove-Error-Code'));
         $this->assertEquals('Invitee is not a user', $response->headers->get('X-TeamInviteRemove-Error-Message'));
@@ -58,8 +65,7 @@ class GetTest extends ActionTest
 
         $this->getTeamService()->create('Foo', $leader);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName($user->getEmail());
+        $response = $this->teamInviteController->removeAction($user->getEmail());
 
         $this->assertEquals(3, $response->headers->get('X-TeamInviteRemove-Error-Code'));
         $this->assertEquals('Invitee does not have an invite for this team', $response->headers->get('X-TeamInviteRemove-Error-Message'));
@@ -82,8 +88,7 @@ class GetTest extends ActionTest
 
         $this->setUser($leader2);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName($user->getEmail());
+        $response = $this->teamInviteController->removeAction($user->getEmail());
 
         $this->assertEquals(3, $response->headers->get('X-TeamInviteRemove-Error-Code'));
         $this->assertEquals('Invitee does not have an invite for this team', $response->headers->get('X-TeamInviteRemove-Error-Message'));
@@ -103,8 +108,7 @@ class GetTest extends ActionTest
 
         $this->setUser($leader);
 
-        $methodName = $this->getActionNameFromRouter();
-        $response = $this->getCurrentController()->$methodName($user->getEmail());
+        $response = $this->teamInviteController->removeAction($user->getEmail());
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertFalse($this->getTeamInviteService()->hasForTeamAndUser($team, $user));

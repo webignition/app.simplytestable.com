@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Delete\DeleteAction\Success;
 
+use SimplyTestable\ApiBundle\Controller\JobConfiguration\DeleteController;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
@@ -31,8 +32,6 @@ class SuccessTest extends DeleteTest {
         $user = $userFactory->createAndActivateUser();
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
         $jobConfigurationFactory->create([
             JobConfigurationFactory::KEY_USER => $user,
@@ -51,7 +50,10 @@ class SuccessTest extends DeleteTest {
 
         $this->jobConfiguration = $jobConfigurationService->get(self::LABEL);
 
-        $this->response = $this->getCurrentController()->$methodName(self::LABEL);
+        $controller = new DeleteController();
+        $controller->setContainer($this->container);
+
+        $this->response = $controller->deleteAction(self::LABEL);
     }
 
     public function testResponseStatusCode() {

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration\Delete\DeleteAction;
 
+use SimplyTestable\ApiBundle\Controller\JobConfiguration\DeleteController;
 use Symfony\Component\HttpFoundation\Response;
 
 class NotFoundTest extends DeleteTest {
@@ -17,8 +18,10 @@ class NotFoundTest extends DeleteTest {
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->setUser($userService->getPublicUser());
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController()->$methodName(self::LABEL);
+        $controller = new DeleteController();
+        $controller->setContainer($this->container);
+
+        $this->response = $controller->deleteAction(self::LABEL);
     }
 
     public function testResponseStatusCode() {

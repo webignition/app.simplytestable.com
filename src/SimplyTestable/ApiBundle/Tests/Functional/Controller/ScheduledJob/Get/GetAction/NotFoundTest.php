@@ -2,9 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\Get\GetAction;
 
+use SimplyTestable\ApiBundle\Controller\ScheduledJob\GetController;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\ScheduledJob\ActionTest;
 use Symfony\Component\HttpFoundation\Response;
 
-class NotFoundTest extends GetTest {
+class NotFoundTest extends ActionTest {
 
     /**
      * @var Response
@@ -17,8 +19,11 @@ class NotFoundTest extends GetTest {
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->setUser($userService->getPublicUser());
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController()->$methodName('foo');
+        $controller = new GetController();
+        $controller->setContainer($this->container);
+
+        $this->response = $controller->getAction('foo');
+
     }
 
     public function testResponseStatusCode() {

@@ -2,10 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\ActivateAction\Success;
 
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\ActionTest;
+use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Entity\User;
 
-abstract class SuccessTest extends ActionTest {
+abstract class SuccessTest extends BaseControllerJsonTestCase {
 
     /**
      * @var \Symfony\Component\HttpFoundation\Response

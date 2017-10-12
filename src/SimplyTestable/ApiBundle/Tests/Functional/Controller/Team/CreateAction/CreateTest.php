@@ -2,15 +2,22 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\CreateAction;
 
+use SimplyTestable\ApiBundle\Controller\TeamController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\Team\ActionTest;
+use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
-class CreateTest extends ActionTest
+class CreateTest extends BaseControllerJsonTestCase
 {
     /**
      * @var UserFactory
      */
     private $userFactory;
+
+    /**
+     * @var TeamController
+     */
+    private $teamController;
 
     /**
      * {@inheritdoc}
@@ -20,6 +27,8 @@ class CreateTest extends ActionTest
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamController = new TeamController();
+        $this->teamController->setContainer($this->container);
     }
 
     public function testRequestAsTeamLeaderReturnsExistingTeam() {
@@ -34,13 +43,8 @@ class CreateTest extends ActionTest
 
         $this->setUser($leader);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController([
-            'name' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['name' => 'Foo']);
+        $response = $this->teamController->createAction($request);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('/team/', $response->headers->get('location'));
@@ -63,13 +67,8 @@ class CreateTest extends ActionTest
 
         $this->getTeamMemberService()->add($team, $user);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController([
-            'name' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['name' => 'Foo']);
+        $response = $this->teamController->createAction($request);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('/team/', $response->headers->get('location'));
@@ -83,13 +82,8 @@ class CreateTest extends ActionTest
 
         $this->assertNull($this->getTeamService()->getForUser($user));
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController([
-            'name' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['name' => 'Foo']);
+        $response = $this->teamController->createAction($request);
 
         $this->assertEquals(302, $response->getStatusCode());
         $this->assertEquals('/team/', $response->headers->get('location'));
@@ -103,13 +97,8 @@ class CreateTest extends ActionTest
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->setUser($userService->getPublicUser());
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController([
-            'name' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['name' => 'Foo']);
+        $response = $this->teamController->createAction($request);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(9, $response->headers->get('X-TeamCreate-Error-Code'));
@@ -122,13 +111,8 @@ class CreateTest extends ActionTest
 
         $this->setUser($userService->getAdminUser());
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $response = $this->getCurrentController([
-            'name' => 'Foo'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['name' => 'Foo']);
+        $response = $this->teamController->createAction($request);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertEquals(9, $response->headers->get('X-TeamCreate-Error-Code'));
@@ -150,13 +134,8 @@ class CreateTest extends ActionTest
 
         $this->setUser($user);
 
-        $methodName = $this->getActionNameFromRouter();
-
-        $this->getCurrentController([
-            'name' => 'Foo2'
-        ])->$methodName(
-            $this->container->get('request')
-        );
+        $request = new Request([], ['name' => 'Foo2']);
+        $this->teamController->createAction($request);
 
         $this->assertFalse($this->getTeamInviteService()->hasAnyForUser($user));
 

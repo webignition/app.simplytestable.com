@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserCreation\ActivateAction\Success;
 
+use SimplyTestable\ApiBundle\Controller\UserCreationController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
@@ -21,8 +22,10 @@ class PremiumPlanTest extends SuccessTest {
             UserFactory::KEY_PLAN_NAME => self::USER_PLAN,
         ]);
 
-        $methodName = $this->getActionNameFromRouter();
-        $this->response = $this->getCurrentController()->$methodName($this->user->getConfirmationToken());
+        $userCreationController = new UserCreationController();
+        $userCreationController->setContainer($this->container);
+
+        $this->response = $userCreationController->activateAction($this->user->getConfirmationToken());
     }
 
     public function testUserIsOnSelectedPlan() {
