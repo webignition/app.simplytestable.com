@@ -16,6 +16,7 @@ class DeleteController extends JobConfigurationController
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -27,9 +28,9 @@ class DeleteController extends JobConfigurationController
 
         $label = trim($label);
 
-        $this->getJobConfigurationService()->setUser($this->getUser());
+        $jobConfigurationService->setUser($this->getUser());
 
-        $jobConfiguration = $this->getJobConfigurationService()->get($label);
+        $jobConfiguration = $jobConfigurationService->get($label);
         if (is_null($jobConfiguration)) {
             return $this->sendNotFoundResponse();
         }
@@ -40,7 +41,7 @@ class DeleteController extends JobConfigurationController
         ]);
 
         if (!empty($scheduledJob)) {
-            $this->getJobConfigurationService()->delete($label);
+            $jobConfigurationService->delete($label);
 
             return $this->sendResponse();
         }
