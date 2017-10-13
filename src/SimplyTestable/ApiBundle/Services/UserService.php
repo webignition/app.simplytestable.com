@@ -1,8 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
 use FOS\UserBundle\Doctrine\UserManager;
+use FOS\UserBundle\Util\TokenGenerator;
+use SimplyTestable\ApiBundle\Repository\UserRepository;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -18,7 +19,7 @@ class UserService extends UserManager
     private $tokenGeneratorClass;
 
     /**
-     * @var \FOS\UserBundle\Util\TokenGenerator
+     * @var TokenGenerator
      */
     private $tokenGenerator;
 
@@ -140,10 +141,10 @@ class UserService extends UserManager
     }
 
     /**
-     *
-     * @return \FOS\UserBundle\Util\TokenGenerator
+     * @return TokenGenerator
      */
-    private function getTokenGenerator() {
+    private function getTokenGenerator()
+    {
         if (is_null($this->tokenGenerator)) {
             $this->tokenGenerator = new $this->tokenGeneratorClass;
         }
@@ -151,12 +152,11 @@ class UserService extends UserManager
         return $this->tokenGenerator;
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\UserRepository
+     * @return UserRepository
      */
-    public function getEntityRepository() {
+    public function getEntityRepository()
+    {
         if (is_null($this->entityRepository)) {
             $this->entityRepository = $this->objectManager->getRepository('SimplyTestable\ApiBundle\Entity\User');
         }
