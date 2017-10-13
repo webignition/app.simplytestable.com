@@ -114,14 +114,14 @@ class UserService extends UserManager
     }
 
     /**
-     *
      * @param string $emailCanonical
-     * @return boolean
+     *
+     * @return bool
      */
-    public function exists($emailCanonical) {
+    public function exists($emailCanonical)
+    {
         return !is_null($this->findUserByEmail($this->canonicalizeEmail($emailCanonical)));
     }
-
 
     /**
      *

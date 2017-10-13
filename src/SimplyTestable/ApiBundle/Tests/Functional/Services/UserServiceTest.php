@@ -117,4 +117,39 @@ class UserServiceTest extends BaseTestCase
 
         $this->assertInstanceOf(User::class, $user);
     }
+
+    /**
+     * @dataProvider existsDataProvider
+     *
+     * @param string $userEmail
+     * @param bool $expectedExists
+     */
+    public function testExists($userEmail, $expectedExists)
+    {
+        $this->assertEquals(
+            $expectedExists,
+            $this->userService->exists($userEmail)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function existsDataProvider()
+    {
+        return [
+            'public user' => [
+                'userEmail' => 'public@simplytestable.com',
+                'expectedExists' => true,
+            ],
+            'admin user' => [
+                'userEmail' => 'admin@simplytestable.com',
+                'expectedExists' => true,
+            ],
+            'new user' => [
+                'userEmail' => 'foo@simplytestable.com',
+                'expectedExists' => false,
+            ],
+        ];
+    }
 }
