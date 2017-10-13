@@ -1,45 +1,14 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
+namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite;
 
-use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class TeamInviteControllerTest extends BaseSimplyTestableTestCase
+class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
 {
-    /**
-     * @var TeamInviteController
-     */
-    private $teamInviteController;
-
-    /**
-     * @var UserFactory
-     */
-    private $userFactory;
-
-    /**
-     * @var User[]
-     */
-    private $users;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->teamInviteController = new TeamInviteController();
-        $this->teamInviteController->setContainer($this->container);
-
-        $this->userFactory = new UserFactory($this->container);
-        $this->users = $this->userFactory->createPublicPrivateAndTeamUserSet();
-    }
-
     public function testGetActionGetRequest()
     {
         $router = $this->container->get('router');
