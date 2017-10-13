@@ -110,4 +110,11 @@ class UserServiceTest extends BaseTestCase
             ],
         ];
     }
+
+    public function testCreateUser()
+    {
+        $user = $this->userService->create('foo@example.com', 'password');
+
+        $this->assertInstanceOf(User::class, $user);
+    }
 }

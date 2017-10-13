@@ -92,17 +92,16 @@ class UserService extends UserManager
     }
 
     /**
-     *
      * @param string $email
      * @param string $password
+     *
      * @return User
      */
-    public function create($email, $password) {
-        if ($this->exists($email)) {
-            return false;
-        }
-
+    public function create($email, $password)
+    {
+        /* @var User $user */
         $user = $this->createUser();
+
         $user->setEmail($this->canonicalizeEmail($email));
         $user->setEmailCanonical($this->canonicalizeEmail($email));
         $user->setUsername($this->canonicalizeUsername($email));
@@ -112,9 +111,7 @@ class UserService extends UserManager
         $this->updateUser($user);
 
         return $user;
-
     }
-
 
     /**
      *
