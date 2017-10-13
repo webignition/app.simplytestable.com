@@ -30,4 +30,13 @@ class UserServiceTest extends BaseTestCase
         $this->assertInstanceOf(User::class, $publicUser);
         $this->assertEquals('public@simplytestable.com', $publicUser->getEmail());
     }
+
+    public function testGetAdminUser()
+    {
+        $adminUserEmail = $this->container->getParameter('admin_user_email');
+        $adminUser = $this->userService->getAdminUser();
+
+        $this->assertInstanceOf(User::class, $adminUser);
+        $this->assertEquals($adminUserEmail, $adminUser->getEmail());
+    }
 }

@@ -61,11 +61,14 @@ class UserService extends UserManager
     }
 
     /**
-     *
      * @return User
      */
-    public function getAdminUser() {
-        return $this->findUserByUsername('admin');
+    public function getAdminUser()
+    {
+        /* @var User $user */
+        $user = $this->findUserByUsername('admin');
+
+        return $user;
     }
 
 
