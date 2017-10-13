@@ -11,6 +11,12 @@ use SimplyTestable\ApiBundle\Entity\User;
 
 class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
+    const PUBLIC_USER_EMAIL = 'public@simplytestable.com';
+    const PUBLIC_USER_USERNAME = 'public';
+    const PUBLIC_USER_PASSWORD = 'public';
+
+    const ADMIN_USER_USERNAME = 'admin';
+
     /**
      * @var ContainerInterface
      */
@@ -22,38 +28,50 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-    }    
-    
+    }
+
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        if (!$this->getUserService()->hasPublicUser()) {
-            $user = new User();
-            $user->setEmail('public@simplytestable.com');
-            $user->setPlainPassword('public');
-            $user->setUsername('public');        
+        $userRepository = $manager->getRepository(User::class);
 
-            $userManager = $this->container->get('fos_user.user_manager');        
+        $publicUser = $userRepository->findOneBy([
+            'email' => self::PUBLIC_USER_EMAIL,
+        ]);
+
+        if (empty($publicUser)) {
+            $user = new User();
+            $user->setEmail(self::PUBLIC_USER_EMAIL);
+            $user->setPlainPassword(self::PUBLIC_USER_PASSWORD);
+            $user->setUsername(self::PUBLIC_USER_USERNAME);
+
+            $userManager = $this->container->get('fos_user.user_manager');
             $userManager->updateUser($user);
 
             $manipulator = $this->container->get('fos_user.util.user_manipulator');
-            $manipulator->activate($user->getUsername());             
+            $manipulator->activate($user->getUsername());
         }
-        
-        if (!$this->getUserService()->hasAdminUser()) {
+
+        $adminUserEmail = $this->container->getParameter('admin_user_email');
+
+        $adminUser = $userRepository->findOneBy([
+            'email' => $adminUserEmail,
+        ]);
+
+        if (empty($adminUser)) {
             $user = new User();
             $user->setEmail($this->container->getParameter('admin_user_email'));
             $user->setPlainPassword($this->container->getParameter('admin_user_password'));
-            $user->setUsername('admin'); 
+            $user->setUsername(self::ADMIN_USER_USERNAME);
             $user->addRole('role_admin');
 
-            $userManager = $this->container->get('fos_user.user_manager');        
+            $userManager = $this->container->get('fos_user.user_manager');
             $userManager->updateUser($user);
 
             $manipulator = $this->container->get('fos_user.util.user_manipulator');
-            $manipulator->activate($user->getUsername());            
+            $manipulator->activate($user->getUsername());
         }
     }
 
@@ -63,14 +81,5 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
     public function getOrder()
     {
         return 1; // the order in which fixtures will be loaded
-    }
-    
-    
-    /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Services\UserService
-     */
-    public function getUserService() {
-        return $this->container->get('simplytestable.services.userservice');
     }
 }
