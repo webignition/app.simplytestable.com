@@ -3,7 +3,6 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Mockery\MockInterface;
-use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -12,9 +11,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobRejectionReasonService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -29,19 +26,13 @@ use SimplyTestable\ApiBundle\Services\TestStripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
-use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase
 {
-    const ROUTER_MATCH_CONTROLLER_KEY = '_controller';
-
-    const USER_CONTROLLER_NAME = UserController::class;
     const DEFAULT_CANONICAL_URL = 'http://example.com/';
 
     protected function setUp()
@@ -56,35 +47,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getManager()
     {
         return $this->container->get('doctrine')->getManager();
-    }
-
-    /**
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     *
-     * @return UserController
-     */
-    protected function getUserController($methodName, $postData = array(), $queryData = array())
-    {
-        return $this->getController(self::USER_CONTROLLER_NAME, $methodName, $postData, $queryData);
-    }
-
-    /**
-     * @param string $controllerName
-     * @param string $methodName
-     * @param array $postData
-     * @param array $queryData
-     *
-     * @return Controller
-     */
-    protected function getController(
-        $controllerName,
-        $methodName,
-        array $postData = array(),
-        array $queryData = array()
-    ) {
-        return $this->createController($controllerName, $methodName, $postData, $queryData);
     }
 
     protected function setJobTasksCompleted(Job $job)
@@ -142,14 +104,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return WebsiteResolutionService
-     */
-    protected function getJobWebsiteResolutionService()
-    {
-        return $this->container->get('simplytestable.services.jobwebsiteresolutionservice');
-    }
-
-    /**
      * @return JobPreparationService
      */
     protected function getJobPreparationService()
@@ -163,14 +117,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getWebSiteService()
     {
         return $this->container->get('simplytestable.services.websiteservice');
-    }
-
-    /**
-     * @return JobRejectionReasonService
-     */
-    protected function getJobRejectionReasonService()
-    {
-        return $this->container->get('simplytestable.services.jobrejectionreasonservice');
     }
 
     /**
@@ -211,14 +157,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getStateService()
     {
         return $this->container->get('simplytestable.services.stateservice');
-    }
-
-    /**
-     * @return WorkerActivationRequestService
-     */
-    protected function getWorkerActivationRequestService()
-    {
-        return $this->container->get('simplytestable.services.workeractivationrequestservice');
     }
 
     /**
@@ -318,16 +256,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @param $path
-     *
-     * @return string
-     */
-    protected function getFixture($path)
-    {
-        return file_get_contents($path);
-    }
-
-    /**
      * @return TeamMemberService
      */
     protected function getTeamMemberService()
@@ -349,223 +277,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     protected function getTeamInviteService()
     {
         return $this->container->get('simplytestable.services.teaminviteservice');
-    }
-
-    /**
-     * @return string
-     */
-    protected function getControllerNameFromRouter()
-    {
-        return explode('::', $this->getRouteController())[0];
-    }
-
-    /**
-     * @return string
-     */
-    protected function getActionNameFromRouter($routeParameters = null)
-    {
-        return explode('::', $this->getRouteController($routeParameters))[1];
-    }
-
-    /**
-     * @param array $routeParameters
-     *
-     * @return mixed
-     */
-    protected function getRouteController($routeParameters = null)
-    {
-        $routeParameters = (is_null($routeParameters)) ? $this->getRouteParameters() : $routeParameters;
-
-        return $this
-            ->getRouter()
-            ->match($this->getCurrentRequestUrl($routeParameters))[self::ROUTER_MATCH_CONTROLLER_KEY];
-    }
-
-    /**
-     * @param array $routeParameters
-     *
-     * @return string
-     */
-    protected function getCurrentRequestUrl($routeParameters = null)
-    {
-        $routeParameters = (is_null($routeParameters)) ? $this->getRouteParameters() : $routeParameters;
-
-        return $this->getCurrentController()->generateUrl($this->getRouteFromTestNamespace(), $routeParameters);
-    }
-
-    /**
-     * @param array $postData
-     * @param array $queryData
-     *
-     * @return Controller
-     */
-    protected function getCurrentController(array $postData = [], array $queryData = [])
-    {
-        return $this->getController(
-            $this->getControllerNameFromTestNamespace(),
-            $this->getActionNameFromTestNamespace(),
-            $this->getControllerPostData($postData),
-            $this->getControllerQueryData($queryData)
-        );
-    }
-
-    /**
-     * @param array $postData
-     *
-     * @return array
-     */
-    private function getControllerPostData(array $postData = [])
-    {
-        if (empty($postData)) {
-            return $this->getRequestPostData();
-        }
-
-        return $postData;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getRequestPostData()
-    {
-        return [];
-    }
-
-    /**
-     * @param array $queryData
-     *
-     * @return array
-     */
-    private function getControllerQueryData(array $queryData = [])
-    {
-        if (empty($queryData)) {
-            return $this->getRequestQueryData();
-        }
-
-        return $queryData;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getRequestQueryData()
-    {
-        return [];
-    }
-
-    /**
-     * Get route name for current test
-     *
-     * Is extracted from the class namespace as follows:
-     * \Acme\FooBundle\Tests\Controller\Foo => 'foo'
-     * \Acme\FooBundle\Tests\Controller\FooBar => 'foo_bar'
-     * \Acme\FooBundle\Tests\Controller\FooBar\Bar => 'foobar_bar'
-     *
-     * @return string
-     */
-    protected function getRouteFromTestNamespace()
-    {
-        return strtolower(
-            implode('_', $this->getControllerRelatedNamespaceParts())
-            . '_'
-            . str_replace('Action', '', $this->getActionNameFromTestNamespace())
-        );
-    }
-
-    /**
-     * @return string
-     */
-    protected function getExpectedRouteController()
-    {
-        return $this->getControllerNameFromTestNamespace() . '::' . $this->getActionNameFromTestNamespace();
-    }
-
-    /**
-     * Get controller name from current test namespace
-     *
-     * @return string
-     */
-    private function getControllerNameFromTestNamespace()
-    {
-        return implode('\\', $this->getControllerNamespaceParts()) . 'Controller';
-    }
-
-    /**
-     * Get controller action from current test namespace
-     *
-     * @return string
-     */
-    private function getActionNameFromTestNamespace()
-    {
-        foreach ($this->getNamespaceParts() as $part) {
-            if (preg_match('/.+Action$/', $part)) {
-                return lcfirst($part);
-            }
-        }
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getControllerNamespaceParts()
-    {
-        $relevantParts = array();
-
-        foreach ($this->getNamespaceParts() as $part) {
-            if (preg_match('/.+Action$/', $part)) {
-                return $relevantParts;
-            }
-
-            if ($part != 'Tests' && $part != 'Functional') {
-                $relevantParts[] = $part;
-            }
-        }
-
-        return $relevantParts;
-    }
-
-    /**
-     *
-     * @return string[]
-     */
-    private function getControllerRelatedNamespaceParts()
-    {
-        $parts = $this->getControllerNamespaceParts();
-
-        foreach ($parts as $index => $part) {
-            if ($part === 'Controller') {
-                return array_slice($parts, $index + 1);
-            }
-        }
-
-        return $parts;
-    }
-
-    /**
-     * @return string[]
-     */
-    private function getNamespaceParts()
-    {
-        $parts = explode('\\', get_class($this));
-        array_pop($parts);
-
-        return $parts;
-    }
-
-    /**
-     * @return RouterInterface
-     */
-    protected function getRouter()
-    {
-        return $this->client->getContainer()->get('router');
-    }
-
-    /**
-     * @return array
-     */
-    protected function getRouteParameters()
-    {
-        return [];
     }
 
     /**

@@ -61,13 +61,6 @@ abstract class HasInviteTest extends BaseControllerJsonTestCase {
     public function testUserInTeam() {
         $this->assertEquals($this->getExpectedHasInvite(), $this->summary->team_summary->has_invite);
     }
-
-
-    protected function getRouteParameters() {
-        return [
-            'email_canonical' => $this->user->getEmail()
-        ];
-    }
 }
 
 

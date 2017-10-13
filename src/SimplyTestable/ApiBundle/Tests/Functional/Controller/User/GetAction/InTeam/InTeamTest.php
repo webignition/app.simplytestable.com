@@ -61,13 +61,6 @@ abstract class InTeamTest extends BaseControllerJsonTestCase {
     public function testUserInTeam() {
         $this->assertEquals($this->getExpectedUserInTeam(), $this->summary->team_summary->in);
     }
-
-
-    protected function getRouteParameters() {
-        return [
-            'email_canonical' => $this->user->getEmail()
-        ];
-    }
 }
 
 
