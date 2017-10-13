@@ -3,22 +3,29 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class TeamController extends ApiController {
-
+class TeamController extends ApiController
+{
     /**
-     * @var Request
+     * @return Response
      */
-    private $request;
+    public function getAction()
+    {
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
 
-    public function getAction() {
-        if (!$this->getTeamService()->hasForUser($this->getUser())) {
+        $user = $this->getUser() ;
+        $team = $teamService->getForUser($user);
+
+        if (empty($team)) {
             return $this->sendNotFoundResponse();
         }
 
-        $team = $this->getTeamService()->getForUser($this->getUser());
-        $members = $this->getTeamService()->getMemberService()->getMembers($team);
+        $members = $teamMemberService->getMembers($team);
 
         $serializedMembers = [];
 
@@ -32,10 +39,15 @@ class TeamController extends ApiController {
         ]);
     }
 
-    public function createAction(Request $request) {
+    /**
+     * @param Request $request
+     * @return RedirectResponse|Response
+     */
+    public function createAction(Request $request)
+    {
         $userService = $this->container->get('simplytestable.services.userservice');
-
-        $this->request = $request;
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         if ($userService->isSpecialUser($this->getUser())) {
             return $this->sendFailureResponse([
@@ -44,18 +56,25 @@ class TeamController extends ApiController {
             ]);
         }
 
-        try {
-            $this->getTeamService()->create($this->request->request->get('name'), $this->getUser());
+        $user = $this->getUser();
 
-            $invites = $this->getTeamInviteService()->getForUser($this->getUser());
+        $requestData = $request->request;
+        $requestName = trim($requestData->get('name'));
+
+        try {
+            $teamService->create($requestName, $user);
+
+            $invites = $teamInviteService->getForUser($this->getUser());
             foreach ($invites as $invite) {
-                $this->getTeamInviteService()->remove($invite);
+                $teamInviteService->remove($invite);
             }
 
         } catch (TeamServiceException $teamServiceException) {
+            $isUserAlreadyLeadsTeamException = $teamServiceException->isUserAlreadyLeadsTeamException();
+            $isUserAlreadyOnTeamException = $teamServiceException->isUserAlreadyOnTeamException();
 
-            if ($teamServiceException->isUserAlreadyLeadsTeamException() || $teamServiceException->isUserAlreadyOnTeamException()) {
-                return $this->getTeamGetRedirectResponse();
+            if ($isUserAlreadyLeadsTeamException || $isUserAlreadyOnTeamException) {
+                return $this->createTeamGetRedirectResponse($teamService);
             }
 
             return $this->sendFailureResponse([
@@ -64,12 +83,18 @@ class TeamController extends ApiController {
             ]);
         }
 
-        return $this->getTeamGetRedirectResponse();
+        return $this->createTeamGetRedirectResponse($teamService);
     }
 
-
-    public function removeAction($member_email) {
+    /**
+     * @param string $member_email
+     *
+     * @return Response
+     */
+    public function removeAction($member_email)
+    {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         if (!$userService->exists($member_email)) {
             return $this->sendFailureResponse([
@@ -83,7 +108,8 @@ class TeamController extends ApiController {
         ]);
 
         try {
-            $this->getTeamService()->remove($this->getUser(), $member);
+            $teamService->remove($this->getUser(), $member);
+
             return $this->sendResponse();
         } catch (TeamServiceException $teamServiceException) {
             return $this->sendFailureResponse([
@@ -93,49 +119,40 @@ class TeamController extends ApiController {
         }
     }
 
+    /**
+     * @return Response
+     */
+    public function leaveAction()
+    {
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
 
-    public function leaveAction() {
-        if ($this->getTeamService()->hasTeam($this->getUser())) {
+        if ($teamService->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
                 'X-TeamLeave-Error-Code' => 9,
                 'X-TeamLeave-Error-Message' => 'Leader cannot leave team',
             ]);
         }
 
-        $this->getTeamService()->getMemberService()->remove($this->getUser());
+        $teamMemberService->remove($this->getUser());
+
         return $this->sendResponse();
     }
 
-
     /**
-     * @return \SimplyTestable\ApiBundle\Services\Team\Service
+     * @param TeamService $teamService
+     *
+     * @return RedirectResponse
      */
-    private function getTeamService() {
-        return $this->container->get('simplytestable.services.teamservice');
-    }
-
-
-    /**
-     * @return \SimplyTestable\ApiBundle\Services\Team\InviteService
-     */
-    private function getTeamInviteService() {
-        return $this->container->get('simplytestable.services.teaminviteservice');
-    }
-
-
-
-    /**
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    private function getTeamGetRedirectResponse() {
+    private function createTeamGetRedirectResponse(TeamService $teamService)
+    {
         $response = $this->redirect($this->generateUrl('team_get'));
 
-        $team = $this->getTeamService()->getForUser($this->getUser());
+        $team = $teamService->getForUser($this->getUser());
 
         $response->headers->set('X-Team-Name', $team->getName());
         $response->headers->set('X-Team-ID', $team->getId());
 
         return $response;
     }
-
 }

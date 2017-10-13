@@ -9,7 +9,7 @@ use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
 
 class Service extends EntityService {
-    
+
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Team\Team';
 
 
@@ -18,7 +18,7 @@ class Service extends EntityService {
      */
     private $memberService;
 
-    
+
     /**
      *
      * @return string
@@ -111,9 +111,9 @@ class Service extends EntityService {
         $this->getManager()->persist($team);
         $this->getManager()->flush();
         return $team;
-    } 
+    }
 
-    
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Repository\TeamRepository
@@ -203,7 +203,7 @@ class Service extends EntityService {
         }
 
         $team = $this->getForUser($member);
-        if ($team->getLeader()->getId() != $leader->getId()) {
+        if (empty($team) || $team->getLeader()->getId() !== $leader->getId()) {
             throw new TeamServiceException(
                 'User is not on leader\'s team',
                 TeamServiceException::USER_IS_NOT_ON_LEADERS_TEAM
@@ -229,5 +229,5 @@ class Service extends EntityService {
 
         return $people;
     }
-    
+
 }
