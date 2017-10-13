@@ -8,24 +8,21 @@ use FOS\UserBundle\Util\CanonicalizerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class UserService extends UserManager {
-
+class UserService extends UserManager
+{
     const PUBLIC_USER_EMAIL_ADDRESS = 'public@simplytestable.com';
 
     /**
-     *
      * @var string
      */
     private $tokenGeneratorClass;
 
     /**
-     *
      * @var \FOS\UserBundle\Util\TokenGenerator
      */
     private $tokenGenerator;
 
     /**
-     *
      * @var \Doctrine\ORM\EntityRepository
      */
     private $entityRepository;
@@ -40,18 +37,27 @@ class UserService extends UserManager {
      * @param string                 $class
      * @param string                 $tokenGeneratorClass
      */
-    public function __construct(EncoderFactoryInterface $encoderFactory, CanonicalizerInterface $usernameCanonicalizer, CanonicalizerInterface $emailCanonicalizer, ObjectManager $om, $class, $tokenGeneratorClass)
-    {
+    public function __construct(
+        EncoderFactoryInterface $encoderFactory,
+        CanonicalizerInterface $usernameCanonicalizer,
+        CanonicalizerInterface $emailCanonicalizer,
+        ObjectManager $om,
+        $class,
+        $tokenGeneratorClass
+    ) {
         parent::__construct($encoderFactory, $usernameCanonicalizer, $emailCanonicalizer, $om, $class);
         $this->tokenGeneratorClass = $tokenGeneratorClass;
     }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\User
+     * @return User
      */
-    public function getPublicUser() {
-        return $this->findUserByEmail(self::PUBLIC_USER_EMAIL_ADDRESS);
+    public function getPublicUser()
+    {
+        /* @var User $user */
+        $user = $this->findUserByEmail(self::PUBLIC_USER_EMAIL_ADDRESS);
+
+        return $user;
     }
 
 
@@ -66,7 +72,7 @@ class UserService extends UserManager {
 
     /**
      *
-     * @return \SimplyTestable\ApiBundle\Entity\User
+     * @return User
      */
     public function getAdminUser() {
         return $this->findUserByUsername('admin');
@@ -84,7 +90,7 @@ class UserService extends UserManager {
 
     /**
      *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param User $user
      * @return boolean
      */
     public function isPublicUser(User $user) {
@@ -94,7 +100,7 @@ class UserService extends UserManager {
 
     /**
      *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param User $user
      * @return boolean
      */
     public function isAdminUser(User $user) {
@@ -104,7 +110,7 @@ class UserService extends UserManager {
 
     /**
      *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param User $user
      * @return boolean
      */
     public function isSpecialUser(User $user) {
@@ -116,7 +122,7 @@ class UserService extends UserManager {
      *
      * @param string $email
      * @param string $password
-     * @return \SimplyTestable\ApiBundle\Entity\User
+     * @return User
      */
     public function create($email, $password) {
         if ($this->exists($email)) {
@@ -149,7 +155,7 @@ class UserService extends UserManager {
 
     /**
      *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
+     * @param User $user
      * @return string
      */
     public function getConfirmationToken(User $user) {
