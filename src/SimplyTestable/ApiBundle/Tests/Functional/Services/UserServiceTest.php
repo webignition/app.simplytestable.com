@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Command;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseTestCase;
 
 class UserServiceTest extends BaseTestCase
@@ -38,5 +39,38 @@ class UserServiceTest extends BaseTestCase
 
         $this->assertInstanceOf(User::class, $adminUser);
         $this->assertEquals($adminUserEmail, $adminUser->getEmail());
+    }
+
+    /**
+     * @dataProvider isPublicUserDataProvider
+     *
+     * @param string $userEmail
+     * @param bool $expectedIsPublicUser
+     */
+    public function testIsPublicUser($userEmail, $expectedIsPublicUser)
+    {
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->create([
+            UserFactory::KEY_EMAIL => $userEmail,
+        ]);
+
+        $this->assertEquals($expectedIsPublicUser, $this->userService->isPublicUser($user));
+    }
+
+    /**
+     * @return array
+     */
+    public function isPublicUserDataProvider()
+    {
+        return [
+            'public user' => [
+                'userEmail' => 'public@simplytestable.com',
+                'expectedIsPublicUser' => true,
+            ],
+            'private user' => [
+                'userEmail' => 'foo@simplytestable.com',
+                'expectedIsPublicUser' => false,
+            ],
+        ];
     }
 }
