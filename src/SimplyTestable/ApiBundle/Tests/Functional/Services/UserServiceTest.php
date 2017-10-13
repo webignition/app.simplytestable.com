@@ -152,4 +152,25 @@ class UserServiceTest extends BaseTestCase
             ],
         ];
     }
+
+    public function testGetConfirmationToken()
+    {
+        $userFactory = new UserFactory($this->container);
+
+        $user = $userFactory->create();
+        $this->assertNotEmpty($user->getConfirmationToken());
+
+        $this->assertRegExp(
+            '/[A-Za-z0-9\-_]{43}/',
+            $this->userService->getConfirmationToken($user)
+        );
+
+        $user->setConfirmationToken(null);
+        $this->assertEmpty($user->getConfirmationToken());
+
+        $this->assertRegExp(
+            '/[A-Za-z0-9\-_]{43}/',
+            $this->userService->getConfirmationToken($user)
+        );
+    }
 }

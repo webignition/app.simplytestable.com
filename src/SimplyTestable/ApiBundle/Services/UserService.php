@@ -124,19 +124,20 @@ class UserService extends UserManager
     }
 
     /**
-     *
      * @param User $user
+     *
      * @return string
      */
-    public function getConfirmationToken(User $user) {
+    public function getConfirmationToken(User $user)
+    {
         if (!$user->hasConfirmationToken()) {
             $user->setConfirmationToken($this->getTokenGenerator()->generateToken());
         }
 
         $this->updateUser($user);
+
         return $user->getConfirmationToken();
     }
-
 
     /**
      *
