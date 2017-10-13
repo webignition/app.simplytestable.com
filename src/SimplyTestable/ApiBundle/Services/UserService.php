@@ -82,14 +82,14 @@ class UserService extends UserManager
     }
 
     /**
-     *
      * @param User $user
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isSpecialUser(User $user) {
+    public function isSpecialUser(User $user)
+    {
         return $this->isPublicUser($user) || $user->equals($this->getAdminUser());
     }
-
 
     /**
      *

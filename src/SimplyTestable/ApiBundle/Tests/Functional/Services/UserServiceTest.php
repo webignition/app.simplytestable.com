@@ -73,4 +73,41 @@ class UserServiceTest extends BaseTestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider isSpecialUserDataProvider
+     *
+     * @param string $userEmail
+     * @param bool $expectedIsSpecialUser
+     */
+    public function testIsSpecialUser($userEmail, $expectedIsSpecialUser)
+    {
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->create([
+            UserFactory::KEY_EMAIL => $userEmail,
+        ]);
+
+        $this->assertEquals($expectedIsSpecialUser, $this->userService->isSpecialUser($user));
+    }
+
+    /**
+     * @return array
+     */
+    public function isSpecialUserDataProvider()
+    {
+        return [
+            'public user' => [
+                'userEmail' => 'public@simplytestable.com',
+                'expectedIsSpecialUser' => true,
+            ],
+            'admin user' => [
+                'userEmail' => 'admin@simplytestable.com',
+                'expectedIsSpecialUser' => true,
+            ],
+            'private user' => [
+                'userEmail' => 'foo@simplytestable.com',
+                'expectedIsSpecialUser' => false,
+            ],
+        ];
+    }
 }
