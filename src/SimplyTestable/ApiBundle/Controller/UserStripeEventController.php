@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-class UserStripeEventController extends AbstractUserController
+class UserStripeEventController extends ApiController
 {
 
     public function listAction($email_canonical, $type = null)

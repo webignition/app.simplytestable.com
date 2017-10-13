@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Egulias\EmailValidator\EmailValidator;
 
-class UserEmailChangeController extends AbstractUserController
+class UserEmailChangeController extends ApiController
 {
     public function createAction($email_canonical, $new_email) {
         $userService = $this->container->get('simplytestable.services.userservice');
