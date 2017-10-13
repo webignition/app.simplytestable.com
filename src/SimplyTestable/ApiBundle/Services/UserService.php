@@ -60,31 +60,12 @@ class UserService extends UserManager
         return $user;
     }
 
-
-    /**
-     *
-     * @return boolean
-     */
-    public function hasPublicUser() {
-        return !is_null($this->getPublicUser());
-    }
-
-
     /**
      *
      * @return User
      */
     public function getAdminUser() {
         return $this->findUserByUsername('admin');
-    }
-
-
-    /**
-     *
-     * @return boolean
-     */
-    public function hasAdminUser() {
-        return !is_null($this->getAdminUser());
     }
 
 
