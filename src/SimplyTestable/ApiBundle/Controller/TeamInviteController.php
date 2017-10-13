@@ -24,6 +24,16 @@ class TeamInviteController extends ApiController
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
+        $inviter = $this->getUser();
+
+        if (!$teamService->hasTeam($inviter)) {
+            return $this->sendFailureResponse([
+                'X-TeamInviteGet-Error-Code' => TeamInviteServiceException::INVITER_IS_NOT_A_LEADER,
+                'X-TeamInviteGet-Error-Message' => 'Inviter is not a team leader',
+            ]);
+        }
 
         if (!$userService->exists($invitee_email)) {
             $user = $userService->create($invitee_email, md5(rand()));
@@ -60,7 +70,7 @@ class TeamInviteController extends ApiController
         }
 
         try {
-            return $this->sendResponse($teamInviteService->get($this->getUser(), $invitee));
+            return $this->sendResponse($teamInviteService->get($inviter, $invitee));
         } catch (TeamInviteServiceException $teamInviteServiceException) {
             return $this->sendFailureResponse([
                 'X-TeamInviteGet-Error-Code' => $teamInviteServiceException->getCode(),
