@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 
-class UserAccountPlanSubscriptionController extends AbstractUserController
+class UserAccountPlanSubscriptionController extends ApiController
 {
     public function subscribeAction($email_canonical, $plan_name)
     {

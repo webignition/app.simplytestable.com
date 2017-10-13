@@ -6,7 +6,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 
-class UserController extends AbstractUserController
+class UserController extends ApiController
 {
     public function getAction() {
         return $this->sendResponse($this->getUserSummary($this->getUser()));
