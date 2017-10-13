@@ -2,9 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Team;
 
-use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use Symfony\Component\HttpFoundation\Request;
-
 class TeamControllerLeaveActionTest extends AbstractTeamControllerTest
 {
     public function testLeaveActionPostRequest()
