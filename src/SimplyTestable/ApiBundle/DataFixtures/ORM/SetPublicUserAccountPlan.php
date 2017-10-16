@@ -21,21 +21,24 @@ class SetPublicUserAccountPlan extends AbstractFixture implements OrderedFixture
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-    }   
-    
+    }
+
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $user = $this->getUserService()->getPublicUser();
-        
-        if (!$this->getUserAccountPlanService()->hasForUser($user)) {
-            $plan = $this->getAccountPlanService()->find('public');
-            $this->getUserAccountPlanService()->subscribe($user, $plan);        
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+
+        $user = $userService->getPublicUser();
+
+        if (!$userAccountPlanService->hasForUser($user)) {
+            $plan = $accountPlanService->find('public');
+            $userAccountPlanService->subscribe($user, $plan);
         }
     }
-
 
     /**
      * {@inheritDoc}
@@ -44,30 +47,4 @@ class SetPublicUserAccountPlan extends AbstractFixture implements OrderedFixture
     {
         return 7; // the order in which fixtures will be loaded
     }
-    
-    /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
-     */
-    private function getUserAccountPlanService() {
-        return $this->container->get('simplytestable.services.useraccountplanservice');
-    }     
-    
-    
-    /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Services\AccountPlanService
-     */
-    private function getAccountPlanService() {
-        return $this->container->get('simplytestable.services.accountplanservice');
-    }    
-    
-    
-    /**
-     * 
-     * @return \SimplyTestable\ApiBundle\Services\UserService
-     */
-    private function getUserService() {
-        return $this->container->get('simplytestable.services.userservice');
-    }    
 }
