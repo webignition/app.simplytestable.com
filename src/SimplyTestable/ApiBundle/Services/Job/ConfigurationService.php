@@ -321,6 +321,7 @@ class ConfigurationService extends EntityService {
             /* @var $userJobConfiguration JobConfiguration */
             foreach ($userJobConfiguration->getTaskConfigurations() as $jobTaskConfiguration) {
                 $this->getManager()->remove($jobTaskConfiguration);
+                $userJobConfiguration->removeTaskConfiguration($jobTaskConfiguration);
             }
 
             $this->getManager()->remove($userJobConfiguration);
