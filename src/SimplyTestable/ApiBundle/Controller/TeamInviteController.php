@@ -25,8 +25,7 @@ class TeamInviteController extends ApiController
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $userRepository = $entityManager->getRepository(User::class);
+        $userManager = $this->container->get('fos_user.user_manager');
 
         $inviter = $this->getUser();
 
@@ -52,10 +51,7 @@ class TeamInviteController extends ApiController
             $userAccountPlanService->subscribe($user, $plan);
         }
 
-        /* @var User $invitee */
-        $invitee = $userRepository->findOneBy([
-            'email' => $invitee_email
-        ]);
+        $invitee = $userManager->findUserByEmail($invitee_email);
 
         if ($userService->isSpecialUser($invitee)) {
             return $this->sendFailureResponse([
@@ -196,8 +192,7 @@ class TeamInviteController extends ApiController
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $userRepository = $entityManager->getRepository(User::class);
+        $userManager = $this->container->get('fos_user.user_manager');
 
         if (!$teamService->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
@@ -216,9 +211,7 @@ class TeamInviteController extends ApiController
 
         $team = $teamService->getForUser($this->getUser());
 
-        $invitee = $userRepository->findOneBy([
-            'email' => $invitee_email
-        ]);
+        $invitee = $userManager->findUserByEmail($invitee_email);
 
         if (!$teamInviteService->hasForTeamAndUser($team, $invitee)) {
             return $this->sendFailureResponse([
