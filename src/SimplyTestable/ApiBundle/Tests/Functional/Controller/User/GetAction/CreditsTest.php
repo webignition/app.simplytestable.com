@@ -5,10 +5,10 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
-class CreditsTest extends BaseControllerJsonTestCase
+class CreditsTest extends BaseSimplyTestableTestCase
 {
     /**
      * @var User

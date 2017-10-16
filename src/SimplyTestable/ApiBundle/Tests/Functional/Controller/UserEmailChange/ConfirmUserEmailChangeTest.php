@@ -5,8 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
-class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
+class ConfirmUserEmailChangeTest extends BaseSimplyTestableTestCase
 {
     /**
      * @var UserFactory
