@@ -25,6 +25,8 @@ class TeamInviteController extends ApiController
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userRepository = $entityManager->getRepository(User::class);
 
         $inviter = $this->getUser();
 
@@ -51,7 +53,7 @@ class TeamInviteController extends ApiController
         }
 
         /* @var User $invitee */
-        $invitee = $userService->findUserBy([
+        $invitee = $userRepository->findOneBy([
             'email' => $invitee_email
         ]);
 
@@ -194,6 +196,8 @@ class TeamInviteController extends ApiController
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userRepository = $entityManager->getRepository(User::class);
 
         if (!$teamService->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
@@ -212,7 +216,7 @@ class TeamInviteController extends ApiController
 
         $team = $teamService->getForUser($this->getUser());
 
-        $invitee = $userService->findUserBy([
+        $invitee = $userRepository->findOneBy([
             'email' => $invitee_email
         ]);
 

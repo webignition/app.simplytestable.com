@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -95,6 +96,8 @@ class TeamController extends ApiController
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userRepository = $entityManager->getRepository(User::class);
 
         if (!$userService->exists($member_email)) {
             return $this->sendFailureResponse([
@@ -103,7 +106,7 @@ class TeamController extends ApiController
             ]);
         }
 
-        $member = $userService->findUserBy([
+        $member = $userRepository->findOneBy([
             'email' => $member_email
         ]);
 
