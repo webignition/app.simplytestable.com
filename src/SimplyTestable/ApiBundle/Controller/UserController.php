@@ -20,7 +20,64 @@ class UserController extends ApiController
      */
     public function getAction()
     {
-        return $this->sendResponse($this->getUserSummary($this->getUser()));
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $stripeService = $this->container->get('simplytestable.services.stripeservice');
+        $jobUserAccountPlanEnforcementService = $this->container->get(
+            'simplytestable.services.jobuseraccountplanenforcementservice'
+        );
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
+        $user = $this->getUser();
+
+        $userAccountPlan = $userAccountPlanService->getForUser($this->getUser());
+        if (empty($userAccountPlan)) {
+            $basicPlan = $accountPlanService->find('basic');
+
+            $userAccountPlan = $userAccountPlanService->subscribe(
+                $user,
+                $basicPlan
+            );
+        }
+
+        $userSummary = [
+            'email' => $user->getEmailCanonical(),
+            'user_plan' => $userAccountPlan
+        ];
+
+        $includeStripeCustomerInSummary =
+            $userAccountPlan->hasStripeCustomer() && $user->getId() == $userAccountPlan->getUser()->getId();
+
+        if ($includeStripeCustomerInSummary) {
+            $userSummary['stripe_customer'] = $stripeService->getCustomer($userAccountPlan)->__toArray();
+        }
+
+        $planConstraints = [];
+
+        $plan = $userAccountPlan->getPlan();
+
+        $creditsPerMonthConstraint = $plan->getConstraintNamed('credits_per_month');
+        if (!empty($creditsPerMonthConstraint)) {
+            $jobUserAccountPlanEnforcementService->setUser($this->getUser());
+            $planConstraints['credits'] = [
+                'limit' => $plan->getConstraintNamed('credits_per_month')->getLimit(),
+                'used' => $jobUserAccountPlanEnforcementService->getCreditsUsedThisMonth()
+            ];
+        }
+
+        $urlsPerJobConstraint = $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job');
+        if (!empty($urlsPerJobConstraint)) {
+            $planConstraints['urls_per_job'] = $urlsPerJobConstraint->getLimit();
+        }
+
+        $userSummary['plan_constraints'] = $planConstraints;
+
+        $userSummary['team_summary'] = [
+            'in' => $teamService->hasForUser($this->getUser()),
+            'has_invite' => $this->getHasAnyTeamInvitesForUser($this->getUser())
+        ];
+
+        return $this->sendResponse($userSummary);
     }
 
     /**
@@ -29,55 +86,6 @@ class UserController extends ApiController
     public function authenticateAction()
     {
         return new Response('');
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return array
-     */
-    private function getUserSummary(User $user)
-    {
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
-        if (is_null($userAccountPlan)) {
-            $userAccountPlan = $this->getUserAccountPlanService()->subscribe(
-                $user,
-                $this->getAccountPlanService()->find('basic')
-            );
-        }
-
-        $userSummary = array(
-            'email' => $user->getEmailCanonical(),
-            'user_plan' => $userAccountPlan
-        );
-
-        if ($this->includeStripeCustomerInUserSummary($user, $userAccountPlan)) {
-            $userSummary['stripe_customer'] = $this->getStripeService()->getCustomer($userAccountPlan)->__toArray();
-        }
-
-        $planConstraints = array();
-
-        if ($userAccountPlan->getPlan()->hasConstraintNamed('credits_per_month')) {
-            $this->getJobUserAccountPlanEnforcementService()->setUser($this->getUser());
-            $planConstraints['credits'] = array(
-                'limit' => $userAccountPlan->getPlan()->getConstraintNamed('credits_per_month')->getLimit(),
-                'used' => $this->getJobUserAccountPlanEnforcementService()->getCreditsUsedThisMonth()
-            );
-        }
-
-        if ($userAccountPlan->getPlan()->hasConstraintNamed('urls_per_job')) {
-            $planConstraints['urls_per_job'] =
-                $userAccountPlan->getPlan()->getConstraintNamed('urls_per_job')->getLimit();
-        }
-
-        $userSummary['plan_constraints'] = $planConstraints;
-
-        $userSummary['team_summary'] = [
-            'in' => $this->getTeamService()->hasForUser($this->getUser()),
-            'has_invite' => $this->getHasAnyTeamInvitesForUser($this->getUser())
-        ];
-
-        return $userSummary;
     }
 
     /**
@@ -94,17 +102,6 @@ class UserController extends ApiController
         }
 
         return $this->getTeamInviteService()->hasAnyForUser($this->getUser());
-    }
-
-    /**
-     * @param User $user
-     * @param UserAccountPlan $userAccountPlan
-     *
-     * @return bool
-     */
-    private function includeStripeCustomerInUserSummary(User $user, UserAccountPlan $userAccountPlan)
-    {
-        return $userAccountPlan->hasStripeCustomer() &&  $user->getId() == $userAccountPlan->getUser()->getId();
     }
 
     /**
@@ -164,42 +161,11 @@ class UserController extends ApiController
     }
 
     /**
-     * @return StripeService
-     */
-    private function getStripeService()
-    {
-        return $this->get('simplytestable.services.stripeservice');
-    }
-
-    /**
-     * @return AccountPlanService
-     */
-    private function getAccountPlanService()
-    {
-        return $this->get('simplytestable.services.accountplanservice');
-    }
-
-    /**
      * @return UserAccountPlanService
      */
     private function getUserAccountPlanService()
     {
         return $this->get('simplytestable.services.useraccountplanservice');
-    }
-
-    /**
-     * @return JobUserAccountPlanEnforcementService
-     */
-    private function getJobUserAccountPlanEnforcementService() {
-        return $this->get('simplytestable.services.jobuseraccountplanenforcementservice');
-    }
-
-    /**
-     * @return Service
-     */
-    private function getTeamService()
-    {
-        return $this->get('simplytestable.services.teamservice');
     }
 
     /**
