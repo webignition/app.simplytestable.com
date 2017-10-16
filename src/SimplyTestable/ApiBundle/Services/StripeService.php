@@ -29,11 +29,11 @@ class StripeService {
     /**
      * @param User $user
      * @param string|null $coupon
-     * @return \webignition\Model\Stripe\Customer
+     *
+     * @return StripeCustomer
      */
-    public function createCustomer(User $user, $coupon = null) {
-        $adapter = new StripeCustomerAdapter();
-
+    public function createCustomer(User $user, $coupon = null)
+    {
         $customerProperties = [
             'email' => $user->getEmail()
         ];
@@ -42,7 +42,7 @@ class StripeService {
             $customerProperties['coupon'] = $coupon;
         }
 
-        return $adapter->getStripeCustomer(StripeCustomer::create($customerProperties));
+        return StripeCustomer::create($customerProperties);
     }
 
 
