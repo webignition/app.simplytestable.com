@@ -60,13 +60,14 @@ class StripeService {
         return StripeCustomer::retrieve($stripeCustomerId);
     }
 
-
     /**
-     *
      * @param UserAccountPlan $userAccountPlan
      * @param array $updatedProperties
+     *
+     * @return StripeCustomer
      */
-    public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties) {
+    public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties)
+    {
         $customer = StripeCustomer::retrieve($userAccountPlan->getStripeCustomer());
 
         foreach ($updatedProperties as $key => $value) {
@@ -74,6 +75,8 @@ class StripeService {
         }
 
         $customer->save();
+
+        return $customer;
     }
 
 

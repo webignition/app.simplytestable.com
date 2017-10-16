@@ -7,22 +7,25 @@ use phpmock\mockery\PHPMockery;
 class StripeApiFixtureFactory
 {
     /**
-     * @param string $fixture
+     * @param string[] $fixtures
      */
-    public static function set($fixture)
+    public static function set($fixtures)
     {
         PHPMockery::mock(
             'Stripe',
             'curl_exec'
-        )->andReturn(
-            $fixture
+        )->andReturnValues(
+            $fixtures
         );
+
+        $fixtureCount = count($fixtures);
+        $httpStatusCodes = array_fill(0, $fixtureCount, 200);
 
         PHPMockery::mock(
             'Stripe',
             'curl_getinfo'
-        )->andReturn(
-            200
+        )->andReturnValues(
+            $httpStatusCodes
         );
     }
 

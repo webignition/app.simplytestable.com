@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use Stripe\AttachedObject;
 use Stripe\Customer as StripeCustomer;
 
 class StripeServiceTest extends BaseSimplyTestableTestCase
@@ -36,7 +37,7 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
     public function testCreateCustomer($coupon)
     {
         StripeApiFixtureFactory::set(
-            StripeApiFixtureFactory::load('customer')
+            [StripeApiFixtureFactory::load('customer')]
         );
 
         $user = new User();
@@ -70,7 +71,7 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
     public function testGetCustomer($userAccountPlanStripeCustomer)
     {
         StripeApiFixtureFactory::set(
-            StripeApiFixtureFactory::load('customer')
+            [StripeApiFixtureFactory::load('customer')]
         );
 
         $userAccountPlan = new UserAccountPlan();
@@ -96,6 +97,42 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
             ],
             'has stripe id' => [
                 'userAccountPlanStripeCustomer' => 'cus_BanNZHjdfXcrAl',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider updateCustomerDataProvider
+     *
+     * @param $propertiesToUpdate
+     */
+    public function testUpdateCustomer($propertiesToUpdate)
+    {
+        StripeApiFixtureFactory::set([
+            StripeApiFixtureFactory::load('customer'),
+            StripeApiFixtureFactory::load('customer'),
+        ]);
+
+        $userAccountPlan = new UserAccountPlan();
+        $userAccountPlan->setStripeCustomer('cus_BanNjUqqa6RWw9');
+
+        $updatedCustomer = $this->stripeService->updateCustomer($userAccountPlan, $propertiesToUpdate);
+
+        $this->assertInstanceOf(StripeCustomer::class, $updatedCustomer);
+    }
+
+    /**
+     * @return array
+     */
+    public function updateCustomerDataProvider()
+    {
+        return [
+            'add metadata' => [
+                'propertiesToUpdate' => [
+                    'metadata' => [
+                        'foo' => 'bar',
+                    ],
+                ],
             ],
         ];
     }
