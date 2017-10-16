@@ -13,6 +13,22 @@ use Symfony\Component\HttpFoundation\Request;
 
 class TasksControllerTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var TasksController
+     */
+    private $tasksController;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->tasksController = new TasksController();
+        $this->tasksController->setContainer($this->container);
+    }
+
     public function testRequestActionInMaintenanceReadOnlyMode()
     {
         $request = new Request();
@@ -21,14 +37,12 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
         $maintenanceController->setContainer($this->container);
         $maintenanceController->enableReadOnlyAction();
 
-        $tasksController = $this->createTasksController($request);
-
-        $response = $tasksController->requestAction($request);
+        $response = $this->tasksController->requestAction($request);
         $this->assertEquals(503, $response->getStatusCode());
 
         $maintenanceController->enableBackupReadOnlyAction();
 
-        $response = $tasksController->requestAction($request);
+        $response = $this->tasksController->requestAction($request);
         $this->assertEquals(503, $response->getStatusCode());
 
         $maintenanceController->disableReadOnlyAction();
@@ -67,9 +81,8 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
                 'worker_hostname' => $workerHostname,
             ]
         );
-        $tasksController = $this->createTasksController($request);
 
-        $response = $tasksController->requestAction($request);
+        $response = $this->tasksController->requestAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertTrue($response->headers->has('x-message'));
@@ -117,9 +130,8 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
                 'worker_hostname' => $worker->getHostname(),
             ]
         );
-        $tasksController = $this->createTasksController($request);
 
-        $response = $tasksController->requestAction($request);
+        $response = $this->tasksController->requestAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertTrue($response->headers->has('x-message'));
@@ -166,9 +178,8 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
                 'worker_token' => 'bar',
             ]
         );
-        $tasksController = $this->createTasksController($request);
 
-        $response = $tasksController->requestAction($request);
+        $response = $this->tasksController->requestAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertTrue($response->headers->has('x-message'));
@@ -193,9 +204,8 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
                 'limit' => 0,
             ]
         );
-        $tasksController = $this->createTasksController($request);
 
-        $response = $tasksController->requestAction($request);
+        $response = $this->tasksController->requestAction($request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertTrue($resqueQueueService->isEmpty('task-assign-collection'));
@@ -216,9 +226,8 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
                 'limit' => 1,
             ]
         );
-        $tasksController = $this->createTasksController($request);
 
-        $response = $tasksController->requestAction($request);
+        $response = $this->tasksController->requestAction($request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertTrue($resqueQueueService->isEmpty('task-assign-collection'));
@@ -256,14 +265,12 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
             ]
         );
 
-        $tasksController = $this->createTasksController($request);
-
         $this->assertEquals(
             1,
             $resqueQueueService->getResque()->getQueue('task-assign-collection')->getSize()
         );
 
-        $response = $tasksController->requestAction($request);
+        $response = $this->tasksController->requestAction($request);
 
         $this->assertTrue($response->isSuccessful());
 
@@ -324,9 +331,7 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
 
         $this->assertTrue($resqueQueueService->isEmpty('task-assign-collection'));
 
-        $tasksController = $this->createTasksController($request);
-
-        $response = $tasksController->requestAction($request);
+        $response = $this->tasksController->requestAction($request);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertFalse($resqueQueueService->isEmpty('task-assign-collection'));
@@ -374,21 +379,5 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
                 'limit' => 3,
             ],
         ];
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return TasksController
-     */
-    private function createTasksController(Request $request)
-    {
-        $controller = new TasksController();
-        $this->container->enterScope('request');
-        $this->container->set('request', $request);
-
-        $controller->setContainer($this->container);
-
-        return $controller;
     }
 }

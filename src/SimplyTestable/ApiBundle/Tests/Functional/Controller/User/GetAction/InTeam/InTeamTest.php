@@ -3,10 +3,10 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction\InTeam;
 
 use SimplyTestable\ApiBundle\Controller\UserController;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\User;
 
-abstract class InTeamTest extends BaseControllerJsonTestCase {
+abstract class InTeamTest extends BaseSimplyTestableTestCase {
 
     const DEFAULT_TRIAL_PERIOD = 30;
 

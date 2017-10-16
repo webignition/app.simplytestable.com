@@ -6,8 +6,9 @@ use SimplyTestable\ApiBundle\Controller\StatusController;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
-class StatusControllerTest extends BaseControllerJsonTestCase
+class StatusControllerTest extends BaseSimplyTestableTestCase
 {
     /**
      * @var StatusController

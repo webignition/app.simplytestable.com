@@ -4,9 +4,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
 use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
-class GetActionStripeCustomerSubscriptionTest extends BaseControllerJsonTestCase
+class GetActionStripeCustomerSubscriptionTest extends BaseSimplyTestableTestCase
 {
     const DEFAULT_TRIAL_PERIOD = 30;
 

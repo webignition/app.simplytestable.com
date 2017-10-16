@@ -4,9 +4,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User;
 
 use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
-class HasInvitesTest extends BaseControllerJsonTestCase
+class HasInvitesTest extends BaseSimplyTestableTestCase
 {
     /**
      * @var UserFactory
