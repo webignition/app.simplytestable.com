@@ -3,90 +3,91 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
-use Stripe_AuthenticationError;  
+use Stripe\Error\Authentication as StripeAuthenticationError;
+use Stripe\Error\Card as StripeCardError;
 use webignition\Model\Stripe\Customer as StripeCustomer;
 
 class TestStripeService extends StripeService {
-    
+
     /**
      *
      * @var array
      */
     private $responseData = array();
-    
-    
+
+
     /**
      *
      * @var boolean
      */
     private $hasInvalidApiKey = false;
-    
-    
+
+
     /**
      *
      * @var boolean
      */
     private $issueStripeCardError = false;
-    
-    
+
+
     /**
      *
      * @var string
      */
     private $nextStripeCardErrorMessage = 'Stripe_CardErrorMessage';
-    
-   
+
+
     /**
      *
      * @var string
      */
     private $nextStripeCardErrorParam = 'Stripe_CardErrorParam';
-    
-    
+
+
     /**
      *
      * @var string
      */
     private $nextStripeCardErrorCode = 'Stripe_CardErrorCode';
-    
+
     /**
-     * 
+     *
      * @param boolean $hasInvalidApiKey
      */
     public function setHasInvalidApiKey($hasInvalidApiKey) {
         $this->hasInvalidApiKey = $hasInvalidApiKey;
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param boolean $issueStripeCardError
      */
     public function setIssueStripeCardError($issueStripeCardError) {
         $this->issueStripeCardError = $issueStripeCardError;
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param string $message
      */
     public function setNextStripeCardErrorMessage($message) {
         $this->nextStripeCardErrorMessage = $message;
-    }    
-    
-    
+    }
+
+
     /**
-     * 
+     *
      * @param string $param
      */
     public function setNextStripeCardErrorParam($param) {
         $this->nextStripeCardErrorParam = $param;
-    }    
-    
-    
+    }
+
+
     /**
-     * 
+     *
      * @param string $code
      */
     public function setNextStripeCardErrorCode($code) {
@@ -98,45 +99,45 @@ class TestStripeService extends StripeService {
      * @param User $user
      * @param string|null $coupon
      * @return StripeCustomer
-     * @throws \Stripe_AuthenticationError
+     * @throws StripeAuthenticationError
      */
     public function createCustomer(User $user, $coupon = null) {
         if ($this->hasInvalidApiKey === true) {
-            throw new Stripe_AuthenticationError();
+            throw new StripeAuthenticationError('No API key');
         }
-        
+
         $stripeCustomerData = new \stdClass();
         $stripeCustomerData->id = md5($user->getEmail());
-        
+
         return new StripeCustomer(json_encode($stripeCustomerData));
     }
-    
+
 
     /**
      * @param $method
      * @param array $responseData
      */
-    public function addResponseData($method, $responseData = array()) {                
+    public function addResponseData($method, $responseData = array()) {
         if (!isset($this->responseData[$method])) {
             $this->responseData[$method] = array();
-        }       
-        
+        }
+
         $this->responseData[$method][] = $responseData;
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
      * @return \webignition\Model\Stripe\Customer
      */
-    public function getCustomer(UserAccountPlan $userAccountPlan) {                
+    public function getCustomer(UserAccountPlan $userAccountPlan) {
         $responseData = $this->getResponseData(__FUNCTION__);
-        
-        if ($userAccountPlan->hasStripeCustomer()) {            
-            $customerAsArray = $this->populateCustomerTemplate($this->getCustomerTemplate($userAccountPlan), $responseData);            
-            return new StripeCustomer(json_encode($customerAsArray));      
-        }        
+
+        if ($userAccountPlan->hasStripeCustomer()) {
+            $customerAsArray = $this->populateCustomerTemplate($this->getCustomerTemplate($userAccountPlan), $responseData);
+            return new StripeCustomer(json_encode($customerAsArray));
+        }
     }
 
 
@@ -144,37 +145,40 @@ class TestStripeService extends StripeService {
      * @param UserAccountPlan $userAccountPlan
      * @param array $updatedProperties
      * @return null|void
-     * @throws \Stripe_CardError
+     * @throws StripeCardError
      */
     public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties) {
         if ($this->issueStripeCardError === true) {
             $this->issueStripeCardError = false;
-            throw new \Stripe_CardError(
+            throw new StripeCardError(
                 $this->nextStripeCardErrorMessage,
                 $this->nextStripeCardErrorParam,
-                $this->nextStripeCardErrorCode
+                $this->nextStripeCardErrorCode,
+                404,
+                '',
+                ''
             );
         }
-        
-        return null;        
-    }    
-    
-    
+
+        return null;
+    }
+
+
     private function populateCustomerTemplate($template, $values) {
         $customer = array();
-        
-        foreach ($template as $key => $value) {            
-            if (is_array($value)) {                
+
+        foreach ($template as $key => $value) {
+            if (is_array($value)) {
                 $customer[$key] = $this->populateCustomerTemplate($value, isset($values[$key]) ? $values[$key] : array());
-            } else {                
+            } else {
                 $customer[$key] = isset($values[$key]) ? $values[$key] : $value;
             }
         }
-        
+
         return $customer;
     }
-    
-    
+
+
     private function getCustomerTemplate(UserAccountPlan $userAccountPlan) {
         return array(
             'object' => 'customer',
@@ -211,12 +215,12 @@ class TestStripeService extends StripeService {
             ),
             'discount' => NULL,
             'account_balance' => 0,
-        );       
+        );
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param string $method
      * @return array
      */
@@ -224,53 +228,56 @@ class TestStripeService extends StripeService {
         if (!isset($this->responseData[$method])) {
             return array();
         }
-        
+
         if (count($this->responseData[$method]) === 0) {
             return array();
         }
-        
+
         $responseData = $this->responseData[$method][0];
-        
+
         if (count($this->responseData[$method])) {
             $this->responseData[$method] = array_slice($this->responseData[$method], 1);
         } else {
             $this->responseData[$method] = array();
         }
-        
+
         return $responseData;
     }
-    
+
 
     /**
-     * 
+     *
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
      */
-    public function subscribe(UserAccountPlan $userAccountPlan) {        
+    public function subscribe(UserAccountPlan $userAccountPlan) {
         if ($this->hasInvalidApiKey === true) {
-            throw new Stripe_AuthenticationError();
-        }        
-        
+            throw new StripeAuthenticationError('No API key');
+        }
+
         if ($this->issueStripeCardError === true) {
             $this->issueStripeCardError = false;
-            throw new \Stripe_CardError(
+            throw new StripeCardError(
                 $this->nextStripeCardErrorMessage,
                 $this->nextStripeCardErrorParam,
-                $this->nextStripeCardErrorCode
+                $this->nextStripeCardErrorCode,
+                404,
+                '',
+                ''
             );
-        }        
-        
+        }
+
         return $userAccountPlan;
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
      */
-    public function unsubscribe(UserAccountPlan $userAccountPlan) {    
+    public function unsubscribe(UserAccountPlan $userAccountPlan) {
         if ($this->hasInvalidApiKey === true) {
-            throw new Stripe_AuthenticationError();
-        }        
-    }   
-    
+            throw new StripeAuthenticationError('No API key');
+        }
+    }
+
 }

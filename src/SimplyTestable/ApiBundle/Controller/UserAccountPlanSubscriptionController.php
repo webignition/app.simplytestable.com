@@ -3,6 +3,8 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
+use Stripe\Error\Card as StripeCardError;
+use Stripe\Error\Authentication as StripeAuthenticationError;
 
 class UserAccountPlanSubscriptionController extends ApiController
 {
@@ -34,9 +36,9 @@ class UserAccountPlanSubscriptionController extends ApiController
 
         try {
             $this->getUserAccountPlanService()->subscribe($this->getUser(), $this->getAccountPlanService()->find($plan_name));
-        } catch (\Stripe_AuthenticationError $stripeAuthenticationError) {
+        } catch (StripeAuthenticationError $stripeAuthenticationError) {
             return $this->sendForbiddenResponse();
-        } catch (\Stripe_CardError $stripeCardError) {
+        } catch (StripeCardError $stripeCardError) {
             $this->getUserAccountPlanService()->removeCurrentForUser($this->getUser());
             return $this->sendFailureResponse(array(
                 'X-Stripe-Error-Message' => $stripeCardError->getMessage(),
@@ -86,7 +88,7 @@ class UserAccountPlanSubscriptionController extends ApiController
             $this->getStripeService()->updateCustomer($userAccountPlan, array(
                 'card' => $stripe_card_token
             ));
-        } catch (\Stripe_CardError $stripeCardError) {
+        } catch (StripeCardError $stripeCardError) {
             return $this->sendFailureResponse(array(
                 'X-Stripe-Error-Message' => $stripeCardError->getMessage(),
                 'X-Stripe-Error-Param' => $stripeCardError->param,
