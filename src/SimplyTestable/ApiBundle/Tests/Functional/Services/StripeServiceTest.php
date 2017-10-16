@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -61,6 +62,48 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
         ];
     }
 
+    /**
+     * @dataProvider getCustomerDataProvider
+     *
+     * @param string $userAccountPlanStripeCustomer
+     */
+    public function testGetCustomer($userAccountPlanStripeCustomer)
+    {
+        StripeApiFixtureFactory::set(
+            StripeApiFixtureFactory::load('customer')
+        );
+
+        $userAccountPlan = new UserAccountPlan();
+        $userAccountPlan->setStripeCustomer($userAccountPlanStripeCustomer);
+
+        $customer = $this->stripeService->getCustomer($userAccountPlan);
+
+        if (empty($userAccountPlanStripeCustomer)) {
+            $this->assertNull($customer);
+        } else {
+            $this->assertInstanceOf(StripeCustomer::class, $customer);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomerDataProvider()
+    {
+        return [
+            'no stripe id' => [
+                'userAccountPlanStripeCustomer' => null,
+            ],
+            'has stripe id' => [
+                'userAccountPlanStripeCustomer' => 'cus_BanNZHjdfXcrAl',
+            ],
+        ];
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         parent::tearDown();

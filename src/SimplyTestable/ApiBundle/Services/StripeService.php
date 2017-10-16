@@ -45,23 +45,25 @@ class StripeService {
         return StripeCustomer::create($customerProperties);
     }
 
-
     /**
+     * @param UserAccountPlan $userAccountPlan
      *
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
-     * @return \webignition\Model\Stripe\Customer
+     * @return StripeCustomer
      */
-    public function getCustomer(UserAccountPlan $userAccountPlan) {
-        if ($userAccountPlan->hasStripeCustomer()) {
-            $adapter = new StripeCustomerAdapter();
-            return $adapter->getStripeCustomer(StripeCustomer::retrieve($userAccountPlan->getStripeCustomer()));
+    public function getCustomer(UserAccountPlan $userAccountPlan)
+    {
+        $stripeCustomerId = $userAccountPlan->getStripeCustomer();
+        if (empty($stripeCustomerId)) {
+            return null;
         }
+
+        return StripeCustomer::retrieve($stripeCustomerId);
     }
 
 
     /**
      *
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @param UserAccountPlan $userAccountPlan
      * @param array $updatedProperties
      */
     public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties) {
@@ -101,7 +103,7 @@ class StripeService {
 
     /**
      *
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @param UserAccountPlan $userAccountPlan
      */
     public function unsubscribe(UserAccountPlan $userAccountPlan) {
         $stripeCustomerObject = StripeCustomer::retrieve($userAccountPlan->getStripeCustomer());
