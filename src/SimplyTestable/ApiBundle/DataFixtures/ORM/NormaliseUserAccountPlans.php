@@ -29,9 +29,10 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
      */
     public function load(ObjectManager $manager)
     {
-        $userAccountPlanRepository = $manager->getRepository(UserAccountPlan::class);
-        $userAccountPlans = $userAccountPlanRepository->findAll();
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $userService = $this->container->get('simplytestable.services.userservice');
+
+        $userAccountPlans = $userAccountPlanService->getAll();
 
         foreach ($userAccountPlans as $userAccountPlan) {
             if ($userService->isSpecialUser($userAccountPlan->getUser())) {
@@ -42,11 +43,8 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
             $isModified = false;
 
             if (is_null($userAccountPlan->getIsActive())) {
-                $userAccountPlansForUser = $userAccountPlanRepository->findBy([
-                    'user' => $userAccountPlan->getUser(),
-                ]);
-
-                if (count($userAccountPlansForUser) === 1) {
+                if ($userAccountPlanService->countForUser($userAccountPlan->getUser()) === 1) {
+                    $userAccountPlan->setIsActive(true);
                     $isModified = true;
                 }
             }
