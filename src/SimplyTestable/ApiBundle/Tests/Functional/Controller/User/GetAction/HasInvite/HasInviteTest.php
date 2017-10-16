@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction\HasInvite;
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 use SimplyTestable\ApiBundle\Entity\User;
 
@@ -48,21 +49,17 @@ abstract class HasInviteTest extends BaseControllerJsonTestCase {
 
         $this->setUser($this->user);
 
-        $actionMethod = $this->getActionNameFromRouter();
+        $userController = new UserController();
+        $userController->setContainer($this->container);
 
-        $this->summary = json_decode($this->getCurrentController()->$actionMethod()->getContent());
+        $response = $userController->getAction();
+
+        $this->summary = json_decode($response->getContent());
     }
 
 
     public function testUserInTeam() {
         $this->assertEquals($this->getExpectedHasInvite(), $this->summary->team_summary->has_invite);
-    }
-
-
-    protected function getRouteParameters() {
-        return [
-            'email_canonical' => $this->user->getEmail()
-        ];
     }
 }
 

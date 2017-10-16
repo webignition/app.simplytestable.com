@@ -2,13 +2,18 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
-class GetListController extends JobConfigurationController {
+use Symfony\Component\HttpFoundation\Response;
 
-    public function listAction() {
-        $this->getJobConfigurationService()->setUser($this->getUser());
-        return $this->sendResponse(
-            $this->getJobConfigurationService()->getList()
-        );
+class GetListController extends JobConfigurationController
+{
+    /**
+     * @return Response
+     */
+    public function listAction()
+    {
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService->setUser($this->getUser());
+
+        return $this->sendResponse($jobConfigurationService->getList());
     }
-
 }

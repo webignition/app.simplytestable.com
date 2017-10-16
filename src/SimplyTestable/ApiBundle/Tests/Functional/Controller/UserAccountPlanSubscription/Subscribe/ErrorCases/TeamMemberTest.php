@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserAccountPlanSubsciption\Subscribe\ErrorCases;
 
+use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -28,7 +29,10 @@ class TeamMemberTest extends BaseControllerJsonTestCase {
 
         $this->setUser($user);
 
-        $this->response = $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($user->getEmail(), 'personal');
+        $userAccountPlanSubscriptionController = new UserAccountPlanSubscriptionController();
+        $userAccountPlanSubscriptionController->setContainer($this->container);
+
+        $this->response = $userAccountPlanSubscriptionController->subscribeAction($user->getEmail(), 'personal');
     }
 
     public function testSubscribeFailsWithHttp400() {

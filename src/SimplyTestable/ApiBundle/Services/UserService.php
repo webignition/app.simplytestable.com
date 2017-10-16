@@ -1,31 +1,29 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
 use FOS\UserBundle\Doctrine\UserManager;
+use FOS\UserBundle\Util\TokenGenerator;
+use SimplyTestable\ApiBundle\Repository\UserRepository;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class UserService extends UserManager {
-
+class UserService extends UserManager
+{
     const PUBLIC_USER_EMAIL_ADDRESS = 'public@simplytestable.com';
 
     /**
-     *
      * @var string
      */
     private $tokenGeneratorClass;
 
     /**
-     *
-     * @var \FOS\UserBundle\Util\TokenGenerator
+     * @var TokenGenerator
      */
     private $tokenGenerator;
 
     /**
-     *
      * @var \Doctrine\ORM\EntityRepository
      */
     private $entityRepository;
@@ -40,90 +38,71 @@ class UserService extends UserManager {
      * @param string                 $class
      * @param string                 $tokenGeneratorClass
      */
-    public function __construct(EncoderFactoryInterface $encoderFactory, CanonicalizerInterface $usernameCanonicalizer, CanonicalizerInterface $emailCanonicalizer, ObjectManager $om, $class, $tokenGeneratorClass)
-    {
+    public function __construct(
+        EncoderFactoryInterface $encoderFactory,
+        CanonicalizerInterface $usernameCanonicalizer,
+        CanonicalizerInterface $emailCanonicalizer,
+        ObjectManager $om,
+        $class,
+        $tokenGeneratorClass
+    ) {
         parent::__construct($encoderFactory, $usernameCanonicalizer, $emailCanonicalizer, $om, $class);
         $this->tokenGeneratorClass = $tokenGeneratorClass;
     }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\User
+     * @return User
      */
-    public function getPublicUser() {
-        return $this->findUserByEmail(self::PUBLIC_USER_EMAIL_ADDRESS);
+    public function getPublicUser()
+    {
+        /* @var User $user */
+        $user = $this->findUserByEmail(self::PUBLIC_USER_EMAIL_ADDRESS);
+
+        return $user;
     }
 
-
     /**
-     *
-     * @return boolean
+     * @return User
      */
-    public function hasPublicUser() {
-        return !is_null($this->getPublicUser());
+    public function getAdminUser()
+    {
+        /* @var User $user */
+        $user = $this->findUserByUsername('admin');
+
+        return $user;
     }
 
-
     /**
+     * @param User $user
      *
-     * @return \SimplyTestable\ApiBundle\Entity\User
+     * @return bool
      */
-    public function getAdminUser() {
-        return $this->findUserByUsername('admin');
-    }
-
-
-    /**
-     *
-     * @return boolean
-     */
-    public function hasAdminUser() {
-        return !is_null($this->getAdminUser());
-    }
-
-
-    /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return boolean
-     */
-    public function isPublicUser(User $user) {
+    public function isPublicUser(User $user)
+    {
         return $user->equals($this->getPublicUser());
     }
 
-
     /**
+     * @param User $user
      *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return boolean
+     * @return bool
      */
-    public function isAdminUser(User $user) {
-        return $user->equals($this->getAdminUser());
+    public function isSpecialUser(User $user)
+    {
+        return $this->isPublicUser($user) || $user->equals($this->getAdminUser());
     }
 
-
     /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return boolean
-     */
-    public function isSpecialUser(User $user) {
-        return $this->isPublicUser($user) || $this->isAdminUser($user);
-    }
-
-
-    /**
-     *
      * @param string $email
      * @param string $password
-     * @return \SimplyTestable\ApiBundle\Entity\User
+     *
+     * @return User
      */
-    public function create($email, $password) {
-        if ($this->exists($email)) {
-            return false;
-        }
-
+    public function create($email, $password)
+    {
+        /* @var User $user */
         $user = $this->createUser();
+
         $user->setEmail($this->canonicalizeEmail($email));
         $user->setEmailCanonical($this->canonicalizeEmail($email));
         $user->setUsername($this->canonicalizeUsername($email));
@@ -133,40 +112,39 @@ class UserService extends UserManager {
         $this->updateUser($user);
 
         return $user;
-
     }
 
-
     /**
-     *
      * @param string $emailCanonical
-     * @return boolean
+     *
+     * @return bool
      */
-    public function exists($emailCanonical) {
+    public function exists($emailCanonical)
+    {
         return !is_null($this->findUserByEmail($this->canonicalizeEmail($emailCanonical)));
     }
 
-
     /**
+     * @param User $user
      *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @return string
      */
-    public function getConfirmationToken(User $user) {
+    public function getConfirmationToken(User $user)
+    {
         if (!$user->hasConfirmationToken()) {
             $user->setConfirmationToken($this->getTokenGenerator()->generateToken());
         }
 
         $this->updateUser($user);
+
         return $user->getConfirmationToken();
     }
 
-
     /**
-     *
-     * @return \FOS\UserBundle\Util\TokenGenerator
+     * @return TokenGenerator
      */
-    private function getTokenGenerator() {
+    private function getTokenGenerator()
+    {
         if (is_null($this->tokenGenerator)) {
             $this->tokenGenerator = new $this->tokenGeneratorClass;
         }
@@ -174,12 +152,11 @@ class UserService extends UserManager {
         return $this->tokenGenerator;
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\UserRepository
+     * @return UserRepository
      */
-    public function getEntityRepository() {
+    public function getEntityRepository()
+    {
         if (is_null($this->entityRepository)) {
             $this->entityRepository = $this->objectManager->getRepository('SimplyTestable\ApiBundle\Entity\User');
         }

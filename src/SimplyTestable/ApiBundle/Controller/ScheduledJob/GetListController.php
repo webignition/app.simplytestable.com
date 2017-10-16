@@ -2,12 +2,19 @@
 
 namespace SimplyTestable\ApiBundle\Controller\ScheduledJob;
 
-class GetListController extends ScheduledJobController {
+use Symfony\Component\HttpFoundation\Response;
 
-    public function listAction() {
-        $this->getScheduledJobService()->setUser($this->getUser());
+class GetListController extends ScheduledJobController
+{
+    /**
+     * @return Response
+     */
+    public function listAction()
+    {
+        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService->setUser($this->getUser());
 
-        $list = $this->getScheduledJobService()->getList();
+        $list = $scheduledJobService->getList();
 
         $response = [];
 
@@ -23,5 +30,4 @@ class GetListController extends ScheduledJobController {
 
         return $this->sendResponse($response);
     }
-
 }

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -15,6 +16,11 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserController
+     */
+    private $userController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -22,13 +28,15 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userController = new UserController();
+        $this->userController->setContainer($this->container);
     }
 
     public function testForUserWithBasicPlan() {
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertFalse(isset($responseObject->stripe_customer));
     }
 
@@ -38,7 +46,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertTrue(isset($responseObject->stripe_customer));
     }
 
@@ -50,7 +58,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->deactivateAllForUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertTrue(isset($responseObject->stripe_customer));
     }
 
@@ -63,7 +71,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->deactivateAllForUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertTrue(isset($responseObject->stripe_customer));
     }
 
@@ -84,9 +92,9 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction($user->getEmail(), 'basic');
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('basic'));
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertTrue(isset($responseObject->stripe_customer));
     }
 
@@ -107,7 +115,7 @@ class GetActionStripeCustomerTest extends BaseControllerJsonTestCase
 
         $this->setUser($member);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertFalse(isset($responseObject->stripe_customer));
 
     }

@@ -16,6 +16,8 @@ class JobConfigurationFactory
     const KEY_USER = 'user';
     const KEY_WEBSITE_URL = 'website-url';
     const KEY_TYPE = 'type';
+    const KEY_PARAMETERS = 'parameters';
+    const KEY_TASK_CONFIGURATIONS = 'task-configurations';
 
     /**
      * @var array
@@ -24,6 +26,7 @@ class JobConfigurationFactory
         self::KEY_LABEL => self::DEFAULT_LABEL,
         self::KEY_WEBSITE_URL => self::DEFAULT_WEBSITE_URL,
         self::KEY_TYPE => self::DEFAULT_TYPE,
+
     ];
 
     /**
@@ -67,7 +70,30 @@ class JobConfigurationFactory
         $jobConfiguration->setWebsite($website);
         $jobConfiguration->setType($jobType);
 
+        if (isset($jobConfigurationValues[self::KEY_PARAMETERS])) {
+            $jobConfiguration->setParameters(json_encode($jobConfigurationValues[self::KEY_PARAMETERS]));
+        }
+
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager->persist($jobConfiguration);
+        $entityManager->flush($jobConfiguration);
+
+        if (isset($jobConfigurationValues[self::KEY_TASK_CONFIGURATIONS])) {
+            $jobTaskConfigurationFactory = new JobTaskConfigurationFactory($this->container);
+
+            $taskConfigurationValuesCollection = $jobConfigurationValues[self::KEY_TASK_CONFIGURATIONS];
+
+            foreach ($taskConfigurationValuesCollection as $taskConfigurationValues) {
+                $taskConfiguration = $jobTaskConfigurationFactory->create($taskConfigurationValues);
+                $taskConfiguration->setJobConfiguration($jobConfiguration);
+
+                $entityManager->persist($taskConfiguration);
+                $entityManager->flush($taskConfiguration);
+
+                $jobConfiguration->addTaskConfiguration($taskConfiguration);
+            }
+        }
+
         $entityManager->persist($jobConfiguration);
         $entityManager->flush($jobConfiguration);
 

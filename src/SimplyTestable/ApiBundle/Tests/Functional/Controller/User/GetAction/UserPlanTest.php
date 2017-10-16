@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
 
@@ -15,6 +16,11 @@ class UserPlanTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserController
+     */
+    private $userController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -22,6 +28,8 @@ class UserPlanTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userController = new UserController();
+        $this->userController->setContainer($this->container);
     }
 
     public function testHasUserPlan()
@@ -29,7 +37,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
 
         $this->assertTrue(isset($responseObject->user_plan));
         $this->assertTrue(isset($responseObject->user_plan->plan));
@@ -40,7 +48,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
 
         $this->assertEquals('basic', $responseObject->user_plan->plan->name);
         $this->assertFalse($responseObject->user_plan->plan->is_premium);
@@ -53,7 +61,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
 
         $this->assertEquals('personal', $responseObject->user_plan->plan->name);
         $this->assertTrue($responseObject->user_plan->plan->is_premium);
@@ -67,7 +75,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->deactivateAllForUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
 
         $this->assertEquals('basic', $responseObject->user_plan->plan->name);
     }
@@ -82,7 +90,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->deactivateAllForUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
 
         $this->assertEquals('agency', $responseObject->user_plan->plan->name);
     }
@@ -93,7 +101,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertEquals(self::DEFAULT_TRIAL_PERIOD, $responseObject->user_plan->start_trial_period);
     }
 
@@ -103,10 +111,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
-            $user->getEmail(),
-            'personal'
-        );
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
 
         // Mock the fact that the Stripe customer.subscription.trial_end is
         // $trialDaysPassed days from now
@@ -116,12 +121,9 @@ class UserPlanTest extends BaseControllerJsonTestCase
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
-            $user->getEmail(),
-            'agency'
-        );
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('agency'));
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertEquals($trialDaysRemaining, $responseObject->user_plan->start_trial_period);
     }
 
@@ -143,12 +145,9 @@ class UserPlanTest extends BaseControllerJsonTestCase
             )
         ));
 
-        $this->getUserAccountPlanSubscriptionController('subscribeAction')->subscribeAction(
-            $user->getEmail(),
-            'basic'
-        );
+        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('basic'));
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertEquals($trialDaysRemaining, $responseObject->user_plan->start_trial_period);
     }
 
@@ -171,7 +170,7 @@ class UserPlanTest extends BaseControllerJsonTestCase
 
         $this->getUserAccountPlanService()->subscribe($leader, $this->getAccountPlanService()->find('agency'));
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
 
         $this->assertEquals('agency', $responseObject->user_plan->plan->name);
     }

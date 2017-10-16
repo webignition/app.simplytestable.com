@@ -2,12 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
+use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-class UserCreationController extends AbstractUserController
+class UserCreationController extends ApiController
 {
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
 
@@ -88,10 +88,18 @@ class UserCreationController extends AbstractUserController
         return $this->sendSuccessResponse();
     }
 
-
-    public function activateAction($token = null) {
+    /**
+     * @param string $token
+     *
+     * @return Response
+     */
+    public function activateAction($token = null)
+    {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userManipulator = $this->container->get('fos_user.util.user_manipulator');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -102,48 +110,33 @@ class UserCreationController extends AbstractUserController
         }
 
         $token = trim($token);
-        if ($token == '') {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
+        if (empty($token)) {
+            throw new BadRequestHttpException();
         }
 
         $user = $userService->findUserByConfirmationToken($token);
-        if (is_null($user)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
+        if (empty($user)) {
+            throw new BadRequestHttpException();
         }
 
-        $this->getUserManipulator()->activate($user->getUsername());
+        $userManipulator->activate($user->getUsername());
 
-        if ($this->getUserPostActivationPropertiesService()->hasForUser($user)) {
-            $postActivationProperties = $this->getUserPostActivationPropertiesService()->getForUser($user);
+        $userPostActivationPropertiesRepository = $entityManager->getRepository(UserPostActivationProperties::class);
+        $postActivationProperties = $userPostActivationPropertiesRepository->findOneBy([
+            'user' => $user,
+        ]);
 
-            $this->getUserAccountPlanService()->subscribe(
+        if (!empty($postActivationProperties)) {
+            $userAccountPlanService->subscribe(
                 $user,
                 $postActivationProperties->getAccountPlan(),
                 $postActivationProperties->getCoupon()
             );
 
-            $this->getUserPostActivationPropertiesService()->getManager()->remove($postActivationProperties);
-            $this->getUserPostActivationPropertiesService()->getManager()->flush($postActivationProperties);
+            $entityManager->remove($postActivationProperties);
+            $entityManager->flush($postActivationProperties);
         }
 
         return new Response();
     }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
-     */
-    private function getUserAccountPlanService() {
-        return $this->get('simplytestable.services.useraccountplanservice');
-    }
-
-
-
-    /**
-     * @return UserPostActivationPropertiesService
-     */
-    protected function getUserPostActivationPropertiesService() {
-        return $this->get('simplytestable.services.job.UserPostActivationPropertiesService');
-    }
-
 }

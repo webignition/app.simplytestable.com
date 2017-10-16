@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
+use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
@@ -13,6 +14,11 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
     private $userFactory;
 
     /**
+     * @var UserEmailChangeController
+     */
+    private $userEmailChangeController;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,8 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->userEmailChangeController = new UserEmailChangeController();
+        $this->userEmailChangeController->setContainer($this->container);
     }
 
     public function testForDifferentUser()
@@ -35,12 +43,12 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         ]);
 
         $this->setUser($user2);
-        $this->getUserEmailChangeController('createAction')->createAction($user2->getEmail(), 'user1-new@example.com');
+        $this->userEmailChangeController->createAction($user2->getEmail(), 'user1-new@example.com');
 
         $this->setUser($user1);
 
         try {
-            $this->getUserEmailChangeController('confirmAction')->confirmAction($user2->getEmail(), 'token');
+            $this->userEmailChangeController->confirmAction($user2->getEmail(), 'token');
 
             $this->fail('Attempt to confirm for different user did not generate HTTP 404');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
@@ -58,7 +66,7 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         $this->setUser($user);
 
         try {
-            $this->getUserEmailChangeController('confirmAction')->confirmAction($user->getEmail(), 'token');
+            $this->userEmailChangeController->confirmAction($user->getEmail(), 'token');
 
             $this->fail('Attempt to confirm where no email change request exists did not generate HTTP 404');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
@@ -75,10 +83,10 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         ]);
         $this->setUser($user);
 
-        $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), 'user1-new@example.com');
+        $this->userEmailChangeController->createAction($user->getEmail(), 'user1-new@example.com');
 
         try {
-            $this->getUserEmailChangeController('confirmAction')->confirmAction($user->getEmail(), 'token');
+            $this->userEmailChangeController->confirmAction($user->getEmail(), 'token');
 
             $this->fail('Attempt to confirm with invalid token did not generate HTTP 400');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
@@ -95,7 +103,7 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         ]);
         $this->setUser($user);
 
-        $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), 'user1-new@example.com');
+        $this->userEmailChangeController->createAction($user->getEmail(), 'user1-new@example.com');
         $emailChangeRequest = $this->getUserEmailChangeRequestService()->findByUser($user);
 
         $email2 = 'user1-new@example.com';
@@ -104,7 +112,7 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         ]);
 
         try {
-            $this->getUserEmailChangeController('confirmAction')->confirmAction(
+            $this->userEmailChangeController->confirmAction(
                 $user->getEmail(),
                 $emailChangeRequest->getToken()
             );
@@ -130,10 +138,10 @@ class ConfirmUserEmailChangeTest extends BaseControllerJsonTestCase
         ]);
         $this->setUser($user);
 
-        $this->getUserEmailChangeController('createAction')->createAction($user->getEmail(), $newEmail);
+        $this->userEmailChangeController->createAction($user->getEmail(), $newEmail);
         $emailChangeRequest = $this->getUserEmailChangeRequestService()->findByUser($user);
 
-        $response = $this->getUserEmailChangeController('confirmAction')->confirmAction(
+        $response = $this->userEmailChangeController->confirmAction(
             $user->getEmail(),
             $emailChangeRequest->getToken()
         );

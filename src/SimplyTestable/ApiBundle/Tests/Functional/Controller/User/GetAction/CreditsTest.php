@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
+use SimplyTestable\ApiBundle\Controller\UserController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Controller\BaseControllerJsonTestCase;
@@ -23,6 +24,11 @@ class CreditsTest extends BaseControllerJsonTestCase
      * @var User
      */
     private $member2;
+
+    /**
+     * @var UserController
+     */
+    private $userController;
 
     /**
      * @var int
@@ -68,13 +74,16 @@ class CreditsTest extends BaseControllerJsonTestCase
 
         $this->expectedCreditsUsed =
             $job1->getTasks()->count() + $job2->getTasks()->count()  + $job3->getTasks()->count();
+
+        $this->userController = new UserController();
+        $this->userController->setContainer($this->container);
     }
 
     public function testLeaderCredits()
     {
         $this->setUser($this->leader);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
     }
 
@@ -82,7 +91,7 @@ class CreditsTest extends BaseControllerJsonTestCase
     {
         $this->setUser($this->member1);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
     }
 
@@ -90,7 +99,7 @@ class CreditsTest extends BaseControllerJsonTestCase
     {
         $this->setUser($this->member2);
 
-        $responseObject = json_decode($this->getUserController('getAction')->getAction()->getContent());
+        $responseObject = json_decode($this->userController->getAction()->getContent());
         $this->assertEquals($this->expectedCreditsUsed, $responseObject->plan_constraints->credits->used);
     }
 }

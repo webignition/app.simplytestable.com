@@ -2,20 +2,28 @@
 
 namespace SimplyTestable\ApiBundle\Controller\ScheduledJob;
 
-class DeleteController extends ScheduledJobController {
+use Symfony\Component\HttpFoundation\Response;
 
-    public function deleteAction($id) {
-        $this->getScheduledJobService()->setUser($this->getUser());
+class DeleteController extends ScheduledJobController
+{
+    /**
+     * @param int $id
+     *
+     * @return Response
+     */
+    public function deleteAction($id)
+    {
+        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService->setUser($this->getUser());
 
-        $scheduledJob = $this->getScheduledJobService()->get($id);
+        $scheduledJob = $scheduledJobService->get($id);
 
-        if (is_null($scheduledJob)) {
+        if (empty($scheduledJob)) {
             return $this->sendNotFoundResponse();
         }
 
-        $this->getScheduledJobService()->delete($scheduledJob);
+        $scheduledJobService->delete($scheduledJob);
 
         return $this->sendResponse();
     }
-
 }

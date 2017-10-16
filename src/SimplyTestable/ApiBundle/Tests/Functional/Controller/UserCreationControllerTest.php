@@ -29,7 +29,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
         $this->userCreationController->setContainer($this->container);
     }
 
-    public function testRequest()
+    public function testCreateRequest()
     {
         $router = $this->container->get('router');
         $requestUrl = $router->generate('usercreation_create');
@@ -54,6 +54,22 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
+        $response = $this->userCreationController->activateAction(new Request());
+        $this->assertEquals(503, $response->getStatusCode());
+
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
+
+        $response = $this->userCreationController->activateAction(new Request());
+        $this->assertEquals(503, $response->getStatusCode());
+
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+    }
+
+    public function testCreateActionInMaintenanceReadOnlyMode()
+    {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
+
         $response = $this->userCreationController->createAction(new Request());
         $this->assertEquals(503, $response->getStatusCode());
 
@@ -66,13 +82,13 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
     }
 
     /**
-     * @dataProvider activateActionBadRequestDataProvider
+     * @dataProvider createActionBadRequestDataProvider
      *
      * @param string $email
      * @param string $password
      * @param string $expectedExceptionMessage
      */
-    public function testActivateActionBadRequest($email, $password, $expectedExceptionMessage)
+    public function testCreateActionBadRequest($email, $password, $expectedExceptionMessage)
     {
         $request = new Request([], [
             'email' => $email,
@@ -90,7 +106,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
     /**
      * @return array
      */
-    public function activateActionBadRequestDataProvider()
+    public function createActionBadRequestDataProvider()
     {
         return [
             'no email no password' => [
@@ -167,7 +183,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
      * @param string $expectedPlanName
      * @param array $expectedPostActivationProperties
      */
-    public function testCreateActionFoo(
+    public function testCreateAction(
         $createUser,
         $email,
         $password,
@@ -302,5 +318,84 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @dataProvider activateActionEmptyTokenDataProvider
+     *
+     * @param string $token
+     */
+    public function testActivateActionEmptyToken($token)
+    {
+        $this->setExpectedException(BadRequestHttpException::class);
+
+        $this->userCreationController->activateAction($token);
+    }
+
+    /**
+     * @return array
+     */
+    public function activateActionEmptyTokenDataProvider()
+    {
+        return [
+            'null' => [
+                'token' => null,
+            ],
+            'empty string' => [
+                'token' => '',
+            ],
+            'whitespace string' => [
+                'token' => ' ',
+            ],
+        ];
+    }
+
+    public function testActivateActionInvalidToken()
+    {
+        $this->setExpectedException(BadRequestHttpException::class);
+
+        $this->userCreationController->activateAction('foo');
+    }
+
+    public function testActivateActionSuccessNoPostActivationProperties()
+    {
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->create();
+
+        $response = $this->userCreationController->activateAction($user->getConfirmationToken());
+
+        $this->assertTrue($response->isSuccessful());
+        $this->assertTrue($user->isEnabled());
+    }
+
+    public function testActivateActionSuccessHasPostActivationProperties()
+    {
+        $userPostActivationPropertiesService = $this->container->get(
+            'simplytestable.services.job.userpostactivationpropertiesservice'
+        );
+
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+
+        $agencyAccountPlan = $accountPlanService->find('agency');
+
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->create();
+
+        $postActivationProperties = $userPostActivationPropertiesService->create($user, $agencyAccountPlan, 'TMS');
+
+        $response = $this->userCreationController->activateAction($user->getConfirmationToken());
+
+        $this->assertTrue($response->isSuccessful());
+        $this->assertTrue($user->isEnabled());
+
+        $userAccountPlan = $userAccountPlanService->getForUser($user);
+
+        $this->assertEquals(
+            $postActivationProperties->getAccountPlan(),
+            $userAccountPlan->getPlan()
+        );
+
+        $this->assertEmpty($postActivationProperties->getId());
     }
 }

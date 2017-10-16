@@ -2,21 +2,28 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
-class GetController extends JobConfigurationController {
+use Symfony\Component\HttpFoundation\Response;
 
-    public function getAction($label) {
+class GetController extends JobConfigurationController
+{
+    /**
+     * @param string $label
+     *
+     * @return Response
+     */
+    public function getAction($label)
+    {
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+
         $label = trim($label);
 
-        $this->getJobConfigurationService()->setUser($this->getUser());
+        $jobConfigurationService->setUser($this->getUser());
 
-        $jobConfiguration = $this->getJobConfigurationService()->get($label);
-        if (is_null($jobConfiguration)) {
+        $jobConfiguration = $jobConfigurationService->get($label);
+        if (empty($jobConfiguration)) {
             return $this->sendNotFoundResponse();
         }
 
-        return $this->sendResponse(
-            $this->getJobConfigurationService()->get($label)
-        );
+        return $this->sendResponse($jobConfiguration);
     }
-
 }
