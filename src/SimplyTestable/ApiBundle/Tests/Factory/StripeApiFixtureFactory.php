@@ -31,11 +31,21 @@ class StripeApiFixtureFactory
 
     /**
      * @param string $name
-     *
+     * @param array $replacements
+     * @param array $modifications
      * @return string
      */
-    public static function load($name)
+    public static function load($name, $replacements = [], $modifications = [])
     {
-        return file_get_contents(__DIR__ . '/../Fixtures/Data/Stripe/' . $name . '.json');
+        $content = file_get_contents(__DIR__ . '/../Fixtures/Data/Stripe/' . $name . '.json');
+
+        foreach ($replacements as $key => $value) {
+            $content = str_replace($key, $value, $content);
+        }
+
+        $object = json_decode($content, true);
+        $object = array_replace_recursive($object, $modifications);
+
+        return json_encode($object, JSON_PRETTY_PRINT);
     }
 }
