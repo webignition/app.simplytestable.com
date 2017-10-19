@@ -52,6 +52,7 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
     /**
      * @dataProvider subscribeActionNoExistingUserAccountPlanDataProvider
      *
+     * @param string[] $httpFixtures
      * @param string $planName
      * @param string $expectedStripeCustomer
      * @param int $expectedStartTrialPeriod
@@ -105,6 +106,49 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
                 'planName' => 'personal',
                 'expectedStripeCustomer' => 'b58996c504c5638798eb6b511e6f49af',
                 'expectedStartTrialPeriod' => 30,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider subscribeActionNewPlanIsCurrentPlanDataProvider
+     *
+     * @param string[] $httpFixtures
+     * @param string $planName
+     */
+    public function testSubscribeActionNewPlanIsCurrentPlan($httpFixtures, $planName)
+    {
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+
+        StripeApiFixtureFactory::set($httpFixtures);
+
+        $user = $this->userFactory->create([
+            UserFactory::KEY_PLAN_NAME => $planName,
+        ]);
+
+        $currentUserAccountPlan = $this->userAccountPlanService->getForUser($user);
+
+        $accountPlan = $accountPlanService->find($planName);
+
+        $userAccountPlan = $this->userAccountPlanService->subscribe($user, $accountPlan);
+
+        $this->assertEquals($currentUserAccountPlan, $userAccountPlan);
+    }
+
+    public function subscribeActionNewPlanIsCurrentPlanDataProvider()
+    {
+        return [
+            'basic plan' => [
+                'httpFixtures' => [],
+                'planName' => 'basic',
+            ],
+            'personal plan' => [
+                'httpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                ],
+                'planName' => 'personal',
             ],
         ];
     }

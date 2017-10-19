@@ -124,8 +124,9 @@ class UserAccountPlanService extends EntityService
         }
 
         $currentUserAccountPlan = $this->getForUser($user);
+        $currentPlan = $currentUserAccountPlan->getPlan();
 
-        if ($this->isSameAccountPlan($currentUserAccountPlan->getPlan(), $newPlan)) {
+        if ($currentPlan->getName() === $newPlan->getName()) {
             return $currentUserAccountPlan;
         }
 
@@ -179,17 +180,6 @@ class UserAccountPlanService extends EntityService
         $trialEndTimestamp = $stripeCustomer->getSubscription()->getTrialPeriod()->getEnd();
         $difference = $trialEndTimestamp - time();
         return (int)ceil($difference / 86400);
-    }
-
-    /**
-     * @param AccountPlan $currentPlan
-     * @param AccountPlan $newPlan
-     *
-     * @return bool
-     */
-    private function isSameAccountPlan(AccountPlan $currentPlan, AccountPlan $newPlan)
-    {
-        return $currentPlan->getName() == $newPlan->getName();
     }
 
     /**
