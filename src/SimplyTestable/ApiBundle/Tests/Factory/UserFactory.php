@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserFactory
@@ -55,8 +56,8 @@ class UserFactory
     public function create($userValues = [])
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         foreach ($this->defaultUserValues as $key => $value) {
             if (!array_key_exists($key, $userValues)) {
@@ -74,10 +75,18 @@ class UserFactory
         $user = $userService->create($userValues[self::KEY_EMAIL], 'password');
 
         if (isset($userValues[self::KEY_PLAN_NAME])) {
-            $userAccountPlanService->subscribe(
-                $user,
-                $accountPlanService->find($userValues[self::KEY_PLAN_NAME])
-            );
+            $planName = $userValues[self::KEY_PLAN_NAME];
+            $plan = $accountPlanService->find($planName);
+
+            $userAccountPlan = new UserAccountPlan();
+            $userAccountPlan->setUser($user);
+            $userAccountPlan->setPlan($plan);
+            $userAccountPlan->setStartTrialPeriod($this->container->getParameter('default_trial_period'));
+            $userAccountPlan->setIsActive(true);
+            $userAccountPlan->setStripeCustomer(md5(rand()));
+
+            $entityManager->persist($userAccountPlan);
+            $entityManager->flush($userAccountPlan);
         }
 
         return $user;

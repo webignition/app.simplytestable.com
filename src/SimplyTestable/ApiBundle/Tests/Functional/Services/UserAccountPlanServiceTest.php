@@ -115,14 +115,11 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
     /**
      * @dataProvider subscribeActionNewPlanIsCurrentPlanDataProvider
      *
-     * @param string[] $httpFixtures
      * @param string $planName
      */
-    public function testSubscribeActionNewPlanIsCurrentPlan($httpFixtures, $planName)
+    public function testSubscribeActionNewPlanIsCurrentPlan($planName)
     {
         $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
-
-        StripeApiFixtureFactory::set($httpFixtures);
 
         $user = $this->userFactory->create([
             UserFactory::KEY_PLAN_NAME => $planName,
@@ -141,15 +138,9 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
     {
         return [
             'basic plan' => [
-                'httpFixtures' => [],
                 'planName' => 'basic',
             ],
             'personal plan' => [
-                'httpFixtures' => [
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
-                ],
                 'planName' => 'personal',
             ],
         ];
@@ -161,6 +152,7 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
      * @param string[] $httpFixtures
      * @param string $currentPlanName
      * @param string $planName
+     * @param int $expectedStartTrialPeriod
      */
     public function testSubscribeActionChangePlan($httpFixtures, $currentPlanName, $planName, $expectedStartTrialPeriod)
     {
@@ -217,9 +209,6 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
             ],
             'premium to non-premium' => [
                 'httpFixtures' => [
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // create user create customer
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // create user get customer
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'), // create user update customer
                     StripeApiFixtureFactory::load('customer-hascard-hassub', [], [
                         'subscription' => [
                             'trial_end' => time() + (86400 * 28),
@@ -233,9 +222,6 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
             ],
             'premium to premium' => [
                 'httpFixtures' => [
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // create user create customer
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // create user get customer
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'), // create user update customer
                     StripeApiFixtureFactory::load('customer-hascard-hassub', [], [
                         'subscription' => [
                             'trial_end' => time() + (86400 * 30),
