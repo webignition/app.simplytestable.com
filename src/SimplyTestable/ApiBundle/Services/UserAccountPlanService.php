@@ -136,11 +136,6 @@ class UserAccountPlanService extends EntityService
             return $this->create($user, $newPlan);
         }
 
-        if (!$currentUserAccountPlan->hasStripeCustomer()) {
-            $stripeCustomerModel = $this->stripeService->createCustomer($user, $coupon);
-            $currentUserAccountPlan->setStripeCustomer($stripeCustomerModel->getId());
-        }
-
         $isNonPremiumToPremiumChange = !$currentPlan->getIsPremium() && $newPlan->getIsPremium();
         if ($isNonPremiumToPremiumChange) {
             $userAccountPlan = $this->create(
