@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller\Stripe;
 
 use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Mail\Service as MailService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,7 +45,13 @@ class WebHookController extends ApiController
         $this->sendDeveloperWebhookNotification($mailService, $eventContent, $requestData->type);
 
         $stripeCustomer = $this->getStripeCustomerFromEventData($requestData->data);
-        $user = $userAccountPlanService->getUserByStripeCustomer($stripeCustomer);
+
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $userAccountPlan = $userAccountPlanRepository->findOneBy([
+            'stripeCustomer' => $stripeCustomer,
+        ]);
+
+        $user = $userAccountPlan->getUser();
 
         $stripeEvent = $stripeEventService->create(
             $stripeId,
