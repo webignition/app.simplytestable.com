@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 use SimplyTestable\ApiBundle\Controller\UserCreationController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -383,6 +384,10 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
         $user = $userFactory->create();
 
         $postActivationProperties = $userPostActivationPropertiesService->create($user, $agencyAccountPlan, 'TMS');
+
+        StripeApiFixtureFactory::set([
+            StripeApiFixtureFactory::load('customer-hascard-hassub-hascoupon'),
+        ]);
 
         $response = $this->userCreationController->activateAction($user->getConfirmationToken());
 
