@@ -430,6 +430,26 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
         $this->assertTrue($this->userAccountPlanService->hasForUser($user));
     }
 
+    public function testFindUsersWithNoPlan()
+    {
+        $this->userFactory->createPublicPrivateAndTeamUserSet();
+
+        $usersCreatedWithNoPlan = [
+            $this->userFactory->create([
+                UserFactory::KEY_PLAN_NAME => null,
+                UserFactory::KEY_EMAIL => 'user1@example.com',
+            ]),
+            $this->userFactory->create([
+                UserFactory::KEY_PLAN_NAME => null,
+                UserFactory::KEY_EMAIL => 'user2@example.com',
+            ]),
+        ];
+
+        $usersWithNoPlan = $this->userAccountPlanService->findUsersWithNoPlan();
+
+        $this->assertEquals($usersCreatedWithNoPlan, $usersWithNoPlan);
+    }
+
     /**
      * {@inheritdoc}
      */
