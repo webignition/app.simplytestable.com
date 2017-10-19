@@ -9,7 +9,7 @@ class StripeApiFixtureFactory
     /**
      * @param string[] $fixtures
      */
-    public static function set($fixtures)
+    public static function set($fixtures, $httpStatusCodes = [])
     {
         PHPMockery::mock(
             'Stripe',
@@ -18,8 +18,13 @@ class StripeApiFixtureFactory
             $fixtures
         );
 
-        $fixtureCount = count($fixtures);
-        $httpStatusCodes = array_fill(0, $fixtureCount, 200);
+        if (empty($httpStatusCodes)) {
+            $fixtureCount = count($fixtures);
+            $httpStatusCodes = array_fill(0, $fixtureCount, 200);
+        }
+
+//        var_dump($httpStatusCodes);
+//        exit();
 
         PHPMockery::mock(
             'Stripe',
