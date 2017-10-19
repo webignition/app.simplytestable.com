@@ -450,6 +450,65 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
         $this->assertEquals($usersCreatedWithNoPlan, $usersWithNoPlan);
     }
 
+    public function testFindAllByPlan()
+    {
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+
+        $this->userFactory->create([
+            UserFactory::KEY_PLAN_NAME => 'personal',
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
+
+        $this->userFactory->create([
+            UserFactory::KEY_PLAN_NAME => 'personal',
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
+
+        $this->userFactory->create([
+            UserFactory::KEY_PLAN_NAME => 'agency',
+            UserFactory::KEY_EMAIL => 'user3@example.com',
+        ]);
+
+        $this->userFactory->create([
+            UserFactory::KEY_PLAN_NAME => 'agency',
+            UserFactory::KEY_EMAIL => 'user4@example.com',
+        ]);
+
+        $personalPlan = $accountPlanService->find('personal');
+
+        $foundPersonalPlanUserAccountPlans = $this->userAccountPlanService->findAllByPlan($personalPlan);
+        $foundPersonalPlanUserEmails = [];
+
+        foreach ($foundPersonalPlanUserAccountPlans as $foundPersonalPlanUserAccountPlan) {
+            $foundPersonalPlanUserEmails[] = $foundPersonalPlanUserAccountPlan->getUser()->getEmail();
+        }
+
+        $this->assertEquals(
+            [
+                'user1@example.com',
+                'user2@example.com',
+            ],
+            $foundPersonalPlanUserEmails
+        );
+
+        $agencyPlan = $accountPlanService->find('agency');
+
+        $foundAgencyPlanUserAccountPlans = $this->userAccountPlanService->findAllByPlan($agencyPlan);
+        $foundAgencyPlanUserEmails = [];
+
+        foreach ($foundAgencyPlanUserAccountPlans as $foundAgencyPlanUserAccountPlan) {
+            $foundAgencyPlanUserEmails[] = $foundAgencyPlanUserAccountPlan->getUser()->getEmail();
+        }
+
+        $this->assertEquals(
+            [
+                'user3@example.com',
+                'user4@example.com',
+            ],
+            $foundAgencyPlanUserEmails
+        );
+    }
+
     /**
      * {@inheritdoc}
      */
