@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserAccountPlanFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
@@ -233,6 +234,125 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
                 'currentPlanName' => 'personal',
                 'planName' => 'agency',
                 'expectedStartTrialPeriod' => 30,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getForUserDataProvider
+     *
+     * @param array $userAccountPlansToCreate
+     * @param string $userName
+     * @param int $expectedUserAccountPlanIndex
+     */
+    public function testGetForUser($userAccountPlansToCreate, $userName, $expectedUserAccountPlanIndex)
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
+
+        foreach ($userAccountPlansToCreate as $userAccountPlanToCreate) {
+            $accountPlanUser = $users[$userAccountPlanToCreate['userName']];
+            $currentUserAccountPlan = $userAccountPlanFactory->create(
+                $accountPlanUser,
+                $userAccountPlanToCreate['plan']
+            );
+            $currentUserAccountPlan->setIsActive($userAccountPlanToCreate['isActive']);
+
+            $entityManager->persist($currentUserAccountPlan);
+            $entityManager->flush($currentUserAccountPlan);
+        }
+
+        $user = $users[$userName];
+        $userAccountPlan = $this->userAccountPlanService->getForUser($user);
+
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $userAccountPlans = $userAccountPlanRepository->findAll();
+        $expectedUserAccountPlan = $userAccountPlans[$expectedUserAccountPlanIndex];
+
+        $this->assertEquals($expectedUserAccountPlan->getId(), $userAccountPlan->getId());
+    }
+
+    /**
+     * @return array
+     */
+    public function getForUserDataProvider()
+    {
+        return [
+            'public' => [
+                'userAccountPlansToCreate' => [],
+                'userName' => 'public',
+                'expectedUserAccountPlanIndex' => 0,
+            ],
+            'private with no additional plans' => [
+                'userAccountPlansToCreate' => [],
+                'userName' => 'private',
+                'expectedUserAccountPlanIndex' => 1,
+            ],
+            'private with many active plans' => [
+                'userAccountPlansToCreate' => [
+                    [
+                        'userName' => 'private',
+                        'plan' => 'agency',
+                        'isActive' => true,
+                    ],
+                    [
+                        'userName' => 'private',
+                        'plan' => 'business',
+                        'isActive' => true,
+                    ],
+                    [
+                        'userName' => 'private',
+                        'plan' => 'personal',
+                        'isActive' => true,
+                    ],
+                ],
+                'userName' => 'private',
+                'expectedUserAccountPlanIndex' => 7,
+            ],
+            'private with many plans, not all active' => [
+                'userAccountPlansToCreate' => [
+                    [
+                        'userName' => 'private',
+                        'plan' => 'agency',
+                        'isActive' => true,
+                    ],
+                    [
+                        'userName' => 'private',
+                        'plan' => 'business',
+                        'isActive' => false,
+                    ],
+                    [
+                        'userName' => 'private',
+                        'plan' => 'personal',
+                        'isActive' => null,
+                    ],
+                ],
+                'userName' => 'private',
+                'expectedUserAccountPlanIndex' => 5,
+            ],
+            'team leader gets own user account plan' => [
+                'userAccountPlansToCreate' => [
+                    [
+                        'userName' => 'leader',
+                        'plan' => 'personal',
+                        'isActive' => true,
+                    ],
+                ],
+                'userName' => 'leader',
+                'expectedUserAccountPlanIndex' => 5,
+            ],
+            'team member gets leader user account plan' => [
+                'userAccountPlansToCreate' => [
+                    [
+                        'userName' => 'leader',
+                        'plan' => 'personal',
+                        'isActive' => true,
+                    ],
+                ],
+                'userName' => 'member1',
+                'expectedUserAccountPlanIndex' => 5,
             ],
         ];
     }

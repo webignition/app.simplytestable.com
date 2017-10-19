@@ -205,17 +205,17 @@ class UserAccountPlanService extends EntityService
             ? $this->teamService->getLeaderFor($user)
             : $user;
 
-        $isActiveValues = array(
+        $isActiveValues = [
             true, false, null
-        );
+        ];
 
         foreach ($isActiveValues as $isActiveValue) {
             $userAccountPlans = $this->getEntityRepository()->findBy(array(
                 'user' => $targetUser,
                 'isActive' => $isActiveValue
-            ), array(
+            ), [
                 'id' => 'DESC'
-            ), 1);
+            ], 1);
 
             if (count($userAccountPlans)) {
                 return $userAccountPlans[0];
