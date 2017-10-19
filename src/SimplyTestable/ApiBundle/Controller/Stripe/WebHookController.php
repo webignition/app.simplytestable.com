@@ -51,7 +51,9 @@ class WebHookController extends ApiController
             'stripeCustomer' => $stripeCustomer,
         ]);
 
-        $user = $userAccountPlan->getUser();
+        $user = (empty($userAccountPlan))
+            ? null
+            : $userAccountPlan->getUser();
 
         $stripeEvent = $stripeEventService->create(
             $stripeId,
