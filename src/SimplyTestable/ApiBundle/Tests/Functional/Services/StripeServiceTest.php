@@ -7,8 +7,7 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
-use Stripe\AttachedObject;
-use Stripe\Customer as StripeCustomer;
+use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
 class StripeServiceTest extends BaseSimplyTestableTestCase
 {
@@ -37,7 +36,7 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
     public function testCreateCustomer($coupon)
     {
         StripeApiFixtureFactory::set(
-            [StripeApiFixtureFactory::load('customer')]
+            [StripeApiFixtureFactory::load('customer-nocard-nosub')]
         );
 
         $user = new User();
@@ -45,7 +44,7 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
 
         $customer = $this->stripeService->createCustomer($user, $coupon);
 
-        $this->assertInstanceOf(StripeCustomer::class, $customer);
+        $this->assertInstanceOf(StripeCustomerModel::class, $customer);
     }
 
     /**
@@ -71,7 +70,7 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
     public function testGetCustomer($userAccountPlanStripeCustomer)
     {
         StripeApiFixtureFactory::set(
-            [StripeApiFixtureFactory::load('customer')]
+            [StripeApiFixtureFactory::load('customer-nocard-nosub')]
         );
 
         $userAccountPlan = new UserAccountPlan();
@@ -82,7 +81,7 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
         if (empty($userAccountPlanStripeCustomer)) {
             $this->assertNull($customer);
         } else {
-            $this->assertInstanceOf(StripeCustomer::class, $customer);
+            $this->assertInstanceOf(StripeCustomerModel::class, $customer);
         }
     }
 
@@ -109,8 +108,8 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
     public function testUpdateCustomer($propertiesToUpdate)
     {
         StripeApiFixtureFactory::set([
-            StripeApiFixtureFactory::load('customer'),
-            StripeApiFixtureFactory::load('customer'),
+            StripeApiFixtureFactory::load('customer-nocard-nosub'),
+            StripeApiFixtureFactory::load('customer-nocard-nosub'),
         ]);
 
         $userAccountPlan = new UserAccountPlan();
@@ -118,7 +117,7 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
 
         $updatedCustomer = $this->stripeService->updateCustomer($userAccountPlan, $propertiesToUpdate);
 
-        $this->assertInstanceOf(StripeCustomer::class, $updatedCustomer);
+        $this->assertInstanceOf(StripeCustomerModel::class, $updatedCustomer);
     }
 
     /**
@@ -137,6 +136,48 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
         ];
     }
 
+    public function testSubscribe()
+    {
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+
+        StripeApiFixtureFactory::set([
+            StripeApiFixtureFactory::load('customer-nocard-nosub'),
+            StripeApiFixtureFactory::load('customer-nocard-nosub'),
+        ]);
+
+        $userAccountPlan = new UserAccountPlan();
+        $userAccountPlan->setStripeCustomer('cus_BanNjUqqa6RWw9');
+        $userAccountPlan->setPlan($accountPlanService->find('personal'));
+
+        $response = $this->stripeService->subscribe($userAccountPlan);
+
+        $this->assertInstanceOf(UserAccountPlan::class, $response);
+    }
+
+    public function testUnsubscribeNoSubscription()
+    {
+        StripeApiFixtureFactory::set([
+            StripeApiFixtureFactory::load('customer-nocard-nosub'),
+        ]);
+
+        $userAccountPlan = new UserAccountPlan();
+        $userAccountPlan->setStripeCustomer('cus_BanNjUqqa6RWw9');
+
+        $this->stripeService->unsubscribe($userAccountPlan);
+    }
+
+    public function testUnsubscribeHasSubscription()
+    {
+        StripeApiFixtureFactory::set([
+            StripeApiFixtureFactory::load('customer-hascard-hassub'),
+            StripeApiFixtureFactory::load('customer-hascard-nosub'),
+        ]);
+
+        $userAccountPlan = new UserAccountPlan();
+        $userAccountPlan->setStripeCustomer('cus_BanNjUqqa6RWw9');
+
+        $this->stripeService->unsubscribe($userAccountPlan);
+    }
 
     /**
      * {@inheritdoc}
