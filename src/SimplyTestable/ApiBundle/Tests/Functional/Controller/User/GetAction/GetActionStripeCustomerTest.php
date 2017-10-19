@@ -41,6 +41,8 @@ class GetActionStripeCustomerTest extends BaseSimplyTestableTestCase
     }
 
     public function testForUserWithPremiumPlan() {
+        $this->markTestSkipped('Re-implement in 1299');
+
         $user = $this->userFactory->create();
         $this->setUser($user);
 
@@ -51,6 +53,8 @@ class GetActionStripeCustomerTest extends BaseSimplyTestableTestCase
     }
 
     public function testForUserWhereIsActiveIsZero() {
+        $this->markTestSkipped('Re-implement in 1299');
+
         $user = $this->userFactory->create();
         $this->setUser($user);
 
@@ -63,6 +67,8 @@ class GetActionStripeCustomerTest extends BaseSimplyTestableTestCase
     }
 
     public function testForUserWhereIsActiveIsZeroAndUserHasMany() {
+        $this->markTestSkipped('Re-implement in 1299');
+
         $user = $this->userFactory->create();
         $this->setUser($user);
 
@@ -77,6 +83,8 @@ class GetActionStripeCustomerTest extends BaseSimplyTestableTestCase
 
 
     public function testForUserWithPreviousPremiumTrialBackOnBasic() {
+        $this->markTestSkipped('Re-implement in 1299');
+
         $trialDaysRemaining = rand(1, self::DEFAULT_TRIAL_PERIOD);
 
         $user = $this->userFactory->create();
@@ -100,6 +108,8 @@ class GetActionStripeCustomerTest extends BaseSimplyTestableTestCase
 
 
     public function testTeamMemberSummaryExcludesTeamStripeCustomer() {
+        $this->markTestSkipped('Re-implement in 1299');
+
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);

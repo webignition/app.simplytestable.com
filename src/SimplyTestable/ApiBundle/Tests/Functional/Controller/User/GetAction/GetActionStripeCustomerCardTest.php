@@ -41,6 +41,8 @@ class GetActionStripeCustomerCardTest extends BaseSimplyTestableTestCase
 
     public function testForUserWithBasicPlanAndHasCard()
     {
+        $this->markTestSkipped('Re-implement in 1299');
+
         $card = $this->getRandomCard();
 
         $user = $this->userFactory->create();
@@ -70,6 +72,8 @@ class GetActionStripeCustomerCardTest extends BaseSimplyTestableTestCase
 
     public function testForUserWithPremiumPlan()
     {
+        $this->markTestSkipped('Re-implement in 1299');
+
         $card = $this->getRandomCard();
 
         $user = $this->userFactory->create();

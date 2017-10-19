@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite;
 
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\UserAccountPlanFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -36,11 +37,8 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
      */
     public function testGetActionClientFailure($inviterName, $inviteeEmail, $expectedResponseError)
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
-
-        $agencyPlan = $accountPlanService->find('agency');
-        $userAccountPlanService->subscribe($this->users['private'], $agencyPlan);
+        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory->create($this->users['private'], 'agency');
 
         $inviter = $this->users[$inviterName];
         $this->setUser($inviter);
