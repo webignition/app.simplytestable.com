@@ -154,6 +154,88 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
     }
 
     /**
+     * @dataProvider subscribeActionChangePlanDataProvider
+     *
+     * @param string[] $httpFixtures
+     * @param string $currentPlanName
+     * @param string $planName
+     */
+    public function testSubscribeActionChangePlan($httpFixtures, $currentPlanName, $planName)
+    {
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $nonPremiumAccountPlan = new Plan();
+        $nonPremiumAccountPlan->setName('non-premium');
+        $nonPremiumAccountPlan->setIsPremium(false);
+        $nonPremiumAccountPlan->setIsVisible(true);
+        $nonPremiumAccountPlan->setStripeId('non-premium');
+
+        $entityManager->persist($nonPremiumAccountPlan);
+        $entityManager->flush($nonPremiumAccountPlan);
+
+        StripeApiFixtureFactory::set($httpFixtures);
+
+        $user = $this->userFactory->create([
+            UserFactory::KEY_PLAN_NAME => $currentPlanName,
+        ]);
+
+        $currentUserAccountPlan = $this->userAccountPlanService->getForUser($user);
+
+        $accountPlan = $accountPlanService->find($planName);
+
+        $userAccountPlan = $this->userAccountPlanService->subscribe($user, $accountPlan);
+
+        $this->assertNotEquals($currentUserAccountPlan, $userAccountPlan);
+
+        $this->assertFalse($currentUserAccountPlan->getIsActive());
+        $this->assertTrue($userAccountPlan->getIsActive());
+    }
+
+    public function subscribeActionChangePlanDataProvider()
+    {
+        return [
+            'non-premium to non-premium' => [
+                'httpFixtures' => [],
+                'currentPlanName' => 'basic',
+                'planName' => 'non-premium',
+            ],
+            'non-premium to premium' => [
+                'httpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                ],
+                'currentPlanName' => 'basic',
+                'planName' => 'personal',
+            ],
+            'premium to non-premium' => [
+                'httpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                ],
+                'currentPlanName' => 'personal',
+                'planName' => 'basic',
+            ],
+            'premium to premium' => [
+                'httpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                ],
+                'currentPlanName' => 'personal',
+                'planName' => 'agency',
+            ],
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function tearDown()

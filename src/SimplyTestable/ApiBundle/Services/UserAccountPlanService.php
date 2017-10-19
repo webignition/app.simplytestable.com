@@ -126,44 +126,62 @@ class UserAccountPlanService extends EntityService
         $currentUserAccountPlan = $this->getForUser($user);
         $currentPlan = $currentUserAccountPlan->getPlan();
 
-        if ($currentPlan->getName() === $newPlan->getName()) {
+        $isNewPlanCurrentPlan = $currentPlan->getName() === $newPlan->getName();
+        if ($isNewPlanCurrentPlan) {
             return $currentUserAccountPlan;
         }
 
-        if ($this->isNonPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
+        $isNonPremiumToNonPremiumChange = !$currentPlan->getIsPremium() && !$newPlan->getIsPremium();
+        if ($isNonPremiumToNonPremiumChange) {
             return $this->create($user, $newPlan);
         }
 
-        $stripeCustomer = $this->stripeService->getCustomer($currentUserAccountPlan);
-        $stripeCustomerId = $currentUserAccountPlan->hasStripeCustomer()
-            ? $currentUserAccountPlan->getStripeCustomer()
-            : $this->stripeService->createCustomer($user, $coupon)->getId();
-
-        if ($this->isNonPremiumToPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
-            return $this->stripeService->subscribe($this->create(
-                $user,
-                $newPlan,
-                $stripeCustomerId,
-                $currentUserAccountPlan->getStartTrialPeriod()
-            ));
+        if ($currentUserAccountPlan->hasStripeCustomer()) {
+            $stripeCustomerModel = $this->stripeService->getCustomer($currentUserAccountPlan);
+        } else {
+            $stripeCustomerModel = $this->stripeService->createCustomer($user, $coupon);
         }
 
-        if ($this->isPremiumToNonPremiumChange($currentUserAccountPlan->getPlan(), $newPlan)) {
+//        $stripeCustomerId = $currentUserAccountPlan->hasStripeCustomer()
+//            ? $currentUserAccountPlan->getStripeCustomer()
+//            : $this->stripeService->createCustomer($user, $coupon)->getId();
+
+        $isNonPremiumToPremiumChange = !$currentPlan->getIsPremium() && $newPlan->getIsPremium();
+        if ($isNonPremiumToPremiumChange) {
+            $userAccountPlan = $this->create(
+                $user,
+                $newPlan,
+                $stripeCustomerModel->getId(),
+                $currentUserAccountPlan->getStartTrialPeriod()
+            );
+
+            $this->stripeService->subscribe($userAccountPlan);
+
+            return $userAccountPlan;
+        }
+
+        $isPremiumToNonPremiumChange = $currentPlan->getIsPremium() && !$newPlan->getIsPremium();
+        if ($isPremiumToNonPremiumChange) {
             $this->stripeService->unsubscribe($currentUserAccountPlan);
+
             return $this->create(
                 $user,
                 $newPlan,
-                $stripeCustomerId,
-                $this->getStartTrialPeriod($stripeCustomer)
+                $stripeCustomerModel->getId(),
+                $this->getStartTrialPeriod($stripeCustomerModel)
             );
         }
 
-        return $this->stripeService->subscribe($this->create(
+        $userAccountPlan = $this->create(
             $user,
             $newPlan,
-            $stripeCustomerId,
-            $this->getStartTrialPeriod($stripeCustomer)
-        ));
+            $stripeCustomerModel->getId(),
+            $this->getStartTrialPeriod($stripeCustomerModel)
+        );
+
+        $this->stripeService->subscribe($userAccountPlan);
+
+        return $userAccountPlan;
     }
 
     /**
@@ -180,50 +198,6 @@ class UserAccountPlanService extends EntityService
         $trialEndTimestamp = $stripeCustomer->getSubscription()->getTrialPeriod()->getEnd();
         $difference = $trialEndTimestamp - time();
         return (int)ceil($difference / 86400);
-    }
-
-    /**
-     * @param AccountPlan $currentPlan
-     * @param AccountPlan $newPlan
-     *
-     * @return bool
-     */
-    private function isNonPremiumToPremiumChange(AccountPlan $currentPlan, AccountPlan $newPlan)
-    {
-        return $currentPlan->getIsPremium() == false && $newPlan->getIsPremium() === true;
-    }
-
-    /**
-     * @param AccountPlan $currentPlan
-     * @param AccountPlan $newPlan
-     *
-     * @return bool
-     */
-    private function isPremiumToPremiumChange(AccountPlan $currentPlan, AccountPlan $newPlan)
-    {
-        return $currentPlan->getIsPremium() === true && $newPlan->getIsPremium() === true;
-    }
-
-    /**
-     * @param AccountPlan $currentPlan
-     * @param AccountPlan $newPlan
-     *
-     * @return bool
-     */
-    private function isPremiumToNonPremiumChange(AccountPlan $currentPlan, AccountPlan $newPlan)
-    {
-        return $currentPlan->getIsPremium() === true && $newPlan->getIsPremium() == false;
-    }
-
-    /**
-     * @param AccountPlan $currentPlan
-     * @param AccountPlan $newPlan
-     *
-     * @return bool
-     */
-    private function isNonPremiumToNonPremiumChange(AccountPlan $currentPlan, AccountPlan $newPlan)
-    {
-        return $currentPlan->getIsPremium() == false && $newPlan->getIsPremium() == false;
     }
 
     /**
