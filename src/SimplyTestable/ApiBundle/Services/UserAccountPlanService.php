@@ -245,9 +245,9 @@ class UserAccountPlanService extends EntityService
      */
     public function deactivateAllForUser(User $user)
     {
-        $userAccountPlans = $this->getEntityRepository()->findBy(array(
+        $userAccountPlans = $this->getEntityRepository()->findBy([
             'user' => $user
-        ));
+        ]);
 
         foreach ($userAccountPlans as $userAccountPlan) {
             /* @var $userAccountPlan UserAccountPlan */

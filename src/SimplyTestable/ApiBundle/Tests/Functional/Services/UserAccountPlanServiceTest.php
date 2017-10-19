@@ -379,6 +379,43 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
         );
     }
 
+    public function testDeactivateAllForUser()
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+
+        $user = $this->userFactory->create([
+            UserFactory::KEY_PLAN_NAME => null,
+        ]);
+
+        $findCriteria = [
+            'user' => $user,
+            'isActive' => true,
+        ];
+
+        $this->assertCount(
+            0,
+            $userAccountPlanRepository->findBy($findCriteria)
+        );
+
+        $userAccountPlanFactory->create($user, 'personal');
+        $userAccountPlanFactory->create($user, 'agency');
+
+        $this->assertCount(
+            2,
+            $userAccountPlanRepository->findBy($findCriteria)
+        );
+
+        $this->userAccountPlanService->deactivateAllForUser($user);
+
+        $this->assertCount(
+            0,
+            $userAccountPlanRepository->findBy($findCriteria)
+        );
+
+    }
+
     /**
      * {@inheritdoc}
      */
