@@ -413,7 +413,21 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
             0,
             $userAccountPlanRepository->findBy($findCriteria)
         );
+    }
 
+    public function testHasForUser()
+    {
+        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+
+        $user = $this->userFactory->create([
+            UserFactory::KEY_PLAN_NAME => null,
+        ]);
+
+        $this->assertFalse($this->userAccountPlanService->hasForUser($user));
+
+        $userAccountPlanFactory->create($user, 'personal');
+
+        $this->assertTrue($this->userAccountPlanService->hasForUser($user));
     }
 
     /**
