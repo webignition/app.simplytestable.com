@@ -149,9 +149,7 @@ class StripeServiceTest extends BaseSimplyTestableTestCase
         $userAccountPlan->setStripeCustomer('cus_BanNjUqqa6RWw9');
         $userAccountPlan->setPlan($accountPlanService->find('personal'));
 
-        $response = $this->stripeService->subscribe($userAccountPlan);
-
-        $this->assertInstanceOf(UserAccountPlan::class, $response);
+        $this->stripeService->subscribe($userAccountPlan);
     }
 
     public function testUnsubscribeNoSubscription()

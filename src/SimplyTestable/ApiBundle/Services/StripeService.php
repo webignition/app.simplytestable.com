@@ -84,8 +84,6 @@ class StripeService
 
     /**
      * @param UserAccountPlan $userAccountPlan
-     *
-     * @return UserAccountPlan
      */
     public function subscribe(UserAccountPlan $userAccountPlan)
     {
@@ -99,8 +97,6 @@ class StripeService
             'plan' => $userAccountPlan->getPlan()->getStripeId(),
             'trial_end' => $trialEndTimestamp
         ]);
-
-        return $userAccountPlan;
     }
 
     /**
