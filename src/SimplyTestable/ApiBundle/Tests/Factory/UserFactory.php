@@ -56,8 +56,6 @@ class UserFactory
     public function create($userValues = [])
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         foreach ($this->defaultUserValues as $key => $value) {
             if (!array_key_exists($key, $userValues)) {
@@ -75,18 +73,9 @@ class UserFactory
         $user = $userService->create($userValues[self::KEY_EMAIL], 'password');
 
         if (isset($userValues[self::KEY_PLAN_NAME])) {
-            $planName = $userValues[self::KEY_PLAN_NAME];
-            $plan = $accountPlanService->find($planName);
+            $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
 
-            $userAccountPlan = new UserAccountPlan();
-            $userAccountPlan->setUser($user);
-            $userAccountPlan->setPlan($plan);
-            $userAccountPlan->setStartTrialPeriod($this->container->getParameter('default_trial_period'));
-            $userAccountPlan->setIsActive(true);
-            $userAccountPlan->setStripeCustomer(md5(rand()));
-
-            $entityManager->persist($userAccountPlan);
-            $entityManager->flush($userAccountPlan);
+            $userAccountPlanFactory->create($user, $userValues[self::KEY_PLAN_NAME]);
         }
 
         return $user;
