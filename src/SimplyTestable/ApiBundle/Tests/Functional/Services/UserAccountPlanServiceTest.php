@@ -99,12 +99,14 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
             ],
             'personal plan' => [
                 'httpFixtures' => [
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                    StripeApiFixtureFactory::load('customer-nocard-nosub', [
+                        '{stripe-customer-id}' => 'foo',
+                    ]),   // create customer
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // retrieve customer
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'), // update subscription
                 ],
                 'planName' => 'personal',
-                'expectedStripeCustomer' => 'b58996c504c5638798eb6b511e6f49af',
+                'expectedStripeCustomer' => 'foo',
                 'expectedStartTrialPeriod' => 30,
             ],
         ];
@@ -160,7 +162,7 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
      * @param string $currentPlanName
      * @param string $planName
      */
-    public function testSubscribeActionChangePlan($httpFixtures, $currentPlanName, $planName)
+    public function testSubscribeActionChangePlan($httpFixtures, $currentPlanName, $planName, $expectedStartTrialPeriod)
     {
         $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -190,6 +192,8 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
 
         $this->assertFalse($currentUserAccountPlan->getIsActive());
         $this->assertTrue($userAccountPlan->getIsActive());
+
+        $this->assertEquals($expectedStartTrialPeriod, $userAccountPlan->getStartTrialPeriod());
     }
 
     public function subscribeActionChangePlanDataProvider()
@@ -199,6 +203,7 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
                 'httpFixtures' => [],
                 'currentPlanName' => 'basic',
                 'planName' => 'non-premium',
+                'expectedStartTrialPeriod' => 30,
             ],
             'non-premium to premium' => [
                 'httpFixtures' => [
@@ -208,29 +213,40 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
                 ],
                 'currentPlanName' => 'basic',
                 'planName' => 'personal',
+                'expectedStartTrialPeriod' => 30,
             ],
             'premium to non-premium' => [
                 'httpFixtures' => [
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // create user create customer
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // create user get customer
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'), // create user update customer
+                    StripeApiFixtureFactory::load('customer-hascard-hassub', [], [
+                        'subscription' => [
+                            'trial_end' => time() + (86400 * 28),
+                        ],
+                    ]), // new plan get customer
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // new plan update customer
                 ],
                 'currentPlanName' => 'personal',
                 'planName' => 'basic',
+                'expectedStartTrialPeriod' => 28,
             ],
             'premium to premium' => [
                 'httpFixtures' => [
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
-                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
-                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // create user create customer
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),   // create user get customer
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'), // create user update customer
+                    StripeApiFixtureFactory::load('customer-hascard-hassub', [], [
+                        'subscription' => [
+                            'trial_end' => time() + (86400 * 30),
+                        ],
+                    ]), // new plan get customer
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'), // new plan get customer
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'), // new plan update customer
                 ],
                 'currentPlanName' => 'personal',
                 'planName' => 'agency',
+                'expectedStartTrialPeriod' => 30,
             ],
         ];
     }

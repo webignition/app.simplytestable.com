@@ -4,10 +4,10 @@ services:
     arguments:
         curlOptions: "%curl_options%"
 
-  simplytestable.services.stripeService:
-    class:   SimplyTestable\ApiBundle\Services\TestStripeService
-    arguments:
-        apiKey: "%stripe_key%"
+#  simplytestable.services.stripeService:
+#    class:   SimplyTestable\ApiBundle\Services\TestStripeService
+#    arguments:
+#        apiKey: "%stripe_key%"
 
   simplytestable.services.postmark.sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\TestSender

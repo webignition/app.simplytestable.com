@@ -136,22 +136,17 @@ class UserAccountPlanService extends EntityService
             return $this->create($user, $newPlan);
         }
 
-        if ($currentUserAccountPlan->hasStripeCustomer()) {
-            $stripeCustomerModel = $this->stripeService->getCustomer($currentUserAccountPlan);
-        } else {
+        if (!$currentUserAccountPlan->hasStripeCustomer()) {
             $stripeCustomerModel = $this->stripeService->createCustomer($user, $coupon);
+            $currentUserAccountPlan->setStripeCustomer($stripeCustomerModel->getId());
         }
-
-//        $stripeCustomerId = $currentUserAccountPlan->hasStripeCustomer()
-//            ? $currentUserAccountPlan->getStripeCustomer()
-//            : $this->stripeService->createCustomer($user, $coupon)->getId();
 
         $isNonPremiumToPremiumChange = !$currentPlan->getIsPremium() && $newPlan->getIsPremium();
         if ($isNonPremiumToPremiumChange) {
             $userAccountPlan = $this->create(
                 $user,
                 $newPlan,
-                $stripeCustomerModel->getId(),
+                $currentUserAccountPlan->getStripeCustomer(),
                 $currentUserAccountPlan->getStartTrialPeriod()
             );
 
@@ -159,6 +154,8 @@ class UserAccountPlanService extends EntityService
 
             return $userAccountPlan;
         }
+
+        $stripeCustomerModel = $this->stripeService->getCustomer($currentUserAccountPlan);
 
         $isPremiumToNonPremiumChange = $currentPlan->getIsPremium() && !$newPlan->getIsPremium();
         if ($isPremiumToNonPremiumChange) {
@@ -191,12 +188,9 @@ class UserAccountPlanService extends EntityService
      */
     private function getStartTrialPeriod(StripeCustomerModel $stripeCustomer)
     {
-        if (!$stripeCustomer->hasSubscription()) {
-            return 0;
-        }
-
         $trialEndTimestamp = $stripeCustomer->getSubscription()->getTrialPeriod()->getEnd();
         $difference = $trialEndTimestamp - time();
+
         return (int)ceil($difference / 86400);
     }
 
