@@ -357,6 +357,28 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
         ];
     }
 
+    public function testRemoveCurrentForUser()
+    {
+        $user = $this->userFactory->create();
+
+        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+
+        $agencyUserAccountPlan = $userAccountPlanFactory->create($user, 'agency');
+        $businessUserAccountPlan = $userAccountPlanFactory->create($user, 'business');
+
+        $this->assertEquals(
+            $businessUserAccountPlan->getId(),
+            $this->userAccountPlanService->getForUser($user)->getId()
+        );
+
+        $this->userAccountPlanService->removeCurrentForUser($user);
+
+        $this->assertEquals(
+            $agencyUserAccountPlan->getId(),
+            $this->userAccountPlanService->getForUser($user)->getId()
+        );
+    }
+
     /**
      * {@inheritdoc}
      */

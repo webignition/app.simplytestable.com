@@ -228,14 +228,14 @@ class UserAccountPlanService extends EntityService
      */
     public function removeCurrentForUser(User $user)
     {
-        $userAccountPlans = $this->getEntityRepository()->findBy(array(
+        $userAccountPlan = $this->getEntityRepository()->findOneBy([
             'user' => $user,
-        ), array(
+        ], [
             'id' => 'DESC'
-        ), 1);
+        ]);
 
-        if (count($userAccountPlans) === 1) {
-            $this->getManager()->remove($userAccountPlans[0]);
+        if (!empty($userAccountPlan)) {
+            $this->getManager()->remove($userAccountPlan);
             $this->getManager()->flush();
         }
     }
