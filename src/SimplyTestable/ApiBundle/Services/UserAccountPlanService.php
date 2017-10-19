@@ -270,14 +270,6 @@ class UserAccountPlanService extends EntityService
     }
 
     /**
-     * @return UserAccountPlan[]
-     */
-    public function getAll()
-    {
-        return $this->getEntityRepository()->findAll();
-    }
-
-    /**
      * @param UserAccountPlan $userAccountPlan
      *
      * @return UserAccountPlan

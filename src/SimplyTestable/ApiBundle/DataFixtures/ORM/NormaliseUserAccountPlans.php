@@ -31,8 +31,7 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
     public function load(ObjectManager $manager)
     {
         $userAccountPlanRepository = $manager->getRepository(UserAccountPlan::class);
-
-        $userAccountPlans = $this->getUserAccountPlanService()->getAll();
+        $userAccountPlans = $userAccountPlanRepository->findAll();
 
         foreach ($userAccountPlans as $userAccountPlan) {
             if ($this->getUserService()->isSpecialUser($userAccountPlan->getUser())) {
