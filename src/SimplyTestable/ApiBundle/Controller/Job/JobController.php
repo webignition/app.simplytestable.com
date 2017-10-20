@@ -300,7 +300,7 @@ class JobController extends BaseJobController
             );
         }
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 
     /**

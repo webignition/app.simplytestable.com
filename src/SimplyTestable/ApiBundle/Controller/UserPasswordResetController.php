@@ -53,6 +53,6 @@ class UserPasswordResetController extends UserController
 
         $userService->updateUser($user);
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 }

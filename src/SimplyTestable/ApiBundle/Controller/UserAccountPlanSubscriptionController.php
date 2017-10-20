@@ -65,7 +65,7 @@ class UserAccountPlanSubscriptionController extends ApiController
             }
         }
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 
     /**
@@ -119,6 +119,6 @@ class UserAccountPlanSubscriptionController extends ApiController
             ));
         }
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 }

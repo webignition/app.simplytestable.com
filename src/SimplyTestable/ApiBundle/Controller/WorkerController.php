@@ -64,7 +64,7 @@ class WorkerController extends ApiController
         }
 
         if (Worker::STATE_UNACTIVATED !== $worker->getState()->getName()) {
-            return $this->sendSuccessResponse();
+            return new Response();
         }
 
         $activationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
@@ -88,6 +88,6 @@ class WorkerController extends ApiController
             )
         );
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 }

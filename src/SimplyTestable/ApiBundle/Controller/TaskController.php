@@ -120,7 +120,7 @@ class TaskController extends ApiController
             }
         }
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 
     /**

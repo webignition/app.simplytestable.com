@@ -85,7 +85,7 @@ class UserCreationController extends ApiController
             $userAccountPlanService->subscribe($user, $plan);
         }
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 
     /**

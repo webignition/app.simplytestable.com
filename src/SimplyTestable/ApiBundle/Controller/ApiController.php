@@ -24,14 +24,6 @@ abstract class ApiController extends Controller
     }
 
     /**
-     *
-     * @return Response
-     */
-    public function sendSuccessResponse() {
-        return $this->sendResponse('');
-    }
-
-    /**
      * @param array $headers
      * @return Response
      */
