@@ -50,30 +50,22 @@ class StripeEventService extends EntityService
 
     /**
      * @param User $user
-     * @param mixed $type
+     * @param string|string[] $type
      *
      * @return StripeEvent[]|null
      */
     public function getForUserAndType(User $user, $type = null)
     {
-        $criteria = array(
-            'user' => $user
-        );
-
         if (is_string($type)) {
             $type = trim($type);
-            if ($type != '') {
-                $criteria['type'] = $type;
-            }
         }
 
-        if (is_array($type) && count($type)) {
-            $criteria['type'] = $type;
-        }
-
-        return $this->getEntityRepository()->findBy($criteria, array(
+        return $this->getEntityRepository()->findBy([
+            'user' => $user,
+            'type' => $type,
+        ], [
             'id' => 'DESC'
-        ));
+        ]);
     }
 
     /**
