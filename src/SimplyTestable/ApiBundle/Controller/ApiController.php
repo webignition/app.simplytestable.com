@@ -41,13 +41,12 @@ abstract class ApiController extends Controller
     }
 
     /**
-     *
      * @return Response
      */
-    public function sendNotFoundResponse() {
-        return $this->sendResponse('', 404);
+    public function sendNotFoundResponse()
+    {
+        return Response::create('', 404);
     }
-
 
     /**
      *
