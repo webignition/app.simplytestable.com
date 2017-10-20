@@ -90,6 +90,7 @@ class UserEmailChangeController extends ApiController
 
     public function confirmAction($email_canonical, $token) {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userManager = $this->container->get('fos_user.user_manager');
 
         $email_canonical = $this->getUserEmailChangeRequestService()->canonicalizeEmail($email_canonical);
 
@@ -122,7 +123,7 @@ class UserEmailChangeController extends ApiController
         $user->setUsername($emailChangeRequest->getNewEmail());
         $user->setUsernameCanonical($emailChangeRequest->getNewEmail());
 
-        $userService->updateUser($user);
+        $userManager->updateUser($user);
 
         $this->getUserEmailChangeRequestService()->removeForUser($user);
 

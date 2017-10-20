@@ -20,6 +20,7 @@ class UserPasswordResetController extends UserController
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userManager = $this->container->get('fos_user.user_manager');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -51,7 +52,7 @@ class UserPasswordResetController extends UserController
         $user->setConfirmationToken(null);
         $user->setPasswordRequestedAt(null);
 
-        $userService->updateUser($user);
+        $userManager->updateUser($user);
 
         return $this->sendSuccessResponse();
     }

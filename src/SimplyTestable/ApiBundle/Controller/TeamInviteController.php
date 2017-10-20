@@ -274,10 +274,10 @@ class TeamInviteController extends ApiController
      */
     public function activateAndAcceptAction(Request $request)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
+        $userManager = $this->container->get('fos_user.user_manager');
 
         $requestData = $request->request;
         $token = trim($requestData->get('token'));
@@ -296,7 +296,7 @@ class TeamInviteController extends ApiController
         $password = rawurldecode(trim($requestData->get('password')));
 
         $invite->getUser()->setPlainPassword($password);
-        $userService->updateUser($invite->getUser());
+        $userManager->updateUser($invite->getUser());
 
         $teamMemberService->add($invite->getTeam(), $invite->getUser());
 
