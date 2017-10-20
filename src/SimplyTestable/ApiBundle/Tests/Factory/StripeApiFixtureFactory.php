@@ -30,6 +30,26 @@ class StripeApiFixtureFactory
         )->andReturnValues(
             $httpStatusCodes
         );
+
+        PHPMockery::mock(
+            'Stripe',
+            'stream_socket_client'
+        )->andReturn('not relevant');
+
+        $pem = file_get_contents(realpath(__DIR__ . '/../Fixtures/Data/Certs/512b-rsa-example-cert.pem'));
+
+        PHPMockery::mock(
+            'Stripe',
+            'stream_context_get_params'
+        )->andReturn(
+            [
+                'options' => [
+                    'ssl' => [
+                        'peer_certificate' => $pem,
+                    ],
+                ],
+            ]
+        );
     }
 
     /**
