@@ -115,11 +115,11 @@ class UserController extends ApiController
         $user = $userService->findUserByEmail($email_canonical);
 
         if (is_null($user)) {
-            throw new HttpException(404);
+            throw new NotFoundHttpException();
         }
 
         if ($user->isEnabled() === false) {
-            throw new HttpException(404);
+            throw new NotFoundHttpException();
         }
 
         return new Response('', 200);
