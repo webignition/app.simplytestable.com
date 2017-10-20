@@ -3,7 +3,6 @@
 namespace SimplyTestable\ApiBundle\Tests\Command;
 
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Repository\UserRepository;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseTestCase;
@@ -173,10 +172,5 @@ class UserServiceTest extends BaseTestCase
             '/[A-Za-z0-9\-_]{43}/',
             $this->userService->getConfirmationToken($user)
         );
-    }
-
-    public function testGetEntityRepository()
-    {
-        $this->assertInstanceOf(UserRepository::class, $this->userService->getEntityRepository());
     }
 }

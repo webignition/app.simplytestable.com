@@ -5,7 +5,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Doctrine\UserManager;
 use FOS\UserBundle\Util\TokenGenerator;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
-use SimplyTestable\ApiBundle\Repository\UserRepository;
 use FOS\UserBundle\Util\CanonicalizerInterface;
 use SimplyTestable\ApiBundle\Entity\User;
 
@@ -144,13 +143,5 @@ class UserService
         $this->userManager->updateUser($user);
 
         return $user->getConfirmationToken();
-    }
-
-    /**
-     * @return UserRepository
-     */
-    public function getEntityRepository()
-    {
-        return $this->entityRepository;
     }
 }
