@@ -137,7 +137,7 @@ class UserController extends ApiController
             return new Response('', 200);
         }
 
-        throw new HttpException(404);
+        throw new NotFoundHttpException(404);
     }
 
     /**
