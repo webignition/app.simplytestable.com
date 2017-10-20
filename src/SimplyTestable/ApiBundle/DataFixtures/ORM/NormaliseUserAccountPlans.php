@@ -31,8 +31,9 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
     {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanRepository = $manager->getRepository(UserAccountPlan::class);
 
-        $userAccountPlans = $userAccountPlanService->getAll();
+        $userAccountPlans = $userAccountPlanRepository->findAll();
 
         foreach ($userAccountPlans as $userAccountPlan) {
             if ($userService->isSpecialUser($userAccountPlan->getUser())) {
