@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserAccountPlanFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -113,14 +114,13 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
 
     public function testAcceptActionUserHasPremiumPlan()
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
+        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
 
         $this->setUser($this->inviteeUser);
 
-        $agencyPlan = $accountPlanService->find('agency');
-        $userAccountPlanService->subscribe($this->inviteeUser, $agencyPlan);
+        $userAccountPlanFactory->create($this->inviteeUser, 'agency');
 
         $request = new Request([], [
             'team' => 'Foo',

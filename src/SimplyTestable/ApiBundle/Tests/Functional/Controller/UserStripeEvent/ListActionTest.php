@@ -59,6 +59,8 @@ class ListActionTest extends BaseSimplyTestableTestCase
 
     public function testWithStripeEventsAndNoType()
     {
+        $this->markTestSkipped('Re-implement in 1309');
+
         $user = $this->userFactory->create();
         $this->setUser($user);
 
@@ -81,6 +83,8 @@ class ListActionTest extends BaseSimplyTestableTestCase
 
     public function testWithStripeEventsAndCustomerCreatedType()
     {
+        $this->markTestSkipped('Re-implement in 1309');
+
         $user = $this->userFactory->create();
         $this->setUser($user);
 
@@ -102,6 +106,8 @@ class ListActionTest extends BaseSimplyTestableTestCase
 
     public function testWithStripeEventsAndCustomerSubscriptionUpdatedType()
     {
+        $this->markTestSkipped('Re-implement in 1309');
+
         $user = $this->userFactory->create();
         $this->setUser($user);
 

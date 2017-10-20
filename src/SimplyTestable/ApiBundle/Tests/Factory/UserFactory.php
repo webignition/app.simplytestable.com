@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserFactory
@@ -55,8 +56,6 @@ class UserFactory
     public function create($userValues = [])
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
 
         foreach ($this->defaultUserValues as $key => $value) {
             if (!array_key_exists($key, $userValues)) {
@@ -74,10 +73,9 @@ class UserFactory
         $user = $userService->create($userValues[self::KEY_EMAIL], 'password');
 
         if (isset($userValues[self::KEY_PLAN_NAME])) {
-            $userAccountPlanService->subscribe(
-                $user,
-                $accountPlanService->find($userValues[self::KEY_PLAN_NAME])
-            );
+            $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+
+            $userAccountPlanFactory->create($user, $userValues[self::KEY_PLAN_NAME]);
         }
 
         return $user;

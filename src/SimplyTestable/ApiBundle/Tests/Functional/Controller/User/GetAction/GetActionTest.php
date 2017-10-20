@@ -42,6 +42,8 @@ class GetActionTest extends BaseSimplyTestableTestCase
 
     public function testGetForUserWithPremiumPlan()
     {
+        $this->markTestSkipped('Re-implement in 1299');
+
         $user = $this->userFactory->create();
         $this->setUser($user);
 

@@ -12,6 +12,8 @@ class GetActionStripeCustomerSubscriptionTest extends BaseSimplyTestableTestCase
 
     public function testForUserWithPremiumPlan()
     {
+        $this->markTestSkipped('Re-implement in 1299');
+
         $userFactory = new UserFactory($this->container);
 
         $user = $userFactory->create();

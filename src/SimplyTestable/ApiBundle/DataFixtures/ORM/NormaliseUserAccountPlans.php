@@ -22,36 +22,40 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-    }    
+    }
 
-    
+
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $userAccountPlans = $this->getUserAccountPlanService()->getAll();
-        
+        $userAccountPlanRepository = $manager->getRepository(UserAccountPlan::class);
+        $userAccountPlans = $userAccountPlanRepository->findAll();
+
         foreach ($userAccountPlans as $userAccountPlan) {
             if ($this->getUserService()->isSpecialUser($userAccountPlan->getUser())) {
                 continue;
             }
-            
+
             /* @var $userAccountPlan UserAccountPlan */
             $isModified = false;
-            
+
             if (is_null($userAccountPlan->getIsActive())) {
-                if ($this->getUserAccountPlanService()->countForUser($userAccountPlan->getUser()) === 1) {
-                    $userAccountPlan->setIsActive(true);
+                $userAccountPlansForUser = $userAccountPlanRepository->findBy([
+                    'user' => $userAccountPlan->getUser(),
+                ]);
+
+                if (count($userAccountPlansForUser) === 1) {
                     $isModified = true;
                 }
             }
-            
+
             if (is_null($userAccountPlan->getStartTrialPeriod())) {
                 $userAccountPlan->setStartTrialPeriod($this->container->getParameter('default_trial_period'));
                 $isModified = true;
             }
-            
+
             if ($isModified === true) {
                 $manager->persist($userAccountPlan);
                 $manager->flush();
@@ -66,23 +70,23 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
     {
         return 8; // the order in which fixtures will be loaded
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
      */
     public function getUserAccountPlanService() {
         return $this->container->get('simplytestable.services.useraccountplanservice');
-    } 
-    
-    
+    }
+
+
     /**
-     * 
+     *
      * @return \SimplyTestable\ApiBundle\Services\UserService
      */
     public function getUserService() {
         return $this->container->get('simplytestable.services.userservice');
-    }    
-    
+    }
+
 }

@@ -3,6 +3,8 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\User\GetAction;
 
 use SimplyTestable\ApiBundle\Controller\UserController;
+use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserAccountPlanFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
@@ -50,10 +52,15 @@ class GetActionPlanContraintsTest extends BaseSimplyTestableTestCase
 
     public function testForUserWithPremiumPlan()
     {
+        StripeApiFixtureFactory::set([
+            StripeApiFixtureFactory::load('customer-hascard-hassub'),
+        ]);
+
         $user = $this->userFactory->create();
         $this->setUser($user);
 
-        $this->getUserAccountPlanService()->subscribe($user, $this->getAccountPlanService()->find('personal'));
+        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory->create($user, 'personal');
 
         $responseObject = json_decode($this->userController->getAction()->getContent());
 
@@ -64,5 +71,12 @@ class GetActionPlanContraintsTest extends BaseSimplyTestableTestCase
 
         $this->assertTrue(isset($responseObject->plan_constraints->urls_per_job));
         $this->assertEquals(50, $responseObject->plan_constraints->urls_per_job);
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        \Mockery::close();
     }
 }

@@ -15,7 +15,6 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
      * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
-     * @param array $stripeServiceResponses
      * @param array $expectedWebClientRequestDataCollection
      * @param string $expectedPlanName
      */
@@ -23,18 +22,12 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
         $httpFixtures,
         $stripeEventFixtures,
         $userName,
-        $stripeServiceResponses,
         $expectedWebClientRequestDataCollection,
         $expectedPlanName
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
-        $stripeService = $this->container->get('simplytestable.services.stripeservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-
-        foreach ($stripeServiceResponses as $methodName => $responseData) {
-            $stripeService->addResponseData($methodName, $responseData);
-        }
 
         $this->queueHttpFixtures($httpFixtures);
 
@@ -91,7 +84,6 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                     ]
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [],
                 'expectedWebClientRequestDataCollection' => [
                     [
                         'event' =>  'customer.subscription.deleted',
@@ -138,7 +130,6 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                     ],
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [],
                 'expectedWebClientRequestDataCollection' => [
                     [
                         'event' =>  'customer.subscription.deleted',
@@ -173,7 +164,6 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                     ],
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [],
                 'expectedWebClientRequestDataCollection' => [
                     [
                         'event' =>  'customer.subscription.deleted',
@@ -205,7 +195,6 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                     ],
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [],
                 'expectedWebClientRequestDataCollection' => [
                     [
                         'event' =>  'customer.subscription.deleted',
@@ -248,7 +237,6 @@ class CustomerSubscriptionDeletedListenerTest extends AbstractStripeEventListene
                     ],
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [],
                 'expectedWebClientRequestDataCollection' => [],
                 'expectedPlanName' => 'public',
             ],
