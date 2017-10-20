@@ -2,15 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\AccountPlanService;
-use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
-use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
-use SimplyTestable\ApiBundle\Services\Team\Service;
-use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Symfony\Component\HttpFoundation\Response;
-use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class UserController extends ApiController
@@ -27,6 +20,7 @@ class UserController extends ApiController
             'simplytestable.services.jobuseraccountplanenforcementservice'
         );
         $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         $user = $this->getUser();
 
@@ -72,9 +66,11 @@ class UserController extends ApiController
 
         $userSummary['plan_constraints'] = $planConstraints;
 
+        $hasTeamInvite = !$plan->getIsPremium() && $teamInviteService->hasAnyForUser($user);
+
         $userSummary['team_summary'] = [
             'in' => $teamService->hasForUser($this->getUser()),
-            'has_invite' => $this->getHasAnyTeamInvitesForUser($this->getUser())
+            'has_invite' => $hasTeamInvite
         ];
 
         return $this->sendResponse($userSummary);
@@ -86,22 +82,6 @@ class UserController extends ApiController
     public function authenticateAction()
     {
         return new Response('');
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return bool
-     */
-    private function getHasAnyTeamInvitesForUser(User $user)
-    {
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
-
-        if ($userAccountPlan->getPlan()->getIsPremium()) {
-            return false;
-        }
-
-        return $this->getTeamInviteService()->hasAnyForUser($this->getUser());
     }
 
     /**
@@ -158,14 +138,6 @@ class UserController extends ApiController
         }
 
         throw new HttpException(404);
-    }
-
-    /**
-     * @return UserAccountPlanService
-     */
-    private function getUserAccountPlanService()
-    {
-        return $this->get('simplytestable.services.useraccountplanservice');
     }
 
     /**

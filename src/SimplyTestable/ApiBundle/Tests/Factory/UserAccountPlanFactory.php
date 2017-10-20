@@ -24,10 +24,11 @@ class UserAccountPlanFactory
     /**
      * @param User $user
      * @param string $planName
+     * @param string $stripeCustomerId
      *
      * @return UserAccountPlan
      */
-    public function create(User $user, $planName)
+    public function create(User $user, $planName, $stripeCustomerId = null)
     {
         $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -40,8 +41,12 @@ class UserAccountPlanFactory
         $userAccountPlan->setStartTrialPeriod($this->container->getParameter('default_trial_period'));
         $userAccountPlan->setIsActive(true);
 
-        if ($planName !== 'basic') {
-            $userAccountPlan->setStripeCustomer(md5(rand()));
+        if ($planName !== 'basic' || !empty($stripeCustomerId)) {
+            if (empty($stripeCustomerId)) {
+                $stripeCustomerId = md5(rand());
+            }
+
+            $userAccountPlan->setStripeCustomer($stripeCustomerId);
         }
 
         $entityManager->persist($userAccountPlan);

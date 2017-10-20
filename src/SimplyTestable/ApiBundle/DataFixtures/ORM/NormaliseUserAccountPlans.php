@@ -24,7 +24,6 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
         $this->container = $container;
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -32,9 +31,10 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
     {
         $userAccountPlanRepository = $manager->getRepository(UserAccountPlan::class);
         $userAccountPlans = $userAccountPlanRepository->findAll();
+        $userService = $this->container->get('simplytestable.services.userservice');
 
         foreach ($userAccountPlans as $userAccountPlan) {
-            if ($this->getUserService()->isSpecialUser($userAccountPlan->getUser())) {
+            if ($userService->isSpecialUser($userAccountPlan->getUser())) {
                 continue;
             }
 
@@ -70,23 +70,4 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
     {
         return 8; // the order in which fixtures will be loaded
     }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
-     */
-    public function getUserAccountPlanService() {
-        return $this->container->get('simplytestable.services.useraccountplanservice');
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserService
-     */
-    public function getUserService() {
-        return $this->container->get('simplytestable.services.userservice');
-    }
-
 }
