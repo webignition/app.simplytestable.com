@@ -54,7 +54,7 @@ class StripeEventService extends EntityService
      *
      * @return StripeEvent[]|null
      */
-    public function getForUserAndType(User $user, $type = null)
+    public function getForUserAndType(User $user, $type)
     {
         if (is_string($type)) {
             $type = trim($type);

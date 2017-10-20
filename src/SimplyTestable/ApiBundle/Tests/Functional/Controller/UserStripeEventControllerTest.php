@@ -60,7 +60,7 @@ class UserStripeEventControllerTest extends BaseSimplyTestableTestCase
         $user = $users[$userName];
         $this->setUser($user);
 
-        $response = $this->userStripeEventController->listAction($emailCanonical);
+        $response = $this->userStripeEventController->listAction($emailCanonical, 'foo');
 
         $this->assertTrue($response->isClientError());
     }
@@ -134,74 +134,6 @@ class UserStripeEventControllerTest extends BaseSimplyTestableTestCase
                 'userName' => 'private',
                 'type' => null,
                 'expectedResponseData' => [],
-            ],
-            'private user, no type' => [
-                'stripeEventFixtures' => [
-                    [
-                        'stripeId' => 'foo1',
-                        'type' => 'customer.subscription.created',
-                        'data' => 'data',
-                        'userName' => 'public',
-                    ],
-                    [
-                        'stripeId' => 'foo2',
-                        'type' => 'customer.subscription.updated',
-                        'data' => 'data',
-                        'userName' => 'public',
-                    ],
-                    [
-                        'stripeId' => 'foo3',
-                        'type' => 'customer.subscription.deleted',
-                        'data' => 'data',
-                        'userName' => 'public',
-                    ],
-                    [
-                        'stripeId' => 'foo4',
-                        'type' => 'customer.subscription.created',
-                        'data' => 'data',
-                        'userName' => 'private',
-                    ],
-                    [
-                        'stripeId' => 'foo5',
-                        'type' => 'customer.subscription.updated',
-                        'data' => 'data',
-                        'userName' => 'private',
-                    ],
-                    [
-                        'stripeId' => 'foo6',
-                        'type' => 'customer.subscription.deleted',
-                        'data' => 'data',
-                        'userName' => 'private',
-                    ],
-                ],
-                'userName' => 'private',
-                'type' => null,
-                'expectedResponseData' => [
-                    [
-                        'stripe_id' => 'foo6',
-                        'type' => 'customer.subscription.deleted',
-                        'is_live' => false,
-                        'stripe_event_data' => 'data',
-                        'user' => 'private@example.com',
-                        'is_processed' => false,
-                    ],
-                    [
-                        'stripe_id' => 'foo5',
-                        'type' => 'customer.subscription.updated',
-                        'is_live' => false,
-                        'stripe_event_data' => 'data',
-                        'user' => 'private@example.com',
-                        'is_processed' => false,
-                    ],
-                    [
-                        'stripe_id' => 'foo4',
-                        'type' => 'customer.subscription.created',
-                        'is_live' => false,
-                        'stripe_event_data' => 'data',
-                        'user' => 'private@example.com',
-                        'is_processed' => false,
-                    ],
-                ],
             ],
             'private user, with type' => [
                 'stripeEventFixtures' => [

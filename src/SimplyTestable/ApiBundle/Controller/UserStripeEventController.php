@@ -2,9 +2,17 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class UserStripeEventController extends ApiController
 {
-    public function listAction($email_canonical, $type = null)
+    /**
+     * @param string $email_canonical
+     * @param string $type
+     *
+     * @return Response
+     */
+    public function listAction($email_canonical, $type)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
