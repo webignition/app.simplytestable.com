@@ -38,14 +38,6 @@ abstract class ApiController extends Controller
     /**
      * @return Response
      */
-    public function sendNotFoundResponse()
-    {
-        return Response::create('', 404);
-    }
-
-    /**
-     * @return Response
-     */
     public function sendServiceUnavailableResponse()
     {
         return Response::create('', 503);
