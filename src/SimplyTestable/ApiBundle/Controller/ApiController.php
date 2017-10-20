@@ -8,13 +8,16 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class ApiController extends Controller
 {
     /**
-     *
      * @param mixed $object
-     * @param int statusCode
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param int $statusCode
+     *
+     * @return Response
      */
-    protected function sendResponse($object = null, $statusCode = 200) {
-        $output = (is_null($object)) ? '' : $this->getSerializer()->serialize($object, 'json');
+    protected function sendResponse($object = null, $statusCode = 200)
+    {
+        $serializer = $this->container->get('serializer');
+
+        $output = (is_null($object)) ? '' : $serializer->serialize($object, 'json');
 
         $response = new Response($output);
         $response->setStatusCode($statusCode);
@@ -46,13 +49,5 @@ abstract class ApiController extends Controller
     public function sendServiceUnavailableResponse()
     {
         return Response::create('', 503);
-    }
-
-    /**
-     *
-     * @return \JMS\SerializerBundle\Serializer\Serializer
-     */
-    protected function getSerializer() {
-        return $this->container->get('serializer');
     }
 }
