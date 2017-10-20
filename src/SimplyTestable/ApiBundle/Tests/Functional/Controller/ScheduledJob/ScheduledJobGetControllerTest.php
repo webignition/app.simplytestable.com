@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobServic
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ScheduledJobGetControllerTest extends BaseSimplyTestableTestCase
 {
@@ -77,9 +78,9 @@ class ScheduledJobGetControllerTest extends BaseSimplyTestableTestCase
 
     public function testGetActionScheduledJobNotFound()
     {
-        $response = $this->scheduledJobGetController->getAction(0);
+        $this->setExpectedException(NotFoundHttpException::class);
 
-        $this->assertTrue($response->isNotFound());
+        $this->scheduledJobGetController->getAction(0);
     }
 
     /**

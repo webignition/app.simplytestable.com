@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ScheduledJobUpdateControllerTest extends BaseSimplyTestableTestCase
 {
@@ -110,9 +111,9 @@ class ScheduledJobUpdateControllerTest extends BaseSimplyTestableTestCase
 
     public function testUpdateActionScheduledJobNotFound()
     {
-        $response = $this->scheduledJobUpdateController->updateAction(new Request(), 0);
+        $this->setExpectedException(NotFoundHttpException::class);
 
-        $this->assertTrue($response->isNotFound());
+        $this->scheduledJobUpdateController->updateAction(new Request(), 0);
     }
 
     /**
