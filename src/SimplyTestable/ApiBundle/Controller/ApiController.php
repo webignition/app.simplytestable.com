@@ -49,13 +49,12 @@ abstract class ApiController extends Controller
     }
 
     /**
-     *
      * @return Response
      */
-    public function sendServiceUnavailableResponse() {
-        return $this->sendResponse(null, 503);
+    public function sendServiceUnavailableResponse()
+    {
+        return Response::create('', 503);
     }
-
 
     /**
      *
