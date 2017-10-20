@@ -68,11 +68,24 @@ class UserAccountPlanSubscriptionController extends ApiController
         return $this->sendSuccessResponse();
     }
 
-    public function associateCardAction($email_canonical, $stripe_card_token) {
+    /**
+     * @param string $email_canonical
+     * @param string $stripe_card_token
+     *
+     * @return Response
+     */
+    public function associateCardAction($email_canonical, $stripe_card_token)
+    {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $stripeService = $this->container->get('simplytestable.services.stripeservice');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
+            return $this->sendServiceUnavailableResponse();
+        }
+
+        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
         }
 
@@ -84,19 +97,20 @@ class UserAccountPlanSubscriptionController extends ApiController
             return $this->sendFailureResponse();
         }
 
-        if (!$this->isValidStripeCardToken($stripe_card_token)) {
+        $isValidStripeCardToken = preg_match('/tok_[a-z0-9]{14}/i', $stripe_card_token) > 0;
+        if (!$isValidStripeCardToken) {
             return $this->sendFailureResponse();
         }
 
-        $userAccountPlan = $this->getUserAccountPlanService()->getForUser($this->getUser());
+        $userAccountPlan = $userAccountPlanService->getForUser($this->getUser());
         if (!$userAccountPlan->hasStripeCustomer()) {
             return $this->sendFailureResponse();
         }
 
         try {
-            $this->getStripeService()->updateCustomer($userAccountPlan, array(
+            $stripeService->updateCustomer($userAccountPlan, [
                 'card' => $stripe_card_token
-            ));
+            ]);
         } catch (StripeCardError $stripeCardError) {
             return $this->sendFailureResponse(array(
                 'X-Stripe-Error-Message' => $stripeCardError->getMessage(),
@@ -107,30 +121,4 @@ class UserAccountPlanSubscriptionController extends ApiController
 
         return $this->sendSuccessResponse();
     }
-
-    /**
-     *
-     * @param string $token
-     * @return boolean
-     */
-    private function isValidStripeCardToken($token) {
-        return preg_match('/tok_[a-z0-9]{14}/i', $token) > 0;
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\StripeService
-     */
-    private function getStripeService() {
-        return $this->get('simplytestable.services.stripeservice');
-    }
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserAccountPlanService
-     */
-    private function getUserAccountPlanService() {
-        return $this->get('simplytestable.services.useraccountplanservice');
-    }
-
 }

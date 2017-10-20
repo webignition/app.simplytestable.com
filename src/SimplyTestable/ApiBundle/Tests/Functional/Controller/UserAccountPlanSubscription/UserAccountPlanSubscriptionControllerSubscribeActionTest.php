@@ -1,38 +1,15 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserAccountPlanSubsciption;
+namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserAccountPlanSubscription;
 
-use phpmock\mockery\PHPMockery;
-use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
-use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 
-class UserAccountPlanSubscriptionControllerSubscribeActionTest extends BaseSimplyTestableTestCase
+class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractUserAccountPlanSubscriptionControllerTest
 {
-    /**
-     * @var UserAccountPlanSubscriptionController
-     */
-    private $userAccountPlanSubscriptionController;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->userAccountPlanSubscriptionController = new UserAccountPlanSubscriptionController();
-        $this->userAccountPlanSubscriptionController->setContainer($this->container);
-    }
-
     public function testPostRequest()
     {
         StripeApiFixtureFactory::set([
@@ -58,7 +35,6 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends BaseSimpl
             'user' => $user,
         ]);
 
-        /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());
@@ -224,15 +200,5 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends BaseSimpl
 
         $this->assertInstanceOf(UserAccountPlan::class, $userAccountPlan);
         $this->assertEquals($planName, $userAccountPlan->getPlan()->getName());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        \Mockery::close();
     }
 }

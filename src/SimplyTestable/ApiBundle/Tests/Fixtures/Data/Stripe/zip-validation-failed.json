@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "incorrect_zip",
+    "param": "address_zip",
+    "message": "The zip code you supplied failed validation."
+  }
+}
