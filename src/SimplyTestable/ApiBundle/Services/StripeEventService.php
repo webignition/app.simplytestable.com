@@ -25,8 +25,13 @@ class StripeEventService extends EntityService
      */
     public function create($stripeId, $type, $isLiveMode, $data, $user = null)
     {
-        if ($this->has($stripeId)) {
-            return $this->find($stripeId);
+        /* @var StripeEvent $existingEvent */
+        $existingEvent = $this->getEntityRepository()->findOneBy([
+            'stripeId' => $stripeId,
+        ]);
+
+        if (!empty($existingEvent)) {
+            return $existingEvent;
         }
 
         $stripeEvent = new StripeEvent();
@@ -72,33 +77,15 @@ class StripeEventService extends EntityService
     }
 
     /**
-     * @param string $stripeId
+     * @param StripeEvent $stripeEvent
      *
      * @return StripeEvent
      */
-    public function find($stripeId)
+    public function persistAndFlush(StripeEvent $stripeEvent)
     {
-        return $this->getEntityRepository()->findOneByStripeId($stripeId);
-    }
-
-    /**
-     *
-     * @param string $stripeId
-     * @return bool
-     */
-    public function has($stripeId) {
-        return !is_null($this->find($stripeId));
-    }
-
-
-    /**
-     *
-     * @param StripeEvent $job
-     * @return StripeEvent
-     */
-    public function persistAndFlush(StripeEvent $stripeEvent) {
         $this->getManager()->persist($stripeEvent);
         $this->getManager()->flush();
+
         return $stripeEvent;
     }
 }
