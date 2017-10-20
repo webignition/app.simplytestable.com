@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
 {
@@ -70,9 +71,9 @@ class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
 
     public function testGetActionJobConfigurationNotFound()
     {
-        $response = $this->jobConfigurationGetController->getAction('foo');
+        $this->setExpectedException(NotFoundHttpException::class);
 
-        $this->assertTrue($response->isNotFound());
+        $this->jobConfigurationGetController->getAction('foo');
     }
 
     public function testGetActionSuccess()

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetController extends JobConfigurationController
 {
@@ -21,7 +22,7 @@ class GetController extends JobConfigurationController
 
         $jobConfiguration = $jobConfigurationService->get($label);
         if (empty($jobConfiguration)) {
-            return $this->sendNotFoundResponse();
+            throw new NotFoundHttpException();
         }
 
         return $this->sendResponse($jobConfiguration);
