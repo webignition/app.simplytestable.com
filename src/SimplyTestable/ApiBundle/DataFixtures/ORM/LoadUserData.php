@@ -35,6 +35,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
      */
     public function load(ObjectManager $manager)
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $userManipulator = $this->container->get('fos_user.util.user_manipulator');
         $userRepository = $manager->getRepository(User::class);
 
         $publicUser = $userRepository->findOneBy([
@@ -47,11 +49,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
             $user->setPlainPassword(self::PUBLIC_USER_PASSWORD);
             $user->setUsername(self::PUBLIC_USER_USERNAME);
 
-            $userManager = $this->container->get('fos_user.user_manager');
-            $userManager->updateUser($user);
-
-            $manipulator = $this->container->get('fos_user.util.user_manipulator');
-            $manipulator->activate($user->getUsername());
+            $userService->updateUser($user);
+            $userManipulator->activate($user->getUsername());
         }
 
         $adminUserEmail = $this->container->getParameter('admin_user_email');
@@ -67,11 +66,8 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
             $user->setUsername(self::ADMIN_USER_USERNAME);
             $user->addRole('role_admin');
 
-            $userManager = $this->container->get('fos_user.user_manager');
-            $userManager->updateUser($user);
-
-            $manipulator = $this->container->get('fos_user.util.user_manipulator');
-            $manipulator->activate($user->getUsername());
+            $userService->updateUser($user);
+            $userManipulator->activate($user->getUsername());
         }
     }
 

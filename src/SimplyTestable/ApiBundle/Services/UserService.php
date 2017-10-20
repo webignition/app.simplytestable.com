@@ -56,10 +56,7 @@ class UserService
      */
     public function getPublicUser()
     {
-        /* @var User $user */
-        $user = $this->userManager->findUserByEmail(self::PUBLIC_USER_EMAIL_ADDRESS);
-
-        return $user;
+        return $this->findUserByEmail(self::PUBLIC_USER_EMAIL_ADDRESS);
     }
 
     /**
@@ -143,5 +140,47 @@ class UserService
         $this->userManager->updateUser($user);
 
         return $user->getConfirmationToken();
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return User
+     */
+    public function findUserByEmail($email)
+    {
+        /* @var User $user */
+        $user = $this->userManager->findUserByEmail($email);
+
+        return $user;
+    }
+
+    /**
+     * @param User $user
+     */
+    public function updateUser(User $user)
+    {
+        $this->userManager->updateUser($user);
+    }
+
+    /**
+     * @param User $user
+     */
+    public function updatePassword(User $user)
+    {
+        $this->userManager->updatePassword($user);
+    }
+
+    /**
+     * @param string $token
+     *
+     * @return User
+     */
+    public function findUserByConfirmationToken($token)
+    {
+        /* @var User $user */
+        $user = $this->userManager->findUserByConfirmationToken($token);
+
+        return $user;
     }
 }

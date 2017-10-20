@@ -25,7 +25,6 @@ class TeamInviteController extends ApiController
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
-        $userManager = $this->container->get('fos_user.user_manager');
 
         $inviter = $this->getUser();
 
@@ -51,7 +50,7 @@ class TeamInviteController extends ApiController
             $userAccountPlanService->subscribe($user, $plan);
         }
 
-        $invitee = $userManager->findUserByEmail($invitee_email);
+        $invitee = $userService->findUserByEmail($invitee_email);
 
         if ($userService->isSpecialUser($invitee)) {
             return $this->sendFailureResponse([
@@ -192,7 +191,6 @@ class TeamInviteController extends ApiController
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
-        $userManager = $this->container->get('fos_user.user_manager');
 
         if (!$teamService->hasTeam($this->getUser())) {
             return $this->sendFailureResponse([
@@ -211,7 +209,7 @@ class TeamInviteController extends ApiController
 
         $team = $teamService->getForUser($this->getUser());
 
-        $invitee = $userManager->findUserByEmail($invitee_email);
+        $invitee = $userService->findUserByEmail($invitee_email);
 
         if (!$teamInviteService->hasForTeamAndUser($team, $invitee)) {
             return $this->sendFailureResponse([
@@ -277,7 +275,7 @@ class TeamInviteController extends ApiController
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-        $userManager = $this->container->get('fos_user.user_manager');
+        $userService = $this->container->get('simplytestable.services.userservice');
 
         $requestData = $request->request;
         $token = trim($requestData->get('token'));
@@ -296,7 +294,7 @@ class TeamInviteController extends ApiController
         $password = rawurldecode(trim($requestData->get('password')));
 
         $invite->getUser()->setPlainPassword($password);
-        $userManager->updateUser($invite->getUser());
+        $userService->updateUser($invite->getUser());
 
         $teamMemberService->add($invite->getTeam(), $invite->getUser());
 

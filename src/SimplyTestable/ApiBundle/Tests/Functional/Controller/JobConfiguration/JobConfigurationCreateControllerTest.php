@@ -143,9 +143,9 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
      */
     public function testCreateActionSpecialUser($userEmail)
     {
-        $userManager = $this->container->get('fos_user.user_manager');
+        $userService = $this->container->get('simplytestable.services.userservice');
 
-        $user = $userManager->findUserByEmail($userEmail);
+        $user = $userService->findUserByEmail($userEmail);
         $this->setUser($user);
 
         $request = new Request([], [
