@@ -66,7 +66,6 @@ class UserControllerGetActionTest extends AbstractUserControllerTest
             'method' => 'GET',
         ]);
 
-        /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());

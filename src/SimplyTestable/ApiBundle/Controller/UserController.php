@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserController extends ApiController
 {
@@ -85,7 +86,6 @@ class UserController extends ApiController
     }
 
     /**
-     *
      * @param string $email_canonical
      *
      * @return Response
@@ -95,8 +95,8 @@ class UserController extends ApiController
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $user = $userService->findUserByEmail($email_canonical);
-        if (is_null($user)) {
-            throw new HttpException(404);
+        if (empty($user)) {
+            throw new NotFoundHttpException();
         }
 
         $token = $userService->getConfirmationToken($user);
