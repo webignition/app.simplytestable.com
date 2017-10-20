@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -365,7 +366,7 @@ class JobController extends BaseJobController
 
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($job);
 
-        return $this->sendResponse($taskIds);
+        return new JsonResponse($taskIds);
     }
 
     /**
@@ -386,7 +387,9 @@ class JobController extends BaseJobController
             return $response;
         }
 
-        return $this->sendResponse($this->getTaskService()->getUrlsByJob($job));
+        $urls = $this->getTaskService()->getUrlsByJob($job);
+
+        return new JsonResponse($urls);
     }
 
     /**

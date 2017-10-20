@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -101,7 +102,7 @@ class UserController extends ApiController
 
         $token = $userService->getConfirmationToken($user);
 
-        return $this->sendResponse($token);
+        return new JsonResponse($token);
     }
 
     /**

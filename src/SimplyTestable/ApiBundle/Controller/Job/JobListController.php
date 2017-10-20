@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller\Job;
 use SimplyTestable\ApiBundle\Model\JobList\Configuration;
 use SimplyTestable\ApiBundle\Request\Job\ListRequest;
 use SimplyTestable\ApiBundle\Services\JobListService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class JobListController extends BaseJobController
@@ -48,7 +49,7 @@ class JobListController extends BaseJobController
         $jobListService = $this->container->get('simplytestable.services.joblistservice');
         $jobListService->setConfiguration($jobListConfiguration);
 
-        return $this->sendResponse($jobListService->getMaxResults());
+        return new JsonResponse($jobListService->getMaxResults());
     }
 
     /**
@@ -64,7 +65,7 @@ class JobListController extends BaseJobController
         $jobListService = $this->container->get('simplytestable.services.joblistservice');
         $jobListService->setConfiguration($jobListConfiguration);
 
-        return $this->sendResponse($jobListService->getWebsiteUrls());
+        return new JsonResponse($jobListService->getWebsiteUrls());
     }
 
     /**

@@ -361,6 +361,8 @@ class JobListControllerTest extends BaseSimplyTestableTestCase
         /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
+        echo $response;
+
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('application/json', $response->headers->get('content-type'));
 
