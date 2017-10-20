@@ -44,14 +44,6 @@ abstract class ApiController extends Controller
      *
      * @return Response
      */
-    public function sendGoneResponse() {
-        return $this->sendResponse('', 410);
-    }
-
-    /**
-     *
-     * @return Response
-     */
     public function sendNotFoundResponse() {
         return $this->sendResponse('', 404);
     }
