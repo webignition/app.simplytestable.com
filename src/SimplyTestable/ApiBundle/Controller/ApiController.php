@@ -31,17 +31,13 @@ abstract class ApiController extends Controller
         return $this->sendResponse('');
     }
 
-
     /**
-     *
+     * @param array $headers
      * @return Response
      */
-    public function sendFailureResponse($headers = null) {
-        if (is_array($headers)) {
-            return Response::create('', 400, $headers);
-        }
-
-        return $this->sendResponse('', 400);
+    public function sendFailureResponse($headers = [])
+    {
+        return Response::create('', 400, $headers);
     }
 
     /**
