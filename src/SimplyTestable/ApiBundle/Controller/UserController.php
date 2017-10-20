@@ -89,7 +89,6 @@ class UserController extends ApiController
      * @param string $email_canonical
      *
      * @return Response
-     * @throws HttpException
      */
     public function getTokenAction($email_canonical)
     {
@@ -141,31 +140,25 @@ class UserController extends ApiController
     }
 
     /**
-     * @return InviteService
-     */
-    private function getTeamInviteService()
-    {
-        return $this->get('simplytestable.services.teaminviteservice');
-    }
-
-    /**
      * @param $email_canonical
      *
      * @return Response
-     * @throws HttpException
      */
     public function hasInvitesAction($email_canonical)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
-        if (!$userService->exists($email_canonical)) {
-            throw new HttpException(404);
+        $user = $userService->findUserByEmail($email_canonical);
+
+        if (empty($user)) {
+            throw new NotFoundHttpException(404);
         }
 
-        if ($this->getTeamInviteService()->hasAnyForUser($userService->findUserByEmail($email_canonical))) {
+        if ($teamInviteService->hasAnyForUser($user)) {
             return new Response('', 200);
         }
 
-        throw new HttpException(404);
+        throw new NotFoundHttpException(404);
     }
 }
