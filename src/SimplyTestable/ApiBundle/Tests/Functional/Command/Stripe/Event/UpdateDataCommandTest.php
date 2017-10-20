@@ -2,21 +2,14 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Stripe\Event;
 
-use Mockery\MockInterface;
 use phpmock\mockery\PHPMockery;
-use Psr\Log\LoggerInterface;
-use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand;
-use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFixtureFactory;
-use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UpdateDataCommandTest extends BaseSimplyTestableTestCase
 {
@@ -55,15 +48,12 @@ class UpdateDataCommandTest extends BaseSimplyTestableTestCase
      *
      * @param array $stripeApiResponses
      * @param array $args
+     * @param string|bool $expectedStripeEventData
      */
-    public function testRunFoo($stripeApiResponses, $args, $expectedStripeEventData)
+    public function testRun($stripeApiResponses, $args, $expectedStripeEventData)
     {
-        $eventDispatcher = $this->container->get('event_dispatcher');
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
-        $stripeService = $this->container->get('simplytestable.services.stripeservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $userService = $this->container->get('simplytestable.services.userservice');
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $user = $userService->getPublicUser();
 
@@ -84,7 +74,10 @@ class UpdateDataCommandTest extends BaseSimplyTestableTestCase
             $returnCode
         );
 
-        $updatedStripeEvent = $stripeEventService->getByStripeId($stripeEvent->getStripeId());
+        $stripeEventRepository = $entityManager->getRepository(StripeEvent::class);
+        $updatedStripeEvent = $stripeEventRepository->findOneBy([
+            'stripeId' => $stripeEvent->getStripeId(),
+        ]);
 
         if ($expectedStripeEventData === true) {
             $this->assertEquals($stripeEvent->getStripeEventData(), $updatedStripeEvent->getStripeEventData());
