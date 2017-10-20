@@ -19,7 +19,6 @@ class UserPasswordResetController extends UserController
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-        $userService = $this->container->get('simplytestable.services.userservice');
         $userManager = $this->container->get('fos_user.user_manager');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
@@ -30,7 +29,7 @@ class UserPasswordResetController extends UserController
             return $this->sendServiceUnavailableResponse();
         }
 
-        $user = $userService->findUserByConfirmationToken($token);
+        $user = $userManager->findUserByConfirmationToken($token);
 
         if (empty($user)) {
             throw new NotFoundHttpException();

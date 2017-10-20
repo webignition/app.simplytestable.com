@@ -101,6 +101,7 @@ class UserCreationController extends ApiController
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
+        $userManager = $this->container->get('fos_user.user_manager');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -115,7 +116,7 @@ class UserCreationController extends ApiController
             throw new BadRequestHttpException();
         }
 
-        $user = $userService->findUserByConfirmationToken($token);
+        $user = $userManager->findUserByConfirmationToken($token);
         if (empty($user)) {
             throw new BadRequestHttpException();
         }
