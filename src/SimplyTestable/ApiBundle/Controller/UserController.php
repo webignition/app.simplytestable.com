@@ -93,9 +93,8 @@ class UserController extends ApiController
     public function getTokenAction($email_canonical)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $userManager = $this->container->get('fos_user.user_manager');
 
-        $user = $userManager->findUserByEmail($email_canonical);
+        $user = $userService->findUserByEmail($email_canonical);
         if (empty($user)) {
             throw new NotFoundHttpException();
         }
@@ -112,8 +111,8 @@ class UserController extends ApiController
      */
     public function isEnabledAction($email_canonical)
     {
-        $userManager = $this->container->get('fos_user.user_manager');
-        $user = $userManager->findUserByEmail($email_canonical);
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->findUserByEmail($email_canonical);
 
         if (is_null($user)) {
             throw new NotFoundHttpException();
@@ -149,9 +148,9 @@ class UserController extends ApiController
     public function hasInvitesAction($email_canonical)
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $userManager = $this->container->get('fos_user.user_manager');
+        $userService = $this->container->get('simplytestable.services.userservice');
 
-        $user = $userManager->findUserByEmail($email_canonical);
+        $user = $userService->findUserByEmail($email_canonical);
 
         if (empty($user)) {
             throw new NotFoundHttpException(404);

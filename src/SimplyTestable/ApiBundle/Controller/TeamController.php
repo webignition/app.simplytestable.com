@@ -95,7 +95,6 @@ class TeamController extends ApiController
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
-        $userManager = $this->container->get('fos_user.user_manager');
 
         if (!$userService->exists($member_email)) {
             return $this->sendFailureResponse([
@@ -104,7 +103,7 @@ class TeamController extends ApiController
             ]);
         }
 
-        $member = $userManager->findUserByEmail($member_email);
+        $member = $userService->findUserByEmail($member_email);
 
         try {
             $teamService->remove($this->getUser(), $member);

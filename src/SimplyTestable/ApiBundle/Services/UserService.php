@@ -1,22 +1,21 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Doctrine\UserManager;
 use FOS\UserBundle\Util\TokenGenerator;
-use SimplyTestable\ApiBundle\Repository\UserRepository;
-use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 use FOS\UserBundle\Util\CanonicalizerInterface;
-use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class UserService extends UserManager
+class UserService
 {
     const PUBLIC_USER_EMAIL_ADDRESS = 'public@simplytestable.com';
 
     /**
-     * @var string
+     * @var UserManager
      */
-    private $tokenGeneratorClass;
+    private $userManager;
 
     /**
      * @var TokenGenerator
@@ -29,25 +28,27 @@ class UserService extends UserManager
     private $entityRepository;
 
     /**
-     * Constructor.
-     *
-     * @param EncoderFactoryInterface $encoderFactory
-     * @param CanonicalizerInterface  $usernameCanonicalizer
-     * @param CanonicalizerInterface  $emailCanonicalizer
-     * @param ObjectManager          $om
-     * @param string                 $class
-     * @param string                 $tokenGeneratorClass
+     * @var CanonicalizerInterface
+     */
+    private $canonicalizer;
+
+    /**
+     * @param UserManager $userManager
+     * @param EntityManagerInterface $entityManager
+     * @param TokenGeneratorInterface $tokenGenerator
+     * @param CanonicalizerInterface $canonicalizer
      */
     public function __construct(
-        EncoderFactoryInterface $encoderFactory,
-        CanonicalizerInterface $usernameCanonicalizer,
-        CanonicalizerInterface $emailCanonicalizer,
-        ObjectManager $om,
-        $class,
-        $tokenGeneratorClass
+        UserManager $userManager,
+        EntityManagerInterface $entityManager,
+        TokenGeneratorInterface $tokenGenerator,
+        CanonicalizerInterface $canonicalizer
     ) {
-        parent::__construct($encoderFactory, $usernameCanonicalizer, $emailCanonicalizer, $om, $class);
-        $this->tokenGeneratorClass = $tokenGeneratorClass;
+        $this->userManager = $userManager;
+        $this->tokenGenerator = $tokenGenerator;
+        $this->canonicalizer = $canonicalizer;
+
+        $this->entityRepository = $entityManager->getRepository(User::class);
     }
 
     /**
@@ -55,10 +56,7 @@ class UserService extends UserManager
      */
     public function getPublicUser()
     {
-        /* @var User $user */
-        $user = $this->findUserByEmail(self::PUBLIC_USER_EMAIL_ADDRESS);
-
-        return $user;
+        return $this->findUserByEmail(self::PUBLIC_USER_EMAIL_ADDRESS);
     }
 
     /**
@@ -67,7 +65,7 @@ class UserService extends UserManager
     public function getAdminUser()
     {
         /* @var User $user */
-        $user = $this->findUserByUsername('admin');
+        $user = $this->userManager->findUserByUsername('admin');
 
         return $user;
     }
@@ -101,15 +99,15 @@ class UserService extends UserManager
     public function create($email, $password)
     {
         /* @var User $user */
-        $user = $this->createUser();
+        $user = $this->userManager->createUser();
 
-        $user->setEmail($this->canonicalizeEmail($email));
-        $user->setEmailCanonical($this->canonicalizeEmail($email));
-        $user->setUsername($this->canonicalizeUsername($email));
+        $user->setEmail($this->canonicalizer->canonicalize($email));
+        $user->setEmailCanonical($this->canonicalizer->canonicalize($email));
+        $user->setUsername($this->canonicalizer->canonicalize($email));
         $user->setPlainPassword($password);
-        $user->setConfirmationToken($this->getTokenGenerator()->generateToken());
+        $user->setConfirmationToken($this->tokenGenerator->generateToken());
 
-        $this->updateUser($user);
+        $this->userManager->updateUser($user);
 
         return $user;
     }
@@ -121,7 +119,11 @@ class UserService extends UserManager
      */
     public function exists($emailCanonical)
     {
-        return !is_null($this->findUserByEmail($this->canonicalizeEmail($emailCanonical)));
+        $user = $this->userManager->findUserByEmail(
+            $this->canonicalizer->canonicalize($emailCanonical)
+        );
+
+        return !empty($user);
     }
 
     /**
@@ -132,35 +134,53 @@ class UserService extends UserManager
     public function getConfirmationToken(User $user)
     {
         if (!$user->hasConfirmationToken()) {
-            $user->setConfirmationToken($this->getTokenGenerator()->generateToken());
+            $user->setConfirmationToken($this->tokenGenerator->generateToken());
         }
 
-        $this->updateUser($user);
+        $this->userManager->updateUser($user);
 
         return $user->getConfirmationToken();
     }
 
     /**
-     * @return TokenGenerator
+     * @param string $email
+     *
+     * @return User
      */
-    private function getTokenGenerator()
+    public function findUserByEmail($email)
     {
-        if (is_null($this->tokenGenerator)) {
-            $this->tokenGenerator = new $this->tokenGeneratorClass;
-        }
+        /* @var User $user */
+        $user = $this->userManager->findUserByEmail($email);
 
-        return $this->tokenGenerator;
+        return $user;
     }
 
     /**
-     * @return UserRepository
+     * @param User $user
      */
-    public function getEntityRepository()
+    public function updateUser(User $user)
     {
-        if (is_null($this->entityRepository)) {
-            $this->entityRepository = $this->objectManager->getRepository('SimplyTestable\ApiBundle\Entity\User');
-        }
+        $this->userManager->updateUser($user);
+    }
 
-        return $this->entityRepository;
+    /**
+     * @param User $user
+     */
+    public function updatePassword(User $user)
+    {
+        $this->userManager->updatePassword($user);
+    }
+
+    /**
+     * @param string $token
+     *
+     * @return User
+     */
+    public function findUserByConfirmationToken($token)
+    {
+        /* @var User $user */
+        $user = $this->userManager->findUserByConfirmationToken($token);
+
+        return $user;
     }
 }

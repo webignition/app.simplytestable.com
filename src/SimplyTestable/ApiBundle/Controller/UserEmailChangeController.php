@@ -53,9 +53,9 @@ class UserEmailChangeController extends ApiController
 
 
     public function getAction($email_canonical) {
-        $userManager = $this->container->get('fos_user.user_manager');
+        $userService = $this->container->get('simplytestable.services.userservice');
 
-        $user = $userManager->findUserByEmail($email_canonical);
+        $user = $userService->findUserByEmail($email_canonical);
         if (is_null($user)) {
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
         }
@@ -90,7 +90,6 @@ class UserEmailChangeController extends ApiController
 
     public function confirmAction($email_canonical, $token) {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $userManager = $this->container->get('fos_user.user_manager');
 
         $email_canonical = $this->getUserEmailChangeRequestService()->canonicalizeEmail($email_canonical);
 
@@ -123,7 +122,7 @@ class UserEmailChangeController extends ApiController
         $user->setUsername($emailChangeRequest->getNewEmail());
         $user->setUsernameCanonical($emailChangeRequest->getNewEmail());
 
-        $userManager->updateUser($user);
+        $userService->updateUser($user);
 
         $this->getUserEmailChangeRequestService()->removeForUser($user);
 

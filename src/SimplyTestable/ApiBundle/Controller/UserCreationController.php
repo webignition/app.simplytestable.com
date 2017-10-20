@@ -25,7 +25,6 @@ class UserCreationController extends ApiController
         $userPostActivationPropertiesService = $this->container->get(
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
-        $userManager = $this->container->get('fos_user.user_manager');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -49,7 +48,7 @@ class UserCreationController extends ApiController
             throw new BadRequestHttpException('"password" missing');
         }
 
-        $user = $userManager->findUserByEmail($email);
+        $user = $userService->findUserByEmail($email);
 
         if (empty($user)) {
             $user = $userService->create($email, $password);
@@ -61,7 +60,7 @@ class UserCreationController extends ApiController
             }
 
             $user->setPlainPassword($password);
-            $userManager->updatePassword($user);
+            $userService->updatePassword($user);
         }
 
         $coupon = rawurldecode(trim($requestData->get('coupon')));
@@ -101,7 +100,6 @@ class UserCreationController extends ApiController
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-        $userManager = $this->container->get('fos_user.user_manager');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -116,7 +114,7 @@ class UserCreationController extends ApiController
             throw new BadRequestHttpException();
         }
 
-        $user = $userManager->findUserByConfirmationToken($token);
+        $user = $userService->findUserByConfirmationToken($token);
         if (empty($user)) {
             throw new BadRequestHttpException();
         }

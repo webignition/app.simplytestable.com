@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use SimplyTestable\ApiBundle\Repository\UserRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 use webignition\Model\Stripe\Customer as StripeCustomerModel;
@@ -287,7 +288,10 @@ class UserAccountPlanService extends EntityService
      */
     public function findUsersWithNoPlan()
     {
-        return $this->userService->getEntityRepository()->findAllNotWithIds(array_merge(
+        /* @var UserRepository $userRepository */
+        $userRepository = $this->entityManager->getRepository(User::class);
+
+        return $userRepository->findAllNotWithIds(array_merge(
             $this->getEntityRepository()->findUserIdsWithPlan(),
             array($this->userService->getAdminUser()->getId())
         ));

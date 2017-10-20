@@ -151,7 +151,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
 
     public function testCreateActionExistingUserPasswordIsChanged()
     {
-        $userManager = $this->container->get('fos_user.user_manager');
+        $userService = $this->container->get('simplytestable.services.userservice');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
@@ -168,7 +168,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
 
         $this->assertTrue($response->isSuccessful());
 
-        $user = $userManager->findUserByEmail($user->getEmail());
+        $user = $userService->findUserByEmail($user->getEmail());
 
         $this->assertNotEquals($initialPassword, $user->getPassword());
     }
@@ -197,7 +197,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
         $userPostActivationPropertiesService = $this->container->get(
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
-        $userManager = $this->container->get('fos_user.user_manager');
+        $userService = $this->container->get('simplytestable.services.userservice');
 
         if ($createUser) {
             $userFactory = new UserFactory($this->container);
@@ -224,7 +224,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
 
         $this->assertTrue($response->isSuccessful());
 
-        $user = $userManager->findUserByEmail(rawurldecode($email));
+        $user = $userService->findUserByEmail(rawurldecode($email));
 
         $this->assertInstanceOf(User::class, $user);
 

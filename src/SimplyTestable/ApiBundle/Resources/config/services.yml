@@ -55,12 +55,10 @@ services:
   simplytestable.services.userservice:
     class:  SimplyTestable\ApiBundle\Services\UserService
     arguments:
-        encoderFactory: "@security.encoder_factory"
-        usernameCanonicalizer: "@fos_user.util.username_canonicalizer"
-        emailCanonicalizer: "@fos_user.util.email_canonicalizer"
-        objectManager: "@doctrine.orm.entity_manager"
-        class: %fos_user.model.user.class%
-        tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator
+        userManager: '@fos_user.user_manager'
+        entityManager: "@doctrine.orm.entity_manager"
+        tokenGenerator: '@fos_user.util.token_generator'
+        emailCanonicalizer: '@fos_user.util.email_canonicalizer'
 
   simplytestable.services.workeractivationrequestservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
