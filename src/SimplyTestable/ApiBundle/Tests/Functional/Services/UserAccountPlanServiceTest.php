@@ -176,6 +176,7 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
         ]);
 
         $currentUserAccountPlan = $this->userAccountPlanService->getForUser($user);
+        $currentUserAccountPlanStripeCustomer = $currentUserAccountPlan->getStripeCustomer();
 
         $accountPlan = $accountPlanService->find($planName);
 
@@ -187,6 +188,10 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
         $this->assertTrue($userAccountPlan->getIsActive());
 
         $this->assertEquals($expectedStartTrialPeriod, $userAccountPlan->getStartTrialPeriod());
+
+        if ($currentUserAccountPlan->getPlan()->getIsPremium() && !$userAccountPlan->getPlan()->getIsPremium()) {
+            $this->assertEquals($currentUserAccountPlanStripeCustomer, $userAccountPlan->getStripeCustomer());
+        }
     }
 
     public function subscribeActionChangePlanDataProvider()
@@ -225,7 +230,7 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
                 'httpFixtures' => [
                     StripeApiFixtureFactory::load('customer-hascard-hassub', [], [
                         'subscription' => [
-                            'trial_end' => time() + (86400 * 30),
+                            'trial_end' => time() + (86400 * 25),
                         ],
                     ]), // new plan get customer
                     StripeApiFixtureFactory::load('customer-hascard-hassub'), // new plan get customer
@@ -233,7 +238,7 @@ class UserAccountPlanServiceTest extends BaseSimplyTestableTestCase
                 ],
                 'currentPlanName' => 'personal',
                 'planName' => 'agency',
-                'expectedStartTrialPeriod' => 30,
+                'expectedStartTrialPeriod' => 25,
             ],
         ];
     }
