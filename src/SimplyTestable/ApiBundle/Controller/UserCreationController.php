@@ -25,6 +25,7 @@ class UserCreationController extends ApiController
         $userPostActivationPropertiesService = $this->container->get(
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
+        $userManager = $this->container->get('fos_user.user_manager');
 
         if ($applicationStateService->isInMaintenanceReadOnlyState()) {
             return $this->sendServiceUnavailableResponse();
@@ -48,7 +49,7 @@ class UserCreationController extends ApiController
             throw new BadRequestHttpException('"password" missing');
         }
 
-        $user = $userService->findUserByEmail($email);
+        $user = $userManager->findUserByEmail($email);
 
         if (empty($user)) {
             $user = $userService->create($email, $password);

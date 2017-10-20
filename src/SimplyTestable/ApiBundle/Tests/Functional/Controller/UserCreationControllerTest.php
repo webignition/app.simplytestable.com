@@ -151,7 +151,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
 
     public function testCreateActionExistingUserPasswordIsChanged()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userManager = $this->container->get('fos_user.user_manager');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
@@ -168,7 +168,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
 
         $this->assertTrue($response->isSuccessful());
 
-        $user = $userService->findUserByEmail($user->getEmail());
+        $user = $userManager->findUserByEmail($user->getEmail());
 
         $this->assertNotEquals($initialPassword, $user->getPassword());
     }
@@ -193,11 +193,11 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
         $expectedPlanName,
         $expectedPostActivationProperties
     ) {
-        $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $userPostActivationPropertiesService = $this->container->get(
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
+        $userManager = $this->container->get('fos_user.user_manager');
 
         if ($createUser) {
             $userFactory = new UserFactory($this->container);
@@ -224,7 +224,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
 
         $this->assertTrue($response->isSuccessful());
 
-        $user = $userService->findUserByEmail(rawurldecode($email));
+        $user = $userManager->findUserByEmail(rawurldecode($email));
 
         $this->assertInstanceOf(User::class, $user);
 

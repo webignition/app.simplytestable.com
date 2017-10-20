@@ -120,16 +120,16 @@ class ConfirmUserEmailChangeTest extends BaseSimplyTestableTestCase
 
             $this->fail('Attempt to confirm when email already taken did not generate HTTP 409');
         } catch (\Symfony\Component\HttpKernel\Exception\HttpException $exception) {
-            $userService = $this->container->get('simplytestable.services.userservice');
+            $userManager = $this->container->get('fos_user.user_manager');
 
             $this->assertEquals(409, $exception->getStatusCode());
-            $this->assertInstanceOf(User::class, $userService->findUserByEmail('user1-new@example.com'));
+            $this->assertInstanceOf(User::class, $userManager->findUserByEmail('user1-new@example.com'));
         }
     }
 
     public function testExpectedUsage()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userManager = $this->container->get('fos_user.user_manager');
 
         $email = 'user1@example.com';
         $newEmail = 'user1-new@example.com';
@@ -151,7 +151,7 @@ class ConfirmUserEmailChangeTest extends BaseSimplyTestableTestCase
         $this->getManager()->clear();
 
         $this->assertNull($this->getUserEmailChangeRequestService()->findByUser($user));
-        $this->assertNull($userService->findUserByEmail($email));
-        $this->assertInstanceOf(User::class, $userService->findUserByEmail($newEmail));
+        $this->assertNull($userManager->findUserByEmail($email));
+        $this->assertInstanceOf(User::class, $userManager->findUserByEmail($newEmail));
     }
 }
