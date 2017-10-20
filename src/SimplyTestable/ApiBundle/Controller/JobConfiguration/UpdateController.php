@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationV
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UpdateController extends JobConfigurationController
 {
@@ -38,7 +39,7 @@ class UpdateController extends JobConfigurationController
 
         $jobConfiguration = $jobConfigurationService->get($label);
         if (empty($jobConfiguration)) {
-            return $this->sendNotFoundResponse();
+            throw new NotFoundHttpException();
         }
 
         $newJobConfigurationValues = new JobConfigurationValues();

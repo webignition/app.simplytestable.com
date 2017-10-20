@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class JobConfigurationUpdateControllerTest extends BaseSimplyTestableTestCase
 {
@@ -125,9 +126,9 @@ class JobConfigurationUpdateControllerTest extends BaseSimplyTestableTestCase
 
     public function testUpdateActionJobConfigurationNotFound()
     {
-        $response = $this->jobConfigurationUpdateController->updateAction(new Request(), 'foo');
+        $this->setExpectedException(NotFoundHttpException::class);
 
-        $this->assertTrue($response->isNotFound());
+        $this->jobConfigurationUpdateController->updateAction(new Request(), 'foo');
     }
 
     /**
