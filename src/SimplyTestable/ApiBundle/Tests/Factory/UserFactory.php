@@ -56,6 +56,7 @@ class UserFactory
     public function create($userValues = [])
     {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userManager = $this->container->get('fos_user.user_manager');
 
         foreach ($this->defaultUserValues as $key => $value) {
             if (!array_key_exists($key, $userValues)) {
@@ -65,7 +66,7 @@ class UserFactory
 
         if ($userService->exists($userValues[self::KEY_EMAIL])) {
             /* @var User $user */
-            $user = $userService->findUserByEmail($userValues[self::KEY_EMAIL]);
+            $user = $userManager->findUserByEmail($userValues[self::KEY_EMAIL]);
 
             return $user;
         }
