@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TeamController extends ApiController
 {
@@ -22,7 +23,7 @@ class TeamController extends ApiController
         $team = $teamService->getForUser($user);
 
         if (empty($team)) {
-            return $this->sendNotFoundResponse();
+            throw new NotFoundHttpException();
         }
 
         $members = $teamMemberService->getMembers($team);
