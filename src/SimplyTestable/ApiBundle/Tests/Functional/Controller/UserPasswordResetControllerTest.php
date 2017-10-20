@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class UserPasswordResetControllerTest extends BaseSimplyTestableTestCase
 {
@@ -52,20 +53,17 @@ class UserPasswordResetControllerTest extends BaseSimplyTestableTestCase
         $this->assertTrue($response->isSuccessful());
     }
 
-    public function testActivateActionInMaintenanceReadOnlyMode()
+    public function testResetPasswordActionInMaintenanceReadOnlyMode()
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $response = $this->userPasswordResetController->resetPasswordAction(new Request(), 'foo');
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
-
-        $response = $this->userPasswordResetController->resetPasswordAction(new Request(), 'foo');
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        try {
+            $this->userPasswordResetController->resetPasswordAction(new Request(), 'foo');
+            $this->fail('ServiceUnavailableHttpException not thrown');
+        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
+            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        }
     }
 
     public function testResetPasswordActionInvalidUser()

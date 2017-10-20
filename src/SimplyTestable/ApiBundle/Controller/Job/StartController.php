@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\
     as UserAccountPlanEnforcementException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class StartController extends ApiController
 {
@@ -26,12 +27,8 @@ class StartController extends ApiController
         $jobStartRequestFactory = $this->container->get('simplytestable.services.request.factory.job.start');
         $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         $jobStartRequest = $jobStartRequestFactory->create();

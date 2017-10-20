@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class JobController extends BaseJobController
@@ -207,11 +208,8 @@ class JobController extends BaseJobController
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
 
-        $isInMaintenanceReadOnlyState = $applicationStateService->isInMaintenanceReadOnlyState();
-        $isInMaintenanceBackupReadOnlyState = $applicationStateService->isInMaintenanceBackupReadOnlyState();
-
-        if ($isInMaintenanceReadOnlyState || $isInMaintenanceBackupReadOnlyState) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');

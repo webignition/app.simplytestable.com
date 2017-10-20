@@ -2,14 +2,15 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Worker;
 
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Controller\Worker\TasksController;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class TasksControllerTest extends BaseSimplyTestableTestCase
 {
@@ -31,21 +32,15 @@ class TasksControllerTest extends BaseSimplyTestableTestCase
 
     public function testRequestActionInMaintenanceReadOnlyMode()
     {
-        $request = new Request();
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableReadOnlyAction();
-
-        $response = $this->tasksController->requestAction($request);
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $maintenanceController->enableBackupReadOnlyAction();
-
-        $response = $this->tasksController->requestAction($request);
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $maintenanceController->disableReadOnlyAction();
+        try {
+            $this->tasksController->requestAction(new Request());
+            $this->fail('ServiceUnavailableHttpException not thrown');
+        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
+            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        }
     }
 
     public function testRequest()

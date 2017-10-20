@@ -2,12 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job;
 
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class JobControllerCancelActionTest extends AbstractJobControllerTest
 {
@@ -32,19 +33,15 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
     public function testCancelActionInMaintenanceReadOnlyMode()
     {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableReadOnlyAction();
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $response = $this->jobController->cancelAction('foo', 1);
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $maintenanceController->enableBackupReadOnlyAction();
-
-        $response = $this->jobController->cancelAction('foo', 1);
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $maintenanceController->disableReadOnlyAction();
+        try {
+            $this->jobController->cancelAction('foo', 1);
+            $this->fail('ServiceUnavailableHttpException not thrown');
+        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
+            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        }
     }
 
     /**

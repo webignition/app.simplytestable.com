@@ -82,6 +82,14 @@ class ApplicationStateService
     }
 
     /**
+     * @return bool
+     */
+    public function isInReadOnlyMode()
+    {
+        return $this->isInMaintenanceReadOnlyState() || $this->isInMaintenanceBackupReadOnlyState();
+    }
+
+    /**
      * @param string $state
      *
      * @return bool
