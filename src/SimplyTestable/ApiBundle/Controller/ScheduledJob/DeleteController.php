@@ -25,6 +25,6 @@ class DeleteController extends ScheduledJobController
 
         $scheduledJobService->delete($scheduledJob);
 
-        return $this->sendResponse();
+        return new Response();
     }
 }

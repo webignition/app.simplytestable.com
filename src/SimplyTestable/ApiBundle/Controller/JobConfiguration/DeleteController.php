@@ -41,7 +41,7 @@ class DeleteController extends JobConfigurationController
         if (empty($scheduledJob)) {
             $jobConfigurationService->delete($label);
 
-            return $this->sendResponse();
+            return new Response();
         }
 
         return $this->sendFailureResponse([

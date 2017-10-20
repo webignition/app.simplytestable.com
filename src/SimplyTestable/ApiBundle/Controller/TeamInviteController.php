@@ -115,7 +115,7 @@ class TeamInviteController extends ApiController
         }
 
         if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
-            return $this->sendResponse();
+            return new Response();
         }
 
         $scheduledJobService->setUser($this->getUser());
@@ -134,7 +134,7 @@ class TeamInviteController extends ApiController
             $teamInviteService->remove($invite);
         }
 
-        return $this->sendResponse();
+        return new Response();
     }
 
     /**
@@ -221,7 +221,7 @@ class TeamInviteController extends ApiController
 
         $teamInviteService->remove($teamInviteService->getForTeamAndUser($team, $invitee));
 
-        return $this->sendResponse();
+        return new Response();
     }
 
     /**
@@ -247,7 +247,7 @@ class TeamInviteController extends ApiController
             $teamInviteService->remove($invite);
         }
 
-        return $this->sendResponse();
+        return new Response();
     }
 
     /**
@@ -305,6 +305,6 @@ class TeamInviteController extends ApiController
             $teamInviteService->remove($invite);
         }
 
-        return $this->sendResponse();
+        return new Response();
     }
 }

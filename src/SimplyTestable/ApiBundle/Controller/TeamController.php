@@ -109,7 +109,7 @@ class TeamController extends ApiController
         try {
             $teamService->remove($this->getUser(), $member);
 
-            return $this->sendResponse();
+            return new Response();
         } catch (TeamServiceException $teamServiceException) {
             return $this->sendFailureResponse([
                 'X-TeamRemove-Error-Code' => $teamServiceException->getCode(),
@@ -135,7 +135,7 @@ class TeamController extends ApiController
 
         $teamMemberService->remove($this->getUser());
 
-        return $this->sendResponse();
+        return new Response();
     }
 
     /**

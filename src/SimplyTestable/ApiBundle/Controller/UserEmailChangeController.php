@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use Egulias\EmailValidator\EmailValidator;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserEmailChangeController extends ApiController
 {
@@ -28,7 +29,7 @@ class UserEmailChangeController extends ApiController
 
         if ($this->getUserEmailChangeRequestService()->hasForUser($user)) {
             if ($this->getUserEmailChangeRequestService()->findByUser($user)->getNewEmail() === $new_email) {
-                return $this->sendResponse();
+                return new Response();
             }
 
             throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
@@ -48,7 +49,7 @@ class UserEmailChangeController extends ApiController
 
         $this->getUserEmailChangeRequestService()->create($user, $new_email);
 
-        return $this->sendResponse();
+        return new Response();
     }
 
 
@@ -84,7 +85,7 @@ class UserEmailChangeController extends ApiController
 
         $this->getUserEmailChangeRequestService()->removeForUser($user);
 
-        return $this->sendResponse();
+        return new Response();
     }
 
 
@@ -126,7 +127,7 @@ class UserEmailChangeController extends ApiController
 
         $this->getUserEmailChangeRequestService()->removeForUser($user);
 
-        return $this->sendResponse();
+        return new Response();
     }
 
 
