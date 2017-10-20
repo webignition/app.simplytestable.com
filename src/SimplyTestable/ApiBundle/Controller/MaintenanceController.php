@@ -65,7 +65,7 @@ class MaintenanceController extends ApiController
             }
         }
 
-        return $this->sendResponse($responseLines);
+        return new JsonResponse($responseLines);
     }
 
     /**
