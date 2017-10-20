@@ -2,26 +2,26 @@
 
 namespace SimplyTestable\ApiBundle\Adapter\Stripe\Customer;
 
+use Stripe\Customer as StripeCustomer;
+use webignition\Model\Stripe\Customer as StripeCustomerModel;
+
 /**
- * Translates Stripe-provided \Stripe_Customer into webignition\Model\Stripe\Customer
+ * Translates Stripe-provided Stripe\Customer into webignition\Model\Stripe\Customer
  */
-class StripeCustomerAdapter {
-    
-    public function getStripeCustomer(\Stripe_Customer $customer) {
-        return new \webignition\Model\Stripe\Customer($this->stripeCustomerToJson($customer));
-    }
+class StripeCustomerAdapter
+{
+    public function getStripeCustomer(StripeCustomer $customer)
+    {
+        $stripeCustomerData = json_decode($customer->__toJSON());
 
+        $stripeCustomerData->id = $customer->id;
 
-    private function stripeCustomerToJson(\Stripe_Customer $customer) {
-        $stripeCustomerStdObject = json_decode(json_encode($customer->__toArray(true)));
-
-        $stripeCustomerStdObject->id = $customer->id;
-
-        if (isset($stripeCustomerStdObject->discount) && isset($stripeCustomerStdObject->discount->coupon)) {
-            $stripeCustomerStdObject->discount->coupon->id = $customer->discount->coupon->id;
+        if (isset($stripeCustomerData->discount) && isset($stripeCustomerData->discount->coupon)) {
+            $stripeCustomerData->discount->coupon->id = $customer->discount->coupon->id;
         }
 
-        return json_encode($stripeCustomerStdObject);
+        $stripeCustomerJson = json_encode($stripeCustomerData, JSON_PRETTY_PRINT);
+
+        return new StripeCustomerModel($stripeCustomerJson);
     }
-    
 }

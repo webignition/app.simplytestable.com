@@ -28,7 +28,7 @@
         "webignition/website-rss-feed-finder":">=0.2.1,<1.0",
         "guzzle/guzzle":">=3.8.0,<4",
         "jasonlewis/expressive-date": "1.0.*",
-        "stripe/stripe-php": "1.7.15",
+        "stripe/stripe-php": "2.1.0",
         "webignition/html-validation-error-normaliser":"dev-master",
         "webignition/html-document-link-finder":">=0.7,<1.0",
         "webignition/url-resolver":">=0.3,<1.0",

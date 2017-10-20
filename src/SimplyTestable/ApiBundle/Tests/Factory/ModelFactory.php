@@ -8,6 +8,8 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
+use Stripe\Customer as StripeCustomer;
+use Stripe\Stripe;
 
 class ModelFactory
 {
@@ -100,5 +102,24 @@ class ModelFactory
         $taskType->setName($taskTypeValues[self::TASK_TYPE_NAME]);
 
         return $taskType;
+    }
+
+    /**
+     * @param string $stripeCustomerId
+     * @param string $stripeCustomerJson
+     *
+     * @return StripeCustomer
+     */
+    public static function createStripeCustomer($stripeCustomerId, $stripeCustomerJson)
+    {
+        StripeApiFixtureFactory::set(
+            [$stripeCustomerJson]
+        );
+
+        Stripe::setApiKey('foo');
+
+        $stripeCustomer = StripeCustomer::retrieve($stripeCustomerId);
+
+        return $stripeCustomer;
     }
 }

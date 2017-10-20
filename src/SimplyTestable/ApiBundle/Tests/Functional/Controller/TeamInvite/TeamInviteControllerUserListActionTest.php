@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite;
 
+use SimplyTestable\ApiBundle\Tests\Factory\UserAccountPlanFactory;
+
 class TeamInviteControllerUserListActionTest extends AbstractTeamInviteControllerTest
 {
     public function testUserListActionGetRequest()
@@ -60,14 +62,12 @@ class TeamInviteControllerUserListActionTest extends AbstractTeamInviteControlle
     public function testUserListActionHasInvitesPremiumPlanUser()
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
         $user = $this->users['private'];
         $teamInviteService->get($this->users['leader'], $user);
 
-        $agencyPlan = $accountPlanService->find('agency');
-        $userAccountPlanService->subscribe($user, $agencyPlan);
+        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
+        $userAccountPlanFactory->create($user, 'agency');
 
         $this->setUser($user);
 

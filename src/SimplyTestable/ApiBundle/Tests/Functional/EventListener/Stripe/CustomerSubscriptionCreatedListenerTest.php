@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Tests\Factory\CurlExceptionFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -128,24 +129,21 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
      * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
-     * @param array $stripeServiceResponses
+     * @param string[] $stripeApiHttpFixtures
      * @param array $expectedWebClientRequestDataCollection
      */
     public function testOnCustomerSubscriptionCreated(
         $httpFixtures,
         $stripeEventFixtures,
         $userName,
-        $stripeServiceResponses,
+        $stripeApiHttpFixtures,
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
-        $stripeService = $this->container->get('simplytestable.services.stripeservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
-        foreach ($stripeServiceResponses as $methodName => $responseData) {
-            $stripeService->addResponseData($methodName, $responseData);
-        }
+        StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 
         $this->queueHttpFixtures($httpFixtures);
 
@@ -194,7 +192,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
                     ]
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [],
+                'stripeApiHttpFixtures' => [],
                 'expectedWebClientRequestDataCollection' => [
                     [
                         'event' =>  'customer.subscription.created',
@@ -230,15 +228,8 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
                     ],
                 ],
                 'user' => 'private',
-                'stripeServiceResponses' => [
-                    'getCustomer' => [
-                        'active_card' => [
-                            'exp_month' => '01',
-                            'exp_year' => '99',
-                            'last4' => '1234',
-                            'type' => 'Foo'
-                        ]
-                    ],
+                'stripeApiHttpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
                 ],
                 'expectedWebClientRequestDataCollection' => [
                     [
@@ -274,8 +265,8 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
                     ]
                 ],
                 'user' => 'private',
-                'stripeServiceResponses' => [
-                    'getCustomer' => [],
+                'stripeApiHttpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-nocard-nosub'),
                 ],
                 'expectedWebClientRequestDataCollection' => [
                     [
@@ -291,5 +282,12 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
                 ],
             ],
         ];
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        \Mockery::close();
     }
 }

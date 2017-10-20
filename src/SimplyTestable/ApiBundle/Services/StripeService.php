@@ -1,39 +1,38 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
-use Stripe;
-use Stripe_Customer;
+use Stripe\Stripe;
+use Stripe\Customer as StripeCustomer;
 use SimplyTestable\ApiBundle\Adapter\Stripe\Customer\StripeCustomerAdapter;
+use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
-class StripeService {    
-    
+class StripeService
+{
     /**
-     * 
+     * @var StripeCustomerAdapter
+     */
+    private $stripeCustomerAdapter;
+
+    /**
      * @param string $apiKey
      */
-    public function __construct($apiKey) {
+    public function __construct($apiKey)
+    {
         Stripe::setApiKey($apiKey);
+        $this->stripeCustomerAdapter = new StripeCustomerAdapter();
     }
-    
-    /**
-     * 
-     * @return string
-     */
-    public function getApiKey() {
-        return Stripe::getApiKey();
-    }
-
 
     /**
      * @param User $user
      * @param string|null $coupon
-     * @return \webignition\Model\Stripe\Customer
+     *
+     * @return StripeCustomerModel
      */
-    public function createCustomer(User $user, $coupon = null) {
-        $adapter = new StripeCustomerAdapter();
-
+    public function createCustomer(User $user, $coupon = null)
+    {
         $customerProperties = [
             'email' => $user->getEmail()
         ];
@@ -42,73 +41,73 @@ class StripeService {
             $customerProperties['coupon'] = $coupon;
         }
 
-        return $adapter->getStripeCustomer(Stripe_Customer::create($customerProperties));
+        $customer = StripeCustomer::create($customerProperties);
+
+        return $this->stripeCustomerAdapter->getStripeCustomer($customer);
     }
-    
-    
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
-     * @return \webignition\Model\Stripe\Customer
+     * @param UserAccountPlan $userAccountPlan
+     *
+     * @return StripeCustomerModel
      */
-    public function getCustomer(UserAccountPlan $userAccountPlan) {        
-        if ($userAccountPlan->hasStripeCustomer()) {            
-            $adapter = new StripeCustomerAdapter();
-            return $adapter->getStripeCustomer(Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer()));
-        }        
+    public function getCustomer(UserAccountPlan $userAccountPlan)
+    {
+        $stripeCustomerId = $userAccountPlan->getStripeCustomer();
+        if (empty($stripeCustomerId)) {
+            return null;
+        }
+
+        $customer = StripeCustomer::retrieve($stripeCustomerId);
+
+        return $this->stripeCustomerAdapter->getStripeCustomer($customer);
     }
-    
-    
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @param UserAccountPlan $userAccountPlan
      * @param array $updatedProperties
+     *
+     * @return StripeCustomerModel
      */
-    public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties) {
-        $customer = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
-        
+    public function updateCustomer(UserAccountPlan $userAccountPlan, $updatedProperties)
+    {
+        $customer = StripeCustomer::retrieve($userAccountPlan->getStripeCustomer());
+
         foreach ($updatedProperties as $key => $value) {
             $customer->{$key} = $value;
         }
 
-        $customer->save();        
-    }
+        $customer = $customer->save();
 
+        return $this->stripeCustomerAdapter->getStripeCustomer($customer);
+    }
 
     /**
      * @param UserAccountPlan $userAccountPlan
-     * @return UserAccountPlan
      */
-    public function subscribe(UserAccountPlan $userAccountPlan) {
-        $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
-        $stripeCustomerObject->updateSubscription(array(
+    public function subscribe(UserAccountPlan $userAccountPlan)
+    {
+        $customer = StripeCustomer::retrieve($userAccountPlan->getStripeCustomer());
+
+        $trialEndTimestamp = ($userAccountPlan->getStartTrialPeriod() <= 0)
+            ? 'now'
+            : time() + ($userAccountPlan->getStartTrialPeriod() * 86400);
+
+        $customer->updateSubscription([
             'plan' => $userAccountPlan->getPlan()->getStripeId(),
-            'trial_end' => $this->getTrialEndTimestamp($userAccountPlan)
-        ));
-        
-        return $userAccountPlan;
+            'trial_end' => $trialEndTimestamp
+        ]);
     }
-    
-    
-    private function getTrialEndTimestamp(UserAccountPlan $userAccountPlan) {
-        if ($userAccountPlan->getStartTrialPeriod() <= 0) {
-            return 'now';
-        }
-        
-        return time() + ($userAccountPlan->getStartTrialPeriod() * 86400);
-    }
-    
-    
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\UserAccountPlan $userAccountPlan
+     * @param UserAccountPlan $userAccountPlan
      */
-    public function unsubscribe(UserAccountPlan $userAccountPlan) {        
-        $stripeCustomerObject = Stripe_Customer::retrieve($userAccountPlan->getStripeCustomer());
-        
-        if (isset($stripeCustomerObject->subscription) && !is_null($stripeCustomerObject->subscription)) {
-            $stripeCustomerObject->cancelSubscription();
-        }      
+    public function unsubscribe(UserAccountPlan $userAccountPlan)
+    {
+        $customer = StripeCustomer::retrieve($userAccountPlan->getStripeCustomer());
+
+        if (isset($customer->subscription) && !is_null($customer->subscription)) {
+            $customer->cancelSubscription();
+        }
     }
-    
 }

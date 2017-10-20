@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 
@@ -15,24 +16,21 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
      * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
-     * @param array $stripeServiceResponses
+     * @param array $stripeApiHttpFixtures
      * @param array $expectedWebClientRequestDataCollection
      */
     public function testOnInvoicePaymentFailed(
         $httpFixtures,
         $stripeEventFixtures,
         $userName,
-        $stripeServiceResponses,
+        $stripeApiHttpFixtures,
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
-        $stripeService = $this->container->get('simplytestable.services.stripeservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
-        foreach ($stripeServiceResponses as $methodName => $responseData) {
-            $stripeService->addResponseData($methodName, $responseData);
-        }
+        StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 
         $this->queueHttpFixtures($httpFixtures);
 
@@ -69,7 +67,9 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
                     'invoice.payment_failed' => [],
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [],
+                'stripeApiHttpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-nocard-hassub'),
+                ],
                 'expectedWebClientRequestDataCollection' => [],
             ],
             'invoice.payment_failed; has card' => [
@@ -104,15 +104,8 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
                     ]
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [
-                    'getCustomer' => [
-                        'active_card' => [
-                            'exp_month' => '01',
-                            'exp_year' => '99',
-                            'last4' => '1234',
-                            'type' => 'Foo'
-                        ]
-                    ],
+                'stripeApiHttpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
                 ],
                 'expectedWebClientRequestDataCollection' => [
                     [
@@ -151,15 +144,8 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
                     ]
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [
-                    'getCustomer' => [
-                        'active_card' => [
-                            'exp_month' => '01',
-                            'exp_year' => '99',
-                            'last4' => '1234',
-                            'type' => 'Foo'
-                        ]
-                    ],
+                'stripeApiHttpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
                 ],
                 'expectedWebClientRequestDataCollection' => [
                     [
@@ -220,15 +206,8 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
                     ]
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [
-                    'getCustomer' => [
-                        'active_card' => [
-                            'exp_month' => '01',
-                            'exp_year' => '99',
-                            'last4' => '1234',
-                            'type' => 'Foo'
-                        ]
-                    ],
+                'stripeApiHttpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
                 ],
                 'expectedWebClientRequestDataCollection' => [
                     [
@@ -295,15 +274,8 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
                     ]
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [
-                    'getCustomer' => [
-                        'active_card' => [
-                            'exp_month' => '01',
-                            'exp_year' => '99',
-                            'last4' => '1234',
-                            'type' => 'Foo'
-                        ]
-                    ],
+                'stripeApiHttpFixtures' => [
+                    StripeApiFixtureFactory::load('customer-hascard-hassub'),
                 ],
                 'expectedWebClientRequestDataCollection' => [
                     [
@@ -326,5 +298,12 @@ class InvoicePaymentFailedListenerTest extends AbstractStripeEventListenerTest
                 ],
             ],
         ];
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        \Mockery::close();
     }
 }

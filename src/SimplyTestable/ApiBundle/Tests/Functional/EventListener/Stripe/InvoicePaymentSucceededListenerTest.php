@@ -15,24 +15,17 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
      * @param array $httpFixtures
      * @param array $stripeEventFixtures
      * @param string $userName
-     * @param array $stripeServiceResponses
      * @param array $expectedWebClientRequestDataCollection
      */
     public function testOnInvoicePaymentSucceeded(
         $httpFixtures,
         $stripeEventFixtures,
         $userName,
-        $stripeServiceResponses,
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
-        $stripeService = $this->container->get('simplytestable.services.stripeservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-
-        foreach ($stripeServiceResponses as $methodName => $responseData) {
-            $stripeService->addResponseData($methodName, $responseData);
-        }
 
         $this->queueHttpFixtures($httpFixtures);
 
@@ -76,7 +69,6 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
                     ]
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [],
                 'expectedWebClientRequestDataCollection' => [],
             ],
             'invoice.payment_succeeded; no discount' => [
@@ -112,7 +104,6 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
                     ]
                 ],
                 'user' => 'public',
-                'stripeServiceResponses' => [],
                 'expectedWebClientRequestDataCollection' => [
                     [
                         'event' =>  'invoice.payment_succeeded',
@@ -174,7 +165,6 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
                     ]
                 ],
                 'user' => 'private',
-                'stripeServiceResponses' => [],
                 'expectedWebClientRequestDataCollection' => [
                     [
                         'event' =>  'invoice.payment_succeeded',
