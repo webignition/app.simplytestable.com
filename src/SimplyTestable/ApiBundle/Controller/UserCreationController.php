@@ -61,7 +61,7 @@ class UserCreationController extends ApiController
             }
 
             $user->setPlainPassword($password);
-            $userService->updatePassword($user);
+            $userManager->updatePassword($user);
         }
 
         $coupon = rawurldecode(trim($requestData->get('coupon')));
