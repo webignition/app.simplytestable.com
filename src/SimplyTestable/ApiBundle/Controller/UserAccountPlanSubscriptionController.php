@@ -48,7 +48,7 @@ class UserAccountPlanSubscriptionController extends ApiController
         try {
             $userAccountPlanService->subscribe($this->getUser(), $plan);
         } catch (StripeAuthenticationError $stripeAuthenticationError) {
-            return $this->sendForbiddenResponse();
+            return Response::create('', 403);
         } catch (StripeCardError $stripeCardError) {
             $userAccountPlanService->removeCurrentForUser($this->getUser());
             return $this->sendFailureResponse([
