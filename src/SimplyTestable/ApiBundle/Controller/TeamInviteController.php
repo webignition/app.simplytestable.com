@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TeamInviteController extends ApiController
 {
@@ -259,7 +260,7 @@ class TeamInviteController extends ApiController
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         if (!$teamInviteService->hasForToken(trim($token))) {
-            return $this->sendNotFoundResponse();
+            throw new NotFoundHttpException();
         }
 
         return $this->sendResponse($teamInviteService->getForToken($token));

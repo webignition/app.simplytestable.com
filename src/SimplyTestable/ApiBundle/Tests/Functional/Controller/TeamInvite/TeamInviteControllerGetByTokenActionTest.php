@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\TeamInvite;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControllerTest
 {
@@ -34,9 +35,9 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
 
     public function testGetByTokenActionNotFound()
     {
-        $response = $this->teamInviteController->getByTokenAction('foo');
+        $this->setExpectedException(NotFoundHttpException::class);
 
-        $this->assertTrue($response->isNotFound());
+         $this->teamInviteController->getByTokenAction('foo');
     }
 
     public function testGetByTokenActionSuccess()
