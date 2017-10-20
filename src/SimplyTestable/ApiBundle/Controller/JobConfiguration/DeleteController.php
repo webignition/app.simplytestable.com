@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DeleteController extends JobConfigurationController
 {
@@ -32,7 +33,7 @@ class DeleteController extends JobConfigurationController
 
         $jobConfiguration = $jobConfigurationService->get($label);
         if (is_null($jobConfiguration)) {
-            return $this->sendNotFoundResponse();
+            throw new NotFoundHttpException();
         }
 
         $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
