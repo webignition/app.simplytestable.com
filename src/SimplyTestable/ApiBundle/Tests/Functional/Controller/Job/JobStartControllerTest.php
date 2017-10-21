@@ -15,6 +15,7 @@ use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class JobStartControllerTest extends BaseSimplyTestableTestCase
@@ -96,21 +97,18 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
 
     public function testStartActionInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
         $request = new Request();
         $this->container->get('request_stack')->push($request);
 
-        $response = $this->jobStartController->startAction();
-        $this->assertEquals(503, $response->getStatusCode());
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
-
-        $response = $this->jobStartController->startAction();
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        try {
+            $this->jobStartController->startAction();
+            $this->fail('ServiceUnavailableHttpException not thrown');
+        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
+            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        }
     }
 
     public function testStartActionUnroutableWebsite()

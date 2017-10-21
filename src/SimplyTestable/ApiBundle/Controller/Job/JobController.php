@@ -7,10 +7,12 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class JobController extends BaseJobController
@@ -207,11 +209,8 @@ class JobController extends BaseJobController
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
 
-        $isInMaintenanceReadOnlyState = $applicationStateService->isInMaintenanceReadOnlyState();
-        $isInMaintenanceBackupReadOnlyState = $applicationStateService->isInMaintenanceBackupReadOnlyState();
-
-        if ($isInMaintenanceReadOnlyState || $isInMaintenanceBackupReadOnlyState) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
@@ -300,7 +299,7 @@ class JobController extends BaseJobController
             );
         }
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 
     /**
@@ -367,7 +366,7 @@ class JobController extends BaseJobController
 
         $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($job);
 
-        return $this->sendResponse($taskIds);
+        return new JsonResponse($taskIds);
     }
 
     /**
@@ -388,7 +387,9 @@ class JobController extends BaseJobController
             return $response;
         }
 
-        return $this->sendResponse($this->getTaskService()->getUrlsByJob($job));
+        $urls = $this->getTaskService()->getUrlsByJob($job);
+
+        return new JsonResponse($urls);
     }
 
     /**

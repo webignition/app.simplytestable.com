@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractUserAccountPlanSubscriptionControllerTest
 {
@@ -45,15 +46,12 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $response = $this->userAccountPlanSubscriptionController->subscribeAction('foo', 'bar');
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
-
-        $response = $this->userAccountPlanSubscriptionController->subscribeAction('foo', 'bar');
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        try {
+            $this->userAccountPlanSubscriptionController->subscribeAction('foo', 'bar');
+            $this->fail('ServiceUnavailableHttpException not thrown');
+        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
+            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        }
     }
 
     /**

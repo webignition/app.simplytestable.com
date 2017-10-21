@@ -5,8 +5,10 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TeamInviteController extends ApiController
 {
@@ -114,7 +116,7 @@ class TeamInviteController extends ApiController
         }
 
         if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
-            return $this->sendResponse();
+            return new Response();
         }
 
         $scheduledJobService->setUser($this->getUser());
@@ -133,7 +135,7 @@ class TeamInviteController extends ApiController
             $teamInviteService->remove($invite);
         }
 
-        return $this->sendResponse();
+        return new Response();
     }
 
     /**
@@ -175,7 +177,7 @@ class TeamInviteController extends ApiController
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
-            return $this->sendResponse([]);
+            return new JsonResponse([]);
         }
 
         return $this->sendResponse($teamInviteService->getForUser($this->getUser()));
@@ -220,7 +222,7 @@ class TeamInviteController extends ApiController
 
         $teamInviteService->remove($teamInviteService->getForTeamAndUser($team, $invitee));
 
-        return $this->sendResponse();
+        return new Response();
     }
 
     /**
@@ -246,7 +248,7 @@ class TeamInviteController extends ApiController
             $teamInviteService->remove($invite);
         }
 
-        return $this->sendResponse();
+        return new Response();
     }
 
     /**
@@ -259,7 +261,7 @@ class TeamInviteController extends ApiController
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         if (!$teamInviteService->hasForToken(trim($token))) {
-            return $this->sendNotFoundResponse();
+            throw new NotFoundHttpException();
         }
 
         return $this->sendResponse($teamInviteService->getForToken($token));
@@ -304,6 +306,6 @@ class TeamInviteController extends ApiController
             $teamInviteService->remove($invite);
         }
 
-        return $this->sendResponse();
+        return new Response();
     }
 }

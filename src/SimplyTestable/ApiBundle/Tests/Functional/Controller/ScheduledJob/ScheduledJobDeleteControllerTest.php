@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ScheduledJobDeleteControllerTest extends BaseSimplyTestableTestCase
 {
@@ -88,9 +89,9 @@ class ScheduledJobDeleteControllerTest extends BaseSimplyTestableTestCase
 
     public function testDeleteActionScheduledJobNotFound()
     {
-        $response = $this->scheduledJobDeleteController->deleteAction(0);
+        $this->setExpectedException(NotFoundHttpException::class);
 
-        $this->assertTrue($response->isNotFound());
+        $this->scheduledJobDeleteController->deleteAction(0);
     }
 
     public function testDeleteSuccess()

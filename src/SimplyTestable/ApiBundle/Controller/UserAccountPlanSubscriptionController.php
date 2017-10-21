@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as Use
 use Stripe\Error\Card as StripeCardError;
 use Stripe\Error\Authentication as StripeAuthenticationError;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class UserAccountPlanSubscriptionController extends ApiController
 {
@@ -23,12 +24,8 @@ class UserAccountPlanSubscriptionController extends ApiController
         $accountPlanService = $this->get('simplytestable.services.accountplanservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         if ($userService->isPublicUser($this->getUser())) {
@@ -48,7 +45,7 @@ class UserAccountPlanSubscriptionController extends ApiController
         try {
             $userAccountPlanService->subscribe($this->getUser(), $plan);
         } catch (StripeAuthenticationError $stripeAuthenticationError) {
-            return $this->sendForbiddenResponse();
+            return Response::create('', 403);
         } catch (StripeCardError $stripeCardError) {
             $userAccountPlanService->removeCurrentForUser($this->getUser());
             return $this->sendFailureResponse([
@@ -65,7 +62,7 @@ class UserAccountPlanSubscriptionController extends ApiController
             }
         }
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 
     /**
@@ -81,12 +78,8 @@ class UserAccountPlanSubscriptionController extends ApiController
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $stripeService = $this->container->get('simplytestable.services.stripeservice');
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         if ($userService->isPublicUser($this->getUser())) {
@@ -119,6 +112,6 @@ class UserAccountPlanSubscriptionController extends ApiController
             ));
         }
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 }

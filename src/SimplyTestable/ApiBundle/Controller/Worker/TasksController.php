@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Controller\ApiController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class TasksController extends ApiController
 {
@@ -14,12 +16,8 @@ class TasksController extends ApiController
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -64,18 +62,18 @@ class TasksController extends ApiController
         ));
 
         if ($limit === 0) {
-            return $this->sendResponse();
+            return new Response();
         }
 
         if ($resqueQueueService->contains('task-assign-collection', ['worker' => $workerHostname])) {
-            return $this->sendResponse();
+            return new Response();
         }
 
         $taskQueueService->setLimit($limit);
         $taskIds = $taskQueueService->getNext();
 
         if (empty($taskIds)) {
-            return $this->sendResponse();
+            return new Response();
         }
 
         $taskRepository = $entityManager->getRepository(Task::class);
@@ -100,6 +98,6 @@ class TasksController extends ApiController
             )
         );
 
-        return $this->sendResponse();
+        return new Response();
     }
 }

@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
@@ -18,6 +19,7 @@ use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFa
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
 {
@@ -34,6 +36,22 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->jobFactory = new JobFactory($this->container);
+    }
+
+    public function testCompleteActionInReadOnlyMode()
+    {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
+
+        $taskController = new TaskController();
+        $taskController->setContainer($this->container);
+
+        try {
+            $taskController->completeAction();
+            $this->fail('ServiceUnavailableHttpException not thrown');
+        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
+            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        }
     }
 
     /**

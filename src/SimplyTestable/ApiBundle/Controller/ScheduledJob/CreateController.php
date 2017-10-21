@@ -9,6 +9,7 @@ use Cron\Exception\InvalidPatternException;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class CreateController extends ScheduledJobController
 {
@@ -34,12 +35,8 @@ class CreateController extends ScheduledJobController
 
         $this->request = $request;
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         $requestData = $request->request;

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\ScheduledJob;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DeleteController extends ScheduledJobController
 {
@@ -19,11 +20,11 @@ class DeleteController extends ScheduledJobController
         $scheduledJob = $scheduledJobService->get($id);
 
         if (empty($scheduledJob)) {
-            return $this->sendNotFoundResponse();
+            throw new NotFoundHttpException();
         }
 
         $scheduledJobService->delete($scheduledJob);
 
-        return $this->sendResponse();
+        return new Response();
     }
 }

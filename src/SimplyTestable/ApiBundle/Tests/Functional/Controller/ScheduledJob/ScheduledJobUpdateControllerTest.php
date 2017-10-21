@@ -10,6 +10,8 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class ScheduledJobUpdateControllerTest extends BaseSimplyTestableTestCase
 {
@@ -97,22 +99,19 @@ class ScheduledJobUpdateControllerTest extends BaseSimplyTestableTestCase
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $response = $this->scheduledJobUpdateController->updateAction(new Request(), 0);
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
-
-        $response = $this->scheduledJobUpdateController->updateAction(new Request(), 0);
-        $this->assertEquals(503, $response->getStatusCode());
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        try {
+            $this->scheduledJobUpdateController->updateAction(new Request(), 0);
+            $this->fail('ServiceUnavailableHttpException not thrown');
+        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
+            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+        }
     }
 
     public function testUpdateActionScheduledJobNotFound()
     {
-        $response = $this->scheduledJobUpdateController->updateAction(new Request(), 0);
+        $this->setExpectedException(NotFoundHttpException::class);
 
-        $this->assertTrue($response->isNotFound());
+        $this->scheduledJobUpdateController->updateAction(new Request(), 0);
     }
 
     /**

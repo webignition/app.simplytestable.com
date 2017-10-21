@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Team;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 class TeamControllerGetActionTest extends AbstractTeamControllerTest
 {
     public function testGetActionGetRequest()
@@ -22,11 +24,11 @@ class TeamControllerGetActionTest extends AbstractTeamControllerTest
 
     public function testGetActionUserNotOnTeam()
     {
+        $this->setExpectedException(NotFoundHttpException::class);
+
         $this->setUser($this->users['private']);
 
-        $response = $this->teamController->getAction();
-
-        $this->assertTrue($response->isNotFound());
+        $this->teamController->getAction();
     }
 
     /**

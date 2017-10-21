@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class WorkerController extends ApiController
 {
@@ -27,12 +28,8 @@ class WorkerController extends ApiController
         );
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         $requestData = $request->request;
@@ -64,7 +61,7 @@ class WorkerController extends ApiController
         }
 
         if (Worker::STATE_UNACTIVATED !== $worker->getState()->getName()) {
-            return $this->sendSuccessResponse();
+            return new Response();
         }
 
         $activationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
@@ -88,6 +85,6 @@ class WorkerController extends ApiController
             )
         );
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 }

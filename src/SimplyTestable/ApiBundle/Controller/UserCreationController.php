@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class UserCreationController extends ApiController
 {
@@ -26,12 +27,8 @@ class UserCreationController extends ApiController
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         $requestData = $request->request;
@@ -85,7 +82,7 @@ class UserCreationController extends ApiController
             $userAccountPlanService->subscribe($user, $plan);
         }
 
-        return $this->sendSuccessResponse();
+        return new Response();
     }
 
     /**
@@ -101,12 +98,8 @@ class UserCreationController extends ApiController
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         $token = trim($token);

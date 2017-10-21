@@ -10,6 +10,8 @@ use SimplyTestable\ApiBundle\Exception\Controller\ScheduledJob\Update\Exception
     as ScheduledJobControllerUpdateException;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class UpdateController extends ScheduledJobController
 {
@@ -27,19 +29,15 @@ class UpdateController extends ScheduledJobController
             'simplytestable.services.scheduledjob.cronmodifier.validationservice'
         );
 
-        if ($applicationStateService->isInMaintenanceReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
-        }
-
-        if ($applicationStateService->isInMaintenanceBackupReadOnlyState()) {
-            return $this->sendServiceUnavailableResponse();
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
         }
 
         $scheduledJobService->setUser($this->getUser());
         $scheduledJob = $scheduledJobService->get($id);
 
         if (empty($scheduledJob)) {
-            return $this->sendNotFoundResponse();
+            throw new NotFoundHttpException();
         }
 
         $requestData = $request->request;
