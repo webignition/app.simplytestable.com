@@ -3,154 +3,151 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use Egulias\EmailValidator\EmailValidator;
+use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserEmailChangeController extends ApiController
 {
-    public function createAction($email_canonical, $new_email) {
+    /**
+     * @param string $email_canonical
+     * @param string $new_email
+     *
+     * @return Response
+     */
+    public function createAction($email_canonical, $new_email)
+    {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $emailCanonicalizer = $this->container->get('fos_user.util.email_canonicalizer');
+        $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $email_canonical = $this->getUserEmailChangeRequestService()->canonicalizeEmail($email_canonical);
-        $new_email = $this->getUserEmailChangeRequestService()->canonicalizeEmail($new_email);
+        $new_email = $emailCanonicalizer->canonicalize($new_email);
 
         $user = $this->getUser();
 
-        if (is_null($user)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
-        }
+        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
 
-        if (!$user->isEnabled()) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
-        }
+        /* @var UserEmailChangeRequest|null $existingRequest */
+        $existingUserRequest = $userEmailChangeRequestRepository->findOneBy([
+            'user' => $user,
+        ]);
 
-        if ($user->getEmailCanonical() !== $email_canonical) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
-        }
-
-        if ($this->getUserEmailChangeRequestService()->hasForUser($user)) {
-            if ($this->getUserEmailChangeRequestService()->findByUser($user)->getNewEmail() === $new_email) {
+        if (!empty($existingUserRequest)) {
+            if ($existingUserRequest->getNewEmail() === $new_email) {
                 return new Response();
             }
 
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
+            throw new ConflictHttpException();
         }
 
-        if (!$this->isEmailValid($new_email)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
+        $validator = new EmailValidator();
+        $isEmailValid = $validator->isValid($new_email);
+
+        if (!$isEmailValid) {
+            throw new BadRequestHttpException();
         }
 
         if ($userService->exists($new_email)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
+            throw new ConflictHttpException();
         }
 
-        if ($this->getUserEmailChangeRequestService()->hasForNewEmail($new_email)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
+        $existingNewEmailRequest = $userEmailChangeRequestRepository->findOneBy([
+            'newEmail' => $new_email,
+        ]);
+
+        if (!empty($existingNewEmailRequest)) {
+            throw new ConflictHttpException();
         }
 
-        $this->getUserEmailChangeRequestService()->create($user, $new_email);
+        $userEmailChangeRequestService->create($user, $new_email);
 
         return new Response();
     }
 
-
-    public function getAction($email_canonical) {
+    /**
+     * @param string $email_canonical
+     *
+     * @return Response
+     */
+    public function getAction($email_canonical)
+    {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $user = $userService->findUserByEmail($email_canonical);
-        if (is_null($user)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        if (empty($user)) {
+            throw new NotFoundHttpException();
         }
 
-        $emailChangeRequest = $this->getUserEmailChangeRequestService()->findByUser($user);
-        if (is_null($emailChangeRequest)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
+
+        $emailChangeRequest = $userEmailChangeRequestRepository->findOneBy([
+            'user' => $user,
+        ]);
+
+        if (empty($emailChangeRequest)) {
+            throw new NotFoundHttpException();
         }
 
         return $this->sendResponse($emailChangeRequest);
     }
 
-
-    public function cancelAction($email_canonical) {
-        $email_canonical = $this->getUserEmailChangeRequestService()->canonicalizeEmail($email_canonical);
+    /**
+     * @param $email_canonical
+     *
+     * @return Response
+     */
+    public function cancelAction($email_canonical)
+    {
+        $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
 
         $user = $this->getUser();
 
-        if (is_null($user)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
-        }
-
-        if ($user->getEmailCanonical() !== $email_canonical) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
-        }
-
-        $this->getUserEmailChangeRequestService()->removeForUser($user);
+        $userEmailChangeRequestService->removeForUser($user);
 
         return new Response();
     }
 
-
-    public function confirmAction($email_canonical, $token) {
+    /**
+     * @param string $email_canonical
+     * @param string $token
+     *
+     * @return Response
+     */
+    public function confirmAction($email_canonical, $token)
+    {
         $userService = $this->container->get('simplytestable.services.userservice');
-
-        $email_canonical = $this->getUserEmailChangeRequestService()->canonicalizeEmail($email_canonical);
-
+        $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
         $user = $this->getUser();
 
-        if (is_null($user)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
-        }
-
-        if ($user->getEmailCanonical() !== $email_canonical) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
-        }
-
-        $emailChangeRequest = $this->getUserEmailChangeRequestService()->findByUser($user);
-        if (is_null($emailChangeRequest)) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(404);
+        $emailChangeRequest = $userEmailChangeRequestService->findByUser($user);
+        if (empty($emailChangeRequest)) {
+            throw new NotFoundHttpException();
         }
 
         if ($token !== $emailChangeRequest->getToken()) {
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(400);
+            throw new BadRequestHttpException();
         }
 
         if ($userService->exists($emailChangeRequest->getNewEmail())) {
-            $this->getUserEmailChangeRequestService()->removeForUser($user);
-            throw new \Symfony\Component\HttpKernel\Exception\HttpException(409);
+            $userEmailChangeRequestService->removeForUser($user);
+            throw new ConflictHttpException();
         }
 
-        $user->setEmail($emailChangeRequest->getNewEmail());
-        $user->setEmailCanonical($emailChangeRequest->getNewEmail());
-        $user->setUsername($emailChangeRequest->getNewEmail());
-        $user->setUsernameCanonical($emailChangeRequest->getNewEmail());
+        $newEmail = $emailChangeRequest->getNewEmail();
+
+        $user->setEmail($newEmail);
+        $user->setEmailCanonical($newEmail);
+        $user->setUsername($newEmail);
+        $user->setUsernameCanonical($newEmail);
 
         $userService->updateUser($user);
 
-        $this->getUserEmailChangeRequestService()->removeForUser($user);
+        $userEmailChangeRequestService->removeForUser($user);
 
         return new Response();
     }
-
-
-
-    /**
-     *
-     * @param string $email
-     * @return boolean
-     */
-    private function isEmailValid($email) {
-        $validator = new EmailValidator;
-        return $validator->isValid($email);
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService
-     */
-    protected function getUserEmailChangeRequestService() {
-        return $this->get('simplytestable.services.useremailchangerequestservice');
-    }
-
-
-
 }
