@@ -1,282 +1,282 @@
 job_joblist_list:
-    pattern: /jobs/list/{limit}/{offset}/
-    defaults: { _controller: SimplyTestableApiBundle:Job\JobList:list, _format: json }           
-    
+    path: /jobs/list/{limit}/{offset}/
+    defaults: { _controller: SimplyTestableApiBundle:Job\JobList:list, _format: json }
+
 job_joblist_count:
-    pattern: /jobs/list/count/
-    defaults: { _controller: SimplyTestableApiBundle:Job\JobList:count, _format: json }      
-    
+    path: /jobs/list/count/
+    defaults: { _controller: SimplyTestableApiBundle:Job\JobList:count, _format: json }
+
 job_joblist_websites:
-    pattern: /jobs/list/websites/
-    defaults: { _controller: SimplyTestableApiBundle:Job\JobList:websites, _format: json }          
+    path: /jobs/list/websites/
+    defaults: { _controller: SimplyTestableApiBundle:Job\JobList:websites, _format: json }
 
 job_start_start:
-    pattern: /job/{site_root_url}/start/
+    path: /job/{site_root_url}/start/
     defaults: { _controller: SimplyTestableApiBundle:Job\Start:start, _format: json }
     requirements:
         site_root_url: ".+"
-        
-job_job_latest:        
-  pattern: /job/{site_root_url}/latest/
-  defaults: { _controller: SimplyTestableApiBundle:Job\Job:latest, _format: json } 
+
+job_job_latest:
+  path: /job/{site_root_url}/latest/
+  defaults: { _controller: SimplyTestableApiBundle:Job\Job:latest, _format: json }
   requirements:
-    site_root_url: ".+"   
-        
+    site_root_url: ".+"
+
 job_job_tasks:
-  pattern: /job/{site_root_url}/{test_id}/tasks/
-  defaults: { _controller: SimplyTestableApiBundle:Job\Job:tasks, _format: json } 
+  path: /job/{site_root_url}/{test_id}/tasks/
+  defaults: { _controller: SimplyTestableApiBundle:Job\Job:tasks, _format: json }
   requirements:
-    site_root_url: ".+"   
-    
+    site_root_url: ".+"
+
 job_job_taskids:
-  pattern: /job/{site_root_url}/{test_id}/tasks/ids/
-  defaults: { _controller: SimplyTestableApiBundle:Job\Job:taskIds, _format: json } 
+  path: /job/{site_root_url}/{test_id}/tasks/ids/
+  defaults: { _controller: SimplyTestableApiBundle:Job\Job:taskIds, _format: json }
   requirements:
-    site_root_url: ".+"     
+    site_root_url: ".+"
 
 job_job_listurls:
-    pattern: /job/{site_root_url}/{test_id}/urls/
-    defaults: { _controller: SimplyTestableApiBundle:Job\Job:listUrls, _format: json }    
-    requirements:
-        site_root_url: ".+"  
-        
-job_job_cancel:
-    pattern: /job/{site_root_url}/{test_id}/cancel/
-    defaults: { _controller: SimplyTestableApiBundle:Job\Job:cancel, _format: json }    
-    requirements:
-        site_root_url: ".+"            
-        
-        
-job_job_setpublic:
-    pattern: /job/{site_root_url}/{test_id}/set-public/
-    defaults: { _controller: SimplyTestableApiBundle:Job\Job:setPublic, _format: json }    
-    requirements:
-        site_root_url: ".+"           
-        
-job_job_setprivate:
-    pattern: /job/{site_root_url}/{test_id}/set-private/
-    defaults: { _controller: SimplyTestableApiBundle:Job\Job:setPrivate, _format: json }    
-    requirements:
-        site_root_url: ".+"          
-        
-        
-job_job_ispublic:
-    pattern: /job/{site_root_url}/{test_id}/is_public/
-    defaults: { _controller: SimplyTestableApiBundle:Job\Job:isPublic, _format: json }    
-    requirements:
-        site_root_url: ".+"        
-        
-job_start_retest:
-    pattern: /job/{site_root_url}/{test_id}/re-test/
-    defaults: { _controller: SimplyTestableApiBundle:Job\Start:retest, _format: json }    
-    requirements:
-        site_root_url: ".+"          
-        
-job_job_status:
-    pattern: /job/{site_root_url}/{test_id}/
-    defaults: { _controller: SimplyTestableApiBundle:Job\Job:status, _format: json }    
+    path: /job/{site_root_url}/{test_id}/urls/
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:listUrls, _format: json }
     requirements:
         site_root_url: ".+"
-    
+
+job_job_cancel:
+    path: /job/{site_root_url}/{test_id}/cancel/
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:cancel, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+
+job_job_setpublic:
+    path: /job/{site_root_url}/{test_id}/set-public/
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:setPublic, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+job_job_setprivate:
+    path: /job/{site_root_url}/{test_id}/set-private/
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:setPrivate, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+
+job_job_ispublic:
+    path: /job/{site_root_url}/{test_id}/is_public/
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:isPublic, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+job_start_retest:
+    path: /job/{site_root_url}/{test_id}/re-test/
+    defaults: { _controller: SimplyTestableApiBundle:Job\Start:retest, _format: json }
+    requirements:
+        site_root_url: ".+"
+
+job_job_status:
+    path: /job/{site_root_url}/{test_id}/
+    defaults: { _controller: SimplyTestableApiBundle:Job\Job:status, _format: json }
+    requirements:
+        site_root_url: ".+"
+
 task_type_count:
-  pattern: /tasks/{task_type}/{state_name}/count/
-  defaults: { _controller: SimplyTestableApiBundle:Task:taskTypeCount, _format: json }         
-   
-        
+  path: /tasks/{task_type}/{state_name}/count/
+  defaults: { _controller: SimplyTestableApiBundle:Task:taskTypeCount, _format: json }
+
+
 worker_activate:
-  pattern: /worker/activate/
-  defaults: { _controller: SimplyTestableApiBundle:Worker:activate, _format: json }   
-  
+  path: /worker/activate/
+  defaults: { _controller: SimplyTestableApiBundle:Worker:activate, _format: json }
+
 task_complete:
-  pattern: /task/{canonical_url}/{task_type}/{parameter_hash}/complete/
+  path: /task/{canonical_url}/{task_type}/{parameter_hash}/complete/
   defaults: { _controller: SimplyTestableApiBundle:Task:complete, _format: json }
   requirements:
-      canonical_url: ".+"    
-  
+      canonical_url: ".+"
+
 status:
-  pattern: /
-  defaults: { _controller: SimplyTestableApiBundle:Status:index, _format: json }     
-  
+  path: /
+  defaults: { _controller: SimplyTestableApiBundle:Status:index, _format: json }
+
 usercreation_create:
-  pattern: /user/create/
-  defaults: { _controller: SimplyTestableApiBundle:UserCreation:create, _format: json }   
-  
+  path: /user/create/
+  defaults: { _controller: SimplyTestableApiBundle:UserCreation:create, _format: json }
+
 user_activate_failure:
-  pattern: /user/activate/
-  defaults: { _controller: SimplyTestableApiBundle:UserCreation:activate, _format: json }  
+  path: /user/activate/
+  defaults: { _controller: SimplyTestableApiBundle:UserCreation:activate, _format: json }
 
 user_get:
-  pattern: /user/{email_canonical}/
+  path: /user/{email_canonical}/
   defaults: { _controller: SimplyTestableApiBundle:User:get, _format: json }
 
 user_authenticate:
-  pattern: /user/{email_canonical}/authenticate/
+  path: /user/{email_canonical}/authenticate/
   defaults: { _controller: SimplyTestableApiBundle:User:authenticate, _format: json }
-  
+
 user_card_associate:
-  pattern: /user/{email_canonical}/card/{stripe_card_token}/associate/
-  defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:associateCard, _format: json }    
-  
+  path: /user/{email_canonical}/card/{stripe_card_token}/associate/
+  defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:associateCard, _format: json }
+
 user_plan_subscribe:
-  pattern: /user/{email_canonical}/{plan_name}/subscribe/
-  defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:subscribe, _format: json }               
-  
+  path: /user/{email_canonical}/{plan_name}/subscribe/
+  defaults: { _controller: SimplyTestableApiBundle:UserAccountPlanSubscription:subscribe, _format: json }
+
 user_list_stripe_events:
-  pattern: /user/{email_canonical}/stripe-events/{type}/
-  defaults: { _controller: SimplyTestableApiBundle:UserStripeEvent:list, _format: json }      
-  
+  path: /user/{email_canonical}/stripe-events/{type}/
+  defaults: { _controller: SimplyTestableApiBundle:UserStripeEvent:list, _format: json }
+
 usercreation_activate:
-  pattern: /user/activate/{token}/
+  path: /user/activate/{token}/
   defaults: { _controller: SimplyTestableApiBundle:UserCreation:activate, _format: json }
 
 user_get_token:
-  pattern: /user/{email_canonical}/token/
-  defaults: { _controller: SimplyTestableApiBundle:User:getToken, _format: json }    
-  
+  path: /user/{email_canonical}/token/
+  defaults: { _controller: SimplyTestableApiBundle:User:getToken, _format: json }
+
 user_reset_password:
-  pattern: /user/reset-password/{token}/
+  path: /user/reset-password/{token}/
   defaults: { _controller: SimplyTestableApiBundle:UserPasswordReset:resetPassword, _format: json }
-  
+
 user_exists:
-  pattern: /user/{email_canonical}/exists/
+  path: /user/{email_canonical}/exists/
   defaults: { _controller: SimplyTestableApiBundle:User:exists, _format: json }
 
 user_hasinvites:
-  pattern: /user/{email_canonical}/has-invites/
+  path: /user/{email_canonical}/has-invites/
   defaults: { _controller: SimplyTestableApiBundle:User:hasInvites, _format: json }
-  
+
 user_is_enabled:
-  pattern: /user/{email_canonical}/enabled/
-  defaults: { _controller: SimplyTestableApiBundle:User:isEnabled, _format: json }      
+  path: /user/{email_canonical}/enabled/
+  defaults: { _controller: SimplyTestableApiBundle:User:isEnabled, _format: json }
 
 user_email_change_request_create:
-  pattern: /user/{email_canonical}/email-change-request/{new_email}/create/
-  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:create, _format: json }   
-  
+  path: /user/{email_canonical}/email-change-request/{new_email}/create/
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:create, _format: json }
+
 user_email_change_request_get:
-  pattern: /user/{email_canonical}/email-change-request/
-  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:get, _format: json }     
-  
+  path: /user/{email_canonical}/email-change-request/
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:get, _format: json }
+
 user_email_change_request_cancel:
-  pattern: /user/{email_canonical}/email-change-request/cancel/
-  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:cancel, _format: json }   
-  
+  path: /user/{email_canonical}/email-change-request/cancel/
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:cancel, _format: json }
+
 user_email_change_request_confirm:
-  pattern: /user/{email_canonical}/email-change-request/{token}/
-  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:confirm, _format: json }   
-  
+  path: /user/{email_canonical}/email-change-request/{token}/
+  defaults: { _controller: SimplyTestableApiBundle:UserEmailChange:confirm, _format: json }
+
 disable_readonly:
-    pattern: /maintenance/disable-read-only/
-    defaults: { _controller: SimplyTestableApiBundle:Maintenance:disableReadOnly, _format: json }            
-        
+    path: /maintenance/disable-read-only/
+    defaults: { _controller: SimplyTestableApiBundle:Maintenance:disableReadOnly, _format: json }
+
 enable_readonly:
-    pattern: /maintenance/enable-read-only/
-    defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableReadOnly, _format: json }   
-    
+    path: /maintenance/enable-read-only/
+    defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableReadOnly, _format: json }
+
 leave_readonly:
-    pattern: /maintenance/leave-read-only/
-    defaults: { _controller: SimplyTestableApiBundle:Maintenance:leaveReadOnly, _format: json }       
-    
+    path: /maintenance/leave-read-only/
+    defaults: { _controller: SimplyTestableApiBundle:Maintenance:leaveReadOnly, _format: json }
+
 enable_backup_readonly:
-    pattern: /maintenance/enable-backup-read-only/
+    path: /maintenance/enable-backup-read-only/
     defaults: { _controller: SimplyTestableApiBundle:Maintenance:enableBackupReadOnly, _format: json }
-    
+
 stripe_webhook_receiver:
-    pattern: /stripe/webhook/receiver/
+    path: /stripe/webhook/receiver/
     defaults: { _controller: SimplyTestableApiBundle:Stripe\WebHook:index, _format: json }
 
 team_create:
-    pattern: /team/create/
+    path: /team/create/
     defaults: { _controller: SimplyTestableApiBundle:Team:create }
 
 team_get:
-    pattern: /team/
+    path: /team/
     defaults: { _controller: SimplyTestableApiBundle:Team:get}
 
 teaminvite_accept:
-    pattern: /team/invite/accept/
+    path: /team/invite/accept/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:accept}
 
 teaminvite_activateandaccept:
-    pattern: /team/invite/activate/accept/
+    path: /team/invite/activate/accept/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:activateAndAccept}
 
 teaminvite_decline:
-    pattern: /team/invite/decline/
+    path: /team/invite/decline/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:decline}
 
 teaminvite_get:
-    pattern: /team/invite/{invitee_email}/
+    path: /team/invite/{invitee_email}/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:get}
 
 teaminvite_getbytoken:
-    pattern: /team/invite/bytoken/{token}/
+    path: /team/invite/bytoken/{token}/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:getByToken}
 
 team_remove:
-    pattern: /team/remove/{member_email}/
+    path: /team/remove/{member_email}/
     defaults: { _controller: SimplyTestableApiBundle:Team:remove }
 
 team_leave:
-    pattern: /team/leave/
+    path: /team/leave/
     defaults: { _controller: SimplyTestableApiBundle:Team:leave }
 
 teaminvite_list:
-    pattern: /team/invites/
+    path: /team/invites/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:list }
 
 teaminvite_remove:
-    pattern: /team/invite/{invitee_email}/remove/
+    path: /team/invite/{invitee_email}/remove/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:remove }
 
 teaminvite_userlist:
-    pattern: /team/user/invites/
+    path: /team/user/invites/
     defaults: { _controller: SimplyTestableApiBundle:TeamInvite:userList }
 
 worker_tasks_request:
-    pattern: /worker/tasks/request/
+    path: /worker/tasks/request/
     defaults: { _controller: SimplyTestableApiBundle:Worker\Tasks:request }
 
 jobconfiguration_create_create:
-    pattern: /jobconfiguration/create/
+    path: /jobconfiguration/create/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Create:create }
 
 jobconfiguration_getlist_list:
-    pattern: /jobconfiguration/list/
+    path: /jobconfiguration/list/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\GetList:list, _format: json }
 
 jobconfiguration_delete_delete:
-    pattern: /jobconfiguration/{label}/delete/
+    path: /jobconfiguration/{label}/delete/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Delete:delete, _format: json }
     methods:  [POST]
 
 jobconfiguration_update_update:
-    pattern: /jobconfiguration/{label}/update/
+    path: /jobconfiguration/{label}/update/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Update:update, _format: json }
     methods:  [POST]
 
 jobconfiguration_get_get:
-    pattern: /jobconfiguration/{label}/
+    path: /jobconfiguration/{label}/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Get:get, _format: json }
 
 scheduledjob_create_create:
-    pattern: /scheduledjob/create/
+    path: /scheduledjob/create/
     defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Create:create }
 
 scheduledjob_getlist_list:
-    pattern: /scheduledjob/list/
+    path: /scheduledjob/list/
     defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\GetList:list }
 
 scheduledjob_delete_delete:
-    pattern: /scheduledjob/{id}/delete/
+    path: /scheduledjob/{id}/delete/
     defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Delete:delete, _format: json }
     methods:  [POST]
 
 scheduledjob_get_get:
-    pattern: /scheduledjob/{id}/
+    path: /scheduledjob/{id}/
     defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Get:get, _format: json }
 
 scheduledjob_update_update:
-    pattern: /scheduledjob/{id}/update/
+    path: /scheduledjob/{id}/update/
     defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Update:update, _format: json }
     methods:  [POST]
