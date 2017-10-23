@@ -19,7 +19,7 @@ class UserAccountPlanSubscriptionControllerAssociateCardActionTest extends
 
         $userFactory = new UserFactory($this->container);
 
-        $user = $userFactory->create([
+        $user = $userFactory->createAndActivateUser([
             UserFactory::KEY_PLAN_NAME => 'personal',
         ]);
 

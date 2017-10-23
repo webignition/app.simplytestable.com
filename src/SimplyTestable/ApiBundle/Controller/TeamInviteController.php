@@ -290,17 +290,19 @@ class TeamInviteController extends ApiController
         }
 
         $invite = $teamInviteService->getForToken($token);
+        $invitee = $invite->getUser();
+        $team = $invite->getTeam();
 
-        $userManipulator->activate($invite->getUser()->getUsername());
+        $userManipulator->activate($invitee->getUsername());
 
         $password = rawurldecode(trim($requestData->get('password')));
 
-        $invite->getUser()->setPlainPassword($password);
-        $userService->updateUser($invite->getUser());
+        $invitee->setPlainPassword($password);
+        $userService->updateUser($invitee);
 
-        $teamMemberService->add($invite->getTeam(), $invite->getUser());
+        $teamMemberService->add($team, $invitee);
 
-        $invites = $teamInviteService->getForUser($invite->getUser());
+        $invites = $teamInviteService->getForUser($invitee);
 
         foreach ($invites as $invite) {
             $teamInviteService->remove($invite);

@@ -9,6 +9,7 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
 {
     public function testGetByTokenActionGetRequest()
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         $invitee = $this->userFactory->create([
@@ -25,7 +26,7 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
         $this->getCrawler([
             'url' => $requestUrl,
             'method' => 'GET',
-            'user' => $invitee,
+            'user' => $userService->getAdminUser(),
         ]);
 
         $response = $this->getClientResponse();
@@ -42,13 +43,14 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
 
     public function testGetByTokenActionSuccess()
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         $invitee = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',
         ]);
 
-        $this->setUser($invitee);
+        $this->setUser($userService->getAdminUser());
 
         $invite = $teamInviteService->get($this->users['leader'], $invitee);
 

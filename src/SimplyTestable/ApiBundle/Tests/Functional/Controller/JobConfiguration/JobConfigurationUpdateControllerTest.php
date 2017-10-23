@@ -53,7 +53,7 @@ class JobConfigurationUpdateControllerTest extends BaseSimplyTestableTestCase
         $this->jobConfigurationUpdateController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
-        $this->user = $userFactory->create();
+        $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
 
         $this->jobConfigurationFactory = new JobConfigurationFactory($this->container);

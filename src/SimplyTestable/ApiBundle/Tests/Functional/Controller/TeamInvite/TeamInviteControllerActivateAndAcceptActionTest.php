@@ -23,9 +23,10 @@ class TeamInviteControllerActivateAndAcceptActionTest extends AbstractTeamInvite
         $this->getCrawler([
             'url' => $requestUrl,
             'method' => 'POST',
-            'user' => $invite->getUser(),
+            'user' => null,
             'parameters' => [
                 'token' => $invite->getToken(),
+                'password' => 'user password choice',
             ],
         ]);
 
@@ -56,8 +57,6 @@ class TeamInviteControllerActivateAndAcceptActionTest extends AbstractTeamInvite
 
         $this->assertFalse($inviteeUser->isEnabled());
         $this->assertFalse($teamMemberService->belongsToTeam($inviteeUser));
-
-        $this->setUser($inviteeUser);
 
         $response = $this->teamInviteController->activateAndAcceptAction(new Request([], [
             'token' => $invite->getToken(),

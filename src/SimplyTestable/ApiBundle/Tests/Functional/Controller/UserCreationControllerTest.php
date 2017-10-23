@@ -31,7 +31,7 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
         $this->userCreationController->setContainer($this->container);
     }
 
-    public function testCreateRequest()
+    public function testCreateActionPostRequest()
     {
         $router = $this->container->get('router');
         $requestUrl = $router->generate('usercreation_create');
@@ -45,7 +45,6 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
             ],
         ]);
 
-        /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());
@@ -314,6 +313,30 @@ class UserCreationControllerTest extends BaseSimplyTestableTestCase
                 ],
             ],
         ];
+    }
+
+    public function testActivateActionPostRequest()
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $publicUser = $userService->getPublicUser();
+
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->create();
+
+        $router = $this->container->get('router');
+        $requestUrl = $router->generate('usercreation_activate', [
+            'token' => $user->getConfirmationToken(),
+        ]);
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+            'method' => 'POST',
+            'user' => $publicUser,
+        ]);
+
+        $response = $this->getClientResponse();
+
+        $this->assertTrue($response->isSuccessful());
     }
 
     /**

@@ -33,7 +33,7 @@ class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
     public function testRequest()
     {
         $userFactory = new UserFactory($this->container);
-        $user = $userFactory->create();
+        $user = $userFactory->createAndActivateUser();
 
         $router = $this->container->get('router');
         $requestUrl = $router->generate('jobconfiguration_create_create');

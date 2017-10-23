@@ -2,25 +2,37 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job;
 
+use SimplyTestable\ApiBundle\Controller\Job\JobListController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Fixtures\Loader\JobLoader;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class JobListControllerTest extends BaseSimplyTestableTestCase
 {
     /**
      * @var Job[]
      */
-    protected $jobs;
+    private $jobs;
 
     /**
      * @var User[]
      */
-    protected $users;
+    private $users;
+
+    /**
+     * @var JobListController
+     */
+    private $jobListController;
+
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
 
     /**
      * {@inheritdoc}
@@ -34,6 +46,24 @@ class JobListControllerTest extends BaseSimplyTestableTestCase
 
         $jobLoader = new JobLoader($this->container);
         $this->jobs = $jobLoader->load('jobs.yml', $this->users);
+
+        $this->jobListController = new JobListController();
+        $this->jobListController->setContainer($this->container);
+
+        $this->requestStack = $this->container->get('request_stack');
+    }
+
+    public function testCountActionGetRequest()
+    {
+        $requestUrl = $this->container->get('router')->generate('job_joblist_count');
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+        ]);
+
+        $response = $this->getClientResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     /**
@@ -44,13 +74,11 @@ class JobListControllerTest extends BaseSimplyTestableTestCase
      */
     public function testCountAction($user, $expectedResponseData)
     {
-        $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_joblist_count'),
-            'user' => $this->users[$user],
-        ]);
+        $this->setUser($this->users[$user]);
 
-        /* @var RedirectResponse $response */
-        $response = $this->getClientResponse();
+        $this->requestStack->push(new Request());
+
+        $response = $this->jobListController->countAction();
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('application/json', $response->headers->get('content-type'));
@@ -75,6 +103,25 @@ class JobListControllerTest extends BaseSimplyTestableTestCase
                 'expectedResponseData' => 6,
             ],
         ];
+    }
+
+    public function testListActionGetRequest()
+    {
+        $requestUrl = $this->container->get('router')->generate(
+            'job_joblist_list',
+            [
+                'limit' => 0,
+                'offset' => 0,
+            ]
+        );
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+        ]);
+
+        $response = $this->getClientResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     /**
@@ -105,22 +152,13 @@ class JobListControllerTest extends BaseSimplyTestableTestCase
             $jobIdIndex[] = $job->getId();
         }
 
-        $this->getCrawler([
-            'url' => $this->container->get('router')->generate(
-                'job_joblist_list',
-                array_merge(
-                    [
-                        'limit' => $limit,
-                        'offset' => $offset,
-                    ],
-                    $query
-                )
-            ),
-            'user' => $this->users[$user],
-        ]);
+        $this->setUser($this->users[$user]);
 
-        /* @var RedirectResponse $response */
-        $response = $this->getClientResponse();
+        $request = new Request($query);
+
+        $this->requestStack->push($request);
+
+        $response = $this->jobListController->listAction($limit, $offset);
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('application/json', $response->headers->get('content-type'));
@@ -345,21 +383,30 @@ class JobListControllerTest extends BaseSimplyTestableTestCase
         ];
     }
 
+    public function testWebsitesActionGetRequest()
+    {
+        $this->getCrawler([
+            'url' => $this->container->get('router')->generate('job_joblist_websites'),
+        ]);
+
+        $response = $this->getClientResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
     /**
      * @dataProvider websitesActionDataProvider
      *
      * @param string $user
      * @param int $expectedResponseData
      */
-    public function testWebsitesAction($user, $expectedResponseData)
+    public function testWebsitesActionFoo($user, $expectedResponseData)
     {
-        $this->getCrawler([
-            'url' => $this->container->get('router')->generate('job_joblist_websites'),
-            'user' => $this->users[$user],
-        ]);
+        $this->requestStack->push(new Request());
 
-        /* @var RedirectResponse $response */
-        $response = $this->getClientResponse();
+        $this->setUser($this->users[$user]);
+
+        $response = $this->jobListController->websitesAction();
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('application/json', $response->headers->get('content-type'));

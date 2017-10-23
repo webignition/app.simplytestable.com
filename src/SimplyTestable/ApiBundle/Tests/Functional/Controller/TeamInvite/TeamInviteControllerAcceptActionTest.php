@@ -30,7 +30,7 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
     {
         parent::setUp();
 
-        $this->inviteeUser = $this->userFactory->create([
+        $this->inviteeUser = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'invitee@example.com',
         ]);
 

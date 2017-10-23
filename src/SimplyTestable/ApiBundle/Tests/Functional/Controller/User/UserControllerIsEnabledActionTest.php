@@ -9,6 +9,8 @@ class UserControllerIsEnabledActionTest extends AbstractUserControllerTest
 {
     public function testIsEnabledActionGetRequest()
     {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser([
             UserFactory::KEY_PLAN_NAME => null,
@@ -22,7 +24,7 @@ class UserControllerIsEnabledActionTest extends AbstractUserControllerTest
         $this->getCrawler([
             'url' => $requestUrl,
             'method' => 'GET',
-            'user' => $user,
+            'user' => $userService->getAdminUser(),
         ]);
 
         $response = $this->getClientResponse();
