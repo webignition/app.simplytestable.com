@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
@@ -12,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class UpdateController extends JobConfigurationController
+class UpdateController extends ApiController
 {
     /**
      * @param Request $request

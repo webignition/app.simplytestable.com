@@ -2,12 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class DeleteController extends JobConfigurationController
+class DeleteController extends ApiController
 {
     /**
      * @param $label
