@@ -11,7 +11,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
-        $invitee = $this->userFactory->create([
+        $invitee = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'invitee@example.com',
         ]);
 

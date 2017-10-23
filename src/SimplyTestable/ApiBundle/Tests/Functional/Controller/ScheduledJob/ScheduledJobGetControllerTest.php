@@ -44,7 +44,7 @@ class ScheduledJobGetControllerTest extends BaseSimplyTestableTestCase
         $this->scheduledJobGetController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
-        $this->user = $userFactory->create();
+        $this->user = $userFactory->createAndActivateUser();
 
         $this->setUser($this->user);
 

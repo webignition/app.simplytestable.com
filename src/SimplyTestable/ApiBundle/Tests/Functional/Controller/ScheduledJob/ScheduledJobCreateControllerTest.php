@@ -36,7 +36,7 @@ class ScheduledJobCreateControllerTest extends BaseSimplyTestableTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $userFactory = new UserFactory($this->container);
-        $user = $userFactory->create();
+        $user = $userFactory->createAndActivateUser();
         $this->setUser($user);
 
         $this->createJobConfiguration();

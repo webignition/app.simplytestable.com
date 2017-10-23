@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Job;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration as TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -267,14 +267,12 @@ class ConfigurationService extends EntityService {
 
         try {
             $this->getManager()->flush();
-        } catch (DBALException $dbalException) {
+        } catch (ForeignKeyConstraintViolationException $foo) {
             throw new JobConfigurationServiceException(
                 'Job configuration is in use by one or more scheduled jobs',
                 JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB
             );
         }
-
-
     }
 
     /**
@@ -321,13 +319,14 @@ class ConfigurationService extends EntityService {
             /* @var $userJobConfiguration JobConfiguration */
             foreach ($userJobConfiguration->getTaskConfigurations() as $jobTaskConfiguration) {
                 $this->getManager()->remove($jobTaskConfiguration);
+                $userJobConfiguration->removeTaskConfiguration($jobTaskConfiguration);
             }
 
             $this->getManager()->remove($userJobConfiguration);
 
             try {
                 $this->getManager()->flush($userJobConfiguration);
-            } catch (DBALException $dbalException) {
+            } catch (ForeignKeyConstraintViolationException $foo) {
                 throw new JobConfigurationServiceException(
                     'One or more job configurations are in use by one or more scheduled jobs',
                     JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB

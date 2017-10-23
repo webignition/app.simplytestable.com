@@ -40,7 +40,7 @@ class JobConfigurationDeleteControllerTest extends BaseSimplyTestableTestCase
         $this->jobConfigurationDeleteController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
-        $this->user = $userFactory->create();
+        $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
 
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);

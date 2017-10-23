@@ -27,7 +27,7 @@ class UserStripeEventControllerTest extends BaseSimplyTestableTestCase
     public function testListActionGetRequest()
     {
         $userFactory = new UserFactory($this->container);
-        $user = $userFactory->create();
+        $user = $userFactory->createAndActivateUser();
 
         $router = $this->container->get('router');
         $requestUrl = $router->generate('user_list_stripe_events', [

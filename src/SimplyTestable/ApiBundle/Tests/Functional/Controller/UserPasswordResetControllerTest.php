@@ -32,7 +32,7 @@ class UserPasswordResetControllerTest extends BaseSimplyTestableTestCase
     public function testRequest()
     {
         $userFactory = new UserFactory($this->container);
-        $user = $userFactory->create();
+        $user = $userFactory->createAndActivateUser();
 
         $router = $this->container->get('router');
         $requestUrl = $router->generate('user_reset_password', [

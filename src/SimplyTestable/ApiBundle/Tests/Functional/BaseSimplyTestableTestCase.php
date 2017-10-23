@@ -321,13 +321,15 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
             $options['server'] = [];
         }
 
-        if (!isset($options['user'])) {
+        if (!array_key_exists('user', $options)) {
             $userService = $this->container->get('simplytestable.services.userservice');
 
             $options['user']  = $userService->getPublicUser();
         }
 
-        $this->setRequestUserInSession($options['user']);
+        if (!empty($options['user'])) {
+            $this->setRequestUserInSession($options['user']);
+        }
 
         $crawler = $this->client->request(
             $options['method'],
