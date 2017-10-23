@@ -38,7 +38,9 @@ class HtmlValidatorOutputFactory
     public function __construct()
     {
         $messagesPath = realpath(__DIR__ . self::DEFAULT_MESSAGES_DATA_RELATIVE_PATH);
-        $this->defaultMessages = Yaml::parse($messagesPath);
+        $messagesContent = file_get_contents($messagesPath);
+
+        $this->defaultMessages = Yaml::parse($messagesContent);
     }
 
     public function create($messageValuesCollection)
