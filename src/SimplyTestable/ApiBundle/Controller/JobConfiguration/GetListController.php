@@ -2,9 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use Symfony\Component\HttpFoundation\Response;
 
-class GetListController extends JobConfigurationController
+class GetListController extends ApiController
 {
     /**
      * @return Response

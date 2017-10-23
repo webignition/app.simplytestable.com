@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class CreateController extends JobConfigurationController
+class CreateController extends ApiController
 {
     /**
      * @param Request $request
@@ -88,7 +89,7 @@ class CreateController extends JobConfigurationController
         $jobConfigurationValues->setParameters($requestData->get('parameters'));
 
         try {
-            $jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
+            $jobConfiguration = $jobConfigurationService->create($jobConfigurationValues);
 
             return $this->redirect($this->generateUrl(
                 'jobconfiguration_get_get',
