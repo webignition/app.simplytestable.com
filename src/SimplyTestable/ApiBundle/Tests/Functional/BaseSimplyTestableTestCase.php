@@ -321,7 +321,7 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
             $options['server'] = [];
         }
 
-        if (!isset($options['user']) && !empty($options['user'])) {
+        if (!array_key_exists('user', $options)) {
             $userService = $this->container->get('simplytestable.services.userservice');
 
             $options['user']  = $userService->getPublicUser();
