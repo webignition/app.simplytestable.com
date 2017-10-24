@@ -3,8 +3,6 @@ namespace SimplyTestable\ApiBundle\Entity\Job;
 
 use Doctrine\ORM\Mapping as ORM;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Options as TaskType_Options;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 
@@ -13,9 +11,8 @@ use Doctrine\Common\Collections\Collection as DoctrineCollection;
  * @ORM\Table(
  *     name="JobTaskConfiguration"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class TaskConfiguration
+class TaskConfiguration implements \JsonSerializable
 {
     /**
      * @var int
@@ -39,9 +36,6 @@ class TaskConfiguration
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=true)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedType")
-     * @SerializerAnnotation\Expose
      */
     protected $type;
 
@@ -49,8 +43,6 @@ class TaskConfiguration
      * @var DoctrineCollection
      *
      * @ORM\Column(type="array", name="options", nullable=false)
-     *
-     * @SerializerAnnotation\Expose
      */
     protected $options;
 
@@ -58,22 +50,12 @@ class TaskConfiguration
      * @var bool
      *
      * @ORM\Column(type="boolean", options={"default" = true})
-     *
-     * @SerializerAnnotation\Expose
      */
     private $isEnabled = true;
 
     public function __construct()
     {
         $this->options = new ArrayCollection();
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedType()
-    {
-        return (string)$this->getType();
     }
 
     /**
@@ -208,5 +190,17 @@ class TaskConfiguration
     public function getIsEnabled()
     {
         return $this->isEnabled;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'type' => $this->getType()->getName(),
+            'options' => $this->getOptions(),
+            'is_enabled' => $this->getIsEnabled(),
+        ];
     }
 }

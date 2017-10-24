@@ -11,7 +11,6 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobTaskConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
@@ -22,6 +21,11 @@ class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
     private $jobConfigurationGetController;
 
     /**
+     * @var User
+     */
+    private $user;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -30,16 +34,17 @@ class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
 
         $this->jobConfigurationGetController = new GetController();
         $this->jobConfigurationGetController->setContainer($this->container);
+
+        $userFactory = new UserFactory($this->container);
+        $this->user = $userFactory->createAndActivateUser();
+        $this->setUser($this->user);
     }
 
     public function testRequest()
     {
-        $userFactory = new UserFactory($this->container);
-        $user = $userFactory->create();
-
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
         $jobConfiguration = $jobConfigurationFactory->create([
-            JobConfigurationFactory::KEY_USER => $user,
+            JobConfigurationFactory::KEY_USER => $this->user,
         ]);
 
         $router = $this->container->get('router');
@@ -49,7 +54,7 @@ class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
 
         $this->getCrawler([
             'url' => $requestUrl,
-            'user' => $user,
+            'user' => $this->user,
         ]);
 
         /* @var RedirectResponse $response */
@@ -73,11 +78,7 @@ class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
      */
     public function testGetActionSuccess($jobConfigurationValues, $expectedResponseData)
     {
-        $userFactory = new UserFactory($this->container);
-        $user = $userFactory->createAndActivateUser();
-        $this->setUser($user);
-
-        $jobConfigurationValues[JobConfigurationFactory::KEY_USER] = $user;
+        $jobConfigurationValues[JobConfigurationFactory::KEY_USER] = $this->user;
 
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
         $jobConfiguration = $jobConfigurationFactory->create($jobConfigurationValues);
@@ -103,13 +104,15 @@ class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
                     JobConfigurationFactory::KEY_LABEL => 'foo',
                     JobConfigurationFactory::KEY_WEBSITE_URL => 'http://foo.example.com/',
                     JobConfigurationFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+                    JobConfigurationFactory::KEY_PARAMETERS => 'parameters string',
                 ],
                 'expectedResponseData' => [
-                'label' => 'foo',
-                'user' => 'user@example.com',
-                'website' => 'http://foo.example.com/',
-                'type' => JobTypeService::FULL_SITE_NAME,
-                'task_configurations' => [],
+                    'label' => 'foo',
+                    'user' => 'user@example.com',
+                    'website' => 'http://foo.example.com/',
+                    'type' => JobTypeService::FULL_SITE_NAME,
+                    'task_configurations' => [],
+                    'parameters' => '"parameters string"',
                 ],
             ],
             'with task configuration' => [

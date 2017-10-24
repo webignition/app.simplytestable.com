@@ -6,7 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 /**
@@ -15,10 +14,8 @@ use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfi
  * @ORM\Table(
  *     name="JobConfiguration"
  * )
- *
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class Configuration
+class Configuration implements \JsonSerializable
 {
     /**
      * @var int
@@ -33,7 +30,6 @@ class Configuration
      * @var string
      *
      * @ORM\Column(type="string", unique=false, nullable=false)
-     * @SerializerAnnotation\Expose
      */
     private $label;
 
@@ -42,9 +38,6 @@ class Configuration
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
-     * @SerializerAnnotation\Expose
      */
     protected $user;
 
@@ -53,9 +46,6 @@ class Configuration
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\WebSite")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedWebsite")
-     * @SerializerAnnotation\Expose
      */
     protected $website;
 
@@ -64,9 +54,6 @@ class Configuration
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Type")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedType")
-     * @SerializerAnnotation\Expose
      */
     protected $type;
 
@@ -74,7 +61,6 @@ class Configuration
      * @var DoctrineCollection
      *
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration", mappedBy="jobConfiguration")
-     * @SerializerAnnotation\Expose
      */
     protected $taskConfigurations = [];
 
@@ -82,33 +68,8 @@ class Configuration
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     protected $parameters;
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedUser()
-    {
-        return $this->getUser()->getUsername();
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedWebsite()
-    {
-        return (string)$this->getWebsite();
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedType()
-    {
-        return (string)$this->getType();
-    }
 
     /**
      * @return int
@@ -344,5 +305,33 @@ class Configuration
         }
 
         return $this->getParameters() == $configuration->getParameters();
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $serializedTaskConfigurations = [];
+
+        foreach ($this->getTaskConfigurations() as $taskConfiguration) {
+            $serializedTaskConfigurations[] = $taskConfiguration->jsonSerialize();
+        }
+
+        $jobConfigurationData = [
+            'label' => $this->getLabel(),
+            'user' => $this->getUser()->getEmail(),
+            'website' => $this->getWebsite()->getCanonicalUrl(),
+            'type' => $this->getType()->getName(),
+            'task_configurations' => $serializedTaskConfigurations,
+        ];
+
+        $parameters = $this->getParameters();
+
+        if (!empty($parameters)) {
+            $jobConfigurationData['parameters'] = $parameters;
+        }
+
+        return $jobConfigurationData;
     }
 }
