@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Egulias\EmailValidator\EmailValidator;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -70,7 +71,7 @@ class UserEmailChangeController extends ApiController
     /**
      * @param string $email_canonical
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function getAction($email_canonical)
     {
@@ -92,7 +93,7 @@ class UserEmailChangeController extends ApiController
             throw new NotFoundHttpException();
         }
 
-        return $this->sendResponse($emailChangeRequest);
+        return new JsonResponse($emailChangeRequest);
     }
 
     /**

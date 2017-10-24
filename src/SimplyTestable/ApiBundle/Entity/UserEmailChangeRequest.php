@@ -2,14 +2,11 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * @ORM\Entity
- *
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class UserEmailChangeRequest
+class UserEmailChangeRequest implements \JsonSerializable
 {
     /**
      * @var int
@@ -32,7 +29,6 @@ class UserEmailChangeRequest
      * @var string
      *
      * @ORM\Column(type="string", unique=true)
-     * @SerializerAnnotation\Expose
      */
     protected $newEmail;
 
@@ -40,7 +36,6 @@ class UserEmailChangeRequest
      * @var string
      *
      * @ORM\Column(type="string", unique=true)
-     * @SerializerAnnotation\Expose
      */
     protected $token;
 
@@ -120,5 +115,16 @@ class UserEmailChangeRequest
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'new_email' => $this->getNewEmail(),
+            'token' => $this->getToken(),
+        ];
     }
 }
