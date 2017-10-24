@@ -2,68 +2,45 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * @ORM\Entity
- * 
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class UserEmailChangeRequest
+class UserEmailChangeRequest implements \JsonSerializable
 {
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
+
     /**
+     * @var User
      *
-     * @var \SimplyTestable\ApiBundle\Entity\User
-     * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     protected $user;
-    
-    
+
     /**
+     * @var string
      *
-     * @var string 
-     * 
      * @ORM\Column(type="string", unique=true)
-     * @SerializerAnnotation\Expose 
-     */    
-    protected $newEmail;
-    
-    
-    /**
-     *
-     * @var string 
-     * 
-     * @ORM\Column(type="string", unique=true)
-     * @SerializerAnnotation\Expose 
-     */    
-    protected $token;
-    
-    
-    /**
-     *
-     * @return string
      */
-    public function getPublicSerializedUser() {
-        return $this->getUser()->getUsername();
-    }    
-
+    protected $newEmail;
 
     /**
-     * Get id
+     * @var string
      *
-     * @return integer 
+     * @ORM\Column(type="string", unique=true)
+     */
+    protected $token;
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -71,22 +48,15 @@ class UserEmailChangeRequest
     }
 
     /**
-     * Set newEmail
-     *
      * @param string $newEmail
-     * @return UserEmailChangeRequest
      */
     public function setNewEmail($newEmail)
     {
         $this->newEmail = $newEmail;
-    
-        return $this;
     }
 
     /**
-     * Get newEmail
-     *
-     * @return string 
+     * @return string
      */
     public function getNewEmail()
     {
@@ -94,22 +64,15 @@ class UserEmailChangeRequest
     }
 
     /**
-     * Set token
-     *
      * @param string $token
-     * @return UserEmailChangeRequest
      */
     public function setToken($token)
     {
         $this->token = $token;
-    
-        return $this;
     }
 
     /**
-     * Get token
-     *
-     * @return string 
+     * @return string
      */
     public function getToken()
     {
@@ -117,25 +80,31 @@ class UserEmailChangeRequest
     }
 
     /**
-     * Set user
-     *
-     * @param SimplyTestable\ApiBundle\Entity\User $user
-     * @return UserEmailChangeRequest
+     * @param User $user
      */
-    public function setUser(\SimplyTestable\ApiBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
-    
-        return $this;
     }
 
     /**
      * Get user
      *
-     * @return SimplyTestable\ApiBundle\Entity\User 
+     * @return User
      */
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'new_email' => $this->getNewEmail(),
+            'token' => $this->getToken(),
+        ];
     }
 }
