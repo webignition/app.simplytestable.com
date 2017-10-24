@@ -3,14 +3,16 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
+use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
-use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\FactoryService;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class TaskController extends ApiController
@@ -128,23 +130,33 @@ class TaskController extends ApiController
      */
     public function taskTypeCountAction($task_type, $state_name)
     {
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $taskStatePrefix = 'task-';
+        $taskTypeRepository = $entityManager->getRepository(TaskType::class);
 
-        if (!$taskTypeService->exists($task_type)) {
-            return new Response('', 404);
+        /* @var TaskType $taskType */
+        $taskType = $taskTypeRepository->findOneBy([
+            'name' => $task_type,
+        ]);
+
+        if (empty($taskType)) {
+            throw new NotFoundHttpException();
         }
 
-        if (!$stateService->has($taskStatePrefix . $state_name)) {
-            return new Response('', 404);
+        $stateRepository = $entityManager->getRepository(State::class);
+
+        /* @var State $state */
+        $state = $stateRepository->findOneBy([
+            'name' => 'task-' . $state_name,
+        ]);
+
+        if (empty($state)) {
+            throw new NotFoundHttpException();
         }
 
-        $taskType = $taskTypeService->getByName($task_type);
-        $state = $stateService->fetch($taskStatePrefix . $state_name);
+        $taskRepository = $entityManager->getRepository(Task::class);
+        $count = $taskRepository->getCountByTaskTypeAndState($taskType, $state);
 
-        return new Response(json_encode($taskService->getCountByTaskTypeAndState($taskType, $state)), 200);
+        return new Response(json_encode($count), 200);
     }
 }
