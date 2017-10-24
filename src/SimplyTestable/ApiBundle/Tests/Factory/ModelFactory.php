@@ -4,9 +4,11 @@ namespace SimplyTestable\ApiBundle\Tests\Factory;
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use Stripe\Customer as StripeCustomer;
 use Stripe\Stripe;
@@ -121,5 +123,37 @@ class ModelFactory
         $stripeCustomer = StripeCustomer::retrieve($stripeCustomerId);
 
         return $stripeCustomer;
+    }
+
+    /**
+     * @param string $name
+     * @param State|null $nextState
+     *
+     * @return State
+     */
+    public static function createState($name, $nextState = null)
+    {
+        $state = new State();
+        $state->setName($name);
+        $state->setNextState($nextState);
+
+        return $state;
+    }
+
+    /**
+     * @param string $hostname
+     * @param State $state
+     * @param string $token
+     *
+     * @return Worker
+     */
+    public static function createWorker($hostname, State $state, $token)
+    {
+        $worker = new Worker();
+        $worker->setHostname($hostname);
+        $worker->setState($state);
+        $worker->setToken($token);
+
+        return $worker;
     }
 }
