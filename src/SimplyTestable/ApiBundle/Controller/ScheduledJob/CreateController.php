@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\ScheduledJob;
 
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Cron\Validator\CrontabValidator;
@@ -11,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class CreateController extends ScheduledJobController
+class CreateController extends ApiController
 {
     /**
      * @var Request

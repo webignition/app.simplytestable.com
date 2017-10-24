@@ -2,9 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Controller\ScheduledJob;
 
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use Symfony\Component\HttpFoundation\Response;
 
-class GetListController extends ScheduledJobController
+class GetListController extends ApiController
 {
     /**
      * @return Response

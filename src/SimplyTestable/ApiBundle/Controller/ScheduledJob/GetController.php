@@ -2,10 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Controller\ScheduledJob;
 
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class GetController extends ScheduledJobController
+class GetController extends ApiController
 {
     /**
      * @param int $id
