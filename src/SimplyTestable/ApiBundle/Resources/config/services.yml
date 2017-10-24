@@ -429,3 +429,10 @@ services:
         jobService: '@simplytestable.services.jobservice'
         crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
         tokenStorage: '@security.token_storage'
+
+  simplytestable.services.applicationstatusfactory:
+    class:   SimplyTestable\ApiBundle\Services\ApplicationStatusFactory
+    arguments:
+      applicationStateService: '@simplytestable.services.applicationstateservice'
+      stateService: '@simplytestable.services.stateservice'
+      entityManager: '@doctrine.orm.entity_manager'
