@@ -40,14 +40,6 @@ class UserEmailChangeRequest implements \JsonSerializable
     protected $token;
 
     /**
-     * @return string
-     */
-    public function getPublicSerializedUser()
-    {
-        return $this->getUser()->getUsername();
-    }
-
-    /**
      * @return int
      */
     public function getId()
@@ -57,14 +49,10 @@ class UserEmailChangeRequest implements \JsonSerializable
 
     /**
      * @param string $newEmail
-     *
-     * @return UserEmailChangeRequest
      */
     public function setNewEmail($newEmail)
     {
         $this->newEmail = $newEmail;
-
-        return $this;
     }
 
     /**
@@ -77,14 +65,10 @@ class UserEmailChangeRequest implements \JsonSerializable
 
     /**
      * @param string $token
-     *
-     * @return UserEmailChangeRequest
      */
     public function setToken($token)
     {
         $this->token = $token;
-
-        return $this;
     }
 
     /**
@@ -97,14 +81,10 @@ class UserEmailChangeRequest implements \JsonSerializable
 
     /**
      * @param User $user
-     *
-     * @return UserEmailChangeRequest
      */
     public function setUser(User $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 
     /**
