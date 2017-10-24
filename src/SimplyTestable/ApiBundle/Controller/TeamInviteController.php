@@ -3,7 +3,6 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
-use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +17,7 @@ class TeamInviteController extends ApiController
      * @param Request $request
      * @param string $invitee_email
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function getAction(Request $request, $invitee_email)
     {
@@ -69,7 +68,7 @@ class TeamInviteController extends ApiController
         }
 
         try {
-            return $this->sendResponse($teamInviteService->get($inviter, $invitee));
+            return new JsonResponse($teamInviteService->get($inviter, $invitee));
         } catch (TeamInviteServiceException $teamInviteServiceException) {
             return $this->sendFailureResponse([
                 'X-TeamInviteGet-Error-Code' => $teamInviteServiceException->getCode(),
@@ -139,7 +138,7 @@ class TeamInviteController extends ApiController
     }
 
     /**
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function listAction()
     {
@@ -165,7 +164,7 @@ class TeamInviteController extends ApiController
             }
         }
 
-        return $this->sendResponse($invites);
+        return new JsonResponse($invites);
     }
 
     /**
@@ -180,7 +179,7 @@ class TeamInviteController extends ApiController
             return new JsonResponse([]);
         }
 
-        return $this->sendResponse($teamInviteService->getForUser($this->getUser()));
+        return new JsonResponse($teamInviteService->getForUser($this->getUser()));
     }
 
     /**
@@ -264,7 +263,7 @@ class TeamInviteController extends ApiController
             throw new NotFoundHttpException();
         }
 
-        return $this->sendResponse($teamInviteService->getForToken($token));
+        return new JsonResponse($teamInviteService->getForToken($token));
     }
 
     /**
