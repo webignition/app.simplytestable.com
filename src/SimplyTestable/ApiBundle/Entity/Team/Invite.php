@@ -56,14 +56,10 @@ class Invite implements \JsonSerializable
 
     /**
      * @param Team $team
-     *
-     * @return Invite
      */
     public function setTeam(Team $team)
     {
         $this->team = $team;
-
-        return $this;
     }
 
     /**
@@ -76,14 +72,10 @@ class Invite implements \JsonSerializable
 
     /**
      * @param User $user
-     *
-     * @return Invite
      */
     public function setUser(User $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 
     /**
@@ -96,13 +88,10 @@ class Invite implements \JsonSerializable
 
     /**
      * @param $token
-     *
-     * @return Invite
      */
     public function setToken($token)
     {
         $this->token = $token;
-        return $this;
     }
 
     /**
