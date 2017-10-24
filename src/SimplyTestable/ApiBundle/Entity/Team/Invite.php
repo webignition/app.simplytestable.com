@@ -3,19 +3,22 @@ namespace SimplyTestable\ApiBundle\Entity\Team;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
+use SimplyTestable\ApiBundle\Entity\User;
 
 /**
- *
  * @ORM\Entity
- * @ORM\Table(name="TeamInvite",uniqueConstraints={@ORM\UniqueConstraint(name="teamInvite_idx", columns={"team_id", "user_id"})})
+ * @ORM\Table(
+ *     name="TeamInvite",
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="teamInvite_idx", columns={"team_id", "user_id"})}
+ * )
  * @SerializerAnnotation\ExclusionPolicy("all")
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TeamInviteRepository")
  */
-class Invite {
+class Invite
+{
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -23,8 +26,7 @@ class Invite {
     protected $id;
 
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\Team\Team
+     * @var Team
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Team\Team")
      * @ORM\JoinColumn(name="team_id", referencedColumnName="id", nullable=false)
@@ -35,8 +37,7 @@ class Invite {
     protected $team;
 
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\User
+     * @var User
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
@@ -46,9 +47,7 @@ class Invite {
      */
     protected $user;
 
-
     /**
-     *
      * @var string
      *
      * @ORM\Column(type="string", unique=true, nullable=false)
@@ -56,25 +55,20 @@ class Invite {
      */
     protected $token;
 
-
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
-
     /**
-     * Set team
+     * @param Team $team
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Team\Team $team
      * @return Invite
      */
-    public function setTeam(\SimplyTestable\ApiBundle\Entity\Team\Team $team)
+    public function setTeam(Team $team)
     {
         $this->team = $team;
 
@@ -82,9 +76,7 @@ class Invite {
     }
 
     /**
-     * Get team
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Team\Team 
+     * @return Team
      */
     public function getTeam()
     {
@@ -92,12 +84,11 @@ class Invite {
     }
 
     /**
-     * Set user
+     * @param User $user
      *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
      * @return Invite
      */
-    public function setUser(\SimplyTestable\ApiBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
 
@@ -105,48 +96,45 @@ class Invite {
     }
 
     /**
-     * Get user
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\User 
+     * @return User
      */
     public function getUser()
     {
         return $this->user;
     }
 
-
     /**
-     *
      * @return string
      */
-    public function getPublicSerializedUser() {
+    public function getPublicSerializedUser()
+    {
         return $this->getUser()->getUsername();
     }
 
-
     /**
-     *
      * @return string
      */
-    public function getPublicSerializedTeam() {
+    public function getPublicSerializedTeam()
+    {
         return $this->getTeam()->getName();
     }
 
-
     /**
      * @param $token
+     *
      * @return Invite
      */
-    public function setToken($token) {
+    public function setToken($token)
+    {
         $this->token = $token;
         return $this;
     }
 
-
     /**
      * @return string
      */
-    public function getToken() {
+    public function getToken()
+    {
         return $this->token;
     }
 }
