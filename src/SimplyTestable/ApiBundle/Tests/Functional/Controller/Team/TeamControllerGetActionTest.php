@@ -43,6 +43,7 @@ class TeamControllerGetActionTest extends AbstractTeamControllerTest
         $response = $this->teamController->getAction();
 
         $this->assertTrue($response->isSuccessful());
+        $this->assertEquals('application/json', $response->headers->get('content-type'));
 
         $responseData = json_decode($response->getContent(), true);
 
