@@ -86,7 +86,9 @@ class ProcessCommand extends Command
             'stripeId' => $input->getArgument('stripeId'),
         ]);
 
-        if (!$eventEntity->hasUser()) {
+        $stripeEventUser = $eventEntity->getUser();
+
+        if (empty($stripeEventUser)) {
             $this->logger->error('Stripe\Event\ProcessCommand: event has no user');
 
             return self::RETURN_CODE_EVENT_HAS_NO_USER;

@@ -101,14 +101,10 @@ class Event
 
     /**
      * @param string $stripeId
-     *
-     * @return Event
      */
     public function setStripeId($stripeId)
     {
         $this->stripeId = $stripeId;
-
-        return $this;
     }
 
     /**
@@ -121,14 +117,10 @@ class Event
 
     /**
      * @param string $type
-     *
-     * @return Event
      */
     public function setType($type)
     {
         $this->type = $type;
-
-        return $this;
     }
 
     /**
@@ -141,14 +133,10 @@ class Event
 
     /**
      * @param boolean $isLive
-     *
-     * @return Event
      */
     public function setIsLive($isLive)
     {
         $this->isLive = $isLive;
-
-        return $this;
     }
 
     /**
@@ -161,14 +149,10 @@ class Event
 
     /**
      * @param string $stripeEventData
-     *
-     * @return Event
      */
     public function setStripeEventData($stripeEventData)
     {
         $this->stripeEventData = $stripeEventData;
-
-        return $this;
     }
 
     /**
@@ -198,14 +182,10 @@ class Event
 
     /**
      * @param User $user
-     *
-     * @return Event
      */
     public function setUser(User $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 
     /**
@@ -214,14 +194,6 @@ class Event
     public function getUser()
     {
         return $this->user;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasUser()
-    {
-        return !is_null($this->getUser());
     }
 
     /**
