@@ -81,14 +81,10 @@ class Configuration implements \JsonSerializable
 
     /**
      * @param User $user
-     *
-     * @return Configuration
      */
     public function setUser(User $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 
     /**
@@ -100,23 +96,11 @@ class Configuration implements \JsonSerializable
     }
 
     /**
-     * @return bool
-     */
-    public function hasUser()
-    {
-        return !is_null($this->user);
-    }
-
-    /**
      * @param  $website
-     *
-     * @return Configuration
      */
     public function setWebsite(WebSite $website)
     {
         $this->website = $website;
-
-        return $this;
     }
 
     /**
@@ -129,14 +113,10 @@ class Configuration implements \JsonSerializable
 
     /**
      * @param Type $type
-     *
-     * @return Configuration
      */
     public function setType(JobType $type)
     {
         $this->type = $type;
-
-        return $this;
     }
 
     /**
@@ -149,14 +129,10 @@ class Configuration implements \JsonSerializable
 
     /**
      * @param string $parameters
-     *
-     * @return Configuration
      */
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
-
-        return $this;
     }
 
     /**
@@ -192,46 +168,11 @@ class Configuration implements \JsonSerializable
     }
 
     /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function hasParameter($name)
-    {
-        if (!$this->hasParameters()) {
-            return false;
-        }
-
-        $parameters = json_decode($this->getParameters());
-        return isset($parameters->{$name});
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getParameter($name)
-    {
-        if (!$this->hasParameter($name)) {
-            return null;
-        }
-
-        $parameters = json_decode($this->getParameters(), true);
-
-        return $parameters[$name];
-    }
-
-    /**
      * @param string $label
-     *
-     * @return Configuration
      */
     public function setLabel($label)
     {
         $this->label = $label;
-
-        return $this;
     }
 
     /**
@@ -244,14 +185,10 @@ class Configuration implements \JsonSerializable
 
     /**
      * @param TaskConfiguration $taskConfiguration
-     *
-     * @return Configuration
      */
     public function addTaskConfiguration(TaskConfiguration $taskConfiguration)
     {
         $this->taskConfigurations[] = $taskConfiguration;
-
-        return $this;
     }
 
     /**

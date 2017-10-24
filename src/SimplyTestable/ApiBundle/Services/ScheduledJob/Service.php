@@ -79,7 +79,9 @@ class Service extends EntityService {
 
 
     public function create(JobConfiguration $jobConfiguration, $schedule = '* * * * *', $cronModifier = null, $isRecurring = true) {
-        if (!$jobConfiguration->hasUser()) {
+        $jobConfigurationUser = $jobConfiguration->getUser();
+
+        if (empty($jobConfigurationUser)) {
             throw new ScheduledJobException(
                 'User is not set',
                 ScheduledJobException::CODE_USER_NOT_SET

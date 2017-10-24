@@ -125,8 +125,10 @@ class JobService extends EntityService
             }
         }
 
-        if ($jobConfiguration->hasParameters()) {
-            $job->setParameters($jobConfiguration->getParameters());
+        $jobConfigurationParameters = $jobConfiguration->getParameters();
+
+        if (!empty($jobConfigurationParameters)) {
+            $job->setParameters($jobConfigurationParameters);
         }
 
         $startingState = $this->stateService->fetch(self::STARTING_STATE);

@@ -68,13 +68,10 @@ class TaskConfiguration implements \JsonSerializable
 
     /**
      * @param TaskType $type
-     *
-     * @return TaskConfiguration
      */
     public function setType(TaskType $type)
     {
         $this->type = $type;
-        return $this;
     }
 
     /**
@@ -87,14 +84,10 @@ class TaskConfiguration implements \JsonSerializable
 
     /**
      * @param Configuration $jobConfiguration
-     *
-     * @return TaskConfiguration
      */
     public function setJobConfiguration(Configuration $jobConfiguration)
     {
         $this->jobConfiguration = $jobConfiguration;
-
-        return $this;
     }
 
     /**
@@ -121,6 +114,7 @@ class TaskConfiguration implements \JsonSerializable
     public function getOption($optionName)
     {
         $options = $this->getOptions();
+
         return (isset($options[$optionName])) ? $options[$optionName] : null;
     }
 
@@ -136,14 +130,10 @@ class TaskConfiguration implements \JsonSerializable
 
     /**
      * @param array $options
-     *
-     * @return TaskConfiguration
      */
     public function setOptions($options)
     {
         $this->options = $options;
-
-        return $this;
     }
 
     /**
