@@ -38,7 +38,7 @@ class WebHookController extends ApiController
         ]);
 
         if (!empty($stripeEvent)) {
-            return $this->sendResponse($stripeEvent);
+            return new JsonResponse($stripeEvent);
         }
 
         $this->sendDeveloperWebhookNotification($mailService, $eventContent, $requestData->type);
