@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Entity\Team;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\User;
 
 /**
@@ -11,10 +10,9 @@ use SimplyTestable\ApiBundle\Entity\User;
  *     name="TeamInvite",
  *     uniqueConstraints={@ORM\UniqueConstraint(name="teamInvite_idx", columns={"team_id", "user_id"})}
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TeamInviteRepository")
  */
-class Invite
+class Invite implements \JsonSerializable
 {
     /**
      * @var int
@@ -30,9 +28,6 @@ class Invite
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Team\Team")
      * @ORM\JoinColumn(name="team_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedTeam")
-     * @SerializerAnnotation\Expose
      */
     protected $team;
 
@@ -41,9 +36,6 @@ class Invite
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
-     * @SerializerAnnotation\Expose
      */
     protected $user;
 
@@ -51,7 +43,6 @@ class Invite
      * @var string
      *
      * @ORM\Column(type="string", unique=true, nullable=false)
-     * @SerializerAnnotation\Expose
      */
     protected $token;
 
@@ -104,22 +95,6 @@ class Invite
     }
 
     /**
-     * @return string
-     */
-    public function getPublicSerializedUser()
-    {
-        return $this->getUser()->getUsername();
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedTeam()
-    {
-        return $this->getTeam()->getName();
-    }
-
-    /**
      * @param $token
      *
      * @return Invite
@@ -136,5 +111,17 @@ class Invite
     public function getToken()
     {
         return $this->token;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'team' => $this->getTeam()->getName(),
+            'user' => $this->getUser()->getEmail(),
+            'token' => $this->getToken(),
+        ];
     }
 }
