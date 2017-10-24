@@ -3,11 +3,9 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Stripe;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use MZ\PostmarkBundle\Postmark\Message as PostmarkMessage;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
-use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
@@ -31,33 +29,58 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
         $this->webHookController->setContainer($this->container);
     }
 
-//    public function testRequest()
-//    {
-//        $hostname = 'worker-hostname';
-//        $token = 'worker-token';
-//
-//        $workerFactory = new WorkerFactory($this->container);
-//        $workerFactory->create([
-//            WorkerFactory::KEY_HOSTNAME => $hostname,
-//            WorkerFactory::KEY_TOKEN => $token,
-//        ]);
-//
-//        $router = $this->container->get('router');
-//        $requestUrl = $router->generate('worker_activate');
-//
-//        $this->getCrawler([
-//            'url' => $requestUrl,
-//            'method' => 'POST',
-//            'parameters' => [
-//                'hostname' => $hostname,
-//                'token' => $token,
-//            ],
-//        ]);
-//
-//        $response = $this->getClientResponse();
-//
-//        $this->assertTrue($response->isSuccessful());
-//    }
+    public function testIndexActionPostRequest()
+    {
+        $fixtureName = 'customer.subscription.created.active';
+        $fixtureModifications = [
+            'data' => [
+                'object' => [
+                    'customer' => 'stripe-customer',
+                ],
+            ],
+        ];
+
+        $stripeId = 'foo';
+        $stripeCustomer = 'stripe-customer';
+
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $userFactory = new UserFactory($this->container);
+        $user = $userFactory->create();
+
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+
+        /* @var UserAccountPlan $userAccountPlan */
+        $userAccountPlan = $userAccountPlanRepository->findOneBy([
+            'user' => $user,
+        ]);
+
+        $userAccountPlan->setStripeCustomer($stripeCustomer);
+        $entityManager->persist($userAccountPlan);
+        $entityManager->flush($userAccountPlan);
+
+        $fixtureModifications = array_merge($fixtureModifications, [
+            'id' => $stripeId,
+        ]);
+
+        $requestContent = json_encode(StripeEventFixtureFactory::load($fixtureName, $fixtureModifications));
+
+        $router = $this->container->get('router');
+        $requestUrl = $router->generate('stripe_webhook_receiver');
+
+        $this->getCrawler([
+            'url' => $requestUrl,
+            'method' => 'POST',
+            'user' => null,
+            'parameters' => [
+                'event' => $requestContent,
+            ],
+        ]);
+
+        $response = $this->getClientResponse();
+
+        $this->assertTrue($response->isSuccessful());
+    }
 
     /**
      * @dataProvider indexActionNoEventContentDataProvider
@@ -159,22 +182,20 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
     }
 
     /**
-     * @dataProvider indexActionFooDataProvider
+     * @dataProvider indexActionSuccessDataProvider
      *
      * @param string $fixtureName
      * @param array $fixtureModifications
      * @param string $stripeId
      * @param string $stripeCustomer
      * @param array $expectedResponseData
-     * @param string[] $expectedResponseKeysMissing
      */
-    public function testIndexActionFoo(
+    public function testIndexActionSuccess(
         $fixtureName,
         $fixtureModifications,
         $stripeId,
         $stripeCustomer,
-        $expectedResponseData,
-        $expectedResponseKeysMissing
+        $expectedResponseData
     ) {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
@@ -215,13 +236,9 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
 
         $this->assertNotNull($stripeEvent);
 
-        foreach ($expectedResponseData as $expectedKey => $expectedValue) {
-            $this->assertEquals($expectedValue, $responseData[$expectedKey]);
-        }
+        $expectedResponseData['stripe_event_data'] = $requestContent;
 
-        foreach ($expectedResponseKeysMissing as $expectedKey) {
-            $this->assertFalse(array_key_exists($expectedKey, $responseData));
-        }
+        $this->assertEquals($expectedResponseData, $responseData);
 
         $mailSender = $this->container->get('simplytestable.services.postmark.sender');
 
@@ -239,7 +256,7 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
     /**
      * @return array
      */
-    public function indexActionFooDataProvider()
+    public function indexActionSuccessDataProvider()
     {
         return [
             'customer.subscription.created' => [
@@ -256,8 +273,10 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
                 'expectedResponseData' => [
                     'stripe_id' =>  'foo',
                     'user' => 'user@example.com',
+                    'type' => 'customer.subscription.created',
+                    'is_live' => false,
+                    'is_processed' => false,
                 ],
-                'expectedResponseKeysMissing' => [],
             ],
             'customer.subscription.deleted' => [
                 'fixtureName' => 'customer.subscription.deleted',
@@ -273,8 +292,10 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
                 'expectedResponseData' => [
                     'stripe_id' =>  'foo',
                     'user' => 'user@example.com',
+                    'type' => 'customer.subscription.deleted',
+                    'is_live' => false,
+                    'is_processed' => false,
                 ],
-                'expectedResponseKeysMissing' => [],
             ],
             'customer.subscription.trial_will_end' => [
                 'fixtureName' => 'customer.subscription.trial_will_end',
@@ -290,8 +311,10 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
                 'expectedResponseData' => [
                     'stripe_id' =>  'foo',
                     'user' => 'user@example.com',
+                    'type' => 'customer.subscription.trial_will_end',
+                    'is_live' => true,
+                    'is_processed' => false,
                 ],
-                'expectedResponseKeysMissing' => [],
             ],
             'customer.subscription.updated' => [
                 'fixtureName' => 'customer.subscription.updated.planchange',
@@ -307,8 +330,10 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
                 'expectedResponseData' => [
                     'stripe_id' =>  'foo',
                     'user' => 'user@example.com',
+                    'type' => 'customer.subscription.updated',
+                    'is_live' => true,
+                    'is_processed' => false,
                 ],
-                'expectedResponseKeysMissing' => [],
             ],
             'customer.updated' => [
                 'fixtureName' => 'customer.updated',
@@ -324,8 +349,10 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
                 'expectedResponseData' => [
                     'stripe_id' =>  'foo',
                     'user' => 'user@example.com',
+                    'type' => 'customer.updated',
+                    'is_live' => false,
+                    'is_processed' => false,
                 ],
-                'expectedResponseKeysMissing' => [],
             ],
             'invoice.payment_failed; unknown user' => [
                 'fixtureName' => 'invoice.payment_failed',
@@ -340,9 +367,9 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
                 'stripeCustomer' => 'stripe-customer-foo',
                 'expectedResponseData' => [
                     'stripe_id' =>  'foo',
-                ],
-                'expectedResponseKeysMissing' => [
-                    'user',
+                    'type' => 'invoice.payment_failed',
+                    'is_live' => true,
+                    'is_processed' => false,
                 ],
             ],
             'invoice.payment_failed; known user' => [
@@ -359,8 +386,10 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
                 'expectedResponseData' => [
                     'stripe_id' =>  'foo',
                     'user' => 'user@example.com',
+                    'type' => 'invoice.payment_failed',
+                    'is_live' => true,
+                    'is_processed' => false,
                 ],
-                'expectedResponseKeysMissing' => [],
             ],
             'invoice.payment_succeeded' => [
                 'fixtureName' => 'invoice.payment_succeeded',
@@ -376,8 +405,10 @@ class WebHookControllerTest extends BaseSimplyTestableTestCase
                 'expectedResponseData' => [
                     'stripe_id' =>  'foo',
                     'user' => 'user@example.com',
+                    'type' => 'invoice.payment_succeeded',
+                    'is_live' => true,
+                    'is_processed' => false,
                 ],
-                'expectedResponseKeysMissing' => [],
             ],
         ];
     }

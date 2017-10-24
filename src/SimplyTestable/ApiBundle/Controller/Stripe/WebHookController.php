@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Mail\Service as MailService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,12 +15,11 @@ class WebHookController extends ApiController
     /**
      * @param Request $request
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function indexAction(Request $request)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
         $mailService = $this->get('simplytestable.services.mail.service');
 
@@ -32,14 +32,13 @@ class WebHookController extends ApiController
         $requestData = json_decode($eventContent);
         $stripeId = $requestData->id;
 
-
         $stripeEventRepository = $entityManager->getRepository(StripeEvent::class);
         $stripeEvent = $stripeEventRepository->findOneBy([
             'stripeId' => $stripeId,
         ]);
 
         if (!empty($stripeEvent)) {
-            return $this->sendResponse($stripeEvent);
+            return new JsonResponse($stripeEvent);
         }
 
         $this->sendDeveloperWebhookNotification($mailService, $eventContent, $requestData->type);
@@ -73,7 +72,7 @@ class WebHookController extends ApiController
             )
         );
 
-        return $this->sendResponse($stripeEvent);
+        return new JsonResponse($stripeEvent);
     }
 
     /**

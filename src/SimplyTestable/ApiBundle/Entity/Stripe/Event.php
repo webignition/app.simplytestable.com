@@ -2,12 +2,11 @@
 namespace SimplyTestable\ApiBundle\Entity\Stripe;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
+use SimplyTestable\ApiBundle\Entity\User;
 use webignition\Model\Stripe\Event\Event as StripeEventModel;
 use webignition\Model\Stripe\Event\Factory as StripeEventFactory;
 
 /**
- * 
  * @ORM\Entity
  * @ORM\Table(
  *     name="StripeEvent",
@@ -15,101 +14,63 @@ use webignition\Model\Stripe\Event\Factory as StripeEventFactory;
  *         @ORM\Index(name="type_idx", columns={"type"})
  *     }
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class Event
-{    
+class Event implements \JsonSerializable
+{
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
-    
+
     /**
+     * @var string
      *
-     * @var string 
-     * 
      * @ORM\Column(type="string", unique=true)
-     * @SerializerAnnotation\Expose
      */
     protected $stripeId;
-    
-    
+
     /**
+     * @var string
      *
-     * @var string 
-     * 
      * @ORM\Column(type="string")
-     * @SerializerAnnotation\Expose
-     */    
+     */
     protected $type;
-    
-    
+
     /**
+     * @var bool
      *
-     * @var boolean
-     * 
      * @ORM\Column(type="boolean")
-     * @SerializerAnnotation\Expose
      */
     protected $isLive;
-    
-    
+
     /**
-     *
      * @var string
-     * 
+     *
      * @ORM\Column(type="text", nullable=true, name="data")
-     * @SerializerAnnotation\Expose
      */
     protected $stripeEventData;
-    
-    
+
     /**
+     * @var User
      *
-     * @var \SimplyTestable\ApiBundle\Entity\User
-     * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
-     * 
-     * @SerializerAnnotation\Expose 
      */
     protected $user;
-    
-    
+
     /**
+     * @var bool
      *
-     * @var boolean
-     * 
      * @ORM\Column(type="boolean", options={"default" = 0})
-     * @SerializerAnnotation\Expose
-     */    
-    private $isProcessed = false;
-    
-    
-    /**
-     *
-     * @return string
      */
-    public function getPublicSerializedUser() {
-        if (is_null($this->getUser())) {
-            return null;
-        }
-        
-        return $this->getUser()->getUsername();
-    }    
-    
-    
+    private $isProcessed = false;
+
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -117,22 +78,15 @@ class Event
     }
 
     /**
-     * Set stripeId
-     *
      * @param string $stripeId
-     * @return Handle
      */
     public function setStripeId($stripeId)
     {
         $this->stripeId = $stripeId;
-    
-        return $this;
     }
 
     /**
-     * Get stripeId
-     *
-     * @return string 
+     * @return string
      */
     public function getStripeId()
     {
@@ -140,22 +94,15 @@ class Event
     }
 
     /**
-     * Set type
-     *
      * @param string $type
-     * @return Handle
      */
     public function setType($type)
     {
         $this->type = $type;
-    
-        return $this;
     }
 
     /**
-     * Get type
-     *
-     * @return string 
+     * @return string
      */
     public function getType()
     {
@@ -163,22 +110,15 @@ class Event
     }
 
     /**
-     * Set isLive
-     *
      * @param boolean $isLive
-     * @return Handle
      */
     public function setIsLive($isLive)
     {
         $this->isLive = $isLive;
-    
-        return $this;
     }
 
     /**
-     * Get isLive
-     *
-     * @return boolean 
+     * @return bool
      */
     public function getIsLive()
     {
@@ -186,84 +126,89 @@ class Event
     }
 
     /**
-     *
-     * @param string $data
-     * @return Event
+     * @param string $stripeEventData
      */
     public function setStripeEventData($stripeEventData)
     {
         $this->stripeEventData = $stripeEventData;
-    
-        return $this;
     }
 
     /**
-     *
-     * @return string 
+     * @return string
      */
     public function getStripeEventData()
     {
         return $this->stripeEventData;
     }
-    
-    
+
     /**
-     * 
-     * @return \webignition\Model\Stripe\Event\Event
+     * @return StripeEventModel
      */
-    public function getStripeEventObject() {        
-        return (is_null($this->getStripeEventData()))
-            ? null 
-            : StripeEventFactory::create($this->getStripeEventData());
+    public function getStripeEventObject()
+    {
+        $stripeEventData = $this->getStripeEventData();
+
+        if (empty($stripeEventData)) {
+            return null;
+        }
+
+        /* @var StripeEventModel $model */
+        $model = StripeEventFactory::create($stripeEventData);
+
+        return $model;
     }
 
     /**
-     * Set user
-     *
-     * @param SimplyTestable\ApiBundle\Entity\User $user
-     * @return Event
+     * @param User $user
      */
-    public function setUser(\SimplyTestable\ApiBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
-    
-        return $this;
     }
 
     /**
-     * Get user
-     *
-     * @return SimplyTestable\ApiBundle\Entity\User 
+     * @return User
      */
     public function getUser()
     {
         return $this->user;
     }
-    
-    
+
     /**
-     * 
-     * @return boolean
-     */
-    public function hasUser() {
-        return !is_null($this->getUser());
-    }
-    
-    
-    /**
-     * 
      * @param boolean $isProcessed
      */
-    public function setIsProcessed($isProcessed) {
+    public function setIsProcessed($isProcessed)
+    {
         $this->isProcessed = $isProcessed;
     }
-    
-    
+
     /**
-     * 
-     * @return boolean
+     * @return bool
      */
-    public function getIsProcessed() {
+    public function getIsProcessed()
+    {
         return $this->isProcessed;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $eventData = [
+            'stripe_id' => $this->getStripeId(),
+            'type' => $this->getType(),
+            'is_live' => $this->getIsLive(),
+            'stripe_event_data' => $this->getStripeEventData(),
+            'is_processed' => $this->getIsProcessed(),
+        ];
+
+        $user = $this->getUser();
+
+        if (!empty($user)) {
+            $eventData['user'] = $this->getUser()->getEmail();
+        }
+
+        return $eventData;
     }
 }

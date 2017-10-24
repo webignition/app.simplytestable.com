@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserStripeEventController extends ApiController
@@ -10,7 +11,7 @@ class UserStripeEventController extends ApiController
      * @param string $email_canonical
      * @param string $type
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function listAction($email_canonical, $type)
     {
@@ -27,6 +28,6 @@ class UserStripeEventController extends ApiController
 
         $events = $stripeEventService->getForUserAndType($this->getUser(), $type);
 
-        return $this->sendResponse($events);
+        return new JsonResponse($events);
     }
 }
