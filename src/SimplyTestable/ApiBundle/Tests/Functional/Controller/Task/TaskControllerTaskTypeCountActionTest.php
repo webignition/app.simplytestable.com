@@ -61,6 +61,7 @@ class TaskControllerTaskTypeCountActionTest extends BaseSimplyTestableTestCase
         $response = $this->taskController->taskTypeCountAction(TaskTypeService::HTML_VALIDATION_TYPE, 'completed');
 
         $this->assertTrue($response->isSuccessful());
+        $this->assertEquals('application/json', $response->headers->get('content-type'));
 
         $responseData = json_decode($response->getContent());
 
