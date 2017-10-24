@@ -74,7 +74,7 @@ class ApplicationStatusTest extends \PHPUnit_Framework_TestCase
                     'workers' => [
                         [
                             'hostname' => 'worker1.example.com',
-                            'state' => 'worker-active',
+                            'state' => 'active',
                         ],
                     ],
                     'version' => 'a0092bfe2c7ae35996deb4bc2b1c57fc91a0c5e4',

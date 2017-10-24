@@ -16,6 +16,8 @@ class Worker implements \JsonSerializable
     const STATE_DELETED = 'worker-deleted';
     const STATE_OFFLINE = 'worker-offline';
 
+    const STATE_NAME_PREFIX = 'worker-';
+
     /**
      * @var int
      *
@@ -148,7 +150,7 @@ class Worker implements \JsonSerializable
     {
         return [
             'hostname' => $this->getHostname(),
-            'state' => $this->getState()->getName(),
+            'state' => str_replace(self::STATE_NAME_PREFIX, '', $this->getState()->getName()),
         ];
     }
 }
