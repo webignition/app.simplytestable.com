@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 
 /**
- * 
  * @ORM\Entity
  * @ORM\Table(
  *     name="JobTaskConfiguration"
@@ -17,32 +16,25 @@ use Doctrine\Common\Collections\Collection as DoctrineCollection;
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class TaskConfiguration
-{    
+{
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * 
      */
     private $id;
 
-
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\Job\Configuration
+     * @var Configuration
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Configuration", inversedBy="taskConfigurations")
      * @ORM\JoinColumn(name="jobconfiguration_id", referencedColumnName="id", nullable=false)
-     *
      */
     protected $jobConfiguration;
 
-
     /**
-     *
      * @var TaskType
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
@@ -53,10 +45,7 @@ class TaskConfiguration
      */
     protected $type;
 
-
-
     /**
-     *
      * @var DoctrineCollection
      *
      * @ORM\Column(type="array", name="options", nullable=false)
@@ -64,7 +53,6 @@ class TaskConfiguration
      * @SerializerAnnotation\Expose
      */
     protected $options;
-
 
     /**
      * @var bool
@@ -75,38 +63,30 @@ class TaskConfiguration
      */
     private $isEnabled = true;
 
-
     public function __construct()
     {
         $this->options = new ArrayCollection();
     }
 
-
-    
     /**
-     *
      * @return string
      */
-    public function getPublicSerializedType() {
+    public function getPublicSerializedType()
+    {
         return (string)$this->getType();
     }
 
-    
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
         return $this->id;
     }
 
-    
     /**
-     * Set type
-     *
      * @param TaskType $type
+     *
      * @return TaskConfiguration
      */
     public function setType(TaskType $type)
@@ -116,8 +96,6 @@ class TaskConfiguration
     }
 
     /**
-     * Get type
-     *
      * @return TaskType
      */
     public function getType()
@@ -126,9 +104,8 @@ class TaskConfiguration
     }
 
     /**
-     * Set jobConfiguration
-     *
      * @param Configuration $jobConfiguration
+     *
      * @return TaskConfiguration
      */
     public function setJobConfiguration(Configuration $jobConfiguration)
@@ -139,51 +116,45 @@ class TaskConfiguration
     }
 
     /**
-     * Get jobConfiguration
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Configuration 
+     * @return Configuration
      */
     public function getJobConfiguration()
     {
         return $this->jobConfiguration;
     }
 
-
     /**
-     *
      * @return int
      */
-    public function getOptionCount() {
+    public function getOptionCount()
+    {
         return count($this->getOptions());
     }
 
-
     /**
-     *
      * @param string $optionName
+     *
      * @return mixed
      */
-    public function getOption($optionName) {
+    public function getOption($optionName)
+    {
         $options = $this->getOptions();
         return (isset($options[$optionName])) ? $options[$optionName] : null;
     }
 
-
     /**
-     *
      * @param string $optionName
-     * @return boolean
+     *
+     * @return bool
      */
-    public function hasOption($optionName) {
+    public function hasOption($optionName)
+    {
         return !is_null($this->getOption($optionName));
     }
 
-
-
     /**
-     * Set options
-     *
      * @param array $options
+     *
      * @return TaskConfiguration
      */
     public function setOptions($options)
@@ -194,8 +165,6 @@ class TaskConfiguration
     }
 
     /**
-     * Get options
-     *
      * @return array
      */
     public function getOptions()
@@ -203,12 +172,13 @@ class TaskConfiguration
         return $this->options;
     }
 
-
     /**
      * @param TaskConfiguration $taskConfiguration
+     *
      * @return bool
      */
-    public function hasMatchingTypeAndOptions(TaskConfiguration $taskConfiguration) {
+    public function hasMatchingTypeAndOptions(TaskConfiguration $taskConfiguration)
+    {
         if ($this->getType()->getName() != $taskConfiguration->getType()->getName()) {
             return false;
         }
@@ -224,19 +194,19 @@ class TaskConfiguration
         return true;
     }
 
-
     /**
      * @param $isEnabled
      */
-    public function setIsEnabled($isEnabled) {
+    public function setIsEnabled($isEnabled)
+    {
         $this->isEnabled = $isEnabled;
     }
-
 
     /**
      * @return bool
      */
-    public function getIsEnabled() {
+    public function getIsEnabled()
+    {
         return $this->isEnabled;
     }
 }
