@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Entity\Stripe;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\User;
 use webignition\Model\Stripe\Event\Event as StripeEventModel;
 use webignition\Model\Stripe\Event\Factory as StripeEventFactory;
@@ -15,9 +14,8 @@ use webignition\Model\Stripe\Event\Factory as StripeEventFactory;
  *         @ORM\Index(name="type_idx", columns={"type"})
  *     }
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class Event
+class Event implements \JsonSerializable
 {
     /**
      * @var int
@@ -32,7 +30,6 @@ class Event
      * @var string
      *
      * @ORM\Column(type="string", unique=true)
-     * @SerializerAnnotation\Expose
      */
     protected $stripeId;
 
@@ -40,7 +37,6 @@ class Event
      * @var string
      *
      * @ORM\Column(type="string")
-     * @SerializerAnnotation\Expose
      */
     protected $type;
 
@@ -48,7 +44,6 @@ class Event
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @SerializerAnnotation\Expose
      */
     protected $isLive;
 
@@ -56,7 +51,6 @@ class Event
      * @var string
      *
      * @ORM\Column(type="text", nullable=true, name="data")
-     * @SerializerAnnotation\Expose
      */
     protected $stripeEventData;
 
@@ -65,9 +59,6 @@ class Event
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
-     *
-     * @SerializerAnnotation\Expose
      */
     protected $user;
 
@@ -75,21 +66,8 @@ class Event
      * @var bool
      *
      * @ORM\Column(type="boolean", options={"default" = 0})
-     * @SerializerAnnotation\Expose
      */
     private $isProcessed = false;
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedUser()
-    {
-        if (is_null($this->getUser())) {
-            return null;
-        }
-
-        return $this->getUser()->getUsername();
-    }
 
     /**
      * @return int
@@ -210,5 +188,27 @@ class Event
     public function getIsProcessed()
     {
         return $this->isProcessed;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $eventData = [
+            'stripe_id' => $this->getStripeId(),
+            'type' => $this->getType(),
+            'is_live' => $this->getIsLive(),
+            'stripe_event_data' => $this->getStripeEventData(),
+            'is_processed' => $this->getIsProcessed(),
+        ];
+
+        $user = $this->getUser();
+
+        if (!empty($user)) {
+            $eventData['user'] = $this->getUser()->getEmail();
+        }
+
+        return $eventData;
     }
 }
