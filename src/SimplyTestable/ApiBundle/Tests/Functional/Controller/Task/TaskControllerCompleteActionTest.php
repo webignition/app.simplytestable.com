@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Task\CompleteAction;
+namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Task;
 
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
