@@ -120,7 +120,8 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
 
         /* @var Task $selectedTask */
         $selectedTask = $tasks->get(0);
-        $this->assertFalse($selectedTask->hasOutput());
+        $selectedTaskOutput = $selectedTask->getOutput();
+        $this->assertEmpty($selectedTaskOutput);
 
         $taskWithOutput = $tasks->get(1);
 
@@ -133,9 +134,11 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
 
         $returnValue = $this->linkIntegrityTaskPreProcessor->process($selectedTask);
 
+        $selectedTaskOutput = $selectedTask->getOutput();
+
         $this->assertFalse($returnValue);
         $this->assertEquals(TaskService::QUEUED_STATE, $selectedTask->getState()->getName());
-        $this->assertFalse($selectedTask->hasOutput());
+        $this->assertEmpty($selectedTaskOutput);
     }
 
     /**
@@ -195,7 +198,8 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
 
         /* @var Task $selectedTask */
         $selectedTask = $tasks->get(0);
-        $this->assertFalse($selectedTask->hasOutput());
+        $selectedTaskOutput = $selectedTask->getOutput();
+        $this->assertEmpty($selectedTaskOutput);
 
         $taskWithOutput = $tasks->get(1);
         $this->taskFactory->setEndDateTime($taskWithOutput, new \DateTime());
@@ -219,9 +223,11 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
 
         $returnValue = $this->linkIntegrityTaskPreProcessor->process($selectedTask);
 
+        $selectedTaskOutput = $selectedTask->getOutput();
+
         $this->assertFalse($returnValue);
         $this->assertEquals(TaskService::QUEUED_STATE, $selectedTask->getState()->getName());
-        $this->assertFalse($selectedTask->hasOutput());
+        $this->assertEmpty($selectedTaskOutput);
     }
 
     /**
@@ -274,7 +280,9 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
 
         /* @var Task $selectedTask */
         $selectedTask = $tasks->get(0);
-        $this->assertFalse($selectedTask->hasOutput());
+        $selectedTaskOutput = $selectedTask->getOutput();
+
+        $this->assertEmpty($selectedTaskOutput);
 
         $taskWithOutput = $tasks->get(1);
         $this->taskFactory->setEndDateTime($taskWithOutput, new \DateTime());
@@ -294,11 +302,10 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
         $this->assertFalse($returnValue);
         $this->assertEquals(TaskService::QUEUED_STATE, $selectedTask->getState()->getName());
 
-        $this->assertTrue($selectedTask->hasOutput());
+        $selectedTaskOutput = $selectedTask->getOutput();
 
-        $output = $selectedTask->getOutput();
-
-        $this->assertEquals($expectedTaskOutput, $output->getOutput());
+        $this->assertNotEmpty($selectedTaskOutput);
+        $this->assertEquals($expectedTaskOutput, $selectedTaskOutput->getOutput());
         $this->assertEquals($expectedTaskParameters, $selectedTask->getParametersArray());
     }
 
@@ -401,7 +408,8 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
 
         /* @var Task $selectedTask */
         $selectedTask = $tasks->get(0);
-        $this->assertFalse($selectedTask->hasOutput());
+        $taskOutput = $selectedTask->getOutput();
+        $this->assertEmpty($taskOutput);
 
         foreach ($tasks as $taskIndex => $task) {
             if (!empty($taskOutputValuesCollection[$taskIndex])) {
@@ -421,21 +429,21 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
 
         $this->assertEquals($expectedTaskStateName, $selectedTask->getState()->getName());
 
-        if (empty($expectedTaskOutputValues)) {
-            $this->assertFalse($selectedTask->hasOutput());
-        } else {
-            $this->assertTrue($selectedTask->hasOutput());
+        $taskOutput = $selectedTask->getOutput();
 
-            $output = $selectedTask->getOutput();
+        if (empty($expectedTaskOutputValues)) {
+            $this->assertEmpty($taskOutput);
+        } else {
+            $this->assertNotEmpty($taskOutput);
 
             $this->assertEquals(
                 $expectedTaskOutputValues['output'],
-                $output->getOutput()
+                $taskOutput->getOutput()
             );
 
             $this->assertEquals(
                 $expectedTaskOutputValues['errorCount'],
-                $output->getErrorCount()
+                $taskOutput->getErrorCount()
             );
         }
     }

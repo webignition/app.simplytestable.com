@@ -65,7 +65,9 @@ class TaskController extends ApiController
         $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
 
         foreach ($tasks as $task) {
-            if ($task->hasOutput() && $taskOutputJoinerFactory->hasTaskOutputJoiner($task)) {
+            $currentTaskOutput = $task->getOutput();
+
+            if (!empty($currentTaskOutput) && $taskOutputJoinerFactory->hasTaskOutputJoiner($task)) {
                 $output = $taskOutputJoinerFactory->getTaskOutputJoiner($task)->join(array(
                     $task->getOutput(),
                     $output

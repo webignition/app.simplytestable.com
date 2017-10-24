@@ -87,15 +87,16 @@ class CollectionCommand extends \Symfony\Component\Console\Command\Command
         $taskIdsByWorker = array();
         foreach ($taskIds as $taskId) {
             $task = $this->taskService->getById($taskId);
+            $taskWorker = $task->getWorker();
 
-            if ($task->hasWorker()) {
-                if (!isset($taskIdsByWorker[$task->getWorker()->getHostname()])) {
-                    $taskIdsByWorker[$task->getWorker()->getHostname()] = array();
+            if (empty($taskWorker)) {
+                $this->taskService->cancel($task);
+            } else {
+                if (!isset($taskIdsByWorker[$taskWorker->getHostname()])) {
+                    $taskIdsByWorker[$taskWorker->getHostname()] = array();
                 }
 
-                $taskIdsByWorker[$task->getWorker()->getHostname()][] = $task;
-            } else {
-                $this->taskService->cancel($task);
+                $taskIdsByWorker[$taskWorker->getHostname()][] = $task;
             }
         }
 
