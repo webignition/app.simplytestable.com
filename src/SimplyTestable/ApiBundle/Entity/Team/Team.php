@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Entity\Team;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\User;
 
 /**
@@ -11,14 +10,13 @@ use SimplyTestable\ApiBundle\Entity\User;
  * @ORM\Table(
  *     name="Team"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TeamRepository")
  */
-class Team {
+class Team implements \JsonSerializable
+{
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -26,29 +24,22 @@ class Team {
     protected $id;
 
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\User
+     * @var User
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="leader_id", referencedColumnName="id", nullable=false)
-     * @SerializerAnnotation\Expose
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedLeader")
      */
     protected $leader;
 
     /**
-     *
      * @var string
      *
      * @ORM\Column(type="string", unique=true, nullable=false)
-     * @SerializerAnnotation\Expose
      */
     protected $name;
 
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -56,21 +47,14 @@ class Team {
     }
 
     /**
-     * Set leader
-     *
      * @param User $leader
-     * @return Team
      */
     public function setLeader(User $leader)
     {
         $this->leader = $leader;
-
-        return $this;
     }
 
     /**
-     * Get leader
-     *
      * @return User
      */
     public function getLeader()
@@ -79,33 +63,29 @@ class Team {
     }
 
     /**
-     * Set name
-     *
      * @param string $name
-     * @return Team
      */
     public function setName($name)
     {
         $this->name = $name;
-
-        return $this;
     }
 
     /**
-     * Get name
-     *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
         return $this->name;
     }
 
-
     /**
-     * @return string
+     * @return array
      */
-    public function getPublicSerializedLeader() {
-        return $this->getLeader()->getUsername();
+    public function jsonSerialize()
+    {
+        return [
+            'leader' => $this->getLeader()->getEmail(),
+            'name' => $this->getName(),
+        ];
     }
 }
