@@ -4,11 +4,13 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\GetController;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\JobTaskConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
@@ -17,11 +19,6 @@ class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
      * @var GetController
      */
     private $jobConfigurationGetController;
-
-    /**
-     * @var JobConfiguration
-     */
-    private $jobConfiguration;
 
     /**
      * @var User
@@ -41,26 +38,23 @@ class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
-
-        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
-        $this->jobConfiguration = $jobConfigurationFactory->create([
-            JobConfigurationFactory::KEY_USER => $this->user,
-        ]);
     }
 
     public function testRequest()
     {
-        $userFactory = new UserFactory($this->container);
-        $user = $userFactory->create();
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfiguration = $jobConfigurationFactory->create([
+            JobConfigurationFactory::KEY_USER => $this->user,
+        ]);
 
         $router = $this->container->get('router');
         $requestUrl = $router->generate('jobconfiguration_get_get', [
-            'label' => $this->jobConfiguration->getLabel(),
+            'label' => $jobConfiguration->getLabel(),
         ]);
 
         $this->getCrawler([
             'url' => $requestUrl,
-            'user' => $user,
+            'user' => $this->user,
         ]);
 
         /* @var RedirectResponse $response */
@@ -76,23 +70,89 @@ class JobConfigurationGetControllerTest extends BaseSimplyTestableTestCase
         $this->jobConfigurationGetController->getAction('foo');
     }
 
-    public function testGetActionSuccess()
+    /**
+     * @dataProvider getActionSuccessDataProvider
+     *
+     * @param array $jobConfigurationValues
+     * @param array $expectedResponseData
+     */
+    public function testGetActionSuccess($jobConfigurationValues, $expectedResponseData)
     {
-        $response = $this->jobConfigurationGetController->getAction($this->jobConfiguration->getLabel());
+        $jobConfigurationValues[JobConfigurationFactory::KEY_USER] = $this->user;
+
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $jobConfiguration = $jobConfigurationFactory->create($jobConfigurationValues);
+
+        $response = $this->jobConfigurationGetController->getAction($jobConfiguration->getLabel());
 
         $this->assertTrue($response->isSuccessful());
+        $this->assertEquals($response->headers->get('content-type'), 'application/json');
 
         $responseData = json_decode($response->getContent(), true);
 
-        $this->assertEquals(
-            [
-                'label' => $this->jobConfiguration->getLabel(),
-                'user' => $this->jobConfiguration->getUser()->getEmailCanonical(),
-                'website' => $this->jobConfiguration->getWebsite()->getCanonicalUrl(),
-                'type' => $this->jobConfiguration->getType()->getName(),
-                'task_configurations' => [],
+        $this->assertEquals($expectedResponseData, $responseData);
+    }
+
+    /**
+     * @return array
+     */
+    public function getActionSuccessDataProvider()
+    {
+        return [
+            'without task configuration' => [
+                'jobConfigurationValues' => [
+                    JobConfigurationFactory::KEY_LABEL => 'foo',
+                    JobConfigurationFactory::KEY_WEBSITE_URL => 'http://foo.example.com/',
+                    JobConfigurationFactory::KEY_TYPE => JobTypeService::FULL_SITE_NAME,
+                    JobConfigurationFactory::KEY_PARAMETERS => 'parameters string',
+                ],
+                'expectedResponseData' => [
+                    'label' => 'foo',
+                    'user' => 'user@example.com',
+                    'website' => 'http://foo.example.com/',
+                    'type' => JobTypeService::FULL_SITE_NAME,
+                    'task_configurations' => [],
+                    'parameters' => '"parameters string"',
+                ],
             ],
-            $responseData
-        );
+            'with task configuration' => [
+                'jobConfigurationValues' => [
+                    JobConfigurationFactory::KEY_LABEL => 'bar',
+                    JobConfigurationFactory::KEY_WEBSITE_URL => 'http://bar.example.com/',
+                    JobConfigurationFactory::KEY_TYPE => JobTypeService::SINGLE_URL_NAME,
+                    JobConfigurationFactory::KEY_TASK_CONFIGURATIONS => [
+                        [
+                            JobTaskConfigurationFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                            JobTaskConfigurationFactory::KEY_OPTIONS => [
+                                'html-validation-foo' => 'html-validation-bar',
+                            ],
+                        ],
+                        [
+                            JobTaskConfigurationFactory::KEY_TYPE => TaskTypeService::CSS_VALIDATION_TYPE,
+                        ],
+                    ],
+                ],
+                'expectedResponseData' => [
+                    'label' => 'bar',
+                    'user' => 'user@example.com',
+                    'website' => 'http://bar.example.com/',
+                    'type' => JobTypeService::SINGLE_URL_NAME,
+                    'task_configurations' => [
+                        [
+                            'type' => TaskTypeService::HTML_VALIDATION_TYPE,
+                            'options' => [
+                                'html-validation-foo' => 'html-validation-bar',
+                            ],
+                            'is_enabled' => true,
+                        ],
+                        [
+                            'type' => TaskTypeService::CSS_VALIDATION_TYPE,
+                            'options' => [],
+                            'is_enabled' => true,
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }
