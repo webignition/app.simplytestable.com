@@ -36,7 +36,9 @@ class SetWorkerToken extends AbstractFixture implements OrderedFixtureInterface,
         $workers = $workerRepository->findAll();
 
         foreach ($workers as $worker) {
-            if (!$worker->hasToken()) {
+            $workerToken = $worker->getToken();
+
+            if (empty($workerToken)) {
                 $worker->setToken(md5(rand()));
 
                 $entityManager->persist($worker);

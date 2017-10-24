@@ -1,13 +1,15 @@
 <?php
 namespace SimplyTestable\ApiBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 /**
  * @ORM\Entity
  */
-class Worker
+class Worker implements \JsonSerializable
 {
     const STATE_ACTIVE = 'worker-active';
     const STATE_UNACTIVATED = 'worker-unactivated';
@@ -15,8 +17,7 @@ class Worker
     const STATE_OFFLINE = 'worker-offline';
 
     /**
-     *
-     * @var type integer
+     * @var int
      *
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -25,90 +26,57 @@ class Worker
     protected $id;
 
     /**
-     *
      * @var string
      *
      * @ORM\Column(type="string", unique=true, nullable=false)
      */
     protected $hostname;
 
-
     /**
-     *
-     * @var \Doctrine\Common\Collections\Collection
+     * @var DoctrineCollection
      *
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="worker")
      */
     protected $tasks;
 
-
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\State
+     * @var State
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=true)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
-     * @SerializerAnnotation\Expose
      */
     protected $state;
 
-
     /**
-     *
      * @var string
      *
      * @ORM\Column(type="string", unique=false, nullable=true)
      */
     private $token;
 
-
-    /**
-     * Constructor
-     */
     public function __construct()
     {
-        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->tasks = new ArrayCollection();
     }
 
-
     /**
-     *
-     * @return string
-     */
-    public function getPublicSerializedState() {
-        return str_replace('worker-', '', (string)$this->getState());
-    }
-
-
-    /**
-     * Set state
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\State $state
-     * @return Job
+     * @param State $state
      */
     public function setState(State $state)
     {
         $this->state = $state;
-        return $this;
     }
 
     /**
-     * Get state
-     *
-     * @return use SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
     public function getState()
     {
         return $this->state;
     }
 
-
     /**
-     * Get id
-     *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -116,21 +84,14 @@ class Worker
     }
 
     /**
-     * Set hostname
-     *
      * @param string $hostname
-     * @return Worker
      */
     public function setHostname($hostname)
     {
         $this->hostname = $hostname;
-
-        return $this;
     }
 
     /**
-     * Get hostname
-     *
      * @return string
      */
     public function getHostname()
@@ -139,24 +100,17 @@ class Worker
     }
 
     /**
-     * Add tasks
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $tasks
-     * @return Worker
+     * @param Task $tasks
      */
-    public function addTask(\SimplyTestable\ApiBundle\Entity\Task\Task $tasks)
+    public function addTask(Task $tasks)
     {
         $this->tasks[] = $tasks;
-
-        return $this;
     }
 
     /**
-     * Remove tasks
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $tasks
+     * @param Task $tasks
      */
-    public function removeTask(\SimplyTestable\ApiBundle\Entity\Task\Task $tasks)
+    public function removeTask(Task $tasks)
     {
         $this->tasks->removeElement($tasks);
     }
@@ -164,46 +118,37 @@ class Worker
     /**
      * Get tasks
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return DoctrineCollection
      */
     public function getTasks()
     {
         return $this->tasks;
     }
 
-
-    /**
-     *
-     * @param Worker $worker
-     * @return boolean
-     */
-    public function equals(Worker $worker) {
-        return $this->getHostname() == $worker->getHostname();
-    }
-
-
     /**
      * @param string $token
-     * @return Worker
      */
-    public function setToken($token) {
+    public function setToken($token)
+    {
         $this->token = $token;
-        return $this;
     }
-
 
     /**
      * @return string
      */
-    public function getToken() {
+    public function getToken()
+    {
         return $this->token;
     }
 
-
     /**
-     * @return bool
+     * @return array
      */
-    public function hasToken() {
-        return !is_null($this->getToken());
+    public function jsonSerialize()
+    {
+        return [
+            'hostname' => $this->getHostname(),
+            'state' => $this->getState()->getName(),
+        ];
     }
 }
