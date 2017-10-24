@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -126,7 +127,7 @@ class TaskController extends ApiController
      * @param string $task_type
      * @param string $state_name
      *
-     * @return Response
+     * @return JsonResponse
      */
     public function taskTypeCountAction($task_type, $state_name)
     {
@@ -157,6 +158,6 @@ class TaskController extends ApiController
         $taskRepository = $entityManager->getRepository(Task::class);
         $count = $taskRepository->getCountByTaskTypeAndState($taskType, $state);
 
-        return new Response(json_encode($count), 200);
+        return new JsonResponse($count);
     }
 }
