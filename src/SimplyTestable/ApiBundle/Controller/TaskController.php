@@ -3,18 +3,16 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
+use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
-use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\FactoryService;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
-use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class TaskController extends ApiController
@@ -25,16 +23,22 @@ class TaskController extends ApiController
     public function completeAction()
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+        $completeRequestFactory = $this->container->get('simplytestable.services.request.factory.task.complete');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoinerservicefactory');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-
-        $completeRequest = $this->container->get('simplytestable.services.request.factory.task.complete')->create();
+        $completeRequest = $completeRequestFactory->create();
         if (!$completeRequest->isValid()) {
             throw new BadRequestHttpException();
         }
@@ -54,29 +58,27 @@ class TaskController extends ApiController
 
         $state = $completeRequest->getState();
 
-        $urlDiscoveryTaskType = $this->getTaskTypeService()->getByName('URL discovery');
-
-        $crawlJobContainerService = $this->getCrawlJobContainerService();
+        $urlDiscoveryTaskType = $taskTypeService->getByName('URL discovery');
 
         /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
         $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
 
         foreach ($tasks as $task) {
-            if ($task->hasOutput() && $this->getTaskOutputJoinerFactoryService()->hasTaskOutputJoiner($task)) {
-                $output = $this->getTaskOutputJoinerFactoryService()->getTaskOutputJoiner($task)->join(array(
+            if ($task->hasOutput() && $taskOutputJoinerFactory->hasTaskOutputJoiner($task)) {
+                $output = $taskOutputJoinerFactory->getTaskOutputJoiner($task)->join(array(
                     $task->getOutput(),
                     $output
                 ));
             }
 
-            $this->getTaskService()->complete($task, $endDateTime, $output, $state, false);
+            $taskService->complete($task, $endDateTime, $output, $state, false);
 
             if ($task->getType()->equals($urlDiscoveryTaskType)) {
                 $crawlJobContainerService->processTaskResults($task);
             }
 
-            if (!$this->getJobService()->hasIncompleteTasks($task->getJob())) {
-                $this->getJobService()->complete($task->getJob());
+            if (!$jobService->hasIncompleteTasks($task->getJob())) {
+                $jobService->complete($task->getJob());
             }
 
             if ($task->getType()->equals($urlDiscoveryTaskType)) {
@@ -98,14 +100,14 @@ class TaskController extends ApiController
                             ) . '-domains-to-ignore';
 
                             if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
-                                $this->getJobPreparationService()->setPredefinedDomainsToIgnore(
+                                $jobPreparationService->setPredefinedDomainsToIgnore(
                                     $taskType,
                                     $this->container->getParameter($taskTypeParameterDomainsToIgnoreKey)
                                 );
                             }
                         }
 
-                        $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);
+                        $jobPreparationService->prepareFromCrawl($crawlJobContainer);
                     }
                 }
 
@@ -128,75 +130,33 @@ class TaskController extends ApiController
      */
     public function taskTypeCountAction($task_type, $state_name)
     {
-        $taskStatePrefix = 'task-';
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        if (!$this->getTaskTypeService()->exists($task_type)) {
-            return new Response('', 404);
+        $taskTypeRepository = $entityManager->getRepository(TaskType::class);
+
+        /* @var TaskType $taskType */
+        $taskType = $taskTypeRepository->findOneBy([
+            'name' => $task_type,
+        ]);
+
+        if (empty($taskType)) {
+            throw new NotFoundHttpException();
         }
 
-        if (!$this->getStateService()->has($taskStatePrefix . $state_name)) {
-            return new Response('', 404);
+        $stateRepository = $entityManager->getRepository(State::class);
+
+        /* @var State $state */
+        $state = $stateRepository->findOneBy([
+            'name' => 'task-' . $state_name,
+        ]);
+
+        if (empty($state)) {
+            throw new NotFoundHttpException();
         }
 
-        $taskType = $this->getTaskTypeService()->getByName($task_type);
-        $state = $this->getStateService()->fetch($taskStatePrefix . $state_name);
+        $taskRepository = $entityManager->getRepository(Task::class);
+        $count = $taskRepository->getCountByTaskTypeAndState($taskType, $state);
 
-        return new Response(json_encode($this->getTaskService()->getCountByTaskTypeAndState($taskType, $state)), 200);
-    }
-
-    /**
-     * @return TaskService
-     */
-    private function getTaskService()
-    {
-        return $this->container->get('simplytestable.services.taskservice');
-    }
-
-    /**
-     * @return JobService
-     */
-    private function getJobService()
-    {
-        return $this->container->get('simplytestable.services.jobservice');
-    }
-
-    /**
-     * @return \SimplyTestable\ApiBundle\Services\JobPreparationService
-     */
-    private function getJobPreparationService()
-    {
-        return $this->container->get('simplytestable.services.jobpreparationservice');
-    }
-
-    /**
-     * @return TaskTypeService
-     */
-    private function getTaskTypeService()
-    {
-        return $this->container->get('simplytestable.services.tasktypeservice');
-    }
-
-    /**
-     * @return StateService
-     */
-    private function getStateService()
-    {
-        return $this->container->get('simplytestable.services.stateservice');
-    }
-
-    /**
-     * @return CrawlJobContainerService
-     */
-    private function getCrawlJobContainerService()
-    {
-        return $this->container->get('simplytestable.services.crawljobcontainerservice');
-    }
-
-    /**
-     * @return FactoryService
-     */
-    private function getTaskOutputJoinerFactoryService()
-    {
-        return $this->container->get('simplytestable.services.TaskOutputJoinerServiceFactory');
+        return new Response(json_encode($count), 200);
     }
 }

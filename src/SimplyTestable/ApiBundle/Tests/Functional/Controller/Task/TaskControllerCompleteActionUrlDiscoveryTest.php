@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Task\CompleteAction;
+namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Task;
 
 use Guzzle\Http\Message\Response;
 use SimplyTestable\ApiBundle\Controller\TaskController;

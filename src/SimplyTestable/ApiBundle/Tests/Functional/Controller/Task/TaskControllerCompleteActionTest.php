@@ -1,6 +1,6 @@
 <?php
 
-namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Task\CompleteAction;
+namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Task;
 
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
@@ -17,12 +17,18 @@ use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var TaskController
+     */
+    private $taskController;
+
     /**
      * @var JobFactory
      */
@@ -35,6 +41,9 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
+        $this->taskController = new TaskController();
+        $this->taskController->setContainer($this->container);
+
         $this->jobFactory = new JobFactory($this->container);
     }
 
@@ -43,11 +52,10 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $taskController = new TaskController();
-        $taskController->setContainer($this->container);
+        $this->container->get('request_stack')->push(new Request());
 
         try {
-            $taskController->completeAction();
+            $this->taskController->completeAction();
             $this->fail('ServiceUnavailableHttpException not thrown');
         } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
             $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
@@ -69,10 +77,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
         $this->container->get('request_stack')->push($request);
 
-        $taskController = new TaskController();
-        $taskController->setContainer($this->container);
-
-        $taskController->completeAction();
+        $this->taskController->completeAction();
     }
 
     /**
@@ -123,10 +128,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
         $this->container->get('request_stack')->push($request);
 
-        $taskController = new TaskController();
-        $taskController->setContainer($this->container);
-
-        $taskController->completeAction();
+        $this->taskController->completeAction();
     }
 
     /**
@@ -215,10 +217,7 @@ class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
         $this->container->get('request_stack')->push($request);
 
-        $taskController = new TaskController();
-        $taskController->setContainer($this->container);
-
-        $response = $taskController->completeAction();
+        $response = $this->taskController->completeAction();
 
         $this->assertTrue($response->isSuccessful());
 
