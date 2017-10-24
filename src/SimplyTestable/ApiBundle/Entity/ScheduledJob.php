@@ -60,14 +60,10 @@ class ScheduledJob implements \JsonSerializable
 
     /**
      * @param JobConfiguration $jobConfiguration
-     *
-     * @return ScheduledJob
      */
     public function setJobConfiguration(JobConfiguration $jobConfiguration)
     {
         $this->jobConfiguration = $jobConfiguration;
-
-        return $this;
     }
 
     /**
@@ -80,14 +76,10 @@ class ScheduledJob implements \JsonSerializable
 
     /**
      * @param CronJob $cronJob
-     *
-     * @return ScheduledJob
      */
     public function setCronJob(CronJob $cronJob)
     {
         $this->cronJob = $cronJob;
-
-        return $this;
     }
 
     /**
@@ -100,14 +92,10 @@ class ScheduledJob implements \JsonSerializable
 
     /**
      * @param bool $isRecurring
-     *
-     * @return ScheduledJob
      */
     public function setIsRecurring($isRecurring)
     {
         $this->isRecurring = $isRecurring;
-
-        return $this;
     }
 
     /**
@@ -120,14 +108,10 @@ class ScheduledJob implements \JsonSerializable
 
     /**
      * @param $cronModifier
-     *
-     * @return $this
      */
     public function setCronModifier($cronModifier)
     {
         $this->cronModifier = $cronModifier;
-
-        return $this;
     }
 
     /**
@@ -136,14 +120,6 @@ class ScheduledJob implements \JsonSerializable
     public function getCronModifier()
     {
         return $this->cronModifier;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasCronModifier()
-    {
-        return !is_null($this->cronModifier);
     }
 
     /**

@@ -115,8 +115,10 @@ class Service extends EntityService {
 
         $command = 'simplytestable:scheduledjob:enqueue ' . $scheduledJob->getId();
 
-        if ($scheduledJob->hasCronModifier()) {
-            $command .= ' #' . $scheduledJob->getCronModifier();
+        $cronModifier = $scheduledJob->getCronModifier();
+
+        if (!empty($cronModifier)) {
+            $command .= ' #' . $cronModifier;
         }
 
         $scheduledJob->getCronJob()->setCommand($command);
