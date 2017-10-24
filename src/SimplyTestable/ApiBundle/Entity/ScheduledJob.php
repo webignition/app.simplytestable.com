@@ -2,17 +2,14 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Cron\CronBundle\Entity\CronJob;
 
 /**
  * @ORM\Entity
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\ScheduledJob\Repository")
- *
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class ScheduledJob
+class ScheduledJob implements \JsonSerializable
 {
     /**
      * @var int
@@ -147,5 +144,24 @@ class ScheduledJob
     public function hasCronModifier()
     {
         return !is_null($this->cronModifier);
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $data = [
+            'id' => $this->getId(),
+            'jobconfiguration' => $this->getJobConfiguration()->getLabel(),
+            'schedule' => $this->getCronJob()->getSchedule(),
+            'isrecurring' => (int)$this->getIsRecurring(),
+        ];
+
+        if (!empty($this->cronModifier)) {
+            $data['schedule-modifier'] = $this->getCronModifier();
+        }
+
+        return $data;
     }
 }
