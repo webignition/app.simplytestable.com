@@ -71,7 +71,9 @@ class SetTokenFromActivationRequestCommand extends Command
                 'worker' => $worker,
             ]);
 
-            if (!$worker->hasToken() && !empty($workerActivationRequest)) {
+            $workerToken = $worker->getToken();
+
+            if (empty($workerToken) && !empty($workerActivationRequest)) {
                 $worker->setToken($workerActivationRequest->getToken());
 
                 $this->entityManager->persist($worker);
