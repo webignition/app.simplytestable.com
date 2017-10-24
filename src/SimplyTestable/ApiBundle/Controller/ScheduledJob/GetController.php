@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\ScheduledJob;
 
 use SimplyTestable\ApiBundle\Controller\ApiController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -11,7 +12,7 @@ class GetController extends ApiController
     /**
      * @param int $id
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function getAction($id)
     {
@@ -24,12 +25,6 @@ class GetController extends ApiController
             throw new NotFoundHttpException();
         }
 
-        return $this->sendResponse([
-            'id' => $scheduledJob->getId(),
-            'jobconfiguration' => $scheduledJob->getJobConfiguration()->getLabel(),
-            'schedule' => $scheduledJob->getCronJob()->getSchedule(),
-            'schedule-modifier' => $scheduledJob->getCronModifier(),
-            'isrecurring' => (int)$scheduledJob->getIsRecurring(),
-        ]);
+        return new JsonResponse($scheduledJob);
     }
 }
