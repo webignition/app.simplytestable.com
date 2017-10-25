@@ -19,6 +19,7 @@ class SummaryTest extends \PHPUnit_Framework_TestCase
      * @param UserAccountPlan $userAccountPlan
      * @param StripeCustomerSummary $stripeCustomerSummary
      * @param PlanConstraintsSummary $planConstraintsSummary
+     * @param TeamSummary $teamSummary
      * @param array $expectedReturnValue
      */
     public function testJsonSerialize(
