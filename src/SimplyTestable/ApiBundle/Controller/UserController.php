@@ -41,8 +41,10 @@ class UserController extends ApiController
             'user_plan' => $userAccountPlan
         ];
 
+        $userAccountPlanStripeCustomer = $userAccountPlan->getStripeCustomer();
+
         $includeStripeCustomerInSummary =
-            $userAccountPlan->hasStripeCustomer() && $user->getId() == $userAccountPlan->getUser()->getId();
+            !empty($userAccountPlanStripeCustomer) && $user->getId() == $userAccountPlan->getUser()->getId();
 
         if ($includeStripeCustomerInSummary) {
             $userSummary['stripe_customer'] = $stripeService->getCustomer($userAccountPlan)->__toArray();

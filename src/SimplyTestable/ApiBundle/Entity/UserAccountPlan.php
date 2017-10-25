@@ -1,11 +1,13 @@
 <?php
-namespace SimplyTestable\ApiBundle\Entity;;
+
+namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 
 /**
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(
  *     name="UserAccountPlan"
@@ -15,11 +17,9 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  */
 class UserAccountPlan
 {
-    
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -27,57 +27,47 @@ class UserAccountPlan
     private $id;
 
     /**
+     * @var User
      *
-     * @var \SimplyTestable\ApiBundle\Entity\User
-     * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
-     */    
+     */
     private $user;
-    
-    
 
     /**
+     * @var AccountPlan
      *
-     * @var \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan
-     * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Plan")
      * @ORM\JoinColumn(name="accountplan_id", referencedColumnName="id", nullable=false)
      * @SerializerAnnotation\Expose
-     */    
+     */
     private $plan;
-    
-    
+
     /**
+     * @var bool
      *
-     * @var boolean 
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $isActive = true;
-    
-    
+
     /**
+     * @var string
      *
-     * @var string 
      * @ORM\Column(type="string", nullable=true)
      * @SerializerAnnotation\Expose
-     */    
+     */
     private $stripeCustomer = null;
-    
-    
+
     /**
-     *
      * @var int
+     *
      * @ORM\Column(type="integer", nullable=true)
      * @SerializerAnnotation\Expose
      */
     private $startTrialPeriod = 30;
-    
 
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -85,22 +75,15 @@ class UserAccountPlan
     }
 
     /**
-     * Set user
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return UserAccountPlan
+     * @param User $user
      */
-    public function setUser(\SimplyTestable\ApiBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
-    
-        return $this;
     }
 
     /**
-     * Get user
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\User 
+     * @return User
      */
     public function getUser()
     {
@@ -108,101 +91,63 @@ class UserAccountPlan
     }
 
     /**
-     * Set plan
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $accountPlan
-     * @return UserAccountPlan
+     * @param AccountPlan $plan
      */
-    public function setPlan(\SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan)
+    public function setPlan(AccountPlan $plan)
     {
         $this->plan = $plan;
-    
-        return $this;
     }
 
     /**
-     * Get plan
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan 
+     * @return AccountPlan
      */
     public function getPlan()
     {
         return $this->plan;
     }
-    
-    
+
     /**
-     * Set isActive
-     *
-     * @param boolean $isActive
-     * @return UserAccountPlan
+     * @param bool $isActive
      */
     public function setIsActive($isActive)
     {
         $this->isActive = $isActive;
-    
-        return $this;
     }
 
     /**
-     * Get isActive
-     *
-     * @return boolean 
+     * @return bool
      */
     public function getIsActive()
     {
         return $this->isActive;
-    }    
+    }
 
     /**
-     * Set stripeCustomer
-     *
      * @param string $stripeCustomer
-     * @return UserAccountPlan
      */
     public function setStripeCustomer($stripeCustomer)
     {
         $this->stripeCustomer = $stripeCustomer;
-    
-        return $this;
     }
 
     /**
-     * Get stripeCustomer
-     *
-     * @return string 
+     * @return string
      */
     public function getStripeCustomer()
     {
         return $this->stripeCustomer;
     }
-    
-    
-    /**
-     * 
-     * @return boolean
-     */
-    public function hasStripeCustomer() {
-        return !is_null($this->getStripeCustomer());
-    }
 
     /**
-     * Set startTrialPeriod
-     *
      * @param integer $startTrialPeriod
-     * @return UserAccountPlan
      */
     public function setStartTrialPeriod($startTrialPeriod)
     {
         $this->startTrialPeriod = $startTrialPeriod;
-    
-        return $this;
     }
 
     /**
-     * Get startTrialPeriod
-     *
-     * @return integer 
+     * @return int
      */
     public function getStartTrialPeriod()
     {
