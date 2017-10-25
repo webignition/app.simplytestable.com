@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class UserController extends ApiController
 {
     /**
-     * @return Response
+     * @return JsonResponse
      */
     public function getAction()
     {
