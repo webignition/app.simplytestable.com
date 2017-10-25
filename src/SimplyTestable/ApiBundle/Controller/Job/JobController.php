@@ -307,7 +307,7 @@ class JobController extends BaseJobController
      * @param string $site_root_url
      * @param int $test_id
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function tasksAction(Request $request, $site_root_url, $test_id)
     {
@@ -343,7 +343,7 @@ class JobController extends BaseJobController
             }
         }
 
-        return $this->sendResponse($tasks);
+        return new JsonResponse($tasks);
     }
 
     /**

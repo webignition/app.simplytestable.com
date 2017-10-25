@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Entity\Task;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use webignition\InternetMediaType\InternetMediaType;
 
 /**
@@ -16,10 +15,8 @@ use webignition\InternetMediaType\InternetMediaType;
  * )
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TaskOutputRepository")
  *
- * @SerializerAnnotation\ExclusionPolicy("all")
- *
  */
-class Output
+class Output implements \JsonSerializable
 {
     /**
      * @var int
@@ -34,7 +31,6 @@ class Output
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     protected $output;
 
@@ -42,7 +38,6 @@ class Output
      * @var InternetMediaType
      *
      * @ORM\Column(type="string", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     protected $contentType;
 
@@ -50,7 +45,6 @@ class Output
      * @var int
      *
      * @ORM\Column(type="integer", nullable=false)
-     * @SerializerAnnotation\Expose
      */
     private $errorCount = 0;
 
@@ -58,7 +52,6 @@ class Output
      * @var int
      *
      * @ORM\Column(type="integer", nullable=false)
-     * @SerializerAnnotation\Expose
      */
     private $warningCount = 0;
 
@@ -163,5 +156,18 @@ class Output
         content-type:'.$this->getContentType().'
         error-count:'.$this->getErrorCount().'
         warning-count:'.$this->getWarningCount());
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'output' => $this->output,
+            'content_type' => (string)$this->contentType,
+            'error_count' => $this->errorCount,
+            'warning_count' => $this->warningCount,
+        ];
     }
 }

@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Entity\Task;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
@@ -18,11 +17,10 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
  *         @ORM\Index(name="remoteId_idx", columns={"remoteId"})
  *     }
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TaskRepository")
  *
  */
-class Task
+class Task implements \JsonSerializable
 {
     /**
      * @var int
@@ -30,7 +28,6 @@ class Task
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @SerializerAnnotation\Expose
      */
     protected $id;
 
@@ -46,7 +43,6 @@ class Task
      * @var string
      *
      * @ORM\Column(type="text", nullable=false)
-     * @SerializerAnnotation\Expose
      */
     protected $url;
 
@@ -55,9 +51,6 @@ class Task
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
-     * @SerializerAnnotation\Expose
      */
     protected $state;
 
@@ -65,8 +58,6 @@ class Task
      * @var Worker
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Worker", inversedBy="tasks")
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedWorker")
-     * @SerializerAnnotation\Expose
      */
     protected $worker;
 
@@ -75,9 +66,6 @@ class Task
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
      * @ORM\JoinColumn(name="tasktype_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedType")
-     * @SerializerAnnotation\Expose
      */
     protected $type;
 
@@ -85,7 +73,6 @@ class Task
      * @var TimePeriod
      *
      * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist", "remove"})
-     * @SerializerAnnotation\Expose
      */
     protected $timePeriod;
 
@@ -93,9 +80,6 @@ class Task
      * @var int
      *
      * @ORM\Column(type="bigint", nullable=true)
-     * @SerializerAnnotation\Expose
-     * @SerializerAnnotation\SerializedName("remote_id")
-     * @SerializerAnnotation\Expose
      */
     protected $remoteId;
 
@@ -103,7 +87,6 @@ class Task
      * @var Output
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Output", cascade={"persist"})
-     * @SerializerAnnotation\Expose
      */
     protected $output;
 
@@ -112,30 +95,6 @@ class Task
      * @ORM\Column(type="text", nullable=true)
      */
     protected $parameters;
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedState()
-    {
-        return str_replace('task-', '', (string)$this->getState());
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedType()
-    {
-        return (string)$this->getType();
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedWorker()
-    {
-        return (is_null($this->getWorker())) ? '' : $this->getWorker()->getHostname();
-    }
 
     /**
      * @return integer
@@ -340,5 +299,42 @@ class Task
         }
 
         return $parametersArray[$name];
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $stateName = str_replace('task-', '', $this->getState()->getName());
+        $worker = $this->getWorker();
+
+        $workerHostname = empty($worker)
+            ? ''
+            : $worker->getHostname();
+
+        $taskData = [
+            'id' => $this->getId(),
+            'url' => $this->getUrl(),
+            'state' => $stateName,
+            'worker' => $workerHostname,
+            'type' => $this->getType()->getName(),
+        ];
+
+        if (!empty($this->timePeriod) && !$this->timePeriod->isEmpty()) {
+            $taskData['time_period'] = $this->timePeriod->jsonSerialize();
+        }
+
+        if (!empty($this->remoteId)) {
+            $taskData['remote_id'] = $this->remoteId;
+        }
+
+        $output = $this->getOutput();
+
+        if (!empty($output)) {
+            $taskData['output'] = $output->jsonSerialize();
+        }
+
+        return $taskData;
     }
 }
