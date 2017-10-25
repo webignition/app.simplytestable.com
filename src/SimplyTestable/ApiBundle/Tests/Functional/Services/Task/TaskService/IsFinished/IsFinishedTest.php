@@ -19,7 +19,7 @@ abstract class IsFinishedTest extends ServiceTest
 
         $this->task = new Task();
         $this->task->setJob($job);
-        $this->task->setUrl(self::DEFAULT_CANONICAL_URL);
+        $this->task->setUrl('http://example.com');
         $this->task->setState($this->getState());
         $this->task->setType($this->getTaskTypeService()->getByName('html validation'));
 

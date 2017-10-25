@@ -26,6 +26,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->createResolveAndPrepare([
+            JobFactory::KEY_SITE_ROOT_URL => 'http://example.com',
             JobFactory::KEY_USER => $user,
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
@@ -39,7 +40,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, $urlLimit)),
+            'output' => json_encode($this->createUrlResultSet('http://example.com', $urlLimit)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
