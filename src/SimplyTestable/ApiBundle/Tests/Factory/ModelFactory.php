@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Factory;
 use ReflectionClass;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
+use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
@@ -60,6 +61,8 @@ class ModelFactory
     const JOB_TIME_PERIOD = 'time-period';
     const REJECTION_REASON_REASON = 'reason';
     const REJECTION_REASON_CONSTRAINT = 'constraint';
+    const AMMENDMENT_REASON = 'reason';
+    const AMMENDMENT_CONSTRAINT = 'constraint';
 
     /**
      * @param array $userValues
@@ -385,5 +388,20 @@ class ModelFactory
         $rejectionReason->setConstraint($rejectionReasonValues[self::REJECTION_REASON_CONSTRAINT]);
 
         return $rejectionReason;
+    }
+
+    /**
+     * @param array $ammendmentValues
+     *
+     * @return Ammendment
+     */
+    public static function createAmmendment($ammendmentValues)
+    {
+        $ammendment = new Ammendment();
+
+        $ammendment->setReason($ammendmentValues[self::AMMENDMENT_REASON]);
+        $ammendment->setConstraint($ammendmentValues[self::AMMENDMENT_CONSTRAINT]);
+
+        return $ammendment;
     }
 }

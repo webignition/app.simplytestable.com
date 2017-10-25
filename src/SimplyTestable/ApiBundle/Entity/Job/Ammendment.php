@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Entity\Job;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 
 /**
@@ -10,9 +9,8 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
  * @ORM\Table(
  *     name="JobAmmendment"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class Ammendment
+class Ammendment implements \JsonSerializable
 {
     /**
      * @var int
@@ -35,7 +33,6 @@ class Ammendment
      * @var string
      *
      * @ORM\Column(type="string", nullable=false)
-     * @SerializerAnnotation\Expose
      */
     protected $reason;
 
@@ -44,7 +41,6 @@ class Ammendment
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint")
      * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     protected $constraint;
 
@@ -103,5 +99,16 @@ class Ammendment
     public function getConstraint()
     {
         return $this->constraint;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'reason' => $this->reason,
+            'constraint' => $this->constraint->jsonSerialize(),
+        ];
     }
 }
