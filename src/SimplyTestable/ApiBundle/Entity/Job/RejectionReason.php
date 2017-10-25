@@ -48,7 +48,7 @@ class RejectionReason
     protected $constraint;
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
