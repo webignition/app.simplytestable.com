@@ -6,7 +6,6 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 
 /**
- *
  * @ORM\Entity
  * @ORM\Table(
  *     name="JobRejectionReason"
