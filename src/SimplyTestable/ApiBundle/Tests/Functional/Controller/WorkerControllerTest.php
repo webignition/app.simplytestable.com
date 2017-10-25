@@ -175,7 +175,7 @@ class WorkerControllerTest extends BaseSimplyTestableTestCase
      *
      * @param string $existingActivationRequestStateName
      */
-    public function testActivateActionSuccessFoo($existingActivationRequestStateName)
+    public function testActivateActionSuccess($existingActivationRequestStateName)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
