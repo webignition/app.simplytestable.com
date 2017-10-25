@@ -440,9 +440,21 @@ services:
   simplytestable.services.usersummaryfactory:
     class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
     arguments:
-      aptokenStorage: '@security.token_storage'
+      tokenStorage: '@security.token_storage'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
       stripeService: '@simplytestable.services.stripeservice'
       jobUserAccountPlanEnforcementService: '@simplytestable.services.jobuseraccountplanenforcementservice'
       teamInviteService: '@simplytestable.services.teaminviteservice'
       teamService: '@simplytestable.services.teamservice'
+
+  simplytestable.services.jobsummaryfactory:
+    class:   SimplyTestable\ApiBundle\Services\JobSummaryFactory
+    arguments:
+      entityManager: '@doctrine.orm.entity_manager'
+      taskService: '@simplytestable.services.taskservice'
+      stateService: '@simplytestable.services.stateservice'
+      jobService: '@simplytestable.services.jobservice'
+      teamService: '@simplytestable.services.teamservice'
+      jobRejectionReasonService: '@simplytestable.services.jobrejectionreasonservice'
+      crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
