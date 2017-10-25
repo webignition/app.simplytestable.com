@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Entity\Account\Plan;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  *
@@ -12,9 +11,8 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * @ORM\Table(
  *     name="AccountPlan"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class Plan
+class Plan implements \JsonSerializable
 {
     /**
      * @var int
@@ -29,7 +27,6 @@ class Plan
      * @var string
      *
      * @ORM\Column(type="string", unique=true)
-     * @SerializerAnnotation\Expose
      */
     private $name;
 
@@ -48,7 +45,6 @@ class Plan
      * @var bool
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     private $isPremium = false;
 
@@ -186,5 +182,16 @@ class Plan
     public function getStripeId()
     {
         return $this->stripe_id;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->name,
+            'is_premium' => $this->isPremium,
+        ];
     }
 }

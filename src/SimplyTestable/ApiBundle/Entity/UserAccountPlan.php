@@ -3,7 +3,6 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 
 /**
@@ -13,9 +12,8 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
  *     name="UserAccountPlan"
  * )
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\UserAccountPlanRepository")
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class UserAccountPlan
+class UserAccountPlan implements \JsonSerializable
 {
     /**
      * @var int
@@ -39,7 +37,6 @@ class UserAccountPlan
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Plan")
      * @ORM\JoinColumn(name="accountplan_id", referencedColumnName="id", nullable=false)
-     * @SerializerAnnotation\Expose
      */
     private $plan;
 
@@ -54,7 +51,6 @@ class UserAccountPlan
      * @var string
      *
      * @ORM\Column(type="string", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     private $stripeCustomer = null;
 
@@ -62,7 +58,6 @@ class UserAccountPlan
      * @var int
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     private $startTrialPeriod = 30;
 
@@ -152,5 +147,22 @@ class UserAccountPlan
     public function getStartTrialPeriod()
     {
         return $this->startTrialPeriod;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $userAccountPlanData = [
+            'plan' => $this->plan->jsonSerialize(),
+            'start_trial_period' => $this->startTrialPeriod,
+        ];
+
+        if (!empty($this->stripeCustomer)) {
+            $userAccountPlanData['stripe_customer'] = $this->stripeCustomer;
+        }
+
+        return $userAccountPlanData;
     }
 }
