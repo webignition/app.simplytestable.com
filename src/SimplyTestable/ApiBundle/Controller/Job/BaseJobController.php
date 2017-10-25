@@ -52,9 +52,9 @@ abstract class BaseJobController extends ApiController
 
         $jobSummary = [
             'id' => $job->getId(),
-            'user' => $job->getPublicSerializedUser(),
-            'website' => $job->getPublicSerializedWebsite(),
-            'state' => $job->getPublicSerializedState(),
+            'user' => $job->getUser()->getEmail(),
+            'website' => $job->getWebsite()->getCanonicalUrl(),
+            'state' => str_replace('job-', '', (string)$job->getState()),
             'time_period' => $job->getTimePeriod(),
             'url_count' => $job->getUrlCount(),
             'task_count' => $taskService->getCountByJob($job),
@@ -68,7 +68,7 @@ abstract class BaseJobController extends ApiController
             'skipped_task_count' => $jobService->getSkippedTaskCount($job),
             'warninged_task_count' => $jobService->getCountOfTasksWithWarnings($job),
             'task_type_options' => $jobTaskTypeOptions,
-            'type' => $job->getPublicSerializedType(),
+            'type' => $job->getType()->getName(),
             'is_public' => $isPublic,
             'parameters' => $job->getParameters(),
             'error_count' => $errorCount,
@@ -90,7 +90,7 @@ abstract class BaseJobController extends ApiController
 
             $jobSummary['crawl'] = array(
                 'id' => $crawlJob->getId(),
-                'state' => $crawlJob->getPublicSerializedState(),
+                'state' => str_replace('job-', '', (string)$crawlJob->getState()),
                 'processed_url_count' => count($crawlJobContainerService->getProcessedUrls($crawlJobContainer)),
                 'discovered_url_count' => count($crawlJobContainerService->getDiscoveredUrls($crawlJobContainer, true)),
             );

@@ -30,8 +30,6 @@ class Job
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     *
-     * @SerializerAnnotation\Expose
      */
     protected $id;
 
@@ -40,9 +38,6 @@ class Job
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedUser")
-     * @SerializerAnnotation\Expose
      */
     protected $user;
 
@@ -51,9 +46,6 @@ class Job
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\WebSite")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedWebsite")
-     * @SerializerAnnotation\Expose
      */
     protected $website;
 
@@ -62,15 +54,11 @@ class Job
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\State")
      * @ORM\JoinColumn(name="state_id", referencedColumnName="id", nullable=false)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedState")
-     * @SerializerAnnotation\Expose
      */
     protected $state;
 
     /**
      * @var int
-     * @SerializerAnnotation\Expose
      */
     protected $urlCount;
 
@@ -78,7 +66,6 @@ class Job
      * @var DoctrineCollection
      *
      * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Task", mappedBy="job")
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedTasks")
      */
     private $tasks;
 
@@ -87,9 +74,6 @@ class Job
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Type")
      * @ORM\JoinColumn(name="type_id", referencedColumnName="id", nullable=true)
-     *
-     * @SerializerAnnotation\Accessor(getter="getPublicSerializedType")
-     * @SerializerAnnotation\Expose
      */
     protected $type;
 
@@ -101,9 +85,6 @@ class Job
      *      inverseJoinColumns={@ORM\JoinColumn(name="tasktype_id", referencedColumnName="id")},
      *      joinColumns={@ORM\JoinColumn(name="job_id", referencedColumnName="id")}
      * )
-     *
-     * @SerializerAnnotation\SerializedName("task_types")
-     * @SerializerAnnotation\Expose
      */
     private $requestedTaskTypes;
 
@@ -119,14 +100,17 @@ class Job
      * @var TimePeriod
      *
      * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\TimePeriod", cascade={"persist"})
-     * @SerializerAnnotation\Expose
      */
     protected $timePeriod;
 
     /**
      * @var DoctrineCollection
      *
-     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Ammendment", mappedBy="job", cascade={"persist"})
+     * @ORM\OneToMany(
+     *     targetEntity="SimplyTestable\ApiBundle\Entity\Job\Ammendment",
+     *     mappedBy="job",
+     *     cascade={"persist"}
+     * )
      */
     private $ammendments;
 
@@ -134,7 +118,6 @@ class Job
      * @var string
      *
      * @ORM\Column(type="text", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     protected $parameters;
 
@@ -142,7 +125,6 @@ class Job
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @SerializerAnnotation\Expose
      */
     private $isPublic = false;
 
@@ -156,52 +138,6 @@ class Job
     }
 
     /**
-     * @return string
-     */
-    public function getPublicSerializedUser()
-    {
-        return $this->getUser()->getUsername();
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedWebsite()
-    {
-        return (string)$this->getWebsite();
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedState()
-    {
-        return str_replace('job-', '', (string)$this->getState());
-    }
-
-    /**
-     * @return string
-     */
-    public function getPublicSerializedType()
-    {
-        return (string)$this->getType();
-    }
-
-    /**
-     * @return DoctrineCollection
-     */
-    public function getPublicSerializedTasks()
-    {
-        $tasks = clone $this->getTasks();
-        foreach ($tasks as $task) {
-            /* @var $task Task */
-            $task->setOutput(null);
-        }
-
-        return $tasks;
-    }
-
-    /**
      * @return int
      */
     public function getId()
@@ -211,14 +147,10 @@ class Job
 
     /**
      * @param User $user
-     *
-     * @return Job
      */
     public function setUser(User $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 
     /**
@@ -230,15 +162,11 @@ class Job
     }
 
     /**
-     * @param  $website
-     *
-     * @return Job
+     * @param $website
      */
     public function setWebsite(WebSite $website)
     {
         $this->website = $website;
-
-        return $this;
     }
 
     /**
@@ -251,14 +179,10 @@ class Job
 
     /**
      * @param State $state
-     *
-     * @return Job
      */
     public function setState(State $state)
     {
         $this->state = $state;
-
-        return $this;
     }
 
     /**
@@ -270,32 +194,14 @@ class Job
     }
 
     /**
-     * @return Job
-     */
-    public function setNextState()
-    {
-        if (!is_null($this->getState()->getNextState())) {
-            $this->state = $this->getState()->getNextState();
-        }
-
-        return $this;
-    }
-
-    /**
      * @param Task $task
-     *
-     * @return Job
      */
     public function addTask(Task $task)
     {
         $this->tasks[] = $task;
-
-        return $this;
     }
 
     /**
-     * Remove tasks
-     *
      * @param Task $task
      */
     public function removeTask(Task $task)
@@ -313,14 +219,10 @@ class Job
 
     /**
      * @param TimePeriod $timePeriod
-     *
-     * @return Job
      */
     public function setTimePeriod(TimePeriod $timePeriod = null)
     {
         $this->timePeriod = $timePeriod;
-
-        return $this;
     }
 
     /**
@@ -333,16 +235,12 @@ class Job
 
     /**
      * @param TaskType $requestedTaskType
-     *
-     * @return Job
      */
     public function addRequestedTaskType(TaskType $requestedTaskType)
     {
         if (!$this->requestedTaskTypes->contains($requestedTaskType)) {
             $this->requestedTaskTypes[] = $requestedTaskType;
         }
-
-        return $this;
     }
 
     /**
@@ -431,24 +329,18 @@ class Job
 
     /**
      * @param int $urlCount
-     *
-     * @return Job
      */
     public function setUrlCount($urlCount)
     {
         $this->urlCount = $urlCount;
-        return $this;
     }
 
     /**
      * @param TaskTypeOptions $taskTypeOptions
-     * @return Job
      */
     public function addTaskTypeOption(TaskTypeOptions $taskTypeOptions)
     {
         $this->taskTypeOptions[] = $taskTypeOptions;
-
-        return $this;
     }
 
     /**
@@ -469,13 +361,10 @@ class Job
 
     /**
      * @param Type $type
-     *
-     * @return Job
      */
     public function setType(JobType $type)
     {
         $this->type = $type;
-        return $this;
     }
 
     /**
@@ -493,7 +382,6 @@ class Job
     public function addAmmendment(Ammendment $ammendment)
     {
         $this->ammendments[] = $ammendment;
-        return $this;
     }
 
     /**
@@ -514,14 +402,10 @@ class Job
 
     /**
      * @param boolean $isPublic
-     *
-     * @return Job
      */
     public function setIsPublic($isPublic)
     {
         $this->isPublic = $isPublic;
-
-        return $this;
     }
 
     /**
@@ -532,17 +416,12 @@ class Job
         return filter_var($this->isPublic, FILTER_VALIDATE_BOOLEAN);
     }
 
-
     /**
      * @param string $parameters
-     *
-     * @return Job
      */
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
-
-        return $this;
     }
 
     /**
@@ -589,6 +468,7 @@ class Job
         }
 
         $parameters = json_decode($this->getParameters());
+
         return isset($parameters->{$name});
     }
 
@@ -620,5 +500,45 @@ class Job
         }
 
         return $taskIds;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $serializedRequestedTaskTypes = [];
+
+        foreach ($this->requestedTaskTypes as $taskType) {
+            /* @var TaskType $taskType */
+            $serializedRequestedTaskTypes[] = $taskType->jsonSerialize();
+        }
+
+        $serializedTaskTypeOptions = [];
+
+        foreach ($this->taskTypeOptions as $taskTypeOptions) {
+            /* @var TaskTypeOptions $taskTypeOptions */
+            $taskTypeName = $taskTypeOptions->getTaskType()->getName();
+
+            $serializedTaskTypeOptions[$taskTypeName] = $taskTypeOptions->getOptions();
+        }
+
+        $serializedJobData = [
+            'id' => $this->id,
+            'user' => $this->user->getEmail(),
+            'website' => $this->website->getCanonicalUrl(),
+            'state' => str_replace('job-', '', $this->state->getName()),
+            'url_count' => $this->urlCount,
+            'task_types' => $serializedRequestedTaskTypes,
+            'task_type_options' => $serializedTaskTypeOptions,
+            'type' => $this->type->getName(),
+            'parameters' => $this->parameters,
+        ];
+
+        if (!$this->timePeriod->isEmpty()) {
+            $serializedJobData['time_period'] = $this->timePeriod->jsonSerialize();
+        }
+
+        return $serializedJobData;
     }
 }

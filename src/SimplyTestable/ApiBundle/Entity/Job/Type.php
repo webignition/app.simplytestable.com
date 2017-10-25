@@ -2,50 +2,40 @@
 namespace SimplyTestable\ApiBundle\Entity\Job;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
- * 
  * @ORM\Entity
  * @ORM\Table(
  *     name="JobType"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class Type
 {
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
-    
-    /**
-     *
-     * @var string
-     * @ORM\Column(type="string", unique=true, nullable=false)
-     * @SerializerAnnotation\Expose
-     */
-    protected $name;
-    
-    
-    /**
-     *
-     * @var string
-     * @ORM\Column(type="text", nullable=false)
-     */
-    protected $description;  
-    
 
     /**
-     * Get id
+     * @var string
      *
-     * @return integer 
+     * @ORM\Column(type="string", unique=true, nullable=false)
+     */
+    protected $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=false)
+     */
+    protected $description;
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -53,21 +43,15 @@ class Type
     }
 
     /**
-     * Set name
-     *
      * @param string $name
-     * @return Type
      */
     public function setName($name)
     {
         $this->name = $name;
-        return $this;
     }
 
     /**
-     * Get name
-     *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -75,42 +59,36 @@ class Type
     }
 
     /**
-     * Set description
-     *
-     * @param text $description
-     * @return Type
+     * @param string $description
      */
     public function setDescription($description)
     {
         $this->description = $description;
-        return $this;
     }
 
     /**
-     * Get description
-     *
-     * @return text 
+     * @return string
      */
     public function getDescription()
     {
         return $this->description;
     }
-    
+
     /**
-     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getName();
     }
-    
-    
+
     /**
-     * 
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Type $type
-     * @return boolean
+     * @param Type $type
+     *
+     * @return bool
      */
-    public function equals(Type $type) {
+    public function equals(Type $type)
+    {
         return strtolower($this->getName()) == strtolower($type->getName());
     }
 }
