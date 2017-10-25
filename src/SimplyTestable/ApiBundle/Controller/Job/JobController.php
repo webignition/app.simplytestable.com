@@ -312,11 +312,12 @@ class JobController extends BaseJobController
     public function tasksAction(Request $request, $site_root_url, $test_id)
     {
         $taskService = $this->container->get('simplytestable.services.taskservice');
+        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
 
-        $this->getJobRetrievalService()->setUser($this->getUser());
+        $jobRetrievalService->setUser($this->getUser());
 
         try {
-            $job = ($this->getJobRetrievalService()->retrieve($test_id));
+            $job = ($jobRetrievalService->retrieve($test_id));
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -357,12 +358,13 @@ class JobController extends BaseJobController
     public function taskIdsAction($site_root_url, $test_id)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
         $taskRepository = $entityManager->getRepository(Task::class);
 
-        $this->getJobRetrievalService()->setUser($this->getUser());
+        $jobRetrievalService->setUser($this->getUser());
 
         try {
-            $job = ($this->getJobRetrievalService()->retrieve($test_id));
+            $job = ($jobRetrievalService->retrieve($test_id));
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -383,12 +385,13 @@ class JobController extends BaseJobController
     public function listUrlsAction($site_root_url, $test_id)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
         $taskRepository = $entityManager->getRepository(Task::class);
 
-        $this->getJobRetrievalService()->setUser($this->getUser());
+        $jobRetrievalService->setUser($this->getUser());
 
         try {
-            $job = ($this->getJobRetrievalService()->retrieve($test_id));
+            $job = ($jobRetrievalService->retrieve($test_id));
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);

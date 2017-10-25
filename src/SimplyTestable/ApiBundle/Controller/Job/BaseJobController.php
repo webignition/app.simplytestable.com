@@ -207,14 +207,6 @@ abstract class BaseJobController extends ApiController
     }
 
     /**
-     * @return RetrievalService
-     */
-    protected function getJobRetrievalService()
-    {
-        return $this->get('simplytestable.services.job.retrievalservice');
-    }
-
-    /**
      * @return TeamService
      */
     private function getTeamService() {
