@@ -2,65 +2,60 @@
 namespace SimplyTestable\ApiBundle\Entity\Task\Type;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
- * 
  * @ORM\Entity
  * @ORM\Table(name="TaskType")
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class Type
+class Type implements \JsonSerializable
 {
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
-    
+
     /**
-     *
      * @var string
+     *
      * @ORM\Column(type="string", unique=true, nullable=false)
-     * @SerializerAnnotation\Expose
      */
     protected $name;
-    
-    
+
     /**
-     *
      * @var string
+     *
      * @ORM\Column(type="text", nullable=false)
      */
     protected $description;
-    
-    
+
     /**
      *
-     * @var SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass
-     * 
+     * @var TaskTypeClass
+     *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass")
      * @ORM\JoinColumn(name="tasktypeclass_id", referencedColumnName="id", nullable=false)
      */
-    protected $class;   
-    
-    /**
-     *
-     * @var boolean
-     * @ORM\Column(type="boolean", name="selectable", nullable=false)
-     */
-    protected $selectable = false;    
-    
+    protected $class;
 
     /**
-     * Get id
      *
-     * @return integer 
+     * @var bool
+     * @ORM\Column(type="boolean", name="selectable", nullable=false)
+     */
+    protected $selectable = false;
+
+    public function __construct()
+    {
+        $this->selectable = false;
+    }
+
+
+    /**
+     * @return integer
      */
     public function getId()
     {
@@ -68,21 +63,15 @@ class Type
     }
 
     /**
-     * Set name
-     *
      * @param string $name
-     * @return Type
      */
     public function setName($name)
     {
         $this->name = $name;
-        return $this;
     }
 
     /**
-     * Get name
-     *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -90,21 +79,15 @@ class Type
     }
 
     /**
-     * Set description
-     *
-     * @param text $description
-     * @return Type
+     * @param string $description
      */
     public function setDescription($description)
     {
         $this->description = $description;
-        return $this;
     }
 
     /**
-     * Get description
-     *
-     * @return text 
+     * @return string
      */
     public function getDescription()
     {
@@ -112,81 +95,62 @@ class Type
     }
 
     /**
-     * Set class
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass $class
-     * @return Type
+     * @param TaskTypeClass $class
      */
-    public function setClass(\SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass $class)
+    public function setClass(TaskTypeClass $class)
     {
         $this->class = $class;
-        return $this;
     }
 
     /**
-     * Get class
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass
+     * @return TaskTypeClass
      */
     public function getClass()
     {
         return $this->class;
     }
-    
-    
-    public function __construct()
-    {
-//        $this->jobs = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->selectable = false;
-    }
-    
+
     /**
-     * Set selectable
-     *
-     * @param boolean $selectable
-     * @return Type
+     * @param bool $selectable
      */
     public function setSelectable($selectable)
     {
         $this->selectable = $selectable;
-        return $this;
     }
 
     /**
-     * Get selectable
-     *
-     * @return boolean 
+     * @return bool
      */
     public function getSelectable()
     {
         return $this->selectable;
     }
-    
-    
+
     /**
-     * 
-     * @return boolean
-     */
-    public function isSelectable() {
-        return $this->getSelectable() === true;
-    }
-    
-    
-    /**
-     *
      * @param Type $taskType
-     * @return boolean
+     *
+     * @return bool
      */
-    public function equals(Type $taskType) {
+    public function equals(Type $taskType)
+    {
         return $this->getName() == $taskType->getName();
     }
-    
-    
+
     /**
-     *
      * @return string
      */
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getName();
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->getName(),
+        ];
     }
 }

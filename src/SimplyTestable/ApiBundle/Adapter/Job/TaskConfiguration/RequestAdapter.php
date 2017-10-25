@@ -72,7 +72,7 @@ class RequestAdapter
             }
 
             $taskType = $this->taskTypeService->getByName($taskTypeName);
-            if (!$taskType->isSelectable()) {
+            if (!$taskType->getSelectable()) {
                 continue;
             }
 
