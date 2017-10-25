@@ -32,8 +32,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 abstract class BaseSimplyTestableTestCase extends BaseTestCase
 {
-    const DEFAULT_CANONICAL_URL = 'http://example.com/';
-
     protected function setUp()
     {
         parent::setUp();

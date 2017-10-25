@@ -35,6 +35,7 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->createResolveAndPrepare([
+            JobFactory::KEY_SITE_ROOT_URL => 'http://example.com',
             JobFactory::KEY_USER => $user,
             JobFactory::KEY_TEST_TYPES => [
                 'html validation',
@@ -51,7 +52,7 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet(self::DEFAULT_CANONICAL_URL, 1)),
+            'output' => json_encode($this->createUrlResultSet('http://example.com', 1)),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
