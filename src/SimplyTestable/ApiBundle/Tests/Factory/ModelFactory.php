@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Tests\Factory;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
@@ -42,6 +43,8 @@ class ModelFactory
     const ACCOUNT_PLAN_CONSTRAINTS = 'constraints';
     const CONSTRAINT_NAME = 'name';
     const CONSTRAINT_LIMIT = 'limit';
+    const TASK_TYPE_OPTIONS_TASK_TYPE = 'task-type';
+    const TASK_TYPE_OPTIONS_TASK_OPTIONS = 'options';
 
     /**
      * @param array $userValues
@@ -278,10 +281,28 @@ class ModelFactory
      *
      * @return StripeCustomerModel
      */
-    public static function createStripeCustomerModel($fixtureName, $fixtureReplacements = [], $fixtureModifications = [])
-    {
+    public static function createStripeCustomerModel(
+        $fixtureName,
+        $fixtureReplacements = [],
+        $fixtureModifications = []
+    ) {
         return new StripeCustomerModel(
             StripeApiFixtureFactory::load($fixtureName, $fixtureReplacements, $fixtureModifications)
         );
+    }
+
+    /**
+     * @param array $taskTypeOptionsValues
+     *
+     * @return TaskTypeOptions
+     */
+    public static function createTaskTypeOptions($taskTypeOptionsValues)
+    {
+        $taskTypeOptions = new TaskTypeOptions();
+
+        $taskTypeOptions->setTaskType($taskTypeOptionsValues[self::TASK_TYPE_OPTIONS_TASK_TYPE]);
+        $taskTypeOptions->setOptions($taskTypeOptionsValues[self::TASK_TYPE_OPTIONS_TASK_OPTIONS]);
+
+        return $taskTypeOptions;
     }
 }

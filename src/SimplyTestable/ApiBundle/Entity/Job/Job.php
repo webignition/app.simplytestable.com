@@ -535,7 +535,7 @@ class Job
             'parameters' => $this->parameters,
         ];
 
-        if (!$this->timePeriod->isEmpty()) {
+        if (!empty($this->timePeriod) && !$this->timePeriod->isEmpty()) {
             $serializedJobData['time_period'] = $this->timePeriod->jsonSerialize();
         }
 
