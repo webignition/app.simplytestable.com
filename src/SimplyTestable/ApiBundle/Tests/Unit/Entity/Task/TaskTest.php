@@ -48,8 +48,6 @@ class TaskTest extends \PHPUnit_Framework_TestCase
         $task->setRemoteId($remoteId);
         $task->setOutput($output);
 
-        var_dump($task->jsonSerialize());
-
         $this->assertEquals($expectedReturnValue, $task->jsonSerialize());
     }
 
