@@ -2,8 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
+use ReflectionClass;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
@@ -45,6 +48,18 @@ class ModelFactory
     const CONSTRAINT_LIMIT = 'limit';
     const TASK_TYPE_OPTIONS_TASK_TYPE = 'task-type';
     const TASK_TYPE_OPTIONS_TASK_OPTIONS = 'options';
+    const JOB_ID = 'id';
+    const JOB_USER = 'user';
+    const JOB_WEBSITE = 'website';
+    const JOB_STATE = 'state';
+    const JOB_URL_COUNT = 'url-count';
+    const JOB_REQUESTED_TASK_TYPES = 'requested-task-types';
+    const JOB_TASK_TYPE_OPTIONS_COLLECTION = 'task-type-options-collection';
+    const JOB_TYPE = 'type';
+    const JOB_PARAMETERS = 'parameters';
+    const JOB_TIME_PERIOD = 'time-period';
+    const REJECTION_REASON_REASON = 'reason';
+    const REJECTION_REASON_CONSTRAINT = 'constraint';
 
     /**
      * @param array $userValues
@@ -304,5 +319,71 @@ class ModelFactory
         $taskTypeOptions->setOptions($taskTypeOptionsValues[self::TASK_TYPE_OPTIONS_TASK_OPTIONS]);
 
         return $taskTypeOptions;
+    }
+
+    /**
+     * @param array $jobValues
+     *
+     * @return Job
+     */
+    public static function createJob($jobValues)
+    {
+        $job = new Job();
+
+        if (isset($jobValues[self::JOB_ID])) {
+            $reflectionClass = new ReflectionClass(Job::class);
+
+            $reflectionProperty = $reflectionClass->getProperty('id');
+            $reflectionProperty->setAccessible(true);
+            $reflectionProperty->setValue($job, $jobValues[self::JOB_ID]);
+        }
+
+        $job->setUser($jobValues[self::JOB_USER]);
+        $job->setWebsite($jobValues[self::JOB_WEBSITE]);
+        $job->setState($jobValues[self::JOB_STATE]);
+        $job->setUrlCount($jobValues[self::JOB_URL_COUNT]);
+
+        if (isset($jobValues[self::JOB_REQUESTED_TASK_TYPES])) {
+            $requestedTaskTypes = $jobValues[self::JOB_REQUESTED_TASK_TYPES];
+
+            foreach ($requestedTaskTypes as $taskType) {
+                $job->addRequestedTaskType($taskType);
+            }
+        }
+
+        if (isset($jobValues[self::JOB_TASK_TYPE_OPTIONS_COLLECTION])) {
+            $taskTypeOptionsCollection = $jobValues[self::JOB_TASK_TYPE_OPTIONS_COLLECTION];
+
+            foreach ($taskTypeOptionsCollection as $taskTypeOptions) {
+                $job->addTaskTypeOption($taskTypeOptions);
+            }
+        }
+
+        $job->setType($jobValues[self::JOB_TYPE]);
+
+        if (isset($jobValues[self::JOB_TIME_PERIOD])) {
+            $job->setTimePeriod($jobValues[self::JOB_TIME_PERIOD]);
+        }
+
+        if (isset($jobValues[self::JOB_PARAMETERS])) {
+            $job->setParameters($jobValues[self::JOB_PARAMETERS]);
+        }
+
+        return $job;
+    }
+
+    /**
+     * @param array $rejectionReasonValues
+     *
+     * @return RejectionReason
+     */
+    public static function createRejectionReason($rejectionReasonValues)
+    {
+        $rejectionReason = new RejectionReason();
+
+        $rejectionReason->setReason($rejectionReasonValues[self::REJECTION_REASON_REASON]);
+        $rejectionReason->setConstraint($rejectionReasonValues[self::REJECTION_REASON_CONSTRAINT]);
+
+        return $rejectionReason;
     }
 }

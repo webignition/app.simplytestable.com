@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Entity\Job;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 
 /**
@@ -10,7 +9,6 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
  * @ORM\Table(
  *     name="JobRejectionReason"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class RejectionReason
 {
@@ -34,7 +32,6 @@ class RejectionReason
      * @var string
      *
      * @ORM\Column(type="string", nullable=false)
-     * @SerializerAnnotation\Expose
      */
     protected $reason;
 
@@ -43,7 +40,6 @@ class RejectionReason
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint")
      * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     protected $constraint;
 
@@ -101,5 +97,16 @@ class RejectionReason
     public function getConstraint()
     {
         return $this->constraint;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'reason' => $this->reason,
+            'constraint' => $this->constraint->jsonSerialize(),
+        ];
     }
 }
