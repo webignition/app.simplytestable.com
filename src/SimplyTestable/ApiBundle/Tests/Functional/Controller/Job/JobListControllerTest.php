@@ -136,7 +136,7 @@ class JobListControllerTest extends BaseSimplyTestableTestCase
      * @param int $expectedResponseOffset
      * @param array $expectedListedJobs
      */
-    public function testListAction(
+    public function testListActionSuccess(
         $user,
         $limit,
         $offset,

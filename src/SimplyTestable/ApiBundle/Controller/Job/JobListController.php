@@ -28,12 +28,21 @@ class JobListController extends BaseJobController
         $jobListService = $this->container->get('simplytestable.services.joblistservice');
         $jobListService->setConfiguration($jobListConfiguration);
 
-        return $this->sendResponse(array(
+        $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
+
+        $jobs = $jobListService->get();
+
+        $serializedJobSummaries = [];
+        foreach ($jobs as $job) {
+            $serializedJobSummaries[] = $jobSummaryFactory->create($job);
+        }
+
+        return new JsonResponse([
             'max_results' => $jobListService->getMaxResults(),
             'limit' => $jobListConfiguration->getLimit(),
             'offset' => $jobListConfiguration->getOffset(),
-            'jobs' => $this->getJobSummaries($jobListService)
-        ));
+            'jobs' => $serializedJobSummaries,
+        ]);
     }
 
     /**
@@ -85,22 +94,5 @@ class JobListController extends BaseJobController
         ]);
 
         return $configuration;
-    }
-
-    /**
-     * @param JobListService $jobListService
-     *
-     * @return array
-     */
-    private function getJobSummaries(JobListService $jobListService)
-    {
-        $jobs = $jobListService->get();
-        $summaries = array();
-
-        foreach ($jobs as $job) {
-            $summaries[] = $this->getSummary($this->populateJob($job));
-        }
-
-        return $summaries;
     }
 }
