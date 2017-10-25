@@ -3,9 +3,9 @@ namespace SimplyTestable\ApiBundle\Entity\Job;
 
 use Doctrine\ORM\Mapping as ORM;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 
 /**
- * 
  * @ORM\Entity
  * @ORM\Table(
  *     name="JobAmmendment"
@@ -15,48 +15,41 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 class Ammendment
 {
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
+
     /**
+     * @var Job
      *
-     * @var SimplyTestable\ApiBundle\Entity\Job\Job 
-     * 
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="ammendments")
-     * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)     
+     * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)
      */
-    protected $job;    
-    
-    
+    protected $job;
+
     /**
-     *
      * @var string
+     *
      * @ORM\Column(type="string", nullable=false)
      * @SerializerAnnotation\Expose
      */
     protected $reason;
-    
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint
-     * 
-     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint")
-     * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=true) 
-     * @SerializerAnnotation\Expose
-     */
-    protected $constraint; 
 
     /**
-     * Get id
+     * @var Constraint
      *
-     * @return integer 
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint")
+     * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=true)
+     * @SerializerAnnotation\Expose
+     */
+    protected $constraint;
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -64,22 +57,15 @@ class Ammendment
     }
 
     /**
-     * Set reason
-     *
      * @param string $reason
-     * @return RejectionReason
      */
     public function setReason($reason)
     {
         $this->reason = $reason;
-    
-        return $this;
     }
 
     /**
-     * Get reason
-     *
-     * @return string 
+     * @return string
      */
     public function getReason()
     {
@@ -87,23 +73,16 @@ class Ammendment
     }
 
     /**
-     * Set job
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return RejectionReason
+     * @param Job $job
      */
-    public function setJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job = null)
+    public function setJob(Job $job = null)
     {
         $this->job = $job;
         $job->addAmmendment($this);
-    
-        return $this;
     }
 
     /**
-     * Get job
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
+     * @return Job
      */
     public function getJob()
     {
@@ -111,22 +90,15 @@ class Ammendment
     }
 
     /**
-     * Set constraint
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraint
-     * @return RejectionReason
+     * @param Constraint $constraint
      */
-    public function setConstraint(\SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraint = null)
+    public function setConstraint(Constraint $constraint = null)
     {
         $this->constraint = $constraint;
-    
-        return $this;
     }
 
     /**
-     * Get constraint
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint 
+     * @return Constraint
      */
     public function getConstraint()
     {
