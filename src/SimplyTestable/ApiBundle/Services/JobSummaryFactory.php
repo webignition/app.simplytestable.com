@@ -114,7 +114,7 @@ class JobSummaryFactory
             $isPublic,
             $this->taskRepository->getErrorCountByJob($job),
             $this->taskRepository->getWarningCountByJob($job),
-            $this->createSerializedOwners($job)
+            $this->getOwners($job)
         );
 
         if (JobService::REJECTED_STATE === $job->getState()->getName()) {
@@ -125,7 +125,7 @@ class JobSummaryFactory
 
         $ammendments = $job->getAmmendments()->toArray();
         if (!empty($job->getAmmendments())) {
-            $jobSummary->setAmmendments($ammendments->toArray());
+            $jobSummary->setAmmendments($ammendments);
         }
 
         if ($this->crawlJobContainerService->hasForJob($job)) {
@@ -173,34 +173,19 @@ class JobSummaryFactory
     /**
      * @param Job $job
      *
-     * @return string[]
-     */
-    private function createSerializedOwners(Job $job)
-    {
-        $owners = $this->getOwners($job);
-        $serializedOwners = [];
-
-        foreach ($owners as $owner) {
-            $serializedOwners[] = $owner->getUsername();
-        }
-
-        return $serializedOwners;
-    }
-
-    /**
-     * @param Job $job
-     *
      * @return User[]
      */
     private function getOwners(Job $job)
     {
-        if (!$this->teamService->hasForUser($this->getUser())) {
+        $user = $job->getUser();
+
+        if (!$this->teamService->hasForUser($user)) {
             return [
                 $job->getUser()
             ];
         }
 
-        $team = $this->teamService->getForUser($job->getUser());
+        $team = $this->teamService->getForUser($user);
         $members = $this->teamService->getMemberService()->getMembers($team);
 
         $owners = [

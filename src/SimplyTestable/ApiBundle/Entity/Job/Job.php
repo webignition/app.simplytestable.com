@@ -525,7 +525,7 @@ class Job
 
         $serializedJobData = [
             'id' => $this->id,
-            'user' => $this->user->getEmail(),
+            'user' => $this->user->getUsername(),
             'website' => $this->website->getCanonicalUrl(),
             'state' => str_replace('job-', '', $this->state->getName()),
             'url_count' => $this->urlCount,

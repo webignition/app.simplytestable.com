@@ -75,6 +75,8 @@ class ModelFactory
 
         $user->setEmail($userValues[self::USER_EMAIL]);
         $user->setEmailCanonical($userValues[self::USER_EMAIL]);
+        $user->setUsername($userValues[self::USER_EMAIL]);
+        $user->setUsernameCanonical($userValues[self::USER_EMAIL]);
 
         return $user;
     }

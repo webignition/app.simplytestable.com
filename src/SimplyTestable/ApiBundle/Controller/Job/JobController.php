@@ -172,20 +172,22 @@ class JobController extends BaseJobController
      * @param string $site_root_url
      * @param int $test_id
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function statusAction($site_root_url, $test_id)
     {
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
+
         $jobRetrievalService->setUser($this->getUser());
 
         try {
             $job = $jobRetrievalService->retrieve($test_id);
             $this->populateJob($job);
 
-            $summary = $this->getSummary($job);
+            $jobSummary = $jobSummaryFactory->create($job);
 
-            return $this->sendResponse($summary);
+            return new JsonResponse($jobSummary);
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);

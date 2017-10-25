@@ -150,7 +150,7 @@ class Summary implements \JsonSerializable
         $serialisedOwners = [];
 
         foreach ($this->owners as $owner) {
-            $serialisedOwners[] = $owner->getEmail();
+            $serialisedOwners[] = $owner->getUsername();
         }
 
         $serializedJobSummary = array_merge($this->job->jsonSerialize(), [
