@@ -21,27 +21,13 @@ class User extends BaseUser
      */
     protected $id;
 
-    public function __construct()
-    {
-        parent::__construct();
-        // your own logic
-    }
-
-
     /**
-     *
      * @param User $user
-     * @return boolean
-     */
-    public function equals(User $user) {
-        return $this->getEmailCanonical() == $user->getEmailCanonical();
-    }
-
-    /**
      *
-     * @return boolean
+     * @return bool
      */
-    public function hasConfirmationToken() {
-        return !is_null($this->getConfirmationToken());
+    public function equals(User $user)
+    {
+        return $this->getEmailCanonical() == $user->getEmailCanonical();
     }
 }
