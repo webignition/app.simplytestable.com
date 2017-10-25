@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(
  *     name="TimePeriod",
@@ -17,39 +17,34 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class TimePeriod
-{    
+{
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
-    
+
     /**
-     *
      * @var \DateTime
+     *
      * @ORM\Column(type="datetime", nullable=true)
      * @SerializerAnnotation\Expose
      */
     protected $startDateTime;
-    
-    
+
     /**
-     *
      * @var \DateTime
+     *
      * @ORM\Column(type="datetime", nullable=true)
      * @SerializerAnnotation\Expose
      */
-    protected $endDateTime;    
+    protected $endDateTime;
 
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -57,22 +52,15 @@ class TimePeriod
     }
 
     /**
-     * Set startDateTime
-     *
      * @param \DateTime $startDateTime
-     * @return TimePeriod
      */
     public function setStartDateTime($startDateTime)
     {
         $this->startDateTime = $startDateTime;
-    
-        return $this;
     }
 
     /**
-     * Get startDateTime
-     *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getStartDateTime()
     {
@@ -80,22 +68,15 @@ class TimePeriod
     }
 
     /**
-     * Set endDateTime
-     *
      * @param \DateTime $endDateTime
-     * @return TimePeriod
      */
     public function setEndDateTime($endDateTime)
     {
         $this->endDateTime = $endDateTime;
-    
-        return $this;
     }
 
     /**
-     * Get endDateTime
-     *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getEndDateTime()
     {
