@@ -60,12 +60,14 @@ class StartController extends ApiController
      */
     public function retestAction(Request $request, $site_root_url, $test_id)
     {
-        $job = $this->getJobService()->getById($test_id);
+        $jobService = $this->container->get('simplytestable.services.jobservice');
+
+        $job = $jobService->getById($test_id);
         if (is_null($job)) {
             return $this->sendFailureResponse();
         }
 
-        if (!$this->getJobService()->isFinished($job)) {
+        if (!$jobService->isFinished($job)) {
             return $this->sendFailureResponse();
         }
 
@@ -124,7 +126,9 @@ class StartController extends ApiController
         $reason,
         AccountPlanConstraint $constraint = null
     ) {
-        $job = $this->getJobService()->create(
+        $jobService = $this->container->get('simplytestable.services.jobservice');
+
+        $job = $jobService->create(
             $jobConfiguration
         );
 
@@ -136,13 +140,5 @@ class StartController extends ApiController
             'site_root_url' => $job->getWebsite()->getCanonicalUrl(),
             'test_id' => $job->getId()
         )));
-    }
-
-    /**
-     * @return JobService
-     */
-    private function getJobService()
-    {
-        return $this->get('simplytestable.services.jobservice');
     }
 }

@@ -250,7 +250,7 @@ class JobController extends BaseJobController
                 $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
                 $this->setJobPreparationDomainsToIgnoredFromJobTaskTypes($parentJob, $jobPreparationService);
 
-                $jobPreparationService->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));
+                $jobPreparationService->prepareFromCrawl($crawlJobContainerService->getForJob($parentJob));
 
                 $resqueQueueService->enqueue(
                     $resqueJobFactory->create(
@@ -311,10 +311,13 @@ class JobController extends BaseJobController
      */
     public function tasksAction(Request $request, $site_root_url, $test_id)
     {
-        $this->getJobRetrievalService()->setUser($this->getUser());
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+
+        $jobRetrievalService->setUser($this->getUser());
 
         try {
-            $job = ($this->getJobRetrievalService()->retrieve($test_id));
+            $job = ($jobRetrievalService->retrieve($test_id));
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
@@ -338,7 +341,7 @@ class JobController extends BaseJobController
 
         foreach ($tasks as $task) {
             /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
-            if (!$this->getTaskService()->isFinished($task)) {
+            if (!$taskService->isFinished($task)) {
                 $task->setOutput(null);
             }
         }
@@ -354,17 +357,21 @@ class JobController extends BaseJobController
      */
     public function taskIdsAction($site_root_url, $test_id)
     {
-        $this->getJobRetrievalService()->setUser($this->getUser());
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $taskRepository = $entityManager->getRepository(Task::class);
+
+        $jobRetrievalService->setUser($this->getUser());
 
         try {
-            $job = ($this->getJobRetrievalService()->retrieve($test_id));
+            $job = ($jobRetrievalService->retrieve($test_id));
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
             return $response;
         }
 
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($job);
+        $taskIds = $taskRepository->getIdsByJob($job);
 
         return new JsonResponse($taskIds);
     }
@@ -377,17 +384,21 @@ class JobController extends BaseJobController
      */
     public function listUrlsAction($site_root_url, $test_id)
     {
-        $this->getJobRetrievalService()->setUser($this->getUser());
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $taskRepository = $entityManager->getRepository(Task::class);
+
+        $jobRetrievalService->setUser($this->getUser());
 
         try {
-            $job = ($this->getJobRetrievalService()->retrieve($test_id));
+            $job = ($jobRetrievalService->retrieve($test_id));
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
             $response = new Response();
             $response->setStatusCode(403);
             return $response;
         }
 
-        $urls = $this->getTaskService()->getUrlsByJob($job);
+        $urls = $taskRepository->findUrlsByJob($job);
 
         return new JsonResponse($urls);
     }
