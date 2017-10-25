@@ -2,10 +2,9 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(
  *     name="TimePeriod",
@@ -14,42 +13,34 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  *         @ORM\Index(name="end_idx", columns={"endDateTime"}),
  *     }
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class TimePeriod
-{    
+class TimePeriod implements \JsonSerializable
+{
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
-    
-    /**
-     *
-     * @var \DateTime
-     * @ORM\Column(type="datetime", nullable=true)
-     * @SerializerAnnotation\Expose
-     */
-    protected $startDateTime;
-    
-    
-    /**
-     *
-     * @var \DateTime
-     * @ORM\Column(type="datetime", nullable=true)
-     * @SerializerAnnotation\Expose
-     */
-    protected $endDateTime;    
 
     /**
-     * Get id
+     * @var \DateTime
      *
-     * @return integer 
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $startDateTime;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    protected $endDateTime;
+
+    /**
+     * @return integer
      */
     public function getId()
     {
@@ -57,22 +48,15 @@ class TimePeriod
     }
 
     /**
-     * Set startDateTime
-     *
      * @param \DateTime $startDateTime
-     * @return TimePeriod
      */
     public function setStartDateTime($startDateTime)
     {
         $this->startDateTime = $startDateTime;
-    
-        return $this;
     }
 
     /**
-     * Get startDateTime
-     *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getStartDateTime()
     {
@@ -80,25 +64,48 @@ class TimePeriod
     }
 
     /**
-     * Set endDateTime
-     *
      * @param \DateTime $endDateTime
-     * @return TimePeriod
      */
     public function setEndDateTime($endDateTime)
     {
         $this->endDateTime = $endDateTime;
-    
-        return $this;
     }
 
     /**
-     * Get endDateTime
-     *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getEndDateTime()
     {
         return $this->endDateTime;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->startDateTime) && empty($this->endDateTime);
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $timePeriodData = [];
+
+        if ($this->isEmpty()) {
+            return $timePeriodData;
+        }
+
+        if (!empty($this->startDateTime)) {
+            $timePeriodData['start_date_time'] = $this->startDateTime->format('U');
+        }
+
+        if (!empty($this->endDateTime)) {
+            $timePeriodData['end_date_time'] = $this->endDateTime->format('U');
+        }
+
+        return $timePeriodData;
     }
 }

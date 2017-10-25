@@ -5,13 +5,16 @@ namespace SimplyTestable\ApiBundle\Tests\Factory;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use Stripe\Customer as StripeCustomer;
 use Stripe\Stripe;
+use webignition\InternetMediaType\InternetMediaType;
 
 class ModelFactory
 {
@@ -21,6 +24,12 @@ class ModelFactory
     const TASK_CONFIGURATION_COLLECTION_TYPE = 'type';
     const TASK_CONFIGURATION_COLLECTION_OPTIONS = 'options';
     const TASK_TYPE_NAME = 'name';
+    const TIME_PERIOD_START_DATE_TIME = 'start-date-time';
+    const TIME_PERIOD_END_DATE_TIME = 'end-date-time';
+    const TASK_OUTPUT_OUTPUT = 'output';
+    const TASK_OUTPUT_CONTENT_TYPE = 'content-type';
+    const TASK_OUTPUT_ERROR_COUNT = 'error-count';
+    const TASK_OUTPUT_WARNING_COUNT = 'warning-count';
 
     /**
      * @param array $userValues
@@ -155,5 +164,41 @@ class ModelFactory
         $worker->setToken($token);
 
         return $worker;
+    }
+
+    /**
+     * @param array $timePeriodValues
+     *
+     * @return TimePeriod
+     */
+    public static function createTimePeriod($timePeriodValues)
+    {
+        $timePeriod = new TimePeriod();
+        $timePeriod->setStartDateTime($timePeriodValues[self::TIME_PERIOD_START_DATE_TIME]);
+        $timePeriod->setEndDateTime($timePeriodValues[self::TIME_PERIOD_END_DATE_TIME]);
+
+        return $timePeriod;
+    }
+
+    /**
+     * @param array $taskOutputValues
+     *
+     * @return Output
+     */
+    public static function createTaskOutput($taskOutputValues)
+    {
+        $output = new Output();
+
+        $contentTypeParts = explode('/', $taskOutputValues[self::TASK_OUTPUT_CONTENT_TYPE]);
+        $contentType = new InternetMediaType();
+        $contentType->setType($contentTypeParts[0]);
+        $contentType->setSubtype($contentTypeParts[1]);
+
+        $output->setOutput($taskOutputValues[self::TASK_OUTPUT_OUTPUT]);
+        $output->setContentType($contentType);
+        $output->setErrorCount($taskOutputValues[self::TASK_OUTPUT_ERROR_COUNT]);
+        $output->setWarningCount($taskOutputValues[self::TASK_OUTPUT_WARNING_COUNT]);
+
+        return $output;
     }
 }

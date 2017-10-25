@@ -82,11 +82,13 @@ class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
         $expectedTaskOutputIds = [];
         foreach ($tasks as $taskIndex => $task) {
             if (in_array($taskIndex, $expectedTaskOutputIndices)) {
-                if ($task->hasOutput()) {
-                    $taskOutputId = $task->getOutput()->getId();
+                $taskOutput = $task->getOutput();
+
+                if (!empty($taskOutput)) {
+                    $taskOutputId = $taskOutput->getId();
 
                     if (!in_array($taskOutputId, $expectedTaskOutputIds)) {
-                        $expectedTaskOutputIds[] = $task->getOutput()->getId();
+                        $expectedTaskOutputIds[] = $taskOutputId;
                     }
                 }
             }
@@ -212,11 +214,13 @@ class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
         $expectedTaskOutputIds = [];
         foreach ($tasks as $taskIndex => $task) {
             if (in_array($taskIndex, $expectedTaskOutputIndices)) {
-                if ($task->hasOutput()) {
-                    $taskOutputId = $task->getOutput()->getId();
+                $taskOutput = $task->getOutput();
+
+                if (!empty($taskOutput)) {
+                    $taskOutputId = $taskOutput->getId();
 
                     if (!in_array($taskOutputId, $expectedTaskOutputIds)) {
-                        $expectedTaskOutputIds[] = $task->getOutput()->getId();
+                        $expectedTaskOutputIds[] = $taskOutputId;
                     }
                 }
             }
@@ -323,11 +327,13 @@ class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
         $expectedTaskOutputIds = [];
         foreach ($tasks as $taskIndex => $task) {
             if (in_array($taskIndex, $expectedTaskOutputIndices)) {
-                if ($task->hasOutput()) {
-                    $taskOutputId = $task->getOutput()->getId();
+                $taskOutput = $task->getOutput();
+
+                if (!empty($taskOutput)) {
+                    $taskOutputId = $taskOutput->getId();
 
                     if (!in_array($taskOutputId, $expectedTaskOutputIds)) {
-                        $expectedTaskOutputIds[] = $task->getOutput()->getId();
+                        $expectedTaskOutputIds[] = $taskOutputId;
                     }
                 }
             }
@@ -581,8 +587,6 @@ class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
         $hash,
         $expectedTaskOutputIndices
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
         $jobFactory = new JobFactory($this->container);
         $taskOutputFactory = new TaskOutputFactory($this->container);
 
@@ -605,11 +609,13 @@ class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
         $expectedTaskOutputIds = [];
         foreach ($tasks as $taskIndex => $task) {
             if (in_array($taskIndex, $expectedTaskOutputIndices)) {
-                if ($task->hasOutput()) {
-                    $taskOutputId = $task->getOutput()->getId();
+                $taskOutput = $task->getOutput();
+
+                if (!empty($taskOutput)) {
+                    $taskOutputId = $taskOutput->getId();
 
                     if (!in_array($taskOutputId, $expectedTaskOutputIds)) {
-                        $expectedTaskOutputIds[] = $task->getOutput()->getId();
+                        $expectedTaskOutputIds[] = $taskOutputId;
                     }
                 }
             }
