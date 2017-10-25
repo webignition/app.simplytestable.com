@@ -32,6 +32,7 @@ abstract class BaseJobController extends ApiController
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $jobRejectionReasonService = $this->container->get('simplytestable.services.jobrejectionreasonservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         $jobTaskTypeOptions = [];
 
@@ -72,7 +73,7 @@ abstract class BaseJobController extends ApiController
             'parameters' => $job->getParameters(),
             'error_count' => $errorCount,
             'warning_count' => $warningCount,
-            'owners' => $this->getSerializedOwners($job)
+            'owners' => $this->getSerializedOwners($job, $teamService)
         ];
 
         if (JobService::REJECTED_STATE === $job->getState()->getName()) {
@@ -145,12 +146,13 @@ abstract class BaseJobController extends ApiController
 
     /**
      * @param Job $job
+     * @param TeamService $teamService
      *
      * @return string[]
      */
-    private function getSerializedOwners(Job $job)
+    private function getSerializedOwners(Job $job, TeamService $teamService)
     {
-        $owners = $this->getOwners($job);
+        $owners = $this->getOwners($job, $teamService);
         $serializedOwners = [];
 
         foreach ($owners as $owner) {
@@ -162,19 +164,20 @@ abstract class BaseJobController extends ApiController
 
     /**
      * @param Job $job
+     * @param TeamService $teamService
      *
      * @return User[]
      */
-    private function getOwners(Job $job)
+    private function getOwners(Job $job, TeamService $teamService)
     {
-        if (!$this->getTeamService()->hasForUser($this->getUser())) {
+        if (!$teamService->hasForUser($this->getUser())) {
             return [
                 $job->getUser()
             ];
         }
 
-        $team = $this->getTeamService()->getForUser($job->getUser());
-        $members = $this->getTeamService()->getMemberService()->getMembers($team);
+        $team = $teamService->getForUser($job->getUser());
+        $members = $teamService->getMemberService()->getMembers($team);
 
         $owners = [
             $team->getLeader()
@@ -204,12 +207,5 @@ abstract class BaseJobController extends ApiController
         }
 
         return false;
-    }
-
-    /**
-     * @return TeamService
-     */
-    private function getTeamService() {
-        return $this->container->get('simplytestable.services.teamservice');
     }
 }
