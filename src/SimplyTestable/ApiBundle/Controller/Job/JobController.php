@@ -250,7 +250,7 @@ class JobController extends BaseJobController
                 $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
                 $this->setJobPreparationDomainsToIgnoredFromJobTaskTypes($parentJob, $jobPreparationService);
 
-                $jobPreparationService->prepareFromCrawl($this->getCrawlJobContainerService()->getForJob($parentJob));
+                $jobPreparationService->prepareFromCrawl($crawlJobContainerService->getForJob($parentJob));
 
                 $resqueQueueService->enqueue(
                     $resqueJobFactory->create(
