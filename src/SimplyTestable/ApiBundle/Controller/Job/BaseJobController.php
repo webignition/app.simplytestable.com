@@ -207,14 +207,6 @@ abstract class BaseJobController extends ApiController
     }
 
     /**
-     * @return TaskService
-     */
-    protected function getTaskService()
-    {
-        return $this->get('simplytestable.services.taskservice');
-    }
-
-    /**
      * @return CrawlJobContainerService
      */
     protected function getCrawlJobContainerService()

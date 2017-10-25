@@ -311,6 +311,8 @@ class JobController extends BaseJobController
      */
     public function tasksAction(Request $request, $site_root_url, $test_id)
     {
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
         $this->getJobRetrievalService()->setUser($this->getUser());
 
         try {
@@ -338,7 +340,7 @@ class JobController extends BaseJobController
 
         foreach ($tasks as $task) {
             /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
-            if (!$this->getTaskService()->isFinished($task)) {
+            if (!$taskService->isFinished($task)) {
                 $task->setOutput(null);
             }
         }
@@ -354,6 +356,9 @@ class JobController extends BaseJobController
      */
     public function taskIdsAction($site_root_url, $test_id)
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskRepository = $entityManager->getRepository(Task::class);
+
         $this->getJobRetrievalService()->setUser($this->getUser());
 
         try {
@@ -364,7 +369,7 @@ class JobController extends BaseJobController
             return $response;
         }
 
-        $taskIds = $this->getTaskService()->getEntityRepository()->getIdsByJob($job);
+        $taskIds = $taskRepository->getIdsByJob($job);
 
         return new JsonResponse($taskIds);
     }
@@ -377,6 +382,9 @@ class JobController extends BaseJobController
      */
     public function listUrlsAction($site_root_url, $test_id)
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskRepository = $entityManager->getRepository(Task::class);
+
         $this->getJobRetrievalService()->setUser($this->getUser());
 
         try {
@@ -387,7 +395,7 @@ class JobController extends BaseJobController
             return $response;
         }
 
-        $urls = $this->getTaskService()->getUrlsByJob($job);
+        $urls = $taskRepository->findUrlsByJob($job);
 
         return new JsonResponse($urls);
     }
