@@ -2,16 +2,14 @@
 namespace SimplyTestable\ApiBundle\Entity\Account\Plan;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * @ORM\Entity
  * @ORM\Table(
  *     name="AccountPlanConstraint"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class Constraint
+class Constraint implements \JsonSerializable
 {
     /**
      * @var int
@@ -26,7 +24,6 @@ class Constraint
      * @var string
      *
      * @ORM\Column(type="string")
-     * @SerializerAnnotation\Expose
      */
     private $name;
 
@@ -34,7 +31,6 @@ class Constraint
      * @var int
      *
      * @ORM\Column(type="integer", nullable=true, name="limit_threshold")
-     * @SerializerAnnotation\Expose
      */
     private $limit = null;
 
@@ -42,7 +38,6 @@ class Constraint
      * @var bool
      *
      * @ORM\Column(type="boolean")
-     * @SerializerAnnotation\Expose
      */
     private $isAvailable = true;
 
@@ -124,5 +119,17 @@ class Constraint
     public function getPlan()
     {
         return $this->plan;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->name,
+            'limit' => $this->limit,
+            'is_available' => $this->isAvailable,
+        ];
     }
 }
