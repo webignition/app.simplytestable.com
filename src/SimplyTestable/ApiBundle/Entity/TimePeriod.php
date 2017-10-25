@@ -2,7 +2,6 @@
 namespace SimplyTestable\ApiBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  *
@@ -14,9 +13,8 @@ use JMS\SerializerBundle\Annotation as SerializerAnnotation;
  *         @ORM\Index(name="end_idx", columns={"endDateTime"}),
  *     }
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class TimePeriod
+class TimePeriod implements \JsonSerializable
 {
     /**
      * @var int
@@ -31,7 +29,6 @@ class TimePeriod
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     protected $startDateTime;
 
@@ -39,7 +36,6 @@ class TimePeriod
      * @var \DateTime
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     protected $endDateTime;
 
@@ -81,5 +77,35 @@ class TimePeriod
     public function getEndDateTime()
     {
         return $this->endDateTime;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->startDateTime) && empty($this->endDateTime);
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $timePeriodData = [];
+
+        if ($this->isEmpty()) {
+            return $timePeriodData;
+        }
+
+        if (!empty($this->startDateTime)) {
+            $timePeriodData['start_date_time'] = $this->startDateTime->format('U');
+        }
+
+        if (!empty($this->endDateTime)) {
+            $timePeriodData['end_date_time'] = $this->endDateTime->format('U');
+        }
+
+        return $timePeriodData;
     }
 }
