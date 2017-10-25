@@ -96,8 +96,10 @@ abstract class BaseJobController extends ApiController
 
             $userAccountPlan = $userAccountPlanService->getForUser($job->getUser())->getPlan();
 
-            if ($userAccountPlan->hasConstraintNamed('urls_per_job')) {
-                $jobSummary['crawl']['limit'] = $userAccountPlan->getConstraintNamed('urls_per_job')->getLimit();
+            $urlsPerJobConstraint = $userAccountPlan->getConstraintNamed('urls_per_job');
+
+            if (!empty($urlsPerJobConstraint)) {
+                $jobSummary['crawl']['limit'] = $urlsPerJobConstraint->getLimit();
             }
         }
 

@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\State;
@@ -9,12 +11,14 @@ use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use Stripe\Customer as StripeCustomer;
 use Stripe\Stripe;
 use webignition\InternetMediaType\InternetMediaType;
+use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
 class ModelFactory
 {
@@ -30,6 +34,14 @@ class ModelFactory
     const TASK_OUTPUT_CONTENT_TYPE = 'content-type';
     const TASK_OUTPUT_ERROR_COUNT = 'error-count';
     const TASK_OUTPUT_WARNING_COUNT = 'warning-count';
+    const USER_ACCOUNT_PLAN_PLAN = 'plan';
+    const USER_ACCOUNT_PLAN_START_TRIAL_PERIOD = 'start-trial-period';
+    const USER_ACCOUNT_PLAN_STRIPE_CUSTOMER = 'stripe-customer';
+    const ACCOUNT_PLAN_NAME = 'name';
+    const ACCOUNT_PLAN_IS_PREMIUM  = 'is-premium';
+    const ACCOUNT_PLAN_CONSTRAINTS = 'constraints';
+    const CONSTRAINT_NAME = 'name';
+    const CONSTRAINT_LIMIT = 'limit';
 
     /**
      * @param array $userValues
@@ -200,5 +212,76 @@ class ModelFactory
         $output->setWarningCount($taskOutputValues[self::TASK_OUTPUT_WARNING_COUNT]);
 
         return $output;
+    }
+
+    /**
+     * @param array $constraintValues
+     *
+     * @return Constraint
+     */
+    public static function createAccountPlanConstraint($constraintValues)
+    {
+        $constraint = new Constraint();
+
+        $constraint->setName($constraintValues[self::CONSTRAINT_NAME]);
+        $constraint->setLimit($constraintValues[self::CONSTRAINT_LIMIT]);
+
+        return $constraint;
+    }
+
+    /**
+     * @param array $accountPlanValues
+     *
+     * @return AccountPlan
+     */
+    public static function createAccountPlan($accountPlanValues)
+    {
+        $accountPlan = new AccountPlan();
+
+        $accountPlan->setName($accountPlanValues[self::ACCOUNT_PLAN_NAME]);
+        $accountPlan->setIsPremium($accountPlanValues[self::ACCOUNT_PLAN_IS_PREMIUM]);
+
+        if (isset($accountPlanValues[self::ACCOUNT_PLAN_CONSTRAINTS])) {
+            $constraints = $accountPlanValues[self::ACCOUNT_PLAN_CONSTRAINTS];
+
+            foreach ($constraints as $constraint) {
+                $accountPlan->addConstraint($constraint);
+            }
+        }
+
+        return $accountPlan;
+    }
+
+    /**
+     * @param array $userAccountPlanValues
+     *
+     * @return UserAccountPlan
+     */
+    public static function createUserAccountPlan($userAccountPlanValues)
+    {
+        $userAccountPlan = new UserAccountPlan();
+
+        $userAccountPlan->setPlan($userAccountPlanValues[self::USER_ACCOUNT_PLAN_PLAN]);
+        $userAccountPlan->setStartTrialPeriod($userAccountPlanValues[self::USER_ACCOUNT_PLAN_START_TRIAL_PERIOD]);
+
+        if (isset($userAccountPlanValues[self::USER_ACCOUNT_PLAN_STRIPE_CUSTOMER])) {
+            $userAccountPlan->setStripeCustomer($userAccountPlanValues[self::USER_ACCOUNT_PLAN_STRIPE_CUSTOMER]);
+        }
+
+        return $userAccountPlan;
+    }
+
+    /**
+     * @param string $fixtureName
+     * @param array $fixtureReplacements
+     * @param array $fixtureModifications
+     *
+     * @return StripeCustomerModel
+     */
+    public static function createStripeCustomerModel($fixtureName, $fixtureReplacements = [], $fixtureModifications = [])
+    {
+        return new StripeCustomerModel(
+            StripeApiFixtureFactory::load($fixtureName, $fixtureReplacements, $fixtureModifications)
+        );
     }
 }

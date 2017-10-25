@@ -1,87 +1,74 @@
 <?php
 namespace SimplyTestable\ApiBundle\Entity\Account\Plan;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(
  *     name="AccountPlan"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class Plan
+class Plan implements \JsonSerializable
 {
-    
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;  
-    
+    private $id;
 
     /**
-     *
      * @var string
+     *
      * @ORM\Column(type="string", unique=true)
-     * @SerializerAnnotation\Expose
      */
     private $name;
-    
-    
+
     /**
+     * @var DoctrineCollection
      *
-     * @var \Doctrine\Common\Collections\Collection
-     * 
-     * @ORM\OneToMany(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint", mappedBy="plan", cascade={"persist", "remove"})   
-     */ 
+     * @ORM\OneToMany(
+     *     targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint",
+     *     mappedBy="plan",
+     *     cascade={"persist", "remove"}
+     * )
+     */
     private $constraints;
-    
-    
+
     /**
+     * @var bool
      *
-     * @var boolean
      * @ORM\Column(type="boolean", nullable=true)
-     * @SerializerAnnotation\Expose
      */
     private $isPremium = false;
-    
-    
+
     /**
-     *
-     * @var boolean
+     * @var bool
      * @ORM\Column(type="boolean")
      */
     private $isVisible = false;
-    
-    
+
     /**
-     *
      * @var string
+     *
      * @ORM\Column(type="string", nullable=true)
-     */    
-    private $stripe_id = null;
-    
-    
-    /**
-     * Constructor
      */
+    private $stripe_id = null;
+
     public function __construct()
     {
-        $this->constraints = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->constraints = new ArrayCollection();
         $this->isVisible = false;
     }
-    
+
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -89,22 +76,19 @@ class Plan
     }
 
     /**
-     * Set name
-     *
      * @param string $name
+     *
      * @return Plan
      */
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
     /**
-     * Get name
-     *
-     * @return string 
+     * @return string
      */
     public function getName()
     {
@@ -112,22 +96,15 @@ class Plan
     }
 
     /**
-     * Set isVisible
-     *
-     * @param boolean $isVisible
-     * @return Plan
+     * @param bool $isVisible
      */
     public function setIsVisible($isVisible)
     {
         $this->isVisible = $isVisible;
-    
-        return $this;
     }
 
     /**
-     * Get isVisible
-     *
-     * @return boolean 
+     * @return bool
      */
     public function getIsVisible()
     {
@@ -135,83 +112,56 @@ class Plan
     }
 
     /**
-     * Add constraint
-     *
-     * @param SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraints
-     * @return Plan
+     * @param Constraint $constraint
      */
-    public function addConstraint(\SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraint)
+    public function addConstraint(Constraint $constraint)
     {
         $this->constraints[] = $constraint;
         $constraint->setPlan($this);
-    
-        return $this;
     }
 
     /**
-     * Remove constraint
-     *
-     * @param SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraints
+     * @param Constraint $constraint
      */
-    public function removeConstraint(\SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraint)
+    public function removeConstraint(Constraint $constraint)
     {
         $this->constraints->removeElement($constraint);
     }
 
     /**
-     * Get constraints
-     *
-     * @return Doctrine\Common\Collections\Collection 
+     * @return DoctrineCollection
      */
     public function getConstraints()
     {
         return $this->constraints;
     }
-    
-    
+
     /**
-     * 
      * @param string $constraintName
-     * @return boolean
+     *
+     * @return Constraint|null
      */
-    public function hasConstraintNamed($constraintName) {
-        return !is_null($this->getConstraintNamed($constraintName));
-    }
-    
-    
-    /**
-     * 
-     * @param string $constraintName
-     * @return Constraint
-     */
-    public function getConstraintNamed($constraintName) {
+    public function getConstraintNamed($constraintName)
+    {
         foreach ($this->getConstraints() as $constraint) {
-            if ($constraint->getName() === $constraintName)  {
+            if ($constraint->getName() === $constraintName) {
                 return $constraint;
             }
         }
-        
-        return null;        
+
+        return null;
     }
-   
 
     /**
-     * Set isPremium
-     *
-     * @param boolean $isPremium
-     * @return Plan
+     * @param bool $isPremium
      */
     public function setIsPremium($isPremium)
     {
         $this->isPremium = $isPremium;
-    
-        return $this;
     }
 
     /**
-     * Get isPremium
-     *
-     * @return boolean 
+     * @return bool
      */
     public function getIsPremium()
     {
@@ -219,25 +169,29 @@ class Plan
     }
 
     /**
-     * Set stripe_id
-     *
      * @param string $stripeId
-     * @return Plan
      */
     public function setStripeId($stripeId)
     {
         $this->stripe_id = $stripeId;
-    
-        return $this;
     }
 
     /**
-     * Get stripe_id
-     *
-     * @return string 
+     * @return string
      */
     public function getStripeId()
     {
         return $this->stripe_id;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->name,
+            'is_premium' => $this->isPremium,
+        ];
     }
 }

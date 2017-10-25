@@ -96,7 +96,8 @@ class UserAccountPlanSubscriptionController extends ApiController
         }
 
         $userAccountPlan = $userAccountPlanService->getForUser($this->getUser());
-        if (!$userAccountPlan->hasStripeCustomer()) {
+
+        if (empty($userAccountPlan->getStripeCustomer())) {
             return $this->sendFailureResponse();
         }
 

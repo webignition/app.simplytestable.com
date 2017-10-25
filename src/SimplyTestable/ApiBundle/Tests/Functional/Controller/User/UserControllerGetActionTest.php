@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserAccountPlanFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class UserControllerGetActionTest extends AbstractUserControllerTest
 {

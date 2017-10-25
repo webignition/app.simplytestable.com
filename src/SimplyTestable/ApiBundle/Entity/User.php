@@ -3,16 +3,13 @@ namespace SimplyTestable\ApiBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="fos_user")
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\UserRepository")
- *
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
-class User extends BaseUser
+class User extends BaseUser implements \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -21,27 +18,23 @@ class User extends BaseUser
      */
     protected $id;
 
-    public function __construct()
-    {
-        parent::__construct();
-        // your own logic
-    }
-
-
     /**
-     *
      * @param User $user
-     * @return boolean
+     *
+     * @return bool
      */
-    public function equals(User $user) {
+    public function equals(User $user)
+    {
         return $this->getEmailCanonical() == $user->getEmailCanonical();
     }
 
     /**
-     *
-     * @return boolean
+     * @return array
      */
-    public function hasConfirmationToken() {
-        return !is_null($this->getConfirmationToken());
+    public function jsonSerialize()
+    {
+        return [
+            'email' => $this->getEmailCanonical(),
+        ];
     }
 }

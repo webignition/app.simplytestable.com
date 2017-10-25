@@ -436,3 +436,13 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       stateService: '@simplytestable.services.stateservice'
       entityManager: '@doctrine.orm.entity_manager'
+
+  simplytestable.services.usersummaryfactory:
+    class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
+    arguments:
+      aptokenStorage: '@security.token_storage'
+      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      stripeService: '@simplytestable.services.stripeservice'
+      jobUserAccountPlanEnforcementService: '@simplytestable.services.jobuseraccountplanenforcementservice'
+      teamInviteService: '@simplytestable.services.teaminviteservice'
+      teamService: '@simplytestable.services.teamservice'

@@ -133,13 +133,16 @@ class UserService
      */
     public function getConfirmationToken(User $user)
     {
-        if (!$user->hasConfirmationToken()) {
-            $user->setConfirmationToken($this->tokenGenerator->generateToken());
+        $userConfirmationToken = $user->getConfirmationToken();
+
+        if (empty($userConfirmationToken)) {
+            $userConfirmationToken = $this->tokenGenerator->generateToken();
+
+            $user->setConfirmationToken($userConfirmationToken);
+            $this->userManager->updateUser($user);
         }
 
-        $this->userManager->updateUser($user);
-
-        return $user->getConfirmationToken();
+        return $userConfirmationToken;
     }
 
     /**
