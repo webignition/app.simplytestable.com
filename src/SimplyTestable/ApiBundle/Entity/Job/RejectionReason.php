@@ -104,9 +104,14 @@ class RejectionReason
      */
     public function jsonSerialize()
     {
-        return [
+        $serialisedRejectionReason = [
             'reason' => $this->reason,
-            'constraint' => $this->constraint->jsonSerialize(),
         ];
+
+        if (!empty($this->constraint)) {
+            $serialisedRejectionReason['constraint'] = $this->constraint->jsonSerialize();
+        }
+
+        return $serialisedRejectionReason;
     }
 }

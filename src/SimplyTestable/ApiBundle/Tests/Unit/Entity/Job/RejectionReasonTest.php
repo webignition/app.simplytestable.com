@@ -24,7 +24,7 @@ class RejectionReasonTest extends \PHPUnit_Framework_TestCase
     public function jsonSerializeDataProvider()
     {
         return [
-            'default' => [
+            'with constraint' => [
                 'rejectionReason' => ModelFactory::createRejectionReason([
                     ModelFactory::REJECTION_REASON_REASON => 'reason-name',
                     ModelFactory::REJECTION_REASON_CONSTRAINT => ModelFactory::createAccountPlanConstraint([
@@ -39,6 +39,14 @@ class RejectionReasonTest extends \PHPUnit_Framework_TestCase
                         'limit' => 10,
                         'is_available' => true,
                     ],
+                ],
+            ],
+            'without constraint' => [
+                'rejectionReason' => ModelFactory::createRejectionReason([
+                    ModelFactory::REJECTION_REASON_REASON => 'reason-name',
+                ]),
+                'expectedSerializedData' => [
+                    'reason' => 'reason-name',
                 ],
             ],
         ];

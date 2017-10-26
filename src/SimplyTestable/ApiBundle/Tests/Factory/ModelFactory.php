@@ -387,7 +387,10 @@ class ModelFactory
         $rejectionReason = new RejectionReason();
 
         $rejectionReason->setReason($rejectionReasonValues[self::REJECTION_REASON_REASON]);
-        $rejectionReason->setConstraint($rejectionReasonValues[self::REJECTION_REASON_CONSTRAINT]);
+
+        if (isset($rejectionReasonValues[self::REJECTION_REASON_CONSTRAINT])) {
+            $rejectionReason->setConstraint($rejectionReasonValues[self::REJECTION_REASON_CONSTRAINT]);
+        }
 
         return $rejectionReason;
     }
