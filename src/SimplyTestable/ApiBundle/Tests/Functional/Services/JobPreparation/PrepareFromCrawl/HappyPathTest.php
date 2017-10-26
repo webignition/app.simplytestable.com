@@ -100,8 +100,10 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
     public function testTaskStates()
     {
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
         foreach ($this->getJob()->getTasks() as $task) {
-            $this->assertEquals($this->getTaskService()->getQueuedState(), $task->getState());
+            $this->assertEquals($taskService->getQueuedState(), $task->getState());
         }
     }
 

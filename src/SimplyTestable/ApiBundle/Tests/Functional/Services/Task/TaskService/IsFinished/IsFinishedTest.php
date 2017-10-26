@@ -14,6 +14,8 @@ abstract class IsFinishedTest extends ServiceTest
     {
         parent::setUp();
 
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->create();
 
@@ -23,14 +25,16 @@ abstract class IsFinishedTest extends ServiceTest
         $this->task->setState($this->getState());
         $this->task->setType($this->getTaskTypeService()->getByName('html validation'));
 
-        $this->getTaskService()->persistAndFlush($this->task);
+        $taskService->persistAndFlush($this->task);
     }
 
     abstract protected function getExpectedIsFinished();
 
     public function testIsFinished()
     {
-        $this->assertEquals($this->getExpectedIsFinished(), $this->getTaskService()->isFinished($this->task));
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
+        $this->assertEquals($this->getExpectedIsFinished(), $taskService->isFinished($this->task));
     }
 
     private function getState()
