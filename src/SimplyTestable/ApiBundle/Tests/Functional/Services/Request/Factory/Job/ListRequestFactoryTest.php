@@ -63,6 +63,9 @@ class ListRequestFactoryTest extends BaseSimplyTestableTestCase
         sort($typeNamesToExclude);
 
         $this->assertEquals($expectedTypeNamesToExclude, $typeNamesToExclude);
+
+        $listRequestUser = $jobListRequest->getUser();
+        $this->assertEquals($user, $listRequestUser);
     }
 
     /**

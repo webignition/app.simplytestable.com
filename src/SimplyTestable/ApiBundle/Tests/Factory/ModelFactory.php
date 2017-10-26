@@ -2,9 +2,14 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Factory;
 
+use ReflectionClass;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
+use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
@@ -15,6 +20,7 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
+use SimplyTestable\ApiBundle\Request\Job\ListRequest;
 use Stripe\Customer as StripeCustomer;
 use Stripe\Stripe;
 use webignition\InternetMediaType\InternetMediaType;
@@ -42,6 +48,28 @@ class ModelFactory
     const ACCOUNT_PLAN_CONSTRAINTS = 'constraints';
     const CONSTRAINT_NAME = 'name';
     const CONSTRAINT_LIMIT = 'limit';
+    const TASK_TYPE_OPTIONS_TASK_TYPE = 'task-type';
+    const TASK_TYPE_OPTIONS_TASK_OPTIONS = 'options';
+    const JOB_ID = 'id';
+    const JOB_USER = 'user';
+    const JOB_WEBSITE = 'website';
+    const JOB_STATE = 'state';
+    const JOB_URL_COUNT = 'url-count';
+    const JOB_REQUESTED_TASK_TYPES = 'requested-task-types';
+    const JOB_TASK_TYPE_OPTIONS_COLLECTION = 'task-type-options-collection';
+    const JOB_TYPE = 'type';
+    const JOB_PARAMETERS = 'parameters';
+    const JOB_TIME_PERIOD = 'time-period';
+    const REJECTION_REASON_REASON = 'reason';
+    const REJECTION_REASON_CONSTRAINT = 'constraint';
+    const AMMENDMENT_REASON = 'reason';
+    const AMMENDMENT_CONSTRAINT = 'constraint';
+    const JOB_LIST_REQUEST_TYPES_TO_EXCLUDE = 'types-to-exclude';
+    const JOB_LIST_REQUEST_STATES_TO_EXCLUDE = 'states-to-exclude';
+    const JOB_LIST_REQUEST_URL_FILTER = 'url-filter';
+    const JOB_LIST_REQUEST_JOB_IDS_TO_EXCLUDE = 'job-ids-to-exclude';
+    const JOB_LIST_REQUEST_JOB_IDS_TO_INCLUDE = 'job-ids-to-include';
+    const JOB_LIST_REQUEST_USER = 'user';
 
     /**
      * @param array $userValues
@@ -54,6 +82,8 @@ class ModelFactory
 
         $user->setEmail($userValues[self::USER_EMAIL]);
         $user->setEmailCanonical($userValues[self::USER_EMAIL]);
+        $user->setUsername($userValues[self::USER_EMAIL]);
+        $user->setUsernameCanonical($userValues[self::USER_EMAIL]);
 
         return $user;
     }
@@ -278,10 +308,131 @@ class ModelFactory
      *
      * @return StripeCustomerModel
      */
-    public static function createStripeCustomerModel($fixtureName, $fixtureReplacements = [], $fixtureModifications = [])
-    {
+    public static function createStripeCustomerModel(
+        $fixtureName,
+        $fixtureReplacements = [],
+        $fixtureModifications = []
+    ) {
         return new StripeCustomerModel(
             StripeApiFixtureFactory::load($fixtureName, $fixtureReplacements, $fixtureModifications)
         );
+    }
+
+    /**
+     * @param array $taskTypeOptionsValues
+     *
+     * @return TaskTypeOptions
+     */
+    public static function createTaskTypeOptions($taskTypeOptionsValues)
+    {
+        $taskTypeOptions = new TaskTypeOptions();
+
+        $taskTypeOptions->setTaskType($taskTypeOptionsValues[self::TASK_TYPE_OPTIONS_TASK_TYPE]);
+        $taskTypeOptions->setOptions($taskTypeOptionsValues[self::TASK_TYPE_OPTIONS_TASK_OPTIONS]);
+
+        return $taskTypeOptions;
+    }
+
+    /**
+     * @param array $jobValues
+     *
+     * @return Job
+     */
+    public static function createJob($jobValues)
+    {
+        $job = new Job();
+
+        if (isset($jobValues[self::JOB_ID])) {
+            $reflectionClass = new ReflectionClass(Job::class);
+
+            $reflectionProperty = $reflectionClass->getProperty('id');
+            $reflectionProperty->setAccessible(true);
+            $reflectionProperty->setValue($job, $jobValues[self::JOB_ID]);
+        }
+
+        $job->setUser($jobValues[self::JOB_USER]);
+        $job->setWebsite($jobValues[self::JOB_WEBSITE]);
+        $job->setState($jobValues[self::JOB_STATE]);
+        $job->setUrlCount($jobValues[self::JOB_URL_COUNT]);
+
+        if (isset($jobValues[self::JOB_REQUESTED_TASK_TYPES])) {
+            $requestedTaskTypes = $jobValues[self::JOB_REQUESTED_TASK_TYPES];
+
+            foreach ($requestedTaskTypes as $taskType) {
+                $job->addRequestedTaskType($taskType);
+            }
+        }
+
+        if (isset($jobValues[self::JOB_TASK_TYPE_OPTIONS_COLLECTION])) {
+            $taskTypeOptionsCollection = $jobValues[self::JOB_TASK_TYPE_OPTIONS_COLLECTION];
+
+            foreach ($taskTypeOptionsCollection as $taskTypeOptions) {
+                $job->addTaskTypeOption($taskTypeOptions);
+            }
+        }
+
+        $job->setType($jobValues[self::JOB_TYPE]);
+
+        if (isset($jobValues[self::JOB_TIME_PERIOD])) {
+            $job->setTimePeriod($jobValues[self::JOB_TIME_PERIOD]);
+        }
+
+        if (isset($jobValues[self::JOB_PARAMETERS])) {
+            $job->setParameters($jobValues[self::JOB_PARAMETERS]);
+        }
+
+        return $job;
+    }
+
+    /**
+     * @param array $rejectionReasonValues
+     *
+     * @return RejectionReason
+     */
+    public static function createRejectionReason($rejectionReasonValues)
+    {
+        $rejectionReason = new RejectionReason();
+
+        $rejectionReason->setReason($rejectionReasonValues[self::REJECTION_REASON_REASON]);
+
+        if (isset($rejectionReasonValues[self::REJECTION_REASON_CONSTRAINT])) {
+            $rejectionReason->setConstraint($rejectionReasonValues[self::REJECTION_REASON_CONSTRAINT]);
+        }
+
+        return $rejectionReason;
+    }
+
+    /**
+     * @param array $ammendmentValues
+     *
+     * @return Ammendment
+     */
+    public static function createAmmendment($ammendmentValues)
+    {
+        $ammendment = new Ammendment();
+
+        $ammendment->setReason($ammendmentValues[self::AMMENDMENT_REASON]);
+        $ammendment->setConstraint($ammendmentValues[self::AMMENDMENT_CONSTRAINT]);
+
+        return $ammendment;
+    }
+
+    /**
+     * @param array $jobListRequestValues
+     *
+     * @return ListRequest
+     */
+    public static function createJobListRequest($jobListRequestValues)
+    {
+        $jobListRequest = new ListRequest(
+            $jobListRequestValues[self::JOB_LIST_REQUEST_TYPES_TO_EXCLUDE],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_STATES_TO_EXCLUDE],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_URL_FILTER],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_JOB_IDS_TO_EXCLUDE],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_JOB_IDS_TO_INCLUDE],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_USER]
+        );
+
+        return $jobListRequest;
     }
 }

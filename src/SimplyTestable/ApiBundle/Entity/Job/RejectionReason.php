@@ -2,61 +2,49 @@
 namespace SimplyTestable\ApiBundle\Entity\Job;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 
 /**
- * 
  * @ORM\Entity
  * @ORM\Table(
  *     name="JobRejectionReason"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class RejectionReason
 {
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\Job\Job 
-     * 
-     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job")  
-     */
-    protected $job;    
-    
-    
-    /**
-     *
-     * @var string
-     * @ORM\Column(type="string", nullable=false)
-     * @SerializerAnnotation\Expose
-     */
-    protected $reason;
-    
-    
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint
-     * 
-     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint")
-     * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=true) 
-     * @SerializerAnnotation\Expose
-     */
-    protected $constraint; 
 
     /**
-     * Get id
+     * @var Job
      *
-     * @return integer 
+     * @ORM\OneToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job")
+     */
+    protected $job;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=false)
+     */
+    protected $reason;
+
+    /**
+     * @var Constraint
+     *
+     * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint")
+     * @ORM\JoinColumn(name="constraint_id", referencedColumnName="id", nullable=true)
+     */
+    protected $constraint;
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -64,22 +52,15 @@ class RejectionReason
     }
 
     /**
-     * Set reason
-     *
      * @param string $reason
-     * @return RejectionReason
      */
     public function setReason($reason)
     {
         $this->reason = $reason;
-    
-        return $this;
     }
 
     /**
-     * Get reason
-     *
-     * @return string 
+     * @return string
      */
     public function getReason()
     {
@@ -87,22 +68,15 @@ class RejectionReason
     }
 
     /**
-     * Set job
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return RejectionReason
+     * @param Job $job
      */
-    public function setJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job = null)
+    public function setJob(Job $job = null)
     {
         $this->job = $job;
-    
-        return $this;
     }
 
     /**
-     * Get job
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Job\Job 
+     * @return Job
      */
     public function getJob()
     {
@@ -110,25 +84,34 @@ class RejectionReason
     }
 
     /**
-     * Set constraint
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraint
-     * @return RejectionReason
+     * @param Constraint $constraint
      */
-    public function setConstraint(\SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint $constraint = null)
+    public function setConstraint(Constraint $constraint = null)
     {
         $this->constraint = $constraint;
-    
-        return $this;
     }
 
     /**
-     * Get constraint
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint 
+     * @return Constraint
      */
     public function getConstraint()
     {
         return $this->constraint;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        $serialisedRejectionReason = [
+            'reason' => $this->reason,
+        ];
+
+        if (!empty($this->constraint)) {
+            $serialisedRejectionReason['constraint'] = $this->constraint->jsonSerialize();
+        }
+
+        return $serialisedRejectionReason;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
@@ -12,10 +13,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class JobController extends BaseJobController
+class JobController extends ApiController
 {
     protected $testId = null;
 
@@ -172,24 +174,22 @@ class JobController extends BaseJobController
      * @param string $site_root_url
      * @param int $test_id
      *
-     * @return Response
+     * @return JsonResponse|Response
      */
     public function statusAction($site_root_url, $test_id)
     {
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
+
         $jobRetrievalService->setUser($this->getUser());
 
         try {
             $job = $jobRetrievalService->retrieve($test_id);
-            $this->populateJob($job);
+            $jobSummary = $jobSummaryFactory->create($job);
 
-            $summary = $this->getSummary($job);
-
-            return $this->sendResponse($summary);
+            return new JsonResponse($jobSummary);
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;
+            throw new AccessDeniedHttpException();
         }
     }
 

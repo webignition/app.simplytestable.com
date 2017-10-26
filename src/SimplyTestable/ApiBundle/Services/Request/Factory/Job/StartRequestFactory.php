@@ -175,7 +175,7 @@ class StartRequestFactory
             ]);
 
             if (!empty($taskType)) {
-                if ($taskType->isSelectable()) {
+                if ($taskType->getSelectable()) {
                     $taskConfiguration = new TaskConfiguration();
                     $taskConfiguration->setType($taskType);
                     $taskConfiguration->setOptions($this->getTaskTypeOptionsFromRequest($taskType));
