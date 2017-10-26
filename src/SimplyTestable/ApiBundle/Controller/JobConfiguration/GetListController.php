@@ -2,10 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\ApiController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class GetListController extends ApiController
+class GetListController extends Controller
 {
     /**
      * @return JsonResponse

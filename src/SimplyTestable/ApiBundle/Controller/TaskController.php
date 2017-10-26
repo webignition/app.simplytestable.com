@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class TaskController extends ApiController
+class TaskController extends Controller
 {
     /**
      * @return Response

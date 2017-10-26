@@ -4,13 +4,14 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Egulias\EmailValidator\EmailValidator;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class UserEmailChangeController extends ApiController
+class UserEmailChangeController extends Controller
 {
     /**
      * @param string $email_canonical

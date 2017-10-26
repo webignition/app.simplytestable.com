@@ -2,12 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\ApiController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class GetController extends ApiController
+class GetController extends Controller
 {
     /**
      * @param string $label

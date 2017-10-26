@@ -5,12 +5,12 @@ namespace SimplyTestable\ApiBundle\Controller\Worker;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Controller\ApiController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class TasksController extends ApiController
+class TasksController extends Controller
 {
     public function requestAction(Request $request)
     {

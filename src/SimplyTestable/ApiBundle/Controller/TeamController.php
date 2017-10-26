@@ -4,13 +4,14 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class TeamController extends ApiController
+class TeamController extends Controller
 {
     /**
      * @return JsonResponse

@@ -4,8 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
-use SimplyTestable\ApiBundle\Controller\ApiController;
-use SimplyTestable\ApiBundle\Services\JobService;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Exception\Services\Job\UserAccountPlan\Enforcement\Exception
@@ -14,7 +13,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class StartController extends ApiController
+class StartController extends Controller
 {
     /**
      * @return RedirectResponse|Response

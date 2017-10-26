@@ -2,15 +2,15 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Stripe;
 
-use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Mail\Service as MailService;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class WebHookController extends ApiController
+class WebHookController extends Controller
 {
     /**
      * @param Request $request

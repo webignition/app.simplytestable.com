@@ -5,12 +5,13 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class WorkerController extends ApiController
+class WorkerController extends Controller
 {
     /**
      * @param Request $request

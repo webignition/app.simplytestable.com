@@ -5,12 +5,13 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\BadRequestHttpExceptionFactory;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class TeamInviteController extends ApiController
+class TeamInviteController extends Controller
 {
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
 

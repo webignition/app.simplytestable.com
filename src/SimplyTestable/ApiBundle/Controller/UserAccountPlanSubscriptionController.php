@@ -5,10 +5,11 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 use Stripe\Error\Card as StripeCardError;
 use Stripe\Error\Authentication as StripeAuthenticationError;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class UserAccountPlanSubscriptionController extends ApiController
+class UserAccountPlanSubscriptionController extends Controller
 {
     /**
      * @param string $email_canonical
