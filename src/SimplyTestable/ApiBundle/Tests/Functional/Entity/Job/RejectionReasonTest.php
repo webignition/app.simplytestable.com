@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
+use SimplyTestable\ApiBundle\Tests\Factory\ConstraintFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 
@@ -64,12 +66,21 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase
 
     public function testPersistWithConstraint()
     {
+        $planFactory = new PlanFactory($this->container);
+        $plan = $planFactory->create([]);
+
+        $constraintFactory = new ConstraintFactory($this->container);
+        $constraint = $constraintFactory->create($plan, [
+            ConstraintFactory::KEY_NAME => 'constraint-name',
+            ConstraintFactory::KEY_LIMIT => 1,
+        ]);
+
         $job = $this->jobFactory->create();
 
         $rejectionReason = new RejectionReason();
         $rejectionReason->setJob($job);
         $rejectionReason->setReason('insufficient-credit');
-        $rejectionReason->setConstraint($this->createAccountPlanConstraint());
+        $rejectionReason->setConstraint($constraint);
 
         $this->getManager()->persist($rejectionReason);
         $this->getManager()->flush();

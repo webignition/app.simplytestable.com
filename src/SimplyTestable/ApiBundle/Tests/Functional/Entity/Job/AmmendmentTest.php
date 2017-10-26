@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
+use SimplyTestable\ApiBundle\Tests\Factory\ConstraintFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 
@@ -61,10 +63,19 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
 
     public function testPersistWithConstraint()
     {
+        $planFactory = new PlanFactory($this->container);
+        $plan = $planFactory->create([]);
+
+        $constraintFactory = new ConstraintFactory($this->container);
+        $constraint = $constraintFactory->create($plan, [
+            ConstraintFactory::KEY_NAME => 'constraint-name',
+            ConstraintFactory::KEY_LIMIT => 1,
+        ]);
+
         $ammendment = new Ammendment();
         $ammendment->setJob($this->jobFactory->create());
         $ammendment->setReason('url-count-limited');
-        $ammendment->setConstraint($this->createAccountPlanConstraint());
+        $ammendment->setConstraint($constraint);
 
         $this->getManager()->persist($ammendment);
         $this->getManager()->flush();

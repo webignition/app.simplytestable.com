@@ -209,23 +209,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return AccountPlanConstraint
-     */
-    protected function createAccountPlanConstraint()
-    {
-        $plan = $this->createAccountPlan();
-
-        $constraint = new AccountPlanConstraint();
-        $constraint->setName('bar');
-        $constraint->setPlan($plan);
-
-        $this->getManager()->persist($constraint);
-        $this->getManager()->flush();
-
-        return $constraint;
-    }
-
-    /**
      * @param string $baseUrl
      * @param int $count
      *
