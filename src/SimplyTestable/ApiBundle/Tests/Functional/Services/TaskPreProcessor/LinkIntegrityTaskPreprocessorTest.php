@@ -558,6 +558,8 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
 
     public function testProcessSettingHttpProperties()
     {
+        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => [
                 TaskTypeService::LINK_INTEGRITY_TYPE,
@@ -593,7 +595,7 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
 
         $this->linkIntegrityTaskPreProcessor->process($selectedTask);
 
-        $httpTransactions = $this->getHttpClientService()->getHistoryPlugin()->getAll();
+        $httpTransactions = $httpClientService->getHistoryPlugin()->getAll();
 
         foreach ($httpTransactions as $httpTransaction) {
             /* @var Request $request */
@@ -604,7 +606,7 @@ class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
             ], $request->getCookies());
         }
 
-        $lastRequest = $this->getHttpClientService()->getHistoryPlugin()->getLastRequest();
+        $lastRequest = $httpClientService->getHistoryPlugin()->getLastRequest();
 
         $this->assertEquals(
             LinkIntegrityTaskPreProcessor::HTTP_USER_AGENT,

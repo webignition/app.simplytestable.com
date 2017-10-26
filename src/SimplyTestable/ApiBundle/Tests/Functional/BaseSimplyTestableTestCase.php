@@ -39,14 +39,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return TestHttpClientService
-     */
-    protected function getHttpClientService()
-    {
-        return $this->container->get('simplytestable.services.httpclientservice');
-    }
-
-    /**
      * @return TestStripeService
      */
     protected function getStripeService()
@@ -84,8 +76,10 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
      */
     protected function queueHttpFixtures($fixtures)
     {
+        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+
         foreach ($fixtures as $fixture) {
-            $this->getHttpClientService()->queueFixture($fixture);
+            $httpClientService->queueFixture($fixture);
         }
     }
 

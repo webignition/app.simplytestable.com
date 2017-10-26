@@ -28,9 +28,12 @@ abstract class SuccessTest extends NotifyTest {
     }
 
 
-    public function testAllWorkersAreNotified() {
+    public function testAllWorkersAreNotified()
+    {
+        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+
         $requests = [];
-        foreach ($this->getHttpClientService()->getHistoryPlugin()->getAll() as $requestResponse) {
+        foreach ($httpClientService->getHistoryPlugin()->getAll() as $requestResponse) {
             $requests[] = $requestResponse['request'];
         }
 
