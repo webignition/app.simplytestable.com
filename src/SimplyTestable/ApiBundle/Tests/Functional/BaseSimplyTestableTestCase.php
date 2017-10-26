@@ -38,22 +38,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         $this->clearRedis();
     }
 
-    protected function setJobTasksCompleted(Job $job)
-    {
-        foreach ($job->getTasks() as $task) {
-            /* @var $task Task */
-            $task->setState($this->getTaskService()->getCompletedState());
-
-            $timePeriod = new TimePeriod();
-            $timePeriod->setStartDateTime(new \DateTime());
-            $timePeriod->setEndDateTime(new \DateTime());
-            $task->setTimePeriod($timePeriod);
-
-            $this->getTaskService()->getManager()->persist($task);
-            $this->getTaskService()->getManager()->flush($task);
-        }
-    }
-
     /**
      * @return CrawlJobContainerService
      */
