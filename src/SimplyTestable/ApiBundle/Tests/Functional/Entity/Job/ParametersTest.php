@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
@@ -13,6 +14,11 @@ class ParametersTest extends BaseSimplyTestableTestCase
     private $jobFactory;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,7 @@ class ParametersTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->jobFactory = new JobFactory($this->container);
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
     }
 
     public function testSetPersistGetParameters()
@@ -29,8 +36,9 @@ class ParametersTest extends BaseSimplyTestableTestCase
             'foo' => 'bar'
         )));
 
-        $this->getJobService()->persistAndFlush($job);
-        $this->getJobService()->getManager()->clear();
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
 
         $this->assertEquals('{"foo":"bar"}', $job->getParameters());
     }
@@ -45,8 +53,9 @@ class ParametersTest extends BaseSimplyTestableTestCase
             $key => $value
         )));
 
-        $this->getJobService()->persistAndFlush($job);
-        $this->getJobService()->getManager()->clear();
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
 
         $this->assertEquals('{"key-\u0278":"value-\u0278"}', $job->getParameters());
     }
