@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\TeamInvite\Get;
 
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamInvite\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
@@ -14,6 +15,11 @@ class GetTest extends ServiceTest
     private $userFactory;
 
     /**
+     * @var TeamService
+     */
+    private $teamService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -21,6 +27,7 @@ class GetTest extends ServiceTest
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamService = $this->container->get('simplytestable.services.teamservice');
     }
 
     public function testInviterIsNotTeamLeaderThrowsTeamInviteServiceException()
@@ -53,12 +60,12 @@ class GetTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'leader2@example.com',
         ]);
 
-        $this->getTeamService()->create(
+        $this->teamService->create(
             'Foo1',
             $leader1
         );
 
-        $this->getTeamService()->create(
+        $this->teamService->create(
             'Foo2',
             $leader2
         );
@@ -87,12 +94,12 @@ class GetTest extends ServiceTest
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
-        $team1 = $this->getTeamService()->create(
+        $team1 = $this->teamService->create(
             'Foo1',
             $leader1
         );
 
-        $this->getTeamService()->create(
+        $this->teamService->create(
             'Foo2',
             $leader2
         );
@@ -118,7 +125,7 @@ class GetTest extends ServiceTest
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
-        $team = $this->getTeamService()->create(
+        $team = $this->teamService->create(
             'Foo1',
             $leader
         );
@@ -140,7 +147,7 @@ class GetTest extends ServiceTest
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getTeamService()->create(
+        $this->teamService->create(
             'Foo1',
             $leader
         );

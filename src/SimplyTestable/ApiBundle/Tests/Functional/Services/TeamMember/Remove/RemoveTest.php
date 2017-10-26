@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TeamMember\Add;
 
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamMember\ServiceTest;
 
@@ -13,6 +14,11 @@ class RemoveTest extends ServiceTest
     private $userFactory;
 
     /**
+     * @var TeamService
+     */
+    private $teamService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,6 +26,7 @@ class RemoveTest extends ServiceTest
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamService = $this->container->get('simplytestable.services.teamservice');
     }
 
     public function testRemoveUserThatIsNotOnATeamReturnsTrue()
@@ -39,7 +46,7 @@ class RemoveTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
 
-        $team = $this->getTeamService()->create(
+        $team = $this->teamService->create(
             'Foo',
             $leader
         );
@@ -59,7 +66,7 @@ class RemoveTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
 
-        $team = $this->getTeamService()->create(
+        $team = $this->teamService->create(
             'Foo',
             $leader
         );

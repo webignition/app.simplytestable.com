@@ -55,6 +55,7 @@ class ForTeamTest extends ServiceTest
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
@@ -70,7 +71,7 @@ class ForTeamTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'user2@example.com',
         ]);
 
-        $team = $this->getTeamService()->create(
+        $team = $teamService->create(
             'Foo',
             $this->leader
         );

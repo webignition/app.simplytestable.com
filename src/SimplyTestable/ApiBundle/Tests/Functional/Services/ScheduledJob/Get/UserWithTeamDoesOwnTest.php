@@ -21,6 +21,7 @@ class UserWithTeamDoesOwnTest extends IsRetrievedTest {
 
     protected function setUpPreCreate() {
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         $userFactory = new UserFactory($this->container);
 
@@ -31,7 +32,7 @@ class UserWithTeamDoesOwnTest extends IsRetrievedTest {
             UserFactory::KEY_EMAIL => 'member@example.com',
         ]);
 
-        $teamMemberService->add($this->getTeamService()->create(
+        $teamMemberService->add($teamService->create(
             'Foo',
             $this->leader
         ), $this->member);

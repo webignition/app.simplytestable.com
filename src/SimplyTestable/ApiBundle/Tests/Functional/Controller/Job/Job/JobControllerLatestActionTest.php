@@ -126,11 +126,13 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
 
     public function testForLeaderInTeamWhereLatestTestDoesNotExist()
     {
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
 
-        $this->getTeamService()->create(
+        $teamService->create(
             'Foo',
             $leader
         );

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TeamMember\Add;
 
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamMember\ServiceTest;
 use SimplyTestable\ApiBundle\Exception\Services\TeamMember\Exception as TeamMemberServiceException;
@@ -14,6 +15,11 @@ class CreateTest extends ServiceTest
     private $userFactory;
 
     /**
+     * @var TeamService
+     */
+    private $teamService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -21,6 +27,7 @@ class CreateTest extends ServiceTest
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamService = $this->container->get('simplytestable.services.teamservice');
     }
 
     public function testUserAlreadyOnTeamThrowsTeamMemberServiceException()
@@ -31,7 +38,7 @@ class CreateTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
 
-        $team = $this->getTeamService()->create(
+        $team = $this->teamService->create(
             'Foo',
             $leader
         );
@@ -57,7 +64,7 @@ class CreateTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
 
-        $team = $this->getTeamService()->create(
+        $team = $this->teamService->create(
             'Foo',
             $leader
         );

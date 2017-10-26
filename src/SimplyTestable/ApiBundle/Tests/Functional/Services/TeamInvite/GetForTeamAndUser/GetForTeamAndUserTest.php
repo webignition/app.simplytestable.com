@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\TeamInvite\GetForTeamAndUser;
 
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamInvite\ServiceTest;
-use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 
 class GetForTeamAndUserTest extends ServiceTest
 {
@@ -14,6 +14,11 @@ class GetForTeamAndUserTest extends ServiceTest
     private $userFactory;
 
     /**
+     * @var TeamService
+     */
+    private $teamService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -21,6 +26,7 @@ class GetForTeamAndUserTest extends ServiceTest
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamService = $this->container->get('simplytestable.services.teamservice');
     }
 
     public function testReturnsNullIfNoInvite()
@@ -28,7 +34,7 @@ class GetForTeamAndUserTest extends ServiceTest
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
-        $team = $this->getTeamService()->create(
+        $team = $this->teamService->create(
             'Foo1',
             $leader
         );
@@ -44,7 +50,7 @@ class GetForTeamAndUserTest extends ServiceTest
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
-        $team = $this->getTeamService()->create(
+        $team = $this->teamService->create(
             'Foo1',
             $leader
         );

@@ -51,14 +51,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return TeamService
-     */
-    protected function getTeamService()
-    {
-        return $this->container->get('simplytestable.services.teamservice');
-    }
-
-    /**
      * @return InviteService
      */
     protected function getTeamInviteService()

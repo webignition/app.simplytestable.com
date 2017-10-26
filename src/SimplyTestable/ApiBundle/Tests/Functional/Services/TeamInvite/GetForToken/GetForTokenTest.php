@@ -14,6 +14,8 @@ class GetForTokenTest extends ServiceTest {
 
 
     public function testValidTokenReturnsInvite() {
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
         $userFactory = new UserFactory($this->container);
 
         $leader = $userFactory->createAndActivateUser([
@@ -21,7 +23,7 @@ class GetForTokenTest extends ServiceTest {
         ]);
         $user = $userFactory->createAndActivateUser();
 
-        $this->getTeamService()->create(
+        $teamService->create(
             'Foo1',
             $leader
         );

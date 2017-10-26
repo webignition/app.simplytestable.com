@@ -10,6 +10,7 @@ class GetMembersTest extends ServiceTest
     public function testGetMembers()
     {
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         $userFactory = new UserFactory($this->container);
 
@@ -24,7 +25,7 @@ class GetMembersTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'member2@example.com',
         ]);
 
-        $team = $this->getTeamService()->create('Foo', $leader);
+        $team = $teamService->create('Foo', $leader);
 
         $member1 = $teamMemberService->add($team, $member1);
         $member2 = $teamMemberService->add($team, $member2);

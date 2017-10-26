@@ -73,6 +73,7 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
@@ -83,7 +84,7 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest
         ]);
         $member = $userFactory->createAndActivateUser();
 
-        $teamMemberService->add($this->getTeamService()->create(
+        $teamMemberService->add($teamService->create(
             'Foo',
             $leader
         ), $member);
