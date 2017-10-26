@@ -2,41 +2,69 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity;
 
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 
-class UserPostActivationPropertiesTest extends BaseSimplyTestableTestCase {
+class UserPostActivationPropertiesTest extends BaseSimplyTestableTestCase
+{
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
-    public function testPersistWithoutCoupon() {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $user = $userService->create('user@example.com', 'password');
-        $plan = $this->createAccountPlan();
+    /**
+     * @var User
+     */
+    private $user;
 
+    /**
+     * @var Plan
+     */
+    private $plan;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $userFactory = new UserFactory($this->container);
+        $this->user = $userFactory->create();
+
+        $planFactory = new PlanFactory($this->container);
+        $this->plan = $planFactory->create();
+    }
+
+    public function testPersistWithoutCoupon()
+    {
         $userPostActivationProperties = new UserPostActivationProperties();
-        $userPostActivationProperties->setUser($user);
-        $userPostActivationProperties->setAccountPlan($plan);
+        $userPostActivationProperties->setUser($this->user);
+        $userPostActivationProperties->setAccountPlan($this->plan);
 
-        $this->getManager()->persist($userPostActivationProperties);
-        $this->getManager()->flush();
+        $this->entityManager->persist($userPostActivationProperties);
+        $this->entityManager->flush();
 
         $this->assertNotNull($userPostActivationProperties->getId());
     }
 
-
-    public function testPersistWithCoupon() {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $user = $userService->create('user@example.com', 'password');
-        $plan = $this->createAccountPlan();
-
+    public function testPersistWithCoupon()
+    {
         $userPostActivationProperties = new UserPostActivationProperties();
-        $userPostActivationProperties->setUser($user);
-        $userPostActivationProperties->setAccountPlan($plan);
+        $userPostActivationProperties->setUser($this->user);
+        $userPostActivationProperties->setAccountPlan($this->plan);
         $userPostActivationProperties->setCoupon('FOO');
 
-        $this->getManager()->persist($userPostActivationProperties);
-        $this->getManager()->flush();
+        $this->entityManager->persist($userPostActivationProperties);
+        $this->entityManager->flush();
 
         $this->assertNotNull($userPostActivationProperties->getId());
     }
-
 }

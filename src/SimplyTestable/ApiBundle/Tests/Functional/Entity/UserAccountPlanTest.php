@@ -2,98 +2,132 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity;
 
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 
-class UserAccountPlanTest extends BaseSimplyTestableTestCase {
+class UserAccountPlanTest extends BaseSimplyTestableTestCase
+{
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
-    public function testUtf8StripeCustomer() {
-        $userService = $this->container->get('simplytestable.services.userservice');
+    /**
+     * @var UserFactory
+     */
+    private $userFactory;
 
+    /**
+     * @var Plan
+     */
+    private $plan;
+
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $this->userFactory = new UserFactory($this->container);
+
+        $planFactory = new PlanFactory($this->container);
+        $this->plan = $planFactory->create();
+    }
+
+    public function testUtf8StripeCustomer()
+    {
         $stripeCustomer = 'test-ɸ';
 
-        $user = $userService->create('user@example.com', 'password');
-
-        $plan = $this->createAccountPlan();
+        $user = $this->userFactory->create();
 
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setUser($user);
-        $userAccountPlan->setPlan($plan);
+        $userAccountPlan->setPlan($this->plan);
         $userAccountPlan->setStripeCustomer($stripeCustomer);
 
-        $this->getManager()->persist($userAccountPlan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($userAccountPlan);
+        $this->entityManager->flush();
 
         $userAccountPlanId = $userAccountPlan->getId();
 
-        $this->getManager()->clear();
+        $this->entityManager->clear();
 
-        $this->assertEquals($stripeCustomer, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserAccountPlan')->find($userAccountPlanId)->getStripeCustomer());
+        $userAccountPlanRepository = $this->entityManager->getRepository(UserAccountPlan::class);
+
+        $this->assertEquals(
+            $stripeCustomer,
+            $userAccountPlanRepository->find($userAccountPlanId)->getStripeCustomer()
+        );
     }
 
-
-    public function testPersist() {
-        $userService = $this->container->get('simplytestable.services.userservice');
-
-        $user = $userService->create('user@example.com', 'password');
-
-        $plan = $this->createAccountPlan();
+    public function testPersist()
+    {
+        $user = $this->userFactory->create();
 
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setUser($user);
-        $userAccountPlan->setPlan($plan);
+        $userAccountPlan->setPlan($this->plan);
 
-        $this->getManager()->persist($userAccountPlan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($userAccountPlan);
+        $this->entityManager->flush();
 
         $this->assertNotNull($userAccountPlan->getId());
     }
 
-    public function testApplyOnePlanToMultipleUsers() {
-        $userService = $this->container->get('simplytestable.services.userservice');
+    public function testApplyOnePlanToMultipleUsers()
+    {
+        $user1 = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => 'user1@example.com',
+        ]);
 
-        $user1 = $userService->create('user1@example.com', 'password');
-        $user2 = $userService->create('user2@example.com', 'password');
-
-        $plan = $this->createAccountPlan();
+        $user2 = $this->userFactory->create([
+            UserFactory::KEY_EMAIL => 'user2@example.com',
+        ]);
 
         $userAccountPlan1 = new UserAccountPlan();
         $userAccountPlan1->setUser($user1);
-        $userAccountPlan1->setPlan($plan);
+        $userAccountPlan1->setPlan($this->plan);
 
         $userAccountPlan2 = new UserAccountPlan();
         $userAccountPlan2->setUser($user2);
-        $userAccountPlan2->setPlan($plan);
+        $userAccountPlan2->setPlan($this->plan);
 
-        $this->getManager()->persist($userAccountPlan1);
-        $this->getManager()->persist($userAccountPlan2);
-        $this->getManager()->flush();
+        $this->entityManager->persist($userAccountPlan1);
+        $this->entityManager->persist($userAccountPlan2);
+        $this->entityManager->flush();
 
         $this->assertNotNull($userAccountPlan1->getId());
         $this->assertNotNull($userAccountPlan2->getId());
     }
 
+    public function testDefaultStartTrialPeriod()
+    {
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
-    public function testDefaultStartTrialPeriod() {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $defaultStartTrialPeriod = $this->container->getParameter('default_trial_period');
 
-        $defaultStartTrialPeriod = 30;
-
-        $user = $userService->create('user@example.com', 'password');
-
-        $plan = $this->createAccountPlan();
+        $user = $this->userFactory->create();
 
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setUser($user);
-        $userAccountPlan->setPlan($plan);
+        $userAccountPlan->setPlan($this->plan);
 
-        $this->assertEquals($defaultStartTrialPeriod, $userAccountPlan->getStartTrialPeriod());
+        $this->assertEquals(
+            $defaultStartTrialPeriod,
+            $userAccountPlan->getStartTrialPeriod()
+        );
 
-        $this->getManager()->persist($userAccountPlan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($userAccountPlan);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
 
-        $this->getManager()->clear();
-        $this->assertEquals($defaultStartTrialPeriod, $this->getUserAccountPlanService()->getForUser($user)->getStartTrialPeriod());
+        $this->assertEquals(
+            $defaultStartTrialPeriod,
+            $userAccountPlanService->getForUser($user)->getStartTrialPeriod()
+        );
     }
-
 }

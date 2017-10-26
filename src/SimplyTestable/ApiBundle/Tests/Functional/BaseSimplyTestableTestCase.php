@@ -189,26 +189,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @param string $name
-     *
-     * @return Plan
-     */
-    protected function createAccountPlan($name = null)
-    {
-        if (is_null($name)) {
-            $name = 'test-foo-plan';
-        }
-
-        $plan = new Plan;
-        $plan->setName($name);
-
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
-
-        return $plan;
-    }
-
-    /**
      * @param string $baseUrl
      * @param int $count
      *

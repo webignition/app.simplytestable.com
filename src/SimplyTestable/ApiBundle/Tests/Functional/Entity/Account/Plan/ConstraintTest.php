@@ -2,40 +2,66 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Account\Plan;
 
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 
-class ConstraintTest extends BaseSimplyTestableTestCase {
+class ConstraintTest extends BaseSimplyTestableTestCase
+{
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
-    public function testPersist() {
-        $plan = $this->createAccountPlan();
+    /**
+     * @var Plan
+     */
+    private $plan;
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $planFactory = new PlanFactory($this->container);
+        $this->plan = $planFactory->create();
+    }
+
+    public function testPersist()
+    {
         $constraint = new Constraint();
         $constraint->setName('foo');
-        $constraint->setPlan($plan);
+        $constraint->setPlan($this->plan);
 
-        $this->getManager()->persist($constraint);
-        $this->getManager()->flush();
+        $this->entityManager->persist($constraint);
+        $this->entityManager->flush();
 
         $this->assertNotNull($constraint->getId());
     }
 
-    public function testUtf8Name() {
+    public function testUtf8Name()
+    {
         $name = 'foo-ɸ';
-
-        $plan = $this->createAccountPlan();
 
         $constraint = new Constraint();
         $constraint->setName($name);
-        $constraint->setPlan($plan);
+        $constraint->setPlan($this->plan);
 
-        $this->getManager()->persist($constraint);
-        $this->getManager()->flush();
+        $this->entityManager->persist($constraint);
+        $this->entityManager->flush();
 
         $constraintId = $constraint->getId();
 
-        $this->getManager()->clear();
-        $this->assertEquals($name, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint')->find($constraintId)->getName());
-    }
+        $this->entityManager->clear();
 
+        $constraintRepository = $this->entityManager->getRepository(Constraint::class);
+
+        $this->assertEquals($name, $constraintRepository->find($constraintId)->getName());
+    }
 }
