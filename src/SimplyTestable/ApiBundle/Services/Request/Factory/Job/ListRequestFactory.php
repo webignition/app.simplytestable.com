@@ -91,7 +91,8 @@ class ListRequestFactory
             $this->getStatesToExcludeFromRequest(),
             $this->requestPayload->get(self::PARAMETER_URL_FILTER),
             $this->getJobIdsToExclude(),
-            $this->getJobIdsToInclude()
+            $this->getJobIdsToInclude(),
+            $this->tokenStorage->getToken()->getUser()
         );
     }
 
