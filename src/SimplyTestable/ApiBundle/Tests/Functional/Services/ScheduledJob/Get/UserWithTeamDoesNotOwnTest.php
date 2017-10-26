@@ -20,6 +20,8 @@ class UserWithTeamDoesNotOwnTest extends IsNotRetrievedTest {
 
 
     protected function setUpPreCreate() {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $userFactory = new UserFactory($this->container);
 
         $leader = $userFactory->createAndActivateUser([
@@ -29,7 +31,7 @@ class UserWithTeamDoesNotOwnTest extends IsNotRetrievedTest {
             UserFactory::KEY_EMAIL => 'member@example.com',
         ]);
 
-        $this->getTeamMemberService()->add($this->getTeamService()->create(
+        $teamMemberService->add($this->getTeamService()->create(
             'Foo',
             $leader
         ), $this->member);

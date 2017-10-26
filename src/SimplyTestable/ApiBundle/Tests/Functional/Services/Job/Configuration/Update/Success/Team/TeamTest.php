@@ -48,6 +48,8 @@ abstract class TeamTest extends SuccessTest {
 
 
     public function preCreateJobConfigurations() {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $userFactory = new UserFactory($this->container);
 
         $this->leader = $userFactory->createAndActivateUser([
@@ -65,8 +67,8 @@ abstract class TeamTest extends SuccessTest {
             $this->leader
         );
 
-        $this->getTeamMemberService()->add($team, $this->member1);
-        $this->getTeamMemberService()->add($team, $this->member2);
+        $teamMemberService->add($team, $this->member1);
+        $teamMemberService->add($team, $this->member2);
     }
 
 

@@ -54,6 +54,7 @@ class ForTeamTest extends ServiceTest
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
 
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
@@ -74,8 +75,8 @@ class ForTeamTest extends ServiceTest
             $this->leader
         );
 
-        $this->getTeamMemberService()->add($team, $this->member1);
-        $this->getTeamMemberService()->add($team, $this->member2);
+        $teamMemberService->add($team, $this->member1);
+        $teamMemberService->add($team, $this->member2);
 
         $this->people = [
             $this->leader,

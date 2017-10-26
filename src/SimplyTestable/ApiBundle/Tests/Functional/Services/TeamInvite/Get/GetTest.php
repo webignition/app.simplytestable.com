@@ -77,6 +77,8 @@ class GetTest extends ServiceTest
 
     public function testInviteeIsAlreadyInDifferentTeamThrowsTeamInviteServiceException()
     {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $leader1 = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader1@example.com',
         ]);
@@ -95,7 +97,7 @@ class GetTest extends ServiceTest
             $leader2
         );
 
-        $this->getTeamMemberService()->add($team1, $user);
+        $teamMemberService->add($team1, $user);
 
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception',

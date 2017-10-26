@@ -24,6 +24,7 @@ class ForTeamTest extends ServiceTest {
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
 
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
@@ -34,7 +35,7 @@ class ForTeamTest extends ServiceTest {
         ]);
         $member = $userFactory->createAndActivateUser();
 
-        $this->getTeamMemberService()->add($this->getTeamService()->create(
+        $teamMemberService->add($this->getTeamService()->create(
             'Foo',
             $leader
         ), $member);

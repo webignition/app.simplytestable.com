@@ -30,6 +30,8 @@ abstract class TeamTest extends ServiceTest {
     protected function setUp() {
         parent::setUp();
 
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $userFactory = new UserFactory($this->container);
 
         $this->leader = $userFactory->createAndActivateUser([
@@ -37,7 +39,7 @@ abstract class TeamTest extends ServiceTest {
         ]);
         $this->member = $userFactory->createAndActivateUser();
 
-        $this->getTeamMemberService()->add($this->getTeamService()->create(
+        $teamMemberService->add($this->getTeamService()->create(
             'Foo',
             $this->leader
         ), $this->member);

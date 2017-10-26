@@ -54,6 +54,7 @@ class ForTeamWithMatchTest extends ServiceTest
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
 
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
@@ -64,7 +65,7 @@ class ForTeamWithMatchTest extends ServiceTest
         ]);
         $member = $userFactory->createAndActivateUser();
 
-        $this->getTeamMemberService()->add($this->getTeamService()->create(
+        $teamMemberService->add($this->getTeamService()->create(
             'Foo',
             $leader
         ), $member);

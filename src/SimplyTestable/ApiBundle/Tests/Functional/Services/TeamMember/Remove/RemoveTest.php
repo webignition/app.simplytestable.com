@@ -24,13 +24,17 @@ class RemoveTest extends ServiceTest
 
     public function testRemoveUserThatIsNotOnATeamReturnsTrue()
     {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $user = $this->userFactory->create();
 
-        $this->assertTrue($this->getTeamMemberService()->remove($user));
+        $this->assertTrue($teamMemberService>remove($user));
     }
 
     public function testRemoveUserThatIsOnATeamReturnsTrue()
     {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
@@ -42,13 +46,15 @@ class RemoveTest extends ServiceTest
 
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getTeamMemberService()->add($team, $user);
+        $teamMemberService->add($team, $user);
 
-        $this->assertTrue($this->getTeamMemberService()->remove($user));
+        $this->assertTrue($teamMemberService->remove($user));
     }
 
     public function testRemoveUserThatIsOnATeamRemovesTheUser()
     {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
@@ -60,12 +66,12 @@ class RemoveTest extends ServiceTest
 
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getTeamMemberService()->add($team, $user);
+        $teamMemberService->add($team, $user);
 
-        $this->assertTrue($this->getTeamMemberService()->contains($team, $user));
+        $this->assertTrue($teamMemberService->contains($team, $user));
 
-        $this->getTeamMemberService()->remove($user);
+        $teamMemberService->remove($user);
 
-        $this->assertFalse($this->getTeamMemberService()->contains($team, $user));
+        $this->assertFalse($teamMemberService->contains($team, $user));
     }
 }

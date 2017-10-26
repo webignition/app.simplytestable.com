@@ -43,6 +43,8 @@ class RemoveTest extends ServiceTest
 
 
     public function testUserIsNotInLeadersTeamThrowsTeamServiceException() {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $leader1 = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader1@example.com',
         ]);
@@ -54,7 +56,7 @@ class RemoveTest extends ServiceTest
         $team1 = $this->getTeamService()->create('Foo1', $leader1);
         $this->getTeamService()->create('Foo2', $leader2);
 
-        $this->getTeamMemberService()->add($team1, $user);
+        $teamMemberService->add($team1, $user);
 
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
@@ -67,19 +69,21 @@ class RemoveTest extends ServiceTest
 
 
     public function testRemovesUserFromTeam() {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
         $team = $this->getTeamService()->create('Foo', $leader);
-        $this->getTeamMemberService()->add($team, $user);
+        $teamMemberService->add($team, $user);
 
-        $this->assertTrue($this->getTeamMemberService()->contains($team, $user));
+        $this->assertTrue($teamMemberService->contains($team, $user));
 
         $this->getTeamService()->remove($leader, $user);
 
-        $this->assertFalse($this->getTeamMemberService()->contains($team, $user));
+        $this->assertFalse($teamMemberService->contains($team, $user));
     }
 
 }

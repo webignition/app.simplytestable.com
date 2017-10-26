@@ -81,6 +81,8 @@ class CreateTest extends ServiceTest
 
     public function testUserAlreadyOnTeamThrowsTeamMemberServiceException()
     {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
@@ -92,7 +94,7 @@ class CreateTest extends ServiceTest
 
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getTeamMemberService()->add($team, $user);
+        $teamMemberService->add($team, $user);
 
         $this->setExpectedException(
             'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
