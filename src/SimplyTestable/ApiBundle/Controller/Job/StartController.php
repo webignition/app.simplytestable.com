@@ -64,11 +64,11 @@ class StartController extends ApiController
 
         $job = $jobService->getById($test_id);
         if (is_null($job)) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         if (!$jobService->isFinished($job)) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         $taskTypeNames = array();

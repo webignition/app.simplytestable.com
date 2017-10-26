@@ -57,7 +57,7 @@ class CreateController extends ApiController
         $user = $this->getUser();
 
         if ($userService->isSpecialUser($user)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-ScheduledJobCreate-Error' => json_encode([
                     'code' => 99,
                     'message' => 'Special users cannot create scheduled jobs'
@@ -71,7 +71,7 @@ class CreateController extends ApiController
         $jobConfiguration = $jobConfigurationService->get($requestJobConfigurationLabel);
 
         if (empty($jobConfiguration)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-ScheduledJobCreate-Error' => json_encode([
                     'code' => 98,
                     'message' => 'Unknown job configuration "' . $requestJobConfigurationLabel . '"'
@@ -83,7 +83,7 @@ class CreateController extends ApiController
             $scheduleValidator = new CrontabValidator();
             $scheduleValidator->validate($requestSchedule);
         } catch (InvalidPatternException $invalidPatternException) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-ScheduledJobCreate-Error' => json_encode([
                     'code' => 97,
                     'message' => 'Malformed schedule "' . $requestSchedule . '"'
@@ -97,7 +97,7 @@ class CreateController extends ApiController
         }
 
         if (!$cronModifierValidationService->isValid($requestScheduleModifier)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-ScheduledJobCreate-Error' => json_encode([
                     'code' => 96,
                     'message' => 'Malformed schedule modifier "' . $requestScheduleModifier . '"'
@@ -118,7 +118,7 @@ class CreateController extends ApiController
                 ['id' => $scheduledJob->getId()]
             ));
         } catch (ScheduledJobException $scheduledJobException) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-ScheduledJobCreate-Error' => json_encode([
                     'code' => $scheduledJobException->getCode(),
                     'message' => $scheduledJobException->getMessage()

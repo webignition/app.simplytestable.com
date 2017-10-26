@@ -19,11 +19,11 @@ class UserStripeEventController extends ApiController
         $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
 
         if ($userService->isPublicUser($this->getUser())) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         if ($email_canonical !== $this->getUser()->getEmail()) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         $events = $stripeEventService->getForUserAndType($this->getUser(), $type);

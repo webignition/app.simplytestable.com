@@ -51,7 +51,7 @@ class UpdateController extends ApiController
 
             $jobConfiguration = $jobConfigurationService->get($requestJobConfigurationLabel);
             if (empty($jobConfiguration)) {
-                return $this->sendFailureResponse([
+                return Response::create('', 400, [
                     'X-ScheduledJobUpdate-Error' => json_encode([
                         'code' => 100 - ScheduledJobControllerUpdateException::CODE_UNKNOWN_JOB_CONFIGURATION,
                         'message' => 'Unknown job configuration'
@@ -68,7 +68,7 @@ class UpdateController extends ApiController
                 $scheduleValidator->validate($requestSchedule);
                 $schedule = $requestSchedule;
             } catch (InvalidPatternException $invalidPatternException) {
-                return $this->sendFailureResponse([
+                return Response::create('', 400, [
                     'X-ScheduledJobUpdate-Error' => json_encode([
                         'code' => 100 - ScheduledJobControllerUpdateException::CODE_INVALID_SCHEDULE,
                         'message' => 'Invalid schedule'
@@ -87,7 +87,7 @@ class UpdateController extends ApiController
         if ($requestData->has('schedule-modifier')) {
             $cronModifier = $requestData->get('schedule-modifier');
             if (!$cronModifierValidationService->isValid($cronModifier)) {
-                return $this->sendFailureResponse([
+                return Response::create('', 400, [
                     'X-ScheduledJobUpdate-Error' => json_encode([
                         'code' => 100 - ScheduledJobControllerUpdateException::CODE_INVALID_SCHEDULE_MODIFIER,
                         'message' => 'Invalid schedule modifier'
@@ -105,7 +105,7 @@ class UpdateController extends ApiController
                 $isRecurring
             );
         } catch (ScheduledJobException $scheduledJobException) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-ScheduledJobUpdate-Error' => json_encode([
                     'code' => $scheduledJobException->getCode(),
                     'message' => $scheduledJobException->getMessage()

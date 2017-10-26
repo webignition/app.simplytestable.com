@@ -52,7 +52,7 @@ class TeamController extends ApiController
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         if ($userService->isSpecialUser($this->getUser())) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamCreate-Error-Code' => 9,
                 'X-TeamCreate-Error-Message' => 'Special users cannot create teams',
             ]);
@@ -79,7 +79,7 @@ class TeamController extends ApiController
                 return $this->createTeamGetRedirectResponse($teamService);
             }
 
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamCreate-Error-Code' => $teamServiceException->getCode(),
                 'X-TeamCreate-Error-Message' => $teamServiceException->getMessage(),
             ]);
@@ -99,7 +99,7 @@ class TeamController extends ApiController
         $teamService = $this->container->get('simplytestable.services.teamservice');
 
         if (!$userService->exists($member_email)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamRemove-Error-Code' => 9,
                 'X-TeamRemove-Error-Message' => 'Member is not a user',
             ]);
@@ -112,7 +112,7 @@ class TeamController extends ApiController
 
             return new Response();
         } catch (TeamServiceException $teamServiceException) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamRemove-Error-Code' => $teamServiceException->getCode(),
                 'X-TeamRemove-Error-Message' => $teamServiceException->getMessage(),
             ]);
@@ -128,7 +128,7 @@ class TeamController extends ApiController
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
 
         if ($teamService->hasTeam($this->getUser())) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamLeave-Error-Code' => 9,
                 'X-TeamLeave-Error-Message' => 'Leader cannot leave team',
             ]);
