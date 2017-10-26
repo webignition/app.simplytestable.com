@@ -55,20 +55,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @param Job $job
-     */
-    protected function completeJob(Job $job)
-    {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
-
-        $this->setJobTasksCompleted($job);
-        $job->setState($jobInProgressState);
-        $job->setTimePeriod(new TimePeriod());
-        $this->getJobService()->complete($job);
-    }
-
-    /**
      * @return CrawlJobContainerService
      */
     protected function getCrawlJobContainerService()
