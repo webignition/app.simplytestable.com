@@ -39,14 +39,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return WebSiteService
-     */
-    protected function getWebSiteService()
-    {
-        return $this->container->get('simplytestable.services.websiteservice');
-    }
-
-    /**
      * @return AccountPlanService
      */
     protected function getAccountPlanService()

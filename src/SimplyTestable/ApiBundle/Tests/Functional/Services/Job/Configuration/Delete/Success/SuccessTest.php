@@ -22,6 +22,8 @@ abstract class SuccessTest extends ServiceTest {
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $this->preCreateJobConfigurations();
@@ -30,7 +32,7 @@ abstract class SuccessTest extends ServiceTest {
         $jobConfigurationValues->setLabel(self::LABEL);
         $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $jobConfigurationValues->setType($fullSiteJobType);
-        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://original.example.com/'));
+        $jobConfigurationValues->setWebsite($websiteService->fetch('http://original.example.com/'));
 
         $this->getJobConfigurationService()->setUser($this->getCurrentUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);

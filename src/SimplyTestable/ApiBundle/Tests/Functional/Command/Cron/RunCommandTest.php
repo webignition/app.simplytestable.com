@@ -146,6 +146,7 @@ class RunCommandTest extends BaseSimplyTestableTestCase
     {
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
 
         $jobConfigurationValues = new JobConfigurationValues();
 
@@ -162,7 +163,7 @@ class RunCommandTest extends BaseSimplyTestableTestCase
         }
 
         if (isset($rawValues['website'])) {
-            $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch($rawValues['website']));
+            $jobConfigurationValues->setWebsite($websiteService->fetch($rawValues['website']));
         }
 
         if (isset($rawValues['task_configuration'])) {

@@ -21,6 +21,9 @@ abstract class UserTest extends ServiceTest {
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $this->preCreateJobConfigurations();
@@ -29,9 +32,8 @@ abstract class UserTest extends ServiceTest {
         $jobConfigurationValues->setLabel(self::LABEL);
         $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $jobConfigurationValues->setType($fullSiteJobType);
-        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://original.example.com/'));
+        $jobConfigurationValues->setWebsite($websiteService->fetch('http://original.example.com/'));
 
-        $userService = $this->container->get('simplytestable.services.userservice');
         $this->getJobConfigurationService()->setUser($userService->getPublicUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 

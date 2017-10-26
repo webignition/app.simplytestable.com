@@ -15,10 +15,12 @@ class EmptyTypeTest extends ServiceTest {
             JobConfigurationServiceException::CODE_TYPE_CANNOT_BE_EMPTY
         );
 
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
         $values = new ConfigurationValues();
         $values->setLabel('foo');
         $values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
-        $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $values->setWebsite($websiteService->fetch('http://example.com/'));
 
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->getJobConfigurationService()->setUser($userService->getPublicUser());

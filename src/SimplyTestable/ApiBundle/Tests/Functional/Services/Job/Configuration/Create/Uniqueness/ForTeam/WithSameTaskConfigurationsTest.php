@@ -48,6 +48,8 @@ class WithSameTaskConfigurationsTest extends ServiceTest
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $userFactory = new UserFactory($this->container);
@@ -79,7 +81,7 @@ class WithSameTaskConfigurationsTest extends ServiceTest
         $this->values->setParameters(self::PARAMETERS);
         $this->values->setTaskConfigurationCollection($taskConfigurationCollection);
         $this->values->setType($fullSiteJobType);
-        $this->values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $this->values->setWebsite($websiteService->fetch('http://example.com/'));
 
         $this->getJobConfigurationService()->setUser($member);
         $this->getJobConfigurationService()->create($this->values);

@@ -52,6 +52,8 @@ class ForTeamWithMatchTest extends ServiceTest
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $userFactory = new UserFactory($this->container);
@@ -82,7 +84,7 @@ class ForTeamWithMatchTest extends ServiceTest
         $jobConfigurationValues->setLabel(self::LABEL);
         $jobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
         $jobConfigurationValues->setType($fullSiteJobType);
-        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $jobConfigurationValues->setWebsite($websiteService->fetch('http://example.com/'));
         $jobConfigurationValues->setParameters('parameters');
 
         $this->getJobConfigurationService()->setUser($leader);

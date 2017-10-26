@@ -47,6 +47,7 @@ abstract class ScheduledJobTest extends BaseSimplyTestableTestCase {
     {
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $jobConfiguration = new JobConfiguration();
@@ -54,7 +55,7 @@ abstract class ScheduledJobTest extends BaseSimplyTestableTestCase {
         $jobConfiguration->setParameters('');
         $jobConfiguration->setType($fullSiteJobType);
         $jobConfiguration->setUser($userService->getPublicUser());
-        $jobConfiguration->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $jobConfiguration->setWebsite($websiteService->fetch('http://example.com/'));
 
         return $jobConfiguration;
     }

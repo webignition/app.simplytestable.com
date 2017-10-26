@@ -20,13 +20,15 @@ abstract class HasExistingTest extends ServiceTest {
 
         $this->preCreateJobConfigurations();
 
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
         $this->getJobConfigurationService()->setUser($this->getCurrentUser());
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $firstValues = new ConfigurationValues();
-        $firstValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $firstValues->setWebsite($websiteService->fetch('http://example.com/'));
         $firstValues->setType($fullSiteJobType);
         $firstValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $firstValues->setLabel('first');
@@ -35,7 +37,7 @@ abstract class HasExistingTest extends ServiceTest {
         $this->jobConfiguration = $this->getJobConfigurationService()->create($firstValues);
 
         $secondValues = new ConfigurationValues();
-        $secondValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $secondValues->setWebsite($websiteService->fetch('http://example.com/'));
         $secondValues->setType($fullSiteJobType);
         $secondValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $secondValues->setLabel('second');

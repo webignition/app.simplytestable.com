@@ -35,6 +35,7 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
     protected function createJobConfiguration($rawValues, User $user)
     {
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
 
         $jobConfigurationValues = new JobConfigurationValues();
 
@@ -51,7 +52,7 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
         }
 
         if (isset($rawValues['website'])) {
-            $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch($rawValues['website']));
+            $jobConfigurationValues->setWebsite($websiteService->fetch($rawValues['website']));
         }
 
         if (isset($rawValues['task_configuration'])) {

@@ -33,7 +33,9 @@ class UserTest extends SuccessTest {
     }
 
     protected function getOriginalWebsite() {
-        return $this->getWebSiteService()->fetch('http://original.example.com/');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
+        return $websiteService->fetch('http://original.example.com/');
     }
 
     protected function getOriginalJobType() {
@@ -46,7 +48,9 @@ class UserTest extends SuccessTest {
     }
 
     protected function getNewWebsite() {
-        return $this->getWebSiteService()->fetch('http://new.example.com/');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
+        return $websiteService->fetch('http://new.example.com/');
     }
 
     protected function getNewJobType() {
