@@ -2,11 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
-use SimplyTestable\ApiBundle\Controller\ApiController;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class JobListController extends ApiController
+class JobListController extends Controller
 {
     /**
      * @param int $limit

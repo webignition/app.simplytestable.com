@@ -2,13 +2,14 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class MaintenanceController extends ApiController
+class MaintenanceController extends Controller
 {
     /**
      * @return JsonResponse

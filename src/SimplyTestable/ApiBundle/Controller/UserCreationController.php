@@ -3,12 +3,13 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class UserCreationController extends ApiController
+class UserCreationController extends Controller
 {
     const DEFAULT_ACCOUNT_PLAN_NAME = 'basic';
 
