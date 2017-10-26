@@ -70,13 +70,6 @@ fos_user:
         address: user@example.com
         sender_name: "null"
 
-jms_serializer:
-    metadata:
-        directories:
-            FOSUB:
-                namespace_prefix: "FOS\\UserBundle"
-                path: "%kernel.root_dir%/config/serializer/FOSUB"
-
 # BCCResqueBundle Configuration
 bcc_resque:
     #class: BCC\ResqueBundle\Resque           # the resque class if different from default
