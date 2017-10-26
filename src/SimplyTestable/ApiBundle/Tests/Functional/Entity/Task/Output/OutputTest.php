@@ -2,29 +2,54 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task\Output;
 
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use webignition\InternetMediaType\InternetMediaType;
 
-class TaskTest extends BaseSimplyTestableTestCase {
+class TaskTest extends BaseSimplyTestableTestCase
+{
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
-    public function testUtf8Output() {
+    /**
+     * @var TaskOutputRepository
+     */
+    private $taskOutputRepository;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->taskOutputRepository = $this->entityManager->getRepository(Output::class);
+    }
+
+    public function testUtf8Output()
+    {
         $outputValue = 'ɸ';
 
         $output = new Output();
         $output->setOutput($outputValue);
 
-        $this->getManager()->persist($output);
-        $this->getManager()->flush();
+        $this->entityManager->persist($output);
+        $this->entityManager->flush();
 
         $outputId = $output->getId();
 
-        $this->getManager()->clear();
+        $this->entityManager->clear();
 
-        $this->assertEquals($outputValue, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output')->find($outputId)->getOutput());
+        $this->assertEquals($outputValue, $this->taskOutputRepository->find($outputId)->getOutput());
     }
 
-    public function testUtf8ContentType() {
+    public function testUtf8ContentType()
+    {
         $typeValue = 'ɸ';
 
         $contentType = new InternetMediaType();
@@ -36,29 +61,33 @@ class TaskTest extends BaseSimplyTestableTestCase {
         $output->setContentType($contentType);
 
 
-        $this->getManager()->persist($output);
-        $this->getManager()->flush();
+        $this->entityManager->persist($output);
+        $this->entityManager->flush();
 
         $outputId = $output->getId();
 
-        $this->getManager()->clear();
-        $this->assertEquals($typeValue . '/' . $typeValue, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output')->find($outputId)->getContentType());
+        $this->entityManager->clear();
+        $this->assertEquals(
+            $typeValue . '/' . $typeValue,
+            $this->taskOutputRepository->find($outputId)->getContentType()
+        );
     }
 
-    public function testUtf8Hash() {
+    public function testUtf8Hash()
+    {
         $hash = 'ɸ';
 
         $output = new Output();
         $output->setOutput('');
         $output->setHash($hash);
 
-        $this->getManager()->persist($output);
-        $this->getManager()->flush();
+        $this->entityManager->persist($output);
+        $this->entityManager->flush();
 
         $outputId = $output->getId();
 
-        $this->getManager()->clear();
+        $this->entityManager->clear();
 
-        $this->assertEquals($hash, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output')->find($outputId)->getHash());
+        $this->assertEquals($hash, $this->taskOutputRepository->find($outputId)->getHash());
     }
 }

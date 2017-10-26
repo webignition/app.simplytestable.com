@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Tests\Factory\ConstraintFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
@@ -10,6 +11,11 @@ use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 
 class AmmendmentTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
     /**
      * @var JobFactory
      */
@@ -23,6 +29,7 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->jobFactory = new JobFactory($this->container);
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
     }
 
     public function testUtf8Reason()
@@ -33,19 +40,18 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
         $ammendment->setJob($this->jobFactory->create());
         $ammendment->setReason($reason);
 
-        $this->getManager()->persist($ammendment);
-        $this->getManager()->flush();
+        $this->entityManager->persist($ammendment);
+        $this->entityManager->flush();
 
         $ammendmentId = $ammendment->getId();
 
-        $this->getManager()->clear();
+        $this->entityManager->clear();
+
+        $ammendmentRepository = $this->entityManager->getRepository(Ammendment::class);
 
         $this->assertEquals(
             $reason,
-            $this
-                ->getManager()
-                ->getRepository('SimplyTestable\ApiBundle\Entity\Job\Ammendment')
-                ->find($ammendmentId)->getReason()
+            $ammendmentRepository->find($ammendmentId)->getReason()
         );
     }
 
@@ -55,8 +61,8 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
         $ammendment->setJob($this->jobFactory->create());
         $ammendment->setReason('url-count-limited');
 
-        $this->getManager()->persist($ammendment);
-        $this->getManager()->flush();
+        $this->entityManager->persist($ammendment);
+        $this->entityManager->flush();
 
         $this->assertNotNull($ammendment->getId());
     }
@@ -77,8 +83,8 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
         $ammendment->setReason('url-count-limited');
         $ammendment->setConstraint($constraint);
 
-        $this->getManager()->persist($ammendment);
-        $this->getManager()->flush();
+        $this->entityManager->persist($ammendment);
+        $this->entityManager->flush();
 
         $this->assertNotNull($ammendment->getId());
     }
@@ -90,8 +96,8 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
         $ammendment->setJob($job);
         $ammendment->setReason('url-count-limited');
 
-        $this->getManager()->persist($ammendment);
-        $this->getManager()->flush();
+        $this->entityManager->persist($ammendment);
+        $this->entityManager->flush();
 
         $this->assertCount(1, $job->getAmmendments());
     }
@@ -106,11 +112,11 @@ class AmmendmentTest extends BaseSimplyTestableTestCase
             $ammendment = new Ammendment();
             $ammendment->setJob($job);
             $ammendment->setReason('url-count-limited-' . $ammendmentIndex);
-            $this->getManager()->persist($ammendment);
+            $this->entityManager->persist($ammendment);
             $ammendments[] = $ammendment;
         }
 
-        $this->getManager()->flush();
+        $this->entityManager->flush();
 
         $this->assertCount(count($ammendments), $job->getAmmendments());
     }

@@ -10,6 +10,8 @@ class TeamTest extends BaseSimplyTestableTestCase
 {
     public function testPersist()
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
         $userFactory = new UserFactory($this->container);
 
         $team = new Team();
@@ -18,7 +20,7 @@ class TeamTest extends BaseSimplyTestableTestCase
         ]));
         $team->setName('Foo');
 
-        $this->getManager()->persist($team);
-        $this->getManager()->flush();
+        $entityManager->persist($team);
+        $entityManager->flush();
     }
 }

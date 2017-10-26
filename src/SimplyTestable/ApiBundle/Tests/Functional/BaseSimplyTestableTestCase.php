@@ -38,14 +38,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
         $this->clearRedis();
     }
 
-    /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    protected function getManager()
-    {
-        return $this->container->get('doctrine')->getManager();
-    }
-
     protected function setJobTasksCompleted(Job $job)
     {
         foreach ($job->getTasks() as $task) {

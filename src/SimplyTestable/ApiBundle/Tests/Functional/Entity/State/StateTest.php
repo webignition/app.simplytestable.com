@@ -9,11 +9,13 @@ class StateTest extends BaseSimplyTestableTestCase
 {
     public function testPersist()
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
         $state = new State();
         $state->setName('foo');
 
-        $this->getManager()->persist($state);
-        $this->getManager()->flush();
+        $entityManager->persist($state);
+        $entityManager->flush();
 
         $this->assertNotNull($state->getId());
     }

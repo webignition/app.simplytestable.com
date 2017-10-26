@@ -2,8 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Account\Plan;
 
-use Doctrine\ORM\EntityManagerInterface;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
@@ -11,57 +9,47 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 class ConstraintTest extends BaseSimplyTestableTestCase
 {
     /**
-     * @var EntityManagerInterface
+     * @dataProvider persistDataProvider
+     *
+     * @param string $name
      */
-    private $entityManager;
-
-    /**
-     * @var Plan
-     */
-    private $plan;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
+    public function testPersist($name)
     {
-        parent::setUp();
-
-        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $planFactory = new PlanFactory($this->container);
-        $this->plan = $planFactory->create();
-    }
-
-    public function testPersist()
-    {
-        $constraint = new Constraint();
-        $constraint->setName('foo');
-        $constraint->setPlan($this->plan);
-
-        $this->entityManager->persist($constraint);
-        $this->entityManager->flush();
-
-        $this->assertNotNull($constraint->getId());
-    }
-
-    public function testUtf8Name()
-    {
-        $name = 'foo-ɸ';
+        $plan = $planFactory->create();
 
         $constraint = new Constraint();
         $constraint->setName($name);
-        $constraint->setPlan($this->plan);
+        $constraint->setPlan($plan);
 
-        $this->entityManager->persist($constraint);
-        $this->entityManager->flush();
+        $entityManager->persist($constraint);
+        $entityManager->flush($constraint);
+
+        $this->assertNotNull($constraint->getId());
 
         $constraintId = $constraint->getId();
 
-        $this->entityManager->clear();
+        $entityManager->clear();
 
-        $constraintRepository = $this->entityManager->getRepository(Constraint::class);
+        $constraintRepository = $entityManager->getRepository(Constraint::class);
 
         $this->assertEquals($name, $constraintRepository->find($constraintId)->getName());
+    }
+
+    /**
+     * @return array
+     */
+    public function persistDataProvider()
+    {
+        return [
+            'foo' => [
+                'name' => 'foo',
+            ],
+            'utf8 content' => [
+                'name' => 'foo-ɸ',
+            ],
+        ];
     }
 }

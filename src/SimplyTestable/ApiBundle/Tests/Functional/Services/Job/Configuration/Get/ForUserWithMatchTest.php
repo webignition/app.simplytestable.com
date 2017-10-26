@@ -49,6 +49,8 @@ class ForUserWithMatchTest extends ServiceTest {
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $taskConfigurationCollection = new TaskConfigurationCollection();
@@ -74,7 +76,7 @@ class ForUserWithMatchTest extends ServiceTest {
         $this->getJobConfigurationService()->setUser($userService->getPublicUser());
         $this->originalConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
-        $this->getManager()->clear();
+        $entityManager->clear();
 
         $this->retrievedConfiguration = $this->getJobConfigurationService()->get(self::LABEL);
     }

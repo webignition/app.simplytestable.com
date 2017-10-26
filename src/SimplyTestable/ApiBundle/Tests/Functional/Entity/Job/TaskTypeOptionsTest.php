@@ -10,6 +10,7 @@ class TaskTypeOptionsTest extends BaseSimplyTestableTestCase
 {
     public function testUtf8Options()
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobFactory = new JobFactory($this->container);
 
         $job = $jobFactory->create();
@@ -23,20 +24,18 @@ class TaskTypeOptionsTest extends BaseSimplyTestableTestCase
         $options->setTaskType($taskType);
         $options->setOptions($optionsValue);
 
-        $this->getManager()->persist($options);
-        $this->getManager()->flush();
+        $entityManager->persist($options);
+        $entityManager->flush();
 
         $optionsId = $options->getId();
 
-        $this->getManager()->clear();
+        $entityManager->clear();
+
+        $taskTypeOptionsRepository = $entityManager->getRepository(TaskTypeOptions::class);
 
         $this->assertEquals(
             $optionsValue,
-            $this
-                ->getManager()
-                ->getRepository('SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions')
-                ->find($optionsId)
-                ->getOptions()
+            $taskTypeOptionsRepository->find($optionsId)->getOptions()
         );
     }
 }

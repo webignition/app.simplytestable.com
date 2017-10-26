@@ -4,10 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job\Configuration\Wit
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
-class PersistTest extends WithoutTaskConfigurationsTest
+class PersistTest extends BaseSimplyTestableTestCase
 {
-
     /**
      * @var Configuration
      */
@@ -20,6 +20,7 @@ class PersistTest extends WithoutTaskConfigurationsTest
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
         $userService = $this->container->get('simplytestable.services.userservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $this->configuration = new Configuration();
         $this->configuration->setLabel('foo');
@@ -30,10 +31,9 @@ class PersistTest extends WithoutTaskConfigurationsTest
         $this->configuration->setType($fullSiteJobType);
         $this->configuration->setParameters('bar');
 
-        $this->getManager()->persist($this->configuration);
-        $this->getManager()->flush();
+        $entityManager->persist($this->configuration);
+        $entityManager->flush();
     }
-
 
     public function testIsPersisted()
     {

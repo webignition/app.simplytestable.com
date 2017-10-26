@@ -35,7 +35,9 @@ class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->taskOutputRepository = $this->getManager()->getRepository(Output::class);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
     }

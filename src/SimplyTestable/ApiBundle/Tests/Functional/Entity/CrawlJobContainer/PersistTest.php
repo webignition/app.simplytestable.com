@@ -16,6 +16,7 @@ class PersistTest extends BaseSimplyTestableTestCase
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $crawlJobType = $jobTypeService->getByName(JobTypeService::CRAWL_NAME);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobFactory = new JobFactory($this->container);
 
@@ -27,14 +28,14 @@ class PersistTest extends BaseSimplyTestableTestCase
         $crawlJob->setUser($parentJob->getUser());
         $crawlJob->setWebsite($parentJob->getWebsite());
 
-        $this->getManager()->persist($crawlJob);
+        $entityManager->persist($crawlJob);
 
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setParentJob($parentJob);
         $crawlJobContainer->setCrawlJob($crawlJob);
 
-        $this->getManager()->persist($crawlJobContainer);
-        $this->getManager()->flush();
+        $entityManager->persist($crawlJobContainer);
+        $entityManager->flush();
 
         $this->assertNotNull($crawlJobContainer->getId());
     }

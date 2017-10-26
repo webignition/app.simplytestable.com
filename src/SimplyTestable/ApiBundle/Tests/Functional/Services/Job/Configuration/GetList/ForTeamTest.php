@@ -52,6 +52,7 @@ class ForTeamTest extends ServiceTest
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $userFactory = new UserFactory($this->container);
@@ -94,7 +95,7 @@ class ForTeamTest extends ServiceTest
             }
         }
 
-        $this->getManager()->clear();
+        $entityManager->clear();
 
         foreach ($this->people as $userIndex => $user) {
             /* @var $user User */

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Tests\Factory\ConstraintFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
@@ -10,6 +11,11 @@ use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 
 class RejectionReasonTest extends BaseSimplyTestableTestCase
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
     /**
      * @var JobFactory
      */
@@ -23,6 +29,7 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $this->jobFactory = new JobFactory($this->container);
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
     }
 
     public function testUtf8Reason()
@@ -34,19 +41,18 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase
         $rejectionReason->setJob($job);
         $rejectionReason->setReason($reason);
 
-        $this->getManager()->persist($rejectionReason);
-        $this->getManager()->flush();
+        $this->entityManager->persist($rejectionReason);
+        $this->entityManager->flush();
 
         $rejectionReasonId = $rejectionReason->getId();
 
-        $this->getManager()->clear();
+        $this->entityManager->clear();
+
+        $rejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
 
         $this->assertEquals(
             $reason,
-            $this
-                ->getManager()
-                ->getRepository('SimplyTestable\ApiBundle\Entity\Job\RejectionReason')
-                ->find($rejectionReasonId)->getReason()
+            $rejectionReasonRepository->find($rejectionReasonId)->getReason()
         );
     }
 
@@ -58,8 +64,8 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase
         $rejectionReason->setJob($job);
         $rejectionReason->setReason('insufficient-credit');
 
-        $this->getManager()->persist($rejectionReason);
-        $this->getManager()->flush();
+        $this->entityManager->persist($rejectionReason);
+        $this->entityManager->flush();
 
         $this->assertNotNull($rejectionReason->getId());
     }
@@ -82,8 +88,8 @@ class RejectionReasonTest extends BaseSimplyTestableTestCase
         $rejectionReason->setReason('insufficient-credit');
         $rejectionReason->setConstraint($constraint);
 
-        $this->getManager()->persist($rejectionReason);
-        $this->getManager()->flush();
+        $this->entityManager->persist($rejectionReason);
+        $this->entityManager->flush();
 
         $this->assertNotNull($rejectionReason->getId());
     }

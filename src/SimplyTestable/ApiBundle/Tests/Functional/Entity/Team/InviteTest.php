@@ -14,6 +14,9 @@ class InviteTest extends BaseSimplyTestableTestCase
 
     public function testPersist()
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+
         $userFactory = new UserFactory($this->container);
 
         $team = new Team();
@@ -22,8 +25,8 @@ class InviteTest extends BaseSimplyTestableTestCase
         ]));
         $team->setName('Foo');
 
-        $this->getManager()->persist($team);
-        $this->getManager()->flush();
+        $entityManager->persist($team);
+        $entityManager->flush();
 
         $invite = new Invite();
         $invite->setTeam($team);
@@ -32,12 +35,12 @@ class InviteTest extends BaseSimplyTestableTestCase
         ]));
         $invite->setToken(self::TOKEN);
 
-        $this->getManager()->persist($invite);
-        $this->getManager()->flush();
+        $entityManager->persist($invite);
+        $entityManager->flush();
 
         $inviteId = $invite->getId();
 
-        $retrievedInvite = $this->getTeamInviteService()->getEntityRepository()->find($inviteId);
+        $retrievedInvite = $teamInviteService->getEntityRepository()->find($inviteId);
 
         $this->assertEquals($inviteId, $retrievedInvite->getId());
         $this->assertEquals(self::TOKEN, $retrievedInvite->getToken());

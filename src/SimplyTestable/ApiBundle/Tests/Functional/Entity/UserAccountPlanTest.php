@@ -26,6 +26,9 @@ class UserAccountPlanTest extends BaseSimplyTestableTestCase
      */
     private $plan;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();

@@ -2,45 +2,39 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task\Type;
 
+use SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass;
 use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 
-class TypeTest extends BaseSimplyTestableTestCase {
+class TypeTest extends BaseSimplyTestableTestCase
+{
+    public function testPersistAndRetrieve()
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskTypeClassRepository = $entityManager->getRepository(TaskTypeClass::class);
+        $taskTypeRepository = $entityManager->getRepository(Type::class);
 
-    public function testUtf8Name() {
-        $name = 'test-ɸ';
+        $name = 'name-ɸ';
+        $description = 'description-ɸ';
+
+        /* @var TaskTypeClass $taskTypeClass */
+        $taskTypeClass = $taskTypeClassRepository->find(1);
 
         $type = new Type();
         $type->setName($name);
-        $type->setDescription('foo');
-        $type->setClass($this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find(1));
-
-        $this->getManager()->persist($type);
-        $this->getManager()->flush();
-
-        $typeId = $type->getId();
-
-        $this->getManager()->clear();
-
-        $this->assertEquals($name, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->find($typeId)->getName());
-    }
-
-
-    public function testUtf8Description() {
-        $description = 'ɸ';
-
-        $type = new Type();
-        $type->setName('test-foo');
         $type->setDescription($description);
-        $type->setClass($this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find(1));
+        $type->setClass($taskTypeClass);
 
-        $this->getManager()->persist($type);
-        $this->getManager()->flush();
+        $entityManager->persist($type);
+        $entityManager->flush();
 
         $typeId = $type->getId();
 
-        $this->getManager()->clear();
+        $entityManager->clear();
 
-        $this->assertEquals($description, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type')->find($typeId)->getDescription());
+        $retrievedTaskType = $taskTypeRepository->find($typeId);
+
+        $this->assertEquals($name, $retrievedTaskType->getName());
+        $this->assertEquals($description, $retrievedTaskType->getDescription());
     }
 }

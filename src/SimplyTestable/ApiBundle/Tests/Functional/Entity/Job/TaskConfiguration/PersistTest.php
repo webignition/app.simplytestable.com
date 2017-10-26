@@ -19,6 +19,7 @@ class PersistTest extends TaskConfigurationTest
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $jobConfiguration = new JobConfiguration();
@@ -30,8 +31,8 @@ class PersistTest extends TaskConfigurationTest
         $jobConfiguration->setType($fullSiteJobType);
         $jobConfiguration->setParameters('bar');
 
-        $this->getManager()->persist($jobConfiguration);
-        $this->getManager()->flush();
+        $entityManager->persist($jobConfiguration);
+        $entityManager->flush();
 
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setJobConfiguration($jobConfiguration);
@@ -42,14 +43,16 @@ class PersistTest extends TaskConfigurationTest
             'foo' => 'bar'
         ]);
 
-        $this->getManager()->persist($taskConfiguration);
-        $this->getManager()->flush();
+        $entityManager->persist($taskConfiguration);
+        $entityManager->flush();
 
         $taskConfigurationId = $taskConfiguration->getId();
 
-        $this->getManager()->clear();
+        $entityManager->clear();
 
-        $this->taskConfiguration = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration')->find($taskConfigurationId);
+        $taskConfigurationRepository = $entityManager->getRepository(TaskConfiguration::class);
+
+        $this->taskConfiguration = $taskConfigurationRepository->find($taskConfigurationId);
     }
 
     public function testIsPersisted()

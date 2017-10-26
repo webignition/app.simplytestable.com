@@ -11,6 +11,8 @@ class MemberTest extends BaseSimplyTestableTestCase
 {
     public function testPersist()
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
         $userFactory = new UserFactory($this->container);
 
         $team = new Team();
@@ -19,8 +21,8 @@ class MemberTest extends BaseSimplyTestableTestCase
         ]));
         $team->setName('Foo');
 
-        $this->getManager()->persist($team);
-        $this->getManager()->flush();
+        $entityManager->persist($team);
+        $entityManager->flush();
 
         $member = new Member();
         $member->setTeam($team);
@@ -28,7 +30,7 @@ class MemberTest extends BaseSimplyTestableTestCase
             UserFactory::KEY_EMAIL => 'team-member@example.com',
         ]));
 
-        $this->getManager()->persist($member);
-        $this->getManager()->flush();
+        $entityManager->persist($member);
+        $entityManager->flush();
     }
 }

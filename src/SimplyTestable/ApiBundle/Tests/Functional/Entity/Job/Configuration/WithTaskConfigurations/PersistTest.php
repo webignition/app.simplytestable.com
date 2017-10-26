@@ -5,8 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job\Configuration\Wit
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
 
-class PersistTest extends WithTaskConfigurationsTest
+class PersistTest extends BaseSimplyTestableTestCase
 {
     /**
      * @var Configuration
@@ -19,6 +20,8 @@ class PersistTest extends WithTaskConfigurationsTest
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $this->configuration = new Configuration();
@@ -30,8 +33,8 @@ class PersistTest extends WithTaskConfigurationsTest
         $this->configuration->setType($fullSiteJobType);
         $this->configuration->setParameters('bar');
 
-        $this->getManager()->persist($this->configuration);
-        $this->getManager()->flush();
+        $entityManager->persist($this->configuration);
+        $entityManager->flush();
 
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setJobConfiguration($this->configuration);
@@ -42,13 +45,13 @@ class PersistTest extends WithTaskConfigurationsTest
             'foo' => 'bar'
         ]);
 
-        $this->getManager()->persist($taskConfiguration);
-        $this->getManager()->flush();
+        $entityManager->persist($taskConfiguration);
+        $entityManager->flush();
 
         $this->configuration->addTaskConfiguration($taskConfiguration);
 
-        $this->getManager()->persist($this->configuration);
-        $this->getManager()->flush();
+        $entityManager->persist($this->configuration);
+        $entityManager->flush();
     }
 
     public function testConfigurationIsPersisted()
