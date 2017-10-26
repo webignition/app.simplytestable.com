@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class BaseTestCase extends WebTestCase
@@ -20,16 +19,12 @@ abstract class BaseTestCase extends WebTestCase
     protected $container;
 
     /**
-     * @var Application
+     * {@inheritdoc}
      */
-    protected $application;
-
     protected function setUp()
     {
         $this->client = static::createClient();
         $this->container = $this->client->getKernel()->getContainer();
-        $this->application = new Application(self::$kernel);
-        $this->application->setAutoExit(false);
 
         $this->container->get('doctrine')->getConnection()->beginTransaction();
     }
@@ -39,6 +34,9 @@ abstract class BaseTestCase extends WebTestCase
         exec('redis-cli -r 1 flushall');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         parent::tearDown();
