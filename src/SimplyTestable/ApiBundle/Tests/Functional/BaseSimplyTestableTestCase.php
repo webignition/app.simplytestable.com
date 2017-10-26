@@ -186,21 +186,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @param Response $response
-     *
-     * @return Job
-     */
-    protected function getJobFromResponse(Response $response)
-    {
-        $locationHeader = $response->headers->get('location');
-        $locationHeaderParts = explode('/', rtrim($locationHeader, '/'));
-
-        return $this->getJobService()->getById(
-            (int)$locationHeaderParts[count($locationHeaderParts) - 1]
-        );
-    }
-
-    /**
      * @param array $options
      *
      * @return Crawler

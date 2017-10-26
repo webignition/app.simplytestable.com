@@ -286,7 +286,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
             $job->getId()
         );
 
-        $newJob = $this->getJobFromResponse($response);
+        $newJob = $jobFactory->getFromResponse($response);
 
         $this->assertNotEquals($job->getId(), $newJob->getId());
         $this->assertEquals($job->getType(), $newJob->getType());
