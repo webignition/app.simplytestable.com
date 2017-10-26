@@ -67,7 +67,7 @@ class CreateController extends ApiController
         $user = $this->getUser();
 
         if ($userService->isSpecialUser($user)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-JobConfigurationCreate-Error' => json_encode([
                     'code' => 99,
                     'message' => 'Special users cannot create job configurations'
@@ -96,7 +96,7 @@ class CreateController extends ApiController
                 ['label' => $jobConfiguration->getLabel()]
             ));
         } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-JobConfigurationCreate-Error' => json_encode([
                     'code' => $jobConfigurationServiceException->getCode(),
                     'message' => $jobConfigurationServiceException->getMessage()

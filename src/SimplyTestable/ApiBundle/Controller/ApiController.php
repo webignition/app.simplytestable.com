@@ -25,13 +25,4 @@ abstract class ApiController extends Controller
 
         return $response;
     }
-
-    /**
-     * @param array $headers
-     * @return Response
-     */
-    public function sendFailureResponse($headers = [])
-    {
-        return Response::create('', 400, $headers);
-    }
 }

@@ -45,7 +45,7 @@ class DeleteController extends ApiController
             return new Response();
         }
 
-        return $this->sendFailureResponse([
+        return Response::create('', 400, [
             'X-JobConfigurationDelete-Error' => json_encode([
                 'code' => 1,
                 'message' => 'Job configuration is in use by a scheduled job'

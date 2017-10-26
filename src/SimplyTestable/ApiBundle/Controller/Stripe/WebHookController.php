@@ -26,7 +26,7 @@ class WebHookController extends ApiController
         $eventContent = $this->getEventContent($request);
 
         if (empty($eventContent)) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         $requestData = json_decode($eventContent);

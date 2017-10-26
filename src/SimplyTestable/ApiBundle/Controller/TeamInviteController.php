@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
+use SimplyTestable\ApiBundle\Services\BadRequestHttpExceptionFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +31,7 @@ class TeamInviteController extends ApiController
         $inviter = $this->getUser();
 
         if (!$teamService->hasTeam($inviter)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteGet-Error-Code' => TeamInviteServiceException::INVITER_IS_NOT_A_LEADER,
                 'X-TeamInviteGet-Error-Message' => 'Inviter is not a team leader',
             ]);
@@ -54,14 +55,14 @@ class TeamInviteController extends ApiController
         $invitee = $userService->findUserByEmail($invitee_email);
 
         if ($userService->isSpecialUser($invitee)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteGet-Error-Code' => 10,
                 'X-TeamInviteGet-Error-Message' => 'Special users cannot be invited',
             ]);
         }
 
         if ($userAccountPlanService->getForUser($invitee)->getPlan()->getIsPremium()) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteGet-Error-Code' => 11,
                 'X-TeamInviteGet-Error-Message' => 'Invitee has a premium plan',
             ]);
@@ -70,7 +71,7 @@ class TeamInviteController extends ApiController
         try {
             return new JsonResponse($teamInviteService->get($inviter, $invitee));
         } catch (TeamInviteServiceException $teamInviteServiceException) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteGet-Error-Code' => $teamInviteServiceException->getCode(),
                 'X-TeamInviteGet-Error-Message' => $teamInviteServiceException->getMessage(),
             ]);
@@ -101,14 +102,14 @@ class TeamInviteController extends ApiController
         ]);
 
         if (is_null($team)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteAccept-Error-Code' => 1,
                 'X-TeamInviteAccept-Error-Message' => 'Invalid team',
             ]);
         }
 
         if (!$teamInviteService->hasForTeamAndUser($team, $this->getUser())) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteAccept-Error-Code' => 2,
                 'X-TeamInviteAccept-Error-Message' => 'User has not been invited to join this team',
             ]);
@@ -147,7 +148,7 @@ class TeamInviteController extends ApiController
         $teamService = $this->container->get('simplytestable.services.teamservice');
 
         if (!$teamService->hasTeam($this->getUser())) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteList-Error-Code' => 1,
                 'X-TeamInviteList-Error-Message' => 'User is not a team leader',
             ]);
@@ -194,15 +195,14 @@ class TeamInviteController extends ApiController
         $teamService = $this->container->get('simplytestable.services.teamservice');
 
         if (!$teamService->hasTeam($this->getUser())) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteRemove-Error-Code' => 1,
                 'X-TeamInviteRemove-Error-Message' => 'User is not a team leader',
             ]);
         }
 
-
         if (!$userService->exists($invitee_email)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteRemove-Error-Code' => 2,
                 'X-TeamInviteRemove-Error-Message' => 'Invitee is not a user',
             ]);
@@ -213,7 +213,7 @@ class TeamInviteController extends ApiController
         $invitee = $userService->findUserByEmail($invitee_email);
 
         if (!$teamInviteService->hasForTeamAndUser($team, $invitee)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteRemove-Error-Code' => 3,
                 'X-TeamInviteRemove-Error-Message' => 'Invitee does not have an invite for this team',
             ]);
@@ -282,7 +282,7 @@ class TeamInviteController extends ApiController
         $token = trim($requestData->get('token'));
 
         if (!$teamInviteService->hasForToken($token)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-TeamInviteActivateAndAccept-Error-Code' => 1,
                 'X-TeamInviteActivateAndAccept-Error-Message' => 'No invite for token',
             ]);

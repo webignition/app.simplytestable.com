@@ -34,13 +34,13 @@ class TasksController extends ApiController
         ]);
 
         if (empty($worker)) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-Message' => sprintf('Invalid hostname "%s"', $workerHostname)
             ]);
         }
 
         if (Worker::STATE_ACTIVE !== $worker->getState()->getName()) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-Message' => 'Worker is not active',
                 'X-Retryable' => '1'
             ]);
@@ -49,7 +49,7 @@ class TasksController extends ApiController
         $workerToken = $request->request->get('worker_token');
 
         if ($worker->getToken() !== $workerToken) {
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-Message' => 'Invalid token'
             ]);
         }

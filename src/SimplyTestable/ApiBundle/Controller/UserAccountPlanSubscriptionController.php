@@ -29,17 +29,17 @@ class UserAccountPlanSubscriptionController extends ApiController
         }
 
         if ($userService->isPublicUser($this->getUser())) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         if ($email_canonical !== $this->getUser()->getEmail()) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         $plan = $accountPlanService->find($plan_name);
 
         if (empty($plan)) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         try {
@@ -48,14 +48,14 @@ class UserAccountPlanSubscriptionController extends ApiController
             return Response::create('', 403);
         } catch (StripeCardError $stripeCardError) {
             $userAccountPlanService->removeCurrentForUser($this->getUser());
-            return $this->sendFailureResponse([
+            return Response::create('', 400, [
                 'X-Stripe-Error-Message' => $stripeCardError->getMessage(),
                 'X-Stripe-Error-Param' => $stripeCardError->param,
                 'X-Stripe-Error-Code' => $stripeCardError->getCode()
             ]);
         } catch (UserAccountPlanServiceException $userAccountPlanServiceException) {
             if ($userAccountPlanServiceException->isUserIsTeamMemberException()) {
-                return $this->sendFailureResponse([
+                return Response::create('', 400, [
                     'X-Error-Message' => 'User is a team member',
                     'X-Error-Code' => $userAccountPlanServiceException->getCode()
                 ]);
@@ -83,22 +83,22 @@ class UserAccountPlanSubscriptionController extends ApiController
         }
 
         if ($userService->isPublicUser($this->getUser())) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         if ($email_canonical !== $this->getUser()->getEmail()) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         $isValidStripeCardToken = preg_match('/tok_[a-z0-9]{14}/i', $stripe_card_token) > 0;
         if (!$isValidStripeCardToken) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         $userAccountPlan = $userAccountPlanService->getForUser($this->getUser());
 
         if (empty($userAccountPlan->getStripeCustomer())) {
-            return $this->sendFailureResponse();
+            return Response::create('', 400);
         }
 
         try {
@@ -106,11 +106,11 @@ class UserAccountPlanSubscriptionController extends ApiController
                 'card' => $stripe_card_token
             ]);
         } catch (StripeCardError $stripeCardError) {
-            return $this->sendFailureResponse(array(
+            return Response::create('', 400, [
                 'X-Stripe-Error-Message' => $stripeCardError->getMessage(),
                 'X-Stripe-Error-Param' => $stripeCardError->param,
                 'X-Stripe-Error-Code' => $stripeCardError->getCode()
-            ));
+            ]);
         }
 
         return new Response();
