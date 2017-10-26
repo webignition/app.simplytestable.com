@@ -2,20 +2,21 @@
 namespace SimplyTestable\ApiBundle\Entity\Team;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
+use SimplyTestable\ApiBundle\Entity\User;
 
 /**
- *
  * @ORM\Entity
- * @ORM\Table(name="TeamMember",uniqueConstraints={@ORM\UniqueConstraint(name="teamMember_idx", columns={"team_id", "user_id"})})
- * @SerializerAnnotation\ExclusionPolicy("all")
+ * @ORM\Table(
+ *     name="TeamMember",
+ *     uniqueConstraints={@ORM\UniqueConstraint(name="teamMember_idx", columns={"team_id", "user_id"})}
+ * )
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\TeamMemberRepository")
  */
-class Member {
+class Member
+{
     /**
-     * 
-     * @var integer
-     * 
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -23,8 +24,7 @@ class Member {
     protected $id;
 
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\Team\Team
+     * @var Team
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Team\Team")
      * @ORM\JoinColumn(name="team_id", referencedColumnName="id", nullable=false)
@@ -32,20 +32,15 @@ class Member {
     protected $team;
 
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Entity\User
+     * @var User
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\User")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      */
     protected $user;
 
-
-
     /**
-     * Get id
-     *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -53,30 +48,21 @@ class Member {
     }
 
     /**
-     * Set team
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Team\Team $team
-     * @return Member
+     * @param Team $team
      */
-    public function setTeam(\SimplyTestable\ApiBundle\Entity\Team\Team $team)
+    public function setTeam(Team $team)
     {
         $this->team = $team;
-
-        return $this;
     }
 
-
-
-    public function clear() {
+    public function clear()
+    {
         $this->team = null;
         $this->user = null;
     }
 
-
     /**
-     * Get team
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Team\Team 
+     * @return Team
      */
     public function getTeam()
     {
@@ -84,22 +70,15 @@ class Member {
     }
 
     /**
-     * Set user
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return Member
+     * @param User $user
      */
-    public function setUser(\SimplyTestable\ApiBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 
     /**
-     * Get user
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\User 
+     * @return User
      */
     public function getUser()
     {

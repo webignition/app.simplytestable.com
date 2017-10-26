@@ -11,7 +11,6 @@ use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 use SimplyTestable\ApiBundle\Model\Task\Type\Collection as TaskTypeCollection;
 
 /**
@@ -20,7 +19,6 @@ use SimplyTestable\ApiBundle\Model\Task\Type\Collection as TaskTypeCollection;
  *     name="Job"
  * )
  * @ORM\Entity(repositoryClass="SimplyTestable\ApiBundle\Repository\JobRepository")
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class Job
 {
