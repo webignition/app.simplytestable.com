@@ -39,14 +39,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return JobPreparationService
-     */
-    protected function getJobPreparationService()
-    {
-        return $this->container->get('simplytestable.services.jobpreparationservice');
-    }
-
-    /**
      * @return WebSiteService
      */
     protected function getWebSiteService()

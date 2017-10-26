@@ -27,6 +27,9 @@ class HappyPathTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $userService = $this->container->get('simplytestable.services.userservice');
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
+
         $this->setUser($userService->getPublicUser());
 
         $userFactory = new UserFactory($this->container);
@@ -46,8 +49,6 @@ class HappyPathTest extends BaseSimplyTestableTestCase
         ], [
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
-
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
 
         $this->crawlJobContainer = $crawlJobContainerService->getForJob($job);
         $urlDiscoveryTask = $this->crawlJobContainer->getCrawlJob()->getTasks()->first();
@@ -73,7 +74,7 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
         $taskController->completeAction();
 
-        $this->getJobPreparationService()->prepareFromCrawl($this->crawlJobContainer);
+        $jobPreparationService->prepareFromCrawl($this->crawlJobContainer);
     }
 
     public function testStateIsQueued()
