@@ -1,47 +1,40 @@
 <?php
 namespace SimplyTestable\ApiBundle\Entity\Job;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection as DoctrineCollection;
 use Doctrine\ORM\Mapping as ORM;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
-use JMS\SerializerBundle\Annotation as SerializerAnnotation;
 
 /**
- *
  * @ORM\Entity
  * @ORM\Table(
  *     name="JobTaskTypeOptions"
  * )
- * @SerializerAnnotation\ExclusionPolicy("all")
  */
 class TaskTypeOptions
 {
     /**
-     *
-     * @var integer
+     * @var int
      *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
-     *
      */
     protected $id;
 
-
     /**
-     *
-     * @var SimplyTestable\ApiBundle\Entity\Job\Job
+     * @var Job
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Job\Job", inversedBy="taskTypeOptions")
      * @ORM\JoinColumn(name="job_id", referencedColumnName="id", nullable=false)
      */
     protected $job;
 
-
     /**
-     *
      * @var TaskType
      *
      * @ORM\ManyToOne(targetEntity="SimplyTestable\ApiBundle\Entity\Task\Type\Type")
@@ -49,25 +42,20 @@ class TaskTypeOptions
      */
     protected $taskType;
 
-
     /**
-     *
-     * @var \Doctrine\Common\Collections\Collection
+     * @var DoctrineCollection
      *
      * @ORM\Column(type="array", name="options", nullable=false)
      */
     protected $options;
 
-
     public function __construct()
     {
-        $this->options = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->options = new ArrayCollection();
     }
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @return int
      */
     public function getId()
     {
@@ -75,16 +63,11 @@ class TaskTypeOptions
     }
 
     /**
-     * Set options
-     *
      * @param array $options
-     * @return TaskTypeOptions
      */
     public function setOptions($options)
     {
         $this->options = $options;
-
-        return $this;
     }
 
     /**
@@ -98,22 +81,15 @@ class TaskTypeOptions
     }
 
     /**
-     * Set job
-     *
-     * @param SimplyTestable\ApiBundle\Entity\Job\Job $job
-     * @return TaskTypeOptions
+     * @param Job $job
      */
-    public function setJob(\SimplyTestable\ApiBundle\Entity\Job\Job $job)
+    public function setJob(Job $job)
     {
         $this->job = $job;
-
-        return $this;
     }
 
     /**
-     * Get job
-     *
-     * @return SimplyTestable\ApiBundle\Entity\Job\Job
+     * @return Job
      */
     public function getJob()
     {
@@ -121,55 +97,46 @@ class TaskTypeOptions
     }
 
     /**
-     * Set taskType
-     *
-     * @param SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType
-     * @return TaskTypeOptions
+     * @param TaskType $taskType
      */
-    public function setTaskType(\SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType)
+    public function setTaskType(TaskType $taskType)
     {
         $this->taskType = $taskType;
-
-        return $this;
     }
 
     /**
-     * Get taskType
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\Task\Type\Type
+     * @return TaskType
      */
     public function getTaskType()
     {
         return $this->taskType;
     }
 
-
     /**
-     *
      * @return int
      */
-    public function getOptionCount() {
+    public function getOptionCount()
+    {
         return count($this->getOptions());
     }
 
-
     /**
-     *
      * @param string $optionName
+     *
      * @return mixed
      */
-    public function getOption($optionName) {
+    public function getOption($optionName)
+    {
         $options = $this->getOptions();
         return (isset($options[$optionName])) ? $options[$optionName] : null;
     }
 
-
     /**
-     *
      * @param string $optionName
-     * @return boolean
+     * @return bool
      */
-    public function hasOption($optionName) {
+    public function hasOption($optionName)
+    {
         return !is_null($this->getOption($optionName));
     }
 }
