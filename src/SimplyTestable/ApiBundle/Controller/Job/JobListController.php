@@ -2,13 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Model\JobList\Configuration;
 use SimplyTestable\ApiBundle\Request\Job\ListRequest;
-use SimplyTestable\ApiBundle\Services\JobListService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class JobListController extends BaseJobController
+class JobListController extends ApiController
 {
     /**
      * @param int $limit
@@ -19,16 +19,16 @@ class JobListController extends BaseJobController
     public function listAction($limit = null, $offset = null)
     {
         $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
+        $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
+        $jobListService = $this->container->get('simplytestable.services.joblistservice');
+
         $jobListRequest = $jobListRequestFactory->create();
 
         $jobListConfiguration = $this->createJobListConfiguration($jobListRequest);
         $jobListConfiguration->setLimit($limit);
         $jobListConfiguration->setOffset($offset);
 
-        $jobListService = $this->container->get('simplytestable.services.joblistservice');
         $jobListService->setConfiguration($jobListConfiguration);
-
-        $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
 
         $jobs = $jobListService->get();
 

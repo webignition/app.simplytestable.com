@@ -92,10 +92,16 @@ class JobSummaryFactory
     }
 
     /**
+     * @param Job $job
+     *
      * @return JobSummary
      */
     public function create(Job $job)
     {
+        if (is_null($job->getUrlCount())) {
+            $job->setUrlCount($this->taskRepository->findUrlCountByJob($job));
+        }
+
         $isPublic = $job->getUser()->getEmail() === UserService::PUBLIC_USER_EMAIL_ADDRESS
             ? true
             : $job->getIsPublic();

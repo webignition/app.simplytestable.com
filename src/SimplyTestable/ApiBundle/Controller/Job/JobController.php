@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Controller\ApiController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
@@ -15,7 +16,7 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class JobController extends BaseJobController
+class JobController extends ApiController
 {
     protected $testId = null;
 
@@ -183,8 +184,6 @@ class JobController extends BaseJobController
 
         try {
             $job = $jobRetrievalService->retrieve($test_id);
-            $this->populateJob($job);
-
             $jobSummary = $jobSummaryFactory->create($job);
 
             return new JsonResponse($jobSummary);
