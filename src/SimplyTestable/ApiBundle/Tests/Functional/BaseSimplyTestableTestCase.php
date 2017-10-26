@@ -39,14 +39,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return StateService
-     */
-    protected function getStateService()
-    {
-        return $this->container->get('simplytestable.services.stateservice');
-    }
-
-    /**
      * @return UserEmailChangeRequestService
      */
     protected function getUserEmailChangeRequestService()

@@ -40,6 +40,8 @@ abstract class IsFinishedTest extends ServiceTest
 
     private function getState()
     {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
         $classNameParts = explode('\\', get_class($this));
 
         $inflector = \ICanBoogie\Inflector::get();
@@ -47,10 +49,10 @@ abstract class IsFinishedTest extends ServiceTest
             str_replace('Test', '', $classNameParts[count($classNameParts) - 1])
         );
 
-        if (!$this->getStateService()->has($stateName)) {
+        if (!$stateService->has($stateName)) {
             $this->fail('Task state "' . $stateName . '" does not exist');
         }
 
-        return $this->getStateService()->fetch($stateName);
+        return $stateService->fetch($stateName);
     }
 }
