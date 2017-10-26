@@ -458,3 +458,6 @@ services:
       jobRejectionReasonService: '@simplytestable.services.jobrejectionreasonservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+
+  simplytestable.services.joblistconfigurationfactory:
+    class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory
