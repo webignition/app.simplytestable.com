@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Command;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class UserServiceTest extends BaseTestCase
+class UserServiceTest extends AbstractBaseTestCase
 {
     /**
      * @var UserService

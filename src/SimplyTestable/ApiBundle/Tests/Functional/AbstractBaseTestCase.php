@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-abstract class BaseTestCase extends WebTestCase
+abstract class AbstractBaseTestCase extends WebTestCase
 {
     /**
      * @var Client

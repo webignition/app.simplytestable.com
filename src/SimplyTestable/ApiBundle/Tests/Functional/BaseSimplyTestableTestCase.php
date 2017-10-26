@@ -3,34 +3,13 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional;
 
 use Mockery\MockInterface;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\TimePeriod;
-use SimplyTestable\ApiBundle\Services\AccountPlanService;
-use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
-use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Services\JobTypeService;
-use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\StripeEventService;
-use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use SimplyTestable\ApiBundle\Services\Team\InviteService;
-use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
-use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
-use SimplyTestable\ApiBundle\Services\TestHttpClientService;
-use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
-use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
-use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-abstract class BaseSimplyTestableTestCase extends BaseTestCase
+abstract class BaseSimplyTestableTestCase extends AbstractBaseTestCase
 {
     protected function setUp()
     {
