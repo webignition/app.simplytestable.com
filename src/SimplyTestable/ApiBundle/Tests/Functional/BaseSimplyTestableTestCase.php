@@ -39,14 +39,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return TestStripeService
-     */
-    protected function getStripeService()
-    {
-        return $this->container->get('simplytestable.services.stripeservice');
-    }
-
-    /**
      * @return StripeEventService
      */
     protected function getStripeEventService()
