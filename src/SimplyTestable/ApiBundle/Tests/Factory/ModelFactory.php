@@ -20,6 +20,7 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
+use SimplyTestable\ApiBundle\Request\Job\ListRequest;
 use Stripe\Customer as StripeCustomer;
 use Stripe\Stripe;
 use webignition\InternetMediaType\InternetMediaType;
@@ -63,6 +64,12 @@ class ModelFactory
     const REJECTION_REASON_CONSTRAINT = 'constraint';
     const AMMENDMENT_REASON = 'reason';
     const AMMENDMENT_CONSTRAINT = 'constraint';
+    const JOB_LIST_REQUEST_TYPES_TO_EXCLUDE = 'types-to-exclude';
+    const JOB_LIST_REQUEST_STATES_TO_EXCLUDE = 'states-to-exclude';
+    const JOB_LIST_REQUEST_URL_FILTER = 'url-filter';
+    const JOB_LIST_REQUEST_JOB_IDS_TO_EXCLUDE = 'job-ids-to-exclude';
+    const JOB_LIST_REQUEST_JOB_IDS_TO_INCLUDE = 'job-ids-to-include';
+    const JOB_LIST_REQUEST_USER = 'user';
 
     /**
      * @param array $userValues
@@ -408,5 +415,24 @@ class ModelFactory
         $ammendment->setConstraint($ammendmentValues[self::AMMENDMENT_CONSTRAINT]);
 
         return $ammendment;
+    }
+
+    /**
+     * @param array $jobListRequestValues
+     *
+     * @return ListRequest
+     */
+    public static function createJobListRequest($jobListRequestValues)
+    {
+        $jobListRequest = new ListRequest(
+            $jobListRequestValues[self::JOB_LIST_REQUEST_TYPES_TO_EXCLUDE],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_STATES_TO_EXCLUDE],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_URL_FILTER],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_JOB_IDS_TO_EXCLUDE],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_JOB_IDS_TO_INCLUDE],
+            $jobListRequestValues[self::JOB_LIST_REQUEST_USER]
+        );
+
+        return $jobListRequest;
     }
 }
