@@ -18,6 +18,8 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
      */
     public function testPrepareInWrongState($stateName)
     {
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+
         $state = StateFactory::create($stateName);
 
         $crawlJob = new Job();
@@ -26,7 +28,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setCrawlJob($crawlJob);
 
-        $this->assertFalse($this->getCrawlJobContainerService()->prepare($crawlJobContainer));
+        $this->assertFalse($crawlJobContainerService->prepare($crawlJobContainer));
     }
 
     /**

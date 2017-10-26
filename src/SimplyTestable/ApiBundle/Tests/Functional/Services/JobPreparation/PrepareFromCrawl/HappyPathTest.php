@@ -47,7 +47,9 @@ class HappyPathTest extends BaseSimplyTestableTestCase
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
-        $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+
+        $this->crawlJobContainer = $crawlJobContainerService->getForJob($job);
         $urlDiscoveryTask = $this->crawlJobContainer->getCrawlJob()->getTasks()->first();
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
@@ -115,7 +117,9 @@ class HappyPathTest extends BaseSimplyTestableTestCase
      */
     private function getExpectedTaskCount()
     {
-        $discoveredUrlsCount = count($this->getCrawlJobContainerService()->getDiscoveredUrls($this->crawlJobContainer));
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+
+        $discoveredUrlsCount = count($crawlJobContainerService->getDiscoveredUrls($this->crawlJobContainer));
         return self::EXPECTED_TASK_TYPE_COUNT * $discoveredUrlsCount;
     }
 }

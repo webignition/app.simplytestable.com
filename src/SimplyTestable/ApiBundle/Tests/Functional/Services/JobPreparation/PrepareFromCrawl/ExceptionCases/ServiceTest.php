@@ -10,9 +10,11 @@ class ServiceTest extends BaseSimplyTestableTestCase
 {
     public function testParentJobInWrongStateThrowsJobPreparationServiceException()
     {
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->create();
-        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        $crawlJobContainer = $crawlJobContainerService->getForJob($job);
 
         try {
             $this->getJobPreparationService()->prepareFromCrawl($crawlJobContainer);

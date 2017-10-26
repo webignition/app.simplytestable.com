@@ -43,7 +43,9 @@ class ServiceTest extends BaseSimplyTestableTestCase
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
-        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($this->job);
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+
+        $crawlJobContainer = $crawlJobContainerService->getForJob($this->job);
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([

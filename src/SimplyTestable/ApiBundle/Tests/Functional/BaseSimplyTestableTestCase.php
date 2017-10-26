@@ -39,14 +39,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return CrawlJobContainerService
-     */
-    protected function getCrawlJobContainerService()
-    {
-        return $this->container->get('simplytestable.services.crawljobcontainerservice');
-    }
-
-    /**
      * @return JobTypeService
      */
     protected function getJobTypeService()
