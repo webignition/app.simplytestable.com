@@ -12,14 +12,19 @@ class UserHasTest extends ServiceTest {
     protected function setUp() {
         parent::setUp();
 
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+
         $userFactory = new UserFactory($this->container);
 
         $user = $userFactory->create();
-        $this->userPostActivationProperties = $this->getUserPostActivationPropertiesService()->create($user, $this->getAccountPlanService()->find('personal'));
+        $this->userPostActivationProperties = $this->getUserPostActivationPropertiesService()->create(
+            $user,
+            $accountPlanService->find('personal')
+        );
 
         $this->userPostActivationProperties = $this->getUserPostActivationPropertiesService()->create(
             $user,
-            $this->getAccountPlanService()->find(self::ACCOUNT_PLAN_NAME),
+            $accountPlanService->find(self::ACCOUNT_PLAN_NAME),
             self::COUPON
         );
     }
