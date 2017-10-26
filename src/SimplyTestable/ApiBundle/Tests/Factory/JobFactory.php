@@ -37,6 +37,7 @@ class JobFactory
     const KEY_TASKS = 'tasks';
     const KEY_TASK_STATE = 'state';
     const KEY_TASK_WORKER_HOSTNAME = 'worker-hostname';
+    const KEY_SET_PUBLIC = 'set-public';
 
     /**
      * @var array
@@ -250,6 +251,11 @@ class JobFactory
             }
         }
 
+        if (isset($jobValues[self::KEY_SET_PUBLIC]) && $jobValues[self::KEY_SET_PUBLIC]) {
+            $job->setIsPublic(true);
+            $jobService->persistAndFlush($job);
+        }
+
         return $job;
     }
 
@@ -319,9 +325,9 @@ class JobFactory
     /**
      * @param Job $job
      * @param string $reason
-     * @param Constraint $constraint
+     * @param Constraint|null $constraint
      */
-    public function reject(Job $job, $reason, Constraint $constraint)
+    public function reject(Job $job, $reason, $constraint = null)
     {
         $jobService = $this->container->get('simplytestable.services.jobservice');
 
