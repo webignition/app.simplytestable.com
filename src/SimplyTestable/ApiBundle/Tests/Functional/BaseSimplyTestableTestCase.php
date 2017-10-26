@@ -51,14 +51,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return InviteService
-     */
-    protected function getTeamInviteService()
-    {
-        return $this->container->get('simplytestable.services.teaminviteservice');
-    }
-
-    /**
      * @param array $options
      *
      * @return Crawler

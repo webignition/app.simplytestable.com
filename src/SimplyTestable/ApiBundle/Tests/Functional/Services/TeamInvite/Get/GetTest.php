@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\TeamInvite\Get;
 
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamInvite\ServiceTest;
@@ -20,6 +21,11 @@ class GetTest extends ServiceTest
     private $teamService;
 
     /**
+     * @var InviteService
+     */
+    private $teamInviteService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -28,6 +34,7 @@ class GetTest extends ServiceTest
 
         $this->userFactory = new UserFactory($this->container);
         $this->teamService = $this->container->get('simplytestable.services.teamservice');
+        $this->teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
     }
 
     public function testInviterIsNotTeamLeaderThrowsTeamInviteServiceException()
@@ -45,7 +52,7 @@ class GetTest extends ServiceTest
             TeamInviteServiceException::INVITER_IS_NOT_A_LEADER
         );
 
-        $this->getTeamInviteService()->get(
+        $this->teamInviteService->get(
             $user1,
             $user2
         );
@@ -76,7 +83,7 @@ class GetTest extends ServiceTest
             TeamInviteServiceException::INVITEE_IS_A_LEADER
         );
 
-        $this->getTeamInviteService()->get(
+        $this->teamInviteService->get(
             $leader1,
             $leader2
         );
@@ -112,7 +119,7 @@ class GetTest extends ServiceTest
             TeamInviteServiceException::INVITEE_IS_ON_A_TEAM
         );
 
-        $this->getTeamInviteService()->get(
+        $this->teamInviteService->get(
             $leader2,
             $user
         );
@@ -130,7 +137,7 @@ class GetTest extends ServiceTest
             $leader
         );
 
-        $invite = $this->getTeamInviteService()->get(
+        $invite = $this->teamInviteService->get(
             $leader,
             $user
         );
@@ -152,12 +159,12 @@ class GetTest extends ServiceTest
             $leader
         );
 
-        $invite1 = $this->getTeamInviteService()->get(
+        $invite1 = $this->teamInviteService->get(
             $leader,
             $user
         );
 
-        $invite2 = $this->getTeamInviteService()->get(
+        $invite2 = $this->teamInviteService->get(
             $leader,
             $user
         );

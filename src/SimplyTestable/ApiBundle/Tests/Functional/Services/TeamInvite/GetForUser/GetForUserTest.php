@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\TeamInvite\GetForUser;
 
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamInvite\ServiceTest;
@@ -19,6 +20,11 @@ class GetForUserTest extends ServiceTest
     private $teamService;
 
     /**
+     * @var InviteService
+     */
+    private $teamInviteService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -27,12 +33,13 @@ class GetForUserTest extends ServiceTest
 
         $this->userFactory = new UserFactory($this->container);
         $this->teamService = $this->container->get('simplytestable.services.teamservice');
+        $this->teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
     }
 
     public function testNoInvitesReturnsEmptyCollection()
     {
         $user = $this->userFactory->createAndActivateUser();
-        $this->assertEquals([], $this->getTeamInviteService()->getForUser($user));
+        $this->assertEquals([], $this->teamInviteService->getForUser($user));
     }
 
 
@@ -48,12 +55,12 @@ class GetForUserTest extends ServiceTest
             $leader
         );
 
-        $invite = $this->getTeamInviteService()->get(
+        $invite = $this->teamInviteService->get(
             $leader,
             $user
         );
 
-        $invites = $this->getTeamInviteService()->getForUser($user);
+        $invites = $this->teamInviteService->getForUser($user);
 
         $this->assertEquals(1, count($invites));
         $this->assertEquals($invite->getId(), $invites[0]->getId());
@@ -79,19 +86,19 @@ class GetForUserTest extends ServiceTest
             $leader2
         );
 
-        $invite1 = $this->getTeamInviteService()->get(
+        $invite1 = $this->teamInviteService->get(
             $leader1,
             $user
         );
 
-        $invite2 = $this->getTeamInviteService()->get(
+        $invite2 = $this->teamInviteService->get(
             $leader2,
             $user
         );
 
         $this->assertFalse($invite1->getId() == $invite2->getId());
 
-        $invites = $this->getTeamInviteService()->getForUser($user);
+        $invites = $this->teamInviteService->getForUser($user);
 
         $this->assertEquals(2, count($invites));
         $this->assertEquals($invite1->getId(), $invites[0]->getId());

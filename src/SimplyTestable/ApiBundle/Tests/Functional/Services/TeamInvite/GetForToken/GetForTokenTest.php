@@ -9,12 +9,15 @@ use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInvi
 class GetForTokenTest extends ServiceTest {
 
     public function testInvalidTokenReturnsNoInvite() {
-        $this->assertNull($this->getTeamInviteService()->getForToken('foo'));
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+
+        $this->assertNull($teamInviteService->getForToken('foo'));
     }
 
 
     public function testValidTokenReturnsInvite() {
         $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         $userFactory = new UserFactory($this->container);
 
@@ -28,9 +31,9 @@ class GetForTokenTest extends ServiceTest {
             $leader
         );
 
-        $invite = $this->getTeamInviteService()->get($leader, $user);
+        $invite = $teamInviteService->get($leader, $user);
 
-        $this->assertEquals($invite, $this->getTeamInviteService()->getForToken($invite->getToken()));
+        $this->assertEquals($invite, $teamInviteService->getForToken($invite->getToken()));
     }
 
 }
