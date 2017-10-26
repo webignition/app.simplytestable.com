@@ -18,6 +18,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
     public function testCrawlJobAmmendmentsArePassedToParentJob()
     {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+
         $this->setUser($userService->getPublicUser());
 
         $userFactory = new UserFactory($this->container);
@@ -37,7 +39,7 @@ class ServiceTest extends BaseSimplyTestableTestCase
         $crawlJobContainer = $crawlJobContainerService->getForJob($job);
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
 
-        $userAccountPlanPlan = $this->getUserAccountPlanService()->getForUser($user)->getPlan();
+        $userAccountPlanPlan = $userAccountPlanService->getForUser($user)->getPlan();
         $urlLimit = $userAccountPlanPlan->getConstraintNamed('urls_per_job')->getLimit();
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
