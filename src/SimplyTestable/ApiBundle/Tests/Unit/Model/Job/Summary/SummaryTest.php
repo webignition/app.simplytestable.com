@@ -239,8 +239,8 @@ class SummaryTest extends \PHPUnit_Framework_TestCase
                     'type' => JobTypeService::FULL_SITE_NAME,
                     'parameters' => 'foo',
                     'time_period' => [
-                        'start_date_time' => 1262304000,
-                        'end_date_time' => 1293840000,
+                        'start_date_time' => '2010-01-01T00:00:00+00:00',
+                        'end_date_time' => '2011-01-01T00:00:00+00:00',
                     ],
                     'task_count' => 9,
                     'task_count_by_state' => [

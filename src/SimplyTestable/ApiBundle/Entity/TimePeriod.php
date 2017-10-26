@@ -99,11 +99,11 @@ class TimePeriod implements \JsonSerializable
         }
 
         if (!empty($this->startDateTime)) {
-            $timePeriodData['start_date_time'] = $this->startDateTime->format('U');
+            $timePeriodData['start_date_time'] = $this->startDateTime->format('c');
         }
 
         if (!empty($this->endDateTime)) {
-            $timePeriodData['end_date_time'] = $this->endDateTime->format('U');
+            $timePeriodData['end_date_time'] = $this->endDateTime->format('c');
         }
 
         return $timePeriodData;
