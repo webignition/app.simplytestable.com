@@ -40,9 +40,10 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
         $this->assertTrue($response->isSuccessful());
         $this->assertInstanceOf(JsonResponse::class, $response);
 
-        $responseJobData = json_decode($response->getContent(), true);
+        $responseData = json_decode($response->getContent(), true);
 
-        $this->assertNotEmpty($responseJobData);
+        $this->assertInternalType('array', $responseData);
+        $this->assertNotEmpty($responseData);
     }
 
     public function testStatusActionAccessDenied()
