@@ -39,14 +39,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return UserEmailChangeRequestService
-     */
-    protected function getUserEmailChangeRequestService()
-    {
-        return $this->container->get('simplytestable.services.useremailchangerequestservice');
-    }
-
-    /**
      * @return TestHttpClientService
      */
     protected function getHttpClientService()
