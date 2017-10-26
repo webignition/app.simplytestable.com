@@ -6,11 +6,6 @@ use SimplyTestable\ApiBundle\Tests\Functional\Services\Resque\QueueService\Servi
 
 class IsEmptyTest extends BaseServiceTest {
 
-    protected function setUp() {
-        parent::setUp();
-        $this->clearRedis();
-    }
-
     public function testIsEmpty() {
         $this->assertTrue($this->getService()->isEmpty('tasks-notify'));
     }

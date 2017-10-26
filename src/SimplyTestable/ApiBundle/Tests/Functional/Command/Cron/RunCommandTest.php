@@ -48,8 +48,6 @@ class RunCommandTest extends BaseSimplyTestableTestCase
         $expectedCronJobExitCode,
         $expectedCronJobOutput
     ) {
-        $this->clearRedis();
-
         $userFactory = new UserFactory($this->container);
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');

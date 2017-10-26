@@ -11,12 +11,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 abstract class BaseSimplyTestableTestCase extends AbstractBaseTestCase
 {
-    protected function setUp()
-    {
-        parent::setUp();
-        $this->clearRedis();
-    }
-
     /**
      * @param array $fixtures
      */
