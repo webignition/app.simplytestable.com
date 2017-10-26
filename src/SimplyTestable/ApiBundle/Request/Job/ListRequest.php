@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Request\Job;
 
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\User;
 
 class ListRequest
 {
@@ -33,24 +34,32 @@ class ListRequest
     private $urlFilter;
 
     /**
+     * @var User
+     */
+    private $user;
+
+    /**
      * @param JobType[] $typesToExclude
      * @param State[] $statesToExclude
      * @param string $urlFilter
      * @param int[] $jobIdsToExclude
      * @param int[] $jobIdsToInclude
+     * @param User $user
      */
     public function __construct(
         $typesToExclude,
         $statesToExclude,
         $urlFilter,
         $jobIdsToExclude,
-        $jobIdsToInclude
+        $jobIdsToInclude,
+        User $user
     ) {
         $this->typesToExclude = $typesToExclude;
         $this->statesToExclude = $statesToExclude;
         $this->urlFilter = $urlFilter;
         $this->jobIdsToExclude = $jobIdsToExclude;
         $this->jobIdsToInclude = $jobIdsToInclude;
+        $this->user = $user;
     }
 
     /**
@@ -91,5 +100,13 @@ class ListRequest
     public function getJobIdsToInclude()
     {
         return $this->jobIdsToInclude;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }
