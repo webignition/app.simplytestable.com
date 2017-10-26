@@ -55,7 +55,9 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet('http://example.com', 1)),
+            'output' => json_encode([
+                'http://example.com/0/',
+            ]),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
