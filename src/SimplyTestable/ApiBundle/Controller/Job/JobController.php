@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -188,9 +189,7 @@ class JobController extends ApiController
 
             return new JsonResponse($jobSummary);
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
-            $response = new Response();
-            $response->setStatusCode(403);
-            return $response;
+            throw new AccessDeniedHttpException();
         }
     }
 
