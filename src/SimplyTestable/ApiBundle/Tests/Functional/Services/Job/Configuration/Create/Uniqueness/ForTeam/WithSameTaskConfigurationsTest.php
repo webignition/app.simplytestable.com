@@ -49,6 +49,7 @@ class WithSameTaskConfigurationsTest extends ServiceTest
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
@@ -69,7 +70,7 @@ class WithSameTaskConfigurationsTest extends ServiceTest
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 

@@ -48,13 +48,14 @@ abstract class EmptyNewLabelTest extends ServiceTest {
     {
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 

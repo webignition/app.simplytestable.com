@@ -15,6 +15,7 @@ abstract class IsFinishedTest extends ServiceTest
         parent::setUp();
 
         $taskService = $this->container->get('simplytestable.services.taskservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->create();
@@ -23,7 +24,7 @@ abstract class IsFinishedTest extends ServiceTest
         $this->task->setJob($job);
         $this->task->setUrl('http://example.com');
         $this->task->setState($this->getState());
-        $this->task->setType($this->getTaskTypeService()->getByName('html validation'));
+        $this->task->setType($taskTypeService->getByName('html validation'));
 
         $taskService->persistAndFlush($this->task);
     }

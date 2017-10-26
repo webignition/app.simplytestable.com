@@ -147,6 +147,7 @@ class RunCommandTest extends BaseSimplyTestableTestCase
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $jobConfigurationValues = new JobConfigurationValues();
 
@@ -171,7 +172,7 @@ class RunCommandTest extends BaseSimplyTestableTestCase
 
             foreach ($rawValues['task_configuration'] as $taskTypeName => $taskTypeOptions) {
                 $taskConfiguration = new TaskConfiguration();
-                $taskConfiguration->setType($this->getTaskTypeService()->getByName($taskTypeName));
+                $taskConfiguration->setType($taskTypeService->getByName($taskTypeName));
                 $taskConfiguration->setOptions($taskTypeOptions);
 
                 $taskConfigurationCollection->add($taskConfiguration);

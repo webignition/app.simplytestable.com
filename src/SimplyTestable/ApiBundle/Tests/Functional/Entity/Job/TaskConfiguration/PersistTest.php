@@ -20,6 +20,8 @@ class PersistTest extends TaskConfigurationTest
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $userService = $this->container->get('simplytestable.services.userservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $jobConfiguration = new JobConfiguration();
@@ -37,7 +39,7 @@ class PersistTest extends TaskConfigurationTest
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setJobConfiguration($jobConfiguration);
         $taskConfiguration->setType(
-            $this->getTaskTypeService()->getByName('HTML validation')
+            $taskTypeService->getByName('HTML validation')
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'

@@ -31,6 +31,7 @@ class RetrieveTest extends BaseSimplyTestableTestCase
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $userService = $this->container->get('simplytestable.services.userservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
@@ -49,7 +50,7 @@ class RetrieveTest extends BaseSimplyTestableTestCase
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setJobConfiguration($this->originalConfiguration);
         $taskConfiguration->setType(
-            $this->getTaskTypeService()->getByName('HTML validation')
+            $taskTypeService->getByName('HTML validation')
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'

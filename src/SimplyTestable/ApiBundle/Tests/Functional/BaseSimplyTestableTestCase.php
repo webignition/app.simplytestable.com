@@ -39,14 +39,6 @@ abstract class BaseSimplyTestableTestCase extends BaseTestCase
     }
 
     /**
-     * @return TaskTypeService
-     */
-    protected function getTaskTypeService()
-    {
-        return $this->container->get('simplytestable.services.tasktypeservice');
-    }
-
-    /**
      * @return StateService
      */
     protected function getStateService()

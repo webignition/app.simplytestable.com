@@ -105,13 +105,16 @@ abstract class TeamTest extends SuccessTest {
         return 'new-parameters';
     }
 
-    protected function getNewTaskConfigurationCollection() {
+    protected function getNewTaskConfigurationCollection()
+    {
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 

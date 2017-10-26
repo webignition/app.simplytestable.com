@@ -53,6 +53,7 @@ class ForTeamWithMatchTest extends ServiceTest
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
@@ -73,7 +74,7 @@ class ForTeamWithMatchTest extends ServiceTest
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 

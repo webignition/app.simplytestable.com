@@ -71,6 +71,7 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
@@ -91,7 +92,7 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest
         foreach ($this->taskTypeOptionsSets[0] as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 
@@ -113,12 +114,14 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest
 
     public function testCreateWithSameArgumentsAndDifferentTaskConfigurationsDoesNotThrowException()
     {
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSets[1] as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 

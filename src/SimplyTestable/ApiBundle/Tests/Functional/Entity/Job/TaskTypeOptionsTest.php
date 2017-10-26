@@ -11,11 +11,12 @@ class TaskTypeOptionsTest extends BaseSimplyTestableTestCase
     public function testUtf8Options()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $jobFactory = new JobFactory($this->container);
 
         $job = $jobFactory->create();
 
-        $taskType = $this->getTaskTypeService()->getByName('HTML Validation');
+        $taskType = $taskTypeService->getByName('HTML Validation');
 
         $optionsValue = 'ɸ';
 
