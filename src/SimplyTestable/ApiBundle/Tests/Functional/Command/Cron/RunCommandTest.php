@@ -145,6 +145,7 @@ class RunCommandTest extends BaseSimplyTestableTestCase
     private function createJobConfiguration($rawValues, User $user)
     {
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $jobConfigurationValues = new JobConfigurationValues();
 
@@ -157,7 +158,7 @@ class RunCommandTest extends BaseSimplyTestableTestCase
         }
 
         if (isset($rawValues['type'])) {
-            $jobConfigurationValues->setType($this->getJobTypeService()->getByName($rawValues['type']));
+            $jobConfigurationValues->setType($jobTypeService->getByName($rawValues['type']));
         }
 
         if (isset($rawValues['website'])) {
