@@ -142,7 +142,7 @@ class TaskTest extends \PHPUnit_Framework_TestCase
                     'worker' => '',
                     'type' => 'HTML validation',
                     'time_period' => [
-                        'start_date_time' => 1508872440,
+                        'start_date_time' => '2017-10-24T19:14:00+00:00',
                     ],
                 ],
             ],
@@ -167,8 +167,8 @@ class TaskTest extends \PHPUnit_Framework_TestCase
                     'worker' => '',
                     'type' => 'HTML validation',
                     'time_period' => [
-                        'start_date_time' => 1508872440,
-                        'end_date_time' => 1508876040,
+                        'start_date_time' => '2017-10-24T19:14:00+00:00',
+                        'end_date_time' => '2017-10-24T20:14:00+00:00',
                     ],
                 ],
             ],
