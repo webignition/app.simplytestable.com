@@ -3,11 +3,11 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\Team\Member;
 
-class MemberTest extends BaseSimplyTestableTestCase
+class MemberTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {

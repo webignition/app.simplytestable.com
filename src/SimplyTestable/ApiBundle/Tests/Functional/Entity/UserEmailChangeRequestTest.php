@@ -2,10 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 
-class UserEmailChangeRequestTest extends BaseSimplyTestableTestCase
+class UserEmailChangeRequestTest extends AbstractBaseTestCase
 {
     public function testUtf8NewEmail()
     {

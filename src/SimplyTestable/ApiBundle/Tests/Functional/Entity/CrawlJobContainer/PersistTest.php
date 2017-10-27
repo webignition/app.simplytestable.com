@@ -5,11 +5,11 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
-class PersistTest extends BaseSimplyTestableTestCase
+class PersistTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {

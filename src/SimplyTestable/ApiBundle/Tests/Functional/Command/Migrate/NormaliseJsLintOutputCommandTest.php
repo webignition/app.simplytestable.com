@@ -4,11 +4,11 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Migrate;
 
 use SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class NormaliseJsLintOutputCommandTest extends BaseSimplyTestableTestCase
+class NormaliseJsLintOutputCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var NormaliseJsLintOutputCommand

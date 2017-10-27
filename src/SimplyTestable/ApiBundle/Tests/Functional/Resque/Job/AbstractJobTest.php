@@ -3,9 +3,9 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Resque\Job;
 
 use SimplyTestable\ApiBundle\Resque\Job\Job;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-abstract class AbstractJobTest extends BaseSimplyTestableTestCase
+abstract class AbstractJobTest extends AbstractBaseTestCase
 {
     /**
      * @param array $args

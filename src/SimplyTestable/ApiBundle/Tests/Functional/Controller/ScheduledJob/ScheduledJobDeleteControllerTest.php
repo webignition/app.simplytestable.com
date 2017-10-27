@@ -7,10 +7,10 @@ use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ScheduledJobDeleteControllerTest extends BaseSimplyTestableTestCase
+class ScheduledJobDeleteControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var DeleteController

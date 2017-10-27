@@ -7,10 +7,10 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 
-class UserPostActivationPropertiesTest extends BaseSimplyTestableTestCase
+class UserPostActivationPropertiesTest extends AbstractBaseTestCase
 {
     /**
      * @var EntityManagerInterface

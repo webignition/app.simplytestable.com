@@ -5,10 +5,10 @@ namespace SimplyTestable\ApiBundle\Tests\Request\Factory\Job;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class ListRequestFactoryTest extends BaseSimplyTestableTestCase
+class ListRequestFactoryTest extends AbstractBaseTestCase
 {
     /**
      * @dataProvider createDataProvider

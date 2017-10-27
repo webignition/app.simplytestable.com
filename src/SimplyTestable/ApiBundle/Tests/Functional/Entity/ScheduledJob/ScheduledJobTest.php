@@ -3,13 +3,13 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\ScheduledJob;
 
 use SimplyTestable\ApiBundle\Services\JobTypeService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use Cron\CronBundle\Entity\CronJob;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 
 
-abstract class ScheduledJobTest extends BaseSimplyTestableTestCase {
+abstract class ScheduledJobTest extends AbstractBaseTestCase {
 
 
     /**

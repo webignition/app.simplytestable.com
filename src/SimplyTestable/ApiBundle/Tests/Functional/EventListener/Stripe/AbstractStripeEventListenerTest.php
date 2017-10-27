@@ -4,9 +4,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\EventListener\Stripe;
 
 use Guzzle\Http\Message\EntityEnclosingRequestInterface;
 use SimplyTestable\ApiBundle\Services\TestHttpClientService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-abstract class AbstractStripeEventListenerTest extends BaseSimplyTestableTestCase
+abstract class AbstractStripeEventListenerTest extends AbstractBaseTestCase
 {
     /**
      * @param TestHttpClientService $httpClientService

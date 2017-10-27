@@ -12,9 +12,9 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\StateFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class WebsiteResolutionServiceTest extends BaseSimplyTestableTestCase
+class WebsiteResolutionServiceTest extends AbstractBaseTestCase
 {
     const HTTP_AUTH_USERNAME = 'http-user';
     const HTTP_AUTH_PASSWORD = 'http-pass';

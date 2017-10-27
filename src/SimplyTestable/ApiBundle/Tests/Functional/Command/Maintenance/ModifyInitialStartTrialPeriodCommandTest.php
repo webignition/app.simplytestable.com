@@ -5,11 +5,11 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Maintenance;
 use SimplyTestable\ApiBundle\Command\Maintenance\ModifyInitialStartTrialPeriodCommand;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class ModifyInitialStartTrialPeriodCommandTest extends BaseSimplyTestableTestCase
+class ModifyInitialStartTrialPeriodCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var ModifyInitialStartTrialPeriodCommand

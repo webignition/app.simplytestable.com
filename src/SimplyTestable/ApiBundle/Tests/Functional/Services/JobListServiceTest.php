@@ -8,9 +8,9 @@ use SimplyTestable\ApiBundle\Services\JobListService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Fixtures\Loader\JobLoader;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class JobListServiceTest extends BaseSimplyTestableTestCase
+class JobListServiceTest extends AbstractBaseTestCase
 {
     /**
      * @var JobListService

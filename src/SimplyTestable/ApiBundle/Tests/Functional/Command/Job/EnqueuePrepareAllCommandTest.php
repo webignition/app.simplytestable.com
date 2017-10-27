@@ -5,12 +5,12 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Job;
 use SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class EnqueuePrepareAllCommandTest extends BaseSimplyTestableTestCase
+class EnqueuePrepareAllCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var EnqueuePrepareAllCommand

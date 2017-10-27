@@ -14,9 +14,9 @@ use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class LinkIntegrityTaskPreprocessorTest extends BaseSimplyTestableTestCase
+class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 {
     /**
      * @var LinkIntegrityTaskPreProcessor

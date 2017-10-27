@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job\Configuration\Wit
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class RetrieveTest extends BaseSimplyTestableTestCase
+class RetrieveTest extends AbstractBaseTestCase
 {
     /**
      * @var Configuration

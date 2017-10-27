@@ -11,10 +11,10 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Functional\Repository\TaskRepositoryTestDataProviders;
 
-class TaskRepositoryTest extends BaseSimplyTestableTestCase
+class TaskRepositoryTest extends AbstractBaseTestCase
 {
     use TaskRepositoryTestDataProviders\FindUrlCountByJobDataProvider;
     use TaskRepositoryTestDataProviders\FindUrlsByJobDataProvider;

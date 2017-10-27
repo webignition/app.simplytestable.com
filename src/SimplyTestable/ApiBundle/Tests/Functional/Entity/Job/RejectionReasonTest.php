@@ -6,10 +6,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Tests\Factory\ConstraintFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 
-class RejectionReasonTest extends BaseSimplyTestableTestCase
+class RejectionReasonTest extends AbstractBaseTestCase
 {
     /**
      * @var EntityManagerInterface

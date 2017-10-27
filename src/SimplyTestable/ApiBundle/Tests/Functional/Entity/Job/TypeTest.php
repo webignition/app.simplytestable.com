@@ -2,10 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Type;
 
-class TypeTest extends BaseSimplyTestableTestCase
+class TypeTest extends AbstractBaseTestCase
 {
     public function testPersistAndRetrieve()
     {

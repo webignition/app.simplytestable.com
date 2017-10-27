@@ -6,11 +6,11 @@ use SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class AddNonPlannedUsersToBasicPlanCommandTest extends BaseSimplyTestableTestCase
+class AddNonPlannedUsersToBasicPlanCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var AddNonPlannedUsersToBasicPlanCommand

@@ -6,10 +6,10 @@ use SimplyTestable\ApiBundle\Controller\TeamInviteController;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-abstract class AbstractTeamInviteControllerTest extends BaseSimplyTestableTestCase
+abstract class AbstractTeamInviteControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var TeamInviteController

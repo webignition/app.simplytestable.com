@@ -7,11 +7,11 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Tests\Factory\HtmlValidatorOutputFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class GetTopErrorsCommandTest extends BaseSimplyTestableTestCase
+class GetTopErrorsCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var GetTopErrorsCommand

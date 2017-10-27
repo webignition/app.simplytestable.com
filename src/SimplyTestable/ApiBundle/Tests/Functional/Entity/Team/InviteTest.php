@@ -3,11 +3,11 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 
-class InviteTest extends BaseSimplyTestableTestCase
+class InviteTest extends AbstractBaseTestCase
 {
     const TEAM_NAME = 'Foo';
     const TOKEN = 'token';

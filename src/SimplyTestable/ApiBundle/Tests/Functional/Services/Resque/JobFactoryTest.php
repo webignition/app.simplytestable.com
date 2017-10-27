@@ -12,9 +12,9 @@ use SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob;
 use SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob;
 use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class JobFactoryTest extends BaseSimplyTestableTestCase
+class JobFactoryTest extends AbstractBaseTestCase
 {
     /**
      * @var JobFactory

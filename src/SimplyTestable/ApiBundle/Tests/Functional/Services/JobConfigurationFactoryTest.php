@@ -10,10 +10,10 @@ use SimplyTestable\ApiBundle\Services\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\ModelFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
-class JobConfigurationFactoryTest extends BaseSimplyTestableTestCase
+class JobConfigurationFactoryTest extends AbstractBaseTestCase
 {
     /**
      * @var JobConfigurationFactory

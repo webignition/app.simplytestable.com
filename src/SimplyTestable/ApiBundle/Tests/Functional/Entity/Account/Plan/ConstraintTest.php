@@ -3,10 +3,10 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Account\Plan;
 
 use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 
-class ConstraintTest extends BaseSimplyTestableTestCase
+class ConstraintTest extends AbstractBaseTestCase
 {
     /**
      * @dataProvider persistDataProvider

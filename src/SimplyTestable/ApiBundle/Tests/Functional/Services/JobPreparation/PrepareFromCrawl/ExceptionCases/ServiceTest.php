@@ -4,9 +4,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prep
 
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class ServiceTest extends BaseSimplyTestableTestCase
+class ServiceTest extends AbstractBaseTestCase
 {
     public function testParentJobInWrongStateThrowsJobPreparationServiceException()
     {

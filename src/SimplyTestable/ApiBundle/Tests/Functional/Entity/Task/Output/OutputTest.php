@@ -4,11 +4,11 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task\Output;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use webignition\InternetMediaType\InternetMediaType;
 
-class TaskTest extends BaseSimplyTestableTestCase
+class TaskTest extends AbstractBaseTestCase
 {
     /**
      * @var EntityManagerInterface

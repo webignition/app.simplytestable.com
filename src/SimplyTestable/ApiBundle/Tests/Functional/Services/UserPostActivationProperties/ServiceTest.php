@@ -2,10 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\UserPostActivationProperties;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
 
-abstract class ServiceTest extends BaseSimplyTestableTestCase {
+abstract class ServiceTest extends AbstractBaseTestCase {
 
     /**
      * @return UserPostActivationPropertiesService

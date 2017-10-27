@@ -3,10 +3,10 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\WebSite\Persist;
 
 use Doctrine\ORM\EntityManagerInterface;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 
-class CanonicalUrlTest extends BaseSimplyTestableTestCase
+class CanonicalUrlTest extends AbstractBaseTestCase
 {
     /**
      * @var EntityManagerInterface

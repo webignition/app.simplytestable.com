@@ -4,9 +4,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class ParametersTest extends BaseSimplyTestableTestCase
+class ParametersTest extends AbstractBaseTestCase
 {
     /**
      * @var JobFactory

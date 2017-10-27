@@ -2,10 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\WebSite\IsPubliclyRoutable;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 
-abstract class AbstractIsPubliclyRoutableTest extends BaseSimplyTestableTestCase {
+abstract class AbstractIsPubliclyRoutableTest extends AbstractBaseTestCase {
 
     protected function setUp() {
     }

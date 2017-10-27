@@ -4,11 +4,11 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Account\Plan;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 
-class PlanTest extends BaseSimplyTestableTestCase
+class PlanTest extends AbstractBaseTestCase
 {
     /**
      * @var EntityManagerInterface

@@ -8,10 +8,10 @@ use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class WebHookControllerTest extends BaseSimplyTestableTestCase
+class WebHookControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var WebHookController

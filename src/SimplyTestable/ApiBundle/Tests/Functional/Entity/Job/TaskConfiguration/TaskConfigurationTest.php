@@ -2,8 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job\TaskConfiguration;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-abstract class TaskConfigurationTest extends BaseSimplyTestableTestCase {
+abstract class TaskConfigurationTest extends AbstractBaseTestCase {
 
 }

@@ -4,10 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task;
 
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 
-class TaskTest extends BaseSimplyTestableTestCase
+class TaskTest extends AbstractBaseTestCase
 {
     /**
      * @var JobFactory

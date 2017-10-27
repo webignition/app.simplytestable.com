@@ -2,10 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Stripe\Event;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 
-class EventTest extends BaseSimplyTestableTestCase
+class EventTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {

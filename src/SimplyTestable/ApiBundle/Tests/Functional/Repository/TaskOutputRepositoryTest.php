@@ -9,9 +9,9 @@ use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
+class TaskOutputRepositoryTest extends AbstractBaseTestCase
 {
     /**
      * @var TaskOutputRepository

@@ -12,9 +12,9 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class CrawlJobContainerRepositoryTest extends BaseSimplyTestableTestCase
+class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
 {
     /**
      * @var CrawlJobContainerRepository

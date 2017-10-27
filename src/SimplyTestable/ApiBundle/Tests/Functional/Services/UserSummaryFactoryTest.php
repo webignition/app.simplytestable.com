@@ -6,9 +6,9 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\UserSummaryFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class UserSummaryFactoryTest extends BaseSimplyTestableTestCase
+class UserSummaryFactoryTest extends AbstractBaseTestCase
 {
     /**
      * @var UserSummaryFactory

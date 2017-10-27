@@ -2,10 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task\Type;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass;
 
-class ClassTest extends BaseSimplyTestableTestCase
+class ClassTest extends AbstractBaseTestCase
 {
     public function testPersistAndRetrieve()
     {

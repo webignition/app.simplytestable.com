@@ -5,13 +5,13 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\TaskOutputJoiner;
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class LinkIntegrityTaskOutputJoinerServiceTest extends BaseSimplyTestableTestCase
+class LinkIntegrityTaskOutputJoinerServiceTest extends AbstractBaseTestCase
 {
     /**
      * @var JobFactory

@@ -3,10 +3,10 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 
-class TaskTypeOptionsTest extends BaseSimplyTestableTestCase
+class TaskTypeOptionsTest extends AbstractBaseTestCase
 {
     public function testUtf8Options()
     {

@@ -5,14 +5,14 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\JobConfiguration;
 use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class JobConfigurationCreateControllerTest extends BaseSimplyTestableTestCase
+class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var CreateController

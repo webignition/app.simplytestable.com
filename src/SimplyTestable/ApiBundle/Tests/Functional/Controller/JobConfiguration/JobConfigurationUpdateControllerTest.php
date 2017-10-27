@@ -7,14 +7,14 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class JobConfigurationUpdateControllerTest extends BaseSimplyTestableTestCase
+class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
 {
     const LABEL_ONE = 'job-configuration-label-one';
     const LABEL_TWO = 'job-configuration-label-two';

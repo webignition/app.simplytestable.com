@@ -8,9 +8,9 @@ use SimplyTestable\ApiBundle\Tests\Factory\HtmlDocumentFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\RssFeedFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\SitemapFixtureFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class UrlFinderTest extends BaseSimplyTestableTestCase
+class UrlFinderTest extends AbstractBaseTestCase
 {
     /**
      * @dataProvider getUrlsDataProvider
