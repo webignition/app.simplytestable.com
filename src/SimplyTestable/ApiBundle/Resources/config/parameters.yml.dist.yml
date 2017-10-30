@@ -1,13 +1,13 @@
 parameters:
   bcc_resque_prefix: app.simplytestable.com
   resque_pid: "simplytestable_apibundle"
-  css-validation-domains-to-ignore:
+  css_validation_domains_to_ignore:
    - cdnjs.cloudflare.com
    - ajax.googleapis.com
    - netdna.bootstrapcdn.com
    - ajax.aspnetcdn.com
    - static.nrelate.com
-  js-static-analysis-domains-to-ignore:
+  js_static_analysis_domains_to_ignore:
    - cdnjs.cloudflare.com
    - ajax.googleapis.com
    - netdna.bootstrapcdn.com

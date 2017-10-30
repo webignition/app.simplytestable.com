@@ -463,8 +463,8 @@ class JobController extends Controller
     ) {
         foreach ($job->getRequestedTaskTypes() as $taskType) {
             /* @var Type $taskType */
-            $taskTypeNameKey = strtolower(str_replace(' ', '-', $taskType->getName()));
-            $taskTypeParameterDomainsToIgnoreKey = $taskTypeNameKey . '-domains-to-ignore';
+            $taskTypeNameKey = strtolower(str_replace(' ', '_', $taskType->getName()));
+            $taskTypeParameterDomainsToIgnoreKey = $taskTypeNameKey . '_domains_to_ignore';
 
             if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
                 $jobPreparationService->setPredefinedDomainsToIgnore(
