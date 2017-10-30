@@ -3,18 +3,20 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job;
 
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 
-class TaskTypeOptionsTest extends BaseSimplyTestableTestCase
+class TaskTypeOptionsTest extends AbstractBaseTestCase
 {
     public function testUtf8Options()
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $jobFactory = new JobFactory($this->container);
 
         $job = $jobFactory->create();
 
-        $taskType = $this->getTaskTypeService()->getByName('HTML Validation');
+        $taskType = $taskTypeService->getByName('HTML Validation');
 
         $optionsValue = 'ɸ';
 
@@ -23,20 +25,18 @@ class TaskTypeOptionsTest extends BaseSimplyTestableTestCase
         $options->setTaskType($taskType);
         $options->setOptions($optionsValue);
 
-        $this->getManager()->persist($options);
-        $this->getManager()->flush();
+        $entityManager->persist($options);
+        $entityManager->flush();
 
         $optionsId = $options->getId();
 
-        $this->getManager()->clear();
+        $entityManager->clear();
+
+        $taskTypeOptionsRepository = $entityManager->getRepository(TaskTypeOptions::class);
 
         $this->assertEquals(
             $optionsValue,
-            $this
-                ->getManager()
-                ->getRepository('SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions')
-                ->find($optionsId)
-                ->getOptions()
+            $taskTypeOptionsRepository->find($optionsId)->getOptions()
         );
     }
 }

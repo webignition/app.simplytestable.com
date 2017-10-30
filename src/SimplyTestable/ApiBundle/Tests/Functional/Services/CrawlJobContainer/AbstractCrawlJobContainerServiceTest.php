@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-abstract class AbstractCrawlJobContainerServiceTest extends BaseSimplyTestableTestCase
+abstract class AbstractCrawlJobContainerServiceTest extends AbstractBaseTestCase
 {
     /**
      * @var CrawlJobContainerService

@@ -2,43 +2,34 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task\Type;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass;
 
-class ClassTest extends BaseSimplyTestableTestCase {
+class ClassTest extends AbstractBaseTestCase
+{
+    public function testPersistAndRetrieve()
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-    public function testUtf8Name() {
-        $name = 'test-ɸ';
+        $name = 'name-ɸ';
+        $description = 'description-ɸ';
 
         $taskTypeClass = new TaskTypeClass();
         $taskTypeClass->setName($name);
-        $taskTypeClass->setDescription('foo');
-
-        $this->getManager()->persist($taskTypeClass);
-        $this->getManager()->flush();
-
-        $taskTypeClassId = $taskTypeClass->getId();
-
-        $this->getManager()->clear();
-
-        $this->assertEquals($name, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find($taskTypeClassId)->getName());
-    }
-
-
-    public function testUtf8Description() {
-        $description = 'test-ɸ';
-
-        $taskTypeClass = new TaskTypeClass();
-        $taskTypeClass->setName('test-foo');
         $taskTypeClass->setDescription($description);
 
-        $this->getManager()->persist($taskTypeClass);
-        $this->getManager()->flush();
+        $entityManager->persist($taskTypeClass);
+        $entityManager->flush();
 
         $taskTypeClassId = $taskTypeClass->getId();
 
-        $this->getManager()->clear();
+        $entityManager->clear();
 
-        $this->assertEquals($description, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass')->find($taskTypeClassId)->getDescription());
+        $taskTypeClassRepository = $entityManager->getRepository(TaskTypeClass::class);
+
+        $retrievedTaskType = $taskTypeClassRepository->find($taskTypeClassId);
+
+        $this->assertEquals($name, $retrievedTaskType->getName());
+        $this->assertEquals($description, $retrievedTaskType->getDescription());
     }
 }

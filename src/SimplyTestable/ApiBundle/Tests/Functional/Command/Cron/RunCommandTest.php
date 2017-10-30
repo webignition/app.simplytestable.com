@@ -6,7 +6,7 @@ use Cron\CronBundle\Entity\CronReport;
 use SimplyTestable\ApiBundle\Command\Cron\RunCommand;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
@@ -14,7 +14,7 @@ use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration as TaskConfiguration;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class RunCommandTest extends BaseSimplyTestableTestCase
+class RunCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var RunCommand
@@ -48,8 +48,6 @@ class RunCommandTest extends BaseSimplyTestableTestCase
         $expectedCronJobExitCode,
         $expectedCronJobOutput
     ) {
-        $this->clearRedis();
-
         $userFactory = new UserFactory($this->container);
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -145,6 +143,9 @@ class RunCommandTest extends BaseSimplyTestableTestCase
     private function createJobConfiguration($rawValues, User $user)
     {
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $jobConfigurationValues = new JobConfigurationValues();
 
@@ -157,11 +158,11 @@ class RunCommandTest extends BaseSimplyTestableTestCase
         }
 
         if (isset($rawValues['type'])) {
-            $jobConfigurationValues->setType($this->getJobTypeService()->getByName($rawValues['type']));
+            $jobConfigurationValues->setType($jobTypeService->getByName($rawValues['type']));
         }
 
         if (isset($rawValues['website'])) {
-            $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch($rawValues['website']));
+            $jobConfigurationValues->setWebsite($websiteService->fetch($rawValues['website']));
         }
 
         if (isset($rawValues['task_configuration'])) {
@@ -169,7 +170,7 @@ class RunCommandTest extends BaseSimplyTestableTestCase
 
             foreach ($rawValues['task_configuration'] as $taskTypeName => $taskTypeOptions) {
                 $taskConfiguration = new TaskConfiguration();
-                $taskConfiguration->setType($this->getTaskTypeService()->getByName($taskTypeName));
+                $taskConfiguration->setType($taskTypeService->getByName($taskTypeName));
                 $taskConfiguration->setOptions($taskTypeOptions);
 
                 $taskConfigurationCollection->add($taskConfiguration);

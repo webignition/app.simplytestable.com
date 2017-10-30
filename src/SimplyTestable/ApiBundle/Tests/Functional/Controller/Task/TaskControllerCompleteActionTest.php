@@ -13,7 +13,7 @@ use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactor
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskTypeFactory;
@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\GoneHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class TaskControllerCompleteActionTest extends BaseSimplyTestableTestCase
+class TaskControllerCompleteActionTest extends AbstractBaseTestCase
 {
     /**
      * @var TaskController

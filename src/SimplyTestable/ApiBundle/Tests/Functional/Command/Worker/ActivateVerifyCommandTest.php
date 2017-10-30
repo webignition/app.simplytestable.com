@@ -6,12 +6,12 @@ use SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Guzzle\Http\Message\Response as GuzzleResponse;
 
-class ActivateVerifyCommandTest extends BaseSimplyTestableTestCase
+class ActivateVerifyCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var ActivateVerifyCommand

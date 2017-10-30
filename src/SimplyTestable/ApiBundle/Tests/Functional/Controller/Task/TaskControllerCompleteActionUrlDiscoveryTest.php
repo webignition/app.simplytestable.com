@@ -12,10 +12,10 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
-class TaskControllerCompleteActionUrlDiscoveryTest extends BaseSimplyTestableTestCase
+class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
 {
     /**
      * @var CrawlJobContainer

@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 use SimplyTestable\ApiBundle\Command\Maintenance\AbstractApplicationStateChangeCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class MaintenanceControllerTest extends BaseSimplyTestableTestCase
+class MaintenanceControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var MaintenanceController

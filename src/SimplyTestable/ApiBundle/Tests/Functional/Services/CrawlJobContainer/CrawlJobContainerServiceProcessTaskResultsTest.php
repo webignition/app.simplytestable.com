@@ -176,10 +176,10 @@ class CrawlJobContainerServiceProcessTaskResultsTest extends AbstractCrawlJobCon
         $expectedCrawlJobTasks,
         $expectedCrawlJobAmmendments
     ) {
-        $userService = $this->container->get('simplytestable.services.userservice');
         $taskService = $this->container->get('simplytestable.services.taskservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
 
         $user = $this->userFactory->create();
         $this->setUser($user);
@@ -190,8 +190,8 @@ class CrawlJobContainerServiceProcessTaskResultsTest extends AbstractCrawlJobCon
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
-        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
-        $this->getCrawlJobContainerService()->prepare($crawlJobContainer);
+        $crawlJobContainer = $crawlJobContainerService->getForJob($job);
+        $crawlJobContainerService->prepare($crawlJobContainer);
 
         $crawlJob = $crawlJobContainer->getCrawlJob();
         $crawlJob->setState($stateService->fetch(JobService::IN_PROGRESS_STATE));

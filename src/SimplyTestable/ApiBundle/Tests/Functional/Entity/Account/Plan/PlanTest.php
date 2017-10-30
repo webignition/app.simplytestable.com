@@ -2,28 +2,53 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Account\Plan;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 
-class PlanTest extends BaseSimplyTestableTestCase {
+class PlanTest extends AbstractBaseTestCase
+{
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
-    public function testUtf8Name() {
+    /**
+     * @var EntityRepository
+     */
+    private $planRepository;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->planRepository = $this->entityManager->getRepository(Plan::class);
+    }
+
+    public function testUtf8Name()
+    {
         $name = 'test-ɸ';
 
         $plan = new Plan();
         $plan->setName($name);
 
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
         $planId = $plan->getId();
 
-        $this->getManager()->clear();
-        $this->assertEquals($name, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan')->find($planId)->getName());
+        $this->entityManager->clear();
+        $this->assertEquals($name, $this->planRepository->find($planId)->getName());
     }
 
-    public function testUtf8StripeId() {
+    public function testUtf8StripeId()
+    {
         $name = 'test-foo-plan';
         $stripeId = 'ɸ';
 
@@ -31,71 +56,72 @@ class PlanTest extends BaseSimplyTestableTestCase {
         $plan->setName($name);
         $plan->setStripeId($stripeId);
 
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
         $planId = $plan->getId();
 
-        $this->getManager()->clear();
-        $this->assertEquals($stripeId, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan')->find($planId)->getStripeId());
+        $this->entityManager->clear();
+        $this->assertEquals($stripeId, $this->planRepository->find($planId)->getStripeId());
     }
 
-    public function testCreateAndPersistWithNoConstraints() {
+    public function testCreateAndPersistWithNoConstraints()
+    {
         $plan = new Plan();
         $plan->setName('test-foo-plan');
 
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
         $this->assertNotNull($plan->getId());
     }
 
-
-    public function testDefaultVisibilityIsFalse() {
+    public function testDefaultVisibilityIsFalse()
+    {
         $plan = new Plan();
         $plan->setName('test-foo-plan');
 
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
         $this->assertFalse($plan->getIsVisible());
     }
 
-
-    public function testMakeVisible() {
+    public function testMakeVisible()
+    {
         $plan = new Plan();
         $plan->setName('test-foo-plan');
         $plan->setIsVisible(true);
 
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
         $this->assertTrue($plan->getIsVisible());
     }
 
-
-    public function testNameUniqueness() {
+    public function testNameUniqueness()
+    {
         $plan1 = new Plan();
         $plan1->setName('test-bar-plan');
 
-        $this->getManager()->persist($plan1);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan1);
+        $this->entityManager->flush();
 
         $plan2 = new Plan();
         $plan2->setName('test-bar-plan');
 
-        $this->getManager()->persist($plan2);
+        $this->entityManager->persist($plan2);
 
         try {
-            $this->getManager()->flush();
+            $this->entityManager->flush();
             $this->fail('\Doctrine\DBAL\DBALException not raised for non-unique name');
         } catch (\Doctrine\DBAL\DBALException $doctrineDbalException) {
             $this->assertEquals(23000, $doctrineDbalException->getPrevious()->getCode());
         }
     }
 
-
-    public function testAddConstraintToPlan() {
+    public function testAddConstraintToPlan()
+    {
         $plan = new Plan();
         $plan->setName('test-foo-plan');
 
@@ -104,16 +130,16 @@ class PlanTest extends BaseSimplyTestableTestCase {
 
         $plan->addConstraint($constraint);
 
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
         foreach ($plan->getConstraints() as $associatedConstraint) {
             $this->assertNotNull($associatedConstraint->getId());
         }
     }
 
-
-    public function testAddConstraintsToPlan() {
+    public function testAddConstraintsToPlan()
+    {
         $plan = new Plan();
         $plan->setName('test-foo-plan');
 
@@ -125,16 +151,16 @@ class PlanTest extends BaseSimplyTestableTestCase {
         $constraint2->setName('bar');
         $plan->addConstraint($constraint2);
 
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
         foreach ($plan->getConstraints() as $associatedConstraint) {
             $this->assertNotNull($associatedConstraint->getId());
         }
     }
 
-
-    public function testRemoveConstraintFromPlan() {
+    public function testRemoveConstraintFromPlan()
+    {
         $plan = new Plan();
         $plan->setName('test-foo-plan');
 
@@ -146,23 +172,22 @@ class PlanTest extends BaseSimplyTestableTestCase {
         $constraint2->setName('bar');
         $plan->addConstraint($constraint2);
 
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
         $this->assertEquals(2, $plan->getConstraints()->count());
 
         $plan->removeConstraint($constraint1);
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
         $this->assertEquals(1, $plan->getConstraints()->count());
         $this->assertFalse($plan->getConstraints()->contains($constraint1));
         $this->assertTrue($plan->getConstraints()->contains($constraint2));
-
     }
 
-
-    public function testPersistAndRetrievePlanWithConstraints() {
+    public function testPersistAndRetrievePlanWithConstraints()
+    {
         $plan = new Plan();
         $plan->setName('test-foo-plan');
 
@@ -174,18 +199,18 @@ class PlanTest extends BaseSimplyTestableTestCase {
         $constraint2->setName('bar');
         $plan->addConstraint($constraint2);
 
-        $this->getManager()->persist($plan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($plan);
+        $this->entityManager->flush();
 
-        $this->getManager()->clear();
+        $this->entityManager->clear();
 
-        $planEntityRepository = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan');
-        $retrievedPlan = $planEntityRepository->find($plan->getId());
+        $retrievedPlan = $this->planRepository->find($plan->getId());
 
         $this->assertEquals(2, $retrievedPlan->getConstraints()->count());
     }
 
-    public function testGetConstraintNamed() {
+    public function testGetConstraintNamed()
+    {
         $plan = new Plan();
         $plan->setName('test-foo-plan');
 
@@ -201,5 +226,4 @@ class PlanTest extends BaseSimplyTestableTestCase {
         $this->assertEquals('bar', $plan->getConstraintNamed('bar')->getName());
         $this->assertNull($plan->getConstraintNamed('foobar'));
     }
-
 }

@@ -39,6 +39,9 @@ class ForUserTest extends ServiceTest
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $userFactory = new UserFactory($this->container);
@@ -56,7 +59,7 @@ class ForUserTest extends ServiceTest
             $jobConfigurationValues->setLabel(self::LABEL . '::' . $jobConfigurationIndex);
             $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
             $jobConfigurationValues->setType($fullSiteJobType);
-            $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://' . $jobConfigurationIndex . 'example.com/'));
+            $jobConfigurationValues->setWebsite($websiteService->fetch('http://' . $jobConfigurationIndex . 'example.com/'));
             $jobConfigurationValues->setParameters('parameters');
 
             $this->jobConfigurations[] = $this->getJobConfigurationService()->create($jobConfigurationValues);
@@ -68,13 +71,13 @@ class ForUserTest extends ServiceTest
             $jobConfigurationValues->setLabel(self::LABEL . '::' . $jobConfigurationIndex);
             $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
             $jobConfigurationValues->setType($fullSiteJobType);
-            $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://' . $jobConfigurationIndex . 'example.com/'));
+            $jobConfigurationValues->setWebsite($websiteService->fetch('http://' . $jobConfigurationIndex . 'example.com/'));
             $jobConfigurationValues->setParameters('parameters');
 
             $this->jobConfigurations[] = $this->getJobConfigurationService()->create($jobConfigurationValues);
         }
 
-        $this->getManager()->clear();
+        $entityManager->clear();
 
         $this->getJobConfigurationService()->setUser($this->user1);
         $this->retrievedJobConfigurations[$this->user1->getEmail()] = $this->getJobConfigurationService()->getList();

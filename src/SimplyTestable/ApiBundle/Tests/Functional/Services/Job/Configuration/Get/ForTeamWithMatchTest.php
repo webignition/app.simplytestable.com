@@ -51,6 +51,12 @@ class ForTeamWithMatchTest extends ServiceTest
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $userFactory = new UserFactory($this->container);
@@ -60,7 +66,7 @@ class ForTeamWithMatchTest extends ServiceTest
         ]);
         $member = $userFactory->createAndActivateUser();
 
-        $this->getTeamMemberService()->add($this->getTeamService()->create(
+        $teamMemberService->add($teamService->create(
             'Foo',
             $leader
         ), $member);
@@ -70,7 +76,7 @@ class ForTeamWithMatchTest extends ServiceTest
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 
@@ -81,13 +87,13 @@ class ForTeamWithMatchTest extends ServiceTest
         $jobConfigurationValues->setLabel(self::LABEL);
         $jobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
         $jobConfigurationValues->setType($fullSiteJobType);
-        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $jobConfigurationValues->setWebsite($websiteService->fetch('http://example.com/'));
         $jobConfigurationValues->setParameters('parameters');
 
         $this->getJobConfigurationService()->setUser($leader);
         $this->originalConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
-        $this->getManager()->clear();
+        $entityManager->clear();
 
         $this->getJobConfigurationService()->setUser($member);
 

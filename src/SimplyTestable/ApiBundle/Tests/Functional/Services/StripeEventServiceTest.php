@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class StripeEventServiceTest extends BaseSimplyTestableTestCase
+class StripeEventServiceTest extends AbstractBaseTestCase
 {
     /**
      * @var StripeEventService

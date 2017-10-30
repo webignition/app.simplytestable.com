@@ -5,12 +5,12 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services\JobPreparation\Prep
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
-class ServiceTest extends BaseSimplyTestableTestCase
+class ServiceTest extends AbstractBaseTestCase
 {
     /**
      *
@@ -18,6 +18,8 @@ class ServiceTest extends BaseSimplyTestableTestCase
     public function testCrawlJobAmmendmentsArePassedToParentJob()
     {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+
         $this->setUser($userService->getPublicUser());
 
         $userFactory = new UserFactory($this->container);
@@ -32,15 +34,28 @@ class ServiceTest extends BaseSimplyTestableTestCase
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
-        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+
+        $crawlJobContainer = $crawlJobContainerService->getForJob($job);
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
 
-        $userAccountPlanPlan = $this->getUserAccountPlanService()->getForUser($user)->getPlan();
+        $userAccountPlanPlan = $userAccountPlanService->getForUser($user)->getPlan();
         $urlLimit = $userAccountPlanPlan->getConstraintNamed('urls_per_job')->getLimit();
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet('http://example.com', $urlLimit)),
+            'output' => json_encode([
+                'http://example.com/0/',
+                'http://example.com/1/',
+                'http://example.com/2/',
+                'http://example.com/3/',
+                'http://example.com/4/',
+                'http://example.com/5/',
+                'http://example.com/6/',
+                'http://example.com/7/',
+                'http://example.com/8/',
+                'http://example.com/9/',
+            ]),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,

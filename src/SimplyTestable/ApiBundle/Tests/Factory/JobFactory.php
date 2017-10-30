@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Guzzle\Http\Message\Response as GuzzleResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class JobFactory
@@ -351,5 +352,21 @@ class JobFactory
         $jobController = new JobController();
         $jobController->setContainer($this->container);
         $jobController->cancelAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+    }
+
+    /**
+     * @param Response $response
+     *
+     * @return Job
+     */
+    public function getFromResponse(Response $response)
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
+
+        $locationHeader = $response->headers->get('location');
+        $locationHeaderParts = explode('/', rtrim($locationHeader, '/'));
+
+        return $jobRepository->find((int)$locationHeaderParts[count($locationHeaderParts) - 1]);
     }
 }

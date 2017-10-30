@@ -13,12 +13,12 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class JobStartControllerTest extends BaseSimplyTestableTestCase
+class JobStartControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var StartController
@@ -286,7 +286,7 @@ class JobStartControllerTest extends BaseSimplyTestableTestCase
             $job->getId()
         );
 
-        $newJob = $this->getJobFromResponse($response);
+        $newJob = $jobFactory->getFromResponse($response);
 
         $this->assertNotEquals($job->getId(), $newJob->getId());
         $this->assertEquals($job->getType(), $newJob->getType());

@@ -14,6 +14,9 @@ abstract class IsFinishedTest extends ServiceTest
     {
         parent::setUp();
 
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->create();
 
@@ -21,20 +24,24 @@ abstract class IsFinishedTest extends ServiceTest
         $this->task->setJob($job);
         $this->task->setUrl('http://example.com');
         $this->task->setState($this->getState());
-        $this->task->setType($this->getTaskTypeService()->getByName('html validation'));
+        $this->task->setType($taskTypeService->getByName('html validation'));
 
-        $this->getTaskService()->persistAndFlush($this->task);
+        $taskService->persistAndFlush($this->task);
     }
 
     abstract protected function getExpectedIsFinished();
 
     public function testIsFinished()
     {
-        $this->assertEquals($this->getExpectedIsFinished(), $this->getTaskService()->isFinished($this->task));
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
+        $this->assertEquals($this->getExpectedIsFinished(), $taskService->isFinished($this->task));
     }
 
     private function getState()
     {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
         $classNameParts = explode('\\', get_class($this));
 
         $inflector = \ICanBoogie\Inflector::get();
@@ -42,10 +49,10 @@ abstract class IsFinishedTest extends ServiceTest
             str_replace('Test', '', $classNameParts[count($classNameParts) - 1])
         );
 
-        if (!$this->getStateService()->has($stateName)) {
+        if (!$stateService->has($stateName)) {
             $this->fail('Task state "' . $stateName . '" does not exist');
         }
 
-        return $this->getStateService()->fetch($stateName);
+        return $stateService->fetch($stateName);
     }
 }

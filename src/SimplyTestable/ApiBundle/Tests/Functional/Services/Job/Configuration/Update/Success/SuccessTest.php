@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\Success;
 
+use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration\Update\ServiceTest;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
@@ -23,6 +24,8 @@ abstract class SuccessTest extends ServiceTest {
         parent::setUp();
 
         $this->preCreateJobConfigurations();
+
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $originalValues = new ConfigurationValues();
         $originalValues->setLabel(self::LABEL);
@@ -48,8 +51,11 @@ abstract class SuccessTest extends ServiceTest {
 
         $jobConfigurationId = $this->jobConfiguration->getId();
 
-        $this->getManager()->clear();
-        $this->jobConfiguration = $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\Job\Configuration')->find($jobConfigurationId);
+        $entityManager->clear();
+
+        $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
+
+        $this->jobConfiguration = $jobConfigurationRepository->find($jobConfigurationId);
     }
 
     abstract protected function getOriginalWebsite();

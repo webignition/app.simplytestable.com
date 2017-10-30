@@ -6,10 +6,10 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeApiFixtureFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
-class StripeServiceTest extends BaseSimplyTestableTestCase
+class StripeServiceTest extends AbstractBaseTestCase
 {
     /**
      * @var StripeService

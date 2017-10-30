@@ -8,10 +8,10 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ScheduledJobGetControllerTest extends BaseSimplyTestableTestCase
+class ScheduledJobGetControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var GetController

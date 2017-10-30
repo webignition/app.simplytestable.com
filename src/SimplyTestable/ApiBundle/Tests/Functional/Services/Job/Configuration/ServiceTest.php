@@ -2,11 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 
-abstract class ServiceTest extends BaseSimplyTestableTestCase {
+abstract class ServiceTest extends AbstractBaseTestCase {
 
     /**
      * @return \SimplyTestable\ApiBundle\Services\Job\ConfigurationService
@@ -27,10 +27,13 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
     /**
      * @return TaskConfigurationCollection
      */
-    protected function getStandardTaskConfigurationCollection() {
+    protected function getStandardTaskConfigurationCollection()
+    {
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setType(
-            $this->getTaskTypeService()->getByName('HTML validation')
+            $taskTypeService->getByName('HTML validation')
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'
@@ -47,13 +50,16 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
      * @param $taskConfigurationDetails
      * @return TaskConfigurationCollection
      */
-    protected function getTaskConfigurationCollection($taskConfigurationDetails) {
+    protected function getTaskConfigurationCollection($taskConfigurationDetails)
+    {
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($taskConfigurationDetails as $taskName => $options) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskName)
+                $taskTypeService->getByName($taskName)
             );
 
             $taskConfiguration->setOptions($options);

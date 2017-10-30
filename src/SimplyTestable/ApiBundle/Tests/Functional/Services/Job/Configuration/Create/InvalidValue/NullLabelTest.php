@@ -17,15 +17,17 @@ class NullLabelTest extends ServiceTest {
         );
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $userService = $this->container->get('simplytestable.services.userservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $values = new ConfigurationValues();
         $values->setLabel(null);
         $values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $values->setType($fullSiteJobType);
-        $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $values->setWebsite($websiteService->fetch('http://example.com/'));
 
-        $userService = $this->container->get('simplytestable.services.userservice');
         $this->getJobConfigurationService()->setUser($userService->getPublicUser());
         $this->getJobConfigurationService()->create($values);
     }

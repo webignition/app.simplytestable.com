@@ -2,14 +2,14 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\ScheduledJob;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration as TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 
-abstract class ServiceTest extends BaseSimplyTestableTestCase {
+abstract class ServiceTest extends AbstractBaseTestCase {
 
     /**
      * @return \SimplyTestable\ApiBundle\Services\Job\ConfigurationService
@@ -32,7 +32,12 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
      * @param User $user
      * @return JobConfiguration
      */
-    protected function createJobConfiguration($rawValues, User $user) {
+    protected function createJobConfiguration($rawValues, User $user)
+    {
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $jobConfigurationValues = new JobConfigurationValues();
 
         if (isset($rawValues['label'])) {
@@ -44,11 +49,11 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
         }
 
         if (isset($rawValues['type'])) {
-            $jobConfigurationValues->setType($this->getJobTypeService()->getByName($rawValues['type']));
+            $jobConfigurationValues->setType($jobTypeService->getByName($rawValues['type']));
         }
 
         if (isset($rawValues['website'])) {
-            $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch($rawValues['website']));
+            $jobConfigurationValues->setWebsite($websiteService->fetch($rawValues['website']));
         }
 
         if (isset($rawValues['task_configuration'])) {
@@ -56,7 +61,7 @@ abstract class ServiceTest extends BaseSimplyTestableTestCase {
 
             foreach ($rawValues['task_configuration'] as $taskTypeName => $taskTypeOptions) {
                 $taskConfiguration = new TaskConfiguration();
-                $taskConfiguration->setType($this->getTaskTypeService()->getByName($taskTypeName));
+                $taskConfiguration->setType($taskTypeService->getByName($taskTypeName));
                 $taskConfiguration->setOptions($taskTypeOptions);
 
                 $taskConfigurationCollection->add($taskConfiguration);

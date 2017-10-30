@@ -5,17 +5,18 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 
-class PersistTest extends BaseSimplyTestableTestCase
+class PersistTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $crawlJobType = $jobTypeService->getByName(JobTypeService::CRAWL_NAME);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobFactory = new JobFactory($this->container);
 
@@ -27,14 +28,14 @@ class PersistTest extends BaseSimplyTestableTestCase
         $crawlJob->setUser($parentJob->getUser());
         $crawlJob->setWebsite($parentJob->getWebsite());
 
-        $this->getManager()->persist($crawlJob);
+        $entityManager->persist($crawlJob);
 
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setParentJob($parentJob);
         $crawlJobContainer->setCrawlJob($crawlJob);
 
-        $this->getManager()->persist($crawlJobContainer);
-        $this->getManager()->flush();
+        $entityManager->persist($crawlJobContainer);
+        $entityManager->flush();
 
         $this->assertNotNull($crawlJobContainer->getId());
     }

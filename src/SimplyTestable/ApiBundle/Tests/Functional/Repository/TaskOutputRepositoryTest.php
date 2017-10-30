@@ -9,9 +9,9 @@ use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskOutputFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
+class TaskOutputRepositoryTest extends AbstractBaseTestCase
 {
     /**
      * @var TaskOutputRepository
@@ -35,7 +35,9 @@ class TaskOutputRepositoryTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->taskOutputRepository = $this->getManager()->getRepository(Output::class);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
     }

@@ -14,8 +14,6 @@ abstract class ServiceTest extends BaseServiceTest {
     protected function setUp() {
         parent::setUp();
 
-        $this->clearRedis();
-
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
 

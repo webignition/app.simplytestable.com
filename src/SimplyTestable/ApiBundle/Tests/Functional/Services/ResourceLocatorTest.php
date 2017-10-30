@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class ResourceLocatorTest extends BaseSimplyTestableTestCase
+class ResourceLocatorTest extends AbstractBaseTestCase
 {
     /**
      * @dataProvider locateDataProvider

@@ -33,7 +33,9 @@ class UserTest extends SuccessTest {
     }
 
     protected function getOriginalWebsite() {
-        return $this->getWebSiteService()->fetch('http://original.example.com/');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
+        return $websiteService->fetch('http://original.example.com/');
     }
 
     protected function getOriginalJobType() {
@@ -46,7 +48,9 @@ class UserTest extends SuccessTest {
     }
 
     protected function getNewWebsite() {
-        return $this->getWebSiteService()->fetch('http://new.example.com/');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
+        return $websiteService->fetch('http://new.example.com/');
     }
 
     protected function getNewJobType() {
@@ -58,13 +62,16 @@ class UserTest extends SuccessTest {
         return 'new-parameters';
     }
 
-    protected function getNewTaskConfigurationCollection() {
+    protected function getNewTaskConfigurationCollection()
+    {
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 

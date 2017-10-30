@@ -11,9 +11,9 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class FactoryTest extends BaseSimplyTestableTestCase
+class FactoryTest extends AbstractBaseTestCase
 {
     /**
      * @var Factory

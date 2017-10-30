@@ -2,55 +2,77 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\WebSite\Persist;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 
-class CanonicalUrlTest extends BaseSimplyTestableTestCase {
+class CanonicalUrlTest extends AbstractBaseTestCase
+{
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
-    public function testAscii() {
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
+    }
+
+
+    public function testAscii()
+    {
         $canonicalUrl = 'http://example.com/';
 
         $webSite = new WebSite();
         $webSite->setCanonicalUrl($canonicalUrl);
 
-        $this->getWebSiteService()->getManager()->persist($webSite);
-        $this->getWebSiteService()->getManager()->flush();
+        $this->entityManager->persist($webSite);
+        $this->entityManager->flush();
     }
 
-    public function testUtf8() {
+    public function testUtf8()
+    {
         $sourceUrl = 'http://example.com/ɸ';
 
         $webSite = new WebSite();
         $webSite->setCanonicalUrl($sourceUrl);
 
-        $this->getWebSiteService()->getManager()->persist($webSite);
-        $this->getWebSiteService()->getManager()->flush();
+        $this->entityManager->persist($webSite);
+        $this->entityManager->flush();
 
         $websiteId = $webSite->getId();
 
-        $this->getWebSiteService()->getManager()->clear();
+        $this->entityManager->clear();
 
-        $retrievedUrl = $this->getWebSiteService()->getEntityRepository()->find($websiteId)->getCanonicalUrl();
+        $websiteRepository = $this->entityManager->getRepository(WebSite::class);
+
+        $retrievedUrl = $websiteRepository->find($websiteId)->getCanonicalUrl();
 
         /* Last character of the URL will be incorrect if the DB collation is not storing UTF8 correctly */
         $this->assertEquals(184, ord($retrievedUrl[strlen($retrievedUrl) - 1]));
-
     }
 
-
-    public function testUrlGreaterThanVarcharLength() {
+    public function testUrlGreaterThanVarcharLength()
+    {
         $canonicalUrl = str_repeat('+', 1280);
 
         $webSite = new WebSite();
         $webSite->setCanonicalUrl($canonicalUrl);
 
-        $this->getWebSiteService()->getManager()->persist($webSite);
-        $this->getWebSiteService()->getManager()->flush();
+        $this->entityManager->persist($webSite);
+        $this->entityManager->flush();
 
         $preId = $webSite->getId();
 
-        $this->getManager()->clear();
+        $this->entityManager->clear();
 
-        $this->assertEquals($preId, $this->getWebSiteService()->fetch($canonicalUrl)->getId());
+        $websiteRepository = $this->entityManager->getRepository(WebSite::class);
+
+        $this->assertEquals($preId, $websiteRepository->find($preId)->getId());
     }
 }

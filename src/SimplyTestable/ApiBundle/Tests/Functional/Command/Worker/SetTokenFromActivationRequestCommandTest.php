@@ -13,11 +13,11 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerActivationRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class SetTokenFromActivationRequestCommandTest extends BaseSimplyTestableTestCase
+class SetTokenFromActivationRequestCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var SetTokenFromActivationRequestCommand

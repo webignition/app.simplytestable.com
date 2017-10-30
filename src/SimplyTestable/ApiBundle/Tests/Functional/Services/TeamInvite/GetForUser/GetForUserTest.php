@@ -2,9 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team\TeamInvite\GetForUser;
 
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\Services\TeamInvite\ServiceTest;
-use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 
 class GetForUserTest extends ServiceTest
 {
@@ -14,6 +15,16 @@ class GetForUserTest extends ServiceTest
     private $userFactory;
 
     /**
+     * @var TeamService
+     */
+    private $teamService;
+
+    /**
+     * @var InviteService
+     */
+    private $teamInviteService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -21,12 +32,14 @@ class GetForUserTest extends ServiceTest
         parent::setUp();
 
         $this->userFactory = new UserFactory($this->container);
+        $this->teamService = $this->container->get('simplytestable.services.teamservice');
+        $this->teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
     }
 
     public function testNoInvitesReturnsEmptyCollection()
     {
         $user = $this->userFactory->createAndActivateUser();
-        $this->assertEquals([], $this->getTeamInviteService()->getForUser($user));
+        $this->assertEquals([], $this->teamInviteService->getForUser($user));
     }
 
 
@@ -37,17 +50,17 @@ class GetForUserTest extends ServiceTest
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getTeamService()->create(
+        $this->teamService->create(
             'Foo',
             $leader
         );
 
-        $invite = $this->getTeamInviteService()->get(
+        $invite = $this->teamInviteService->get(
             $leader,
             $user
         );
 
-        $invites = $this->getTeamInviteService()->getForUser($user);
+        $invites = $this->teamInviteService->getForUser($user);
 
         $this->assertEquals(1, count($invites));
         $this->assertEquals($invite->getId(), $invites[0]->getId());
@@ -63,29 +76,29 @@ class GetForUserTest extends ServiceTest
         ]);
         $user = $this->userFactory->createAndActivateUser();
 
-        $this->getTeamService()->create(
+        $this->teamService->create(
             'Foo1',
             $leader1
         );
 
-        $this->getTeamService()->create(
+        $this->teamService->create(
             'Foo2',
             $leader2
         );
 
-        $invite1 = $this->getTeamInviteService()->get(
+        $invite1 = $this->teamInviteService->get(
             $leader1,
             $user
         );
 
-        $invite2 = $this->getTeamInviteService()->get(
+        $invite2 = $this->teamInviteService->get(
             $leader2,
             $user
         );
 
         $this->assertFalse($invite1->getId() == $invite2->getId());
 
-        $invites = $this->getTeamInviteService()->getForUser($user);
+        $invites = $this->teamInviteService->getForUser($user);
 
         $this->assertEquals(2, count($invites));
         $this->assertEquals($invite1->getId(), $invites[0]->getId());

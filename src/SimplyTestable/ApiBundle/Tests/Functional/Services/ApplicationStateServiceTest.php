@@ -6,9 +6,9 @@ use phpmock\functions\FixedValueFunction;
 use phpmock\MockBuilder;
 use phpmock\mockery\PHPMockery;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class ApplicationStateServiceTest extends BaseSimplyTestableTestCase
+class ApplicationStateServiceTest extends AbstractBaseTestCase
 {
     /**
      * @var ApplicationStateService

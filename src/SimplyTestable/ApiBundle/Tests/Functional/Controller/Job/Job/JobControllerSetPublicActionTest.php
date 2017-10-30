@@ -60,7 +60,7 @@ class JobControllerSetPublicActionTest extends AbstractJobControllerTest
         $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
 
         if ($expectedResponseStatusCode === 302) {
-            $jobFromResponse = $this->getJobFromResponse($response);
+            $jobFromResponse = $this->jobFactory->getFromResponse($response);
             $this->assertEquals($job->getId(), $jobFromResponse->getId());
         }
 

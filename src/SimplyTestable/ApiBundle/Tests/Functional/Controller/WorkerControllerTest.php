@@ -8,12 +8,12 @@ use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Tests\Factory\WorkerFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class WorkerControllerTest extends BaseSimplyTestableTestCase
+class WorkerControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var WorkerController

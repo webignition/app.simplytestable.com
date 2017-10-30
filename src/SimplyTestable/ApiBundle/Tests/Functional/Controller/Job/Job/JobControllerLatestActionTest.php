@@ -68,7 +68,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
 
         if ($expectedResponseStatusCode === 302) {
-            $jobFromResponse = $this->getJobFromResponse($response);
+            $jobFromResponse = $this->jobFactory->getFromResponse($response);
             $this->assertEquals($job->getId(), $jobFromResponse->getId());
         }
     }
@@ -126,11 +126,13 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
 
     public function testForLeaderInTeamWhereLatestTestDoesNotExist()
     {
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
         ]);
 
-        $this->getTeamService()->create(
+        $teamService->create(
             'Foo',
             $leader
         );

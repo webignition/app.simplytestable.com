@@ -2,14 +2,15 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 
-class UserEmailChangeRequestTest extends BaseSimplyTestableTestCase
+class UserEmailChangeRequestTest extends AbstractBaseTestCase
 {
     public function testUtf8NewEmail()
     {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $newEmail = 'foo-ɸ@example.com';
         $userEmailChangeRequest = new UserEmailChangeRequest();
@@ -18,13 +19,18 @@ class UserEmailChangeRequestTest extends BaseSimplyTestableTestCase
         $userEmailChangeRequest->setNewEmail($newEmail);
         $userEmailChangeRequest->setToken('foo-token');
 
-        $this->getManager()->persist($userEmailChangeRequest);
-        $this->getManager()->flush();
+        $entityManager->persist($userEmailChangeRequest);
+        $entityManager->flush();
 
         $userEmailChangeRequestId = $userEmailChangeRequest->getId();
 
-        $this->getManager()->clear();
+        $entityManager->clear();
 
-        $this->assertEquals($newEmail, $this->getManager()->getRepository('SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest')->find($userEmailChangeRequestId)->getNewEmail());
+        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
+
+        $this->assertEquals(
+            $newEmail,
+            $userEmailChangeRequestRepository->find($userEmailChangeRequestId)->getNewEmail()
+        );
     }
 }

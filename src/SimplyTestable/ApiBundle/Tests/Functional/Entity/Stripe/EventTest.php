@@ -2,25 +2,30 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Stripe\Event;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 
-class EventTest extends BaseSimplyTestableTestCase {
+class EventTest extends AbstractBaseTestCase
+{
+    public function testPersist()
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-    public function testPersist() {
         $event = new Event();
         $event->setIsLive(true);
         $event->setStripeId('evt_1xzXoIFWYFbDCT');
         $event->setType('plan.created');
 
-        $this->getManager()->persist($event);
-        $this->getManager()->flush();
+        $entityManager->persist($event);
+        $entityManager->flush();
 
         $this->assertNotNull($event->getId());
     }
 
+    public function testDataPropertyPersist()
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-    public function testDataPropertyPersist() {
         $event = new Event();
         $event->setIsLive(true);
         $event->setStripeId('evt_1xzXoIFWYFbDCT');
@@ -83,13 +88,14 @@ class EventTest extends BaseSimplyTestableTestCase {
             }
           }');
 
-        $this->getManager()->persist($event);
-        $this->getManager()->flush();
+        $entityManager->persist($event);
+        $entityManager->flush();
 
         $this->assertNotNull($event->getId());
     }
 
-    public function testEmptyDataPropertyGetDataObject() {
+    public function testEmptyDataPropertyGetDataObject()
+    {
         $event = new Event();
         $event->setIsLive(true);
         $event->setStripeId('evt_1xzXoIFWYFbDCT');
@@ -99,7 +105,8 @@ class EventTest extends BaseSimplyTestableTestCase {
         $this->assertNull($event->getStripeEventObject());
     }
 
-    public function testDataPropertyGetDataObject() {
+    public function testDataPropertyGetDataObject()
+    {
         $event = new Event();
         $event->setIsLive(true);
         $event->setStripeId('evt_1xzXoIFWYFbDCT');
@@ -130,5 +137,4 @@ class EventTest extends BaseSimplyTestableTestCase {
         $this->assertInstanceOf('webignition\Model\Stripe\Event\Event', $event->getStripeEventObject());
         $this->assertEquals($expectedEventModel, $event->getStripeEventObject());
     }
-
 }

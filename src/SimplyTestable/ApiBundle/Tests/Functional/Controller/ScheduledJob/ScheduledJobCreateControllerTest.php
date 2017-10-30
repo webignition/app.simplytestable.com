@@ -7,13 +7,13 @@ use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController as Job
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class ScheduledJobCreateControllerTest extends BaseSimplyTestableTestCase
+class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var CreateController

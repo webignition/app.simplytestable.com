@@ -52,6 +52,11 @@ class ForTeamTest extends ServiceTest
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $userFactory = new UserFactory($this->container);
@@ -66,13 +71,13 @@ class ForTeamTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'user2@example.com',
         ]);
 
-        $team = $this->getTeamService()->create(
+        $team = $teamService->create(
             'Foo',
             $this->leader
         );
 
-        $this->getTeamMemberService()->add($team, $this->member1);
-        $this->getTeamMemberService()->add($team, $this->member2);
+        $teamMemberService->add($team, $this->member1);
+        $teamMemberService->add($team, $this->member2);
 
         $this->people = [
             $this->leader,
@@ -87,14 +92,14 @@ class ForTeamTest extends ServiceTest
                 $jobConfigurationValues->setLabel(self::LABEL . '::' . $userIndex . '::' . $jobConfigurationIndex);
                 $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
                 $jobConfigurationValues->setType($fullSiteJobType);
-                $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://' . $userIndex . '.' . $jobConfigurationIndex . 'example.com/'));
+                $jobConfigurationValues->setWebsite($websiteService->fetch('http://' . $userIndex . '.' . $jobConfigurationIndex . 'example.com/'));
                 $jobConfigurationValues->setParameters('parameters');
 
                 $this->jobConfigurations[] = $this->getJobConfigurationService()->create($jobConfigurationValues);
             }
         }
 
-        $this->getManager()->clear();
+        $entityManager->clear();
 
         foreach ($this->people as $userIndex => $user) {
             /* @var $user User */

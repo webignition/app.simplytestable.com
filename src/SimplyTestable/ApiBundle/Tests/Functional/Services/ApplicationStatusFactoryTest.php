@@ -4,9 +4,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Model\ApplicationStatus;
 use SimplyTestable\ApiBundle\Services\ApplicationStatusFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class ApplicationStatusFactoryTest extends BaseSimplyTestableTestCase
+class ApplicationStatusFactoryTest extends AbstractBaseTestCase
 {
     /**
      * @var ApplicationStatusFactory

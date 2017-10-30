@@ -5,13 +5,13 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 use SimplyTestable\ApiBundle\Controller\UserPasswordResetController;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class UserPasswordResetControllerTest extends BaseSimplyTestableTestCase
+class UserPasswordResetControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var UserPasswordResetController

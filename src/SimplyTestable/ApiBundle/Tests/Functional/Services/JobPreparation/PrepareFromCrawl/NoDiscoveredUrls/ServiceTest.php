@@ -7,12 +7,12 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
-class ServiceTest extends BaseSimplyTestableTestCase
+class ServiceTest extends AbstractBaseTestCase
 {
     const EXPECTED_TASK_TYPE_COUNT = 4;
 
@@ -43,7 +43,9 @@ class ServiceTest extends BaseSimplyTestableTestCase
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
-        $crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($this->job);
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+
+        $crawlJobContainer = $crawlJobContainerService->getForJob($this->job);
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
@@ -100,8 +102,10 @@ class ServiceTest extends BaseSimplyTestableTestCase
 
     public function testTaskStates()
     {
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
         foreach ($this->job->getTasks() as $task) {
-            $this->assertEquals($this->getTaskService()->getQueuedState(), $task->getState());
+            $this->assertEquals($taskService->getQueuedState(), $task->getState());
         }
     }
 }

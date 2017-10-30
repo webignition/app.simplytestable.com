@@ -3,10 +3,10 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller;
 
 use SimplyTestable\ApiBundle\Controller\StatusController;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class StatusControllerTest extends BaseSimplyTestableTestCase
+class StatusControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var StatusController

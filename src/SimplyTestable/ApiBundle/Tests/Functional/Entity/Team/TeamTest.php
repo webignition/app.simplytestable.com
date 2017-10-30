@@ -3,13 +3,15 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Task;
 
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 
-class TeamTest extends BaseSimplyTestableTestCase
+class TeamTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
         $userFactory = new UserFactory($this->container);
 
         $team = new Team();
@@ -18,7 +20,7 @@ class TeamTest extends BaseSimplyTestableTestCase
         ]));
         $team->setName('Foo');
 
-        $this->getManager()->persist($team);
-        $this->getManager()->flush();
+        $entityManager->persist($team);
+        $entityManager->flush();
     }
 }

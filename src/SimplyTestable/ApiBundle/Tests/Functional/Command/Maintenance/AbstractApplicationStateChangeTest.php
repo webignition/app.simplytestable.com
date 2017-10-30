@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Maintenance;
 use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Command\Maintenance\AbstractApplicationStateChangeCommand;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-abstract class AbstractApplicationStateChangeTest extends BaseSimplyTestableTestCase
+abstract class AbstractApplicationStateChangeTest extends AbstractBaseTestCase
 {
     /**
      * @param string $state

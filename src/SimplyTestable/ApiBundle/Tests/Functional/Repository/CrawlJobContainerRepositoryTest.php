@@ -12,9 +12,9 @@ use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class CrawlJobContainerRepositoryTest extends BaseSimplyTestableTestCase
+class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
 {
     /**
      * @var CrawlJobContainerRepository
@@ -38,7 +38,9 @@ class CrawlJobContainerRepositoryTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->crawlJobContainerRepository = $this->getManager()->getRepository(CrawlJobContainer::class);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $this->crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
     }

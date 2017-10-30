@@ -5,12 +5,12 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\ScheduledJob\Execute
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class ExecuteCommandTest extends BaseSimplyTestableTestCase
+class ExecuteCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var ExecuteCommand

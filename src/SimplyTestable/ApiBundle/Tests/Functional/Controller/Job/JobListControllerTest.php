@@ -5,11 +5,11 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job;
 use SimplyTestable\ApiBundle\Controller\Job\JobListController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class JobListControllerTest extends BaseSimplyTestableTestCase
+class JobListControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var User[]

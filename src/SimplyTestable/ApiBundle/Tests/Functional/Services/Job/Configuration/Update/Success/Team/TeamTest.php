@@ -47,7 +47,11 @@ abstract class TeamTest extends SuccessTest {
     ];
 
 
-    public function preCreateJobConfigurations() {
+    public function preCreateJobConfigurations()
+    {
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
         $userFactory = new UserFactory($this->container);
 
         $this->leader = $userFactory->createAndActivateUser([
@@ -60,13 +64,13 @@ abstract class TeamTest extends SuccessTest {
             UserFactory::KEY_EMAIL => 'user2@example.com',
         ]);
 
-        $team = $this->getTeamService()->create(
+        $team = $teamService->create(
             'Foo',
             $this->leader
         );
 
-        $this->getTeamMemberService()->add($team, $this->member1);
-        $this->getTeamMemberService()->add($team, $this->member2);
+        $teamMemberService->add($team, $this->member1);
+        $teamMemberService->add($team, $this->member2);
     }
 
 
@@ -76,7 +80,9 @@ abstract class TeamTest extends SuccessTest {
     }
 
     protected function getOriginalWebsite() {
-        return $this->getWebSiteService()->fetch('http://original.example.com/');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
+        return $websiteService->fetch('http://original.example.com/');
     }
 
     protected function getOriginalJobType() {
@@ -89,7 +95,9 @@ abstract class TeamTest extends SuccessTest {
     }
 
     protected function getNewWebsite() {
-        return $this->getWebSiteService()->fetch('http://new.example.com/');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
+        return $websiteService->fetch('http://new.example.com/');
     }
 
     protected function getNewJobType() {
@@ -101,13 +109,16 @@ abstract class TeamTest extends SuccessTest {
         return 'new-parameters';
     }
 
-    protected function getNewTaskConfigurationCollection() {
+    protected function getNewTaskConfigurationCollection()
+    {
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 

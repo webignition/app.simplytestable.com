@@ -11,9 +11,9 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class JobRepositoryTest extends BaseSimplyTestableTestCase
+class JobRepositoryTest extends AbstractBaseTestCase
 {
     /**
      * @var JobRepository
@@ -37,7 +37,9 @@ class JobRepositoryTest extends BaseSimplyTestableTestCase
     {
         parent::setUp();
 
-        $this->jobRepository = $this->getManager()->getRepository(Job::class);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $this->jobRepository = $entityManager->getRepository(Job::class);
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
     }

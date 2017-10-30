@@ -44,26 +44,30 @@ abstract class EmptyNewLabelTest extends ServiceTest {
     abstract protected function getCurrentUser();
 
 
-    public function testEmptyLabelIsIgnored() {
+    public function testEmptyLabelIsIgnored()
+    {
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 
             $taskConfigurationCollection->add($taskConfiguration);
         }
 
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $values = new ConfigurationValues();
         $values->setLabel(self::LABEL);
         $values->setParameters('parameters');
-        $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $values->setWebsite($websiteService->fetch('http://example.com/'));
         $values->setTaskConfigurationCollection($taskConfigurationCollection);
         $values->setType($fullSiteJobType);
 

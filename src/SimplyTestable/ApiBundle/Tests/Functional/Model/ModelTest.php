@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Model;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-abstract class ModelTest extends BaseTestCase {
+abstract class ModelTest extends AbstractBaseTestCase {
 
     protected function getInstance() {
         $modelClassName = $this->getModelClassNameFromTestClassName();

@@ -2,18 +2,20 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\State;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\State;
 
-class StateTest extends BaseSimplyTestableTestCase
+class StateTest extends AbstractBaseTestCase
 {
     public function testPersist()
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
         $state = new State();
         $state->setName('foo');
 
-        $this->getManager()->persist($state);
-        $this->getManager()->flush();
+        $entityManager->persist($state);
+        $entityManager->flush();
 
         $this->assertNotNull($state->getId());
     }

@@ -6,9 +6,9 @@ use Guzzle\Http\Exception\CurlException;
 use SimplyTestable\ApiBundle\Tests\Factory\CurlExceptionFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\HtmlDocumentFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class UrlResolverTest extends BaseSimplyTestableTestCase
+class UrlResolverTest extends AbstractBaseTestCase
 {
     private $longUrlParts = [
         'http://example.com/',

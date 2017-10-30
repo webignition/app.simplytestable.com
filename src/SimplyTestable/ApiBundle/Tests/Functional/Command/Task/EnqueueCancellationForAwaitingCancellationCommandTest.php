@@ -6,11 +6,11 @@ use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancella
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class EnqueueCancellationForAwaitingCancellationCommandTest extends BaseSimplyTestableTestCase
+class EnqueueCancellationForAwaitingCancellationCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var EnqueueCancellationForAwaitingCancellationCommand

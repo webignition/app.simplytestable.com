@@ -6,10 +6,10 @@ use SimplyTestable\ApiBundle\Controller\JobConfiguration\GetListController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 
-class JobConfigurationGetListControllerTest extends BaseSimplyTestableTestCase
+class JobConfigurationGetListControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var GetListController

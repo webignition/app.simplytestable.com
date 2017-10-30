@@ -12,11 +12,13 @@ class UserHasNoneTest extends ServiceTest {
     protected function setUp() {
         parent::setUp();
 
+        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+
         $userFactory = new UserFactory($this->container);
 
         $this->userPostActivationProperties = $this->getUserPostActivationPropertiesService()->create(
             $userFactory->create(),
-            $this->getAccountPlanService()->find(self::ACCOUNT_PLAN_NAME),
+            $accountPlanService->find(self::ACCOUNT_PLAN_NAME),
             self::COUPON
         );
     }

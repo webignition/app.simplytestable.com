@@ -22,6 +22,8 @@ class WhenUsedByScheduledJobTest extends ServiceTest {
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $userFactory = new UserFactory($this->container);
@@ -32,7 +34,7 @@ class WhenUsedByScheduledJobTest extends ServiceTest {
         $jobConfigurationValues->setLabel(self::LABEL);
         $jobConfigurationValues->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $jobConfigurationValues->setType($fullSiteJobType);
-        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://original.example.com/'));
+        $jobConfigurationValues->setWebsite($websiteService->fetch('http://original.example.com/'));
 
         $this->getJobConfigurationService()->setUser($user);
         $this->jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);

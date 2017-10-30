@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Team;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-abstract class ServiceTest extends BaseSimplyTestableTestCase {
+abstract class ServiceTest extends AbstractBaseTestCase {
 
     /**
      * @return \SimplyTestable\ApiBundle\Services\Team\MemberService

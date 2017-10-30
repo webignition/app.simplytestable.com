@@ -3,9 +3,9 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\UserAccountPlanSubscription;
 
 use SimplyTestable\ApiBundle\Controller\UserAccountPlanSubscriptionController;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-abstract class AbstractUserAccountPlanSubscriptionControllerTest extends BaseSimplyTestableTestCase
+abstract class AbstractUserAccountPlanSubscriptionControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var UserAccountPlanSubscriptionController

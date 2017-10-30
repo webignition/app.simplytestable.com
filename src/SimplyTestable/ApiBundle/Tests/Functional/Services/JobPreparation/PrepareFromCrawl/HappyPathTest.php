@@ -8,12 +8,12 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskControllerCompleteActionRequestFactory;
 
-class HappyPathTest extends BaseSimplyTestableTestCase
+class HappyPathTest extends AbstractBaseTestCase
 {
     const EXPECTED_TASK_TYPE_COUNT = 4;
 
@@ -27,6 +27,9 @@ class HappyPathTest extends BaseSimplyTestableTestCase
         parent::setUp();
 
         $userService = $this->container->get('simplytestable.services.userservice');
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
+
         $this->setUser($userService->getPublicUser());
 
         $userFactory = new UserFactory($this->container);
@@ -47,12 +50,14 @@ class HappyPathTest extends BaseSimplyTestableTestCase
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
-        $this->crawlJobContainer = $this->getCrawlJobContainerService()->getForJob($job);
+        $this->crawlJobContainer = $crawlJobContainerService->getForJob($job);
         $urlDiscoveryTask = $this->crawlJobContainer->getCrawlJob()->getTasks()->first();
 
         $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
             'end_date_time' => '2012-03-08 17:03:00',
-            'output' => json_encode($this->createUrlResultSet('http://example.com', 1)),
+            'output' => json_encode([
+                'http://example.com/0/',
+            ]),
             'contentType' => 'application/json',
             'state' => 'completed',
             'errorCount' => 0,
@@ -71,7 +76,7 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
         $taskController->completeAction();
 
-        $this->getJobPreparationService()->prepareFromCrawl($this->crawlJobContainer);
+        $jobPreparationService->prepareFromCrawl($this->crawlJobContainer);
     }
 
     public function testStateIsQueued()
@@ -97,8 +102,10 @@ class HappyPathTest extends BaseSimplyTestableTestCase
 
     public function testTaskStates()
     {
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
         foreach ($this->getJob()->getTasks() as $task) {
-            $this->assertEquals($this->getTaskService()->getQueuedState(), $task->getState());
+            $this->assertEquals($taskService->getQueuedState(), $task->getState());
         }
     }
 
@@ -115,7 +122,9 @@ class HappyPathTest extends BaseSimplyTestableTestCase
      */
     private function getExpectedTaskCount()
     {
-        $discoveredUrlsCount = count($this->getCrawlJobContainerService()->getDiscoveredUrls($this->crawlJobContainer));
+        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+
+        $discoveredUrlsCount = count($crawlJobContainerService->getDiscoveredUrls($this->crawlJobContainer));
         return self::EXPECTED_TASK_TYPE_COUNT * $discoveredUrlsCount;
     }
 }

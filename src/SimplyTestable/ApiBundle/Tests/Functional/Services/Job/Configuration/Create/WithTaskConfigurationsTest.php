@@ -44,6 +44,10 @@ class WithTaskConfigurationsTest extends ServiceTest {
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $taskConfigurationCollection = new TaskConfigurationCollection();
@@ -51,7 +55,7 @@ class WithTaskConfigurationsTest extends ServiceTest {
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 
@@ -63,9 +67,8 @@ class WithTaskConfigurationsTest extends ServiceTest {
         $values->setParameters('parameters');
         $values->setTaskConfigurationCollection($taskConfigurationCollection);
         $values->setType($fullSiteJobType);
-        $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $values->setWebsite($websiteService->fetch('http://example.com/'));
 
-        $userService = $this->container->get('simplytestable.services.userservice');
         $this->getJobConfigurationService()->setUser($userService->getPublicUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($values);
     }

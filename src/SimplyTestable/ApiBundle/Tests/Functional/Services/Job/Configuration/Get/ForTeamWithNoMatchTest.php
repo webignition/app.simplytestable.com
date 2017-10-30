@@ -40,6 +40,11 @@ class ForTeamWithNoMatchTest extends ServiceTest
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $userFactory = new UserFactory($this->container);
@@ -49,7 +54,7 @@ class ForTeamWithNoMatchTest extends ServiceTest
         ]);
         $member = $userFactory->createAndActivateUser();
 
-        $this->getTeamMemberService()->add($this->getTeamService()->create(
+        $teamMemberService->add($teamService->create(
             'Foo',
             $leader
         ), $member);
@@ -59,7 +64,7 @@ class ForTeamWithNoMatchTest extends ServiceTest
         foreach ($this->taskTypeOptionsSet as $taskTypeName => $taskTypeOptions) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $this->getTaskTypeService()->getByName($taskTypeName)
+                $taskTypeService->getByName($taskTypeName)
             );
             $taskConfiguration->setOptions($taskTypeOptions['options']);
 
@@ -70,7 +75,7 @@ class ForTeamWithNoMatchTest extends ServiceTest
         $jobConfigurationValues->setLabel(self::LABEL);
         $jobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
         $jobConfigurationValues->setType($fullSiteJobType);
-        $jobConfigurationValues->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $jobConfigurationValues->setWebsite($websiteService->fetch('http://example.com/'));
         $jobConfigurationValues->setParameters('parameters');
 
         $this->getJobConfigurationService()->setUser($leader);

@@ -2,12 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Command\ScheduledJob;
 
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class EnqueueCommandTest extends BaseSimplyTestableTestCase
+class EnqueueCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var EnqueueCommand

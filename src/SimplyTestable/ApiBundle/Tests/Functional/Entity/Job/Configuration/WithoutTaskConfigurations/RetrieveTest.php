@@ -4,10 +4,10 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Entity\Job\Configuration\Wit
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class RetrieveTest extends WithoutTaskConfigurationsTest
+class RetrieveTest extends AbstractBaseTestCase
 {
-
     /**
      * @var Configuration
      */
@@ -42,11 +42,11 @@ class RetrieveTest extends WithoutTaskConfigurationsTest
         $this->originalConfiguration->setType($fullSiteJobType);
         $this->originalConfiguration->setParameters('bar');
 
-        $this->getManager()->persist($this->originalConfiguration);
-        $this->getManager()->flush();
+        $entityManager->persist($this->originalConfiguration);
+        $entityManager->flush();
 
         $this->configurationId = $this->originalConfiguration->getId();
-        $this->getManager()->clear();
+        $entityManager->clear();
 
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
         $this->retrievedConfiguration = $jobConfigurationRepository->find($this->configurationId);

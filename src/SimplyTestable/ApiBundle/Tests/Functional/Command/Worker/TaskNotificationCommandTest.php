@@ -5,11 +5,11 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Command\Worker;
 use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand;
 use SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class TaskNotificationCommandTest extends BaseSimplyTestableTestCase
+class TaskNotificationCommandTest extends AbstractBaseTestCase
 {
     public function testRun()
     {

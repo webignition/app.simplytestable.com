@@ -9,9 +9,9 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Model\JobList\Configuration;
 use SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class JobListQueryBuilderFactoryTest extends BaseSimplyTestableTestCase
+class JobListQueryBuilderFactoryTest extends AbstractBaseTestCase
 {
     /**
      * @var JobListQueryBuilderFactory

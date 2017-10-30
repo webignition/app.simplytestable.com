@@ -13,9 +13,9 @@ use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\PlanFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserAccountPlanFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class JobUserAccountPlanEnforcementServiceTest extends BaseSimplyTestableTestCase
+class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
 {
     /**
      * @var JobUserAccountPlanEnforcementService

@@ -4,9 +4,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-class StateServiceTest extends BaseSimplyTestableTestCase
+class StateServiceTest extends AbstractBaseTestCase
 {
     /**
      * @var StateService

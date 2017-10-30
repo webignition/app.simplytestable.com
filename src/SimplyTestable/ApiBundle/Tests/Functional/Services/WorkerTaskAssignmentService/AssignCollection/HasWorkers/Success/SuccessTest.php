@@ -49,10 +49,12 @@ abstract class SuccessTest extends ServiceTest
 
     public function testTasksAreAssigned()
     {
+        $taskService = $this->container->get('simplytestable.services.taskservice');
+
         $this->getService()->assignCollection($this->getTasks(), $this->getWorkers());
 
         foreach ($this->getTasks() as $task) {
-            $this->assertEquals($this->getTaskService()->getInProgressState(), $task->getState());
+            $this->assertEquals($taskService->getInProgressState(), $task->getState());
         }
     }
 

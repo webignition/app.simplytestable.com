@@ -23,6 +23,10 @@ class ForTeamTest extends ServiceTest {
         parent::setUp();
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
+
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
 
         $userFactory = new UserFactory($this->container);
@@ -32,13 +36,13 @@ class ForTeamTest extends ServiceTest {
         ]);
         $member = $userFactory->createAndActivateUser();
 
-        $this->getTeamMemberService()->add($this->getTeamService()->create(
+        $teamMemberService->add($teamService->create(
             'Foo',
             $leader
         ), $member);
 
         $values = new ConfigurationValues();
-        $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/'));
+        $values->setWebsite($websiteService->fetch('http://example.com/'));
         $values->setType($fullSiteJobType);
         $values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $values->setLabel(self::LABEL1);
@@ -47,7 +51,7 @@ class ForTeamTest extends ServiceTest {
         $this->jobConfiguration = $this->getJobConfigurationService()->create($values);
 
         $values->setLabel(self::LABEL2);
-        $values->setWebsite($this->getWebSiteService()->fetch('http://example.com/bar'));
+        $values->setWebsite($websiteService->fetch('http://example.com/bar'));
         $this->getJobConfigurationService()->create($values);
 
         $this->getJobConfigurationService()->setUser($leader);

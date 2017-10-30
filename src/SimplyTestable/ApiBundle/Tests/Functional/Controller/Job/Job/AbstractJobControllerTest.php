@@ -5,9 +5,9 @@ namespace SimplyTestable\ApiBundle\Tests\Functional\Controller\Job\Job;
 use SimplyTestable\ApiBundle\Controller\Job\JobController;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
-abstract class AbstractJobControllerTest extends BaseSimplyTestableTestCase
+abstract class AbstractJobControllerTest extends AbstractBaseTestCase
 {
     /**
      * @var UserFactory

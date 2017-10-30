@@ -7,11 +7,11 @@ use SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Tests\Factory\StripeEventFactory;
-use SimplyTestable\ApiBundle\Tests\Functional\BaseSimplyTestableTestCase;
+use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-class UpdateDataCommandTest extends BaseSimplyTestableTestCase
+class UpdateDataCommandTest extends AbstractBaseTestCase
 {
     /**
      * @var UpdateDataCommand
