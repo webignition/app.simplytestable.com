@@ -100,8 +100,8 @@ class TaskController extends Controller
                         foreach ($crawlJobContainer->getParentJob()->getRequestedTaskTypes() as $taskType) {
                             /* @var $taskType TaskType */
                             $taskTypeParameterDomainsToIgnoreKey = strtolower(
-                                str_replace(' ', '-', $taskType->getName())
-                            ) . '-domains-to-ignore';
+                                str_replace(' ', '_', $taskType->getName())
+                            ) . '_domains_to_ignore';
 
                             if ($this->container->hasParameter($taskTypeParameterDomainsToIgnoreKey)) {
                                 $jobPreparationService->setPredefinedDomainsToIgnore(

@@ -150,12 +150,12 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         }
 
         $this->assertEquals(
-            $this->container->getParameter('css-validation-domains-to-ignore'),
+            $this->container->getParameter('css_validation_domains_to_ignore'),
             json_decode($cssValidationTask->getParameters())->{'domains-to-ignore'}
         );
 
         $this->assertEquals(
-            $this->container->getParameter('js-static-analysis-domains-to-ignore'),
+            $this->container->getParameter('js_static_analysis_domains_to_ignore'),
             json_decode($jsStaticAnalysisTask->getParameters())->{'domains-to-ignore'}
         );
 

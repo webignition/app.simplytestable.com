@@ -19,8 +19,8 @@ services:
               - logger
             parameters:
               predefinedDomainsToIgnore:
-                css-validation: '%css-validation-domains-to-ignore%'
-                js-static-analysis: '%js-static-analysis-domains-to-ignore%'
+                css-validation: '%css_validation_domains_to_ignore%'
+                js-static-analysis: '%js_static_analysis_domains_to_ignore%'
           job-resolve:
             queue: job-resolve
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Job\ResolveJob
@@ -35,8 +35,8 @@ services:
               - simplytestable.services.jobpreparationservice
             parameters:
               predefinedDomainsToIgnore:
-                css-validation: '%css-validation-domains-to-ignore%'
-                js-static-analysis: '%js-static-analysis-domains-to-ignore%'
+                css-validation: '%css_validation_domains_to_ignore%'
+                js-static-analysis: '%js_static_analysis_domains_to_ignore%'
           task-assign-collection:
             queue: task-assign-collection
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob

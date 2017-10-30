@@ -34,8 +34,8 @@ services:
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       logger: '@logger'
       predefinedDomainsToIgnore:
-        css-validation: '%css-validation-domains-to-ignore%'
-        js-static-analysis: '%js-static-analysis-domains-to-ignore%'
+        css-validation: '%css_validation_domains_to_ignore%'
+        js-static-analysis: '%js_static_analysis_domains_to_ignore%'
     tags:
       - { name: console.command }
 
@@ -49,8 +49,8 @@ services:
       websiteResolutionService: '@simplytestable.services.jobwebsiteresolutionservice'
       jobPreparationService: '@simplytestable.services.jobpreparationservice'
       predefinedDomainsToIgnore:
-        css-validation: '%css-validation-domains-to-ignore%'
-        js-static-analysis: '%js-static-analysis-domains-to-ignore%'
+        css-validation: '%css_validation_domains_to_ignore%'
+        js-static-analysis: '%js_static_analysis_domains_to_ignore%'
     tags:
       - { name: console.command }
 
