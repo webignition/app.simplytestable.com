@@ -28,7 +28,7 @@ class ConfigurationService extends EntityService
      * @param EntityManager $entityManager
      * @param TeamService $teamService
      */
-    public function __construct(EntityManager $entityManager,TeamService $teamService)
+    public function __construct(EntityManager $entityManager, TeamService $teamService)
     {
         parent::__construct($entityManager);
         $this->teamService = $teamService;
