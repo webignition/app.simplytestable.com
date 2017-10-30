@@ -14,6 +14,9 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
      */
     private $users;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();

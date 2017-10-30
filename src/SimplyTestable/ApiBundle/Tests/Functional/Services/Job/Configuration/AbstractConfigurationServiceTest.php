@@ -84,7 +84,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
      *
      * @return Configuration[]
      */
-    protected function createJobConfigurationCollection($jobConfigurationValuesCollection, $users)
+    protected function createJobConfigurationCollection($jobConfigurationValuesCollection, $users = [])
     {
         $jobConfigurationCollection = [];
 
@@ -93,8 +93,10 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
                 $jobConfigurationValues
             );
 
-            $currentUser = $users[$jobConfigurationValues['userName']];
-            $this->setUser($currentUser);
+            if (!empty($users)) {
+                $currentUser = $users[$jobConfigurationValues['userName']];
+                $this->setUser($currentUser);
+            }
 
             $jobConfigurationCollection[] = $this->jobConfigurationService->create($jobConfigurationValuesModel);
         }
