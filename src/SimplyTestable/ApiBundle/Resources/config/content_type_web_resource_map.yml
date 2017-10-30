@@ -1,0 +1,4 @@
+default: webignition\WebResource\WebResource
+text/html: webignition\WebResource\WebPage\WebPage
+application/xhtml+xml: webignition\WebResource\WebPage\WebPage
+application/json: webignition\WebResource\JsonDocument\JsonDocument
