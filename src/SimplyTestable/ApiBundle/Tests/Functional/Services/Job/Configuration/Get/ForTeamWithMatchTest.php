@@ -90,12 +90,12 @@ class ForTeamWithMatchTest extends ServiceTest
         $jobConfigurationValues->setWebsite($websiteService->fetch('http://example.com/'));
         $jobConfigurationValues->setParameters('parameters');
 
-        $this->getJobConfigurationService()->setUser($leader);
+        $this->setUser($leader);
         $this->originalConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $entityManager->clear();
 
-        $this->getJobConfigurationService()->setUser($member);
+        $this->setUser($member);
 
         $this->retrievedConfiguration = $this->getJobConfigurationService()->get(self::LABEL);
     }

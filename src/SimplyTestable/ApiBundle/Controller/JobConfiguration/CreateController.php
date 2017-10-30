@@ -75,8 +75,6 @@ class CreateController extends Controller
             ]);
         }
 
-        $jobConfigurationService->setUser($user);
-
         $website = $websiteService->fetch($requestWebsite);
         $jobType = $this->getJobType($entityManager, $requestType);
         $taskConfigurationCollection = $this->getRequestTaskConfigurationCollection($request, $taskTypeService);

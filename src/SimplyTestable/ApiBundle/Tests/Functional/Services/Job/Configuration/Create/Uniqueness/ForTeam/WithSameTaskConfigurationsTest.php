@@ -86,10 +86,10 @@ class WithSameTaskConfigurationsTest extends ServiceTest
         $this->values->setType($fullSiteJobType);
         $this->values->setWebsite($websiteService->fetch('http://example.com/'));
 
-        $this->getJobConfigurationService()->setUser($member);
+        $this->setUser($member);
         $this->getJobConfigurationService()->create($this->values);
 
-        $this->getJobConfigurationService()->setUser($leader);
+        $this->setUser($leader);
     }
 
     public function testCreateWithSameArgumentsAndSameTaskConfigurationsThrowsException()

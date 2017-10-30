@@ -48,7 +48,7 @@ abstract class TeamTest extends ServiceTest {
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setUser($this->getJobConfigurationUser());
 
-        $this->getJobConfigurationService()->setUser($this->getServiceUser());
+        $this->setUser($this->getServiceUser());
 
         $this->ownsResult = $this->getJobConfigurationService()->owns($jobConfiguration);
     }

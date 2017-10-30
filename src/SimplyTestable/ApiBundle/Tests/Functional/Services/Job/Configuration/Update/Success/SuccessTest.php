@@ -34,7 +34,7 @@ abstract class SuccessTest extends ServiceTest {
         $originalValues->setType($this->getOriginalJobType());
         $originalValues->setWebsite($this->getOriginalWebsite());
 
-        $this->getJobConfigurationService()->setUser($this->getCurrentUser());
+        $this->setUser($this->getCurrentUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($originalValues);
 
         $newValues = new ConfigurationValues();

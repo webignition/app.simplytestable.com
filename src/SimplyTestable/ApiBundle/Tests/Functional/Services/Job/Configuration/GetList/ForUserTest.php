@@ -53,7 +53,7 @@ class ForUserTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'user2@example.com',
         ]);
 
-        $this->getJobConfigurationService()->setUser($this->user1);
+        $this->setUser($this->user1);
         for ($jobConfigurationIndex = 0; $jobConfigurationIndex < self::JOB_CONFIGURATION_COUNT; $jobConfigurationIndex++) {
             $jobConfigurationValues = new ConfigurationValues();
             $jobConfigurationValues->setLabel(self::LABEL . '::' . $jobConfigurationIndex);
@@ -65,7 +65,7 @@ class ForUserTest extends ServiceTest
             $this->jobConfigurations[] = $this->getJobConfigurationService()->create($jobConfigurationValues);
         }
 
-        $this->getJobConfigurationService()->setUser($this->user2);
+        $this->setUser($this->user2);
         for ($jobConfigurationIndex = 0; $jobConfigurationIndex < self::JOB_CONFIGURATION_COUNT; $jobConfigurationIndex++) {
             $jobConfigurationValues = new ConfigurationValues();
             $jobConfigurationValues->setLabel(self::LABEL . '::' . $jobConfigurationIndex);
@@ -79,10 +79,10 @@ class ForUserTest extends ServiceTest
 
         $entityManager->clear();
 
-        $this->getJobConfigurationService()->setUser($this->user1);
+        $this->setUser($this->user1);
         $this->retrievedJobConfigurations[$this->user1->getEmail()] = $this->getJobConfigurationService()->getList();
 
-        $this->getJobConfigurationService()->setUser($this->user2);
+        $this->setUser($this->user2);
         $this->retrievedJobConfigurations[$this->user2->getEmail()] = $this->getJobConfigurationService()->getList();
     }
 

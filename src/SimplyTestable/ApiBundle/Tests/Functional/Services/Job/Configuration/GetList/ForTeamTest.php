@@ -86,7 +86,7 @@ class ForTeamTest extends ServiceTest
         ];
 
         foreach ($this->people as $userIndex => $user) {
-            $this->getJobConfigurationService()->setUser($user);
+            $this->setUser($user);
             for ($jobConfigurationIndex = 0; $jobConfigurationIndex < self::JOB_CONFIGURATION_COUNT; $jobConfigurationIndex++) {
                 $jobConfigurationValues = new ConfigurationValues();
                 $jobConfigurationValues->setLabel(self::LABEL . '::' . $userIndex . '::' . $jobConfigurationIndex);
@@ -103,7 +103,7 @@ class ForTeamTest extends ServiceTest
 
         foreach ($this->people as $userIndex => $user) {
             /* @var $user User */
-            $this->getJobConfigurationService()->setUser($user);
+            $this->setUser($user);
             $this->retrievedJobConfigurations[$user->getEmail()] = $this->getJobConfigurationService()->getList(true);
         }
     }

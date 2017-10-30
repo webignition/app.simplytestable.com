@@ -146,7 +146,6 @@ class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
             $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
 
             foreach ($scheduledJobValuesCollection as $scheduledJobValues) {
-                $jobConfigurationService->setUser($this->user);
                 $jobConfiguration = $jobConfigurationService->get($scheduledJobValues['job-configuration']);
 
                 $scheduledJobService->create(

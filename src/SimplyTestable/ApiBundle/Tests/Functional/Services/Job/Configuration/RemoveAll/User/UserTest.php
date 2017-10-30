@@ -34,7 +34,7 @@ abstract class UserTest extends ServiceTest {
         $jobConfigurationValues->setType($fullSiteJobType);
         $jobConfigurationValues->setWebsite($websiteService->fetch('http://original.example.com/'));
 
-        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $this->assertNotNull($this->jobConfiguration->getId());

@@ -25,7 +25,7 @@ class EmptyWebsiteTest extends ServiceTest {
         $values->setType($fullSiteJobType);
 
         $userService = $this->container->get('simplytestable.services.userservice');
-        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
         $this->getJobConfigurationService()->create($values);
     }
 

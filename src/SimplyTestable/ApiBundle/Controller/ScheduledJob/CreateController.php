@@ -66,7 +66,6 @@ class CreateController extends Controller
         }
 
         $scheduledJobService->setUser($this->getUser());
-        $jobConfigurationService->setUser($this->getUser());
 
         $jobConfiguration = $jobConfigurationService->get($requestJobConfigurationLabel);
 

@@ -27,8 +27,6 @@ class DeleteController extends Controller
 
         $label = trim($label);
 
-        $jobConfigurationService->setUser($this->getUser());
-
         $jobConfiguration = $jobConfigurationService->get($label);
         if (is_null($jobConfiguration)) {
             throw new NotFoundHttpException();

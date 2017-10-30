@@ -31,7 +31,7 @@ class ForUserTest extends ServiceTest {
         $this->values->setType($fullSiteJobType);
         $this->values->setWebsite($websiteService->fetch('http://example.com/'));
 
-        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
         $this->getJobConfigurationService()->create($this->values);
     }
 

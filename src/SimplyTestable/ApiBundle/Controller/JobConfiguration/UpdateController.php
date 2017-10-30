@@ -33,8 +33,6 @@ class UpdateController extends Controller
             throw new ServiceUnavailableHttpException();
         }
 
-        $jobConfigurationService->setUser($this->getUser());
-
         $jobConfiguration = $jobConfigurationService->get($label);
         if (empty($jobConfiguration)) {
             throw new NotFoundHttpException();

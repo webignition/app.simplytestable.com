@@ -8,7 +8,7 @@ class WithoutJobConfigurationUserSetTest extends ServiceTest {
 
     public function testReturnsFalseIfJobConfigurationUserIsNotSet() {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
         $this->assertFalse($this->getJobConfigurationService()->owns(new JobConfiguration()));
     }
 

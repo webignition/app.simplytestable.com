@@ -76,7 +76,7 @@ class ForUserWithMatchTest extends ServiceTest {
         $jobConfigurationValues->setParameters('parameters');
 
         $userService = $this->container->get('simplytestable.services.userservice');
-        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
         $this->originalConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $entityManager->clear();

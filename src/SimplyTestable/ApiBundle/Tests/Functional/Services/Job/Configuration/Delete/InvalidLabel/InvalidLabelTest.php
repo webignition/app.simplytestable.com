@@ -19,7 +19,7 @@ abstract class InvalidLabelTest extends ServiceTest {
             JobConfigurationServiceException::CODE_NO_SUCH_CONFIGURATION
         );
 
-        $this->getJobConfigurationService()->setUser($this->getCurrentUser());
+        $this->setUser($this->getCurrentUser());
         $this->getJobConfigurationService()->delete(self::LABEL);
     }
 

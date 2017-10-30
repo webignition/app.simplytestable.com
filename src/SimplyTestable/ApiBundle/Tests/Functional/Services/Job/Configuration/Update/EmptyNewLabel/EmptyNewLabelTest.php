@@ -71,7 +71,7 @@ abstract class EmptyNewLabelTest extends ServiceTest {
         $values->setTaskConfigurationCollection($taskConfigurationCollection);
         $values->setType($fullSiteJobType);
 
-        $this->getJobConfigurationService()->setUser($this->getCurrentUser());
+        $this->setUser($this->getCurrentUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($values);
 
         $newValues = new ConfigurationValues();

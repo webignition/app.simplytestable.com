@@ -179,7 +179,7 @@ class RunCommandTest extends AbstractBaseTestCase
             $jobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
         }
 
-        $jobConfigurationService->setUser($user);
+        $this->setUser($user);
 
         return $jobConfigurationService->create($jobConfigurationValues);
     }

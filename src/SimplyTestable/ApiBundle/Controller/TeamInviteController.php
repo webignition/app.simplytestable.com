@@ -123,7 +123,6 @@ class TeamInviteController extends Controller
         $scheduledJobService->setUser($this->getUser());
         $scheduledJobService->removeAll();
 
-        $jobConfigurationService->setUser($this->getUser());
         $jobConfigurationService->removeAll();
 
         $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
