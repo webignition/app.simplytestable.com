@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Services\Job;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration as TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\EntityService;
@@ -11,15 +12,12 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as J
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 
-class ConfigurationService extends EntityService {
-
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Job\Configuration';
-
+class ConfigurationService extends EntityService
+{
     /**
      * @var TeamService
      */
     private $teamService;
-
 
     /**
      * @var User
@@ -30,36 +28,36 @@ class ConfigurationService extends EntityService {
      * @param EntityManager $entityManager
      * @param TeamService $teamService
      */
-    public function __construct(EntityManager $entityManager,TeamService $teamService) {
+    public function __construct(EntityManager $entityManager,TeamService $teamService)
+    {
         parent::__construct($entityManager);
         $this->teamService = $teamService;
     }
 
     /**
-     *
      * @return string
      */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
+    protected function getEntityName()
+    {
+        return Configuration::class;
     }
-
 
     /**
      * @param User $user
-     * @return $this
      */
-    public function setUser(User $user) {
+    public function setUser(User $user)
+    {
         $this->user = $user;
-        return $this;
     }
-
 
     /**
      * @param ConfigurationValues $values
+     *
      * @return JobConfiguration
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception
+     * @throws JobConfigurationServiceException
      */
-    public function create(ConfigurationValues $values) {
+    public function create(ConfigurationValues $values)
+    {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
                 'User is not set',
@@ -136,7 +134,8 @@ class ConfigurationService extends EntityService {
      * @throws JobConfigurationServiceException
      * @return null|JobConfiguration
      */
-    public function get($label) {
+    public function get($label)
+    {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
                 'User is not set',
@@ -144,20 +143,26 @@ class ConfigurationService extends EntityService {
             );
         }
 
-        return $this->getEntityRepository()->findOneBy([
+        /* @var Configuration $jobConfiguration */
+        $jobConfiguration = $this->getEntityRepository()->findOneBy([
             'label' => $label,
-            'user' => ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeopleForUser($this->user) : [$this->user]
+            'user' => ($this->teamService->hasForUser($this->user))
+                ? $this->teamService->getPeopleForUser($this->user)
+                : [$this->user]
         ]);
-    }
 
+        return $jobConfiguration;
+    }
 
     /**
      * @param JobConfiguration $jobConfiguration
      * @param ConfigurationValues $newValues
+     *
      * @return JobConfiguration
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception
+     * @throws JobConfigurationServiceException
      */
-    public function update(JobConfiguration $jobConfiguration, ConfigurationValues $newValues) {
+    public function update(JobConfiguration $jobConfiguration, ConfigurationValues $newValues)
+    {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
                 'User is not set',
@@ -231,7 +236,7 @@ class ConfigurationService extends EntityService {
             foreach ($newValues->getTaskConfigurationCollection()->get() as $taskConfiguration) {
                 /* @var $taskConfiguration TaskConfiguration */
                 $taskConfiguration->setJobConfiguration($jobConfiguration);
-                $jobConfiguration->addTaskConfiguration($taskConfiguration);;
+                $jobConfiguration->addTaskConfiguration($taskConfiguration);
                 $this->getManager()->persist($taskConfiguration);
             }
         }
@@ -242,8 +247,13 @@ class ConfigurationService extends EntityService {
         return $jobConfiguration;
     }
 
-
-    public function delete($label) {
+    /**
+     * @param string $label
+     *
+     * @throws JobConfigurationServiceException
+     */
+    public function delete($label)
+    {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
                 'User is not set',
@@ -277,9 +287,10 @@ class ConfigurationService extends EntityService {
 
     /**
      * @return JobConfiguration[]
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception
+     * @throws JobConfigurationServiceException
      */
-    public function getList() {
+    public function getList()
+    {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
                 'User is not set',
@@ -288,15 +299,18 @@ class ConfigurationService extends EntityService {
         }
 
         return $this->getEntityRepository()->findBy([
-            'user' => ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeopleForUser($this->user) : [$this->user]
+            'user' => ($this->teamService->hasForUser($this->user))
+                ? $this->teamService->getPeopleForUser($this->user)
+                : [$this->user]
         ]);
     }
 
 
     /**
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception
+     * @throws JobConfigurationServiceException
      */
-    public function removeAll() {
+    public function removeAll()
+    {
         if (!$this->hasUser()) {
             throw new JobConfigurationServiceException(
                 'User is not set',
@@ -336,31 +350,36 @@ class ConfigurationService extends EntityService {
         }
     }
 
-
     /**
      * @param $label
+     *
      * @return bool
      */
-    private function has($label) {
+    private function has($label)
+    {
         return !is_null($this->get($label));
     }
-
 
     /**
      * @param ConfigurationValues $values
      * @return bool
      */
-    private function hasExisting(ConfigurationValues $values) {
+    private function hasExisting(ConfigurationValues $values)
+    {
         $jobConfigurations = $this->getEntityRepository()->findBy([
             'website' => $values->getWebsite(),
             'type' => $values->getType(),
             'parameters' => $values->getParameters(),
-            'user' => ($this->teamService->hasForUser($this->user)) ? $this->teamService->getPeopleForUser($this->user) : [$this->user]
+            'user' => ($this->teamService->hasForUser($this->user))
+                ? $this->teamService->getPeopleForUser($this->user)
+                : [$this->user]
         ]);
 
         foreach ($jobConfigurations as $jobConfiguration) {
             /* @var $jobConfiguration JobConfiguration */
-            if ($values->getTaskConfigurationCollection()->equals($jobConfiguration->getTaskConfigurationsAsCollection())) {
+            if ($values->getTaskConfigurationCollection()->equals(
+                $jobConfiguration->getTaskConfigurationsAsCollection()
+            )) {
                 return true;
             }
         }
@@ -368,26 +387,29 @@ class ConfigurationService extends EntityService {
         return false;
     }
 
-
     /**
      * @return bool
      */
-    private function hasUser() {
+    private function hasUser()
+    {
         return $this->user instanceof User;
     }
-
 
     /**
      * @param JobConfiguration $jobConfiguration
      * @param ConfigurationValues $values
+     *
      * @return bool
      */
-    private function matches(JobConfiguration $jobConfiguration, ConfigurationValues $values) {
+    private function matches(JobConfiguration $jobConfiguration, ConfigurationValues $values)
+    {
         if ($jobConfiguration->getParameters() != $values->getParameters()) {
             return false;
         }
 
-        if (!$jobConfiguration->getTaskConfigurationsAsCollection()->equals($values->getTaskConfigurationCollection())) {
+        if (!$jobConfiguration->getTaskConfigurationsAsCollection()->equals(
+            $values->getTaskConfigurationCollection()
+        )) {
             return false;
         }
 
@@ -402,13 +424,14 @@ class ConfigurationService extends EntityService {
         return true;
     }
 
-
     /**
      * @param JobConfiguration $jobConfiguration
      * @param ConfigurationValues $values
+     *
      * @return bool
      */
-    private function hasLabelChange(JobConfiguration $jobConfiguration, ConfigurationValues $values) {
+    private function hasLabelChange(JobConfiguration $jobConfiguration, ConfigurationValues $values)
+    {
         if ($values->hasEmptyLabel()) {
             return false;
         }
@@ -416,12 +439,12 @@ class ConfigurationService extends EntityService {
         return $jobConfiguration->getLabel() != $values->getLabel();
     }
 
-
     /**
      * @param JobConfiguration $jobConfiguration
      * @return bool
      */
-    public function owns(JobConfiguration $jobConfiguration) {
+    public function owns(JobConfiguration $jobConfiguration)
+    {
         if (!$this->hasUser()) {
             return false;
         }
