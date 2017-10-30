@@ -35,7 +35,7 @@ class RemoveTest extends ServiceTest
 
         $user = $this->userFactory->create();
 
-        $this->assertTrue($teamMemberService>remove($user));
+        $this->assertTrue($teamMemberService->remove($user));
     }
 
     public function testRemoveUserThatIsOnATeamReturnsTrue()
