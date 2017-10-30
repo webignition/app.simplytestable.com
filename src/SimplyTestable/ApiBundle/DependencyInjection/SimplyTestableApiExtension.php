@@ -20,6 +20,7 @@ class SimplyTestableApiExtension extends Extension
      */
     private $parameterFiles = [
         'content_type_web_resource_map.yml',
+        'curl_options.yml',
     ];
 
     /**
