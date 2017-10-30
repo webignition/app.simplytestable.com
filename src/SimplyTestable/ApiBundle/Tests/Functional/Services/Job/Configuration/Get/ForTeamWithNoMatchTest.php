@@ -78,10 +78,10 @@ class ForTeamWithNoMatchTest extends ServiceTest
         $jobConfigurationValues->setWebsite($websiteService->fetch('http://example.com/'));
         $jobConfigurationValues->setParameters('parameters');
 
-        $this->getJobConfigurationService()->setUser($leader);
+        $this->setUser($leader);
         $this->getJobConfigurationService()->create($jobConfigurationValues);
 
-        $this->getJobConfigurationService()->setUser($member);
+        $this->setUser($member);
     }
 
     public function testNoMatchReturnsNull()

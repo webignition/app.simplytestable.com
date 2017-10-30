@@ -5,12 +5,12 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration as TaskConfiguration;
-use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ConfigurationService extends EntityService
 {
@@ -20,18 +20,24 @@ class ConfigurationService extends EntityService
     private $teamService;
 
     /**
-     * @var User
+     * @var TokenStorageInterface
      */
-    private $user;
+    private $tokenStorage;
 
     /**
      * @param EntityManager $entityManager
      * @param TeamService $teamService
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(EntityManager $entityManager, TeamService $teamService)
-    {
+    public function __construct(
+        EntityManager $entityManager,
+        TeamService $teamService,
+        TokenStorageInterface $tokenStorage
+    ) {
         parent::__construct($entityManager);
+
         $this->teamService = $teamService;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -43,14 +49,6 @@ class ConfigurationService extends EntityService
     }
 
     /**
-     * @param User $user
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
-    }
-
-    /**
      * @param ConfigurationValues $values
      *
      * @return JobConfiguration
@@ -58,12 +56,7 @@ class ConfigurationService extends EntityService
      */
     public function create(ConfigurationValues $values)
     {
-        if (!$this->hasUser()) {
-            throw new JobConfigurationServiceException(
-                'User is not set',
-                JobConfigurationServiceException::CODE_USER_NOT_SET
-            );
-        }
+        $user = $this->tokenStorage->getToken()->getUser();
 
         if ($values->hasEmptyLabel()) {
             throw new JobConfigurationServiceException(
@@ -109,7 +102,7 @@ class ConfigurationService extends EntityService
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setLabel($values->getLabel());
-        $jobConfiguration->setUser($this->user);
+        $jobConfiguration->setUser($user);
         $jobConfiguration->setWebsite($values->getWebsite());
         $jobConfiguration->setType($values->getType());
         $jobConfiguration->setParameters($values->getParameters());
@@ -136,19 +129,14 @@ class ConfigurationService extends EntityService
      */
     public function get($label)
     {
-        if (!$this->hasUser()) {
-            throw new JobConfigurationServiceException(
-                'User is not set',
-                JobConfigurationServiceException::CODE_USER_NOT_SET
-            );
-        }
+        $user = $this->tokenStorage->getToken()->getUser();
 
         /* @var Configuration $jobConfiguration */
         $jobConfiguration = $this->getEntityRepository()->findOneBy([
             'label' => $label,
-            'user' => ($this->teamService->hasForUser($this->user))
-                ? $this->teamService->getPeopleForUser($this->user)
-                : [$this->user]
+            'user' => ($this->teamService->hasForUser($user))
+                ? $this->teamService->getPeopleForUser($user)
+                : [$user]
         ]);
 
         return $jobConfiguration;
@@ -163,13 +151,6 @@ class ConfigurationService extends EntityService
      */
     public function update(JobConfiguration $jobConfiguration, ConfigurationValues $newValues)
     {
-        if (!$this->hasUser()) {
-            throw new JobConfigurationServiceException(
-                'User is not set',
-                JobConfigurationServiceException::CODE_USER_NOT_SET
-            );
-        }
-
         if ($newValues->hasNonEmptyLabel()) {
             if ($this->has($newValues->getLabel()) && $this->get($newValues->getLabel()) != $jobConfiguration) {
                 throw new JobConfigurationServiceException(
@@ -254,13 +235,6 @@ class ConfigurationService extends EntityService
      */
     public function delete($label)
     {
-        if (!$this->hasUser()) {
-            throw new JobConfigurationServiceException(
-                'User is not set',
-                JobConfigurationServiceException::CODE_USER_NOT_SET
-            );
-        }
-
         if (!$this->has($label)) {
             throw new JobConfigurationServiceException(
                 'Configuration with label "' . $label . '" does not exist',
@@ -291,34 +265,23 @@ class ConfigurationService extends EntityService
      */
     public function getList()
     {
-        if (!$this->hasUser()) {
-            throw new JobConfigurationServiceException(
-                'User is not set',
-                JobConfigurationServiceException::CODE_USER_NOT_SET
-            );
-        }
+        $user = $this->tokenStorage->getToken()->getUser();
 
         return $this->getEntityRepository()->findBy([
-            'user' => ($this->teamService->hasForUser($this->user))
-                ? $this->teamService->getPeopleForUser($this->user)
-                : [$this->user]
+            'user' => ($this->teamService->hasForUser($user))
+                ? $this->teamService->getPeopleForUser($user)
+                : [$user]
         ]);
     }
-
 
     /**
      * @throws JobConfigurationServiceException
      */
     public function removeAll()
     {
-        if (!$this->hasUser()) {
-            throw new JobConfigurationServiceException(
-                'User is not set',
-                JobConfigurationServiceException::CODE_USER_NOT_SET
-            );
-        }
+        $user = $this->tokenStorage->getToken()->getUser();
 
-        if ($this->teamService->hasForUser($this->user)) {
+        if ($this->teamService->hasForUser($user)) {
             throw new JobConfigurationServiceException(
                 'Unable to remove all; user is in a team',
                 JobConfigurationServiceException::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM
@@ -326,7 +289,7 @@ class ConfigurationService extends EntityService
         }
 
         $userJobConfigurations = $this->getEntityRepository()->findBy([
-            'user' => $this->user
+            'user' => $user
         ]);
 
         foreach ($userJobConfigurations as $userJobConfiguration) {
@@ -366,13 +329,15 @@ class ConfigurationService extends EntityService
      */
     private function hasExisting(ConfigurationValues $values)
     {
+        $user = $this->tokenStorage->getToken()->getUser();
+
         $jobConfigurations = $this->getEntityRepository()->findBy([
             'website' => $values->getWebsite(),
             'type' => $values->getType(),
             'parameters' => $values->getParameters(),
-            'user' => ($this->teamService->hasForUser($this->user))
-                ? $this->teamService->getPeopleForUser($this->user)
-                : [$this->user]
+            'user' => ($this->teamService->hasForUser($user))
+                ? $this->teamService->getPeopleForUser($user)
+                : [$user]
         ]);
 
         foreach ($jobConfigurations as $jobConfiguration) {
@@ -385,14 +350,6 @@ class ConfigurationService extends EntityService
         }
 
         return false;
-    }
-
-    /**
-     * @return bool
-     */
-    private function hasUser()
-    {
-        return $this->user instanceof User;
     }
 
     /**
@@ -445,26 +402,24 @@ class ConfigurationService extends EntityService
      */
     public function owns(JobConfiguration $jobConfiguration)
     {
-        if (!$this->hasUser()) {
-            return false;
-        }
+        $user = $this->tokenStorage->getToken()->getUser();
 
         if (is_null($jobConfiguration->getUser())) {
             return false;
         }
 
-        if ($jobConfiguration->getUser()->equals($this->user)) {
+        if ($jobConfiguration->getUser()->equals($user)) {
             return true;
         }
 
-        if (!$this->teamService->hasForUser($this->user)) {
+        if (!$this->teamService->hasForUser($user)) {
             return false;
         }
 
-        $people = $this->teamService->getPeopleForUser($this->user);
+        $people = $this->teamService->getPeopleForUser($user);
 
         foreach ($people as $person) {
-            if ($person->equals($this->user)) {
+            if ($person->equals($user)) {
                 return true;
             }
         }

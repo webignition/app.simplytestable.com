@@ -70,7 +70,7 @@ abstract class ServiceTest extends AbstractBaseTestCase {
             $jobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
         }
 
-        $this->getJobConfigurationService()->setUser($user);
+        $this->setUser($user);
         return $this->getJobConfigurationService()->create($jobConfigurationValues);
     }
 

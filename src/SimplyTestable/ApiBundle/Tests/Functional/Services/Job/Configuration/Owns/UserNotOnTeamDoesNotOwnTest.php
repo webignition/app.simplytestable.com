@@ -18,7 +18,7 @@ class UserNotOnTeamDoesNotOwnTest extends ServiceTest {
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setUser($user1);
 
-        $this->getJobConfigurationService()->setUser($user2);
+        $this->setUser($user2);
 
         $this->assertFalse($this->getJobConfigurationService()->owns($jobConfiguration));
     }

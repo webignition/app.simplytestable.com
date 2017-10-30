@@ -71,7 +71,7 @@ class WithSameTaskConfigurationsTest extends ServiceTest {
         $this->values->setParameters(self::PARAMETERS);
 
         $userService = $this->container->get('simplytestable.services.userservice');
-        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
         $this->getJobConfigurationService()->create($this->values);
     }
 

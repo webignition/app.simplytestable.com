@@ -13,7 +13,7 @@ class UserOwnsJobConfigurationTest extends ServiceTest {
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setUser($user);
 
-        $this->getJobConfigurationService()->setUser($user);
+        $this->setUser($user);
 
         $this->assertTrue($this->getJobConfigurationService()->owns($jobConfiguration));
     }

@@ -13,7 +13,6 @@ class GetListController extends Controller
     public function listAction()
     {
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
-        $jobConfigurationService->setUser($this->getUser());
 
         return new JsonResponse($jobConfigurationService->getList());
     }

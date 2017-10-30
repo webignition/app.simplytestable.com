@@ -47,14 +47,14 @@ class ForTeamTest extends ServiceTest {
         $values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $values->setLabel(self::LABEL1);
 
-        $this->getJobConfigurationService()->setUser($member);
+        $this->setUser($member);
         $this->jobConfiguration = $this->getJobConfigurationService()->create($values);
 
         $values->setLabel(self::LABEL2);
         $values->setWebsite($websiteService->fetch('http://example.com/bar'));
         $this->getJobConfigurationService()->create($values);
 
-        $this->getJobConfigurationService()->setUser($leader);
+        $this->setUser($leader);
     }
 
     public function testCreateWithNonUniqueLabelForTeamThrowsException() {

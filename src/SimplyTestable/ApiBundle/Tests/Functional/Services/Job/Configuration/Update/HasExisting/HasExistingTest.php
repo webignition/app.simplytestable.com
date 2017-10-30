@@ -22,7 +22,7 @@ abstract class HasExistingTest extends ServiceTest {
 
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
 
-        $this->getJobConfigurationService()->setUser($this->getCurrentUser());
+        $this->setUser($this->getCurrentUser());
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
@@ -59,7 +59,7 @@ abstract class HasExistingTest extends ServiceTest {
             JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
         );
 
-        $this->getJobConfigurationService()->setUser($this->getCurrentUser());
+        $this->setUser($this->getCurrentUser());
 
         $newValues = new ConfigurationValues();
         $newValues->setParameters('second-job-configuration-parameters');

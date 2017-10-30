@@ -34,7 +34,7 @@ class ForUserTest extends ServiceTest {
         $values->setTaskConfigurationCollection($this->getStandardTaskConfigurationCollection());
         $values->setLabel(self::LABEL1);
 
-        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($values);
 
         $values->setLabel(self::LABEL2);

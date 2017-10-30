@@ -47,8 +47,6 @@ class UpdateController extends Controller
         $requestJobConfigurationLabel = trim($requestData->get('job-configuration'));
 
         if (!empty($requestJobConfigurationLabel)) {
-            $jobConfigurationService->setUser($this->getUser());
-
             $jobConfiguration = $jobConfigurationService->get($requestJobConfigurationLabel);
             if (empty($jobConfiguration)) {
                 return Response::create('', 400, [

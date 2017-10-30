@@ -40,7 +40,7 @@ class ForTeamTest extends ServiceTest
             $leader
         ), $member);
 
-        $this->getJobConfigurationService()->setUser($member);
+        $this->setUser($member);
 
         $this->values = new ConfigurationValues();
         $this->values->setLabel(self::LABEL);
@@ -50,7 +50,7 @@ class ForTeamTest extends ServiceTest
 
         $this->getJobConfigurationService()->create($this->values);
 
-        $this->getJobConfigurationService()->setUser($leader);
+        $this->setUser($leader);
     }
 
     public function testCreateWithNonUniqueLabelForTeamThrowsException()

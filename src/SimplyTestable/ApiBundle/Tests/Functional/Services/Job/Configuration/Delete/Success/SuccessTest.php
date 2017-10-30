@@ -34,7 +34,7 @@ abstract class SuccessTest extends ServiceTest {
         $jobConfigurationValues->setType($fullSiteJobType);
         $jobConfigurationValues->setWebsite($websiteService->fetch('http://original.example.com/'));
 
-        $this->getJobConfigurationService()->setUser($this->getCurrentUser());
+        $this->setUser($this->getCurrentUser());
         $this->jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $this->assertNotNull($this->jobConfiguration->getId());

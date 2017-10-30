@@ -36,7 +36,7 @@ class WhenUsedByScheduledJobTest extends ServiceTest {
         $jobConfigurationValues->setType($fullSiteJobType);
         $jobConfigurationValues->setWebsite($websiteService->fetch('http://original.example.com/'));
 
-        $this->getJobConfigurationService()->setUser($user);
+        $this->setUser($user);
         $this->jobConfiguration = $this->getJobConfigurationService()->create($jobConfigurationValues);
 
         $this->assertNotNull($this->jobConfiguration->getId());

@@ -27,7 +27,7 @@ class EmptyTaskConfigurationCollectionTest extends ServiceTest {
         $values->setType($fullSiteJobType);
         $values->setWebsite($websiteService->fetch('http://example.com/'));
 
-        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
         $this->getJobConfigurationService()->create($values);
     }
 

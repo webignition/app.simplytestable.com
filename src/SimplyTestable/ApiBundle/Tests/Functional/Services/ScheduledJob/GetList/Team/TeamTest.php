@@ -58,7 +58,8 @@ abstract class TeamTest extends ServiceTest {
 
         ], $this->leader);
 
-        $this->getJobConfigurationService()->setUser($this->leader);
+
+        $this->setUser($this->leader);
         $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * *',
@@ -66,7 +67,7 @@ abstract class TeamTest extends ServiceTest {
             true
         );
 
-        $this->getJobConfigurationService()->setUser($this->member);
+        $this->setUser($this->member);
         $this->getScheduledJobService()->create(
             $jobConfiguration,
             '* * * * 0',

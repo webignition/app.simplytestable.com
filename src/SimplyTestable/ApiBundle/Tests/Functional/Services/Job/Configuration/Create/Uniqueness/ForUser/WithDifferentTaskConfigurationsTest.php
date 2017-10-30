@@ -92,7 +92,7 @@ class WithDifferentTaskConfigurationsTest extends ServiceTest {
         $this->values->setWebsite($websiteService->fetch('http://example.com/'));
 
         $userService = $this->container->get('simplytestable.services.userservice');
-        $this->getJobConfigurationService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
         $this->getJobConfigurationService()->create($this->values);
     }
 
