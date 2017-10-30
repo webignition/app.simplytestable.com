@@ -135,6 +135,9 @@ class ConfigurationServiceGetListTest extends AbstractConfigurationServiceTest
             $jobConfigurationListIds[] = $jobConfiguration->getId();
         }
 
+        sort($expectedJobConfigurationIds);
+        sort($jobConfigurationListIds);
+
         $this->assertEquals($expectedJobConfigurationIds, $jobConfigurationListIds);
     }
 
