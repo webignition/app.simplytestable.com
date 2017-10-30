@@ -218,7 +218,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
     }
 
     /**
-     * @dataProvider testCreateSuccessDataProvider
+     * @dataProvider createSuccessDataProvider
      *
      * @param string $userName
      * @param array $existingJobConfigurationValuesCollection
@@ -269,7 +269,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
     /**
      * @return array
      */
-    public function testCreateSuccessDataProvider()
+    public function createSuccessDataProvider()
     {
         return [
             'no existing job configurations' => [

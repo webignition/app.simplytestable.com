@@ -123,8 +123,8 @@ class ConfigurationService extends EntityService
     }
 
     /**
-     * @param $label
-     * @throws JobConfigurationServiceException
+     * @param string $label
+     *
      * @return null|JobConfiguration
      */
     public function get($label)
