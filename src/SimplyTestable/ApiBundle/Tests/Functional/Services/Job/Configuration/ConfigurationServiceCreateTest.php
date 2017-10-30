@@ -232,16 +232,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
 
-        foreach ($existingJobConfigurationValuesCollection as $existingJobConfigurationValues) {
-            $existingJobConfigurationValuesModel = $this->createJobConfigurationValuesModel(
-                $existingJobConfigurationValues
-            );
-
-            $currentUser = $users[$existingJobConfigurationValues['userName']];
-            $this->setUser($currentUser);
-
-            $this->jobConfigurationService->create($existingJobConfigurationValuesModel);
-        }
+        $this->createJobConfigurationCollection($existingJobConfigurationValuesCollection, $users);
 
         $jobConfigurationValuesModel = $this->createJobConfigurationValuesModel($jobConfigurationValues);
 

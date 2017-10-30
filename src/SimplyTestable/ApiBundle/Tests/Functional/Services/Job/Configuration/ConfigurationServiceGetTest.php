@@ -36,19 +36,10 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
         $label,
         $expectedJobConfigurationIndex
     ) {
-        $jobConfigurationIds = [];
-
-        foreach ($existingJobConfigurationValuesCollection as $existingJobConfigurationValues) {
-            $existingJobConfigurationValuesModel = $this->createJobConfigurationValuesModel(
-                $existingJobConfigurationValues
-            );
-
-            $currentUser = $this->users[$existingJobConfigurationValues['userName']];
-            $this->setUser($currentUser);
-
-            $existingJobConfiguration = $this->jobConfigurationService->create($existingJobConfigurationValuesModel);
-            $jobConfigurationIds[] = $existingJobConfiguration;
-        }
+        $jobConfigurationCollection = $this->createJobConfigurationCollection(
+            $existingJobConfigurationValuesCollection,
+            $this->users
+        );
 
         $user = $this->users[$userName];
         $this->setUser($user);
@@ -58,7 +49,7 @@ class ConfigurationServiceGetTest extends AbstractConfigurationServiceTest
         if (is_null($expectedJobConfigurationIndex)) {
             $this->assertNull($jobConfiguration);
         } else {
-            $expectedJobConfigurationId = $jobConfigurationIds[$expectedJobConfigurationIndex]->getId();
+            $expectedJobConfigurationId = $jobConfigurationCollection[$expectedJobConfigurationIndex]->getId();
 
             $this->assertEquals($expectedJobConfigurationId, $jobConfiguration->getId());
         }

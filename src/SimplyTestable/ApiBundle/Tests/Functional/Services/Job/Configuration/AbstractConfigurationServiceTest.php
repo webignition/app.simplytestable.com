@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\Job\Configuration;
 
+use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
@@ -74,5 +76,29 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
         }
 
         return $configurationValuesModel;
+    }
+
+    /**
+     * @param array $jobConfigurationValuesCollection
+     * @param User[] $users
+     *
+     * @return Configuration[]
+     */
+    protected function createJobConfigurationCollection($jobConfigurationValuesCollection, $users)
+    {
+        $jobConfigurationCollection = [];
+
+        foreach ($jobConfigurationValuesCollection as $jobConfigurationValues) {
+            $jobConfigurationValuesModel = $this->createJobConfigurationValuesModel(
+                $jobConfigurationValues
+            );
+
+            $currentUser = $users[$jobConfigurationValues['userName']];
+            $this->setUser($currentUser);
+
+            $jobConfigurationCollection[] = $this->jobConfigurationService->create($jobConfigurationValuesModel);
+        }
+
+        return $jobConfigurationCollection;
     }
 }
