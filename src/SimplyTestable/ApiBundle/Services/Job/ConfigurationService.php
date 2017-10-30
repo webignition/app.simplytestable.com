@@ -380,35 +380,4 @@ class ConfigurationService extends EntityService
 
         return true;
     }
-
-    /**
-     * @param JobConfiguration $jobConfiguration
-     * @return bool
-     */
-    public function owns(JobConfiguration $jobConfiguration)
-    {
-        $user = $this->tokenStorage->getToken()->getUser();
-
-        if (is_null($jobConfiguration->getUser())) {
-            return false;
-        }
-
-        if ($jobConfiguration->getUser()->equals($user)) {
-            return true;
-        }
-
-        if (!$this->teamService->hasForUser($user)) {
-            return false;
-        }
-
-        $people = $this->teamService->getPeopleForUser($user);
-
-        foreach ($people as $person) {
-            if ($person->equals($user)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }
