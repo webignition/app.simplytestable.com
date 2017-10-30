@@ -123,8 +123,8 @@ class ConfigurationService extends EntityService
     }
 
     /**
-     * @param $label
-     * @throws JobConfigurationServiceException
+     * @param string $label
+     *
      * @return null|JobConfiguration
      */
     public function get($label)
@@ -146,7 +146,6 @@ class ConfigurationService extends EntityService
      * @param JobConfiguration $jobConfiguration
      * @param ConfigurationValues $newValues
      *
-     * @return JobConfiguration
      * @throws JobConfigurationServiceException
      */
     public function update(JobConfiguration $jobConfiguration, ConfigurationValues $newValues)
@@ -179,7 +178,10 @@ class ConfigurationService extends EntityService
         }
 
         if ($this->matches($jobConfiguration, $comparatorValues)) {
-            if (!$this->hasLabelChange($jobConfiguration, $comparatorValues)) {
+            $comparatorValuesHasLabelChange = $jobConfiguration->getLabel() !== $comparatorValues->getLabel();
+            $hasLabelChange = $comparatorValues->hasEmptyLabel() || $comparatorValuesHasLabelChange;
+
+            if (!$hasLabelChange) {
                 return $jobConfiguration;
             }
         } else {
@@ -224,8 +226,6 @@ class ConfigurationService extends EntityService
 
         $this->getManager()->persist($jobConfiguration);
         $this->getManager()->flush();
-
-        return $jobConfiguration;
     }
 
     /**
@@ -379,51 +379,5 @@ class ConfigurationService extends EntityService
         }
 
         return true;
-    }
-
-    /**
-     * @param JobConfiguration $jobConfiguration
-     * @param ConfigurationValues $values
-     *
-     * @return bool
-     */
-    private function hasLabelChange(JobConfiguration $jobConfiguration, ConfigurationValues $values)
-    {
-        if ($values->hasEmptyLabel()) {
-            return false;
-        }
-
-        return $jobConfiguration->getLabel() != $values->getLabel();
-    }
-
-    /**
-     * @param JobConfiguration $jobConfiguration
-     * @return bool
-     */
-    public function owns(JobConfiguration $jobConfiguration)
-    {
-        $user = $this->tokenStorage->getToken()->getUser();
-
-        if (is_null($jobConfiguration->getUser())) {
-            return false;
-        }
-
-        if ($jobConfiguration->getUser()->equals($user)) {
-            return true;
-        }
-
-        if (!$this->teamService->hasForUser($user)) {
-            return false;
-        }
-
-        $people = $this->teamService->getPeopleForUser($user);
-
-        foreach ($people as $person) {
-            if ($person->equals($user)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
