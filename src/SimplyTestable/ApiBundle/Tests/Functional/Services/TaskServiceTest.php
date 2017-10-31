@@ -260,4 +260,25 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->assertEquals('foo', $retrievedTask->getUrl());
         $this->assertEquals('foo', $this->task->getUrl());
     }
+
+    public function testSetStarted()
+    {
+        $this->assertEquals(TaskService::QUEUED_STATE, $this->task->getState()->getName());
+        $this->assertNull($this->task->getWorker());
+        $this->assertNull($this->task->getRemoteId());
+        $this->assertNull($this->task->getTimePeriod());
+
+        $workerFactory = new WorkerFactory($this->container);
+        $worker = $workerFactory->create();
+        $remoteId = 1;
+
+        $this->taskService->setStarted($this->task, $worker, $remoteId);
+
+        $this->assertEquals(TaskService::IN_PROGRESS_STATE, $this->task->getState()->getName());
+        $this->assertEquals($worker, $this->task->getWorker());
+        $this->assertEquals($remoteId, $this->task->getRemoteId());
+        $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
+        $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
+        $this->assertNull($this->task->getTimePeriod()->getEndDateTime());
+    }
 }
