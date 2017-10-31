@@ -34,7 +34,7 @@ class TaskController extends Controller
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
-        $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoinerservicefactory');
+        $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();

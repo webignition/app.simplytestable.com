@@ -2,144 +2,154 @@
 namespace SimplyTestable\ApiBundle\Services\TaskOutputJoiner;
 
 use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use webignition\InternetMediaType\InternetMediaType;
+use webignition\InternetMediaType\Parser\Parser as InternetMediaTypeParser;
 
-class LinkIntegrityTaskOutputJoiner extends TaskOutputJoiner {
+class LinkIntegrityTaskOutputJoiner implements TaskOutputJoinerInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function handles(TaskType $taskType)
+    {
+        return $taskType->getName() === TaskTypeService::LINK_INTEGRITY_TYPE;
+    }
 
-    public function process($taskOutputs) {        
+    /**
+     * {@inheritdoc}
+     */
+    public function join($taskOutputs)
+    {
+        $filteredTaskOutputs = [];
+        foreach ($taskOutputs as $taskOutput) {
+            if ($taskOutput instanceof TaskOutput) {
+                $filteredTaskOutputs[] = $taskOutput;
+            }
+        }
+
+        if (count($filteredTaskOutputs) === 1) {
+            return $filteredTaskOutputs[0];
+        }
+
         $linkIntegrityResults = $this->getJoinedOutputBody($taskOutputs);
-        
+
         $joinedOutput = new TaskOutput();
-        
-        $joinedOutput->setContentType($this->getContentType($taskOutputs));
+
+        $contentType = new InternetMediaType();
+        $contentType->setType('application');
+        $contentType->setSubtype('json');
+
+        $joinedOutput->setContentType($contentType);
         $joinedOutput->setErrorCount($this->getErrorCount($linkIntegrityResults));
         $joinedOutput->generateHash();
         $joinedOutput->setOutput(json_encode($linkIntegrityResults));
         $joinedOutput->setWarningCount(0);
-        
+
         return $joinedOutput;
     }
-    
-    
+
     /**
-     * 
-     * @param array $taskOutputs
-     * @return \webignition\InternetMediaType\InternetMediaType
-     */
-    private function getContentType($taskOutputs) {        
-        /* @var $taskOutput TaskOutput */
-        $taskOutput = $taskOutputs[0];
-        
-        if ($taskOutput->getContentType() instanceof \webignition\InternetMediaType\InternetMediaType) {
-            return $taskOutput->getContentType();            
-        }        
-        
-        $mediaTypeParser = new \webignition\InternetMediaType\Parser\Parser();
-        return $mediaTypeParser->parse($taskOutput->getContentType());
-    }
-    
-    
-    /**
-     * 
      * @param array $linkIntegrityResults
+     *
      * @return int
      */
-    private function getErrorCount($linkIntegrityResults) {
+    private function getErrorCount($linkIntegrityResults)
+    {
         $errorCount = 0;
-        
+
         foreach ($linkIntegrityResults as $linkIntegrityResult) {
             if ($this->isLinkIntegrityError($linkIntegrityResult)) {
                 $errorCount++;
             }
         }
-        
+
         return $errorCount;
     }
-    
-    
-    
+
     /**
-     * 
      * @param \stdClass $linkIntegrityResult
-     * @return boolean
+     *
+     * @return bool
      */
-    private function isLinkIntegrityError($linkIntegrityResult) {
+    private function isLinkIntegrityError($linkIntegrityResult)
+    {
         if ($linkIntegrityResult->type == 'curl') {
             return true;
         }
-        
-        if ($linkIntegrityResult->type == 'http' && in_array(substr($linkIntegrityResult->state, 0, 1), array('3', '4', '5'))) {
+
+        if (in_array(substr($linkIntegrityResult->state, 0, 1), array('3', '4', '5'))) {
             return true;
         }
-        
+
         return false;
     }
-    
-    
-    
+
     /**
-     * 
-     * @param array $taskOutputs
-     * @return string
+     * @param TaskOutput[] $taskOutputs
+     *
+     * @return array
      */
-    private function getJoinedOutputBody($taskOutputs) {
-        $linkIntegrityResults = array();
-        
+    private function getJoinedOutputBody($taskOutputs)
+    {
+        $linkIntegrityResults = [];
+
         foreach ($taskOutputs as $taskOutput) {
             /* @var $taskOutput TaskOutput */
             $decodedTaskOutput = json_decode($taskOutput->getOutput());
-            
+
             foreach ($decodedTaskOutput as $linkIntegrityResult) {
                 if (!$this->contains($linkIntegrityResults, $linkIntegrityResult)) {
                     $linkIntegrityResults[] = $linkIntegrityResult;
                 }
             }
         }
-        
+
         return $linkIntegrityResults;
     }
-    
-    
+
     /**
-     * 
      * @param array $linkIntegrityResults
      * @param \stdClass $linkIntegrityResult
-     * @return boolean
+     *
+     * @return bool
      */
-    private function contains($linkIntegrityResults, $linkIntegrityResult) {
+    private function contains($linkIntegrityResults, $linkIntegrityResult)
+    {
         foreach ($linkIntegrityResults as $comparator) {
             if ($this->areLinkIntegrityResultsEqual($comparator, $linkIntegrityResult)) {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
-    
+
     /**
-     * 
      * @param \stdClass $a
      * @param \stdClass $b
-     * @return boolean
+     *
+     * @return bool
      */
-    private function areLinkIntegrityResultsEqual($a, $b) {
+    private function areLinkIntegrityResultsEqual($a, $b)
+    {
         $properties = array('context', 'state', 'type', 'url');
-        
+
         foreach ($properties as $property) {
             if (!isset($a->$property)) {
                 return false;
             }
-            
+
             if (!isset($b->$property)) {
                 return false;
             }
-            
+
             if ($a->$property != $b->$property) {
                 return false;
             }
         }
-        
+
         return true;
-    } 
-    
+    }
 }
