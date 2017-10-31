@@ -358,14 +358,8 @@ class TaskRepository extends EntityRepository
         $queryBuilder = $this->createQueryBuilder('Task');
         $queryBuilder->select('Task');
 
-        $stateConditions = array();
-
-        $stateIndex = 0;
-        foreach ($states as $state) {
-            $stateConditions[] = '(Task.state = :State'.$stateIndex.')';
-            $queryBuilder->setParameter('State'.$stateIndex, $state);
-            $stateIndex++;
-        }
+        $stateCondition = 'Task.state IN (:States)';
+        $queryBuilder->setParameter('States', $states);
 
         $urlConditions = array();
 
@@ -379,7 +373,7 @@ class TaskRepository extends EntityRepository
         $queryBuilder->where(sprintf(
             'Task.type = :TaskType AND (%s) AND (%s)',
             implode(' OR ', $urlConditions),
-            implode(' OR ', $stateConditions)
+            $stateCondition
 
         ));
 

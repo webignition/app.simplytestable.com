@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
@@ -102,10 +103,8 @@ class HappyPathTest extends AbstractBaseTestCase
 
     public function testTaskStates()
     {
-        $taskService = $this->container->get('simplytestable.services.taskservice');
-
         foreach ($this->getJob()->getTasks() as $task) {
-            $this->assertEquals($taskService->getQueuedState(), $task->getState());
+            $this->assertEquals(TaskService::QUEUED_STATE, $task->getState()->getName());
         }
     }
 

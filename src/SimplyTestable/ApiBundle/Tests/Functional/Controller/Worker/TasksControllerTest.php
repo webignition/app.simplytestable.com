@@ -346,7 +346,7 @@ class TasksControllerTest extends AbstractBaseTestCase
         $this->assertCount($limit, $resqueJobTaskIds);
 
         foreach ($resqueJobTaskIds as $resqueJobTaskId) {
-            $task = $taskService->getById($resqueJobTaskId);
+            $task = $taskService->getEntityRepository()->find($resqueJobTaskId);
             $this->assertEquals(TaskService::QUEUED_FOR_ASSIGNMENT_STATE, $task->getState()->getName());
         }
     }

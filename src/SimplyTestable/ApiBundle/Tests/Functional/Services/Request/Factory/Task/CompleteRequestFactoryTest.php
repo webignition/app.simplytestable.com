@@ -223,8 +223,12 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
 
         $taskService = \Mockery::mock(TaskService::class);
         $taskService
-            ->shouldReceive('getIncompleteStates')
-            ->andReturn($incompleteStates);
+            ->shouldReceive('getIncompleteStateNames')
+            ->andReturn([
+                TaskService::IN_PROGRESS_STATE,
+                TaskService::QUEUED_STATE,
+                TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+            ]);
 
         $taskService
             ->shouldReceive('getEquivalentTasks')
@@ -249,6 +253,19 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $stateService
             ->shouldReceive('fetch')
             ->andReturn($stateToFetch);
+
+        $stateService
+            ->shouldReceive('fetchCollection')
+            ->with([
+                TaskService::IN_PROGRESS_STATE,
+                TaskService::QUEUED_STATE,
+                TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+            ])
+            ->andReturn([
+                StateFactory::create(TaskService::IN_PROGRESS_STATE),
+                StateFactory::create(TaskService::QUEUED_STATE),
+                StateFactory::create(TaskService::QUEUED_FOR_ASSIGNMENT_STATE),
+            ]);
 
         return $stateService;
     }

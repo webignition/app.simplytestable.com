@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
@@ -107,6 +108,8 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
      */
     public function testCompleteActionNoMatchingTasks($postData, $routeParams)
     {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
         $this->setExpectedException(
             GoneHttpException::class
         );
@@ -122,7 +125,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
 
         $this->setJobTaskStates(
             $job,
-            $this->container->get('simplytestable.services.taskservice')->getInProgressState()
+            $stateService->fetch(TaskService::IN_PROGRESS_STATE)
         );
 
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
@@ -193,6 +196,8 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
         $expectedJobTaskStates,
         $expectedJobTaskOutputValues
     ) {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
         $this->setJobTypeConstraintLimits();
         $userFactory = new UserFactory($this->container);
 
@@ -208,7 +213,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
 
             $this->setJobTaskStates(
                 $job,
-                $this->container->get('simplytestable.services.taskservice')->getInProgressState()
+                $stateService->fetch(TaskService::IN_PROGRESS_STATE)
             );
 
             $jobs[] = $job;

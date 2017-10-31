@@ -163,7 +163,7 @@ class CompleteRequestFactory
             trim($this->routeParams[self::ROUTE_PARAM_CANONICAL_URL]),
             $taskType,
             trim($this->routeParams[self::ROUTE_PARAM_PARAMETER_HASH]),
-            $this->taskService->getIncompleteStates()
+            $this->stateService->fetchCollection($this->taskService->getIncompleteStateNames())
         );
 
         return (empty($tasks))

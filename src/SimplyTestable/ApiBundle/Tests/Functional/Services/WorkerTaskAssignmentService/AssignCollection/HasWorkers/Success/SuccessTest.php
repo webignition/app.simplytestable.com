@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services\WorkerTaskAssignmentService\AssignCollection\HasWorkers\Success;
 
+use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 use SimplyTestable\ApiBundle\Tests\Factory\HttpFixtureFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
@@ -49,12 +50,10 @@ abstract class SuccessTest extends ServiceTest
 
     public function testTasksAreAssigned()
     {
-        $taskService = $this->container->get('simplytestable.services.taskservice');
-
         $this->getService()->assignCollection($this->getTasks(), $this->getWorkers());
 
         foreach ($this->getTasks() as $task) {
-            $this->assertEquals($taskService->getInProgressState(), $task->getState());
+            $this->assertEquals(TaskService::IN_PROGRESS_STATE, $task->getState()->getName());
         }
     }
 

@@ -174,7 +174,7 @@ class JobService extends EntityService
 
         /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
         foreach ($tasks as $task) {
-            if ($this->taskService->isInProgress($task)) {
+            if ($task->getState()->getName() === TaskService::IN_PROGRESS_STATE) {
                 $this->taskService->setAwaitingCancellation($task);
             } else {
                 $this->taskService->cancel($task);
@@ -201,7 +201,7 @@ class JobService extends EntityService
     public function cancelIncompleteTasks(Job $job)
     {
         foreach ($job->getTasks() as $task) {
-            if (!$this->taskService->isCompleted($task)) {
+            if ($task->getState()->getName() !== TaskService::COMPLETED_STATE) {
                 $this->taskService->cancel($task);
             }
         }
@@ -275,7 +275,7 @@ class JobService extends EntityService
     {
         $incompleteTaskCount = $this->taskService->getEntityRepository()->getCountByJobAndStates(
             $job,
-            $this->taskService->getIncompleteStates()
+            $this->stateService->fetchCollection($this->taskService->getIncompleteStateNames())
         );
 
         return $incompleteTaskCount > 0;
@@ -359,15 +359,13 @@ class JobService extends EntityService
      */
     private function getCountOfTasksWithIssues(Job $job, $issueType)
     {
-        $statesToExclude = [
-            $this->taskService->getCancelledState(),
-            $this->taskService->getAwaitingCancellationState()
-        ];
-
         return $this->taskService->getEntityRepository()->getCountWithIssuesByJob(
             $job,
             $issueType,
-            $statesToExclude
+            $this->stateService->fetchCollection([
+                TaskService::CANCELLED_STATE,
+                TaskService::AWAITING_CANCELLATION_STATE,
+            ])
         );
     }
 
@@ -381,10 +379,10 @@ class JobService extends EntityService
     {
         return $this->taskService->getEntityRepository()->getCountByJobAndStates(
             $job,
-            [
-                $this->taskService->getCancelledState(),
-                $this->taskService->getAwaitingCancellationState()
-            ]
+            $this->stateService->fetchCollection([
+                TaskService::CANCELLED_STATE,
+                TaskService::AWAITING_CANCELLATION_STATE,
+            ])
         );
     }
 
@@ -396,7 +394,7 @@ class JobService extends EntityService
     public function getSkippedTaskCount(Job $job)
     {
         return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, [
-            $this->taskService->getSkippedState()
+            $this->stateService->fetch(TaskService::TASK_SKIPPED_STATE),
         ]);
     }
 
