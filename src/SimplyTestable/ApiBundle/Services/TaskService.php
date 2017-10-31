@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
@@ -277,7 +278,9 @@ class TaskService extends EntityService
 
         $output->generateHash();
 
-        $existingOutput = $this->getTaskOutputEntityRepository()->findOneBy([
+        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
+
+        $existingOutput = $taskOutputRepository->findOneBy([
             'hash' => $output->getHash(),
         ]);
 
@@ -298,18 +301,6 @@ class TaskService extends EntityService
         $task->clearRemoteId();
 
         $this->persistAndFlush($task);
-    }
-
-    /**
-     * @return TaskOutputRepository
-     */
-    private function getTaskOutputEntityRepository()
-    {
-        if (is_null($this->taskOutputRepository)) {
-            $this->taskOutputRepository = $this->entityManager->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
-        }
-
-        return $this->taskOutputRepository;
     }
 
     /**
