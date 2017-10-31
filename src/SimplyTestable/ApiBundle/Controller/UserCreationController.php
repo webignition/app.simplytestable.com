@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UserCreationController extends Controller
 {
@@ -54,7 +55,7 @@ class UserCreationController extends Controller
             if ($user->isEnabled()) {
                 return $this->redirect($this->generateUrl('user_get', [
                     'email_canonical' => $email
-                ], true));
+                ], UrlGeneratorInterface::ABSOLUTE_URL));
             }
 
             $user->setPlainPassword($password);
