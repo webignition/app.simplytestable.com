@@ -219,4 +219,13 @@ class TaskServiceTest extends AbstractBaseTestCase
             $this->assertFalse($this->taskService->isCancellable($this->task));
         }
     }
+
+    public function testGetIncompleteStateNames()
+    {
+        $this->assertEquals([
+            TaskService::IN_PROGRESS_STATE,
+            TaskService::QUEUED_STATE,
+            TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+        ], $this->taskService->getIncompleteStateNames());
+    }
 }
