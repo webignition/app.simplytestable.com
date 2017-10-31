@@ -81,6 +81,16 @@ class TaskService extends EntityService
     ];
 
     /**
+     * @var string[]
+     */
+    private $cancellableStates = [
+        self::AWAITING_CANCELLATION_STATE,
+        self::IN_PROGRESS_STATE,
+        self::QUEUED_STATE,
+        self::QUEUED_FOR_ASSIGNMENT_STATE,
+    ];
+
+    /**
      * @param EntityManager $entityManager
      * @param StateService $stateService
      * @param ResqueQueueService $resqueQueueService
@@ -197,32 +207,6 @@ class TaskService extends EntityService
      *
      * @return bool
      */
-    public function isCancellable(Task $task)
-    {
-        if ($this->isAwaitingCancellation($task)) {
-            return true;
-        }
-
-        if ($this->isInProgress($task)) {
-            return true;
-        }
-
-        if ($this->isQueued($task)) {
-            return true;
-        }
-
-        if ($this->isQueuedForAssignment($task)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @return bool
-     */
     public function isCompleted(Task $task)
     {
         return $task->getState()->getName() === self::COMPLETED_STATE;
@@ -305,7 +289,28 @@ class TaskService extends EntityService
      */
     public function isFinished(Task $task)
     {
-        return in_array($task->getState()->getName(), $this->finishedStateNames);
+        return $this->isTaskInStates($task, $this->finishedStateNames);
+    }
+
+    /**
+     * @param Task $task
+     *
+     * @return bool
+     */
+    public function isCancellable(Task $task)
+    {
+        return $this->isTaskInStates($task, $this->cancellableStates);
+    }
+
+    /**
+     * @param Task $task
+     * @param string $stateNames
+     *
+     * @return bool
+     */
+    private function isTaskInStates(Task $task, $stateNames)
+    {
+        return in_array($task->getState()->getName(), $stateNames);
     }
 
     /**
