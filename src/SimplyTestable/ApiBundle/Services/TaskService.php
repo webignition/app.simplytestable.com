@@ -154,14 +154,6 @@ class TaskService extends EntityService
     /**
      * @return State
      */
-    public function getQueuedState()
-    {
-        return $this->stateService->fetch(self::QUEUED_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getSkippedState()
     {
         return $this->stateService->fetch(self::TASK_SKIPPED_STATE);
@@ -230,7 +222,7 @@ class TaskService extends EntityService
      */
     public function isQueued(Task $task)
     {
-        return $task->getState()->equals($this->getQueuedState());
+        return $task->getState()->getName() === self::QUEUED_STATE;
     }
 
     /**
@@ -387,7 +379,9 @@ class TaskService extends EntityService
      */
     public function reQueue(Task $task)
     {
-        $task->setState($this->getQueuedState());
+        $queuedState = $this->stateService->fetch(self::QUEUED_STATE);
+
+        $task->setState($queuedState);
         $this->getManager()->persist($task);
         return $task;
     }
@@ -530,7 +524,9 @@ class TaskService extends EntityService
      */
     public function getJobsWithQueuedTasks()
     {
-        return $this->getEntityRepository()->findJobsbyTaskState($this->getQueuedState());
+        return $this->getEntityRepository()->findJobsbyTaskState(
+            $this->stateService->fetch(self::QUEUED_STATE)
+        );
     }
 
     /**

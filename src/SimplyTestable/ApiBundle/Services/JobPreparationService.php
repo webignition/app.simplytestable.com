@@ -242,7 +242,7 @@ class JobPreparationService
     {
         $requestedTaskTypes = $job->getRequestedTaskTypes();
 
-        $newTaskState = $this->taskService->getQueuedState();
+        $newTaskState = $this->stateService->fetch(TaskService::QUEUED_STATE);
 
         foreach ($urls as $url) {
             $comparatorUrl = new NormalisedUrl($url);

@@ -90,9 +90,13 @@ class WorkerTaskAssignmentService extends WorkerTaskService
                 return $this->assignCollection($failedTasks, $nonFailedWorkers);
             }
 
-            foreach ($failedTasks as $task) {
-                $task->setState($this->taskService->getQueuedState());
-                $this->taskService->persistAndFlush($task);
+            if (!empty($failedTasks)) {
+                $taskQueuedState = $this->stateService->fetch(TaskService::QUEUED_STATE);
+
+                foreach ($failedTasks as $task) {
+                    $task->setState($taskQueuedState);
+                    $this->taskService->persistAndFlush($task);
+                }
             }
 
             return self::ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE;

@@ -194,10 +194,12 @@ class CrawlJobContainerService extends EntityService
             );
         }
 
+        $taskQueuedState = $this->stateService->fetch(TaskService::QUEUED_STATE);
+
         $task = new Task();
         $task->setJob($crawlJobContainer->getCrawlJob());
         $task->setParameters(json_encode($parameters));
-        $task->setState($this->taskService->getQueuedState());
+        $task->setState($taskQueuedState);
         $task->setType($this->taskTypeService->getByName('URL discovery'));
         $task->setUrl($url);
 
