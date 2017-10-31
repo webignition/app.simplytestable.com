@@ -174,7 +174,7 @@ class JobService extends EntityService
 
         /* @var $task \SimplyTestable\ApiBundle\Entity\Task\Task */
         foreach ($tasks as $task) {
-            if ($this->taskService->isInProgress($task)) {
+            if ($task->getState()->getName() === TaskService::IN_PROGRESS_STATE) {
                 $this->taskService->setAwaitingCancellation($task);
             } else {
                 $this->taskService->cancel($task);

@@ -211,16 +211,6 @@ class TaskService extends EntityService
     }
 
     /**
-     *
-     * @param Task $task
-     * @return bool
-     */
-    public function isInProgress(Task $task)
-    {
-        return $task->getState()->getName() === self::IN_PROGRESS_STATE;
-    }
-
-    /**
      * @param Task $task
      *
      * @return bool
