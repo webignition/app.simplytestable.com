@@ -245,4 +245,19 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->assertEquals($originalTaskUrl, $retrievedTask->getUrl());
         $this->assertEquals('foo', $this->task->getUrl());
     }
+
+    public function testPersistAndFlush()
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $this->task->setUrl('foo');
+        $this->taskService->persistAndFlush($this->task);
+
+        $entityManager->clear();
+
+        $retrievedTask = $this->taskService->getEntityRepository()->find($this->task->getId());
+
+        $this->assertEquals('foo', $retrievedTask->getUrl());
+        $this->assertEquals('foo', $this->task->getUrl());
+    }
 }
