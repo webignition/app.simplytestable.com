@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Tests\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -280,5 +281,114 @@ class TaskServiceTest extends AbstractBaseTestCase
         $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
         $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
         $this->assertNull($this->task->getTimePeriod()->getEndDateTime());
+    }
+
+    public function testCompleteIncorrectState()
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $completedState = $stateService->fetch(TaskService::COMPLETED_STATE);
+
+        $incorrectStateNames = $this->taskService->getFinishedStateNames();
+
+        foreach ($incorrectStateNames as $stateName) {
+            $this->task->setState($stateService->fetch($stateName));
+
+            $this->taskService->complete($this->task, new \DateTime(), new Output(), $completedState);
+
+            $this->assertEquals($stateName, $this->task->getState()->getName());
+        }
+    }
+
+    public function testCompleteHasExistingOutput()
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $completedState = $stateService->fetch(TaskService::COMPLETED_STATE);
+
+        $output = new Output();
+        $output->generateHash();
+
+        $entityManager->persist($output);
+        $entityManager->flush();
+
+        $this->taskService->complete($this->task, new \DateTime(), $output, $completedState);
+
+        $this->assertEquals($output->getId(), $this->task->getOutput()->getId());
+    }
+
+    /**
+     * @dataProvider completeSuccessDataProvider
+     *
+     * @param array $taskValues
+     * @param \DateTime $endDateTime
+     * @param string $outputContent
+     * @param string $stateName
+     */
+    public function testCompleteSuccess($taskValues, $endDateTime, $outputContent, $stateName)
+    {
+        if (!empty($taskValues)) {
+            if (isset($taskValues[TaskFactory::KEY_WORKER])) {
+                $workerFactory = new WorkerFactory($this->container);
+                $worker = $workerFactory->create([
+                    WorkerFactory::KEY_HOSTNAME => $taskValues[TaskFactory::KEY_WORKER],
+                ]);
+
+                $taskValues[TaskFactory::KEY_WORKER] = $worker;
+            }
+
+            if (isset($taskValues[TaskFactory::KEY_TIME_PERIOD])) {
+                $timePeriodFactory = new TimePeriodFactory($this->container);
+                $timePeriod = $timePeriodFactory->create($taskValues[TaskFactory::KEY_TIME_PERIOD]);
+
+                $taskValues[TaskFactory::KEY_TIME_PERIOD] = $timePeriod;
+            }
+
+            $taskFactory = new TaskFactory($this->container);
+            $taskFactory->update($this->task, $taskValues);
+        }
+
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $state = $stateService->fetch($stateName);
+
+        $output = new Output();
+        $output->setOutput($outputContent);
+
+        $this->taskService->complete($this->task, $endDateTime, $output, $state);
+
+        $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
+        $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
+        $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getEndDateTime());
+
+        $this->assertEquals($outputContent, $this->task->getOutput()->getOutput());
+        $this->assertEquals($stateName, $this->task->getState()->getName());
+        $this->assertNull($this->task->getWorker());
+        $this->assertNull($this->task->getRemoteId());
+    }
+
+    /**
+     * @return array
+     */
+    public function completeSuccessDataProvider()
+    {
+        return [
+            'no worker, no remote id, no time period' => [
+                'taskValues' => [],
+                'endDateTime' => new \DateTime('2010-01-01 12:00:00'),
+                'outputContent' => 'foo',
+                'stateName' => TaskService::COMPLETED_STATE,
+            ],
+            'has worker, has remote id, has time period' => [
+                'taskValues' => [
+                    TaskFactory::KEY_WORKER => 'worker.simplytestable.com',
+                    TaskFactory::KEY_REMOTE_ID => 1,
+                    TaskFactory::KEY_TIME_PERIOD => [
+                        TimePeriodFactory::KEY_START_DATE_TIME => new \DateTime(),
+                    ],
+                ],
+                'endDateTime' => new \DateTime('2010-01-01 12:00:00'),
+                'outputContent' => 'foo',
+                'stateName' => TaskService::COMPLETED_STATE,
+            ],
+        ];
     }
 }

@@ -260,23 +260,19 @@ class TaskService extends EntityService
      * @param \DateTime $endDateTime
      * @param TaskOutput $output
      * @param State $state
-     *
-     * @return Task
      */
-    public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state, $flush = true)
+    public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state)
     {
         $taskIsInCorrectState = false;
 
-        $incompleteStates = $this->stateService->fetchCollection($this->getIncompleteStateNames());
-
-        foreach ($incompleteStates as $incompleteState) {
-            if ($task->getState()->equals($incompleteState)) {
+        foreach ($this->getIncompleteStateNames() as $incompleteStateName) {
+            if ($task->getState()->getName() === $incompleteStateName) {
                 $taskIsInCorrectState = true;
             }
         }
 
         if (!$taskIsInCorrectState) {
-            return $task;
+            return;
         }
 
         $output->generateHash();
@@ -301,7 +297,7 @@ class TaskService extends EntityService
         $task->clearWorker();
         $task->clearRemoteId();
 
-        return $this->persistAndFlush($task);
+        $this->persistAndFlush($task);
     }
 
     /**
