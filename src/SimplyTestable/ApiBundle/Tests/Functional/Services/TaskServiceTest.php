@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskFactory;
@@ -390,5 +391,26 @@ class TaskServiceTest extends AbstractBaseTestCase
                 'stateName' => TaskService::COMPLETED_STATE,
             ],
         ];
+    }
+
+    public function testGetAvailableStateNames()
+    {
+        $this->assertEquals([
+            TaskService::CANCELLED_STATE,
+            TaskService::QUEUED_STATE,
+            TaskService::IN_PROGRESS_STATE,
+            TaskService::COMPLETED_STATE,
+            TaskService::AWAITING_CANCELLATION_STATE,
+            TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+            TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+            TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+            TaskService::TASK_SKIPPED_STATE
+        ], $this->taskService->getAvailableStateNames());
+    }
+
+    public function testGetEntityRepository()
+    {
+        $this->assertInstanceOf(TaskRepository::class, $this->taskService->getEntityRepository());
     }
 }
