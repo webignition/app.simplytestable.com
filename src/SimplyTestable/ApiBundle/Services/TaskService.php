@@ -306,16 +306,6 @@ class TaskService extends EntityService
     /**
      * @param Job $job
      *
-     * @return array
-     */
-    public function getUrlsByJob(Job $job)
-    {
-        return $this->getEntityRepository()->findUrlsByJob($job);
-    }
-
-    /**
-     * @param Job $job
-     *
      * @return Task[]
      */
     public function getAwaitingCancellationByJob(Job $job)
