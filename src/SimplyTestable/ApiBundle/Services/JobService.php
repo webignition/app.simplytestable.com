@@ -359,15 +359,13 @@ class JobService extends EntityService
      */
     private function getCountOfTasksWithIssues(Job $job, $issueType)
     {
-        $statesToExclude = [
-            $this->taskService->getCancelledState(),
-            $this->taskService->getAwaitingCancellationState()
-        ];
-
         return $this->taskService->getEntityRepository()->getCountWithIssuesByJob(
             $job,
             $issueType,
-            $statesToExclude
+            $this->stateService->fetchCollection([
+                TaskService::CANCELLED_STATE,
+                TaskService::AWAITING_CANCELLATION_STATE,
+            ])
         );
     }
 
@@ -381,10 +379,10 @@ class JobService extends EntityService
     {
         return $this->taskService->getEntityRepository()->getCountByJobAndStates(
             $job,
-            [
-                $this->taskService->getCancelledState(),
-                $this->taskService->getAwaitingCancellationState()
-            ]
+            $this->stateService->fetchCollection([
+                TaskService::CANCELLED_STATE,
+                TaskService::AWAITING_CANCELLATION_STATE,
+            ])
         );
     }
 

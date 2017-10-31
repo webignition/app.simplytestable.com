@@ -94,7 +94,9 @@ class TaskService extends EntityService
             return $task;
         }
 
-        $task->setState($this->getCancelledState());
+        $cancelledState = $this->stateService->fetch(self::CANCELLED_STATE);
+
+        $task->setState($cancelledState);
         $task->clearWorker();
 
         if ($task->getTimePeriod() instanceof TimePeriod) {
@@ -174,14 +176,6 @@ class TaskService extends EntityService
     /**
      * @return State
      */
-    public function getCancelledState()
-    {
-        return $this->stateService->fetch(self::CANCELLED_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getQueuedForAssignmentState()
     {
         return $this->stateService->fetch(self::QUEUED_FOR_ASSIGNMENT_STATE);
@@ -234,7 +228,7 @@ class TaskService extends EntityService
      */
     public function isCancelled(Task $task)
     {
-        return $task->getState()->equals($this->getCancelledState());
+        return $task->getState()->getName() === self::CANCELLED_STATE;
     }
 
     /**
