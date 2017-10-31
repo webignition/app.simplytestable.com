@@ -185,16 +185,6 @@ class TaskService extends EntityService
      *
      * @return bool
      */
-    public function isCancelled(Task $task)
-    {
-        return $task->getState()->getName() === self::CANCELLED_STATE;
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @return bool
-     */
     public function isCompleted(Task $task)
     {
         return $task->getState()->getName() === self::COMPLETED_STATE;
