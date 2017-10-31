@@ -178,14 +178,6 @@ class TaskService extends EntityService
     /**
      * @return State
      */
-    public function getFailedRetryLimitReachedState()
-    {
-        return $this->stateService->fetch(self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getSkippedState()
     {
         return $this->stateService->fetch(self::TASK_SKIPPED_STATE);
@@ -294,7 +286,7 @@ class TaskService extends EntityService
      */
     public function isFailedRetryLimitReached(Task $task)
     {
-        return $task->getState()->equals($this->getFailedRetryLimitReachedState());
+        return $task->getState()->getName() === self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE;
     }
 
 
