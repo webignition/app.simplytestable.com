@@ -32,6 +32,9 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
      */
     private $parentJob;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -41,7 +44,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
         $job = $jobFactory->createResolveAndPrepare([
             'type' => JobTypeService::FULL_SITE_NAME,
             'siteRootUrl' => 'http://example.com',
-            'testTypes' => ['html validation',],
+            'testTypes' => ['css validation',],
             'testTypeOptions' => [],
             'parameters' => [],
             'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()

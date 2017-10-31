@@ -34,7 +34,7 @@ class TaskController extends Controller
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
-        $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoinerservicefactory');
+        $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -68,11 +68,15 @@ class TaskController extends Controller
         foreach ($tasks as $task) {
             $currentTaskOutput = $task->getOutput();
 
-            if (!empty($currentTaskOutput) && $taskOutputJoinerFactory->hasTaskOutputJoiner($task)) {
-                $output = $taskOutputJoinerFactory->getTaskOutputJoiner($task)->join(array(
-                    $task->getOutput(),
-                    $output
-                ));
+            if (!empty($currentTaskOutput)) {
+                $taskOutputJoiner = $taskOutputJoinerFactory->getPreprocessor($task->getType());
+
+                if (!empty($taskOutputJoiner)) {
+                    $output = $taskOutputJoiner->join(array(
+                        $task->getOutput(),
+                        $output
+                    ));
+                }
             }
 
             $taskService->complete($task, $endDateTime, $output, $state, false);
