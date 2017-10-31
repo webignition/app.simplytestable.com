@@ -152,14 +152,6 @@ class TaskService extends EntityService
     }
 
     /**
-     * @return State
-     */
-    public function getSkippedState()
-    {
-        return $this->stateService->fetch(self::TASK_SKIPPED_STATE);
-    }
-
-    /**
      * @param Task $task
      *
      * @return bool
@@ -282,7 +274,7 @@ class TaskService extends EntityService
      */
     public function isSkipped(Task $task)
     {
-        return $task->getState()->equals($this->getSkippedState());
+        return $task->getState()->getName() === self::TASK_SKIPPED_STATE;
     }
 
     /**

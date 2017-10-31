@@ -394,7 +394,7 @@ class JobService extends EntityService
     public function getSkippedTaskCount(Job $job)
     {
         return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, [
-            $this->taskService->getSkippedState()
+            $this->stateService->fetch(TaskService::TASK_SKIPPED_STATE),
         ]);
     }
 
