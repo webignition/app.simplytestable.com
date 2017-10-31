@@ -261,20 +261,6 @@ class TaskService extends EntityService
     }
 
     /**
-     * @param Task $task
-     *
-     * @return Task
-     */
-    public function reQueue(Task $task)
-    {
-        $queuedState = $this->stateService->fetch(self::QUEUED_STATE);
-
-        $task->setState($queuedState);
-        $this->getManager()->persist($task);
-        return $task;
-    }
-
-    /**
      * @param int $remoteId
      *
      * @return Task
