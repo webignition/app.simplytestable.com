@@ -205,16 +205,6 @@ class TaskService extends EntityService
      *
      * @return bool
      */
-    public function isFailedRetryAvailable(Task $task)
-    {
-        return $task->getState()->getName() === self::TASK_FAILED_RETRY_AVAILABLE_STATE;
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @return bool
-     */
     public function isSkipped(Task $task)
     {
         return $task->getState()->getName() === self::TASK_SKIPPED_STATE;
