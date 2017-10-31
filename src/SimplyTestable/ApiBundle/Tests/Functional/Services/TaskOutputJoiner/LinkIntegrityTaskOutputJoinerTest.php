@@ -100,7 +100,7 @@ class LinkIntegrityTaskOutputJoinerTest extends AbstractBaseTestCase
             }
 
             if (isset($outputValues['warningCount'])) {
-                $output->setErrorCount($outputValues['warningCount']);
+                $output->setWarningCount($outputValues['warningCount']);
             }
 
             if (isset($outputValues['contentType'])) {
