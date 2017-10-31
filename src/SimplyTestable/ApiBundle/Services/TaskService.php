@@ -185,16 +185,6 @@ class TaskService extends EntityService
      *
      * @return bool
      */
-    public function isCompleted(Task $task)
-    {
-        return $task->getState()->getName() === self::COMPLETED_STATE;
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @return bool
-     */
     public function isQueued(Task $task)
     {
         return $task->getState()->getName() === self::QUEUED_STATE;

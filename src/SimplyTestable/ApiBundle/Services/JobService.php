@@ -201,7 +201,7 @@ class JobService extends EntityService
     public function cancelIncompleteTasks(Job $job)
     {
         foreach ($job->getTasks() as $task) {
-            if (!$this->taskService->isCompleted($task)) {
+            if ($task->getState()->getName() !== TaskService::COMPLETED_STATE) {
                 $this->taskService->cancel($task);
             }
         }
