@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -221,6 +222,7 @@ class JobController extends Controller
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $taskService = $this->get('simplytestable.services.taskservice');
         $stateService = $this->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobRetrievalService->setUser($this->getUser());
 
@@ -283,7 +285,14 @@ class JobController extends Controller
             );
         }
 
-        $tasksAwaitingCancellation = $taskService->getAwaitingCancellationByJob($job);
+        $taskRepository = $entityManager->getRepository(Task::class);
+        $taskAwaitingCancellationState = $stateService->fetch(TaskService::AWAITING_CANCELLATION_STATE);
+
+        $tasksAwaitingCancellation = $taskRepository->findBy([
+            'job' => $job,
+            'state' => $taskAwaitingCancellationState,
+        ]);
+
         $taskIdsToCancel = array();
 
         foreach ($tasksAwaitingCancellation as $task) {

@@ -304,21 +304,6 @@ class TaskService extends EntityService
     }
 
     /**
-     * @param Job $job
-     *
-     * @return Task[]
-     */
-    public function getAwaitingCancellationByJob(Job $job)
-    {
-        $awaitingCancellationState = $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
-
-        return $this->getEntityRepository()->findBy([
-            'job' => $job,
-            'state' => $awaitingCancellationState,
-        ]);
-    }
-
-    /**
      * @return Job[]
      */
     public function getJobsWithQueuedTasks()
