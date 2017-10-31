@@ -115,14 +115,20 @@ class TaskService extends EntityService
     }
 
     /**
+     * @return string[]
+     */
+    public function getFinishedStateNames()
+    {
+        return $this->finishedStateNames;
+    }
+
+    /**
      * @param Task $task
-     *
-     * @return Task
      */
     public function cancel(Task $task)
     {
         if ($this->isFinished($task)) {
-            return $task;
+            return;
         }
 
         $cancelledState = $this->stateService->fetch(self::CANCELLED_STATE);
@@ -130,17 +136,18 @@ class TaskService extends EntityService
         $task->setState($cancelledState);
         $task->clearWorker();
 
-        if ($task->getTimePeriod() instanceof TimePeriod) {
-            $task->getTimePeriod()->setEndDateTime(new \DateTime());
-        } else {
-            $task->setTimePeriod(new TimePeriod());
-            $task->getTimePeriod()->setStartDateTime(new \DateTime());
-            $task->getTimePeriod()->setEndDateTime(new \DateTime());
+        $timePeriod = $task->getTimePeriod();
+
+        if (empty($timePeriod)) {
+            $timePeriod = new TimePeriod();
+            $timePeriod->setStartDateTime(new \DateTime());
+
+            $task->setTimePeriod($timePeriod);
         }
 
-        $this->getManager()->persist($task);
+        $timePeriod->setEndDateTime(new \DateTime());
 
-        return $task;
+        $this->getManager()->persist($task);
     }
 
     /**
