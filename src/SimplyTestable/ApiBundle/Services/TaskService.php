@@ -5,15 +5,16 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
-use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 
-class TaskService extends EntityService {
-
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Task\Task';
+class TaskService extends EntityService
+{
     const CANCELLED_STATE = 'task-cancelled';
     const QUEUED_STATE = 'task-queued';
     const IN_PROGRESS_STATE = 'task-in-progress';
@@ -25,13 +26,27 @@ class TaskService extends EntityService {
     const TASK_FAILED_RETRY_LIMIT_REACHED_STATE = 'task-failed-retry-limit-reached';
     const TASK_SKIPPED_STATE = 'task-skipped';
 
+    /**
+     * @var StateService
+     */
+    private $stateService;
 
     /**
-     * Collection of all the states a task could be in
-     *
-     * @var array
+     * @var ResqueQueueService
      */
-    private $availableStateNames = array(
+    private $resqueQueueService;
+
+    /**
+     * @var TaskOutputRepository
+     */
+    private $taskOutputRepository;
+
+    /**
+     * All the states a task could be in
+     *
+     * @var string[]
+     */
+    private $availableStateNames = [
         self::CANCELLED_STATE,
         self::QUEUED_STATE,
         self::IN_PROGRESS_STATE,
@@ -42,58 +57,39 @@ class TaskService extends EntityService {
         self::TASK_FAILED_RETRY_AVAILABLE_STATE,
         self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
         self::TASK_SKIPPED_STATE
-    );
+    ];
 
     /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\StateService
-     */
-    private $stateService;
-
-
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Services\Resque\QueueService
-     */
-    private $resqueQueueService;
-
-    /**
-     *
-     * @var \SimplyTestable\ApiBundle\Repository\TaskOutputRepository
-     */
-    private $taskOutputRepository;
-
-    /**
-     *
      * @param EntityManager $entityManager
-     * @param \SimplyTestable\ApiBundle\Services\StateService $stateService
+     * @param StateService $stateService
+     * @param ResqueQueueService $resqueQueueService
      */
     public function __construct(
-            EntityManager $entityManager,
-            \SimplyTestable\ApiBundle\Services\StateService $stateService,
-            \SimplyTestable\ApiBundle\Services\Resque\QueueService $resqueQueueService)
-    {
+        EntityManager $entityManager,
+        StateService $stateService,
+        ResqueQueueService $resqueQueueService
+    ) {
         parent::__construct($entityManager);
+
         $this->stateService = $stateService;
         $this->resqueQueueService = $resqueQueueService;
     }
 
-
     /**
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
+    protected function getEntityName()
+    {
+        return Task::class;
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return \SimplyTestable\ApiBundle\Entity\Task\Task
+     *
+     * @return Task
      */
-    public function cancel(Task $task) {
+    public function cancel(Task $task)
+    {
         if ($this->isFinished($task)) {
             return $task;
         }
@@ -114,8 +110,13 @@ class TaskService extends EntityService {
         return $task;
     }
 
-
-    public function setAwaitingCancellation(Task $task) {
+    /**
+     * @param Task $task
+     *
+     * @return Task
+     */
+    public function setAwaitingCancellation(Task $task)
+    {
         if ($this->isAwaitingCancellation($task)) {
             return $task;
         }
@@ -134,128 +135,125 @@ class TaskService extends EntityService {
     }
 
     /**
-     *
      * @param int $id
-     * @return \SimplyTestable\ApiBundle\Entity\Task\Task
+     *
+     * @return Task
      */
-    public function getById($id) {
-        return $this->getEntityRepository()->find($id);
+    public function getById($id)
+    {
+        /* @var Task $task */
+        $task = $this->getEntityRepository()->find($id);
+
+        return $task;
     }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getQueuedState() {
+    public function getQueuedState()
+    {
         return $this->stateService->fetch(self::QUEUED_STATE);
     }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getInProgressState() {
+    public function getInProgressState()
+    {
         return $this->stateService->fetch(self::IN_PROGRESS_STATE);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getCompletedState() {
+    public function getCompletedState()
+    {
         return $this->stateService->fetch(self::COMPLETED_STATE);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getCancelledState() {
+    public function getCancelledState()
+    {
         return $this->stateService->fetch(self::CANCELLED_STATE);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getQueuedForAssignmentState() {
+    public function getQueuedForAssignmentState()
+    {
         return $this->stateService->fetch(self::QUEUED_FOR_ASSIGNMENT_STATE);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getAwaitingCancellationState() {
+    public function getAwaitingCancellationState()
+    {
         return $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getFailedNoRetryAvailableState() {
+    public function getFailedNoRetryAvailableState()
+    {
         return $this->stateService->fetch(self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getFailedRetryAvailableState() {
+    public function getFailedRetryAvailableState()
+    {
         return $this->stateService->fetch(self::TASK_FAILED_RETRY_AVAILABLE_STATE);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getFailedRetryLimitReachedState() {
+    public function getFailedRetryLimitReachedState()
+    {
         return $this->stateService->fetch(self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Entity\State
+     * @return State
      */
-    public function getSkippedState() {
+    public function getSkippedState()
+    {
         return $this->stateService->fetch(self::TASK_SKIPPED_STATE);
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isCancelled(Task $task) {
+    public function isCancelled(Task $task)
+    {
         return $task->getState()->equals($this->getCancelledState());
     }
 
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isAwaitingCancellation(Task $task) {
+    public function isAwaitingCancellation(Task $task)
+    {
         return $task->getState()->equals($this->getAwaitingCancellationState());
     }
 
-
     /**
+     * @param Task $task
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
-     * @return boolean
+     * @return bool
      */
-    public function isCancellable(Task $task) {
+    public function isCancellable(Task $task)
+    {
         if ($this->isAwaitingCancellation($task)) {
             return true;
         }
@@ -275,63 +273,63 @@ class TaskService extends EntityService {
         return false;
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isCompleted(Task $task) {
+    public function isCompleted(Task $task)
+    {
         return $task->getState()->equals($this->getCompletedState());
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isQueued(Task $task) {
+    public function isQueued(Task $task)
+    {
         return $task->getState()->equals($this->getQueuedState());
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isQueuedForAssignment(Task $task) {
+    public function isQueuedForAssignment(Task $task)
+    {
         return $task->getState()->equals($this->getQueuedForAssignmentState());
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isFailedRetryAvailable(Task $task) {
+    public function isFailedRetryAvailable(Task $task)
+    {
         return $task->getState()->equals($this->getFailedRetryAvailableState());
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isFailedNoRetryAvailable(Task $task) {
+    public function isFailedNoRetryAvailable(Task $task)
+    {
         return $task->getState()->equals($this->getFailedNoRetryAvailableState());
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isFailedRetryLimitReached(Task $task) {
+    public function isFailedRetryLimitReached(Task $task)
+    {
         return $task->getState()->equals($this->getFailedRetryLimitReachedState());
     }
 
@@ -339,29 +337,29 @@ class TaskService extends EntityService {
     /**
      *
      * @param Task $task
-     * @return boolean
+     * @return bool
      */
     public function isInProgress(Task $task) {
         return $task->getState()->equals($this->getInProgressState());
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isSkipped(Task $task) {
+    public function isSkipped(Task $task)
+    {
         return $task->getState()->equals($this->getSkippedState());
     }
 
-
     /**
-     *
      * @param Task $task
-     * @return boolean
+     *
+     * @return bool
      */
-    public function isFinished(Task $task) {
+    public function isFinished(Task $task)
+    {
         if ($this->isCompleted($task)) {
             return true;
         }
@@ -389,49 +387,48 @@ class TaskService extends EntityService {
         return false;
     }
 
-
     /**
-     *
-     * @return array
+     * @return State[]
      */
-    public function getIncompleteStates() {
-        return array(
+    public function getIncompleteStates()
+    {
+        return [
             $this->getInProgressState(),
             $this->getQueuedState(),
             $this->getQueuedForAssignmentState()
-        );
+        ];
     }
 
     /**
-     *
      * @param Task $task
+     *
      * @return Task
      */
-    public function persist(Task $task) {
+    public function persist(Task $task)
+    {
         $this->getManager()->persist($task);
         return $task;
     }
 
-
     /**
-     *
      * @param Task $task
+     *
      * @return Task
      */
-    public function persistAndFlush(Task $task) {
+    public function persistAndFlush(Task $task)
+    {
         $this->getManager()->persist($task);
         $this->getManager()->flush();
         return $task;
     }
 
-
     /**
-     *
      * @param Task $task
      * @param Worker $worker
      * @param int $remoteId
      */
-    public function setStarted(Task $task, Worker $worker, $remoteId) {
+    public function setStarted(Task $task, Worker $worker, $remoteId)
+    {
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());
 
@@ -441,40 +438,43 @@ class TaskService extends EntityService {
         $task->setWorker($worker);
     }
 
-
     /**
+     * @param Task $task
      *
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Task $task
      * @return Task
      */
-    public function reQueue(Task $task) {
+    public function reQueue(Task $task)
+    {
         $task->setState($this->getQueuedState());
         $this->getManager()->persist($task);
         return $task;
     }
 
-
     /**
-     *
      * @param int $remoteId
-     * @return \SimplyTestable\ApiBundle\Entity\Task\Task
+     *
+     * @return Task
      */
-    public function getByRemoteId($remoteId) {
-        return $this->getEntityRepository()->findBy(array(
+    public function getByRemoteId($remoteId)
+    {
+        /* @var Task $task */
+        $task = $this->getEntityRepository()->findBy([
             'remoteId' => $remoteId
-        ));
+        ]);
+
+        return $task;
     }
 
-
     /**
-     *
      * @param Task $task
      * @param \DateTime $endDateTime
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Output $output
-     * @param \SimplyTestable\ApiBundle\Entity\State $state
-     * @return \SimplyTestable\ApiBundle\Entity\Task\Task
+     * @param TaskOutput $output
+     * @param State $state
+     *
+     * @return Task
      */
-    public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state, $flush = true) {
+    public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state, $flush = true)
+    {
         $taskIsInCorrectState = false;
         foreach ($this->getIncompleteStates() as $incompleteState) {
             if ($task->getState()->equals($incompleteState)) {
@@ -511,12 +511,11 @@ class TaskService extends EntityService {
         return $this->persistAndFlush($task);
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TaskOutputRepository
+     * @return TaskOutputRepository
      */
-    private function getTaskOutputEntityRepository() {
+    private function getTaskOutputEntityRepository()
+    {
         if (is_null($this->taskOutputRepository)) {
             $this->taskOutputRepository = $this->entityManager->getRepository('SimplyTestable\ApiBundle\Entity\Task\Output');
         }
@@ -524,20 +523,20 @@ class TaskService extends EntityService {
         return $this->taskOutputRepository;
     }
 
-
     /**
-     *
      * @param Worker $worker
      * @param int $remoteId
+     *
      * @return Task
      */
-    public function getByWorkerAndRemoteId(Worker $worker, $remoteId) {
-        $tasks = $this->getEntityRepository()->findBy(array(
+    public function getByWorkerAndRemoteId(Worker $worker, $remoteId)
+    {
+        $tasks = $this->getEntityRepository()->findBy([
             'worker' => $worker,
             'remoteId' => $remoteId
-        ), array(
+        ], [
             'id' => 'DESC'
-        ), 1);
+        ], 1);
 
         if (count($tasks) === 0) {
             return null;
@@ -547,89 +546,89 @@ class TaskService extends EntityService {
     }
 
     /**
-     *
      * @param Job $job
+     *
      * @return int
      */
-    public function getUrlCountByJob(Job $job) {
+    public function getUrlCountByJob(Job $job)
+    {
         return $this->getEntityRepository()->findUrlCountByJob($job);
     }
 
-
     /**
-     *
      * @param Job $job
+     *
      * @return array
      */
-    public function getUrlsByJob(Job $job) {
+    public function getUrlsByJob(Job $job)
+    {
         return $this->getEntityRepository()->findUrlsByJob($job);
     }
 
-
     /**
-     *
      * @param Job $job
-     * @return array
+     *
+     * @return Task[]
      */
-    public function getAwaitingCancellationByJob(Job $job) {
-        return $this->getEntityRepository()->findBy(array(
+    public function getAwaitingCancellationByJob(Job $job)
+    {
+        return $this->getEntityRepository()->findBy([
             'job' => $job,
             'state' => $this->getAwaitingCancellationState()
-        ));
+        ]);
     }
 
-
     /**
-     *
-     * @return array
+     * @return Job[]
      */
-    public function getJobsWithQueuedTasks() {
+    public function getJobsWithQueuedTasks()
+    {
         return $this->getEntityRepository()->findJobsbyTaskState($this->getQueuedState());
     }
 
     /**
-     *
      * @param Job $job
-     * @return integer
+     *
+     * @return int
      */
-    public function getCountByJob(Job $job) {
+    public function getCountByJob(Job $job)
+    {
         return $this->getEntityRepository()->getCountByJob($job);
     }
 
-
     /**
-     *
      * @return array
      */
-    public function getAvailableStateNames() {
+    public function getAvailableStateNames()
+    {
         return $this->availableStateNames;
     }
 
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TaskRepository
+     * @return TaskRepository
      */
-    public function getEntityRepository() {
+    public function getEntityRepository()
+    {
         return parent::getEntityRepository();
     }
 
-
     /**
-     *
      * @param string $url
-     * @param \SimplyTestable\ApiBundle\Entity\Task\Type\Type $taskType
+     * @param TaskType $taskType
      * @param string $parameter_hash
-     * @param array $states
-     * @return array
+     * @param State[] $states
+     *
+     * @return Task[]
      */
-    public function getEquivalentTasks($url, TaskType $taskType, $parameter_hash, $states) {
+    public function getEquivalentTasks($url, TaskType $taskType, $parameter_hash, $states)
+    {
         $urlEncoder = new \webignition\Url\Encoder();
 
-        $urlSet = array_unique(array(
+        $urlSet = array_unique([
             $url,
             urldecode($url),
             (string)$urlEncoder->encode(new \webignition\Url\Url(($url)))
-        ));
+        ]);
 
         $tasks = $this->getEntityRepository()->getCollectionByUrlSetAndTaskTypeAndStates(
             $urlSet,
@@ -649,5 +648,4 @@ class TaskService extends EntityService {
 
         return $tasks;
     }
-
 }
