@@ -304,16 +304,6 @@ class TaskService extends EntityService
     }
 
     /**
-     * @return Job[]
-     */
-    public function getJobsWithQueuedTasks()
-    {
-        return $this->getEntityRepository()->findJobsbyTaskState(
-            $this->stateService->fetch(self::QUEUED_STATE)
-        );
-    }
-
-    /**
      * @param Job $job
      *
      * @return int
