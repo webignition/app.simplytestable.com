@@ -162,14 +162,6 @@ class TaskService extends EntityService
     /**
      * @return State
      */
-    public function getQueuedForAssignmentState()
-    {
-        return $this->stateService->fetch(self::QUEUED_FOR_ASSIGNMENT_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getSkippedState()
     {
         return $this->stateService->fetch(self::TASK_SKIPPED_STATE);
@@ -248,7 +240,7 @@ class TaskService extends EntityService
      */
     public function isQueuedForAssignment(Task $task)
     {
-        return $task->getState()->equals($this->getQueuedForAssignmentState());
+        return $task->getState()->getName() === self::QUEUED_FOR_ASSIGNMENT_STATE;
     }
 
     /**
