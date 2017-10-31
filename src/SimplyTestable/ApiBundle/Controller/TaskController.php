@@ -68,11 +68,15 @@ class TaskController extends Controller
         foreach ($tasks as $task) {
             $currentTaskOutput = $task->getOutput();
 
-            if (!empty($currentTaskOutput) && $taskOutputJoinerFactory->hasTaskOutputJoiner($task)) {
-                $output = $taskOutputJoinerFactory->getTaskOutputJoiner($task)->join(array(
-                    $task->getOutput(),
-                    $output
-                ));
+            if (!empty($currentTaskOutput)) {
+                $taskOutputJoiner = $taskOutputJoinerFactory->getPreprocessor($task->getType());
+
+                if (!empty($taskOutputJoiner)) {
+                    $output = $taskOutputJoiner->join(array(
+                        $task->getOutput(),
+                        $output
+                    ));
+                }
             }
 
             $taskService->complete($task, $endDateTime, $output, $state, false);

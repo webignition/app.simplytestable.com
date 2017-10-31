@@ -186,7 +186,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
      * @param array $expectedJobTaskStates
      * @param array $expectedJobTaskOutputValues
      */
-    public function testCompleteAction(
+    public function testCompleteActionSuccess(
         $jobCollectionData,
         $postData,
         $routeParams,

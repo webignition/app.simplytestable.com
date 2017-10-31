@@ -32,6 +32,9 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
      */
     private $parentJob;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
