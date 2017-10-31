@@ -60,6 +60,27 @@ class TaskService extends EntityService
     ];
 
     /**
+     * @var string[]
+     */
+    private $incompleteStateNames = [
+        self::IN_PROGRESS_STATE,
+        self::QUEUED_STATE,
+        self::QUEUED_FOR_ASSIGNMENT_STATE,
+    ];
+
+    /**
+     * @var string[]
+     */
+    private $finishedStateNames = [
+        self::CANCELLED_STATE,
+        self::COMPLETED_STATE,
+        self::TASK_FAILED_RETRY_AVAILABLE_STATE,
+        self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+        self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+        self::TASK_SKIPPED_STATE,
+    ];
+
+    /**
      * @param EntityManager $entityManager
      * @param StateService $stateService
      * @param ResqueQueueService $resqueQueueService
@@ -284,31 +305,7 @@ class TaskService extends EntityService
      */
     public function isFinished(Task $task)
     {
-        if ($this->isCompleted($task)) {
-            return true;
-        }
-
-        if ($this->isCancelled($task)) {
-            return true;
-        }
-
-        if ($this->isFailedRetryAvailable($task)) {
-            return true;
-        }
-
-        if ($this->isFailedNoRetryAvailable($task)) {
-            return true;
-        }
-
-        if ($this->isFailedRetryLimitReached($task)) {
-            return true;
-        }
-
-        if ($this->isSkipped($task)) {
-            return true;
-        }
-
-        return false;
+        return in_array($task->getState()->getName(), $this->finishedStateNames);
     }
 
     /**
@@ -316,11 +313,7 @@ class TaskService extends EntityService
      */
     public function getIncompleteStateNames()
     {
-        return [
-            self::IN_PROGRESS_STATE,
-            self::QUEUED_STATE,
-            self::QUEUED_FOR_ASSIGNMENT_STATE,
-        ];
+        return $this->incompleteStateNames;
     }
 
     /**
