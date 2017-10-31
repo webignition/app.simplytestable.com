@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use SimplyTestable\ApiBundle\Tests\Factory\InternetMediaTypeFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 
@@ -97,10 +96,6 @@ class LinkIntegrityTaskOutputJoinerTest extends AbstractBaseTestCase
 
             if (isset($outputValues['errorCount'])) {
                 $output->setErrorCount($outputValues['errorCount']);
-            }
-
-            if (isset($outputValues['warningCount'])) {
-                $output->setWarningCount($outputValues['warningCount']);
             }
 
             if (isset($outputValues['contentType'])) {
