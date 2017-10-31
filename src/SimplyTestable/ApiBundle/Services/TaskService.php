@@ -178,14 +178,6 @@ class TaskService extends EntityService
     /**
      * @return State
      */
-    public function getFailedNoRetryAvailableState()
-    {
-        return $this->stateService->fetch(self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getFailedRetryAvailableState()
     {
         return $this->stateService->fetch(self::TASK_FAILED_RETRY_AVAILABLE_STATE);
@@ -300,7 +292,7 @@ class TaskService extends EntityService
      */
     public function isFailedNoRetryAvailable(Task $task)
     {
-        return $task->getState()->equals($this->getFailedNoRetryAvailableState());
+        return $task->getState()->getName() === self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE;
     }
 
     /**
