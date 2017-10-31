@@ -162,14 +162,6 @@ class TaskService extends EntityService
     /**
      * @return State
      */
-    public function getInProgressState()
-    {
-        return $this->stateService->fetch(self::IN_PROGRESS_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getQueuedForAssignmentState()
     {
         return $this->stateService->fetch(self::QUEUED_FOR_ASSIGNMENT_STATE);
@@ -289,14 +281,14 @@ class TaskService extends EntityService
         return $task->getState()->getName() === self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE;
     }
 
-
     /**
      *
      * @param Task $task
      * @return bool
      */
-    public function isInProgress(Task $task) {
-        return $task->getState()->equals($this->getInProgressState());
+    public function isInProgress(Task $task)
+    {
+        return $task->getState()->getName() === self::IN_PROGRESS_STATE;
     }
 
     /**
@@ -385,11 +377,13 @@ class TaskService extends EntityService
      */
     public function setStarted(Task $task, Worker $worker, $remoteId)
     {
+        $inProgressState = $this->stateService->fetch(self::IN_PROGRESS_STATE);
+
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());
 
         $task->setRemoteId($remoteId);
-        $task->setState($this->getInProgressState());
+        $task->setState($inProgressState);
         $task->setTimePeriod($timePeriod);
         $task->setWorker($worker);
     }
