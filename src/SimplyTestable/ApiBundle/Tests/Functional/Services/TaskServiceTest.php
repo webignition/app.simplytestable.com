@@ -165,4 +165,30 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $this->assertEquals(TaskService::AWAITING_CANCELLATION_STATE, $this->task->getState()->getName());
     }
+
+    public function testIsFinished()
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $finishedStateNames = $this->taskService->getFinishedStateNames();
+
+        foreach ($finishedStateNames as $stateName) {
+            $this->task->setState($stateService->fetch($stateName));
+
+            $this->assertTrue($this->taskService->isFinished($this->task));
+        }
+
+        $unfinishedStateNames = [
+            TaskService::QUEUED_STATE,
+            TaskService::IN_PROGRESS_STATE,
+            TaskService::AWAITING_CANCELLATION_STATE,
+            TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
+        ];
+
+        foreach ($unfinishedStateNames as $stateName) {
+            $this->task->setState($stateService->fetch($stateName));
+
+            $this->assertFalse($this->taskService->isFinished($this->task));
+        }
+    }
 }
