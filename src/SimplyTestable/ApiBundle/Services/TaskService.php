@@ -215,16 +215,6 @@ class TaskService extends EntityService
      *
      * @return bool
      */
-    public function isFailedNoRetryAvailable(Task $task)
-    {
-        return $task->getState()->getName() === self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE;
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @return bool
-     */
     public function isFailedRetryLimitReached(Task $task)
     {
         return $task->getState()->getName() === self::TASK_FAILED_RETRY_LIMIT_REACHED_STATE;
