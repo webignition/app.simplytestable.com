@@ -170,14 +170,6 @@ class TaskService extends EntityService
     /**
      * @return State
      */
-    public function getCompletedState()
-    {
-        return $this->stateService->fetch(self::COMPLETED_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getQueuedForAssignmentState()
     {
         return $this->stateService->fetch(self::QUEUED_FOR_ASSIGNMENT_STATE);
@@ -268,7 +260,7 @@ class TaskService extends EntityService
      */
     public function isCompleted(Task $task)
     {
-        return $task->getState()->equals($this->getCompletedState());
+        return $task->getState()->getName() === self::COMPLETED_STATE;
     }
 
     /**

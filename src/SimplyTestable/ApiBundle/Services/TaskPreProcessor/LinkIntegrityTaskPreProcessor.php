@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
@@ -37,6 +38,11 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     private $httpClientService;
 
     /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
@@ -45,12 +51,14 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         TaskService $taskService,
         WebResourceService $webResourceService,
         HttpClientService $httpClientService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        StateService $stateService
     ) {
         $this->taskService = $taskService;
         $this->webResourceService = $webResourceService;
         $this->httpClientService = $httpClientService;
         $this->logger = $logger;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -167,11 +175,13 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
      */
     private function completeTask(Task $task, Output $output)
     {
+        $taskCompletedState = $this->stateService->fetch(TaskService::COMPLETED_STATE);
+
         $this->taskService->complete(
             $task,
             new \DateTime(),
             $output,
-            $this->taskService->getCompletedState()
+            $taskCompletedState
         );
     }
 

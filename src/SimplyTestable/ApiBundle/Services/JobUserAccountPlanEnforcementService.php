@@ -43,24 +43,32 @@ class JobUserAccountPlanEnforcementService
     private $jobTypeService;
 
     /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
      * @param UserAccountPlanService $userAccountPlanService
      * @param JobService $jobService
      * @param TaskService $taskService
      * @param TeamService $teamService
      * @param JobTypeService $jobTypeService
+     * @param StateService $stateService
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
         JobService $jobService,
         TaskService $taskService,
         TeamService $teamService,
-        JobTypeService $jobTypeService
+        JobTypeService $jobTypeService,
+        StateService $stateService
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
         $this->jobService = $jobService;
         $this->taskService = $taskService;
         $this->teamService = $teamService;
         $this->jobTypeService = $jobTypeService;
+        $this->stateService = $stateService;
     }
 
     /**
@@ -166,13 +174,13 @@ class JobUserAccountPlanEnforcementService
 
         return $this->taskService->getEntityRepository()->getCountByUsersAndStatesForPeriod(
             $this->teamService->getPeopleForUser($this->user),
-            [
-                $this->taskService->getCompletedState(),
-                $this->taskService->getFailedNoRetryAvailableState(),
-                $this->taskService->getFailedRetryAvailableState(),
-                $this->taskService->getFailedRetryLimitReachedState(),
-                $this->taskService->getSkippedState(),
-            ],
+            $this->stateService->fetchCollection([
+                TaskService::COMPLETED_STATE,
+                TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+                TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+                TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+                TaskService::TASK_SKIPPED_STATE,
+            ]),
             $startDateTime->format('Y-m-01'),
             $endDateTime->format('Y-m-d 23:59:59')
         );

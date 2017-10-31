@@ -319,7 +319,7 @@ class CrawlJobContainerService extends EntityService
     {
         return $this->taskService->getEntityRepository()->findUrlsByJobAndState(
             $crawlJobContainer->getCrawlJob(),
-            $this->taskService->getCompletedState()
+            $this->stateService->fetch(TaskService::COMPLETED_STATE)
         );
     }
 
@@ -337,9 +337,11 @@ class CrawlJobContainerService extends EntityService
 
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
+        $taskCompletedState = $this->stateService->fetch(TaskService::COMPLETED_STATE);
+
         $completedTaskUrls = $this->taskService->getEntityRepository()->findUrlsByJobAndState(
             $crawlJob,
-            $this->taskService->getCompletedState()
+            $taskCompletedState
         );
 
         foreach ($completedTaskUrls as $taskUrl) {
@@ -350,7 +352,7 @@ class CrawlJobContainerService extends EntityService
 
         $completedTaskOutputs = $this->taskService->getEntityRepository()->getOutputCollectionByJobAndState(
             $crawlJob,
-            $this->taskService->getCompletedState()
+            $taskCompletedState
         );
 
         foreach ($completedTaskOutputs as $taskOutput) {
