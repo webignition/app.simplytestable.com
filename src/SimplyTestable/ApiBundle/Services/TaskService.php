@@ -83,7 +83,7 @@ class TaskService extends EntityService
     /**
      * @var string[]
      */
-    private $cancellableStates = [
+    private $cancellableStateNames = [
         self::AWAITING_CANCELLATION_STATE,
         self::IN_PROGRESS_STATE,
         self::QUEUED_STATE,
@@ -120,6 +120,14 @@ class TaskService extends EntityService
     public function getFinishedStateNames()
     {
         return $this->finishedStateNames;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getCancellableStateNames()
+    {
+        return $this->cancellableStateNames;
     }
 
     /**
@@ -187,7 +195,7 @@ class TaskService extends EntityService
      */
     public function isCancellable(Task $task)
     {
-        return $this->isTaskInStates($task, $this->cancellableStates);
+        return $this->isTaskInStates($task, $this->cancellableStateNames);
     }
 
     /**

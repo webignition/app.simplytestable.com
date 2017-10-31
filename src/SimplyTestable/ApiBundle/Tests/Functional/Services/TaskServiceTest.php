@@ -191,4 +191,32 @@ class TaskServiceTest extends AbstractBaseTestCase
             $this->assertFalse($this->taskService->isFinished($this->task));
         }
     }
+
+    public function testIsCancellable()
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $cancellableStateNames = $this->taskService->getCancellableStateNames();
+
+        foreach ($cancellableStateNames as $stateName) {
+            $this->task->setState($stateService->fetch($stateName));
+
+            $this->assertTrue($this->taskService->isCancellable($this->task));
+        }
+
+        $uncancellableStateNames = [
+            TaskService::CANCELLED_STATE,
+            TaskService::COMPLETED_STATE,
+            TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
+            TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,
+            TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
+            TaskService::TASK_SKIPPED_STATE
+        ];
+
+        foreach ($uncancellableStateNames as $stateName) {
+            $this->task->setState($stateService->fetch($stateName));
+
+            $this->assertFalse($this->taskService->isCancellable($this->task));
+        }
+    }
 }
