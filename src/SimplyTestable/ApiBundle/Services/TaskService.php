@@ -185,16 +185,6 @@ class TaskService extends EntityService
      *
      * @return bool
      */
-    public function isQueuedForAssignment(Task $task)
-    {
-        return $task->getState()->getName() === self::QUEUED_FOR_ASSIGNMENT_STATE;
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @return bool
-     */
     public function isSkipped(Task $task)
     {
         return $task->getState()->getName() === self::TASK_SKIPPED_STATE;
