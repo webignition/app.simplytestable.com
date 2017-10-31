@@ -8,9 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
-use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 
@@ -36,11 +34,6 @@ class TaskService extends EntityService
      * @var ResqueQueueService
      */
     private $resqueQueueService;
-
-    /**
-     * @var TaskOutputRepository
-     */
-    private $taskOutputRepository;
 
     /**
      * All the states a task could be in
