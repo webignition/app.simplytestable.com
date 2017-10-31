@@ -5,11 +5,12 @@ use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CollectionCommand extends \Symfony\Component\Console\Command\Command
+class CollectionCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 1;
@@ -86,7 +87,7 @@ class CollectionCommand extends \Symfony\Component\Console\Command\Command
 
         $taskIdsByWorker = array();
         foreach ($taskIds as $taskId) {
-            $task = $this->taskService->getById($taskId);
+            $task = $this->taskService->getEntityRepository()->find($taskId);
             $taskWorker = $task->getWorker();
 
             if (empty($taskWorker)) {

@@ -171,19 +171,6 @@ class TaskService extends EntityService
     }
 
     /**
-     * @param int $id
-     *
-     * @return Task
-     */
-    public function getById($id)
-    {
-        /* @var Task $task */
-        $task = $this->getEntityRepository()->find($id);
-
-        return $task;
-    }
-
-    /**
      * @param Task $task
      *
      * @return bool
