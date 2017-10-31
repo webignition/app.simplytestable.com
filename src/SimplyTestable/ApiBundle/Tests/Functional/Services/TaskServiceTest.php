@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TaskFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\TimePeriodFactory;
@@ -412,5 +413,276 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testGetEntityRepository()
     {
         $this->assertInstanceOf(TaskRepository::class, $this->taskService->getEntityRepository());
+    }
+
+    /**
+     * @dataProvider getEquivalentTasksDataProvider
+     *
+     * @param array $taskValues
+     * @param string $url
+     * @param string $taskTypeName
+     * @param string $parameterHash
+     * @param string[] $stateNames
+     * @param int[] $expectedEquivalentTaskIndices
+     */
+    public function testGetEquivalentTasks(
+        $taskValues,
+        $url,
+        $taskTypeName,
+        $parameterHash,
+        $stateNames,
+        $expectedEquivalentTaskIndices
+    ) {
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $taskFactory = new TaskFactory($this->container);
+
+        /* @var Task[] $tasks */
+        $tasks = $this->job->getTasks()->toArray();
+
+        foreach ($tasks as $taskIndex => $task) {
+            $currentTaskValues = $taskValues[$taskIndex];
+
+            // d751713988987e9331980363e24189ce
+            if (isset($currentTaskValues[TaskFactory::KEY_TYPE])) {
+                $currentTaskType = $taskTypeService->getByName($currentTaskValues[TaskFactory::KEY_TYPE]);
+                $currentTaskValues[TaskFactory::KEY_TYPE] = $currentTaskType;
+            }
+
+            if (isset($currentTaskValues[TaskFactory::KEY_STATE])) {
+                $currentState = $stateService->fetch($currentTaskValues[TaskFactory::KEY_STATE]);
+                $currentTaskValues[TaskFactory::KEY_STATE] = $currentState;
+            }
+
+            $taskFactory->update($task, $currentTaskValues);
+        }
+
+        $taskType = $taskTypeService->getByName($taskTypeName);
+        $states = $stateService->fetchCollection($stateNames);
+
+        $equivalentTasks = $this->taskService->getEquivalentTasks($url, $taskType, $parameterHash, $states);
+
+        $this->assertCount(count($expectedEquivalentTaskIndices), $equivalentTasks);
+
+        $equivalentTaskIds = [];
+        $expectedEquivalentTaskIds = [];
+
+        foreach ($equivalentTasks as $equivalentTaskIndex => $equivalentTask) {
+            if (in_array($equivalentTaskIndex, $expectedEquivalentTaskIndices)) {
+                $expectedEquivalentTaskIds[] = $equivalentTask->getId();
+            }
+
+            $equivalentTaskIds[] = $equivalentTask->getId();
+        }
+
+        $this->assertEquals($equivalentTaskIds, $equivalentTaskIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function getEquivalentTasksDataProvider()
+    {
+        return [
+            'no matches' => [
+                'taskValues' => [
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                    ],
+                ],
+                'url' => 'bar',
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'parameterHash' => '',
+                'stateNames' => [],
+                'expectedEquivalentTaskIndices' => [],
+            ],
+            'match all by url, task type, state' => [
+                'taskValues' => [
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'url' => 'foo',
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'parameterHash' => '',
+                'stateNames' => [
+                    TaskService::COMPLETED_STATE,
+                ],
+                'expectedEquivalentTaskIndices' => [0, 1, 2],
+            ],
+            'match all by encoded url variant' => [
+                'taskValues' => [
+                    [
+                        TaskFactory::KEY_URL => 'foo%20bar',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo bar',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo%20bar',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'url' => 'foo%20bar',
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'parameterHash' => '',
+                'stateNames' => [
+                    TaskService::COMPLETED_STATE,
+                ],
+                'expectedEquivalentTaskIndices' => [0, 1, 2],
+            ],
+            'match all by decoded url variant' => [
+                'taskValues' => [
+                    [
+                        TaskFactory::KEY_URL => 'foo%20bar',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo bar',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo%20bar',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'url' => 'foo bar',
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'parameterHash' => '',
+                'stateNames' => [
+                    TaskService::COMPLETED_STATE,
+                ],
+                'expectedEquivalentTaskIndices' => [0, 1, 2],
+            ],
+            'match partial by state' => [
+                'taskValues' => [
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::CANCELLED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'url' => 'foo',
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'parameterHash' => '',
+                'stateNames' => [
+                    TaskService::COMPLETED_STATE,
+                ],
+                'expectedEquivalentTaskIndices' => [0, 2],
+            ],
+            'match partial by task type' => [
+                'taskValues' => [
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::CSS_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::CSS_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'url' => 'foo',
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'parameterHash' => '',
+                'stateNames' => [
+                    TaskService::COMPLETED_STATE,
+                ],
+                'expectedEquivalentTaskIndices' => [0],
+            ],
+            'match partial by parameter hash' => [
+                'taskValues' => [
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => 'bar',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => 'bar',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                    [
+                        TaskFactory::KEY_URL => 'foo',
+                        TaskFactory::KEY_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        TaskFactory::KEY_PARAMETERS => '',
+                        TaskFactory::KEY_STATE => TaskService::COMPLETED_STATE,
+                    ],
+                ],
+                'url' => 'foo',
+                'taskTypeName' => TaskTypeService::HTML_VALIDATION_TYPE,
+                'parameterHash' => 'd41d8cd98f00b204e9800998ecf8427e',
+                'stateNames' => [
+                    TaskService::COMPLETED_STATE,
+                ],
+                'expectedEquivalentTaskIndices' => [2],
+            ],
+        ];
     }
 }

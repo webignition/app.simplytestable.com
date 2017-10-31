@@ -11,6 +11,8 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use webignition\Url\Encoder as UrlEncoder;
+use webignition\Url\Url;
 
 class TaskService extends EntityService
 {
@@ -315,19 +317,19 @@ class TaskService extends EntityService
     /**
      * @param string $url
      * @param TaskType $taskType
-     * @param string $parameter_hash
+     * @param string $parameterHash
      * @param State[] $states
      *
      * @return Task[]
      */
-    public function getEquivalentTasks($url, TaskType $taskType, $parameter_hash, $states)
+    public function getEquivalentTasks($url, TaskType $taskType, $parameterHash, $states)
     {
-        $urlEncoder = new \webignition\Url\Encoder();
+        $urlEncoder = new UrlEncoder();
 
         $urlSet = array_unique([
             $url,
             urldecode($url),
-            (string)$urlEncoder->encode(new \webignition\Url\Url(($url)))
+            (string)$urlEncoder->encode(new Url(($url)))
         ]);
 
         $tasks = $this->getEntityRepository()->getCollectionByUrlSetAndTaskTypeAndStates(
@@ -336,11 +338,11 @@ class TaskService extends EntityService
             $states
         );
 
-        $parameter_hash = trim($parameter_hash);
+        $parameterHash = trim($parameterHash);
 
-        if ($parameter_hash !== '') {
+        if (!empty($parameterHash)) {
             foreach ($tasks as $taskIndex => $task) {
-                if ($task->getParametersHash() !== $parameter_hash) {
+                if ($task->getParametersHash() !== $parameterHash) {
                     unset($tasks[$taskIndex]);
                 }
             }
