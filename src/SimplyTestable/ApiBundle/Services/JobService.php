@@ -275,7 +275,7 @@ class JobService extends EntityService
     {
         $incompleteTaskCount = $this->taskService->getEntityRepository()->getCountByJobAndStates(
             $job,
-            $this->taskService->getIncompleteStates()
+            $this->stateService->fetchCollection($this->taskService->getIncompleteStateNames())
         );
 
         return $incompleteTaskCount > 0;

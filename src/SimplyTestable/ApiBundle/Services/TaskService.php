@@ -344,14 +344,14 @@ class TaskService extends EntityService
     }
 
     /**
-     * @return State[]
+     * @return string[]
      */
-    public function getIncompleteStates()
+    public function getIncompleteStateNames()
     {
         return [
-            $this->getInProgressState(),
-            $this->getQueuedState(),
-            $this->getQueuedForAssignmentState()
+            self::IN_PROGRESS_STATE,
+            self::QUEUED_STATE,
+            self::QUEUED_FOR_ASSIGNMENT_STATE,
         ];
     }
 
@@ -432,7 +432,10 @@ class TaskService extends EntityService
     public function complete(Task $task, \DateTime $endDateTime, TaskOutput $output, State $state, $flush = true)
     {
         $taskIsInCorrectState = false;
-        foreach ($this->getIncompleteStates() as $incompleteState) {
+
+        $incompleteStates = $this->stateService->fetchCollection($this->getIncompleteStateNames());
+
+        foreach ($incompleteStates as $incompleteState) {
             if ($task->getState()->equals($incompleteState)) {
                 $taskIsInCorrectState = true;
             }
