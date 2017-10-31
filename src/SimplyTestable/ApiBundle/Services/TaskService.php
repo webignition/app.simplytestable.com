@@ -256,21 +256,6 @@ class TaskService extends EntityService
     }
 
     /**
-     * @param int $remoteId
-     *
-     * @return Task
-     */
-    public function getByRemoteId($remoteId)
-    {
-        /* @var Task $task */
-        $task = $this->getEntityRepository()->findBy([
-            'remoteId' => $remoteId
-        ]);
-
-        return $task;
-    }
-
-    /**
      * @param Task $task
      * @param \DateTime $endDateTime
      * @param TaskOutput $output
