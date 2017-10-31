@@ -150,15 +150,13 @@ class TaskService extends EntityService
      */
     public function setAwaitingCancellation(Task $task)
     {
-        if ($this->isAwaitingCancellation($task)) {
-            return $task;
-        }
+        $disAllowedStateNames = [
+            self::AWAITING_CANCELLATION_STATE,
+            self::CANCELLED_STATE,
+            self::COMPLETED_STATE,
+        ];
 
-        if ($this->isCancelled($task)) {
-            return $task;
-        }
-
-        if ($this->isCompleted($task)) {
+        if (in_array($task->getState()->getName(), $disAllowedStateNames)) {
             return $task;
         }
 
@@ -190,16 +188,6 @@ class TaskService extends EntityService
     public function isCancelled(Task $task)
     {
         return $task->getState()->getName() === self::CANCELLED_STATE;
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @return bool
-     */
-    public function isAwaitingCancellation(Task $task)
-    {
-        return $task->getState()->getName() === self::AWAITING_CANCELLATION_STATE;
     }
 
     /**
