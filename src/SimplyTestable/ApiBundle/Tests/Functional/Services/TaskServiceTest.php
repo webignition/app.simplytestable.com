@@ -228,4 +228,21 @@ class TaskServiceTest extends AbstractBaseTestCase
             TaskService::QUEUED_FOR_ASSIGNMENT_STATE,
         ], $this->taskService->getIncompleteStateNames());
     }
+
+    public function testPersist()
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $originalTaskUrl = $this->task->getUrl();
+
+        $this->task->setUrl('foo');
+        $this->taskService->persist($this->task);
+
+        $entityManager->clear();
+
+        $retrievedTask = $this->taskService->getEntityRepository()->find($this->task->getId());
+
+        $this->assertEquals($originalTaskUrl, $retrievedTask->getUrl());
+        $this->assertEquals('foo', $this->task->getUrl());
+    }
 }

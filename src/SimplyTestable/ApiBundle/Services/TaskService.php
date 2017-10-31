@@ -219,13 +219,10 @@ class TaskService extends EntityService
 
     /**
      * @param Task $task
-     *
-     * @return Task
      */
     public function persist(Task $task)
     {
         $this->getManager()->persist($task);
-        return $task;
     }
 
     /**
