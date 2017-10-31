@@ -131,7 +131,9 @@ class TaskService extends EntityService
             return $task;
         }
 
-        $task->setState($this->getAwaitingCancellationState());
+        $awaitingCancellationState = $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
+
+        $task->setState($awaitingCancellationState);
 
         return $task;
     }
@@ -184,14 +186,6 @@ class TaskService extends EntityService
     /**
      * @return State
      */
-    public function getAwaitingCancellationState()
-    {
-        return $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
-    }
-
-    /**
-     * @return State
-     */
     public function getFailedNoRetryAvailableState()
     {
         return $this->stateService->fetch(self::TASK_FAILED_NO_RETRY_AVAILABLE_STATE);
@@ -238,7 +232,7 @@ class TaskService extends EntityService
      */
     public function isAwaitingCancellation(Task $task)
     {
-        return $task->getState()->equals($this->getAwaitingCancellationState());
+        return $task->getState()->getName() === self::AWAITING_CANCELLATION_STATE;
     }
 
     /**
@@ -566,9 +560,11 @@ class TaskService extends EntityService
      */
     public function getAwaitingCancellationByJob(Job $job)
     {
+        $awaitingCancellationState = $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
+
         return $this->getEntityRepository()->findBy([
             'job' => $job,
-            'state' => $this->getAwaitingCancellationState()
+            'state' => $awaitingCancellationState,
         ]);
     }
 
