@@ -25,6 +25,11 @@ class TaskServiceTest extends AbstractBaseTestCase
     private $job;
 
     /**
+     * @var Task
+     */
+    private $task;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -35,21 +40,21 @@ class TaskServiceTest extends AbstractBaseTestCase
 
         $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->createResolveAndPrepare();
+
+        $this->task = $this->job->getTasks()->get(0);
     }
 
     public function testCancelFinishedTask()
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
-        /* @var Task $task */
-        $task = $this->job->getTasks()->get(0);
-
         $finishedStateNames = $this->taskService->getFinishedStateNames();
 
         foreach ($finishedStateNames as $stateName) {
-            $task->setState($stateService->fetch($stateName));
-            $this->taskService->cancel($task);
-            $this->assertEquals($stateName, $task->getState()->getName());
+            $this->task->setState($stateService->fetch($stateName));
+
+            $this->taskService->cancel($this->task);
+            $this->assertEquals($stateName, $this->task->getState()->getName());
         }
     }
 
@@ -87,9 +92,6 @@ class TaskServiceTest extends AbstractBaseTestCase
      */
     public function testCancelSuccess($taskValues)
     {
-        /* @var Task $task */
-        $task = $this->job->getTasks()->get(0);
-
         if (isset($taskValues[TaskFactory::KEY_WORKER])) {
             $workerFactory = new WorkerFactory($this->container);
             $worker = $workerFactory->create([
@@ -107,15 +109,15 @@ class TaskServiceTest extends AbstractBaseTestCase
         }
 
         $taskFactory = new TaskFactory($this->container);
-        $taskFactory->update($task, $taskValues);
+        $taskFactory->update($this->task, $taskValues);
 
-        $this->taskService->cancel($task);
+        $this->taskService->cancel($this->task);
 
-        $this->assertEquals(TaskService::CANCELLED_STATE, $task->getState()->getName());
-        $this->assertNull($task->getWorker());
-        $this->assertInstanceOf(TimePeriod::class, $task->getTimePeriod());
-        $this->assertInstanceOf(\DateTime::class, $task->getTimePeriod()->getStartDateTime());
-        $this->assertInstanceOf(\DateTime::class, $task->getTimePeriod()->getEndDateTime());
+        $this->assertEquals(TaskService::CANCELLED_STATE, $this->task->getState()->getName());
+        $this->assertNull($this->task->getWorker());
+        $this->assertInstanceOf(TimePeriod::class, $this->task->getTimePeriod());
+        $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getStartDateTime());
+        $this->assertInstanceOf(\DateTime::class, $this->task->getTimePeriod()->getEndDateTime());
     }
 
     /**
@@ -137,5 +139,30 @@ class TaskServiceTest extends AbstractBaseTestCase
                 ],
             ],
         ];
+    }
+
+    public function testSetAwaitingCancellationDisallowedStateName()
+    {
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
+        $disallowedStateNames = [
+            TaskService::AWAITING_CANCELLATION_STATE,
+            TaskService::CANCELLED_STATE,
+            TaskService::COMPLETED_STATE,
+        ];
+
+        foreach ($disallowedStateNames as $stateName) {
+            $this->task->setState($stateService->fetch($stateName));
+
+            $this->taskService->setAwaitingCancellation($this->task);
+            $this->assertEquals($stateName, $this->task->getState()->getName());
+        }
+    }
+
+    public function testSetAwaitingCancellationSuccess()
+    {
+        $this->taskService->setAwaitingCancellation($this->task);
+
+        $this->assertEquals(TaskService::AWAITING_CANCELLATION_STATE, $this->task->getState()->getName());
     }
 }

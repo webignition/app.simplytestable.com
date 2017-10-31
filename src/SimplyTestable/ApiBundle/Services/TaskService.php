@@ -152,8 +152,6 @@ class TaskService extends EntityService
 
     /**
      * @param Task $task
-     *
-     * @return Task
      */
     public function setAwaitingCancellation(Task $task)
     {
@@ -164,14 +162,12 @@ class TaskService extends EntityService
         ];
 
         if (in_array($task->getState()->getName(), $disAllowedStateNames)) {
-            return $task;
+            return;
         }
 
         $awaitingCancellationState = $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
 
         $task->setState($awaitingCancellationState);
-
-        return $task;
     }
 
     /**
