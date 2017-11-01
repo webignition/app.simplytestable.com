@@ -532,4 +532,54 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
             ],
         ];
     }
+
+    public function testRemoveAllForTeamUser()
+    {
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $userFactory = new UserFactory($this->container);
+        $users = $userFactory->createPublicPrivateAndTeamUserSet();
+        $user = $users['leader'];
+
+        $jobConfiguration = $jobConfigurationFactory->create([
+            JobConfigurationFactory::KEY_USER => $user,
+        ]);
+
+        $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfiguration,
+        ]);
+
+        $this->setUser($user);
+
+        $this->expectException(ScheduledJobServiceException::class);
+        $this->expectExceptionMessage('Unable to remove all; user is in a team');
+        $this->expectExceptionCode(ScheduledJobServiceException::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM);
+
+        $this->scheduledJobService->removeAll();
+    }
+
+    public function testRemoveAllSuccess()
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $user = $userService->getPublicUser();
+
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+
+        $jobConfiguration = $jobConfigurationFactory->create([
+            JobConfigurationFactory::KEY_USER => $user,
+        ]);
+
+        $scheduledJob = $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfiguration,
+        ]);
+
+        $this->assertNotNull($scheduledJob->getId());
+
+        $this->setUser($user);
+
+        $this->scheduledJobService->removeAll();
+
+        $this->assertNull($scheduledJob->getId());
+    }
 }
