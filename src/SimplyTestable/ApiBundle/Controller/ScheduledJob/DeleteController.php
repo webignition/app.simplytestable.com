@@ -16,7 +16,6 @@ class DeleteController extends Controller
     public function deleteAction($id)
     {
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-        $scheduledJobService->setUser($this->getUser());
 
         $scheduledJob = $scheduledJobService->get($id);
 

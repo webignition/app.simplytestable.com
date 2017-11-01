@@ -54,7 +54,7 @@ abstract class TeamTest extends ServiceTest {
         $teamMemberService->add($team, $this->member1);
         $teamMemberService->add($team, $this->member2);
 
-        $this->getScheduledJobService()->setUser($this->getCurrentUser());
+        $this->setUser($this->getCurrentUser());
     }
 
     abstract protected function getCurrentUser();

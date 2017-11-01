@@ -35,7 +35,8 @@ abstract class WithTest extends BaseServiceTest {
             true
         );
 
-        $this->getScheduledJobService()->setUser($this->getServiceRequestUser());
+        $this->setUser($this->getServiceRequestUser());
+
         $this->scheduledJob = $this->getScheduledJobService()->get($scheduledJob->getId());
     }
 

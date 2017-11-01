@@ -34,7 +34,6 @@ class UpdateController extends Controller
             throw new ServiceUnavailableHttpException();
         }
 
-        $scheduledJobService->setUser($this->getUser());
         $scheduledJob = $scheduledJobService->get($id);
 
         if (empty($scheduledJob)) {

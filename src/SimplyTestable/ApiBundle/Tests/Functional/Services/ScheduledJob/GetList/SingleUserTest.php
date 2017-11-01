@@ -51,7 +51,7 @@ class SingleUserTest extends ServiceTest {
             true
         );
 
-        $this->getScheduledJobService()->setUser($user);
+        $this->setUser($user);
         $this->list = $this->getScheduledJobService()->getList();
     }
 

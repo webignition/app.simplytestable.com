@@ -17,7 +17,6 @@ class GetController extends Controller
     public function getAction($id)
     {
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-        $scheduledJobService->setUser($this->getUser());
 
         $scheduledJob = $scheduledJobService->get($id);
 

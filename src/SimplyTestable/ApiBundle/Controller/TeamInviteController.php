@@ -120,7 +120,6 @@ class TeamInviteController extends Controller
             return new Response();
         }
 
-        $scheduledJobService->setUser($this->getUser());
         $scheduledJobService->removeAll();
 
         $jobConfigurationService->removeAll();

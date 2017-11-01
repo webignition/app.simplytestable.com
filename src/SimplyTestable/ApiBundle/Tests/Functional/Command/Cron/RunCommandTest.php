@@ -66,7 +66,6 @@ class RunCommandTest extends AbstractBaseTestCase
 
         ], $user);
 
-        $scheduledJobService->setUser($user);
         $scheduledJob = $scheduledJobService->create(
             $jobConfiguration,
             $schedule,
