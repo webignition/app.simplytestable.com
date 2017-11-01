@@ -45,29 +45,13 @@ abstract class CommandJob extends Job
         $input = new ArrayInput($this->getCommandArgs());
         $output = new BufferedOutput();
 
-        $useTestReturnCode = $this->isTestEnvironment() && isset($this->args['returnCode']);
-
-        $returnCode = $useTestReturnCode
-            ? $this->args['returnCode']
-            : $command->run($input, $output);
+        $returnCode = $command->run($input, $output);
 
         if ($returnCode === 0) {
             return true;
         }
 
         return $this->handleNonZeroReturnCode($returnCode, $output);
-    }
-
-    /**
-     * @return bool
-     */
-    private function isTestEnvironment()
-    {
-        if (!isset($this->args['kernel.environment'])) {
-            return false;
-        }
-
-        return $this->args['kernel.environment'] == 'test';
     }
 
     /**
