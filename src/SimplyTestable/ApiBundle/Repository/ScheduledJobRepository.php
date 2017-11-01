@@ -39,6 +39,7 @@ class ScheduledJobRepository extends EntityRepository
 
     /**
      * @param User[] $users
+     *
      * @return ScheduledJob[]
      */
     public function getList($users = [])

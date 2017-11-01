@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Repository\ScheduledJobRepository;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Tests\Factory\ScheduledJobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 
 class ScheduledJobRepositoryTest extends AbstractBaseTestCase
@@ -166,6 +167,165 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
                 'cronModifier' => '[ `date +\%d` -le 0 ]',
                 'isRecurring' => true,
                 'expectedHas' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getListDataProvider
+     *
+     * @param array $scheduledJobValuesCollection
+     * @param string[] $userNames
+     * @param int[] $expectedScheduledJobIndices
+     */
+    public function testGetList(
+        $scheduledJobValuesCollection,
+        $userNames,
+        $expectedScheduledJobIndices
+    ) {
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $userFactory = new UserFactory($this->container);
+        $users = $userFactory->createPublicPrivateAndTeamUserSet();
+
+        /* @var ScheduledJob[] $scheduledJobs */
+        $scheduledJobs = [];
+
+        foreach ($scheduledJobValuesCollection as $scheduledJobValues) {
+            $jobConfigurationValues = $scheduledJobValues[ScheduledJobFactory::KEY_JOB_CONFIGURATION];
+
+            if (isset($jobConfigurationValues[JobConfigurationFactory::KEY_USER])) {
+                $user = $users[$jobConfigurationValues[JobConfigurationFactory::KEY_USER]];
+                $jobConfigurationValues[JobConfigurationFactory::KEY_USER] = $user;
+            }
+
+            $jobConfiguration = $jobConfigurationFactory->create(
+                $jobConfigurationValues
+            );
+
+            $scheduledJobValues[ScheduledJobFactory::KEY_JOB_CONFIGURATION] = $jobConfiguration;
+
+            $scheduledJobs[] = $scheduledJobFactory->create($scheduledJobValues);
+        }
+
+        $requestUsers = [];
+
+        foreach ($userNames as $userName) {
+            $requestUsers[] = $users[$userName];
+        }
+
+        $retrievedScheduledJobs = $this->scheduledJobRepository->getList($requestUsers);
+
+        $this->assertCount(count($expectedScheduledJobIndices), $retrievedScheduledJobs);
+
+        $retrievedScheduledJobIds = [];
+        $expectedScheduledJobIds = [];
+
+        foreach ($scheduledJobs as $scheduledJobIndex => $scheduledJob) {
+            if (in_array($scheduledJobIndex, $expectedScheduledJobIndices)) {
+                $expectedScheduledJobIds[] = $scheduledJob->getId();
+            }
+        }
+
+        foreach ($retrievedScheduledJobs as $retrievedScheduledJob) {
+            $retrievedScheduledJobIds[] = $retrievedScheduledJob->getId();
+        }
+
+        $this->assertEquals($expectedScheduledJobIds, $retrievedScheduledJobIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function getListDataProvider()
+    {
+        $teamScheduledJobValuesCollection = [
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'private',
+                ],
+            ],
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'leader',
+                ],
+            ],
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'member1',
+                ],
+            ],
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'private',
+                ],
+            ],
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'member2',
+                ],
+            ],
+        ];
+
+        return [
+            'no matches' => [
+                'scheduledJobValuesCollection' => [
+                    [
+                        ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                            JobConfigurationFactory::KEY_USER => 'private',
+                        ],
+                    ],
+                ],
+                'userNames' => [
+                    'public',
+                ],
+                'expectedScheduledJobIndices' => [],
+            ],
+            'matches for private user' => [
+                'scheduledJobValuesCollection' => [
+                    [
+                        ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                            JobConfigurationFactory::KEY_USER => 'private',
+                        ],
+                    ],
+                    [
+                        ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                            JobConfigurationFactory::KEY_USER => 'leader',
+                        ],
+                    ],
+                    [
+                        ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                            JobConfigurationFactory::KEY_USER => 'private',
+                        ],
+                    ],
+                ],
+                'userNames' => [
+                    'private',
+                ],
+                'expectedScheduledJobIndices' => [0, 2],
+            ],
+            'matches for team leader' => [
+                'scheduledJobValuesCollection' => $teamScheduledJobValuesCollection,
+                'userNames' => [
+                    'leader',
+                ],
+                'expectedScheduledJobIndices' => [1],
+            ],
+            'matches for team member1' => [
+                'scheduledJobValuesCollection' => $teamScheduledJobValuesCollection,
+                'userNames' => [
+                    'member1',
+                ],
+                'expectedScheduledJobIndices' => [2],
+            ],
+            'matches for team' => [
+                'scheduledJobValuesCollection' => $teamScheduledJobValuesCollection,
+                'userNames' => [
+                    'leader',
+                    'member1',
+                    'member2',
+                ],
+                'expectedScheduledJobIndices' => [1, 2, 4],
             ],
         ];
     }
