@@ -38,11 +38,8 @@ class RemoveTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'user2@example.com',
         ]);
 
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
-            '',
-            TeamServiceException::IS_NOT_LEADER
-        );
+        $this->expectException(TeamServiceException::class);
+        $this->expectExceptionCode(TeamServiceException::IS_NOT_LEADER);
 
         $this->teamService->remove($user1, $user2);
     }
@@ -64,11 +61,8 @@ class RemoveTest extends ServiceTest
 
         $teamMemberService->add($team1, $user);
 
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
-            '',
-            TeamServiceException::USER_IS_NOT_ON_LEADERS_TEAM
-        );
+        $this->expectException(TeamServiceException::class);
+        $this->expectExceptionCode(TeamServiceException::USER_IS_NOT_ON_LEADERS_TEAM);
 
         $this->teamService->remove($leader2, $user);
     }

@@ -22,11 +22,9 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
         $expectedExceptionMessage,
         $expectedExceptionCode
     ) {
-        $this->setExpectedException(
-            JobConfigurationServiceException::class,
-            $expectedExceptionMessage,
-            $expectedExceptionCode
-        );
+        $this->expectException(JobConfigurationServiceException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->expectExceptionCode($expectedExceptionCode);
 
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->setUser($userService->getPublicUser());
@@ -97,11 +95,9 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
      */
     public function testCreateWithNonUniqueLabel($creatorUserName, $requestorUserName)
     {
-        $this->setExpectedException(
-            JobConfigurationServiceException::class,
-            'Label "foo" is not unique',
-            JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
-        );
+        $this->expectException(JobConfigurationServiceException::class);
+        $this->expectExceptionMessage('Label "foo" is not unique');
+        $this->expectExceptionCode(JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
@@ -160,11 +156,9 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
      */
     public function testCreateHasExisting($creatorUserName, $requestorUserName)
     {
-        $this->setExpectedException(
-            JobConfigurationServiceException::class,
-            'Matching configuration already exists',
-            JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS
-        );
+        $this->expectException(JobConfigurationServiceException::class);
+        $this->expectExceptionMessage('Matching configuration already exists');
+        $this->expectExceptionCode(JobConfigurationServiceException::CODE_CONFIGURATION_ALREADY_EXISTS);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();

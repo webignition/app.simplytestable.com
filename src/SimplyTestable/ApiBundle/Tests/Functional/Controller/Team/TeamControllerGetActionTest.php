@@ -24,7 +24,7 @@ class TeamControllerGetActionTest extends AbstractTeamControllerTest
 
     public function testGetActionUserNotOnTeam()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->setUser($this->users['private']);
 

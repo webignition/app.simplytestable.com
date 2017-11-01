@@ -39,11 +39,9 @@ class RetrievalServiceTest extends AbstractBaseTestCase
      */
     public function testRetrieveFailure($userTeamStatus, $jobOwnerTeamStatus)
     {
-        $this->setExpectedException(
-            JobRetrievalServiceException::class,
-            'Not authorised',
-            JobRetrievalServiceException::CODE_NOT_AUTHORISED
-        );
+        $this->expectException(JobRetrievalServiceException::class);
+        $this->expectExceptionMessage('Not authorised');
+        $this->expectExceptionCode(JobRetrievalServiceException::CODE_NOT_AUTHORISED);
 
         $user = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'user@example.com',

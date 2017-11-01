@@ -44,7 +44,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
 
     public function testCreateActionWithExistingNonMatchingRequest()
     {
-        $this->setExpectedException(ConflictHttpException::class);
+        $this->expectException(ConflictHttpException::class);
 
         $newEmail = 'new-email@example.com';
 
@@ -58,7 +58,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
 
     public function testCreateActionInvalidNewEmail()
     {
-        $this->setExpectedException(BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $newEmail = 'foo';
 
@@ -70,7 +70,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
 
     public function testCreateActionEmailTakenByUser()
     {
-        $this->setExpectedException(ConflictHttpException::class);
+        $this->expectException(ConflictHttpException::class);
 
         $newEmail = 'new-email@example.com';
 
@@ -86,7 +86,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
 
     public function testCreateActionNewEmailTakenByEmailChangeRequest()
     {
-        $this->setExpectedException(ConflictHttpException::class);
+        $this->expectException(ConflictHttpException::class);
 
         $newEmail = 'new-email@example.com';
 

@@ -48,7 +48,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
 
     public function testStatusActionAccessDenied()
     {
-        $this->setExpectedException(AccessDeniedHttpException::class);
+        $this->expectException(AccessDeniedHttpException::class);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 

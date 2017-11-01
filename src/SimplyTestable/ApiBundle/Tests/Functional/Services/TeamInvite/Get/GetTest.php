@@ -46,11 +46,8 @@ class GetTest extends ServiceTest
             UserFactory::KEY_EMAIL => 'user2@example.com',
         ]);
 
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception',
-            '',
-            TeamInviteServiceException::INVITER_IS_NOT_A_LEADER
-        );
+        $this->expectException(TeamInviteServiceException::class);
+        $this->expectExceptionCode(TeamInviteServiceException::INVITER_IS_NOT_A_LEADER);
 
         $this->teamInviteService->get(
             $user1,
@@ -77,11 +74,8 @@ class GetTest extends ServiceTest
             $leader2
         );
 
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception',
-            '',
-            TeamInviteServiceException::INVITEE_IS_A_LEADER
-        );
+        $this->expectException(TeamInviteServiceException::class);
+        $this->expectExceptionCode(TeamInviteServiceException::INVITEE_IS_A_LEADER);
 
         $this->teamInviteService->get(
             $leader1,
@@ -113,11 +107,8 @@ class GetTest extends ServiceTest
 
         $teamMemberService->add($team1, $user);
 
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception',
-            '',
-            TeamInviteServiceException::INVITEE_IS_ON_A_TEAM
-        );
+        $this->expectException(TeamInviteServiceException::class);
+        $this->expectExceptionCode(TeamInviteServiceException::INVITEE_IS_ON_A_TEAM);
 
         $this->teamInviteService->get(
             $leader2,

@@ -68,7 +68,7 @@ class UserPasswordResetControllerTest extends AbstractBaseTestCase
 
     public function testResetPasswordActionInvalidUser()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->userPasswordResetController->resetPasswordAction(new Request(), 'invalid token');
     }
@@ -81,10 +81,8 @@ class UserPasswordResetControllerTest extends AbstractBaseTestCase
 
         $request = new Request();
 
-        $this->setExpectedException(
-            BadRequestHttpException::class,
-            '"password" missing'
-        );
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage('"password" missing');
 
         $this->userPasswordResetController->resetPasswordAction($request, $user->getConfirmationToken());
     }

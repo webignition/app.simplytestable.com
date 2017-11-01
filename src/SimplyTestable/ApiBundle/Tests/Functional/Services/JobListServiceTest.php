@@ -50,11 +50,9 @@ class JobListServiceTest extends AbstractBaseTestCase
 
     public function testGetWithNoConfiguration()
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
-            JobListService::EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET,
-            JobListService::EXCEPTION_CODE_CONFIGURATION_NOT_SET
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(JobListService::EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET);
+        $this->expectExceptionCode(JobListService::EXCEPTION_CODE_CONFIGURATION_NOT_SET);
 
         $this->jobListService->get();
     }
@@ -208,11 +206,9 @@ class JobListServiceTest extends AbstractBaseTestCase
 
     public function testGetMaxResultsWithNoConfiguration()
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
-            JobListService::EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET,
-            JobListService::EXCEPTION_CODE_CONFIGURATION_NOT_SET
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(JobListService::EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET);
+        $this->expectExceptionCode(JobListService::EXCEPTION_CODE_CONFIGURATION_NOT_SET);
 
         $this->jobListService->getMaxResults();
     }
@@ -230,11 +226,9 @@ class JobListServiceTest extends AbstractBaseTestCase
 
     public function testGetWebsiteUrlsWithNoConfiguration()
     {
-        $this->setExpectedException(
-            \RuntimeException::class,
-            JobListService::EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET,
-            JobListService::EXCEPTION_CODE_CONFIGURATION_NOT_SET
-        );
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(JobListService::EXCEPTION_MESSAGE_CONFIGURATION_NOT_SET);
+        $this->expectExceptionCode(JobListService::EXCEPTION_CODE_CONFIGURATION_NOT_SET);
 
         $this->jobListService->getWebsiteUrls();
     }

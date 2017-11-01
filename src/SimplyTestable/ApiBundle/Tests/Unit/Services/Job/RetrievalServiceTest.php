@@ -26,11 +26,9 @@ class RetrievalServiceTest extends \PHPUnit_Framework_TestCase
         $expectedExceptionMessage,
         $expectedExceptionCode
     ) {
-        $this->setExpectedException(
-            JobRetrievalServiceException::class,
-            $expectedExceptionMessage,
-            $expectedExceptionCode
-        );
+        $this->expectException(JobRetrievalServiceException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->expectExceptionCode($expectedExceptionCode);
 
         /* @var TeamService $teamService */
         $teamService = \Mockery::mock(TeamService::class);

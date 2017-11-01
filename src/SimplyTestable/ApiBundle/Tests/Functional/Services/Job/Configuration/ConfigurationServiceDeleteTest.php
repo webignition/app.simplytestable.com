@@ -13,11 +13,9 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
         $userService = $this->container->get('simplytestable.services.userservice');
         $this->setUser($userService->getPublicUser());
 
-        $this->setExpectedException(
-            JobConfigurationServiceException::class,
-            'Configuration with label "foo" does not exist',
-            JobConfigurationServiceException::CODE_NO_SUCH_CONFIGURATION
-        );
+        $this->expectException(JobConfigurationServiceException::class);
+        $this->expectExceptionMessage('Configuration with label "foo" does not exist');
+        $this->expectExceptionCode(JobConfigurationServiceException::CODE_NO_SUCH_CONFIGURATION);
 
         $this->jobConfigurationService->delete('foo');
     }
@@ -45,11 +43,9 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
         $jobConfiguration = $jobConfigurationCollection[0];
         $scheduledJobService->create($jobConfiguration);
 
-        $this->setExpectedException(
-            JobConfigurationServiceException::class,
-            'Job configuration is in use by one or more scheduled jobs',
-            JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB
-        );
+        $this->expectException(JobConfigurationServiceException::class);
+        $this->expectExceptionMessage('Job configuration is in use by one or more scheduled jobs');
+        $this->expectExceptionCode(JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB);
 
         $this->jobConfigurationService->delete($jobConfiguration->getLabel());
     }

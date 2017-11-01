@@ -89,10 +89,8 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
             'task-configuration' => $taskConfiguration,
         ]);
 
-        $this->setExpectedException(
-            BadRequestHttpException::class,
-            $expectedExceptionMessage
-        );
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
 
         $this->jobConfigurationCreateController->createAction($request);
     }

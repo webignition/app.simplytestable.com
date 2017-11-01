@@ -35,14 +35,14 @@ class UserControllerHasInvitesActionTest extends AbstractUserControllerTest
 
     public function testHasInvitesActionUserNotFound()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->userController->hasInvitesAction('foo@example.com');
     }
 
     public function testHasInvitesActionNoInvites()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $userService = $this->container->get('simplytestable.services.userservice');
         $publicUser = $userService->getPublicUser();

@@ -31,14 +31,14 @@ class UserEmailChangeControllerGetActionTest extends AbstractUserEmailChangeCont
 
     public function testGetActionInvalidUser()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->userEmailChangeController->getAction('foo@example.com');
     }
 
     public function testGetActionNoEmailChangeRequest()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->userEmailChangeController->getAction($this->user->getEmail());
     }

@@ -36,11 +36,8 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
     public function testSubscribeUserBelongsToTeam()
     {
-        $this->setExpectedException(
-            UserAccountPlanServiceException::class,
-            '',
-            UserAccountPlanServiceException::CODE_USER_IS_TEAM_MEMBER
-        );
+        $this->expectException(UserAccountPlanServiceException::class);
+        $this->expectExceptionCode(UserAccountPlanServiceException::CODE_USER_IS_TEAM_MEMBER);
 
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users['member1'];

@@ -90,10 +90,8 @@ class UserCreationControllerTest extends AbstractBaseTestCase
             'password' => $password,
         ]);
 
-        $this->setExpectedException(
-            BadRequestHttpException::class,
-            $expectedExceptionMessage
-        );
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
 
         $this->userCreationController->createAction($request);
     }
@@ -346,7 +344,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
      */
     public function testActivateActionEmptyToken($token)
     {
-        $this->setExpectedException(BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $this->userCreationController->activateAction($token);
     }
@@ -371,7 +369,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
 
     public function testActivateActionInvalidToken()
     {
-        $this->setExpectedException(BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $this->userCreationController->activateAction('foo');
     }

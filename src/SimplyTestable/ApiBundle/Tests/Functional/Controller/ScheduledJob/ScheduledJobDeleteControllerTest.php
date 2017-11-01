@@ -89,7 +89,7 @@ class ScheduledJobDeleteControllerTest extends AbstractBaseTestCase
 
     public function testDeleteActionScheduledJobNotFound()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->scheduledJobDeleteController->deleteAction(0);
     }

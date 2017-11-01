@@ -65,7 +65,7 @@ class JobConfigurationGetControllerTest extends AbstractBaseTestCase
 
     public function testGetActionJobConfigurationNotFound()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->jobConfigurationGetController->getAction('foo');
     }

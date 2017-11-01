@@ -23,11 +23,9 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
         $user = $users[$userName];
         $this->setUser($user);
 
-        $this->setExpectedException(
-            JobConfigurationServiceException::class,
-            'Unable to remove all; user is in a team',
-            JobConfigurationServiceException::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM
-        );
+        $this->expectException(JobConfigurationServiceException::class);
+        $this->expectExceptionMessage('Unable to remove all; user is in a team');
+        $this->expectExceptionCode(JobConfigurationServiceException::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM);
 
         $this->jobConfigurationService->removeAll();
     }
@@ -70,11 +68,9 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
         $jobConfiguration = $jobConfigurationCollection[0];
         $scheduledJobService->create($jobConfiguration);
 
-        $this->setExpectedException(
-            JobConfigurationServiceException::class,
-            'One or more job configurations are in use by one or more scheduled jobs',
-            JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB
-        );
+        $this->expectException(JobConfigurationServiceException::class);
+        $this->expectExceptionMessage('One or more job configurations are in use by one or more scheduled jobs');
+        $this->expectExceptionCode(JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB);
 
         $this->jobConfigurationService->removeAll();
     }

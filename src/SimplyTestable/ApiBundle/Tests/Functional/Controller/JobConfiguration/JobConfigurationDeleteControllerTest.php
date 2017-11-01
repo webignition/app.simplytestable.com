@@ -101,7 +101,7 @@ class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
 
     public function testDeleteActionJobConfigurationNotFound()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->jobConfigurationDeleteController->deleteAction('foo');
     }

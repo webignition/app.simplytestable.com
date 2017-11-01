@@ -30,7 +30,7 @@ class UserControllerExistsActionTest extends AbstractUserControllerTest
 
     public function testExistsActionUserNotFound()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->userController->existsAction('foo@example.com');
     }

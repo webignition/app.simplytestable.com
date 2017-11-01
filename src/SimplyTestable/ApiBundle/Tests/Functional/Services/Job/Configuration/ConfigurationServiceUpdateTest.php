@@ -59,11 +59,9 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
             $updatedJobConfigurationValues
         ));
 
-        $this->setExpectedException(
-            JobConfigurationServiceException::class,
-            $expectedExceptionMessage,
-            $expectedExceptionCode
-        );
+        $this->expectException(JobConfigurationServiceException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
+        $this->expectExceptionCode($expectedExceptionCode);
 
         $this->jobConfigurationService->update($jobConfiguration, $updateJobConfigurationValuesModel);
     }

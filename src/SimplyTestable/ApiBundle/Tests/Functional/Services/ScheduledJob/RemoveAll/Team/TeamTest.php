@@ -60,11 +60,10 @@ abstract class TeamTest extends ServiceTest {
     abstract protected function getCurrentUser();
 
     public function testCallWithoutSettingUserThrowsException() {
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception',
-            'Unable to remove all; user is in a team',
-            ScheduledJobException::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM
-        );
+        $this->expectException(ScheduledJobException::class);
+        $this->expectExceptionMessage('Unable to remove all; user is in a team');
+        $this->expectExceptionCode(ScheduledJobException::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM);
+
 
         $this->getScheduledJobService()->removeAll();
     }
