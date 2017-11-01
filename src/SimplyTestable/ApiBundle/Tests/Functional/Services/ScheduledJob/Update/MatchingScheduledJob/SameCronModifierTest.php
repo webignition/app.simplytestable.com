@@ -7,11 +7,9 @@ use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as Schedu
 class SameCronModifierTest extends MatchingScheduledJobTest {
 
     public function testUpdateToMatchingScheduledJobThrowsException() {
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception',
-            'Matching scheduled job exists',
-            ScheduledJobServiceException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
-        );
+        $this->expectException(ScheduledJobServiceException::class);
+        $this->expectExceptionMessage('Matching scheduled job exists');
+        $this->expectExceptionCode(ScheduledJobServiceException::CODE_MATCHING_SCHEDULED_JOB_EXISTS);
 
         $this->getScheduledJobService()->update(
             $this->scheduledJob,

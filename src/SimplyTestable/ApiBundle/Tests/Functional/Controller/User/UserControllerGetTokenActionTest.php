@@ -30,7 +30,7 @@ class UserControllerGetTokenActionTest extends AbstractUserControllerTest
 
     public function testGetTokenActionUserNotFound()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->userController->getTokenAction('foo@example.com');
     }

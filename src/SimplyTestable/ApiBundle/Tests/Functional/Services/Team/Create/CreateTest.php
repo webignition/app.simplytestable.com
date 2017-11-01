@@ -32,11 +32,8 @@ class CreateTest extends ServiceTest
 
     public function testEmptyNameThrowsTeamServiceException()
     {
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
-            '',
-            TeamServiceException::CODE_NAME_EMPTY
-        );
+        $this->expectException(TeamServiceException::class);
+        $this->expectExceptionCode(TeamServiceException::CODE_NAME_EMPTY);
 
         $this->teamService->create(
             '',
@@ -51,11 +48,8 @@ class CreateTest extends ServiceTest
             $this->userFactory->createAndActivateUser()
         );
 
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
-            '',
-            TeamServiceException::CODE_NAME_TAKEN
-        );
+        $this->expectException(TeamServiceException::class);
+        $this->expectExceptionCode(TeamServiceException::CODE_NAME_TAKEN);
 
         $this->teamService->create(
             'Foo',
@@ -74,11 +68,8 @@ class CreateTest extends ServiceTest
             $user
         );
 
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
-            '',
-            TeamServiceException::USER_ALREADY_LEADS_TEAM
-        );
+        $this->expectException(TeamServiceException::class);
+        $this->expectExceptionCode(TeamServiceException::USER_ALREADY_LEADS_TEAM);
 
         $this->teamService->create(
             'Bar',
@@ -103,11 +94,8 @@ class CreateTest extends ServiceTest
 
         $teamMemberService->add($team, $user);
 
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\Team\Exception',
-            '',
-            TeamServiceException::USER_ALREADY_ON_TEAM
-        );
+        $this->expectException(TeamServiceException::class);
+        $this->expectExceptionCode(TeamServiceException::USER_ALREADY_ON_TEAM);
 
         $this->teamService->create(
             'Bar',

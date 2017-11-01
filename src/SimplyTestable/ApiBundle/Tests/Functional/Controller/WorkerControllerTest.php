@@ -86,10 +86,8 @@ class WorkerControllerTest extends AbstractBaseTestCase
             'token' => $token,
         ]);
 
-        $this->setExpectedException(
-            BadRequestHttpException::class,
-            $expectedExceptionMessage
-        );
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
 
         $this->workerController->activateAction($request);
     }

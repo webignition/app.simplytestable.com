@@ -46,11 +46,9 @@ class StartServiceTest extends AbstractBaseTestCase
 
     public function testStartWithUnroutableWebsite()
     {
-        $this->setExpectedException(
-            JobStartServiceException::class,
-            'Unroutable website',
-            JobStartServiceException::CODE_UNROUTABLE_WEBSITE
-        );
+        $this->expectException(JobStartServiceException::class);
+        $this->expectExceptionMessage('Unroutable website');
+        $this->expectExceptionCode(JobStartServiceException::CODE_UNROUTABLE_WEBSITE);
 
         $website = new WebSite();
         $website->setCanonicalUrl('http://foo');
@@ -120,11 +118,9 @@ class StartServiceTest extends AbstractBaseTestCase
             'simplytestable.services.jobuseraccountplanenforcementservice' => $mockJobUserAccountPlanEnforcementService
         ]);
 
-        $this->setExpectedException(
-            $expectedException['class'],
-            $expectedException['message'],
-            $expectedException['code']
-        );
+        $this->expectException($expectedException['class']);
+        $this->expectExceptionMessage($expectedException['message']);
+        $this->expectExceptionCode($expectedException['code']);
 
         $jobStartService->start($jobConfiguration);
     }

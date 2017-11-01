@@ -58,14 +58,12 @@ class StateServiceTest extends AbstractBaseTestCase
 
     public function testFetchUnknownState()
     {
-        $this->setExpectedException(
-            \InvalidArgumentException::class,
-            sprintf(
-                StateService::EXCEPTION_MESSAGE_UNKNOWN_STATE,
-                'foo'
-            ),
-            StateService::EXCEPTION_CODE_UNKNOWN_STATE
-        );
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage(sprintf(
+            StateService::EXCEPTION_MESSAGE_UNKNOWN_STATE,
+            'foo'
+        ));
+        $this->expectExceptionCode(StateService::EXCEPTION_CODE_UNKNOWN_STATE);
 
         $this->stateService->fetch('foo');
     }

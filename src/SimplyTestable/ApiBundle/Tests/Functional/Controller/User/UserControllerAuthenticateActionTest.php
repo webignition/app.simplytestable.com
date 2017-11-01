@@ -22,7 +22,7 @@ class UserControllerAuthenticateActionTest extends AbstractUserControllerTest
 
     public function testAuthenticateActionGetRequestDisabledUser()
     {
-        $this->setExpectedException(DisabledException::class);
+        $this->expectException(DisabledException::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();

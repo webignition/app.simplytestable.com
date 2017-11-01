@@ -47,11 +47,8 @@ class CreateTest extends ServiceTest
 
         $teamMemberService->add($team, $user);
 
-        $this->setExpectedException(
-            'SimplyTestable\ApiBundle\Exception\Services\TeamMember\Exception',
-            '',
-            TeamMemberServiceException::USER_ALREADY_ON_TEAM
-        );
+        $this->expectException(TeamMemberServiceException::class);
+        $this->expectExceptionCode(TeamMemberServiceException::USER_ALREADY_ON_TEAM);
 
         $teamMemberService->add($team, $user);
     }

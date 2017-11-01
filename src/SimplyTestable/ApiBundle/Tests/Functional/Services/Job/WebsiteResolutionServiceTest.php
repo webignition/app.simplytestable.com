@@ -51,11 +51,9 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
 
     public function testResolveJobInWrongState()
     {
-        $this->setExpectedException(
-            WebsiteResolutionException::class,
-            'Job is in wrong state, currently "foo"',
-            WebsiteResolutionException::CODE_JOB_IN_WRONG_STATE_CODE
-        );
+        $this->expectException(WebsiteResolutionException::class);
+        $this->expectExceptionMessage('Job is in wrong state, currently "foo"');
+        $this->expectExceptionCode(WebsiteResolutionException::CODE_JOB_IN_WRONG_STATE_CODE);
 
         $job = $this->jobFactory->create();
         $job->setState(StateFactory::create('foo'));

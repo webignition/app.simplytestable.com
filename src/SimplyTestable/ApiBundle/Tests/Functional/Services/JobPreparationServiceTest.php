@@ -55,9 +55,7 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
 
     public function testJobInWrongState()
     {
-        $this->setExpectedException(
-            JobPreparationException::class
-        );
+        $this->expectException(JobPreparationException::class);
 
         $job = $this->jobFactory->create();
         $this->jobPreparationService->prepare($job);

@@ -44,14 +44,14 @@ class TaskControllerTaskTypeCountActionTest extends AbstractBaseTestCase
 
     public function testTaskTypeCountActionInvalidTaskType()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->taskController->taskTypeCountAction('foo', 'completed');
     }
 
     public function testTaskTypeCountActionInvalidState()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->taskController->taskTypeCountAction(TaskTypeService::HTML_VALIDATION_TYPE, 'foo');
     }

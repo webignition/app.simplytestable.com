@@ -71,9 +71,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
      */
     public function testCompleteActionInvalidRequest($postData, $routeParams)
     {
-        $this->setExpectedException(
-            BadRequestHttpException::class
-        );
+        $this->expectException(BadRequestHttpException::class);
 
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
         $this->container->get('request_stack')->push($request);
@@ -110,9 +108,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
-        $this->setExpectedException(
-            GoneHttpException::class
-        );
+        $this->expectException(GoneHttpException::class);
 
         $job = $this->jobFactory->createResolveAndPrepare([
             'type' => JobTypeService::FULL_SITE_NAME,

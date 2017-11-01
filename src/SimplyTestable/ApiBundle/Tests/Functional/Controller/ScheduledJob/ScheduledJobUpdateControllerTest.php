@@ -109,7 +109,7 @@ class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
 
     public function testUpdateActionScheduledJobNotFound()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->scheduledJobUpdateController->updateAction(new Request(), 0);
     }

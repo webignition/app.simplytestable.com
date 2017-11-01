@@ -34,14 +34,14 @@ class UserControllerIsEnabledActionTest extends AbstractUserControllerTest
 
     public function testIsEnabledActionUnknownUser()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->userController->isEnabledAction('foo@example.com');
     }
 
     public function testIsEnabledActionNotEnabledUser()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create([

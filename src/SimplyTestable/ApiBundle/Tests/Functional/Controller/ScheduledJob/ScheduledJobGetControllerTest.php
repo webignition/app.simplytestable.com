@@ -78,7 +78,7 @@ class ScheduledJobGetControllerTest extends AbstractBaseTestCase
 
     public function testGetActionScheduledJobNotFound()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->scheduledJobGetController->getAction(0);
     }

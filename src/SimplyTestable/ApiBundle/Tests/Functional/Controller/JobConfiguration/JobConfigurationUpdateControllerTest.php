@@ -124,7 +124,7 @@ class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
 
     public function testUpdateActionJobConfigurationNotFound()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $this->jobConfigurationUpdateController->updateAction(new Request(), 'foo');
     }

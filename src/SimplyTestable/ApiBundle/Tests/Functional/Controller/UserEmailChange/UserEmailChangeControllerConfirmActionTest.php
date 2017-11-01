@@ -33,7 +33,7 @@ class UserEmailChangeControllerConfirmActionTest extends AbstractUserEmailChange
 
     public function testConfirmActionUserHasNoRequest()
     {
-        $this->setExpectedException(NotFoundHttpException::class);
+        $this->expectException(NotFoundHttpException::class);
 
         $user = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'no-request@example.com',
@@ -49,7 +49,7 @@ class UserEmailChangeControllerConfirmActionTest extends AbstractUserEmailChange
 
     public function testConfirmActionInvalidToken()
     {
-        $this->setExpectedException(BadRequestHttpException::class);
+        $this->expectException(BadRequestHttpException::class);
 
         $this->createEmailChangeRequest($this->user, 'new-email@example.com');
 
@@ -61,7 +61,7 @@ class UserEmailChangeControllerConfirmActionTest extends AbstractUserEmailChange
 
     public function testConfirmActionNewEmailTaken()
     {
-        $this->setExpectedException(ConflictHttpException::class);
+        $this->expectException(ConflictHttpException::class);
 
         $newEmail = 'new-email@example.com';
 

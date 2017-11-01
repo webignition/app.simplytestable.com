@@ -92,10 +92,8 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
             'schedule' => $schedule,
         ]);
 
-        $this->setExpectedException(
-            BadRequestHttpException::class,
-            $expectedExceptionMessage
-        );
+        $this->expectException(BadRequestHttpException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
 
         $this->scheduledJobCreateController->createAction($request);
     }
