@@ -26,7 +26,9 @@ class ScheduledJobRepository extends EntityRepository
         ScheduledJob.isRecurring = :IsRecurring AND
         CronJob.schedule = :Schedule';
 
-        if (!is_null($cronModifier)) {
+        if (empty($cronModifier)) {
+            $where .= ' AND ScheduledJob.cronModifier IS NULL';
+        } else {
             $where .= ' AND ScheduledJob.cronModifier = :CronModifier';
             $queryBuilder->setParameter('CronModifier', $cronModifier);
         }

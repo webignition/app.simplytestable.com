@@ -131,7 +131,7 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
                 'scheduledJobJobConfigurationIndex' => 0,
                 'jobConfigurationValues' => null,
                 'schedule' => '* * * * *',
-                'cronModifier' => '',
+                'cronModifier' => null,
                 'isRecurring' => true,
                 'expectedHas' => false,
             ],
