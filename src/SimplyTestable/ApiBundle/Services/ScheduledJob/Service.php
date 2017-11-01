@@ -124,7 +124,6 @@ class Service extends EntityService
      * @param $id
      *
      * @return null|ScheduledJob
-     * @throws ScheduledJobException
      */
     public function get($id)
     {
@@ -157,7 +156,6 @@ class Service extends EntityService
 
     /**
      * @return ScheduledJob[]
-     * @throws ScheduledJobException
      */
     public function getList()
     {
