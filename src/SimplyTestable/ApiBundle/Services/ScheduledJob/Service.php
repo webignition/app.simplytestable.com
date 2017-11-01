@@ -4,7 +4,7 @@ namespace SimplyTestable\ApiBundle\Services\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Cron\CronBundle\Entity\CronJob;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
-use SimplyTestable\ApiBundle\Repository\ScheduledJob\Repository as ScheduledJobRepository;
+use SimplyTestable\ApiBundle\Repository\ScheduledJobRepository;
 use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use Doctrine\ORM\EntityManager;
