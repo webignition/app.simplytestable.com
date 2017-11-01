@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurationService;
 use Cron\CronBundle\Cron\Manager as CronManager;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class Service extends EntityService
 {
@@ -33,26 +34,29 @@ class Service extends EntityService
     private $cronManager;
 
     /**
-     * @var User
+     * @var TokenStorageInterface
      */
-    private $user;
+    private $tokenStorage;
 
     /**
      * @param EntityManager $entityManager
      * @param JobConfigurationService $jobConfigurationService
      * @param TeamService $teamService
      * @param CronManager $cronManager
+     * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
         EntityManager $entityManager,
         JobConfigurationService $jobConfigurationService,
         TeamService $teamService,
-        CronManager $cronManager
+        CronManager $cronManager,
+        TokenStorageInterface $tokenStorage
     ) {
         parent::__construct($entityManager);
         $this->jobConfigurationService = $jobConfigurationService;
         $this->teamService = $teamService;
         $this->cronManager = $cronManager;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -68,15 +72,7 @@ class Service extends EntityService
      */
     public function setUser(User $user)
     {
-        $this->user = $user;
-    }
 
-    /**
-     * @return bool
-     */
-    public function hasUser()
-    {
-        return !is_null($this->user);
     }
 
     /**
@@ -94,23 +90,12 @@ class Service extends EntityService
         $cronModifier = null,
         $isRecurring = true
     ) {
-        $jobConfigurationUser = $jobConfiguration->getUser();
-
-        if (empty($jobConfigurationUser)) {
-            throw new ScheduledJobException(
-                'User is not set',
-                ScheduledJobException::CODE_USER_NOT_SET
-            );
-        }
-
         if ($this->getEntityRepository()->has($jobConfiguration, $schedule, $cronModifier, $isRecurring)) {
             throw new ScheduledJobException(
                 'Matching scheduled job exists',
                 ScheduledJobException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
             );
         }
-
-        $this->user = $jobConfiguration->getUser();
 
         $cronJob = new CronJob();
         $cronJob->setCommand('');
@@ -154,12 +139,7 @@ class Service extends EntityService
      */
     public function get($id)
     {
-        if (!$this->hasUser()) {
-            throw new ScheduledJobException(
-                'User is not set',
-                ScheduledJobException::CODE_USER_NOT_SET
-            );
-        }
+        $user = $this->tokenStorage->getToken()->getUser();
 
         /* @var $scheduledJob ScheduledJob */
         $scheduledJob = $this->getEntityRepository()->find($id);
@@ -167,15 +147,15 @@ class Service extends EntityService
             return null;
         }
 
-        if ($scheduledJob->getJobConfiguration()->getUser()->equals($this->user)) {
+        if ($scheduledJob->getJobConfiguration()->getUser()->equals($user)) {
             return $scheduledJob;
         }
 
-        if (!$this->teamService->hasForUser($this->user)) {
+        if (!$this->teamService->hasForUser($user)) {
             return null;
         }
 
-        $people = $this->teamService->getPeopleForUser($this->user);
+        $people = $this->teamService->getPeopleForUser($user);
 
         foreach ($people as $person) {
             if ($scheduledJob->getJobConfiguration()->getUser()->equals($person)) {
@@ -192,17 +172,12 @@ class Service extends EntityService
      */
     public function getList()
     {
-        if (!$this->hasUser()) {
-            throw new ScheduledJobException(
-                'User is not set',
-                ScheduledJobException::CODE_USER_NOT_SET
-            );
-        }
+        $user = $this->tokenStorage->getToken()->getUser();
 
         return $this->getEntityRepository()->getList(
-            ($this->teamService->hasForUser($this->user)
-                ? $this->teamService->getPeopleForUser($this->user)
-                : [$this->user])
+            ($this->teamService->hasForUser($user)
+                ? $this->teamService->getPeopleForUser($user)
+                : [$user])
         );
     }
 
@@ -318,21 +293,16 @@ class Service extends EntityService
      */
     public function removeAll()
     {
-        if (!$this->hasUser()) {
-            throw new ScheduledJobException(
-                'User is not set',
-                ScheduledJobException::CODE_USER_NOT_SET
-            );
-        }
+        $user = $this->tokenStorage->getToken()->getUser();
 
-        if ($this->teamService->hasForUser($this->user)) {
+        if ($this->teamService->hasForUser($user)) {
             throw new ScheduledJobException(
                 'Unable to remove all; user is in a team',
                 ScheduledJobException::CODE_UNABLE_TO_PERFORM_AS_USER_IS_IN_A_TEAM
             );
         }
 
-        $userScheduledJobs = $this->getEntityRepository()->getList([$this->user]);
+        $userScheduledJobs = $this->getEntityRepository()->getList([$user]);
 
         foreach ($userScheduledJobs as $userScheduledJob) {
             /* @var $userScheduledJob ScheduledJob */

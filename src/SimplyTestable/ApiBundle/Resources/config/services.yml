@@ -366,6 +366,7 @@ services:
         jobConfigurationService: "@simplytestable.services.job.configurationservice"
         teamService: "@simplytestable.services.teamservice"
         cronManager: "@cron.manager"
+        tokenStorage: '@security.token_storage'
 
   simplytestable.services.job.startservice:
     class:  SimplyTestable\ApiBundle\Services\Job\StartService

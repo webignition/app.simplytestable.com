@@ -75,7 +75,7 @@ abstract class TeamTest extends ServiceTest {
             true
         );
 
-        $this->getScheduledJobService()->setUser($this->getServiceRequestUser());
+        $this->setUser($this->getServiceRequestUser());
         $this->list = $this->getScheduledJobService()->getList();
     }
 

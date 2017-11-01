@@ -7,7 +7,8 @@ class DoesNotExistTest extends ServiceTest {
     public function testCallForNonExistentScheduledReturnsNull() {
         $userService = $this->container->get('simplytestable.services.userservice');
 
-        $this->getScheduledJobService()->setUser($userService->getPublicUser());
+        $this->setUser($userService->getPublicUser());
+
         $this->assertNull($this->getScheduledJobService()->get(1));
     }
 
