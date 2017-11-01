@@ -22,24 +22,18 @@ class ScheduledJobRepository extends EntityRepository
         $queryBuilder->select('count(ScheduledJob.id)');
         $queryBuilder->join('ScheduledJob.cronJob', 'CronJob');
 
-        $where = 'ScheduledJob.jobConfiguration = :JobConfiguration AND
-        ScheduledJob.isRecurring = :IsRecurring AND
-        CronJob.schedule = :Schedule';
-
-        if (empty($cronModifier)) {
-            $where .= ' AND ScheduledJob.cronModifier IS NULL';
-        } else {
-            $where .= ' AND ScheduledJob.cronModifier = :CronModifier';
-            $queryBuilder->setParameter('CronModifier', $cronModifier);
-        }
-
-        $queryBuilder->where($where);
+        $queryBuilder->where('ScheduledJob.jobConfiguration = :JobConfiguration');
+        $queryBuilder->andWhere('ScheduledJob.isRecurring = :IsRecurring');
+        $queryBuilder->andWhere('CronJob.schedule = :Schedule');
+        $queryBuilder->andWhere('ScheduledJob.cronModifier = :CronModifier');
 
         $queryBuilder->setParameter('JobConfiguration', $jobConfiguration);
         $queryBuilder->setParameter('IsRecurring', $isRecurring);
         $queryBuilder->setParameter('Schedule', $schedule);
+        $queryBuilder->setParameter('CronModifier', $cronModifier);
 
         $result = $queryBuilder->getQuery()->getResult();
+
         return $result[0][1] > 0;
     }
 
