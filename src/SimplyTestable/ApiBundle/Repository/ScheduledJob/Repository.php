@@ -6,17 +6,18 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 
-class Repository extends EntityRepository {
-
-
+class Repository extends EntityRepository
+{
     /**
      * @param JobConfiguration $jobConfiguration
      * @param $schedule
      * @param $cronModifier
      * @param $isRecurring
+     *
      * @return bool
      */
-    public function has(JobConfiguration $jobConfiguration, $schedule, $cronModifier, $isRecurring) {
+    public function has(JobConfiguration $jobConfiguration, $schedule, $cronModifier, $isRecurring)
+    {
         $queryBuilder = $this->createQueryBuilder('ScheduledJob');
         $queryBuilder->select('count(ScheduledJob.id)');
         $queryBuilder->join('ScheduledJob.cronJob', 'CronJob');
@@ -40,12 +41,12 @@ class Repository extends EntityRepository {
         return $result[0][1] > 0;
     }
 
-
     /**
      * @param User[] $users
      * @return ScheduledJob[]
      */
-    public function getList($users = []) {
+    public function getList($users = [])
+    {
         $queryBuilder = $this->createQueryBuilder('ScheduledJob');
         $queryBuilder->select('ScheduledJob');
         $queryBuilder->join('ScheduledJob.jobConfiguration', 'JobConfiguration');
@@ -54,5 +55,4 @@ class Repository extends EntityRepository {
 
         return $queryBuilder->getQuery()->getResult();
     }
-
 }
