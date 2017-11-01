@@ -124,7 +124,6 @@ class Service extends EntityService
      * @param $id
      *
      * @return null|ScheduledJob
-     * @throws ScheduledJobException
      */
     public function get($id)
     {
@@ -157,7 +156,6 @@ class Service extends EntityService
 
     /**
      * @return ScheduledJob[]
-     * @throws ScheduledJobException
      */
     public function getList()
     {
@@ -201,7 +199,6 @@ class Service extends EntityService
             : $jobConfiguration;
 
         $comparatorSchedule = is_null($schedule) ? $scheduledJob->getCronJob()->getSchedule() : $schedule;
-        $comparatorCronModifier = is_null($cronModifier) ? $scheduledJob->getCronModifier() : $cronModifier;
         $comparatorIsRecurring = is_null($isRecurring) ? $scheduledJob->getIsRecurring() : $isRecurring;
 
         $scheduledJobJobConfiguration = $scheduledJob->getJobConfiguration();
