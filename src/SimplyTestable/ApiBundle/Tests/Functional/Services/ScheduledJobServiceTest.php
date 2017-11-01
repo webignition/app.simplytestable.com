@@ -12,6 +12,8 @@ use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurati
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Tests\Factory\JobConfigurationFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\ScheduledJobFactory;
+use SimplyTestable\ApiBundle\Tests\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Tests\Functional\AbstractBaseTestCase;
 use Cron\CronBundle\Cron\Manager as CronManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -138,5 +140,111 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
                 'expectedCronJobCommand' => 'simplytestable:scheduledjob:enqueue %s #bar'
             ],
         ];
+    }
+
+    public function testGetInvalidId()
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+        $this->setUser($userService->getPublicUser());
+
+        $scheduledJob = $this->scheduledJobService->get(0);
+
+        $this->assertNull($scheduledJob);
+    }
+
+    public function testGetSuccessForNonTeamUser()
+    {
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        $user = $userService->getPublicUser();
+        $this->setUser($user);
+
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+
+        $scheduledJob = $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create([
+                JobConfigurationFactory::KEY_USER => $user,
+            ]),
+        ]);
+
+        $retrievedScheduledJob = $this->scheduledJobService->get($scheduledJob->getId());
+
+        $this->assertEquals($scheduledJob, $retrievedScheduledJob);
+    }
+
+    public function testGetFailureForNonTeamUser()
+    {
+        $userFactory = new UserFactory($this->container);
+        $users = $userFactory->createPublicAndPrivateUserSet();
+
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+
+        $scheduledJob = $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create([
+                JobConfigurationFactory::KEY_USER => $users['public'],
+            ]),
+        ]);
+
+        $this->setUser($users['private']);
+
+        $retrievedScheduledJob = $this->scheduledJobService->get($scheduledJob->getId());
+
+        $this->assertNull($retrievedScheduledJob);
+    }
+
+    public function testGetForTeamUsers()
+    {
+        $userFactory = new UserFactory($this->container);
+        $users = $userFactory->createPublicPrivateAndTeamUserSet();
+
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+
+        $leaderScheduledJob = $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create([
+                JobConfigurationFactory::KEY_USER => $users['leader'],
+            ]),
+        ]);
+
+        $memberScheduledJob = $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create([
+                JobConfigurationFactory::KEY_USER => $users['member1'],
+            ]),
+        ]);
+
+        $this->setUser($users['leader']);
+
+        $this->assertEquals($leaderScheduledJob, $this->scheduledJobService->get($leaderScheduledJob->getId()));
+        $this->assertEquals($memberScheduledJob, $this->scheduledJobService->get($memberScheduledJob->getId()));
+
+        $this->setUser($users['member1']);
+
+        $this->assertEquals($leaderScheduledJob, $this->scheduledJobService->get($leaderScheduledJob->getId()));
+        $this->assertEquals($memberScheduledJob, $this->scheduledJobService->get($memberScheduledJob->getId()));
+    }
+
+    public function testGetFailureForTeamUsers()
+    {
+        $userFactory = new UserFactory($this->container);
+        $users = $userFactory->createPublicPrivateAndTeamUserSet();
+
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+
+        $scheduledJob = $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create([
+                JobConfigurationFactory::KEY_USER => $users['private'],
+            ]),
+        ]);
+
+        $this->setUser($users['leader']);
+
+        $this->assertNull($this->scheduledJobService->get($scheduledJob->getId()));
+
+        $this->setUser($users['member1']);
+
+        $this->assertNull($this->scheduledJobService->get($scheduledJob->getId()));
     }
 }
