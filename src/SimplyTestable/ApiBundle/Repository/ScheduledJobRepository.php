@@ -25,12 +25,15 @@ class ScheduledJobRepository extends EntityRepository
         $queryBuilder->where('ScheduledJob.jobConfiguration = :JobConfiguration');
         $queryBuilder->andWhere('ScheduledJob.isRecurring = :IsRecurring');
         $queryBuilder->andWhere('CronJob.schedule = :Schedule');
-        $queryBuilder->andWhere('ScheduledJob.cronModifier = :CronModifier');
+
+        if (!is_null($cronModifier)) {
+            $queryBuilder->andWhere('ScheduledJob.cronModifier = :CronModifier');
+            $queryBuilder->setParameter('CronModifier', $cronModifier);
+        }
 
         $queryBuilder->setParameter('JobConfiguration', $jobConfiguration);
         $queryBuilder->setParameter('IsRecurring', $isRecurring);
         $queryBuilder->setParameter('Schedule', $schedule);
-        $queryBuilder->setParameter('CronModifier', $cronModifier);
 
         $result = $queryBuilder->getQuery()->getResult();
 

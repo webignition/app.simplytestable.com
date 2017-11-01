@@ -120,22 +120,6 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
                 'isRecurring' => true,
                 'expectedHas' => false,
             ],
-            'no matches on cron modifier' => [
-                'scheduledJobValuesCollection' => [
-                    [
-                        ScheduledJobFactory::KEY_JOB_CONFIGURATION => [],
-                        ScheduledJobFactory::KEY_SCHEDULE => '* * * * *',
-                        ScheduledJobFactory::KEY_CRON_MODIFIER => '[ `date +\%d` -le 0 ]',
-                        ScheduledJobFactory::KEY_IS_RECURRING => true,
-                    ],
-                ],
-                'scheduledJobJobConfigurationIndex' => 0,
-                'jobConfigurationValues' => null,
-                'schedule' => '* * * * *',
-                'cronModifier' => null,
-                'isRecurring' => true,
-                'expectedHas' => false,
-            ],
             'no matches on is recurring' => [
                 'scheduledJobValuesCollection' => [
                     [
@@ -152,7 +136,23 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
                 'isRecurring' => false,
                 'expectedHas' => false,
             ],
-            'matches' => [
+            'matches with cron modifier set but requested modifier null' => [
+                'scheduledJobValuesCollection' => [
+                    [
+                        ScheduledJobFactory::KEY_JOB_CONFIGURATION => [],
+                        ScheduledJobFactory::KEY_SCHEDULE => '* * * * *',
+                        ScheduledJobFactory::KEY_CRON_MODIFIER => '[ `date +\%d` -le 0 ]',
+                        ScheduledJobFactory::KEY_IS_RECURRING => true,
+                    ],
+                ],
+                'scheduledJobJobConfigurationIndex' => 0,
+                'jobConfigurationValues' => null,
+                'schedule' => '* * * * *',
+                'cronModifier' => null,
+                'isRecurring' => true,
+                'expectedHas' => true,
+            ],
+            'matches with cron modifier set and requested modifier set' => [
                 'scheduledJobValuesCollection' => [
                     [
                         ScheduledJobFactory::KEY_JOB_CONFIGURATION => [],
