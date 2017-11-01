@@ -376,4 +376,23 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
             ],
         ];
     }
+
+    public function testDelete()
+    {
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+
+        $scheduledJob = $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfigurationFactory->create(),
+        ]);
+
+        $this->assertInstanceOf(ScheduledJob::class, $scheduledJob);
+        $this->assertNotNull($scheduledJob->getId());
+        $this->assertNotNull($scheduledJob->getCronJob()->getId());
+
+        $this->scheduledJobService->delete($scheduledJob);
+
+        $this->assertNull($scheduledJob->getId());
+        $this->assertNull($scheduledJob->getCronJob()->getId());
+    }
 }
