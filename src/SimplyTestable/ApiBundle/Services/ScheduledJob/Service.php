@@ -15,8 +15,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class Service extends EntityService
 {
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\ScheduledJob';
-
     /**
      * @var JobConfigurationService
      */
