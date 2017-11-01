@@ -199,7 +199,6 @@ class Service extends EntityService
             : $jobConfiguration;
 
         $comparatorSchedule = is_null($schedule) ? $scheduledJob->getCronJob()->getSchedule() : $schedule;
-        $comparatorCronModifier = is_null($cronModifier) ? $scheduledJob->getCronModifier() : $cronModifier;
         $comparatorIsRecurring = is_null($isRecurring) ? $scheduledJob->getIsRecurring() : $isRecurring;
 
         $scheduledJobJobConfiguration = $scheduledJob->getJobConfiguration();

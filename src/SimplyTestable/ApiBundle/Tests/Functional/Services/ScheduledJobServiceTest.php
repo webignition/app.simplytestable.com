@@ -395,4 +395,141 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
         $this->assertNull($scheduledJob->getId());
         $this->assertNull($scheduledJob->getCronJob()->getId());
     }
+
+    public function testUpdateHasMatchingScheduledJob()
+    {
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+
+        $jobConfiguration = $jobConfigurationFactory->create();
+
+        $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfiguration,
+            ScheduledJobFactory::KEY_SCHEDULE => '* * * * *',
+        ]);
+
+        $scheduledJob = $scheduledJobFactory->create([
+            ScheduledJobFactory::KEY_JOB_CONFIGURATION => $jobConfiguration,
+            ScheduledJobFactory::KEY_SCHEDULE => '* * * * 1',
+        ]);
+
+        $this->expectException(ScheduledJobServiceException::class);
+        $this->expectExceptionMessage('Matching scheduled job exists');
+        $this->expectExceptionCode(ScheduledJobServiceException::CODE_MATCHING_SCHEDULED_JOB_EXISTS);
+
+        $this->scheduledJobService->update(
+            $scheduledJob,
+            null,
+            '* * * * *',
+            null,
+            null
+        );
+    }
+
+    /**
+     * @dataProvider updateSuccessDataProvider
+     *
+     * @param array $jobConfigurationValues
+     * @param array $scheduledJobValues
+     * @param array $updatedJobConfigurationValues
+     * @param string $schedule
+     * @param string $cronModifier
+     * @param bool $isRecurring
+     * @param $expectedJobConfigurationLabel
+     */
+    public function testUpdateSuccess(
+        $jobConfigurationValues,
+        $scheduledJobValues,
+        $updatedJobConfigurationValues,
+        $schedule,
+        $cronModifier,
+        $isRecurring,
+        $expectedJobConfigurationLabel
+    ) {
+        $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+        $scheduledJobFactory = new ScheduledJobFactory($this->container);
+
+        $jobConfiguration = $jobConfigurationFactory->create($jobConfigurationValues);
+
+        $scheduledJobValues[ScheduledJobFactory::KEY_JOB_CONFIGURATION] = $jobConfiguration;
+
+        $scheduledJob = $scheduledJobFactory->create($scheduledJobValues);
+
+        $updatedJobConfiguration = null;
+
+        if (is_array($updatedJobConfigurationValues)) {
+            $updatedJobConfiguration = $jobConfigurationFactory->create($updatedJobConfigurationValues);
+        } elseif ($updatedJobConfigurationValues === true) {
+            $updatedJobConfiguration = $jobConfiguration;
+        }
+
+        $this->scheduledJobService->update(
+            $scheduledJob,
+            $updatedJobConfiguration,
+            $schedule,
+            $cronModifier,
+            $isRecurring
+        );
+
+        $this->assertEquals($schedule, $scheduledJob->getCronJob()->getSchedule());
+        $this->assertEquals($cronModifier, $scheduledJob->getCronModifier());
+        $this->assertEquals($isRecurring, $scheduledJob->getIsRecurring());
+        $this->assertEquals($expectedJobConfigurationLabel, $scheduledJob->getJobConfiguration()->getLabel());
+    }
+
+    /**
+     * @return array
+     */
+    public function updateSuccessDataProvider()
+    {
+        return [
+            'no changes, null job configuration' => [
+                'jobConfigurationValues' => [
+                    JobConfigurationFactory::KEY_LABEL => 'foo',
+                ],
+                'scheduledJobValues' => [
+                    ScheduledJobFactory::KEY_SCHEDULE => '* * * * *',
+                    ScheduledJobFactory::KEY_CRON_MODIFIER => null,
+                    ScheduledJobFactory::KEY_IS_RECURRING => true,
+                ],
+                'updatedJobConfigurationValues' => null,
+                'schedule' => '* * * * *',
+                'cronModifier' => null,
+                'isRecurring' =>  true,
+                'expectedJobConfigurationLabel' => 'foo',
+            ],
+            'no changes, same job configuration' => [
+                'jobConfigurationValues' => [
+                    JobConfigurationFactory::KEY_LABEL => 'foo',
+                ],
+                'scheduledJobValues' => [
+                    ScheduledJobFactory::KEY_SCHEDULE => '* * * * *',
+                    ScheduledJobFactory::KEY_CRON_MODIFIER => 'bar',
+                    ScheduledJobFactory::KEY_IS_RECURRING => true,
+                ],
+                'updatedJobConfigurationValues' => true,
+                'schedule' => '* * * * *',
+                'cronModifier' => 'bar',
+                'isRecurring' =>  true,
+                'expectedJobConfigurationLabel' => 'foo',
+            ],
+            'update job configuration, schedule' => [
+                'jobConfigurationValues' => [
+                    JobConfigurationFactory::KEY_LABEL => 'foo',
+                ],
+                'scheduledJobValues' => [
+                    ScheduledJobFactory::KEY_SCHEDULE => '* * * * *',
+                    ScheduledJobFactory::KEY_CRON_MODIFIER => 'bar',
+                    ScheduledJobFactory::KEY_IS_RECURRING => true,
+                ],
+                'updatedJobConfigurationValues' => [
+                    JobConfigurationFactory::KEY_LABEL => 'foobar',
+                ],
+                'schedule' => '* * * * 1',
+                'cronModifier' => 'updated cron modifier',
+                'isRecurring' =>  false,
+                'expectedJobConfigurationLabel' => 'foobar',
+            ],
+        ];
+    }
 }
