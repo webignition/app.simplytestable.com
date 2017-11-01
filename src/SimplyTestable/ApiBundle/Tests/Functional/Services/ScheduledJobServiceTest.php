@@ -247,4 +247,133 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
         $this->assertNull($this->scheduledJobService->get($scheduledJob->getId()));
     }
+
+    /**
+     * @dataProvider getListDataProvider
+     *
+     * @param array $scheduledJobValuesCollection
+     * @param string $userName
+     * @param int[] $expectedScheduledJobIndices
+     */
+    public function testGetList($scheduledJobValuesCollection, $userName, $expectedScheduledJobIndices)
+    {
+        $userFactory = new UserFactory($this->container);
+        $users = $userFactory->createPublicPrivateAndTeamUserSet();
+        $user = $users[$userName];
+
+        /* @var ScheduledJob[] $scheduledJobs */
+        $scheduledJobs = [];
+
+        if (!empty($scheduledJobValuesCollection)) {
+            $scheduledJobFactory = new ScheduledJobFactory($this->container);
+            $jobConfigurationFactory = new JobConfigurationFactory($this->container);
+
+            foreach ($scheduledJobValuesCollection as $scheduledJobValues) {
+                $jobConfigurationValues = $scheduledJobValues[ScheduledJobFactory::KEY_JOB_CONFIGURATION];
+
+                $jobConfigurationUserName = $jobConfigurationValues[JobConfigurationFactory::KEY_USER];
+                $jobConfigurationValues[JobConfigurationFactory::KEY_USER] = $users[$jobConfigurationUserName];
+
+                $jobConfiguration = $jobConfigurationFactory->create($jobConfigurationValues);
+
+                $scheduledJobValues[ScheduledJobFactory::KEY_JOB_CONFIGURATION] = $jobConfiguration;
+
+                $scheduledJobs[] = $scheduledJobFactory->create($scheduledJobValues);
+            }
+        }
+
+        $this->setUser($user);
+
+        $scheduledJobList = $this->scheduledJobService->getList();
+
+        $this->assertCount(count($expectedScheduledJobIndices), $scheduledJobList);
+
+        $scheduledJobListIds = [];
+        $expectedScheduledJobIds = [];
+
+        foreach ($scheduledJobs as $scheduledJobIndex => $scheduledJob) {
+            if (in_array($scheduledJobIndex, $expectedScheduledJobIndices)) {
+                $expectedScheduledJobIds[] = $scheduledJob->getId();
+            }
+        }
+
+        foreach ($scheduledJobList as $scheduledJob) {
+            $scheduledJobListIds[] = $scheduledJob->getId();
+        }
+
+        $this->assertEquals($expectedScheduledJobIds, $scheduledJobListIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function getListDataProvider()
+    {
+        $teamScheduledJobValuesCollection = [
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'public',
+                ],
+            ],
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'leader',
+                ],
+            ],
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'member1',
+                ],
+            ],
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'member2',
+                ],
+            ],
+            [
+                ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                    JobConfigurationFactory::KEY_USER => 'private',
+                ],
+            ],
+        ];
+
+        return [
+            'private user, no scheduled jobs' => [
+                'scheduledJobValuesCollection' => [],
+                'userName' => 'private',
+                'expectedScheduledJobIndices' => [],
+            ],
+            'private user, has scheduled jobs' => [
+                'scheduledJobValuesCollection' => [
+                    [
+                        ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                            JobConfigurationFactory::KEY_USER => 'public',
+                        ],
+                    ],
+                    [
+                        ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                            JobConfigurationFactory::KEY_USER => 'private',
+                        ],
+                    ],
+                    [
+                        ScheduledJobFactory::KEY_JOB_CONFIGURATION => [
+                            JobConfigurationFactory::KEY_USER => 'private',
+                        ],
+                    ],
+                ],
+                'userName' => 'private',
+                'expectedScheduledJobIndices' => [1, 2],
+            ],
+            'team leader' => [
+                'scheduledJobValuesCollection' => $teamScheduledJobValuesCollection,
+                'userName' => 'leader',
+                'expectedScheduledJobIndices' => [1, 2, 3],
+            ],
+            'team member' => [
+                'scheduledJobValuesCollection' => $teamScheduledJobValuesCollection,
+                'userName' => 'member1',
+                'expectedScheduledJobIndices' => [1, 2, 3],
+            ],
+        ];
+    }
 }
