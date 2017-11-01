@@ -5,6 +5,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Cron\CronBundle\Entity\CronJob;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Repository\ScheduledJob\Repository as ScheduledJobRepository;
 use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use Doctrine\ORM\EntityManager;
@@ -12,9 +13,8 @@ use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurati
 use Cron\CronBundle\Cron\Manager as CronManager;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobException;
 
-
-class Service extends EntityService {
-
+class Service extends EntityService
+{
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\ScheduledJob';
 
     /**
@@ -22,25 +22,27 @@ class Service extends EntityService {
      */
     private $jobConfigurationService;
 
-
     /**
      * @var TeamService
      */
     private $teamService;
-
 
     /**
      * @var CronManager
      */
     private $cronManager;
 
-
     /**
      * @var User
      */
     private $user;
 
-
+    /**
+     * @param EntityManager $entityManager
+     * @param JobConfigurationService $jobConfigurationService
+     * @param TeamService $teamService
+     * @param CronManager $cronManager
+     */
     public function __construct(
         EntityManager $entityManager,
         JobConfigurationService $jobConfigurationService,
@@ -54,31 +56,44 @@ class Service extends EntityService {
     }
 
     /**
-     *
      * @return string
      */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
+    protected function getEntityName()
+    {
+        return ScheduledJob::class;
     }
-
 
     /**
      * @param User $user
      */
-    public function setUser(User $user) {
+    public function setUser(User $user)
+    {
         $this->user = $user;
     }
-
 
     /**
      * @return bool
      */
-    public function hasUser() {
+    public function hasUser()
+    {
         return !is_null($this->user);
     }
 
-
-    public function create(JobConfiguration $jobConfiguration, $schedule = '* * * * *', $cronModifier = null, $isRecurring = true) {
+    /**
+     * @param JobConfiguration $jobConfiguration
+     * @param string $schedule
+     * @param null $cronModifier
+     * @param bool $isRecurring
+     *
+     * @return ScheduledJob
+     * @throws ScheduledJobException
+     */
+    public function create(
+        JobConfiguration $jobConfiguration,
+        $schedule = '* * * * *',
+        $cronModifier = null,
+        $isRecurring = true
+    ) {
         $jobConfigurationUser = $jobConfiguration->getUser();
 
         if (empty($jobConfigurationUser)) {
@@ -131,13 +146,14 @@ class Service extends EntityService {
         return $scheduledJob;
     }
 
-
     /**
      * @param $id
+     *
      * @return null|ScheduledJob
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception
+     * @throws ScheduledJobException
      */
-    public function get($id) {
+    public function get($id)
+    {
         if (!$this->hasUser()) {
             throw new ScheduledJobException(
                 'User is not set',
@@ -170,12 +186,12 @@ class Service extends EntityService {
         return null;
     }
 
-
     /**
      * @return ScheduledJob[]
      * @throws ScheduledJobException
      */
-    public function getList() {
+    public function getList()
+    {
         if (!$this->hasUser()) {
             throw new ScheduledJobException(
                 'User is not set',
@@ -184,20 +200,21 @@ class Service extends EntityService {
         }
 
         return $this->getEntityRepository()->getList(
-            ($this->teamService->hasForUser($this->user) ? $this->teamService->getPeopleForUser($this->user) : [$this->user])
+            ($this->teamService->hasForUser($this->user)
+                ? $this->teamService->getPeopleForUser($this->user)
+                : [$this->user])
         );
     }
-
 
     /**
      * @param ScheduledJob $scheduledJob
      */
-    public function delete(ScheduledJob $scheduledJob) {
+    public function delete(ScheduledJob $scheduledJob)
+    {
         $this->getManager()->remove($scheduledJob->getCronJob());
         $this->getManager()->remove($scheduledJob);
         $this->getManager()->flush();
     }
-
 
     /**
      * @param ScheduledJob $scheduledJob
@@ -205,15 +222,27 @@ class Service extends EntityService {
      * @param string $schedule
      * @param string $cronModifier
      * @param bool $isRecurring
+     *
      * @throws ScheduledJobException
      */
-    public function update(ScheduledJob $scheduledJob, JobConfiguration $jobConfiguration = null, $schedule = null, $cronModifier = null, $isRecurring = null) {
-        $comparatorJobConfiguration = is_null($jobConfiguration) ? clone $scheduledJob->getJobConfiguration() : $jobConfiguration;
+    public function update(
+        ScheduledJob $scheduledJob,
+        JobConfiguration $jobConfiguration = null,
+        $schedule = null,
+        $cronModifier = null,
+        $isRecurring = null
+    ) {
+        $comparatorJobConfiguration = is_null($jobConfiguration)
+            ? clone $scheduledJob->getJobConfiguration()
+            : $jobConfiguration;
+
         $comparatorSchedule = is_null($schedule) ? $scheduledJob->getCronJob()->getSchedule() : $schedule;
         $comparatorCronModifier = is_null($cronModifier) ? $scheduledJob->getCronModifier() : $cronModifier;
         $comparatorIsRecurring = is_null($isRecurring) ? $scheduledJob->getIsRecurring() : $isRecurring;
 
-        if (!is_null($jobConfiguration) && $scheduledJob->getJobConfiguration()->getId() == $jobConfiguration->getId()) {
+        $scheduledJobJobConfiguration = $scheduledJob->getJobConfiguration();
+
+        if (!is_null($jobConfiguration) && $scheduledJobJobConfiguration->getId() == $jobConfiguration->getId()) {
             $jobConfiguration = null;
         }
 
@@ -233,8 +262,19 @@ class Service extends EntityService {
             return;
         }
 
-        if (!is_null($comparatorJobConfiguration) && !is_null($comparatorSchedule) && !is_null($comparatorIsRecurring)) {
-            if ($this->getEntityRepository()->has($comparatorJobConfiguration, $comparatorSchedule, $cronModifier, $comparatorIsRecurring)) {
+        $comparatorJobConfigurationIsNull = is_null($comparatorJobConfiguration);
+        $comparatorScheduleIsNull = is_null($comparatorSchedule);
+        $comparatorIsRecurringIsNull = is_null($comparatorIsRecurring);
+
+        if (!$comparatorJobConfigurationIsNull && !$comparatorScheduleIsNull && !$comparatorIsRecurringIsNull) {
+            $hasExisting = $this->getEntityRepository()->has(
+                $comparatorJobConfiguration,
+                $comparatorSchedule,
+                $cronModifier,
+                $comparatorIsRecurring
+            );
+
+            if ($hasExisting) {
                 throw new ScheduledJobException(
                     'Matching scheduled job exists',
                     ScheduledJobException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
@@ -265,20 +305,19 @@ class Service extends EntityService {
         return;
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\ScheduledJob\Repository
+     * @return ScheduledJobRepository
      */
-    public function getEntityRepository() {
+    public function getEntityRepository()
+    {
         return parent::getEntityRepository();
     }
-
 
     /**
      * @throws ScheduledJobException
      */
-    public function removeAll() {
+    public function removeAll()
+    {
         if (!$this->hasUser()) {
             throw new ScheduledJobException(
                 'User is not set',
