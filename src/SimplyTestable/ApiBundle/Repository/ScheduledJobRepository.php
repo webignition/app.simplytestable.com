@@ -1,12 +1,12 @@
 <?php
-namespace SimplyTestable\ApiBundle\Repository\ScheduledJob;
+namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 
-class Repository extends EntityRepository
+class ScheduledJobRepository extends EntityRepository
 {
     /**
      * @param JobConfiguration $jobConfiguration
