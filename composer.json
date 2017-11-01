@@ -46,7 +46,6 @@
     "require-dev": {
         "sensio/generator-bundle": "~3.0",
         "symfony/phpunit-bridge": "~2.7",
-        "icanboogie/inflector":">=1.0,<2",
         "phpunit/phpunit": "~4.0",
         "squizlabs/php_codesniffer": "3.*",
         "mockery/mockery": "~0.9",
