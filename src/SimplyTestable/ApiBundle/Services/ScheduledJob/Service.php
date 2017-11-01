@@ -68,14 +68,6 @@ class Service extends EntityService
     }
 
     /**
-     * @param User $user
-     */
-    public function setUser(User $user)
-    {
-
-    }
-
-    /**
      * @param JobConfiguration $jobConfiguration
      * @param string $schedule
      * @param null $cronModifier
