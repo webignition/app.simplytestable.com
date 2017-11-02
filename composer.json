@@ -70,15 +70,12 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
         ],
-        "test-unit": "./bin/phpunit -c app --colors src/SimplyTestable/ApiBundle/Tests/Unit/",
-        "test-functional": "./bin/phpunit -c app --colors src/SimplyTestable/ApiBundle/Tests/Functional/",
+        "test-unit": "./vendor/bin/phpunit -c app --colors src/SimplyTestable/ApiBundle/Tests/Unit/",
+        "test-functional": "./vendor/bin/phpunit -c app --colors src/SimplyTestable/ApiBundle/Tests/Functional/",
         "test": [
             "@composer test-unit",
             "@composer test-functional"
         ]
-    },
-    "config": {
-        "bin-dir": "bin"
     },
     "minimum-stability": "stable",
     "prefer-stable":true,
