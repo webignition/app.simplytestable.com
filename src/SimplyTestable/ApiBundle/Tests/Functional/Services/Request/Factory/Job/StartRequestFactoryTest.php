@@ -53,9 +53,11 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
 
         $taskConfigurationCollection = $jobStartRequest->getTaskConfigurationCollection();
 
-        $this->assertEquals(count($expectedTaskConfigurationCollection), $taskConfigurationCollection->count());
+        $taskConfigurations = $taskConfigurationCollection->get();
 
-        foreach ($taskConfigurationCollection->get() as $taskConfigurationIndex => $taskConfiguration) {
+        $this->assertEquals(count($expectedTaskConfigurationCollection), count($taskConfigurations));
+
+        foreach ($taskConfigurations as $taskConfigurationIndex => $taskConfiguration) {
             $expectedTaskConfiguration = $expectedTaskConfigurationCollection[$taskConfigurationIndex];
 
             $this->assertEquals($expectedTaskConfiguration['type']['name'], $taskConfiguration->getType()->getName());

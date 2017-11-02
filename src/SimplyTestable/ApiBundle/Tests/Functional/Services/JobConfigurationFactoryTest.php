@@ -129,13 +129,15 @@ class JobConfigurationFactoryTest extends AbstractBaseTestCase
                 ]),
                 'jobParameters' => [],
                 'taskConfigurationCollection' => ModelFactory::createTaskConfigurationCollection([
-                    TaskTypeService::HTML_VALIDATION_TYPE => [
-                        ModelFactory::TASK_CONFIGURATION_COLLECTION_OPTIONS => [
+                    [
+                        ModelFactory::TASK_CONFIGURATION_TYPE => TaskTypeService::HTML_VALIDATION_TYPE,
+                        ModelFactory::TASK_CONFIGURATION_OPTIONS => [
                             'html-validation-foo' => 'html-validation-bar',
                         ],
                     ],
-                    TaskTypeService::LINK_INTEGRITY_TYPE => [
-                        ModelFactory::TASK_CONFIGURATION_COLLECTION_OPTIONS => [
+                    [
+                        ModelFactory::TASK_CONFIGURATION_TYPE => TaskTypeService::LINK_INTEGRITY_TYPE,
+                        ModelFactory::TASK_CONFIGURATION_OPTIONS => [
                             'link-integrity-foo' => 'link-integrity-bar',
                         ],
                     ],

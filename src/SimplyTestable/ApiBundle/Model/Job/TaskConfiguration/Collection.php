@@ -66,19 +66,11 @@ class Collection
     }
 
     /**
-     * @return int
-     */
-    public function count()
-    {
-        return count($this->collection);
-    }
-
-    /**
      * @return bool
      */
     public function isEmpty()
     {
-        return $this->count() == 0;
+        return empty($this->collection);
     }
 
     /**
@@ -88,7 +80,10 @@ class Collection
      */
     public function equals(Collection $comparator)
     {
-        if ($this->count() != $comparator->count()) {
+        $comparatorCollection = $comparator->get();
+        $thisCollectionCount = count($this->collection);
+
+        if ($thisCollectionCount !== count($comparatorCollection)) {
             return false;
         }
 
@@ -101,16 +96,7 @@ class Collection
             }
         }
 
-        return $matchCount == $this->count();
-    }
-
-    /**
-     * @return $this
-     */
-    public function clear()
-    {
-        $this->collection = [];
-        return $this;
+        return $matchCount === $thisCollectionCount;
     }
 
     /**
