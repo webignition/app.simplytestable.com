@@ -15,7 +15,6 @@ vendor
 composer.phar
 phpcpd.phar
 app/config/parameters.yml
-/bin
 # IDE meta
 /nbproject
 /.idea
