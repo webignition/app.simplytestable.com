@@ -1,12 +1,12 @@
-{
+    {
     "name": "webignition/app.simplytestable.com",
     "description": "Source for http://app.simplytestable.com",
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-4": { "": "src/" },
+        "files": ["app/AppKernel.php"]
     },
     "require": {
         "php": ">=5.4.0",
-
         "doctrine/doctrine-bundle": "~1.4",
         "doctrine/orm": "^2.4.8",
         "incenteev/composer-parameter-handler": "~2.0",
