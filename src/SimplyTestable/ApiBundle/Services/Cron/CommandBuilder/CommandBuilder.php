@@ -8,6 +8,7 @@ class CommandBuilder extends BaseCommandBuilder
 {
     const PATTERN_MODIFIER = '/ #.+$/';
     const MODIFIER_PREFIX = ' #';
+    const CONSOLE_PATH = 'bin/console';
 
     /**
      * @var string
@@ -46,10 +47,23 @@ class CommandBuilder extends BaseCommandBuilder
         $this->command = $command;
 
         if (!$this->commandHasModifier()) {
-            return sprintf('%s %s %s --env=%s', $this->phpExecutable, 'app/console', $this->command, $this->environment);
+            return sprintf(
+                '%s %s %s --env=%s',
+                $this->phpExecutable,
+                self::CONSOLE_PATH,
+                $this->command,
+                $this->environment
+            );
         }
 
-        return sprintf('%s && %s %s %s --env=%s', $this->getModifier(), $this->phpExecutable, 'app/console', $this->getUnmodifiedCommand(), $this->environment);
+        return sprintf(
+            '%s && %s %s %s --env=%s',
+            $this->getModifier(),
+            $this->phpExecutable,
+            self::CONSOLE_PATH,
+            $this->getUnmodifiedCommand(),
+            $this->environment
+        );
     }
 
 
