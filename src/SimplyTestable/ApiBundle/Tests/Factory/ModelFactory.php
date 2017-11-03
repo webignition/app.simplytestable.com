@@ -31,8 +31,9 @@ class ModelFactory
     const USER_EMAIL = 'email';
     const WEBSITE_CANONICAL_URL = 'canonical-url';
     const JOB_TYPE_NAME = 'name';
-    const TASK_CONFIGURATION_COLLECTION_TYPE = 'type';
-    const TASK_CONFIGURATION_COLLECTION_OPTIONS = 'options';
+    const TASK_CONFIGURATION_TYPE = 'type';
+    const TASK_CONFIGURATION_OPTIONS = 'options';
+    const TASK_CONFIGURATION_IS_ENABLED = 'is-enabled';
     const TASK_TYPE_NAME = 'name';
     const TIME_PERIOD_START_DATE_TIME = 'start-date-time';
     const TIME_PERIOD_END_DATE_TIME = 'end-date-time';
@@ -125,22 +126,37 @@ class ModelFactory
     {
         $taskConfigurationCollection = new TaskConfigurationCollection();
 
-        foreach ($taskConfigurationCollectionValues as $taskTypeName => $taskConfigurationValues) {
-            $taskType = self::createTaskType([
-                self::TASK_TYPE_NAME => $taskTypeName,
-            ]);
-
-            $taskConfiguration = new TaskConfiguration();
-            $taskConfiguration->setType($taskType);
-
-            if (isset($taskConfigurationValues[self::TASK_CONFIGURATION_COLLECTION_OPTIONS])) {
-                $taskConfiguration->setOptions($taskConfigurationValues[self::TASK_CONFIGURATION_COLLECTION_OPTIONS]);
-            }
-
+        foreach ($taskConfigurationCollectionValues as $taskConfigurationValues) {
+            $taskConfiguration = self::createTaskConfiguration($taskConfigurationValues);
             $taskConfigurationCollection->add($taskConfiguration);
         }
 
         return $taskConfigurationCollection;
+    }
+
+    /**
+     * @param array $taskConfigurationValues
+     *
+     * @return TaskConfiguration
+     */
+    public static function createTaskConfiguration($taskConfigurationValues)
+    {
+        $taskType = self::createTaskType([
+            self::TASK_TYPE_NAME => $taskConfigurationValues[self::TASK_CONFIGURATION_TYPE],
+        ]);
+
+        $taskConfiguration = new TaskConfiguration();
+        $taskConfiguration->setType($taskType);
+
+        if (isset($taskConfigurationValues[self::TASK_CONFIGURATION_OPTIONS])) {
+            $taskConfiguration->setOptions($taskConfigurationValues[self::TASK_CONFIGURATION_OPTIONS]);
+        }
+
+        if (isset($taskConfigurationValues[self::TASK_CONFIGURATION_IS_ENABLED])) {
+            $taskConfiguration->setIsEnabled($taskConfigurationValues[self::TASK_CONFIGURATION_IS_ENABLED]);
+        }
+
+        return $taskConfiguration;
     }
 
     /**
