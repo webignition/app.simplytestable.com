@@ -203,7 +203,7 @@ services:
   simplytestable.services.webResourceService:
     class:  webignition\WebResource\Service\Service
     calls:
-      - [createConfiguration, [{allow-uknown-resource-types: "true", retry-with-url-encoding-disabled: "true", content-type-web-resource-map: %content_type_web_resource_map% }]]
+      - [createConfiguration, [{allow-uknown-resource-types: "true", retry-with-url-encoding-disabled: "true", content-type-web-resource-map: "%content_type_web_resource_map%" }]]
 
   simplytestable.services.taskputoutjoiner.linkintegrity:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner
@@ -224,7 +224,7 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%
+        webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
 
@@ -238,7 +238,7 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%
+        webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
 
@@ -252,7 +252,7 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%
+        webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
 
@@ -266,7 +266,7 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%
+        webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
 
@@ -280,7 +280,7 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%
+        webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
 
@@ -294,7 +294,7 @@ services:
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         accountPlanService: "@simplytestable.services.accountPlanService"
-        webClientProperties: %web_client%
+        webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
 
