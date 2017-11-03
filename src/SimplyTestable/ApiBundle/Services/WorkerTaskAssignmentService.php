@@ -32,17 +32,19 @@ class WorkerTaskAssignmentService extends WorkerTaskService
             "WorkerTaskAssignmentService::assignCollection: workers [" . implode(',', $workerNames) . "]"
         );
 
-        if (count($workers) == 0) {
+        if (empty($workers)) {
             $this->logger->error("WorkerTaskAssignmentService::assignCollection: Cannot assign, no active workers.");
+
             return self::ASSIGN_COLLECTION_NO_WORKERS_STATUS_CODE;
         }
 
         $this->logger->info("WorkerTaskAssignmentService::assignCollection: Task collection count [".count($tasks)."]");
-        if (count($tasks) === 0) {
+        if (empty($tasks)) {
             return self::ASSIGN_COLLECTION_OK_STATUS_CODE;
         }
 
         $taskGroups = $this->getTaskGroups($tasks, count($workers));
+
         $failedWorkers = [];
         $failedGroups = [];
 
@@ -175,6 +177,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService
                 $curlException->getErrorNo(),
                 $curlException->getError()
             ));
+
             return false;
         } catch (BadResponseException $badResponseException) {
             $response = $badResponseException->getResponse();
@@ -187,6 +190,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService
                 $response->getStatusCode(),
                 $response->getReasonPhrase()
             ));
+
             return false;
         }
 
