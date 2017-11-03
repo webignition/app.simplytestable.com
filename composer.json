@@ -24,7 +24,7 @@
         "doctrine/migrations": "~1.5",
         "doctrine/doctrine-migrations-bundle": "1.2.1",
         "doctrine/doctrine-fixtures-bundle": "~2.3",
-        "mlpz/postmark-bundle": "*",
+        "stephenfarrell/postmark-bundle": "dev-master#09eb492d79e823ee256f75b2d2f16df01dc5d146",
         "webignition/internet-media-type":">=0.4.4,<2.0",
         "webignition/website-sitemap-finder":">=1.2,<2.0",
         "webignition/url": ">=1.9.12",
