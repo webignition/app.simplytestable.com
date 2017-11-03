@@ -262,20 +262,7 @@ class JobController extends Controller
             }
         }
 
-        $preCancellationState = clone $job->getState();
-
         $jobService->cancel($job);
-
-        $jobStartingState = $stateService->fetch(JobService::STARTING_STATE);
-
-        if ($preCancellationState->equals($jobStartingState)) {
-            $resqueQueueService->dequeue(
-                $resqueJobFactory->create(
-                    'job-prepare',
-                    ['id' => $job->getId()]
-                )
-            );
-        }
 
         $tasksToDeAssign = array();
         $taskIds = $taskService->getEntityRepository()->getIdsByJob($job);

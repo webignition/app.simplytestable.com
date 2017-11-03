@@ -88,7 +88,7 @@ class QueueService
         foreach ($jobs as $job) {
             /* @var $job ResqueJob */
 
-            if ($this->match($job, $queue, $args)) {
+            if ($this->match($job, $args)) {
                 return $job;
             }
         }
@@ -98,17 +98,12 @@ class QueueService
 
     /**
      * @param ResqueJob $job
-     * @param string $queue
      * @param array $args
      *
      * @return bool
      */
-    private function match(ResqueJob $job, $queue, $args)
+    private function match(ResqueJob $job, $args)
     {
-        if (!$this->jobFactory->getJobClassName($queue) == $job->job->payload['class']) {
-            return false;
-        }
-
         foreach ($args as $key => $value) {
             if (!isset($job->args[$key])) {
                 return false;
@@ -137,6 +132,8 @@ class QueueService
         } catch (\CredisException $credisException) {
             $this->logger->warning('ResqueQueueService::enqueue: Redis error ['.$credisException->getMessage().']');
         }
+
+        return null;
     }
 
     /**
@@ -150,22 +147,6 @@ class QueueService
             return $this->resque->getQueue($queue)->getSize() == 0;
         } catch (\Exception $exception) {
             $this->logger->warning('ResqueQueueService::isEmpty: Redis error ['.$exception->getMessage().']');
-            return false;
-        }
-    }
-
-    /**
-     * @param string $queue
-     * @param array $args
-     *
-     * @return boolean
-     */
-    public function dequeue($queue, $args = null)
-    {
-        try {
-            return \Resque::redis()->lrem(self::QUEUE_KEY . ':' . $queue, 1, $this->findJobInQueue($queue, $args)) == 1;
-        } catch (\Exception $exception) {
-            $this->logger->warning('ResqueQueueService::dequeue: Redis error ['.$exception->getMessage().']');
             return false;
         }
     }
