@@ -1,7 +1,7 @@
 imports:
     - { resource: config.yml }
-    - { resource: "@SimplyTestableApiBundle/Resources/config/parameters_dev.yml" }    
-    - { resource: "@SimplyTestableApiBundle/Resources/config/services_dev.yml" }    
+    - { resource: "@SimplyTestableApiBundle/Resources/config/parameters_dev.yml" }
+    - { resource: "@SimplyTestableApiBundle/Resources/config/services_dev.yml" }
 
 framework:
     router:   { resource: "%kernel.root_dir%/config/routing_dev.yml" }
@@ -20,6 +20,3 @@ monolog:
         firephp:
             type:  firephp
             level: info
-
-assetic:
-    use_controller: true
