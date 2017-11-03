@@ -5,6 +5,10 @@
         "psr-4": { "": "src/" },
         "files": ["app/AppKernel.php"]
     },
+    "autoload-dev": {
+        "psr-4": { "Tests\\": "tests/" },
+        "files": [ "vendor/symfony/symfony/src/Symfony/Component/VarDumper/Resources/functions/dump.php" ]
+    },
     "require": {
         "php": ">=5.4.0",
         "doctrine/doctrine-bundle": "~1.4",
@@ -70,8 +74,8 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
         ],
-        "test-unit": "./vendor/bin/phpunit -c app --colors src/SimplyTestable/ApiBundle/Tests/Unit/",
-        "test-functional": "./vendor/bin/phpunit -c app --colors src/SimplyTestable/ApiBundle/Tests/Functional/",
+        "test-unit": "./vendor/bin/phpunit --colors tests/ApiBundle/Unit/",
+        "test-functional": "./vendor/bin/phpunit --colors tests/ApiBundle/Functional/",
         "test": [
             "@composer test-unit",
             "@composer test-functional"

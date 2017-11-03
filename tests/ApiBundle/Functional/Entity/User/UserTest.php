@@ -1,0 +1,27 @@
+<?php
+
+namespace Tests\ApiBundle\Functional\Entity\User;
+
+use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use SimplyTestable\ApiBundle\Entity\User;
+
+class UserTest extends AbstractBaseTestCase
+{
+    public function testUtf8Email()
+    {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $userService = $this->container->get('simplytestable.services.userservice');
+
+        $email = 'ɸ@example.com';
+
+        $user = $userService->create($email, 'password');
+        $userId = $user->getId();
+
+        $entityManager->clear();
+
+        $userRepository = $entityManager->getRepository(User::class);
+
+        $this->assertEquals($email, $userRepository->find($userId)->getEmail());
+    }
+}
