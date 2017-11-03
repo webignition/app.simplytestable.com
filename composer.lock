@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "14b6753c1079fab1f7fbaa7b346b3a20",
+    "content-hash": "4ba19fc29705388836a2265d10fbb4f6",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -185,24 +185,24 @@
         },
         {
             "name": "cron/cron-bundle",
-            "version": "1.0.3",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Cron/Symfony-Bundle.git",
-                "reference": "a639620a5d7c94b6f47edf02d9a4019bdd44f1fc"
+                "reference": "da00dc22f6d14d1680699dfa138b066dbc3fce26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Cron/Symfony-Bundle/zipball/a639620a5d7c94b6f47edf02d9a4019bdd44f1fc",
-                "reference": "a639620a5d7c94b6f47edf02d9a4019bdd44f1fc",
+                "url": "https://api.github.com/repos/Cron/Symfony-Bundle/zipball/da00dc22f6d14d1680699dfa138b066dbc3fce26",
+                "reference": "da00dc22f6d14d1680699dfa138b066dbc3fce26",
                 "shasum": ""
             },
             "require": {
-                "cron/cron": "^1.0",
+                "cron/cron": "^1.0.1",
                 "doctrine/doctrine-bundle": "^1.3",
                 "doctrine/orm": "^2.4",
                 "php": ">=5.3.0",
-                "symfony/framework-bundle": "^2.4|^3.0"
+                "symfony/framework-bundle": "^2.5|^3.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.0",
@@ -230,7 +230,7 @@
                 }
             ],
             "description": "Symfony cron",
-            "time": "2015-12-18T08:03:02+00:00"
+            "time": "2017-04-11T18:56:17+00:00"
         },
         {
             "name": "doctrine/annotations",
