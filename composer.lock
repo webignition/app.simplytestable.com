@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ba19fc29705388836a2265d10fbb4f6",
+    "content-hash": "5ef811ab826bd07a7d5d2d99749387cd",
     "packages": [
         {
             "name": "chrisboulton/php-resque",
@@ -1946,51 +1946,6 @@
             "time": "2017-09-04T12:26:28+00:00"
         },
         {
-            "name": "mlpz/postmark-bundle",
-            "version": "v0.0.6",
-            "target-dir": "MZ/PostmarkBundle",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/miguel250/PostmarkBundle.git",
-                "reference": "95a84ae0e48677e0f9da37e50bc93be624451d21"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/miguel250/PostmarkBundle/zipball/95a84ae0e48677e0f9da37e50bc93be624451d21",
-                "reference": "95a84ae0e48677e0f9da37e50bc93be624451d21",
-                "shasum": ""
-            },
-            "require": {
-                "kriswallsmith/buzz": ">=0.9",
-                "php": ">=5.3.2",
-                "symfony/framework-bundle": "2.*"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-0": {
-                    "MZ\\PostmarkBundle": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Miguel Perez",
-                    "email": "miguel@miguelpz.com"
-                }
-            ],
-            "description": "postmark bundle",
-            "homepage": "http://www.mlpz.mp",
-            "keywords": [
-                "api",
-                "mailer",
-                "postmark"
-            ],
-            "time": "2013-09-12T14:29:07+00:00"
-        },
-        {
             "name": "monolog/monolog",
             "version": "1.23.0",
             "source": {
@@ -2570,6 +2525,54 @@
                 "rss"
             ],
             "time": "2017-04-17T07:29:31+00:00"
+        },
+        {
+            "name": "stephenfarrell/postmark-bundle",
+            "version": "dev-master",
+            "target-dir": "MZ/PostmarkBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/stephenfarrell/PostmarkBundle.git",
+                "reference": "09eb492d79e823ee256f75b2d2f16df01dc5d146"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/stephenfarrell/PostmarkBundle/zipball/09eb492d79e823ee256f75b2d2f16df01dc5d146",
+                "reference": "09eb492d79e823ee256f75b2d2f16df01dc5d146",
+                "shasum": ""
+            },
+            "require": {
+                "kriswallsmith/buzz": ">=0.9",
+                "php": ">=5.3.2",
+                "symfony/framework-bundle": ">=2"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-0": {
+                    "MZ\\PostmarkBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Miguel Perez",
+                    "email": "miguel@miguelpz.com"
+                },
+                {
+                    "name": "Stephen Farrell"
+                }
+            ],
+            "description": "A minor update of Miguel Perez's no-longer maintained code from https://github.com/miguel250/PostmarkBundle to allow for Symfony 3 compatibility. All credit/kudos/thanks for the work should obviously go to him",
+            "homepage": "https://github.com/stephenfarrell",
+            "keywords": [
+                "api",
+                "mailer",
+                "postmark"
+            ],
+            "time": "2016-09-12T19:08:08+00:00"
         },
         {
             "name": "stripe/stripe-php",
@@ -6327,6 +6330,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "stephenfarrell/postmark-bundle": 20,
         "webignition/html-validation-error-normaliser": 20,
         "chrisboulton/php-resque": 20,
         "chrisboulton/php-resque-scheduler": 20,
