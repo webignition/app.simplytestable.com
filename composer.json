@@ -41,7 +41,7 @@
         "webignition/web-resource-service":"1.0.3",
         "chrisboulton/php-resque": "dev-master",
         "chrisboulton/php-resque-scheduler": "dev-master",
-        "bcc/resque-bundle": "dev-master",
+        "resquebundle/resque": "dev-master#8dac8857e7e95890d5c634bb893551c9b78a27a1",
         "webignition/web-resource-model": "1.1.9",
         "webignition/web-json-model": "1.0.1",
         "webignition/web-page-model": "1.0.2",

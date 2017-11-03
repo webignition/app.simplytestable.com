@@ -75,7 +75,7 @@ services:
   simplytestable.services.resque.queueService:
     class:   SimplyTestable\ApiBundle\Services\Resque\QueueService
     arguments:
-      resque: "@bcc_resque.resque"
+      resque: "@resque"
       environment: "%kernel.environment%"
       logger: "@logger"
       jobFactory: "@simplytestable.services.resque.jobfactory"

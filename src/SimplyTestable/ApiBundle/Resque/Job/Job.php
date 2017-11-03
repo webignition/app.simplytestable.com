@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job;
 
-use BCC\ResqueBundle\ContainerAwareJob;
+use ResqueBundle\Resque\ContainerAwareJob;
 
 abstract class Job extends ContainerAwareJob
 {
