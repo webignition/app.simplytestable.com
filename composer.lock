@@ -4,52 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e04c90609e8007bd0330c62fd123c89c",
+    "content-hash": "14b6753c1079fab1f7fbaa7b346b3a20",
     "packages": [
-        {
-            "name": "bcc/resque-bundle",
-            "version": "dev-master",
-            "target-dir": "BCC/ResqueBundle",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/michelsalib/BCCResqueBundle.git",
-                "reference": "4692fa471d3b9232538bb2215d5532b5b548de57"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/michelsalib/BCCResqueBundle/zipball/4692fa471d3b9232538bb2215d5532b5b548de57",
-                "reference": "4692fa471d3b9232538bb2215d5532b5b548de57",
-                "shasum": ""
-            },
-            "require": {
-                "chrisboulton/php-resque": "dev-master",
-                "chrisboulton/php-resque-scheduler": "dev-master",
-                "symfony/framework-bundle": ">=2.0,<3.0"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-0": {
-                    "BCC\\ResqueBundle": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Michel Salib",
-                    "email": "michelsalib@hotmail.com",
-                    "homepage": "http://michelsalib.com"
-                }
-            ],
-            "description": "BCCResqueBundle",
-            "homepage": "http://github.com/michelsalib/BCCResqueBundle",
-            "keywords": [
-                "resque job queue management"
-            ],
-            "time": "2015-12-11T12:36:40+00:00"
-        },
         {
             "name": "chrisboulton/php-resque",
             "version": "dev-master",
@@ -2311,6 +2267,75 @@
                 "xslt"
             ],
             "time": "2016-08-01T22:40:30+00:00"
+        },
+        {
+            "name": "resquebundle/resque",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/resquebundle/resque.git",
+                "reference": "8dac8857e7e95890d5c634bb893551c9b78a27a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/resquebundle/resque/zipball/8dac8857e7e95890d5c634bb893551c9b78a27a1",
+                "reference": "8dac8857e7e95890d5c634bb893551c9b78a27a1",
+                "shasum": ""
+            },
+            "require": {
+                "chrisboulton/php-resque": "dev-master",
+                "chrisboulton/php-resque-scheduler": "dev-master",
+                "symfony/console": ">=2.8,<4.0",
+                "symfony/framework-bundle": ">=2.8,<4.0",
+                "symfony/process": ">=2.8,<4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.4"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ResqueBundle\\Resque\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michel Salib",
+                    "email": "michelsalib@hotmail.com",
+                    "homepage": "http://michelsalib.com"
+                },
+                {
+                    "name": "Matthew Clarkson",
+                    "email": "mpclarkson@gmail.com",
+                    "homepage": "https://github.com/mpclarkson"
+                },
+                {
+                    "name": "Phil E Taylor",
+                    "email": "phil@phil-taylor.com",
+                    "homepage": "https://www.phil-taylor.com/"
+                }
+            ],
+            "description": "A Symfony 2-3 bundle to manage Resque job queues",
+            "homepage": "https://github.com/resquebundle/resque/",
+            "keywords": [
+                "Symfony2",
+                "job queue",
+                "queue",
+                "redis",
+                "resque",
+                "symfony",
+                "symfony3"
+            ],
+            "time": "2017-04-24T10:11:17+00:00"
         },
         {
             "name": "sensio/distribution-bundle",
@@ -6305,7 +6330,7 @@
         "webignition/html-validation-error-normaliser": 20,
         "chrisboulton/php-resque": 20,
         "chrisboulton/php-resque-scheduler": 20,
-        "bcc/resque-bundle": 20
+        "resquebundle/resque": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

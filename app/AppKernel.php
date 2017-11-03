@@ -20,7 +20,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new MZ\PostmarkBundle\MZPostmarkBundle(),
-            new BCC\ResqueBundle\BCCResqueBundle(),
+            new ResqueBundle\Resque\ResqueBundle(),
             new Cron\CronBundle\CronCronBundle(),
         );
 

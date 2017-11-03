@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services\Resque;
 
-use BCC\ResqueBundle\Resque;
+use ResqueBundle\Resque\Resque;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
