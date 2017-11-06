@@ -6,8 +6,10 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInterface
+class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
     private $taskTypeClasses = array(
         'verification' => 'For the verification of quality aspects such as the presence of a robots.txt file',
@@ -16,11 +18,24 @@ class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInter
     );
 
     /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $repository = $manager->getRepository(TaskTypeClass::class);
+        $repository = $this->container->get('simplytestable.repository.tasktypeclass');
 
         foreach ($this->taskTypeClasses as $name => $description) {
             if (is_null($repository->findOneByName($name))) {

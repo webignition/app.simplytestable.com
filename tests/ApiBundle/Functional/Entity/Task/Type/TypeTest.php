@@ -11,7 +11,7 @@ class TypeTest extends AbstractBaseTestCase
     public function testPersistAndRetrieve()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeClassRepository = $entityManager->getRepository(TaskTypeClass::class);
+        $taskTypeClassRepository = $this->container->get('simplytestable.repository.tasktypeclass');
         $taskTypeRepository = $entityManager->getRepository(Type::class);
 
         $name = 'name-ɸ';

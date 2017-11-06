@@ -7,8 +7,10 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface
+class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
     private $taskTypes = array(
         'HTML validation' => array(
@@ -39,11 +41,24 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface
     );
 
     /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $taskTypeClassRepository = $manager->getRepository(TaskTypeClass::class);
+        $taskTypeClassRepository = $this->container->get('simplytestable.repository.tasktypeclass');
         $taskTypeRepository = $manager->getRepository(TaskType::class);
 
         foreach ($this->taskTypes as $name => $properties) {
