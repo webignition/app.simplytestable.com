@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
@@ -25,7 +24,6 @@ class TaskController extends Controller
     public function completeAction()
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $completeRequestFactory = $this->container->get('simplytestable.services.request.factory.task.complete');
@@ -35,6 +33,9 @@ class TaskController extends Controller
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');
+
+        /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
+        $crawlJobContainerRepository = $this->container->get('simplytestable.repository.crawljobcontainer');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -62,9 +63,6 @@ class TaskController extends Controller
 
         $urlDiscoveryTaskType = $taskTypeService->getByName('URL discovery');
 
-        /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
-        $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
-
         foreach ($tasks as $task) {
             $currentTaskOutput = $task->getOutput();
 
@@ -79,7 +77,7 @@ class TaskController extends Controller
                 }
             }
 
-            $taskService->complete($task, $endDateTime, $output, $state, false);
+            $taskService->complete($task, $endDateTime, $output, $state);
 
             if ($task->getType()->equals($urlDiscoveryTaskType)) {
                 $crawlJobContainerService->processTaskResults($task);
