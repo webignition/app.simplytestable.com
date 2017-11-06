@@ -33,14 +33,4 @@ class AccountPlanService extends EntityService
     {
         return !is_null($this->find($name));
     }
-
-    /**
-     * @return array
-     */
-    public function listVisible()
-    {
-        return $this->getEntityRepository()->findBy(array(
-            'isVisible' => true
-        ));
-    }
 }
