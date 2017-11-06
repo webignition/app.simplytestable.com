@@ -1,48 +1,44 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
-use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 
-
-class AccountPlanService extends EntityService {
-    
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Account\Plan\Plan';
-    
+class AccountPlanService extends EntityService
+{
     /**
      *
      * @return string
      */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
+    protected function getEntityName()
+    {
+        return Plan::class;
     }
-    
-    
+
     /**
-     *
      * @param string $name
-     * @return \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan 
+     *
+     * @return Plan
      */
-    public function find($name) {
+    public function find($name)
+    {
         return $this->getEntityRepository()->findOneByName($name);
     }
-    
-    
+
     /**
-     *
      * @param string $name
-     * @return boolean
+     *
+     * @return bool
      */
-    public function has($name) {
+    public function has($name)
+    {
         return !is_null($this->find($name));
-    } 
-    
-    
+    }
+
     /**
-     * 
      * @return array
      */
-    public function listVisible() {
+    public function listVisible()
+    {
         return $this->getEntityRepository()->findBy(array(
             'isVisible' => true
         ));
