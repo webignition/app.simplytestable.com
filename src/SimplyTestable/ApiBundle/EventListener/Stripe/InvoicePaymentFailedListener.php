@@ -57,7 +57,7 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
             return null;
         }
 
-        $subscriptionDeletedEvents = $this->getStripeEventService()->getForUserAndType(
+        $subscriptionDeletedEvents = $this->stripeEventService->getForUserAndType(
             $this->getEventEntity()->getUser(),
             'customer.subscription.deleted'
         );

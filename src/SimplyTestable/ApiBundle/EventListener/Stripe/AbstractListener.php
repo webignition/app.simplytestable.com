@@ -28,7 +28,7 @@ abstract class AbstractListener
     /**
      * @var StripeEventService
      */
-    private $stripeEventService;
+    protected $stripeEventService;
 
     /**
      * @var UserAccountPlanService
@@ -91,14 +91,6 @@ abstract class AbstractListener
     }
 
     /**
-     * @return StripeEventService
-     */
-    protected function getStripeEventService()
-    {
-        return $this->stripeEventService;
-    }
-
-    /**
      * @return UserAccountPlanService
      */
     protected function getUserAccountPlanService()
@@ -141,7 +133,7 @@ abstract class AbstractListener
     protected function markEntityProcessed()
     {
         $this->getEventEntity()->setIsProcessed(true);
-        $this->getStripeEventService()->persistAndFlush($this->getEventEntity());
+        $this->stripeEventService->persistAndFlush($this->getEventEntity());
     }
 
     /**
