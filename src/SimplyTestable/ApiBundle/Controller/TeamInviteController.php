@@ -27,8 +27,7 @@ class TeamInviteController extends Controller
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         $inviter = $this->getUser();
 

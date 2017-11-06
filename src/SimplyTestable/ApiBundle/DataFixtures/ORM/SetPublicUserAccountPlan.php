@@ -31,11 +31,12 @@ class SetPublicUserAccountPlan extends AbstractFixture implements OrderedFixture
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanRepository = $manager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         $user = $userService->getPublicUser();
 
         if (!$userAccountPlanService->hasForUser($user)) {
+            /* @var Plan $plan */
             $plan = $accountPlanRepository->findOneBy([
                 'name' => 'public',
             ]);

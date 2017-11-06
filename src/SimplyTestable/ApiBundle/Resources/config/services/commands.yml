@@ -80,6 +80,7 @@ services:
     arguments:
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
       entityManager: '@doctrine.orm.entity_manager'
+      accountPlanRepository: '@simplytestable.repository.accountplan'
     tags:
       - { name: console.command }
 
@@ -192,6 +193,7 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
       entityManager: '@doctrine.orm.entity_manager'
+      accountPlanRepository: '@simplytestable.repository.accountplan'
     tags:
       - { name: console.command }
 

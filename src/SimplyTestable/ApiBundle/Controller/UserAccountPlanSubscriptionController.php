@@ -24,8 +24,7 @@ class UserAccountPlanSubscriptionController extends Controller
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();

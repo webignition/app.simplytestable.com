@@ -28,8 +28,7 @@ class UserCreationController extends Controller
         $userPostActivationPropertiesService = $this->container->get(
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
