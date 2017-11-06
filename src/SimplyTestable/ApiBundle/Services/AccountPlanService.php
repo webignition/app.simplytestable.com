@@ -13,14 +13,4 @@ class AccountPlanService extends EntityService
     {
         return Plan::class;
     }
-
-    /**
-     * @param string $name
-     *
-     * @return Plan
-     */
-    public function find($name)
-    {
-        return $this->getEntityRepository()->findOneByName($name);
-    }
 }
