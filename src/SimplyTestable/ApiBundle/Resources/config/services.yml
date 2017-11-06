@@ -122,6 +122,7 @@ services:
         userService: "@simplytestable.services.userservice"
         stripeService: "@simplytestable.services.stripeservice"
         teamService: "@simplytestable.services.teamservice"
+        userRepository: '@simplytestable.repository.user'
         defaultTrialPeriod: "%default_trial_period%"
 
   simplytestable.services.useremailchangerequestservice:
@@ -330,6 +331,7 @@ services:
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
         logger: "@logger"
+        workerRepository: '@simplytestable.repository.worker'
 
   simplytestable.services.job.configurationservice:
     class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService

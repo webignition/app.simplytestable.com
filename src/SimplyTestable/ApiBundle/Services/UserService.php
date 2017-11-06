@@ -23,11 +23,6 @@ class UserService
     private $tokenGenerator;
 
     /**
-     * @var \Doctrine\ORM\EntityRepository
-     */
-    private $entityRepository;
-
-    /**
      * @var CanonicalizerInterface
      */
     private $canonicalizer;
@@ -47,8 +42,6 @@ class UserService
         $this->userManager = $userManager;
         $this->tokenGenerator = $tokenGenerator;
         $this->canonicalizer = $canonicalizer;
-
-        $this->entityRepository = $entityManager->getRepository(User::class);
     }
 
     /**

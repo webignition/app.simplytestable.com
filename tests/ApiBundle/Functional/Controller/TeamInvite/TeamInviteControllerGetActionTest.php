@@ -134,10 +134,11 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
         ]);
 
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $userRepository = $this->container->get('simplytestable.repository.user');
+
         $teamInviteService->get($this->users['leader'], $newUserHasInvite);
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $userRepository = $entityManager->getRepository(User::class);
         $inviteRepository = $entityManager->getRepository(Invite::class);
 
         $invitee = $userRepository->findOneBy([
