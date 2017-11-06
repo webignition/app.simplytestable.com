@@ -1,51 +1,49 @@
 <?php
+
 namespace SimplyTestable\ApiBundle\Services\Team;
 
 use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Repository\TeamRepository;
 use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
 
-class Service extends EntityService {
-
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Team\Team';
-
-
+class Service extends EntityService
+{
     /**
      * @var MemberService
      */
     private $memberService;
 
-
     /**
-     *
      * @return string
      */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
+    protected function getEntityName()
+    {
+        return Team::class;
     }
-
 
     /**
      * @param MemberService $memberService
      * @param EntityManager $entityManager
      */
-    public function __construct(MemberService $memberService, EntityManager $entityManager) {
-        $this->memberService = $memberService;
-
+    public function __construct(MemberService $memberService, EntityManager $entityManager)
+    {
         parent::__construct($entityManager);
-    }
 
+        $this->memberService = $memberService;
+    }
 
     /**
      * @param $name
      * @param User $leader
+     *
      * @return Team
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\Team\Exception
+     * @throws TeamServiceException
      */
-    public function create($name, User $leader) {
+    public function create($name, User $leader)
+    {
         if ($this->hasTeam($leader)) {
             throw new TeamServiceException(
                 'User already leads a team',
@@ -53,7 +51,7 @@ class Service extends EntityService {
             );
         }
 
-        if ($this->getMemberService()->belongsToTeam($leader)) {
+        if ($this->memberService->belongsToTeam($leader)) {
             throw new TeamServiceException(
                 'User already on a team',
                 TeamServiceException::USER_ALREADY_ON_TEAM
@@ -61,14 +59,15 @@ class Service extends EntityService {
         }
 
         $name = trim($name);
-        if ($name == '') {
+        if (empty($name)) {
             throw new TeamServiceException(
                 'Team name cannot be empty',
                 TeamServiceException::CODE_NAME_EMPTY
             );
         }
 
-        if ($this->isNameTaken($name)) {
+        $isNameTaken = $this->getEntityRepository()->getTeamCountByName($name) > 0;
+        if ($isNameTaken) {
             throw new TeamServiceException(
                 'Team name is already taken',
                 TeamServiceException::CODE_NAME_TAKEN
@@ -84,117 +83,116 @@ class Service extends EntityService {
         return $this->persistAndFlush($team);
     }
 
-
     /**
      * @param User $leader
+     *
      * @return bool
      */
-    public function hasTeam(User $leader) {
+    public function hasTeam(User $leader)
+    {
         return $this->getEntityRepository()->getTeamCountByLeader($leader) > 0;
     }
 
-
-    /**
-     * @param $name
-     * @return bool
-     */
-    private function isNameTaken($name) {
-        return $this->getEntityRepository()->getTeamCountByName($name) > 0;
-    }
-
-
     /**
      * @param Team $team
+     *
      * @return Team
      */
-    public function persistAndFlush(Team $team) {
+    public function persistAndFlush(Team $team)
+    {
         $this->getManager()->persist($team);
         $this->getManager()->flush();
+
         return $team;
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TeamRepository
+     * @return TeamRepository
      */
-    public function getEntityRepository() {
+    public function getEntityRepository()
+    {
         return parent::getEntityRepository();
     }
-
 
     /**
      * @return MemberService
      */
-    public function getMemberService() {
+    public function getMemberService()
+    {
         return $this->memberService;
     }
 
-
     /**
      * @param User $user
+     *
      * @return null|User
      */
-    public function getLeaderFor(User $user) {
+    public function getLeaderFor(User $user)
+    {
         if ($this->hasTeam($user)) {
             return $user;
         }
 
-        if ($this->getMemberService()->belongsToTeam($user)) {
-            return $this->getMemberService()->getTeamByUser($user)->getLeader();
+        if ($this->memberService->belongsToTeam($user)) {
+            return $this->memberService->getTeamByUser($user)->getLeader();
         }
 
         return null;
     }
 
-
     /**
      * @param User $user
+     *
      * @return null|Team
      */
-    public function getForUser(User $user) {
+    public function getForUser(User $user)
+    {
         if ($this->hasTeam($user)) {
             return $this->getEntityRepository()->getTeamByLeader($user);
         }
 
-        if ($this->getMemberService()->belongsToTeam($user)) {
-            return $this->getMemberService()->getEntityRepository()->getMemberByUser($user)->getTeam();
+        if ($this->memberService->belongsToTeam($user)) {
+            return $this->memberService->getEntityRepository()->getMemberByUser($user)->getTeam();
         }
 
         return null;
     }
 
-
     /**
      * @param User $user
+     *
      * @return User[]
      */
-    public function getPeopleForUser(User $user) {
+    public function getPeopleForUser(User $user)
+    {
         if (!$this->hasForUser($user)) {
             return [$user];
         }
 
-        return $this->getPeople($this->getForUser($user));
+        $team = $this->getForUser($user);
+
+        return $this->getPeople($team);
     }
-
-
 
     /**
      * @param User $user
+     *
      * @return bool
      */
-    public function hasForUser(User $user) {
+    public function hasForUser(User $user)
+    {
         return !is_null($this->getForUser($user));
     }
-
 
     /**
      * @param User $leader
      * @param User $member
+     *
      * @return bool
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\Team\Exception
+     * @throws TeamServiceException
      */
-    public function remove(User $leader, User $member) {
+    public function remove(User $leader, User $member)
+    {
         if (!$this->hasTeam($leader)) {
             throw new TeamServiceException(
                 'User is not a leader',
@@ -210,18 +208,19 @@ class Service extends EntityService {
             );
         }
 
-        return $this->getMemberService()->remove($member);
+        return $this->memberService->remove($member);
     }
-
 
     /**
      * @param Team $team
+     *
      * @return User[]
      */
-    public function getPeople(Team $team) {
+    public function getPeople(Team $team)
+    {
         $people = [$team->getLeader()];
 
-        $members = $this->getMemberService()->getMembers($team);
+        $members = $this->memberService->getMembers($team);
 
         foreach ($members as $member) {
             $people[] = $member->getUser();
@@ -229,5 +228,4 @@ class Service extends EntityService {
 
         return $people;
     }
-
 }
