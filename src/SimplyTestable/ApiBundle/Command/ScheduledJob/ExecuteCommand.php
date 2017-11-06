@@ -2,7 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\ScheduledJob;
 
 use Doctrine\ORM\EntityManager;
-use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -57,12 +57,18 @@ class ExecuteCommand extends Command
     private $jobService;
 
     /**
+     * @var EntityRepository
+     */
+    private $scheduledJobRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
      * @param  EntityManager $entityManager
      * @param JobStartService $jobStartService
      * @param JobService $jobService
+     * @param EntityRepository $scheduledJobRepository
      * @param string|null $name
      */
     public function __construct(
@@ -72,6 +78,7 @@ class ExecuteCommand extends Command
         EntityManager $entityManager,
         JobStartService $jobStartService,
         JobService $jobService,
+        EntityRepository $scheduledJobRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -82,6 +89,7 @@ class ExecuteCommand extends Command
         $this->entityManager = $entityManager;
         $this->jobStartService = $jobStartService;
         $this->jobService = $jobService;
+        $this->scheduledJobRepository = $scheduledJobRepository;
     }
 
     /**
@@ -118,8 +126,7 @@ class ExecuteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $scheduledJobRepository = $this->entityManager->getRepository(ScheduledJob::class);
-        $scheduledJob = $scheduledJobRepository->find($id);
+        $scheduledJob = $this->scheduledJobRepository->find($id);
 
         if (empty($scheduledJob)) {
             $output->writeln('Scheduled job [' . $input->getArgument('id') . '] does not exist');

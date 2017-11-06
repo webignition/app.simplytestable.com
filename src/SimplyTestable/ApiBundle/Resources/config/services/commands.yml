@@ -120,6 +120,7 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
       jobStartService: '@simplytestable.services.job.startservice'
       jobService: '@simplytestable.services.jobservice'
+      scheduledJobRepository: '@simplytestable.repository.scheduledjob'
     tags:
       - { name: console.command }
 

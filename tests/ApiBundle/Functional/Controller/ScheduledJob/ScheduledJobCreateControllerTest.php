@@ -33,7 +33,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
 
     public function testRequest()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();
@@ -56,8 +56,6 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
 
         /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
-
-        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
         /* @var ScheduledJob $scheduledJob */
         $scheduledJob = $scheduledJobRepository->findAll()[0];
@@ -187,8 +185,6 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
      */
     public function testCreateActionMalformedRequest($requestData, $expectedResponseErrorHeader)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
         $this->setUser($user);
@@ -256,8 +252,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
 
     public function testCreateActionSuccess()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
@@ -272,8 +267,6 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
         ]);
 
         $response = $this->scheduledJobCreateController->createAction($request);
-
-        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
         /* @var ScheduledJob $scheduledJob */
         $scheduledJob = $scheduledJobRepository->findAll()[0];
