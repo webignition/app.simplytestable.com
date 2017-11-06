@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
@@ -16,11 +15,6 @@ use webignition\Model\Stripe\Customer as StripeCustomer;
 
 abstract class AbstractListener
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
     /**
      * @var EventDispatcherInterface
      */
@@ -62,7 +56,6 @@ abstract class AbstractListener
     private $event;
 
     /**
-     * @param LoggerInterface $logger
      * @param EventDispatcherInterface $dispatcher
      * @param StripeService $stripeService
      * @param StripeEventService $stripeEventService
@@ -72,7 +65,6 @@ abstract class AbstractListener
      * @param $webClientProperties
      */
     public function __construct(
-        LoggerInterface $logger,
         EventDispatcherInterface $dispatcher,
         StripeService $stripeService,
         StripeEventService $stripeEventService,
@@ -81,7 +73,6 @@ abstract class AbstractListener
         AccountPlanService $accountPLanService,
         $webClientProperties
     ) {
-        $this->logger = $logger;
         $this->dispatcher = $dispatcher;
         $this->stripeService = $stripeService;
         $this->stripeEventService = $stripeEventService;

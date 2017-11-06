@@ -217,7 +217,6 @@ services:
   simplytestable.listener.stripe.customer.subscription.deleted.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener
     arguments:
-        logger: "@logger"
         dispatcher: "@event_dispatcher"
         stripeService: "@simplytestable.services.stripeservice"
         stripeEventService: "@simplytestable.services.stripeeventservice"
@@ -231,7 +230,6 @@ services:
   simplytestable.listener.stripe.customer.subscription.created.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener
     arguments:
-        logger: "@logger"
         dispatcher: "@event_dispatcher"
         stripeService: "@simplytestable.services.stripeservice"
         stripeEventService: "@simplytestable.services.stripeeventservice"
@@ -245,7 +243,6 @@ services:
   simplytestable.listener.stripe.customer.subscription.trial_will_end.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener
     arguments:
-        logger: "@logger"
         dispatcher: "@event_dispatcher"
         stripeService: "@simplytestable.services.stripeservice"
         stripeEventService: "@simplytestable.services.stripeeventservice"
@@ -259,7 +256,6 @@ services:
   simplytestable.listener.stripe.customer.subscription.updated.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener
     arguments:
-        logger: "@logger"
         dispatcher: "@event_dispatcher"
         stripeService: "@simplytestable.services.stripeservice"
         stripeEventService: "@simplytestable.services.stripeeventservice"
@@ -273,7 +269,6 @@ services:
   simplytestable.listener.stripe.invoice.succeeded.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener
     arguments:
-        logger: "@logger"
         dispatcher: "@event_dispatcher"
         stripeService: "@simplytestable.services.stripeservice"
         stripeEventService: "@simplytestable.services.stripeeventservice"
@@ -287,7 +282,6 @@ services:
   simplytestable.listener.stripe.invoice.payment_failed.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener
     arguments:
-        logger: "@logger"
         dispatcher: "@event_dispatcher"
         stripeService: "@simplytestable.services.stripeservice"
         stripeEventService: "@simplytestable.services.stripeeventservice"

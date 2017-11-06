@@ -62,7 +62,6 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userService = $this->container->get('simplytestable.services.userservice');
         $user = $userService->getPublicUser();
 
-        $logger = \Mockery::mock(LoggerInterface::class);
         $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);
         $stripeService = \Mockery::mock(StripeService::class);
         $stripeEventService = \Mockery::mock(StripeEventService::class);
@@ -78,7 +77,6 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
             ->shouldReceive('persistAndFlush');
 
         $listener = new CustomerSubscriptionCreatedListener(
-            $logger,
             $eventDispatcher,
             $stripeService,
             $stripeEventService,
