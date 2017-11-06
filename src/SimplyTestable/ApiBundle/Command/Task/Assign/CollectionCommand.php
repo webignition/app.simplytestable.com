@@ -2,9 +2,9 @@
 namespace SimplyTestable\ApiBundle\Command\Task\Assign;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -71,6 +71,11 @@ class CollectionCommand extends Command
     private $taskRepository;
 
     /**
+     * @var EntityRepository
+     */
+    private $workerRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
      * @param TaskPreProcessorFactory $taskPreProcessorFactory
@@ -80,6 +85,7 @@ class CollectionCommand extends Command
      * @param WorkerTaskAssignmentService $workerTaskAssignmentService
      * @param LoggerInterface $logger
      * @param TaskRepository $taskRepository
+     * @param EntityRepository $workerRepository
      * @param string|null $name
      */
     public function __construct(
@@ -92,6 +98,7 @@ class CollectionCommand extends Command
         WorkerTaskAssignmentService $workerTaskAssignmentService,
         LoggerInterface $logger,
         TaskRepository $taskRepository,
+        EntityRepository $workerRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -105,6 +112,7 @@ class CollectionCommand extends Command
         $this->workerTaskAssignmentService = $workerTaskAssignmentService;
         $this->logger = $logger;
         $this->taskRepository = $taskRepository;
+        $this->workerRepository = $workerRepository;
     }
 
     /**
@@ -160,8 +168,7 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_OK;
         }
 
-        $workerRepository = $this->entityManager->getRepository(Worker::class);
-        $activeWorkers = $workerRepository->findBy([
+        $activeWorkers = $this->workerRepository->findBy([
             'state' => $this->stateService->fetch(Worker::STATE_ACTIVE),
         ]);
 

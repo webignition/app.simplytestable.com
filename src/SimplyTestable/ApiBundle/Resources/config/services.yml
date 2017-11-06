@@ -424,6 +424,7 @@ services:
       stateService: '@simplytestable.services.stateservice'
       entityManager: '@doctrine.orm.entity_manager'
       taskRepository: '@simplytestable.repository.task'
+      workerRepository: '@simplytestable.repository.worker'
 
   simplytestable.services.usersummaryfactory:
     class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory

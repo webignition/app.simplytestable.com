@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -32,15 +33,22 @@ class ActivateVerifyCommand extends Command
     private $workerActivationRequestService;
 
     /**
+     * @var EntityRepository
+     */
+    private $workerRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
      * @param WorkerActivationRequestService $workerActivationRequestService
+     * @param EntityRepository $workerRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
         WorkerActivationRequestService $workerActivationRequestService,
+        EntityRepository $workerRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -48,6 +56,7 @@ class ActivateVerifyCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
         $this->workerActivationRequestService = $workerActivationRequestService;
+        $this->workerRepository = $workerRepository;
     }
 
     /**
@@ -71,12 +80,11 @@ class ActivateVerifyCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $workerRepository = $this->entityManager->getRepository(Worker::class);
         $workerActivationRequestRepository = $this->entityManager->getRepository(WorkerActivationRequest::class);
 
         $id = (int)$input->getArgument('id');
 
-        $worker = $workerRepository->find($id);
+        $worker = $this->workerRepository->find($id);
         $activationRequest = $workerActivationRequestRepository->findOneBy([
             'worker' => $worker,
         ]);

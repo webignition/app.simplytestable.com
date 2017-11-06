@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,19 +26,27 @@ class SetTokenFromActivationRequestCommand extends Command
     private $entityManager;
 
     /**
+     * @var EntityRepository
+     */
+    private $workerRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
+     * @param EntityRepository $workerRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
+        EntityRepository $workerRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->workerRepository = $workerRepository;
     }
 
     /**
@@ -60,11 +69,10 @@ class SetTokenFromActivationRequestCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $workerRepository = $this->entityManager->getRepository(Worker::class);
         $workerActivationRequestRepository = $this->entityManager->getRepository(WorkerActivationRequest::class);
 
         /* @var Worker[] $workers */
-        $workers = $workerRepository->findAll();
+        $workers = $this->workerRepository->findAll();
 
         foreach ($workers as $worker) {
             $workerActivationRequest = $workerActivationRequestRepository->findOneBy([

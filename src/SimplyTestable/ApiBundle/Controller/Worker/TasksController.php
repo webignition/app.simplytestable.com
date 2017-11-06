@@ -28,9 +28,9 @@ class TasksController extends Controller
 
         /* @var TaskRepository $taskRepository */
         $taskRepository = $this->container->get('simplytestable.repository.task');
+        $workerRepository = $this->container->get('simplytestable.repository.worker');
 
         $workerHostname = $request->request->get('worker_hostname');
-        $workerRepository = $entityManager->getRepository(Worker::class);
 
         $worker = $workerRepository->findOneBy([
             'hostname' => $workerHostname,

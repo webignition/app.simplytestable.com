@@ -152,6 +152,7 @@ services:
       workerTaskAssignmentService: '@simplytestable.services.workertaskassignmentservice'
       logger: '@logger'
       taskRepository: '@simplytestable.repository.task'
+      workerRepository: '@simplytestable.repository.worker'
     tags:
       - { name: console.command }
 
@@ -202,6 +203,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
+      workerRepository: '@simplytestable.repository.worker'
     tags:
       - { name: console.command }
 
@@ -218,6 +220,7 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
       workerActivationRequestService: '@simplytestable.services.workeractivationrequestservice'
+      workerRepository: '@simplytestable.repository.worker'
     tags:
       - { name: console.command }
 
