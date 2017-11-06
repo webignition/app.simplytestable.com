@@ -266,10 +266,9 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'id' => 1,
                     'serviceIds' => [
                         'simplytestable.services.applicationstateservice',
-                        'doctrine.orm.entity_manager',
                         'simplytestable.services.workeractivationrequestservice',
                         'simplytestable.repository.worker',
-                        'simplytestable.repository.workeractivationrequest ',
+                        'simplytestable.repository.workeractivationrequest',
                     ],
                 ],
             ],
