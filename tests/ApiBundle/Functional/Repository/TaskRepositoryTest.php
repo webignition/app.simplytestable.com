@@ -455,47 +455,6 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $this->assertEquals($expectedCount, $count);
     }
 
-//    /**
-//     * @dataProvider getCountWithWarningsByJobDataProvider
-//     *
-//     * @param array $jobValuesCollection
-//     * @param array $taskOutputValuesCollection
-//     * @param int $jobIndex
-//     * @param string[] $stateNamesToExclude
-//     * @param int $expectedCountWithWarnings
-//     */
-//    public function testGetCountWithWarningsByJob(
-//        $jobValuesCollection,
-//        $taskOutputValuesCollection,
-//        $jobIndex,
-//        $stateNamesToExclude,
-//        $expectedCountWithWarnings
-//    ) {
-//        $stateService = $this->container->get('simplytestable.services.stateservice');
-//
-//        $users = $this->userFactory->createPublicAndPrivateUserSet();
-//        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
-//
-//        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
-//        $job = $jobs[$jobIndex];
-//        $tasks = $this->getTasksFromJobCollection($jobs);
-//        $statesToExclude = $stateService->fetchCollection($stateNamesToExclude);
-//
-//        $taskOutputFactory = new TaskOutputFactory($this->container);
-//
-//        foreach ($tasks as $taskIndex => $task) {
-//            if (isset($taskOutputValuesCollection[$taskIndex])) {
-//                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
-//
-//                $taskOutputFactory->create($task, $taskOutputValues);
-//            }
-//        }
-//
-//        $countWithWarnings = $this->taskRepository->getCountWithWarningsByJob($job, $statesToExclude);
-//
-//        $this->assertEquals($expectedCountWithWarnings, $countWithWarnings);
-//    }
-
     /**
      * @dataProvider getErrorCountByJobDataProvider
      *
