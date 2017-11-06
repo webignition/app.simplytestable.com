@@ -91,19 +91,11 @@ abstract class AbstractListener
     }
 
     /**
-     * @return UserAccountPlanService
-     */
-    protected function getUserAccountPlanService()
-    {
-        return $this->userAccountPlanService;
-    }
-
-    /**
      * @return UserAccountPlan
      */
     protected function getUserAccountPlanFromEvent()
     {
-        return $this->getUserAccountPlanService()->getForUser($this->getEventEntity()->getUser());
+        return $this->userAccountPlanService->getForUser($this->getEventEntity()->getUser());
     }
 
     /**
@@ -182,7 +174,7 @@ abstract class AbstractListener
 
     protected function downgradeToBasicPlan()
     {
-        $this->getUserAccountPlanService()->subscribe(
+        $this->userAccountPlanService->subscribe(
             $this->event->getEntity()->getUser(),
             $this->accountPlanService->find('basic')
         );
