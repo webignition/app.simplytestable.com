@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
@@ -29,19 +30,19 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
      * @param $webClientProperties
      */
     public function __construct(
-        StripeService $stripeService,
         StripeEventService $stripeEventService,
-        UserAccountPlanService $userAccountPlanService,
         HttpClientService $httpClientService,
         $webClientProperties,
+        StripeService $stripeService,
+        UserAccountPlanService $userAccountPlanService,
         AccountPlanService $accountPlanService
     ) {
         parent::__construct(
-            $stripeService,
             $stripeEventService,
-            $userAccountPlanService,
             $httpClientService,
-            $webClientProperties
+            $webClientProperties,
+            $stripeService,
+            $userAccountPlanService
         );
 
         $this->accountPlanService = $accountPlanService;
@@ -149,6 +150,14 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
         }
 
         return null;
+    }
+
+    /**
+     * @return UserAccountPlan
+     */
+    protected function getUserAccountPlanFromEvent()
+    {
+        return $this->userAccountPlanService->getForUser($this->event->getEntity()->getUser());
     }
 
     protected function downgradeToBasicPlan()

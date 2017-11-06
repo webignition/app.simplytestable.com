@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
@@ -11,6 +12,7 @@ use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
+use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
 class InvoicePaymentFailedListener extends AbstractInvoiceListener
 {
@@ -18,6 +20,16 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
      * @var EventDispatcherInterface
      */
     private $dispatcher;
+
+    /**
+     * @var StripeService
+     */
+    private $stripeService;
+
+    /**
+     * @var UserAccountPlanService
+     */
+    private $userAccountPlanService;
 
     /**
      * @param StripeService $stripeService
@@ -28,21 +40,21 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
      * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
-        StripeService $stripeService,
         StripeEventService $stripeEventService,
-        UserAccountPlanService $userAccountPlanService,
         HttpClientService $httpClientService,
         $webClientProperties,
+        StripeService $stripeService,
+        UserAccountPlanService $userAccountPlanService,
         EventDispatcherInterface $dispatcher
     ) {
         parent::__construct(
-            $stripeService,
             $stripeEventService,
-            $userAccountPlanService,
             $httpClientService,
             $webClientProperties
         );
 
+        $this->stripeService = $stripeService;
+        $this->userAccountPlanService = $userAccountPlanService;
         $this->dispatcher = $dispatcher;
     }
 
@@ -116,5 +128,21 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
         }
 
         return null;
+    }
+
+    /**
+     * @return UserAccountPlan
+     */
+    protected function getUserAccountPlanFromEvent()
+    {
+        return $this->userAccountPlanService->getForUser($this->event->getEntity()->getUser());
+    }
+
+    /**
+     * @return StripeCustomerModel
+     */
+    protected function getStripeCustomer()
+    {
+        return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent());
     }
 }

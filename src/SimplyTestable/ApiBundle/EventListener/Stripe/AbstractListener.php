@@ -2,31 +2,16 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-use SimplyTestable\ApiBundle\Entity\Stripe\Event;
-use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
-use SimplyTestable\ApiBundle\Services\StripeService;
-use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
-use webignition\Model\Stripe\Customer as StripeCustomer;
 
 abstract class AbstractListener
 {
     /**
-     * @var StripeService
-     */
-    private $stripeService;
-
-    /**
      * @var StripeEventService
      */
     protected $stripeEventService;
-
-    /**
-     * @var UserAccountPlanService
-     */
-    protected $userAccountPlanService;
 
     /**
      * @var array
@@ -44,22 +29,16 @@ abstract class AbstractListener
     protected $event;
 
     /**
-     * @param StripeService $stripeService
      * @param StripeEventService $stripeEventService
-     * @param UserAccountPlanService $userAccountPlanService
      * @param HttpClientService $httpClientService
      * @param $webClientProperties
      */
     public function __construct(
-        StripeService $stripeService,
         StripeEventService $stripeEventService,
-        UserAccountPlanService $userAccountPlanService,
         HttpClientService $httpClientService,
         $webClientProperties
     ) {
-        $this->stripeService = $stripeService;
         $this->stripeEventService = $stripeEventService;
-        $this->userAccountPlanService = $userAccountPlanService;
         $this->httpClientService = $httpClientService;
         $this->webClientProperties = $webClientProperties;
     }
@@ -70,22 +49,6 @@ abstract class AbstractListener
     protected function setEvent(DispatchableEvent $event)
     {
         $this->event = $event;
-    }
-
-    /**
-     * @return UserAccountPlan
-     */
-    protected function getUserAccountPlanFromEvent()
-    {
-        return $this->userAccountPlanService->getForUser($this->event->getEntity()->getUser());
-    }
-
-    /**
-     * @return StripeCustomer
-     */
-    protected function getStripeCustomer()
-    {
-        return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent());
     }
 
     protected function getDefaultWebClientData()

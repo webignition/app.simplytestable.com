@@ -73,11 +73,11 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
             ->shouldReceive('persistAndFlush');
 
         $listener = new CustomerSubscriptionCreatedListener(
-            $stripeService,
             $stripeEventService,
-            $userAccountPlanService,
             $httpClientService,
-            $webClientProperties
+            $webClientProperties,
+            $stripeService,
+            $userAccountPlanService
         );
 
         $stripeEvent = new StripeEvent();

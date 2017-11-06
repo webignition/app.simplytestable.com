@@ -28,19 +28,19 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
      * @param $webClientProperties
      */
     public function __construct(
-        StripeService $stripeService,
         StripeEventService $stripeEventService,
-        UserAccountPlanService $userAccountPlanService,
         HttpClientService $httpClientService,
         $webClientProperties,
+        StripeService $stripeService,
+        UserAccountPlanService $userAccountPlanService,
         AccountPlanService $accountPlanService
     ) {
         parent::__construct(
-            $stripeService,
             $stripeEventService,
-            $userAccountPlanService,
             $httpClientService,
-            $webClientProperties
+            $webClientProperties,
+            $stripeService,
+            $userAccountPlanService
         );
 
         $this->accountPlanService = $accountPlanService;
