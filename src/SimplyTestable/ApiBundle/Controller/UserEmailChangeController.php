@@ -24,13 +24,10 @@ class UserEmailChangeController extends Controller
         $userService = $this->container->get('simplytestable.services.userservice');
         $emailCanonicalizer = $this->container->get('fos_user.util.email_canonicalizer');
         $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userEmailChangeRequestRepository = $this->container->get('simplytestable.repository.useremailchangerequest');
 
         $new_email = $emailCanonicalizer->canonicalize($new_email);
-
         $user = $this->getUser();
-
-        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
 
         /* @var UserEmailChangeRequest|null $existingRequest */
         $existingUserRequest = $userEmailChangeRequestRepository->findOneBy([
@@ -77,14 +74,12 @@ class UserEmailChangeController extends Controller
     public function getAction($email_canonical)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userEmailChangeRequestRepository = $this->container->get('simplytestable.repository.useremailchangerequest');
 
         $user = $userService->findUserByEmail($email_canonical);
         if (empty($user)) {
             throw new NotFoundHttpException();
         }
-
-        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
 
         $emailChangeRequest = $userEmailChangeRequestRepository->findOneBy([
             'user' => $user,

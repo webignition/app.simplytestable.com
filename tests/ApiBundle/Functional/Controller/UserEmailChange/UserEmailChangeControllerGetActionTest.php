@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\Controller\UserEmailChange;
 
-use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserEmailChangeControllerGetActionTest extends AbstractUserEmailChangeControllerTest
@@ -45,8 +44,7 @@ class UserEmailChangeControllerGetActionTest extends AbstractUserEmailChangeCont
 
     public function testGetActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $emailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
+        $emailChangeRequestRepository = $this->container->get('simplytestable.repository.useremailchangerequest');
 
         $this->createEmailChangeRequest($this->user, 'new-email@example.com');
 
