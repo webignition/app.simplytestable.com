@@ -37,6 +37,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         stateService: "@simplytestable.services.stateservice"
         resqueQueueService: "@simplytestable.services.resque.queueService"
+        taskOutputRepository: '@simplytestable.repository.taskoutput'
 
   simplytestable.services.jobservice:
     class:  SimplyTestable\ApiBundle\Services\JobService

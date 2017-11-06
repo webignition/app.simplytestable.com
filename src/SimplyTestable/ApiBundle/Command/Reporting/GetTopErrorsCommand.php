@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Command\Reporting;
 
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
+use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,23 +31,31 @@ class GetTopErrorsCommand extends Command
      */
     private $entityManager;
 
+    /**
+     * @var TaskOutputRepository
+     */
+    private $taskOutputRepository;
+
 
     private $messages = [];
 
     /**
      * @param TaskTypeService $taskTypeService
      * @param EntityManager $entityManager
+     * @param TaskOutputRepository $taskOutputRepository
      * @param string|null $name
      */
     public function __construct(
         TaskTypeService $taskTypeService,
         EntityManager $entityManager,
+        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->taskTypeService = $taskTypeService;
         $this->entityManager = $entityManager;
+        $this->taskOutputRepository = $taskOutputRepository;
     }
 
     /**
@@ -165,8 +174,7 @@ class GetTopErrorsCommand extends Command
             $output->write('Finding task output for [' . $taskTypeName . '] tasks ... ');
         }
 
-        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
-        $taskOutputIds = $taskOutputRepository->findIdsByTaskType($taskType, $taskOutputLimit, $taskOutputOffset);
+        $taskOutputIds = $this->taskOutputRepository->findIdsByTaskType($taskType, $taskOutputLimit, $taskOutputOffset);
 
         $taskOutputCount = count($taskOutputIds);
 
@@ -189,7 +197,8 @@ class GetTopErrorsCommand extends Command
                 ));
             }
 
-            $taskOutput = $taskOutputRepository->find($taskOutputId);
+            /* @var Output $taskOutput */
+            $taskOutput = $this->taskOutputRepository->find($taskOutputId);
 
             $messages = $this->getMessagesForTaskOutput($taskOutput, $taskType);
 

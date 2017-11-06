@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
-use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -35,9 +34,7 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
+        $this->taskOutputRepository = $this->container->get('simplytestable.repository.taskoutput');
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
     }

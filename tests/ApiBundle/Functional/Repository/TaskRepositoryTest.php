@@ -607,7 +607,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $expectedOutputIndices
     ) {
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskOutputRepository = $this->container->get('simplytestable.repository.taskoutput');
 
         $taskType = $taskTypeService->getByName($taskTypeName);
 
@@ -628,7 +628,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
             }
         }
 
-        $taskOutputRepository = $entityManager->getRepository(Output::class);
+        /* @var Output[] $taskOutputs */
         $taskOutputs = $taskOutputRepository->findAll();
 
         $expectedOutputIds = [];

@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -39,10 +40,16 @@ class NormaliseJsLintOutputCommand extends Command
     private $taskTypeRepository;
 
     /**
+     * @var TaskOutputRepository
+     */
+    private $taskOutputRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
      * @param TaskRepository $taskRepository
      * @param EntityRepository $taskTypeRepository
+     * @param TaskOutputRepository $taskOutputRepository
      * @param string|null $name
      */
     public function __construct(
@@ -50,6 +57,7 @@ class NormaliseJsLintOutputCommand extends Command
         EntityManager $entityManager,
         TaskRepository $taskRepository,
         EntityRepository $taskTypeRepository,
+        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -58,6 +66,7 @@ class NormaliseJsLintOutputCommand extends Command
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
         $this->taskTypeRepository = $taskTypeRepository;
+        $this->taskOutputRepository = $taskOutputRepository;
     }
 
     /**
@@ -90,8 +99,6 @@ class NormaliseJsLintOutputCommand extends Command
 
         $output->writeln('Finding jslint output ...');
 
-        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
-
         /* @var TaskType $jsStaticAnalysisType */
         $jsStaticAnalysisType = $this->taskTypeRepository->findOneBy([
             'name' => TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
@@ -117,7 +124,7 @@ class NormaliseJsLintOutputCommand extends Command
             ));
 
             /* @var Output $taskOutput */
-            $taskOutput = $taskOutputRepository->find((int)$jsLintOutputId);
+            $taskOutput = $this->taskOutputRepository->find((int)$jsLintOutputId);
 
             $beforeLength = strlen($taskOutput->getOutput());
 
