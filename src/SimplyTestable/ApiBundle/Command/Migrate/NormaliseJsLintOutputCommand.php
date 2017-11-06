@@ -3,8 +3,9 @@
 namespace SimplyTestable\ApiBundle\Command\Migrate;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -33,15 +34,22 @@ class NormaliseJsLintOutputCommand extends Command
     private $taskRepository;
 
     /**
+     * @var EntityRepository
+     */
+    private $taskTypeRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
      * @param TaskRepository $taskRepository
+     * @param EntityRepository $taskTypeRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
         TaskRepository $taskRepository,
+        EntityRepository $taskTypeRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -49,6 +57,7 @@ class NormaliseJsLintOutputCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
         $this->taskRepository = $taskRepository;
+        $this->taskTypeRepository = $taskTypeRepository;
     }
 
     /**
@@ -81,10 +90,10 @@ class NormaliseJsLintOutputCommand extends Command
 
         $output->writeln('Finding jslint output ...');
 
-        $taskTypeRepository = $this->entityManager->getRepository(Type::class);
         $taskOutputRepository = $this->entityManager->getRepository(Output::class);
 
-        $jsStaticAnalysisType = $taskTypeRepository->findOneBy([
+        /* @var TaskType $jsStaticAnalysisType */
+        $jsStaticAnalysisType = $this->taskTypeRepository->findOneBy([
             'name' => TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
         ]);
 

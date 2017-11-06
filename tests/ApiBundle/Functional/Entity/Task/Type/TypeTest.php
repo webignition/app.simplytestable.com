@@ -12,7 +12,7 @@ class TypeTest extends AbstractBaseTestCase
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeClassRepository = $this->container->get('simplytestable.repository.tasktypeclass');
-        $taskTypeRepository = $entityManager->getRepository(Type::class);
+        $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
 
         $name = 'name-ɸ';
         $description = 'description-ɸ';
