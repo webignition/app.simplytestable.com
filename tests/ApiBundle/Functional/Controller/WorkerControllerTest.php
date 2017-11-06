@@ -123,10 +123,8 @@ class WorkerControllerTest extends AbstractBaseTestCase
      */
     public function testActivateActionSuccessWorkerInWrongState($stateName)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-
-        $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
+        $workerActivationRequestRepository = $this->container->get('simplytestable.repository.workeractivationrequest');
 
         $hostname = 'foo.worker.simplytestable.com';
         $token = 'token';
@@ -178,8 +176,7 @@ class WorkerControllerTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-
-        $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
+        $workerActivationRequestRepository = $this->container->get('simplytestable.repository.workeractivationrequest');
 
         $this->assertEmpty($workerActivationRequestRepository->findAll());
 

@@ -1,9 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
@@ -23,11 +21,6 @@ class ActivateVerifyCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * @var WorkerActivationRequestService
      */
     private $workerActivationRequestService;
@@ -38,25 +31,30 @@ class ActivateVerifyCommand extends Command
     private $workerRepository;
 
     /**
+     * @var EntityRepository
+     */
+    private $workerActivationRequestRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
-     * @param EntityManager $entityManager
      * @param WorkerActivationRequestService $workerActivationRequestService
      * @param EntityRepository $workerRepository
+     * @param EntityRepository $workerActivationRequestRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManager $entityManager,
         WorkerActivationRequestService $workerActivationRequestService,
         EntityRepository $workerRepository,
+        EntityRepository $workerActivationRequestRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
-        $this->entityManager = $entityManager;
         $this->workerActivationRequestService = $workerActivationRequestService;
         $this->workerRepository = $workerRepository;
+        $this->workerActivationRequestRepository = $workerActivationRequestRepository;
     }
 
     /**
@@ -80,12 +78,12 @@ class ActivateVerifyCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $workerActivationRequestRepository = $this->entityManager->getRepository(WorkerActivationRequest::class);
-
         $id = (int)$input->getArgument('id');
 
         $worker = $this->workerRepository->find($id);
-        $activationRequest = $workerActivationRequestRepository->findOneBy([
+
+        /* @var WorkerActivationRequest $activationRequest */
+        $activationRequest = $this->workerActivationRequestRepository->findOneBy([
             'worker' => $worker,
         ]);
 
