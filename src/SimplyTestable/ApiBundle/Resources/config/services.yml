@@ -214,6 +214,12 @@ services:
       taskPreprocessors:
         - '@simplytestable.services.taskputoutjoiner.linkintegrity'
 
+
+
+
+
+
+
   simplytestable.listener.stripe.customer.subscription.deleted.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener
     arguments:
@@ -221,8 +227,8 @@ services:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
         webClientProperties: "%web_client%"
+        accountPlanService: "@simplytestable.services.accountPlanService"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
 
@@ -233,7 +239,6 @@ services:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
         webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
@@ -245,7 +250,6 @@ services:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
         webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
@@ -257,8 +261,8 @@ services:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
         webClientProperties: "%web_client%"
+        accountPlanService: "@simplytestable.services.accountPlanService"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
 
@@ -269,7 +273,6 @@ services:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
         webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
@@ -281,11 +284,18 @@ services:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
         webClientProperties: "%web_client%"
         dispatcher: "@event_dispatcher"
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
+
+
+
+
+
+
+
+
 
   simplytestable.services.postmark.sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\Sender

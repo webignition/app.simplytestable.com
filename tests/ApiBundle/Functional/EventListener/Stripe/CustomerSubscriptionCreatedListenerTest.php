@@ -64,7 +64,6 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $stripeEventService = \Mockery::mock(StripeEventService::class);
         $userAccountPlanService = \Mockery::mock(UserAccountPlanService::class);
         $httpClientService = \Mockery::mock(HttpClientService::class);
-        $accountPlanService = \Mockery::mock(AccountPlanService::class);
 
         $stripeEventService
             ->shouldReceive('getForUserAndType')
@@ -78,7 +77,6 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
             $stripeEventService,
             $userAccountPlanService,
             $httpClientService,
-            $accountPlanService,
             $webClientProperties
         );
 

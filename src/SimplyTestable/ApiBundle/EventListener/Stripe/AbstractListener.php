@@ -5,7 +5,6 @@ namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
@@ -27,7 +26,7 @@ abstract class AbstractListener
     /**
      * @var UserAccountPlanService
      */
-    private $userAccountPlanService;
+    protected $userAccountPlanService;
 
     /**
      * @var array
@@ -40,21 +39,15 @@ abstract class AbstractListener
     private $httpClientService;
 
     /**
-     * @var AccountPlanService
-     */
-    private $accountPlanService;
-
-    /**
      * @var DispatchableEvent
      */
-    private $event;
+    protected $event;
 
     /**
      * @param StripeService $stripeService
      * @param StripeEventService $stripeEventService
      * @param UserAccountPlanService $userAccountPlanService
      * @param HttpClientService $httpClientService
-     * @param AccountPlanService $accountPlanService
      * @param $webClientProperties
      */
     public function __construct(
@@ -62,14 +55,12 @@ abstract class AbstractListener
         StripeEventService $stripeEventService,
         UserAccountPlanService $userAccountPlanService,
         HttpClientService $httpClientService,
-        AccountPlanService $accountPlanService,
         $webClientProperties
     ) {
         $this->stripeService = $stripeService;
         $this->stripeEventService = $stripeEventService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->httpClientService = $httpClientService;
-        $this->accountPlanService = $accountPlanService;
         $this->webClientProperties = $webClientProperties;
     }
 
@@ -102,7 +93,7 @@ abstract class AbstractListener
      */
     protected function getStripeCustomer()
     {
-        return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent($this->event));
+        return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent());
     }
 
     protected function getDefaultWebClientData()
@@ -161,13 +152,5 @@ abstract class AbstractListener
         $webClientUrls = $this->webClientProperties['urls'];
 
         return $webClientUrls['base'] . $webClientUrls['stripe_event_controller'];
-    }
-
-    protected function downgradeToBasicPlan()
-    {
-        $this->userAccountPlanService->subscribe(
-            $this->event->getEntity()->getUser(),
-            $this->accountPlanService->find('basic')
-        );
     }
 }

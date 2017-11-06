@@ -5,7 +5,6 @@ namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice;
-use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
@@ -25,7 +24,6 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
      * @param StripeEventService $stripeEventService
      * @param UserAccountPlanService $userAccountPlanService
      * @param HttpClientService $httpClientService
-     * @param AccountPlanService $accountPlanService
      * @param $webClientProperties
      * @param EventDispatcherInterface $dispatcher
      */
@@ -34,7 +32,6 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
         StripeEventService $stripeEventService,
         UserAccountPlanService $userAccountPlanService,
         HttpClientService $httpClientService,
-        AccountPlanService $accountPlanService,
         $webClientProperties,
         EventDispatcherInterface $dispatcher
     ) {
@@ -43,7 +40,6 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
             $stripeEventService,
             $userAccountPlanService,
             $httpClientService,
-            $accountPlanService,
             $webClientProperties
         );
 
