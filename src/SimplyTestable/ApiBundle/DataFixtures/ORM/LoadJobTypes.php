@@ -6,8 +6,10 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadJobTypes extends AbstractFixture implements OrderedFixtureInterface
+class LoadJobTypes extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
     private $jobTypes = array(
         'Full site' => array(
@@ -21,13 +23,25 @@ class LoadJobTypes extends AbstractFixture implements OrderedFixtureInterface
         )
     );
 
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
 
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $jobTypeRepository = $manager->getRepository(JobType::class);
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
 
         foreach ($this->jobTypes as $name => $properties) {
             $jobType = $jobTypeRepository->findOneByName($name);

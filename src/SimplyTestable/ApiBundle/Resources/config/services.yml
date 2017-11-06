@@ -406,6 +406,7 @@ services:
         entityManager: '@doctrine.orm.entity_manager'
         websiteService: '@simplytestable.services.websiteservice'
         taskTypeRepository: '@simplytestable.repository.tasktype'
+        jobTypeRepository: '@simplytestable.repository.jobtype'
 
   simplytestable.services.jobconfiguration.factory:
     class:   SimplyTestable\ApiBundle\Services\JobConfigurationFactory
@@ -419,6 +420,7 @@ services:
         crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
         tokenStorage: '@security.token_storage'
         stateRepository: '@simplytestable.repository.state'
+        jobTypeRepository: '@simplytestable.repository.jobtype'
 
   simplytestable.services.applicationstatusfactory:
     class:   SimplyTestable\ApiBundle\Services\ApplicationStatusFactory

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Services\Request\Factory\Job;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Repository\StateRepository;
 use SimplyTestable\ApiBundle\Request\Job\ListRequest;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
@@ -62,12 +63,18 @@ class ListRequestFactory
     private $stateRepository;
 
     /**
+     * @var EntityRepository
+     */
+    private $jobTypeRepository;
+
+    /**
      * @param RequestStack $requestStack
      * @param EntityManager $entityManager
      * @param JobService $jobService
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param TokenStorageInterface $tokenStorage
      * @param StateRepository $stateRepository
+     * @param EntityRepository $jobTypeRepository
      */
     public function __construct(
         RequestStack $requestStack,
@@ -75,7 +82,8 @@ class ListRequestFactory
         JobService $jobService,
         CrawlJobContainerService $crawlJobContainerService,
         TokenStorageInterface $tokenStorage,
-        StateRepository $stateRepository
+        StateRepository $stateRepository,
+        EntityRepository $jobTypeRepository
     ) {
         $request = $requestStack->getCurrentRequest();
         $this->requestPayload = $request->query;
@@ -85,6 +93,7 @@ class ListRequestFactory
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->tokenStorage = $tokenStorage;
         $this->stateRepository = $stateRepository;
+        $this->jobTypeRepository = $jobTypeRepository;
 
         $this->shouldExcludeCurrent = !is_null($this->requestPayload->get(self::PARAMETER_EXCLUDE_CURRENT));
         $this->shouldExcludeFinished = !is_null($this->requestPayload->get(self::PARAMETER_EXCLUDE_FINISHED));
@@ -119,9 +128,7 @@ class ListRequestFactory
             $excludeTypeNames[] = 'crawl';
         }
 
-        $jobTypeRepository = $this->entityManager->getRepository(JobType::class);
-
-        return $jobTypeRepository->findBy([
+        return $this->jobTypeRepository->findBy([
             'name' => $excludeTypeNames,
         ]);
     }
