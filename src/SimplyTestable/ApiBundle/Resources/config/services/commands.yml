@@ -10,8 +10,8 @@ services:
       resqueQueueService: '@simplytestable.services.resque.queueservice'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       stateService: '@simplytestable.services.stateservice'
-      entityManager: '@doctrine.orm.entity_manager'
       applicationStateService: '@simplytestable.services.applicationstateservice'
+      jobRepository: '@simplytestable.repository.job'
     tags:
       - { name: console.command }
 
@@ -247,6 +247,7 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
       taskRepository: '@simplytestable.repository.task'
+      taskTypeRepository: '@simplytestable.repository.tasktype'
     tags:
       - { name: console.command }
 

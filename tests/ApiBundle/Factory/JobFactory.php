@@ -359,8 +359,7 @@ class JobFactory
      */
     public function getFromResponse(Response $response)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
+        $jobRepository = $this->container->get('simplytestable.repository.job');
 
         $locationHeader = $response->headers->get('location');
         $locationHeaderParts = explode('/', rtrim($locationHeader, '/'));

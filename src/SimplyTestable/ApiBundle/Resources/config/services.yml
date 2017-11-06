@@ -388,7 +388,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
     arguments:
       teamService: '@simplytestable.services.teamservice'
-      entityManager: '@doctrine.orm.entity_manager'
+      jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.resourcelocator:
     class:  SimplyTestable\ApiBundle\Services\ResourceLocator
@@ -427,9 +427,9 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       stateService: '@simplytestable.services.stateservice'
-      entityManager: '@doctrine.orm.entity_manager'
       taskRepository: '@simplytestable.repository.task'
       workerRepository: '@simplytestable.repository.worker'
+      jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.usersummaryfactory:
     class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
