@@ -46,3 +46,9 @@ services:
     factory: ["@doctrine.orm.entity_manager", getRepository]
     arguments:
         - SimplyTestable\ApiBundle\Entity\User
+
+  simplytestable.repository.tasktype:
+    class: Doctrine\ORM\EntityRepository
+    factory: ["@doctrine.orm.entity_manager", getRepository]
+    arguments:
+        - SimplyTestable\ApiBundle\Entity\Task\Type\Type

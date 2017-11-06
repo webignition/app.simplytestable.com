@@ -138,13 +138,10 @@ class TaskController extends Controller
      */
     public function taskTypeCountAction($task_type, $state_name)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
         /* @var TaskRepository $taskRepository */
         $taskRepository = $this->container->get('simplytestable.repository.task');
         $stateRepository = $this->container->get('simplytestable.repository.state');
-
-        $taskTypeRepository = $entityManager->getRepository(TaskType::class);
+        $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
 
         /* @var TaskType $taskType */
         $taskType = $taskTypeRepository->findOneBy([

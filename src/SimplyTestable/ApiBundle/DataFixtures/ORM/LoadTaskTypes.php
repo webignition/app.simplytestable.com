@@ -5,7 +5,6 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -59,7 +58,7 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
     public function load(ObjectManager $manager)
     {
         $taskTypeClassRepository = $this->container->get('simplytestable.repository.tasktypeclass');
-        $taskTypeRepository = $manager->getRepository(TaskType::class);
+        $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
 
         foreach ($this->taskTypes as $name => $properties) {
             $taskType = $taskTypeRepository->findOneByName($name);
