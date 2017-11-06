@@ -23,14 +23,4 @@ class AccountPlanService extends EntityService
     {
         return $this->getEntityRepository()->findOneByName($name);
     }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function has($name)
-    {
-        return !is_null($this->find($name));
-    }
 }
