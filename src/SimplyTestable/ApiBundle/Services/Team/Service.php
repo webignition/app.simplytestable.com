@@ -66,7 +66,8 @@ class Service extends EntityService
             );
         }
 
-        if ($this->isNameTaken($name)) {
+        $isNameTaken = $this->getEntityRepository()->getTeamCountByName($name) > 0;
+        if ($isNameTaken) {
             throw new TeamServiceException(
                 'Team name is already taken',
                 TeamServiceException::CODE_NAME_TAKEN
@@ -92,17 +93,6 @@ class Service extends EntityService
         return $this->getEntityRepository()->getTeamCountByLeader($leader) > 0;
     }
 
-
-    /**
-     * @param $name
-     *
-     * @return bool
-     */
-    private function isNameTaken($name)
-    {
-        return $this->getEntityRepository()->getTeamCountByName($name) > 0;
-    }
-
     /**
      * @param Team $team
      *
@@ -112,6 +102,7 @@ class Service extends EntityService
     {
         $this->getManager()->persist($team);
         $this->getManager()->flush();
+
         return $team;
     }
 
@@ -178,7 +169,9 @@ class Service extends EntityService
             return [$user];
         }
 
-        return $this->getPeople($this->getForUser($user));
+        $team = $this->getForUser($user);
+
+        return $this->getPeople($team);
     }
 
     /**
