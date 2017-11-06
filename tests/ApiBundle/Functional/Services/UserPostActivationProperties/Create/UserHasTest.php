@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services\UserPostActivationProperties\Create;
 
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use Tests\ApiBundle\Factory\UserFactory;
 
 class UserHasTest extends ServiceTest {
@@ -12,19 +13,30 @@ class UserHasTest extends ServiceTest {
     protected function setUp() {
         parent::setUp();
 
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+
+        /* @var Plan $personalPlan */
+        $personalPlan = $accountPlanRepository->findOneBy([
+            'name' => 'personal',
+        ]);
+
+        /* @var Plan $personalPlan */
+        $agencyPlan = $accountPlanRepository->findOneBy([
+            'name' => self::ACCOUNT_PLAN_NAME,
+        ]);
 
         $userFactory = new UserFactory($this->container);
 
         $user = $userFactory->create();
         $this->userPostActivationProperties = $this->getUserPostActivationPropertiesService()->create(
             $user,
-            $accountPlanService->find('personal')
+            $personalPlan
         );
 
         $this->userPostActivationProperties = $this->getUserPostActivationPropertiesService()->create(
             $user,
-            $accountPlanService->find(self::ACCOUNT_PLAN_NAME),
+            $agencyPlan,
             self::COUPON
         );
     }
