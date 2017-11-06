@@ -7,8 +7,10 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterface
+class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
     private $planDetails = array(
         array(
@@ -145,6 +147,18 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
         ),
     );
 
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
 
     /**
      *
@@ -157,7 +171,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
      */
     public function load(ObjectManager $manager)
     {
-        $this->planRepository = $manager->getRepository(Plan::class);
+        $this->planRepository = $this->container->get('simplytestable.repository.accountplan');
 
         foreach ($this->planDetails as $planDetails) {
             $plan = $this->findPlanByNameHistory($planDetails['names']);
