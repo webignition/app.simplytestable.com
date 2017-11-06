@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Command\Tasks;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -34,15 +35,22 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
     private $entityManager;
 
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param StateService $stateService
      * @param EntityManager $entityManager
+     * @param TaskRepository $taskRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         StateService $stateService,
         EntityManager $entityManager,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -50,6 +58,7 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
         $this->applicationStateService = $applicationStateService;
         $this->stateService = $stateService;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -77,10 +86,9 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
         }
 
         $taskQueuedForAssignmentState = $this->stateService->fetch(TaskService::QUEUED_FOR_ASSIGNMENT_STATE);
-        $taskRepository = $this->entityManager->getRepository(Task::class);
 
         /* @var Task[] $tasks */
-        $tasks = $taskRepository->findBy([
+        $tasks = $this->taskRepository->findBy([
             'state' => $taskQueuedForAssignmentState,
         ]);
 

@@ -422,6 +422,7 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       stateService: '@simplytestable.services.stateservice'
       entityManager: '@doctrine.orm.entity_manager'
+      taskRepository: '@simplytestable.repository.task'
 
   simplytestable.services.usersummaryfactory:
     class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
@@ -444,6 +445,7 @@ services:
       jobRejectionReasonService: '@simplytestable.services.jobrejectionreasonservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      taskRepository: '@simplytestable.repository.task'
 
   simplytestable.services.joblistconfigurationfactory:
     class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory

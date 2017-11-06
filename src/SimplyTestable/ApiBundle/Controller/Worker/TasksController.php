@@ -2,8 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Worker;
 
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +25,9 @@ class TasksController extends Controller
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $taskQueueService = $this->container->get('simplytestable.services.task.queueservice');
+
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $this->container->get('simplytestable.repository.task');
 
         $workerHostname = $request->request->get('worker_hostname');
         $workerRepository = $entityManager->getRepository(Worker::class);
@@ -75,8 +78,6 @@ class TasksController extends Controller
         if (empty($taskIds)) {
             return new Response();
         }
-
-        $taskRepository = $entityManager->getRepository(Task::class);
 
         $tasks = $taskRepository->findBy([
             'id' => $taskIds,

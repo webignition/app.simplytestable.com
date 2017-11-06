@@ -4,8 +4,8 @@ namespace SimplyTestable\ApiBundle\Command\Migrate;
 
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Symfony\Component\Console\Command\Command;
@@ -28,19 +28,27 @@ class NormaliseJsLintOutputCommand extends Command
     private $entityManager;
 
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
+     * @param TaskRepository $taskRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -74,14 +82,13 @@ class NormaliseJsLintOutputCommand extends Command
         $output->writeln('Finding jslint output ...');
 
         $taskTypeRepository = $this->entityManager->getRepository(Type::class);
-        $taskRepository = $this->entityManager->getRepository(Task::class);
         $taskOutputRepository = $this->entityManager->getRepository(Output::class);
 
         $jsStaticAnalysisType = $taskTypeRepository->findOneBy([
             'name' => TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
         ]);
 
-        $jsLintOutputIds = $taskRepository->getTaskOutputByType($jsStaticAnalysisType);
+        $jsLintOutputIds = $this->taskRepository->getTaskOutputByType($jsStaticAnalysisType);
 
         $output->writeln('['.count($jsLintOutputIds).'] outputs to examine');
 

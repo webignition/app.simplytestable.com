@@ -56,9 +56,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $this->container->get('simplytestable.repository.task');
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
     }

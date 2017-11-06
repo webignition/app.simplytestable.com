@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -65,6 +66,11 @@ class CollectionCommand extends Command
     private $logger;
 
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
      * @param TaskPreProcessorFactory $taskPreProcessorFactory
@@ -73,6 +79,7 @@ class CollectionCommand extends Command
      * @param StateService $stateService
      * @param WorkerTaskAssignmentService $workerTaskAssignmentService
      * @param LoggerInterface $logger
+     * @param TaskRepository $taskRepository
      * @param string|null $name
      */
     public function __construct(
@@ -84,6 +91,7 @@ class CollectionCommand extends Command
         StateService $stateService,
         WorkerTaskAssignmentService $workerTaskAssignmentService,
         LoggerInterface $logger,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -96,6 +104,7 @@ class CollectionCommand extends Command
         $this->stateService = $stateService;
         $this->workerTaskAssignmentService = $workerTaskAssignmentService;
         $this->logger = $logger;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -126,9 +135,7 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_OK;
         }
 
-        $taskRepository = $this->entityManager->getRepository(Task::class);
-
-        $tasks = $taskRepository->findBy([
+        $tasks = $this->taskRepository->findBy([
             'id' => $taskIds,
         ]);
 

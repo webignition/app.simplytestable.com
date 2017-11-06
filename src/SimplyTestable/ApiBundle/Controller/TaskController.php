@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -140,6 +141,9 @@ class TaskController extends Controller
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $this->container->get('simplytestable.repository.task');
+
         $taskTypeRepository = $entityManager->getRepository(TaskType::class);
 
         /* @var TaskType $taskType */
@@ -162,7 +166,6 @@ class TaskController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $taskRepository = $entityManager->getRepository(Task::class);
         $count = $taskRepository->getCountByTaskTypeAndState($taskType, $state);
 
         return new JsonResponse($count);

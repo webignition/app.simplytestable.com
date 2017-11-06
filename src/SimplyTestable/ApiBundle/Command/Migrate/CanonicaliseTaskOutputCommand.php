@@ -4,11 +4,11 @@ namespace SimplyTestable\ApiBundle\Command\Migrate;
 
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 
 class CanonicaliseTaskOutputCommand extends Command
 {
@@ -26,19 +26,27 @@ class CanonicaliseTaskOutputCommand extends Command
     private $entityManager;
 
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
+     * @param TaskRepository $taskRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -70,7 +78,6 @@ class CanonicaliseTaskOutputCommand extends Command
         $output->writeln('Finding duplicate output ...');
 
         $taskOutputRepository = $this->entityManager->getRepository(Output::class);
-        $taskRepository = $this->entityManager->getRepository(Task::class);
 
         $duplicateHashes = $taskOutputRepository->findDuplicateHashes($this->getLimit($input));
 
@@ -109,7 +116,7 @@ class CanonicaliseTaskOutputCommand extends Command
 
                     $taskOutput = $taskOutputRepository->find($taskOutputId);
 
-                    $tasksToUpdate = $taskRepository->findBy([
+                    $tasksToUpdate = $this->taskRepository->findBy([
                         'output' => $taskOutput,
                     ]);
 
