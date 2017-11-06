@@ -2,7 +2,8 @@
 namespace SimplyTestable\ApiBundle\Command\Maintenance;
 
 use Doctrine\ORM\EntityManager;
-use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,11 +17,6 @@ class ModifyInitialStartTrialPeriodCommand extends Command
     const RETURN_CODE_MISSING_REQUIRED_OPTION = 2;
 
     /**
-     * @var AccountPlanService
-     */
-    private $accountPlanService;
-
-    /**
      * @var UserAccountPlanService
      */
     private $userAccountPlanService;
@@ -31,22 +27,26 @@ class ModifyInitialStartTrialPeriodCommand extends Command
     private $entityManager;
 
     /**
-     * @param AccountPlanService $accountPlanService
+     * @var EntityRepository
+     */
+    private $accountPlanRepository;
+
+    /**
      * @param UserAccountPlanService $userAccountPlanService
      * @param EntityManager $entityManager
      * @param null $name
      */
     public function __construct(
-        AccountPlanService $accountPlanService,
         UserAccountPlanService $userAccountPlanService,
         EntityManager $entityManager,
         $name = null
     ) {
         parent::__construct($name);
 
-        $this->accountPlanService = $accountPlanService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->entityManager = $entityManager;
+
+        $this->accountPlanRepository = $entityManager->getRepository(Plan::class);
     }
 
     /**
@@ -110,7 +110,9 @@ class ModifyInitialStartTrialPeriodCommand extends Command
             $output->writeln('<info>New trial period: '.$new.'</info>');
         }
 
-        $basicPlan = $this->accountPlanService->find('basic');
+        $basicPlan = $this->accountPlanRepository->findOneBy([
+            'name' => 'basic',
+        ]);
 
         $output->write('<info>Finding users on basic plan:</info>');
 

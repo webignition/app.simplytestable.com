@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\StripeService;
@@ -138,7 +139,12 @@ class StripeServiceTest extends AbstractBaseTestCase
 
     public function testSubscribe()
     {
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
+
+        /* @var Plan $plan */
+        $plan = $accountPlanRepository->findOneBy([
+            'name' => 'personal',
+        ]);
 
         StripeApiFixtureFactory::set([
             StripeApiFixtureFactory::load('customer-nocard-nosub'),
@@ -147,7 +153,7 @@ class StripeServiceTest extends AbstractBaseTestCase
 
         $userAccountPlan = new UserAccountPlan();
         $userAccountPlan->setStripeCustomer('cus_BanNjUqqa6RWw9');
-        $userAccountPlan->setPlan($accountPlanService->find('personal'));
+        $userAccountPlan->setPlan($plan);
 
         $this->stripeService->subscribe($userAccountPlan);
     }

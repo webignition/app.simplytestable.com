@@ -28,7 +28,7 @@ class PlanTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $this->planRepository = $this->entityManager->getRepository(Plan::class);
+        $this->planRepository = $this->container->get('simplytestable.repository.accountplan');
     }
 
     public function testUtf8Name()

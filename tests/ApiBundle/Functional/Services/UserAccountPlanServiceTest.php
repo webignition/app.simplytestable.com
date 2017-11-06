@@ -61,7 +61,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
         $expectedStripeCustomer,
         $expectedStartTrialPeriod
     ) {
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         StripeApiFixtureFactory::set($httpFixtures);
 
@@ -69,7 +69,10 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
             UserFactory::KEY_PLAN_NAME => null,
         ]);
 
-        $accountPlan = $accountPlanService->find($planName);
+        /* @var Plan $accountPlan */
+        $accountPlan = $accountPlanRepository->findOneBy([
+            'name' => $planName,
+        ]);
 
         $userAccountPlan = $this->userAccountPlanService->subscribe($user, $accountPlan);
 
@@ -117,7 +120,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
      */
     public function testSubscribeActionNewPlanIsCurrentPlan($planName)
     {
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         $user = $this->userFactory->create([
             UserFactory::KEY_PLAN_NAME => $planName,
@@ -125,7 +128,10 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
         $currentUserAccountPlan = $this->userAccountPlanService->getForUser($user);
 
-        $accountPlan = $accountPlanService->find($planName);
+        /* @var Plan $accountPlan */
+        $accountPlan = $accountPlanRepository->findOneBy([
+            'name' => $planName,
+        ]);
 
         $userAccountPlan = $this->userAccountPlanService->subscribe($user, $accountPlan);
 
@@ -154,8 +160,8 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
      */
     public function testSubscribeActionChangePlan($httpFixtures, $currentPlanName, $planName, $expectedStartTrialPeriod)
     {
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         $nonPremiumAccountPlan = new Plan();
         $nonPremiumAccountPlan->setName('non-premium');
@@ -175,7 +181,10 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
         $currentUserAccountPlan = $this->userAccountPlanService->getForUser($user);
         $currentUserAccountPlanStripeCustomer = $currentUserAccountPlan->getStripeCustomer();
 
-        $accountPlan = $accountPlanService->find($planName);
+        /* @var Plan $accountPlan */
+        $accountPlan = $accountPlanRepository->findOneBy([
+            'name' => $planName,
+        ]);
 
         $userAccountPlan = $this->userAccountPlanService->subscribe($user, $accountPlan);
 
@@ -454,7 +463,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
     public function testFindAllByPlan()
     {
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         $this->userFactory->create([
             UserFactory::KEY_PLAN_NAME => 'personal',
@@ -476,7 +485,10 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
             UserFactory::KEY_EMAIL => 'user4@example.com',
         ]);
 
-        $personalPlan = $accountPlanService->find('personal');
+        /* @var Plan $personalPlan */
+        $personalPlan = $accountPlanRepository->findOneBy([
+            'name' => 'personal',
+        ]);
 
         $foundPersonalPlanUserAccountPlans = $this->userAccountPlanService->findAllByPlan($personalPlan);
         $foundPersonalPlanUserEmails = [];
@@ -493,7 +505,10 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
             $foundPersonalPlanUserEmails
         );
 
-        $agencyPlan = $accountPlanService->find('agency');
+        /* @var Plan $agencyPlan */
+        $agencyPlan = $accountPlanRepository->findOneBy([
+            'name' => 'agency',
+        ]);
 
         $foundAgencyPlanUserAccountPlans = $this->userAccountPlanService->findAllByPlan($agencyPlan);
         $foundAgencyPlanUserEmails = [];

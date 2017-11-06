@@ -1,6 +1,7 @@
 imports:
     - { resource: services/commands.yml }
     - { resource: services/resque-job-factory.yml }
+    - { resource: services/repositories.yml }
 
 services:
   simplytestable.session.handler:
@@ -114,11 +115,6 @@ services:
       resourceLocator: '@simplytestable.services.resourcelocator'
       kernel: '@kernel'
 
-  simplytestable.services.accountPlanService:
-    class:   SimplyTestable\ApiBundle\Services\AccountPlanService
-    arguments:
-        entityManager: "@doctrine.orm.entity_manager"
-
   simplytestable.services.userAccountPlanService:
     class:   SimplyTestable\ApiBundle\Services\UserAccountPlanService
     arguments:
@@ -222,7 +218,7 @@ services:
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
+        accountPlanRepository: "@simplytestable.repository.accountplan"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
 
@@ -256,7 +252,7 @@ services:
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
+        accountPlanRepository: "@simplytestable.repository.accountplan"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
 
