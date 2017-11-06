@@ -10,16 +10,10 @@ use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use webignition\Model\Stripe\Customer as StripeCustomer;
 
 abstract class AbstractListener
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
     /**
      * @var StripeService
      */
@@ -56,29 +50,26 @@ abstract class AbstractListener
     private $event;
 
     /**
-     * @param EventDispatcherInterface $dispatcher
      * @param StripeService $stripeService
      * @param StripeEventService $stripeEventService
      * @param UserAccountPlanService $userAccountPlanService
      * @param HttpClientService $httpClientService
-     * @param AccountPlanService $accountPLanService
+     * @param AccountPlanService $accountPlanService
      * @param $webClientProperties
      */
     public function __construct(
-        EventDispatcherInterface $dispatcher,
         StripeService $stripeService,
         StripeEventService $stripeEventService,
         UserAccountPlanService $userAccountPlanService,
         HttpClientService $httpClientService,
-        AccountPlanService $accountPLanService,
+        AccountPlanService $accountPlanService,
         $webClientProperties
     ) {
-        $this->dispatcher = $dispatcher;
         $this->stripeService = $stripeService;
         $this->stripeEventService = $stripeEventService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->httpClientService = $httpClientService;
-        $this->accountPlanService = $accountPLanService;
+        $this->accountPlanService = $accountPlanService;
         $this->webClientProperties = $webClientProperties;
     }
 

@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
-use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
@@ -16,7 +15,6 @@ use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Factory\StripeEventFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 
 class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListenerTest
@@ -62,7 +60,6 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userService = $this->container->get('simplytestable.services.userservice');
         $user = $userService->getPublicUser();
 
-        $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);
         $stripeService = \Mockery::mock(StripeService::class);
         $stripeEventService = \Mockery::mock(StripeEventService::class);
         $userAccountPlanService = \Mockery::mock(UserAccountPlanService::class);
@@ -77,7 +74,6 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
             ->shouldReceive('persistAndFlush');
 
         $listener = new CustomerSubscriptionCreatedListener(
-            $eventDispatcher,
             $stripeService,
             $stripeEventService,
             $userAccountPlanService,

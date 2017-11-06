@@ -5,10 +5,51 @@ namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Model\Stripe\Invoice\Invoice;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\StripeService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 
 class InvoicePaymentFailedListener extends AbstractInvoiceListener
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
+     * @param StripeService $stripeService
+     * @param StripeEventService $stripeEventService
+     * @param UserAccountPlanService $userAccountPlanService
+     * @param HttpClientService $httpClientService
+     * @param AccountPlanService $accountPlanService
+     * @param $webClientProperties
+     * @param EventDispatcherInterface $dispatcher
+     */
+    public function __construct(
+        StripeService $stripeService,
+        StripeEventService $stripeEventService,
+        UserAccountPlanService $userAccountPlanService,
+        HttpClientService $httpClientService,
+        AccountPlanService $accountPlanService,
+        $webClientProperties,
+        EventDispatcherInterface $dispatcher
+    ) {
+        parent::__construct(
+            $stripeService,
+            $stripeEventService,
+            $userAccountPlanService,
+            $httpClientService,
+            $accountPlanService,
+            $webClientProperties
+        );
+
+        $this->dispatcher = $dispatcher;
+    }
+
     /**
      * @param DispatchableEvent $event
      */
