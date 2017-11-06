@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\State;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -143,6 +142,7 @@ class TaskController extends Controller
 
         /* @var TaskRepository $taskRepository */
         $taskRepository = $this->container->get('simplytestable.repository.task');
+        $stateRepository = $this->container->get('simplytestable.repository.state');
 
         $taskTypeRepository = $entityManager->getRepository(TaskType::class);
 
@@ -154,8 +154,6 @@ class TaskController extends Controller
         if (empty($taskType)) {
             throw new NotFoundHttpException();
         }
-
-        $stateRepository = $entityManager->getRepository(State::class);
 
         /* @var State $state */
         $state = $stateRepository->findOneBy([

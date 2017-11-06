@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Services\Request\Factory\Job;
 
 use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Repository\StateRepository;
 use SimplyTestable\ApiBundle\Request\Job\ListRequest;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -56,18 +57,25 @@ class ListRequestFactory
     private $shouldExcludeFinished;
 
     /**
+     * @var StateRepository
+     */
+    private $stateRepository;
+
+    /**
      * @param RequestStack $requestStack
      * @param EntityManager $entityManager
      * @param JobService $jobService
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param TokenStorageInterface $tokenStorage
+     * @param StateRepository $stateRepository
      */
     public function __construct(
         RequestStack $requestStack,
         EntityManager $entityManager,
         JobService $jobService,
         CrawlJobContainerService $crawlJobContainerService,
-        TokenStorageInterface $tokenStorage
+        TokenStorageInterface $tokenStorage,
+        StateRepository $stateRepository
     ) {
         $request = $requestStack->getCurrentRequest();
         $this->requestPayload = $request->query;
@@ -76,6 +84,7 @@ class ListRequestFactory
         $this->jobService = $jobService;
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->tokenStorage = $tokenStorage;
+        $this->stateRepository = $stateRepository;
 
         $this->shouldExcludeCurrent = !is_null($this->requestPayload->get(self::PARAMETER_EXCLUDE_CURRENT));
         $this->shouldExcludeFinished = !is_null($this->requestPayload->get(self::PARAMETER_EXCLUDE_FINISHED));
@@ -124,9 +133,7 @@ class ListRequestFactory
     {
         $stateNamesToExclude = $this->getStateNamesToExcludeFromRequest();
 
-        $stateRepository = $this->entityManager->getRepository(State::class);
-
-        return $stateRepository->findBy([
+        return $this->stateRepository->findBy([
             'name' => $stateNamesToExclude,
         ]);
     }
