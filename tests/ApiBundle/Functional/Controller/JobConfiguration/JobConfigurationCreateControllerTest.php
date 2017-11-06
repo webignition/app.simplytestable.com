@@ -179,8 +179,6 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
 
     public function testCreateActionFailureLabelNotUnique()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
         $this->setUser($user);
@@ -206,8 +204,6 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
 
     public function testCreateActionFailureHasExistingJobConfiguration()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
         $this->setUser($user);
@@ -236,8 +232,7 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
 
     public function testCreateAction()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $jobConfigurationRepository = $this->container->get('simplytestable.repository.jobconfiguration');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
@@ -261,8 +256,6 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
             '/jobconfiguration/label%20value/',
             $response->getTargetUrl()
         );
-
-        $jobConfigurationRepository = $entityManager->getRepository(JobConfiguration::class);
 
         $jobConfiguration = $jobConfigurationRepository->findOneBy([
             'label' => $label,

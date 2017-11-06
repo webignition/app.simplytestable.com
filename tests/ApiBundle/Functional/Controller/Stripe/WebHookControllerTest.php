@@ -31,6 +31,8 @@ class WebHookControllerTest extends AbstractBaseTestCase
 
     public function testIndexActionPostRequest()
     {
+        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
+
         $fixtureName = 'customer.subscription.created.active';
         $fixtureModifications = [
             'data' => [
@@ -47,8 +49,6 @@ class WebHookControllerTest extends AbstractBaseTestCase
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
-
-        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         /* @var UserAccountPlan $userAccountPlan */
         $userAccountPlan = $userAccountPlanRepository->findOneBy([

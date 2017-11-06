@@ -125,13 +125,11 @@ class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
 
     public function testDeleteActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobConfigurationRepository = $this->container->get('simplytestable.repository.jobconfiguration');
 
         $response = $this->jobConfigurationDeleteController->deleteAction($this->jobConfiguration->getLabel());
 
         $this->assertTrue($response->isSuccessful());
-
-        $jobConfigurationRepository = $entityManager->getRepository(JobConfiguration::class);
 
         $jobConfiguration = $jobConfigurationRepository->findOneBy([
             'label' => $this->jobConfiguration->getLabel(),

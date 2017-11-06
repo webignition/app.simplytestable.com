@@ -133,12 +133,12 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
 
     public function testAcceptActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
+        $jobConfigurationRepository = $this->container->get('simplytestable.repository.jobconfiguration');
 
         $leader2 = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'leader2@example.com',
@@ -148,8 +148,6 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
         $teamInviteService->get($leader2, $this->inviteeUser);
 
         $this->assertCount(2, $teamInviteService->getForUser($this->inviteeUser));
-
-        $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
 
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
         $jobConfiguration = $jobConfigurationFactory->create([

@@ -87,7 +87,7 @@ class ModifyInitialStartTrialPeriodCommandTest extends AbstractBaseTestCase
         $expectedStartTrialPeriods
     ) {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();

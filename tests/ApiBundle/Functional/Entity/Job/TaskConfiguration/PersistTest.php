@@ -52,7 +52,7 @@ class PersistTest extends TaskConfigurationTest
 
         $entityManager->clear();
 
-        $taskConfigurationRepository = $entityManager->getRepository(TaskConfiguration::class);
+        $taskConfigurationRepository = $this->container->get('simplytestable.repository.taskconfiguration');
 
         $this->taskConfiguration = $taskConfigurationRepository->find($taskConfigurationId);
     }

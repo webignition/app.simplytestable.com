@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Controller\TeamInvite;
 
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
-use SimplyTestable\ApiBundle\Entity\User;
 use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
@@ -135,11 +134,9 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
 
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $userRepository = $this->container->get('simplytestable.repository.user');
+        $inviteRepository = $this->container->get('simplytestable.repository.teaminvite');
 
         $teamInviteService->get($this->users['leader'], $newUserHasInvite);
-
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $inviteRepository = $entityManager->getRepository(Invite::class);
 
         $invitee = $userRepository->findOneBy([
             'email' => $inviteeEmail,

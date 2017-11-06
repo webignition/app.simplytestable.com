@@ -10,6 +10,7 @@ class TypeTest extends AbstractBaseTestCase
     public function testPersistAndRetrieve()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
 
         $name = 'test-ɸ';
         $description = 'ɸ';
@@ -24,8 +25,6 @@ class TypeTest extends AbstractBaseTestCase
         $typeId = $type->getId();
 
         $entityManager->clear();
-
-        $jobTypeRepository = $entityManager->getRepository(Type::class);
 
         $retrievedType = $jobTypeRepository->find($typeId);
 
