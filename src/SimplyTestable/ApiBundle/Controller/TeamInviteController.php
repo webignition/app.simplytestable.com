@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
-use SimplyTestable\ApiBundle\Services\BadRequestHttpExceptionFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,8 +26,9 @@ class TeamInviteController extends Controller
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplanservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $accountPlanRepository = $entityManager->getRepository(Plan::class);
 
         $inviter = $this->getUser();
 
@@ -44,11 +45,17 @@ class TeamInviteController extends Controller
             $requestData = $request->query;
 
             $planName = rawurldecode(trim($requestData->get('plan')));
-            if (empty($planName) || !$accountPlanService->has($planName)) {
-                $planName = self::DEFAULT_ACCOUNT_PLAN_NAME;
-            }
 
-            $plan = $accountPlanService->find($planName);
+            /* @var Plan $plan */
+            $plan = $accountPlanRepository->findOneBy([
+                'name' => $planName,
+            ]);
+
+            if (empty($plan)) {
+                $plan = $accountPlanRepository->findOneBy([
+                    'name' => self::DEFAULT_ACCOUNT_PLAN_NAME,
+                ]);
+            }
 
             $userAccountPlanService->subscribe($user, $plan);
         }

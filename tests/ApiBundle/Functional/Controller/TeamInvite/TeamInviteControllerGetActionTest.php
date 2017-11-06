@@ -37,8 +37,6 @@ class TeamInviteControllerGetActionTest extends AbstractTeamInviteControllerTest
      */
     public function testGetActionClientFailure($inviterName, $inviteeEmail, $expectedResponseError)
     {
-
-
         $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
         $userAccountPlanFactory->create($this->users['private'], 'agency');
 
