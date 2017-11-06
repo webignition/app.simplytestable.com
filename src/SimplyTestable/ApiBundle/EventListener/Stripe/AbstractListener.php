@@ -53,10 +53,10 @@ abstract class AbstractListener
 
     protected function getDefaultWebClientData()
     {
-        return array(
+        return [
             'event' => $this->event->getEntity()->getType(),
             'user' => $this->event->getEntity()->getUser()->getEmail()
-        );
+        ];
     }
 
     protected function markEntityProcessed()
@@ -77,7 +77,7 @@ abstract class AbstractListener
             return false;
         }
 
-        $request = $this->httpClientService->postRequest($subscriberUrl, array(), $data);
+        $request = $this->httpClientService->postRequest($subscriberUrl, [], $data);
 
         try {
             $request->send();

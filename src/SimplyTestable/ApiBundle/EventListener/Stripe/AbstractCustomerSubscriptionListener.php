@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
@@ -10,14 +9,13 @@ use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 use webignition\Model\Stripe\Discount as StripeDiscountModel;
 use webignition\Model\Stripe\Event\Customer\Updated as StripeCustomerUpdatedEvent;
-use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
 abstract class AbstractCustomerSubscriptionListener extends AbstractListener
 {
     /**
      * @var StripeService
      */
-    private $stripeService;
+    protected $stripeService;
 
     /**
      * @var UserAccountPlanService
@@ -83,8 +81,10 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
      */
     private function getCustomerDiscount()
     {
+        $user = $this->event->getEntity()->getUser();
+
         $events = $this->stripeEventService->getForUserAndType(
-            $this->event->getEntity()->getUser(),
+            $user,
             [
                 'customer.created',
                 'customer.updated',
@@ -102,21 +102,5 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
         }
 
         return null;
-    }
-
-    /**
-     * @return UserAccountPlan
-     */
-    protected function getUserAccountPlanFromEvent()
-    {
-        return $this->userAccountPlanService->getForUser($this->event->getEntity()->getUser());
-    }
-
-    /**
-     * @return StripeCustomerModel
-     */
-    protected function getStripeCustomer()
-    {
-        return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent());
     }
 }

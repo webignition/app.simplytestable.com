@@ -13,16 +13,19 @@ class CustomerSubscriptionTrialWillEndListener extends AbstractCustomerSubscript
     {
         $this->setEvent($event);
 
-        $stripeCustomer = $this->getStripeCustomer();
+        $user = $this->event->getEntity()->getUser();
+        $userAccountPlan = $this->userAccountPlanService->getForUser($user);
+        $stripeCustomer = $this->stripeService->getCustomer($userAccountPlan);
+
         $stripeSubscription = $this->getStripeSubscription();
 
-        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
+        $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), [
             'trial_end' => $stripeSubscription->getTrialPeriod()->getEnd(),
             'has_card' => (int)$stripeCustomer->hasCard(),
             'plan_amount' => $this->getPlanAmount($stripeSubscription),
             'plan_name' => $stripeSubscription->getPlan()->getName(),
             'plan_currency' => $stripeSubscription->getPlan()->getCurrency()
-        )));
+        ]));
 
         $this->markEntityProcessed();
     }

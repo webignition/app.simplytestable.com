@@ -60,6 +60,8 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
             'currency' => $stripeSubscription->getPlan()->getCurrency()
         ]);
 
+        $user = $this->event->getEntity()->getUser();
+
         if ($stripeEventObject->isPlanChange()) {
             $oldPlan = $stripeEventObject->getDataObject()->getPreviousAttributes()->get('plan');
 
@@ -99,7 +101,9 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
             $previousSubscription = new StripeSubscriptionModel(json_encode(
                 $stripeEventDataPreviousAttributes->toArray()
             ));
-            $stripeCustomer = $this->getStripeCustomer();
+
+            $userAccountPlan = $this->userAccountPlanService->getForUser($user);
+            $stripeCustomer = $this->stripeService->getCustomer($userAccountPlan);
 
             $webClientEventData = array_merge(
                 $webClientEventData,
@@ -114,19 +118,11 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
             );
 
             if ($stripeCustomer->hasCard() === false) {
-                $this->downgradeToBasicPlan();
+                $this->userAccountPlanService->subscribe($user, $this->accountPlanService->find('basic'));
             }
 
             $this->issueWebClientEvent($webClientEventData);
             $this->markEntityProcessed();
         }
-    }
-
-    protected function downgradeToBasicPlan()
-    {
-        $this->userAccountPlanService->subscribe(
-            $this->event->getEntity()->getUser(),
-            $this->accountPlanService->find('basic')
-        );
     }
 }

@@ -65,7 +65,11 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
     {
         $this->setEvent($event);
 
-        if ($this->getStripeCustomer()->hasCard() === false) {
+        $user = $this->event->getEntity()->getUser();
+        $userAccountPlan = $this->userAccountPlanService->getForUser($user);
+        $stripeCustomer = $this->stripeService->getCustomer($userAccountPlan);
+
+        if ($stripeCustomer->hasCard() === false) {
             $this->markEntityProcessed();
 
             return;
@@ -73,13 +77,13 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
 
         $invoice = $this->getStripeInvoice();
 
-        $webClientData = array_merge($this->getDefaultWebClientData(), array(
+        $webClientData = array_merge($this->getDefaultWebClientData(), [
             'lines' => $invoice->getLinesSummary(),
             'invoice_id' => $invoice->getId(),
             'total' => $invoice->getTotal(),
             'amount_due' => $invoice->getAmountDue(),
             'currency' => $invoice->getCurrency()
-        ));
+        ]);
 
         $this->issueWebClientEvent($webClientData);
         $this->markEntityProcessed();
@@ -106,8 +110,10 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
             return null;
         }
 
+        $user = $this->event->getEntity()->getUser();
+
         $subscriptionDeletedEvents = $this->stripeEventService->getForUserAndType(
-            $this->event->getEntity()->getUser(),
+            $user,
             'customer.subscription.deleted'
         );
 
@@ -128,21 +134,5 @@ class InvoicePaymentFailedListener extends AbstractInvoiceListener
         }
 
         return null;
-    }
-
-    /**
-     * @return UserAccountPlan
-     */
-    protected function getUserAccountPlanFromEvent()
-    {
-        return $this->userAccountPlanService->getForUser($this->event->getEntity()->getUser());
-    }
-
-    /**
-     * @return StripeCustomerModel
-     */
-    protected function getStripeCustomer()
-    {
-        return $this->stripeService->getCustomer($this->getUserAccountPlanFromEvent());
     }
 }

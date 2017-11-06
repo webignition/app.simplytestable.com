@@ -56,14 +56,17 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
         $this->setEvent($event);
 
         $stripeSubscription = $this->getStripeSubscription();
+        $user = $this->event->getEntity()->getUser();
 
         if ($stripeSubscription->wasCancelledDuringTrial()) {
-            $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
+            $userAccountPlan = $this->userAccountPlanService->getForUser($user);
+
+            $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), [
                 'plan_name' => $stripeSubscription->getPlan()->getName(),
                 'actioned_by' => 'user',
                 'is_during_trial' => 1,
-                'trial_days_remaining' => $this->getUserAccountPlanFromEvent()->getStartTrialPeriod()
-            )));
+                'trial_days_remaining' => $userAccountPlan->getStartTrialPeriod()
+            ]));
 
             $this->markEntityProcessed();
 
@@ -72,12 +75,11 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
 
         if ($this->hasInvoicePaymentFailedEventForSubscription($stripeSubscription)) {
             // System has cancelled following payment failure
-            $this->downgradeToBasicPlan();
-
-            $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
+            $this->userAccountPlanService->subscribe($user, $this->accountPlanService->find('basic'));
+            $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), [
                 'plan_name' => $stripeSubscription->getPlan()->getName(),
                 'actioned_by' => 'system'
-            )));
+            ]));
             $this->markEntityProcessed();
 
             return;
@@ -85,11 +87,11 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
 
         if (!$this->hasTrialToActiveStatusChangeEvent()) {
             // User has canceled after trial
-            $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), array(
+            $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), [
                 'plan_name' => $stripeSubscription->getPlan()->getName(),
                 'actioned_by' => 'user',
                 'is_during_trial' => 0
-            )));
+            ]));
             $this->markEntityProcessed();
 
             return;
@@ -105,8 +107,10 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
      */
     private function hasInvoicePaymentFailedEventForSubscription(Subscription $subscription)
     {
+        $user = $this->event->getEntity()->getUser();
+
         $paymentFailedEvents = $this->stripeEventService->getForUserAndType(
-            $this->event->getEntity()->getUser(),
+            $user,
             'invoice.payment_failed'
         );
 
@@ -135,8 +139,10 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
      */
     private function getMostRecentTrialToActiveStatusChangeEvent()
     {
+        $user = $this->event->getEntity()->getUser();
+
         $customerSubscriptionUpdatedEvents = $this->stripeEventService->getForUserAndType(
-            $this->event->getEntity()->getUser(),
+            $user,
             'customer.subscription.updated'
         );
 
@@ -150,21 +156,5 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
         }
 
         return null;
-    }
-
-    /**
-     * @return UserAccountPlan
-     */
-    protected function getUserAccountPlanFromEvent()
-    {
-        return $this->userAccountPlanService->getForUser($this->event->getEntity()->getUser());
-    }
-
-    protected function downgradeToBasicPlan()
-    {
-        $this->userAccountPlanService->subscribe(
-            $this->event->getEntity()->getUser(),
-            $this->accountPlanService->find('basic')
-        );
     }
 }
