@@ -22,3 +22,9 @@ services:
     factory: ["@doctrine.orm.entity_manager", getRepository]
     arguments:
         - SimplyTestable\ApiBundle\Entity\Worker
+
+  simplytestable.repository.useraccountplan:
+    class: Doctrine\ORM\EntityRepository
+    factory: ["@doctrine.orm.entity_manager", getRepository]
+    arguments:
+        - SimplyTestable\ApiBundle\Entity\UserAccountPlan
