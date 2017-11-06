@@ -214,12 +214,6 @@ services:
       taskPreprocessors:
         - '@simplytestable.services.taskputoutjoiner.linkintegrity'
 
-
-
-
-
-
-
   simplytestable.listener.stripe.customer.subscription.deleted.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener
     arguments:
@@ -269,9 +263,7 @@ services:
   simplytestable.listener.stripe.invoice.succeeded.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener
     arguments:
-#        stripeService: "@simplytestable.services.stripeservice"
         stripeEventService: "@simplytestable.services.stripeeventservice"
-#        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
         httpClientService: "@simplytestable.services.httpclientservice"
         webClientProperties: "%web_client%"
     tags:
@@ -288,14 +280,6 @@ services:
         dispatcher: "@event_dispatcher"
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
-
-
-
-
-
-
-
-
 
   simplytestable.services.postmark.sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\Sender
