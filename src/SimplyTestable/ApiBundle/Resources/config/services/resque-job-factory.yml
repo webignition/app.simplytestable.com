@@ -68,8 +68,9 @@ services:
               - id
             serviceIds:
               - simplytestable.services.applicationstateservice
-              - doctrine.orm.entity_manager
               - simplytestable.services.workeractivationrequestservice
+              - simplytestable.repository.worker
+              - simplytestable.repository.workeractivationrequest
           stripe-event:
             queue: stripe-event
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob
@@ -80,6 +81,7 @@ services:
               - doctrine.orm.entity_manager
               - logger
               - event_dispatcher
+              - simplytestable.repository.stripeevent
           tasks-notify:
             queue: tasks-notify
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob
@@ -97,3 +99,4 @@ services:
               - doctrine.orm.entity_manager
               - simplytestable.services.job.startservice
               - simplytestable.services.jobservice
+              - simplytestable.repository.scheduledjob
