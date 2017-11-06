@@ -3,12 +3,49 @@
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\StripeService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use webignition\Model\Stripe\Event\CustomerSubscriptionUpdated;
 use webignition\Model\Stripe\Event\Data as StripeEventData;
 use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 
 class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionListener
 {
+    /**
+     * @var AccountPlanService
+     */
+    private $accountPlanService;
+
+    /**
+     * @param StripeService $stripeService
+     * @param StripeEventService $stripeEventService
+     * @param UserAccountPlanService $userAccountPlanService
+     * @param HttpClientService $httpClientService
+     * @param AccountPlanService $accountPlanService
+     * @param $webClientProperties
+     */
+    public function __construct(
+        StripeEventService $stripeEventService,
+        HttpClientService $httpClientService,
+        $webClientProperties,
+        StripeService $stripeService,
+        UserAccountPlanService $userAccountPlanService,
+        AccountPlanService $accountPlanService
+    ) {
+        parent::__construct(
+            $stripeEventService,
+            $httpClientService,
+            $webClientProperties,
+            $stripeService,
+            $userAccountPlanService
+        );
+
+        $this->accountPlanService = $accountPlanService;
+    }
+
     /**
      * @param DispatchableEvent $event
      */
@@ -17,11 +54,13 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
         $this->setEvent($event);
 
         /* @var $stripeEventObject CustomerSubscriptionUpdated */
-        $stripeEventObject = $this->getEventEntity()->getStripeEventObject();
+        $stripeEventObject = $this->event->getEntity()->getStripeEventObject();
         $stripeSubscription = $this->getStripeSubscription();
         $webClientEventData = array_merge($this->getDefaultWebClientData(), [
             'currency' => $stripeSubscription->getPlan()->getCurrency()
         ]);
+
+        $user = $this->event->getEntity()->getUser();
 
         if ($stripeEventObject->isPlanChange()) {
             $oldPlan = $stripeEventObject->getDataObject()->getPreviousAttributes()->get('plan');
@@ -62,7 +101,9 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
             $previousSubscription = new StripeSubscriptionModel(json_encode(
                 $stripeEventDataPreviousAttributes->toArray()
             ));
-            $stripeCustomer = $this->getStripeCustomer();
+
+            $userAccountPlan = $this->userAccountPlanService->getForUser($user);
+            $stripeCustomer = $this->stripeService->getCustomer($userAccountPlan);
 
             $webClientEventData = array_merge(
                 $webClientEventData,
@@ -77,7 +118,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
             );
 
             if ($stripeCustomer->hasCard() === false) {
-                $this->downgradeToBasicPlan();
+                $this->userAccountPlanService->subscribe($user, $this->accountPlanService->find('basic'));
             }
 
             $this->issueWebClientEvent($webClientEventData);

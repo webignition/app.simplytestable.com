@@ -12,7 +12,7 @@ abstract class AbstractInvoiceListener extends AbstractListener
     protected function getStripeInvoice()
     {
         return new Invoice(
-            json_encode($this->getEventEntity()->getStripeEventObject()->getDataObject()->getObject()->__toArray())
+            json_encode($this->event->getEntity()->getStripeEventObject()->getDataObject()->getObject()->__toArray())
         );
     }
 }

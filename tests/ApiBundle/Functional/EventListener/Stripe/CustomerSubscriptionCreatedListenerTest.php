@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
-use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
@@ -16,7 +15,6 @@ use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Factory\StripeEventFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 
 class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListenerTest
@@ -62,13 +60,10 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userService = $this->container->get('simplytestable.services.userservice');
         $user = $userService->getPublicUser();
 
-        $logger = \Mockery::mock(LoggerInterface::class);
-        $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);
         $stripeService = \Mockery::mock(StripeService::class);
         $stripeEventService = \Mockery::mock(StripeEventService::class);
         $userAccountPlanService = \Mockery::mock(UserAccountPlanService::class);
         $httpClientService = \Mockery::mock(HttpClientService::class);
-        $accountPlanService = \Mockery::mock(AccountPlanService::class);
 
         $stripeEventService
             ->shouldReceive('getForUserAndType')
@@ -78,14 +73,11 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
             ->shouldReceive('persistAndFlush');
 
         $listener = new CustomerSubscriptionCreatedListener(
-            $logger,
-            $eventDispatcher,
-            $stripeService,
             $stripeEventService,
-            $userAccountPlanService,
             $httpClientService,
-            $accountPlanService,
-            $webClientProperties
+            $webClientProperties,
+            $stripeService,
+            $userAccountPlanService
         );
 
         $stripeEvent = new StripeEvent();
