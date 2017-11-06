@@ -97,8 +97,7 @@ class TeamInviteController extends Controller
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
         $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $teamRepository = $entityManager->getRepository(Team::class);
+        $teamRepository = $this->container->get('simplytestable.repository.team');
 
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
@@ -237,8 +236,7 @@ class TeamInviteController extends Controller
     public function declineAction(Request $request)
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $teamRepository = $entityManager->getRepository(Team::class);
+        $teamRepository = $this->container->get('simplytestable.repository.team');
 
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
