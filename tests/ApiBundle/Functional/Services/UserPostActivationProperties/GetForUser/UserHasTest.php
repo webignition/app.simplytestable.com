@@ -10,8 +10,7 @@ class UserHasTest extends ServiceTest {
     protected function setUp() {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         /* @var Plan $plan */
         $plan = $accountPlanRepository->findOneBy([

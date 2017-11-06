@@ -61,8 +61,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
         $expectedStripeCustomer,
         $expectedStartTrialPeriod
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         StripeApiFixtureFactory::set($httpFixtures);
 
@@ -121,8 +120,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
      */
     public function testSubscribeActionNewPlanIsCurrentPlan($planName)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         $user = $this->userFactory->create([
             UserFactory::KEY_PLAN_NAME => $planName,
@@ -163,7 +161,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
     public function testSubscribeActionChangePlan($httpFixtures, $currentPlanName, $planName, $expectedStartTrialPeriod)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         $nonPremiumAccountPlan = new Plan();
         $nonPremiumAccountPlan->setName('non-premium');
@@ -465,8 +463,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
     public function testFindAllByPlan()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         $this->userFactory->create([
             UserFactory::KEY_PLAN_NAME => 'personal',

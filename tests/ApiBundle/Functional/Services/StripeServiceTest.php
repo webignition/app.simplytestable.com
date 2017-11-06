@@ -139,8 +139,7 @@ class StripeServiceTest extends AbstractBaseTestCase
 
     public function testSubscribe()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         /* @var Plan $plan */
         $plan = $accountPlanRepository->findOneBy([
