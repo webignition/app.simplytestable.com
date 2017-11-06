@@ -14,7 +14,7 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
     protected function getStripeSubscription()
     {
         /* @var StripeSubscriptionModel $stripeSubscriptionModel */
-        $stripeSubscriptionModel = $this->getEventEntity()->getStripeEventObject()->getDataObject()->getObject();
+        $stripeSubscriptionModel = $this->event->getEntity()->getStripeEventObject()->getDataObject()->getObject();
 
         return $stripeSubscriptionModel;
     }
@@ -44,7 +44,7 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
     private function getCustomerDiscount()
     {
         $events = $this->stripeEventService->getForUserAndType(
-            $this->getEventEntity()->getUser(),
+            $this->event->getEntity()->getUser(),
             [
                 'customer.created',
                 'customer.updated',

@@ -77,15 +77,7 @@ abstract class AbstractListener
      */
     protected function getUserAccountPlanFromEvent()
     {
-        return $this->userAccountPlanService->getForUser($this->getEventEntity()->getUser());
-    }
-
-    /**
-     * @return Event
-     */
-    protected function getEventEntity()
-    {
-        return $this->event->getEntity();
+        return $this->userAccountPlanService->getForUser($this->event->getEntity()->getUser());
     }
 
     /**
@@ -99,15 +91,15 @@ abstract class AbstractListener
     protected function getDefaultWebClientData()
     {
         return array(
-            'event' => $this->getEventEntity()->getType(),
-            'user' => $this->getEventEntity()->getUser()->getEmail()
+            'event' => $this->event->getEntity()->getType(),
+            'user' => $this->event->getEntity()->getUser()->getEmail()
         );
     }
 
     protected function markEntityProcessed()
     {
-        $this->getEventEntity()->setIsProcessed(true);
-        $this->stripeEventService->persistAndFlush($this->getEventEntity());
+        $this->event->getEntity()->setIsProcessed(true);
+        $this->stripeEventService->persistAndFlush($this->event->getEntity());
     }
 
     /**

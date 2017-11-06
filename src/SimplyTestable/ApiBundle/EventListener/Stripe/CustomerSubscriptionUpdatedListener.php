@@ -54,7 +54,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
         $this->setEvent($event);
 
         /* @var $stripeEventObject CustomerSubscriptionUpdated */
-        $stripeEventObject = $this->getEventEntity()->getStripeEventObject();
+        $stripeEventObject = $this->event->getEntity()->getStripeEventObject();
         $stripeSubscription = $this->getStripeSubscription();
         $webClientEventData = array_merge($this->getDefaultWebClientData(), [
             'currency' => $stripeSubscription->getPlan()->getCurrency()

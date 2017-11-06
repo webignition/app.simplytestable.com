@@ -105,7 +105,7 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
     private function hasInvoicePaymentFailedEventForSubscription(Subscription $subscription)
     {
         $paymentFailedEvents = $this->stripeEventService->getForUserAndType(
-            $this->getEventEntity()->getUser(),
+            $this->event->getEntity()->getUser(),
             'invoice.payment_failed'
         );
 
@@ -135,7 +135,7 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
     private function getMostRecentTrialToActiveStatusChangeEvent()
     {
         $customerSubscriptionUpdatedEvents = $this->stripeEventService->getForUserAndType(
-            $this->getEventEntity()->getUser(),
+            $this->event->getEntity()->getUser(),
             'customer.subscription.updated'
         );
 
