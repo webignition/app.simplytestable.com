@@ -507,7 +507,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
         /* @var Plan $agencyPlan */
         $agencyPlan = $accountPlanRepository->findOneBy([
-            'name' => 'personal',
+            'name' => 'agency',
         ]);
 
         $foundAgencyPlanUserAccountPlans = $this->userAccountPlanService->findAllByPlan($agencyPlan);
