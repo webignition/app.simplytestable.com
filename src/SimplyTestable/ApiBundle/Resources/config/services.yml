@@ -223,7 +223,7 @@ services:
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
+        accountPlanRepository: "@simplytestable.repository.accountplan"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
 
@@ -257,7 +257,7 @@ services:
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
-        accountPlanService: "@simplytestable.services.accountPlanService"
+        accountPlanRepository: "@simplytestable.repository.accountplan"
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
 

@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
-use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
@@ -17,16 +17,16 @@ use webignition\Model\Stripe\Subscription;
 class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionListener
 {
     /**
-     * @var AccountPlanService
+     * @var EntityRepository
      */
-    private $accountPlanService;
+    private $accountPlanRepository;
 
     /**
      * @param StripeService $stripeService
      * @param StripeEventService $stripeEventService
      * @param UserAccountPlanService $userAccountPlanService
      * @param HttpClientService $httpClientService
-     * @param AccountPlanService $accountPlanService
+     * @param EntityRepository $accountPlanRepository
      * @param $webClientProperties
      */
     public function __construct(
@@ -35,7 +35,7 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
         $webClientProperties,
         StripeService $stripeService,
         UserAccountPlanService $userAccountPlanService,
-        AccountPlanService $accountPlanService
+        EntityRepository $accountPlanRepository
     ) {
         parent::__construct(
             $stripeEventService,
@@ -45,7 +45,7 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
             $userAccountPlanService
         );
 
-        $this->accountPlanService = $accountPlanService;
+        $this->accountPlanRepository = $accountPlanRepository;
     }
 
     /**
@@ -75,7 +75,13 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
 
         if ($this->hasInvoicePaymentFailedEventForSubscription($stripeSubscription)) {
             // System has cancelled following payment failure
-            $this->userAccountPlanService->subscribe($user, $this->accountPlanService->find('basic'));
+
+            /* @var Plan $basicPlan */
+            $basicPlan = $this->accountPlanRepository->findOneBy([
+                'name' => 'basic',
+            ]);
+
+            $this->userAccountPlanService->subscribe($user, $basicPlan);
             $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), [
                 'plan_name' => $stripeSubscription->getPlan()->getName(),
                 'actioned_by' => 'system'
