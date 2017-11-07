@@ -1,9 +1,11 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
-class TaskTypeService extends EntityService
+class TaskTypeService
 {
     const HTML_VALIDATION_TYPE = 'HTML validation';
     const CSS_VALIDATION_TYPE = 'CSS validation';
@@ -12,11 +14,22 @@ class TaskTypeService extends EntityService
     const LINK_INTEGRITY_TYPE = 'Link integrity';
 
     /**
-     * {@inheritdoc}
+     * @var EntityManagerInterface
      */
-    protected function getEntityName()
+    private $entityManager;
+
+    /**
+     * @var EntityRepository
+     */
+    private $taskTypeRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        return TaskType::class;
+        $this->entityManager = $entityManager;
+        $this->taskTypeRepository = $entityManager->getRepository(TaskType::class);
     }
 
     /**
@@ -37,7 +50,7 @@ class TaskTypeService extends EntityService
     public function getByName($taskTypeName)
     {
         /* @var TaskType $taskType */
-        $taskType = $this->getEntityRepository()->findOneBy([
+        $taskType = $this->taskTypeRepository->findOneBy([
             'name' => $taskTypeName
         ]);
 
@@ -49,7 +62,7 @@ class TaskTypeService extends EntityService
      */
     public function getSelectableCount()
     {
-        $queryBuilder = $this->getEntityRepository()->createQueryBuilder('TaskType');
+        $queryBuilder = $this->taskTypeRepository->createQueryBuilder('TaskType');
 
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(TaskType.id) as task_type_total');
