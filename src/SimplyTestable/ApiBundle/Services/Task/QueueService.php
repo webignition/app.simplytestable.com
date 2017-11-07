@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Services\Task;
 
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 
@@ -34,11 +35,13 @@ class QueueService
     private $jobRepository;
 
     /**
+     * @param JobService $jobService
      * @param TaskService $taskService
      * @param StateService $stateService
      * @param JobRepository $jobRepository
      */
     public function __construct(
+        JobService $jobService,
         TaskService $taskService,
         StateService $stateService,
         JobRepository $jobRepository

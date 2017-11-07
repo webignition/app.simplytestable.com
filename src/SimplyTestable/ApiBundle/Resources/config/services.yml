@@ -317,6 +317,7 @@ services:
   simplytestable.services.task.queueService:
     class:  SimplyTestable\ApiBundle\Services\Task\QueueService
     arguments:
+        jobService: '@simplytestable.services.jobservice'
         taskService: "@simplytestable.services.taskservice"
         stateService: '@simplytestable.services.stateservice'
         jobRepository: '@simplytestable.repository.job'
