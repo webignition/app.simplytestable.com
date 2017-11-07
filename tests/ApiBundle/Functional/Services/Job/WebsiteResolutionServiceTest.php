@@ -69,7 +69,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
      */
     public function testResolveRejectionDueToCurlException($curlCode, $expectedRejectionReason)
     {
-        $jobRejectionReasonService = $this->container->get('simplytestable.services.jobrejectionreasonservice');
+        $jobRejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
 
         $curlException = new CurlException();
         $curlException->setError('', $curlCode);
@@ -86,7 +86,9 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
 
         $this->websiteResolutionService->resolve($job);
 
-        $jobRejectionReason = $jobRejectionReasonService->getForJob($job);
+        $jobRejectionReason = $jobRejectionReasonRepository->findOneBy([
+            'job' => $job,
+        ]);
 
         $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
         $this->assertInstanceOf(RejectionReason::class, $jobRejectionReason);
