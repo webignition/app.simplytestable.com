@@ -56,19 +56,4 @@ class TaskTypeService
 
         return $taskType;
     }
-
-    /**
-     * @return int
-     */
-    public function getSelectableCount()
-    {
-        $queryBuilder = $this->taskTypeRepository->createQueryBuilder('TaskType');
-
-        $queryBuilder->setMaxResults(1);
-        $queryBuilder->select('count(TaskType.id) as task_type_total');
-        $queryBuilder->where('TaskType.selectable = 1');
-
-        $result = $queryBuilder->getQuery()->getResult();
-        return (int)($result[0]['task_type_total']);
-    }
 }
