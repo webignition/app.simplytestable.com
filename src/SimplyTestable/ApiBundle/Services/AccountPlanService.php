@@ -27,7 +27,7 @@ class AccountPlanService
      */
     public function getBasicPlan()
     {
-        return $this->get(self::getBasicPlan());
+        return $this->get(self::PLAN_BASIC);
     }
 
     /**
