@@ -1,9 +1,10 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Type;
 
-class JobTypeService extends EntityService
+class JobTypeService
 {
     const DEFAULT_TYPE_ID = 1;
     const FULL_SITE_NAME = 'Full site';
@@ -11,10 +12,55 @@ class JobTypeService extends EntityService
     const CRAWL_NAME = 'crawl';
 
     /**
-     * {@inheritdoc}
+     * @var EntityRepository
      */
-    protected function getEntityName()
+    private $jobTypeRepository;
+
+    /**
+     * JobTypeService constructor.
+     * @param EntityRepository $jobTypeRepository
+     */
+    public function __construct(EntityRepository $jobTypeRepository)
     {
-        return Type::class;
+        $this->jobTypeRepository = $jobTypeRepository;
+    }
+
+    /**
+     * @return Type
+     */
+    public function getFullSiteType()
+    {
+        return $this->get(self::FULL_SITE_NAME);
+    }
+
+    /**
+     * @return Type
+     */
+    public function getSingleUrlType()
+    {
+        return $this->get(self::SINGLE_URL_NAME);
+    }
+
+    /**
+     * @return Type
+     */
+    public function getCrawlType()
+    {
+        return $this->get(self::CRAWL_NAME);
+    }
+
+    /**
+     * @param $name
+     *
+     * @return Type
+     */
+    public function get($name)
+    {
+        /* @var Type $jobType */
+        $jobType = $this->jobTypeRepository->findOneBy([
+            'name' => $name,
+        ]);
+
+        return $jobType;
     }
 }

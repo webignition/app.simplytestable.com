@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
@@ -285,13 +284,9 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $user = $users[$userName];
 
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
-        /* @var Type $jobType */
-        $jobType = $jobTypeRepository->findOneBy([
-            'name' => $jobTypeName,
-        ]);
-
+        $jobType = $jobTypeService->get($jobTypeName);
         $website = $websiteService->fetch($websiteUrl);
 
         $this->createJobs($jobValuesCollection, $users);

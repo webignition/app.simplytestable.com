@@ -29,6 +29,7 @@ class UpdateController extends Controller
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -47,16 +48,10 @@ class UpdateController extends Controller
         $website = $websiteService->fetch($requestWebsite);
 
         $requestJobType = trim($requestData->get('type'));
-
-        /* @var JobType $jobType */
-        $jobType = $jobTypeRepository->findOneBy([
-            'name' => $requestJobType,
-        ]);
+        $jobType = $jobTypeService->get($requestJobType);
 
         if (empty($jobType)) {
-            $jobType = $jobTypeRepository->findOneBy([
-                'name' => JobTypeService::FULL_SITE_NAME,
-            ]);
+            $jobType = $jobTypeService->getFullSiteType();
         }
 
         $adapter = new RequestAdapter();

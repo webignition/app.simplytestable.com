@@ -4,8 +4,6 @@ namespace Tests\ApiBundle\Functional\Entity\Job\Configuration\WithTaskConfigurat
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
-use SimplyTestable\ApiBundle\Entity\Job\Type;
-use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class RetrieveTest extends AbstractBaseTestCase
@@ -33,12 +31,9 @@ class RetrieveTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $configurationRepository = $this->container->get('simplytestable.repository.jobconfiguration');
-        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
-        /* @var Type $fullSiteJobType */
-        $fullSiteJobType = $jobTypeRepository->findOneBy([
-            'name' => JobTypeService::FULL_SITE_NAME,
-        ]);
+        $fullSiteJobType = $jobTypeService->getFullSiteType();
 
         $this->originalConfiguration = new Configuration();
         $this->originalConfiguration->setLabel('foo');

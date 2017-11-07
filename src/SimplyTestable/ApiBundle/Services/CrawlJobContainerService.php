@@ -2,10 +2,8 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -55,9 +53,9 @@ class CrawlJobContainerService
     private $entityRepository;
 
     /**
-     * @var EntityRepository
+     * @var JobTypeService
      */
-    private $jobTypeRepository;
+    private $jobTypeService;
 
     /**
      * @param EntityManagerInterface $entityManager
@@ -67,6 +65,7 @@ class CrawlJobContainerService
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
+     * @param JobTypeService $jobTypeService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -75,7 +74,8 @@ class CrawlJobContainerService
         JobService $jobService,
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         StateService $stateService,
-        UserAccountPlanService $userAccountPlanService
+        UserAccountPlanService $userAccountPlanService,
+        JobTypeService $jobTypeService
     ) {
         $this->entityManager = $entityManager;
         $this->taskService = $taskService;
@@ -84,9 +84,9 @@ class CrawlJobContainerService
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
+        $this->jobTypeService = $jobTypeService;
 
         $this->entityRepository = $entityManager->getRepository(CrawlJobContainer::class);
-        $this->jobTypeRepository = $entityManager->getRepository(JobType::class);
     }
 
     /**
@@ -401,9 +401,7 @@ class CrawlJobContainerService
     private function create(Job $job)
     {
         $jobStartingState = $this->stateService->fetch(JobService::STARTING_STATE);
-        $crawlJobType = $this->jobTypeRepository->findOneBy([
-            'name' => JobTypeService::CRAWL_NAME,
-        ]);
+        $crawlJobType = $this->jobTypeService->getCrawlType();
 
         $crawlJob = new Job();
         $crawlJob->setType($crawlJobType);

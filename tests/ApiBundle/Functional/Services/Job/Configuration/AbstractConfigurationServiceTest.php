@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Services\Job\Configuration;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
-use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
@@ -37,7 +36,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
     {
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $configurationValuesModel = new ConfigurationValues();
 
@@ -51,11 +50,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
         }
 
         if (isset($jobConfigurationValues['type'])) {
-            /* @var Type $jobType */
-            $jobType = $jobTypeRepository->findOneBy([
-                'name' => $jobConfigurationValues['type'],
-            ]);
-
+            $jobType = $jobTypeService->get($jobConfigurationValues['type']);
             $configurationValuesModel->setType($jobType);
         }
 

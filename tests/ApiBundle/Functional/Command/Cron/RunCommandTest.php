@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Command\Cron;
 
 use Cron\CronBundle\Entity\CronReport;
 use SimplyTestable\ApiBundle\Command\Cron\RunCommand;
-use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Entity\User;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -144,7 +143,7 @@ class RunCommandTest extends AbstractBaseTestCase
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $jobConfigurationValues = new JobConfigurationValues();
 
@@ -157,11 +156,7 @@ class RunCommandTest extends AbstractBaseTestCase
         }
 
         if (isset($rawValues['type'])) {
-            /* @var Type $jobType */
-            $jobType = $jobTypeRepository->findOneBy([
-                'name' => $rawValues['type'],
-            ]);
-
+            $jobType = $jobTypeService->get($rawValues['type']);
             $jobConfigurationValues->setType($jobType);
         }
 

@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
-use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
@@ -80,17 +79,14 @@ class JobServiceTest extends AbstractBaseTestCase
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
         $website = $websiteService->fetch($url);
 
-        /* @var Type $jobType */
-        $jobType = $jobTypeRepository->findOneBy([
-            'name' => $jobTypeName,
-        ]);
+        $jobType = $jobTypeService->get($jobTypeName);
 
         $jobConfiguration = new Configuration();
         $jobConfiguration->setUser($user);

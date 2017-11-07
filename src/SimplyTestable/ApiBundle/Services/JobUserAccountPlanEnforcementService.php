@@ -41,9 +41,9 @@ class JobUserAccountPlanEnforcementService
     private $stateService;
 
     /**
-     * @var EntityRepository
+     * @var JobTypeService
      */
-    private $jobTypeRepository;
+    private $jobTypeService;
 
     /**
      * @var JobRepository
@@ -57,6 +57,7 @@ class JobUserAccountPlanEnforcementService
      * @param StateService $stateService
      * @param EntityRepository $jobTypeRepository
      * @param JobRepository $jobRepository
+     * @param JobTypeService $jobTypeService
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
@@ -66,7 +67,7 @@ class JobUserAccountPlanEnforcementService
         StateService $stateService,
         JobRepository $jobRepository,
         StateService $stateService,
-        EntityRepository $jobTypeRepository
+        JobTypeService $jobTypeService
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
 
@@ -74,6 +75,7 @@ class JobUserAccountPlanEnforcementService
         $this->teamService = $teamService;
         $this->jobTypeService = $jobTypeService;
         $this->stateService = $stateService;
+        $this->jobTypeService = $jobTypeService;
         $this->jobRepository = $jobRepository;
         $this->jobTypeRepository = $jobTypeRepository;
     }

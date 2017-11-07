@@ -61,9 +61,9 @@ class StartRequestFactory
     private $taskTypeRepository;
 
     /**
-     * @var EntityRepository
+     * @var JobTypeService
      */
-    private $jobTypeRepository;
+    private $jobTypeService;
 
     /**
      * @param RequestStack $requestStack
@@ -71,7 +71,7 @@ class StartRequestFactory
      * @param EntityManager $entityManager
      * @param WebSiteService $websiteService
      * @param EntityRepository $taskTypeRepository
-     * @param EntityRepository $jobTypeRepository
+     * @param JobTypeService $jobTypeService
      */
     public function __construct(
         RequestStack $requestStack,
@@ -79,7 +79,7 @@ class StartRequestFactory
         EntityManager $entityManager,
         WebSiteService $websiteService,
         EntityRepository $taskTypeRepository,
-        EntityRepository $jobTypeRepository
+        JobTypeService $jobTypeService
     ) {
         $request = $requestStack->getCurrentRequest();
 
@@ -89,7 +89,7 @@ class StartRequestFactory
         $this->entityManager = $entityManager;
         $this->websiteService = $websiteService;
         $this->taskTypeRepository = $taskTypeRepository;
-        $this->jobTypeRepository = $jobTypeRepository;
+        $this->jobTypeService = $jobTypeService;
 
         if (0 === $request->request->count() && 0 === $request->query->count()) {
             $this->requestPayload = new ParameterBag();
@@ -129,15 +129,9 @@ class StartRequestFactory
     {
         $requestJobType = $this->requestPayload->get(self::PARAMETER_JOB_TYPE);
 
-        /* @var JobType $jobType */
-        $jobType = $this->jobTypeRepository->findOneBy([
-            'name' => $requestJobType,
-        ]);
-
+        $jobType = $this->jobTypeService->get($requestJobType);
         if (empty($jobType)) {
-            $jobType = $this->jobTypeRepository->findOneBy([
-                'name' => JobTypeService::FULL_SITE_NAME,
-            ]);
+            $jobType = $this->jobTypeService->getFullSiteType();
         }
 
         return $jobType;
