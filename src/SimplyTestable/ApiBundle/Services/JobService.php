@@ -156,8 +156,6 @@ class JobService
 
     /**
      * @param Job $job
-     *
-     * @return Job
      */
     public function cancel(Job $job)
     {
@@ -190,8 +188,6 @@ class JobService
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();
-
-        return $job;
     }
 
     /**
@@ -210,8 +206,6 @@ class JobService
      * @param Job $job
      * @param string $reason
      * @param AccountPlanConstraint|null $constraint
-     *
-     * @return Job
      */
     public function reject(Job $job, $reason, AccountPlanConstraint $constraint = null)
     {
@@ -224,7 +218,7 @@ class JobService
         ];
 
         if (!in_array($jobStateName, $allowedStateNames)) {
-            return $job;
+            return;
         }
 
         $rejectedState = $this->stateService->fetch(self::REJECTED_STATE);
@@ -239,8 +233,6 @@ class JobService
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();
-
-        return $job;
     }
 
     /**
@@ -273,17 +265,15 @@ class JobService
 
     /**
      * @param Job $job
-     *
-     * @return Job
      */
     public function complete(Job $job)
     {
         if ($this->isFinished($job)) {
-            return $job;
+            return;
         }
 
         if ($this->hasIncompleteTasks($job)) {
-            return $job;
+            return;
         }
 
         $completedState = $this->stateService->fetch(self::COMPLETED_STATE);
@@ -293,8 +283,6 @@ class JobService
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();
-
-        return $job;
     }
 
     /**
