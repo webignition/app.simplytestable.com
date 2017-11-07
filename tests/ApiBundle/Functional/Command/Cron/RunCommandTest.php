@@ -141,9 +141,9 @@ class RunCommandTest extends AbstractBaseTestCase
     private function createJobConfiguration($rawValues, User $user)
     {
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $jobConfigurationValues = new JobConfigurationValues();
 
@@ -156,7 +156,8 @@ class RunCommandTest extends AbstractBaseTestCase
         }
 
         if (isset($rawValues['type'])) {
-            $jobConfigurationValues->setType($jobTypeService->getByName($rawValues['type']));
+            $jobType = $jobTypeService->get($rawValues['type']);
+            $jobConfigurationValues->setType($jobType);
         }
 
         if (isset($rawValues['website'])) {

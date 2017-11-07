@@ -23,11 +23,6 @@ class CrawlJobContainerService
     private $taskTypeService;
 
     /**
-     * @var JobTypeService
-     */
-    private $jobTypeService;
-
-    /**
      * @var JobService
      */
     private $jobService;
@@ -58,33 +53,38 @@ class CrawlJobContainerService
     private $entityRepository;
 
     /**
+     * @var JobTypeService
+     */
+    private $jobTypeService;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param TaskService $taskService
      * @param TaskTypeService $taskTypeService
-     * @param JobTypeService $jobTypeService
      * @param JobService $jobService
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
+     * @param JobTypeService $jobTypeService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         TaskService $taskService,
         TaskTypeService $taskTypeService,
-        JobTypeService $jobTypeService,
         JobService $jobService,
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         StateService $stateService,
-        UserAccountPlanService $userAccountPlanService
+        UserAccountPlanService $userAccountPlanService,
+        JobTypeService $jobTypeService
     ) {
         $this->entityManager = $entityManager;
         $this->taskService = $taskService;
         $this->taskTypeService = $taskTypeService;
-        $this->jobTypeService = $jobTypeService;
         $this->jobService = $jobService;
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
+        $this->jobTypeService = $jobTypeService;
 
         $this->entityRepository = $entityManager->getRepository(CrawlJobContainer::class);
     }
@@ -401,7 +401,7 @@ class CrawlJobContainerService
     private function create(Job $job)
     {
         $jobStartingState = $this->stateService->fetch(JobService::STARTING_STATE);
-        $crawlJobType = $this->jobTypeService->getByName(JobTypeService::CRAWL_NAME);
+        $crawlJobType = $this->jobTypeService->getCrawlType();
 
         $crawlJob = new Job();
         $crawlJob->setType($crawlJobType);

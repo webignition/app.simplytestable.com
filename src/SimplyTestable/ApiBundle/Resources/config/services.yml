@@ -109,7 +109,7 @@ services:
   simplytestable.services.jobtypeservice:
     class:  SimplyTestable\ApiBundle\Services\JobTypeService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        jobTypeRepository: "@simplytestable.repository.jobtype"
 
   simplytestable.services.applicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
@@ -140,9 +140,9 @@ services:
         userAccountPlanService: "@simplytestable.services.userAccountPlanService"
         taskService: "@simplytestable.services.taskservice"
         teamService: "@simplytestable.services.teamservice"
-        jobTypeService: '@simplytestable.services.jobtypeservice'
         stateService: '@simplytestable.services.stateservice'
         jobRepository: '@simplytestable.repository.job'
+        jobTypeService: '@simplytestable.services.jobtypeservice'
 
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
@@ -174,11 +174,11 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         taskService: "@simplytestable.services.taskservice"
         taskTypeService: "@simplytestable.services.tasktypeservice"
-        jobTypeService: "@simplytestable.services.jobtypeservice"
         jobService: "@simplytestable.services.jobservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+        jobTypeService: '@simplytestable.services.jobtypeservice'
 
   simplytestable.services.taskpreprocessor.linkintegrity:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
@@ -407,7 +407,7 @@ services:
         entityManager: '@doctrine.orm.entity_manager'
         websiteService: '@simplytestable.services.websiteservice'
         taskTypeRepository: '@simplytestable.repository.tasktype'
-        jobTypeRepository: '@simplytestable.repository.jobtype'
+        jobTypeService: '@simplytestable.services.jobtypeservice'
 
   simplytestable.services.jobconfiguration.factory:
     class:   SimplyTestable\ApiBundle\Services\JobConfigurationFactory

@@ -34,14 +34,14 @@ class JobUserAccountPlanEnforcementService
     private $teamService;
 
     /**
-     * @var JobTypeService
-     */
-    private $jobTypeService;
-
-    /**
      * @var StateService
      */
     private $stateService;
+
+    /**
+     * @var JobTypeService
+     */
+    private $jobTypeService;
 
     /**
      * @var JobRepository
@@ -55,14 +55,16 @@ class JobUserAccountPlanEnforcementService
      * @param JobTypeService $jobTypeService
      * @param StateService $stateService
      * @param JobRepository $jobRepository
+     * @param StateService $stateService
+     * @param JobTypeService $jobTypeService
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
         TaskService $taskService,
         TeamService $teamService,
-        JobTypeService $jobTypeService,
         StateService $stateService,
-        JobRepository $jobRepository
+        JobRepository $jobRepository,
+        JobTypeService $jobTypeService
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
 
@@ -70,6 +72,7 @@ class JobUserAccountPlanEnforcementService
         $this->teamService = $teamService;
         $this->jobTypeService = $jobTypeService;
         $this->stateService = $stateService;
+        $this->jobTypeService = $jobTypeService;
         $this->jobRepository = $jobRepository;
     }
 
@@ -127,7 +130,7 @@ class JobUserAccountPlanEnforcementService
             return false;
         }
 
-        $jobType = $this->jobTypeService->getByName($jobTypeName);
+        $jobType = $this->jobTypeService->get($jobTypeName);
         $startDateTime = new \DateTime('first day of this month');
         $endDateTime = new \DateTime('last day of this month');
 

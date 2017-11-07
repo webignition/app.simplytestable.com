@@ -283,10 +283,10 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
 
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
-        $jobType = $jobTypeService->getByName($jobTypeName);
+        $jobType = $jobTypeService->get($jobTypeName);
         $website = $websiteService->fetch($websiteUrl);
 
         $this->createJobs($jobValuesCollection, $users);

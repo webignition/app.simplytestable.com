@@ -77,15 +77,16 @@ class JobServiceTest extends AbstractBaseTestCase
     ) {
         $userFactory = new UserFactory($this->container);
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
         $website = $websiteService->fetch($url);
-        $jobType = $jobTypeService->getByName($jobTypeName);
+
+        $jobType = $jobTypeService->get($jobTypeName);
 
         $jobConfiguration = new Configuration();
         $jobConfiguration->setUser($user);

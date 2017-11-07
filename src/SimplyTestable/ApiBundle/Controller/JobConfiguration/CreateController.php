@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
-use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
@@ -31,7 +30,7 @@ class CreateController extends Controller
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -75,7 +74,7 @@ class CreateController extends Controller
         }
 
         $website = $websiteService->fetch($requestWebsite);
-        $jobType = $this->getJobType($jobTypeRepository, $requestType);
+        $jobType = $this->getJobType($jobTypeService, $requestType);
         $taskConfigurationCollection = $this->getRequestTaskConfigurationCollection($request, $taskTypeService);
 
         $jobConfigurationValues = new JobConfigurationValues();
@@ -103,22 +102,17 @@ class CreateController extends Controller
     }
 
     /**
-     * @param EntityRepository $jobTypeRepository
+     * @param JobTypeService $jobTypeService
      * @param string $requestType
      *
      * @return JobType
      */
-    private function getJobType(EntityRepository $jobTypeRepository, $requestType)
+    private function getJobType(JobTypeService $jobTypeService, $requestType)
     {
-        /* @var JobType $jobType */
-        $jobType = $jobTypeRepository->findOneBy([
-            'name' => $requestType,
-        ]);
+        $jobType = $jobTypeService->get($requestType);
 
         if (empty($jobType)) {
-            $jobType = $jobTypeRepository->findOneBy([
-                'name' => JobTypeService::FULL_SITE_NAME,
-            ]);
+            $jobType = $jobTypeService->getFullSiteType();
         }
 
         return $jobType;

@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Entity\Job\TaskConfiguration;
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
-use SimplyTestable\ApiBundle\Services\JobTypeService;
 
 class PersistTest extends TaskConfigurationTest
 {
@@ -17,12 +16,12 @@ class PersistTest extends TaskConfigurationTest
     {
         parent::setUp();
 
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $userService = $this->container->get('simplytestable.services.userservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
-        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+        $fullSiteJobType = $jobTypeService->getFullSiteType();
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setLabel('foo');

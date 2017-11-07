@@ -184,12 +184,11 @@ class JobFactory
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $jobStartService = $this->container->get('simplytestable.services.job.startservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
         $tokenStorage = $this->container->get('security.token_storage');
         $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
         $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
-        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         foreach ($this->defaultJobValues as $key => $value) {
             if (!isset($jobValues[$key])) {
@@ -222,7 +221,7 @@ class JobFactory
             $this->container->get('doctrine.orm.entity_manager'),
             $websiteService,
             $taskTypeRepository,
-            $jobTypeRepository
+            $jobTypeService
         );
 
         $jobStartRequest = $jobStartRequestFactory->create();

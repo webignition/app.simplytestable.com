@@ -35,8 +35,8 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
     protected function createJobConfigurationValuesModel($jobConfigurationValues)
     {
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $configurationValuesModel = new ConfigurationValues();
 
@@ -50,7 +50,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
         }
 
         if (isset($jobConfigurationValues['type'])) {
-            $jobType = $jobTypeService->getByName($jobConfigurationValues['type']);
+            $jobType = $jobTypeService->get($jobConfigurationValues['type']);
             $configurationValuesModel->setType($jobType);
         }
 

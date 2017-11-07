@@ -59,10 +59,10 @@ class JobConfigurationFactory
         }
 
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $website = $websiteService->fetch($jobConfigurationValues[self::KEY_WEBSITE_URL]);
-
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
-        $jobType = $jobTypeService->getByName($jobConfigurationValues[self::KEY_TYPE]);
+
+        $website = $websiteService->fetch($jobConfigurationValues[self::KEY_WEBSITE_URL]);
+        $jobType = $jobTypeService->get($jobConfigurationValues[self::KEY_TYPE]);
 
         $jobConfiguration = new Configuration();
         $jobConfiguration->setLabel($jobConfigurationValues[self::KEY_LABEL]);

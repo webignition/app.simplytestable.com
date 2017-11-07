@@ -1,9 +1,10 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Type;
 
-class JobTypeService extends EntityService
+class JobTypeService
 {
     const DEFAULT_TYPE_ID = 1;
     const FULL_SITE_NAME = 'Full site';
@@ -11,47 +12,55 @@ class JobTypeService extends EntityService
     const CRAWL_NAME = 'crawl';
 
     /**
-     * {@inheritdoc}
+     * @var EntityRepository
      */
-    protected function getEntityName()
+    private $jobTypeRepository;
+
+    /**
+     * JobTypeService constructor.
+     * @param EntityRepository $jobTypeRepository
+     */
+    public function __construct(EntityRepository $jobTypeRepository)
     {
-        return Type::class;
+        $this->jobTypeRepository = $jobTypeRepository;
     }
 
     /**
      * @return Type
      */
-    public function getDefaultType()
+    public function getFullSiteType()
     {
-        /* @var Type $type */
-        $type = $this->getEntityRepository()->find(self::DEFAULT_TYPE_ID);
-
-        return $type;
+        return $this->get(self::FULL_SITE_NAME);
     }
 
+    /**
+     * @return Type
+     */
+    public function getSingleUrlType()
+    {
+        return $this->get(self::SINGLE_URL_NAME);
+    }
 
     /**
-     * @param string $name
+     * @return Type
+     */
+    public function getCrawlType()
+    {
+        return $this->get(self::CRAWL_NAME);
+    }
+
+    /**
+     * @param $name
      *
      * @return Type
      */
-    public function getByName($name)
+    public function get($name)
     {
-        /* @var Type $type */
-        $type = $this->getEntityRepository()->findOneBy([
-            'name' => $name
+        /* @var Type $jobType */
+        $jobType = $this->jobTypeRepository->findOneBy([
+            'name' => $name,
         ]);
 
-        return $type;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function has($name)
-    {
-        return !is_null($this->getByName($name));
+        return $jobType;
     }
 }
