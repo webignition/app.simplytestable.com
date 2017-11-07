@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\TaskPreProcessor;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\TooManyRedirectsException;
 use Psr\Log\LoggerInterface;
@@ -54,12 +55,18 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
     private $taskRepository;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * @param TaskService $taskService
      * @param WebResourceService $webResourceService
      * @param HttpClientService $httpClientService
      * @param LoggerInterface $logger
      * @param StateService $stateService
      * @param TaskRepository $taskRepository
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         TaskService $taskService,
@@ -67,7 +74,8 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         HttpClientService $httpClientService,
         LoggerInterface $logger,
         StateService $stateService,
-        TaskRepository $taskRepository
+        TaskRepository $taskRepository,
+        EntityManagerInterface $entityManager
     ) {
         $this->taskService = $taskService;
         $this->webResourceService = $webResourceService;
@@ -75,6 +83,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         $this->logger = $logger;
         $this->stateService = $stateService;
         $this->taskRepository = $taskRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -144,7 +153,8 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 
             $task->setOutput($output);
 
-            $this->taskService->persistAndFlush($task);
+            $this->entityManager->persist($task);
+            $this->entityManager->flush();
         }
 
         return false;

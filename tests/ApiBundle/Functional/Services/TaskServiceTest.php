@@ -255,7 +255,9 @@ class TaskServiceTest extends AbstractBaseTestCase
         $taskRepository = $this->container->get('simplytestable.repository.task');
 
         $this->task->setUrl('foo');
-        $this->taskService->persistAndFlush($this->task);
+
+        $entityManager->persist($this->task);
+        $entityManager->flush();
 
         $entityManager->clear();
 

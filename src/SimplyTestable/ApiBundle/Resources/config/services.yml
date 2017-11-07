@@ -195,6 +195,7 @@ services:
       logger: '@logger'
       stateService: '@simplytestable.services.stateservice'
       taskRepository: '@simplytestable.repository.task'
+      entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.taskpreprocessor.factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory

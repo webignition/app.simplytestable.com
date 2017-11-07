@@ -55,7 +55,9 @@ class CrawlJobContainerServiceGetProcessedUrlsTest extends AbstractCrawlJobConta
             $output->setOutput(json_encode($discoveredUrlSet));
 
             $task->setOutput($output);
-            $taskService->persistAndFlush($task);
+
+            $entityManager->persist($task);
+            $entityManager->flush();
 
             $this->crawlJobContainerService->processTaskResults($task);
         }

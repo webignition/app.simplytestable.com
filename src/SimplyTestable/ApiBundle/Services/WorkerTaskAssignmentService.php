@@ -126,7 +126,9 @@ class WorkerTaskAssignmentService extends WorkerTaskService
 
                 foreach ($failedTasks as $task) {
                     $task->setState($taskQueuedState);
-                    $this->taskService->persistAndFlush($task);
+
+                    $this->entityManager->persist($task);
+                    $this->entityManager->flush();
                 }
             }
 

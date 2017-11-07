@@ -225,18 +225,6 @@ class TaskService
 
     /**
      * @param Task $task
-     *
-     * @return Task
-     */
-    public function persistAndFlush(Task $task)
-    {
-        $this->entityManager->persist($task);
-        $this->entityManager->flush();
-        return $task;
-    }
-
-    /**
-     * @param Task $task
      * @param Worker $worker
      * @param int $remoteId
      */
@@ -295,7 +283,8 @@ class TaskService
         $task->clearWorker();
         $task->clearRemoteId();
 
-        $this->persistAndFlush($task);
+        $this->entityManager->persist($task);
+        $this->entityManager->flush();
     }
 
     /**

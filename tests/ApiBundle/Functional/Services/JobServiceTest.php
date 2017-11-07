@@ -439,7 +439,7 @@ class JobServiceTest extends AbstractBaseTestCase
     public function testCancel($jobValues, $resolveAndPrepare)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($resolveAndPrepare) {
             $job = $this->jobFactory->createResolveAndPrepare($jobValues);
@@ -454,7 +454,9 @@ class JobServiceTest extends AbstractBaseTestCase
             $task = $tasks->first();
 
             $task->setState($stateService->get(TaskService::IN_PROGRESS_STATE));
-            $taskService->persistAndFlush($task);
+
+            $entityManager->persist($task);
+            $entityManager->flush();
         }
 
         $this->jobService->cancel($job);
@@ -566,7 +568,7 @@ class JobServiceTest extends AbstractBaseTestCase
     public function testCancelIncompleteTasks()
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $finishedTaskStates = [
             TaskService::CANCELLED_STATE,
@@ -607,7 +609,9 @@ class JobServiceTest extends AbstractBaseTestCase
             $state = $stateService->get($stateName);
 
             $task->setState($state);
-            $taskService->persistAndFlush($task);
+
+            $entityManager->persist($task);
+            $entityManager->flush();
         }
 
         foreach ($incompleteTaskStates as $stateIndex => $stateName) {
@@ -615,7 +619,9 @@ class JobServiceTest extends AbstractBaseTestCase
             $state = $stateService->get($stateName);
 
             $task->setState($state);
-            $taskService->persistAndFlush($task);
+
+            $entityManager->persist($task);
+            $entityManager->flush();
         }
 
         $this->jobService->cancelIncompleteTasks($job);
