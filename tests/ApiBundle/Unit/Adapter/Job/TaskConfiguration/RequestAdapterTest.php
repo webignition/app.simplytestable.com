@@ -75,9 +75,7 @@ class RequestAdapterTest extends \PHPUnit_Framework_TestCase
                     ],
                 ]),
                 'taskTypeService' => $this->createTaskTypeService([
-                    'foo' => [
-                        'exists' => false,
-                    ],
+                    'foo' => null,
                 ]),
                 'expectedIsEmpty' => true,
                 'expectedTaskConfigurationCollection' => [],
@@ -89,13 +87,10 @@ class RequestAdapterTest extends \PHPUnit_Framework_TestCase
                     ],
                 ]),
                 'taskTypeService' => $this->createTaskTypeService([
-                    'foo' => [
-                        'exists' => true,
-                        'taskType' => $this->createTaskType([
-                            'name' => 'foo',
-                            'selectable' => false,
-                        ]),
-                    ],
+                    'foo' => $this->createTaskType([
+                        'name' => 'foo',
+                        'selectable' => false,
+                    ]),
                 ]),
                 'expectedIsEmpty' => true,
                 'expectedTaskConfigurationCollection' => [],
@@ -114,20 +109,14 @@ class RequestAdapterTest extends \PHPUnit_Framework_TestCase
                     ],
                 ]),
                 'taskTypeService' => $this->createTaskTypeService([
-                    'html validation' => [
-                        'exists' => true,
-                        'taskType' => $this->createTaskType([
-                            'name' => 'html validation',
-                            'selectable' => true,
-                        ]),
-                    ],
-                    'link integrity' => [
-                        'exists' => true,
-                        'taskType' => $this->createTaskType([
-                            'name' => 'link integrity',
-                            'selectable' => true,
-                        ]),
-                    ],
+                    'html validation' => $this->createTaskType([
+                        'name' => 'html validation',
+                        'selectable' => true,
+                    ]),
+                    'link integrity' => $this->createTaskType([
+                        'name' => 'link integrity',
+                        'selectable' => true,
+                    ]),
                 ]),
                 'expectedIsEmpty' => false,
                 'expectedTaskConfigurationCollection' => [
@@ -157,18 +146,11 @@ class RequestAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $taskTypeService = \Mockery::mock(TaskTypeService::class);
 
-        foreach ($taskTypes as $taskTypeName => $taskTypeProperties) {
+        foreach ($taskTypes as $taskTypeName => $taskType) {
             $taskTypeService
-                ->shouldReceive('exists')
+                ->shouldReceive('get')
                 ->with($taskTypeName)
-                ->andReturn($taskTypeProperties['exists']);
-
-            if ($taskTypeProperties['exists']) {
-                $taskTypeService
-                    ->shouldReceive('getByName')
-                    ->with($taskTypeName)
-                    ->andReturn($taskTypeProperties['taskType']);
-            }
+                ->andReturn($taskType);
         }
 
         return $taskTypeService;

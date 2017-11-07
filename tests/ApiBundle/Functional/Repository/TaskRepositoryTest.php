@@ -216,7 +216,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
 
         $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
-        $taskType = $taskTypeService->getByName($taskTypeName);
+        $taskType = $taskTypeService->get($taskTypeName);
         $state = $stateService->get($taskStateName);
 
         $this->assertEquals(
@@ -283,7 +283,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
-        $taskType = $taskTypeService->getByName($taskTypeName);
+        $taskType = $taskTypeService->get($taskTypeName);
         $states = $stateService->getCollection($stateNames);
 
         $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
@@ -568,7 +568,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $taskOutputRepository = $this->container->get('simplytestable.repository.taskoutput');
 
-        $taskType = $taskTypeService->getByName($taskTypeName);
+        $taskType = $taskTypeService->get($taskTypeName);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 

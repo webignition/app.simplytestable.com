@@ -70,7 +70,6 @@ class StartRequestFactory
      * @param TokenStorageInterface $tokenStorage
      * @param EntityManager $entityManager
      * @param WebSiteService $websiteService
-     * @param EntityRepository $taskTypeRepository
      * @param JobTypeService $jobTypeService
      */
     public function __construct(
@@ -78,7 +77,6 @@ class StartRequestFactory
         TokenStorageInterface $tokenStorage,
         EntityManager $entityManager,
         WebSiteService $websiteService,
-        EntityRepository $taskTypeRepository,
         JobTypeService $jobTypeService
     ) {
         $request = $requestStack->getCurrentRequest();
@@ -88,8 +86,9 @@ class StartRequestFactory
         $this->tokenStorage = $tokenStorage;
         $this->entityManager = $entityManager;
         $this->websiteService = $websiteService;
-        $this->taskTypeRepository = $taskTypeRepository;
         $this->jobTypeService = $jobTypeService;
+
+        $this->taskTypeRepository = $entityManager->getRepository(TaskType::class);
 
         if (0 === $request->request->count() && 0 === $request->query->count()) {
             $this->requestPayload = new ParameterBag();

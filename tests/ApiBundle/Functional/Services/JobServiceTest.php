@@ -95,7 +95,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $jobConfiguration->setParameters(json_encode($jobParameters));
 
         foreach ($taskConfigurationCollectionValues as $taskConfigurationValues) {
-            $taskType = $taskTypeService->getByName($taskConfigurationValues['type']);
+            $taskType = $taskTypeService->get($taskConfigurationValues['type']);
 
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType($taskType);

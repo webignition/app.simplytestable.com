@@ -280,7 +280,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $taskTypeService = \Mockery::mock(TaskTypeService::class);
         $taskTypeService
-            ->shouldReceive('getByName')
+            ->shouldReceive('get')
             ->with($name)
             ->andReturn($taskType);
 

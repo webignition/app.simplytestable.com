@@ -60,7 +60,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
             $taskConfigurationValuesCollection = $jobConfigurationValues['task-configuration'];
 
             foreach ($taskConfigurationValuesCollection as $taskConfigurationValues) {
-                $taskType = $taskTypeService->getByName($taskConfigurationValues['type']);
+                $taskType = $taskTypeService->get($taskConfigurationValues['type']);
 
                 $taskConfiguration = new TaskConfiguration();
                 $taskConfiguration->setType($taskType);

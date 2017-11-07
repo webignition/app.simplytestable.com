@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services\Job\Configuration;
 
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
@@ -33,7 +34,7 @@ abstract class ServiceTest extends AbstractBaseTestCase {
 
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setType(
-            $taskTypeService->getByName('HTML validation')
+            $taskTypeService->getHtmlValidationTaskType()
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'
@@ -59,7 +60,7 @@ abstract class ServiceTest extends AbstractBaseTestCase {
         foreach ($taskConfigurationDetails as $taskName => $options) {
             $taskConfiguration = new TaskConfiguration();
             $taskConfiguration->setType(
-                $taskTypeService->getByName($taskName)
+                $taskTypeService->get($taskName)
             );
 
             $taskConfiguration->setOptions($options);

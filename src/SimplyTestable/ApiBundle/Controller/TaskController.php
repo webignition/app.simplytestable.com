@@ -61,7 +61,7 @@ class TaskController extends Controller
 
         $state = $completeRequest->getState();
 
-        $urlDiscoveryTaskType = $taskTypeService->getByName('URL discovery');
+        $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
         foreach ($tasks as $task) {
             $currentTaskOutput = $task->getOutput();
@@ -139,12 +139,9 @@ class TaskController extends Controller
         /* @var TaskRepository $taskRepository */
         $taskRepository = $this->container->get('simplytestable.repository.task');
         $stateRepository = $this->container->get('simplytestable.repository.state');
-        $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
-        /* @var TaskType $taskType */
-        $taskType = $taskTypeRepository->findOneBy([
-            'name' => $task_type,
-        ]);
+        $taskType = $taskTypeService->get($task_type);
 
         if (empty($taskType)) {
             throw new NotFoundHttpException();

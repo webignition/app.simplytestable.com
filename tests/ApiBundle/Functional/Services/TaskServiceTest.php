@@ -445,7 +445,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
             // d751713988987e9331980363e24189ce
             if (isset($currentTaskValues[TaskFactory::KEY_TYPE])) {
-                $currentTaskType = $taskTypeService->getByName($currentTaskValues[TaskFactory::KEY_TYPE]);
+                $currentTaskType = $taskTypeService->get($currentTaskValues[TaskFactory::KEY_TYPE]);
                 $currentTaskValues[TaskFactory::KEY_TYPE] = $currentTaskType;
             }
 
@@ -457,7 +457,7 @@ class TaskServiceTest extends AbstractBaseTestCase
             $taskFactory->update($task, $currentTaskValues);
         }
 
-        $taskType = $taskTypeService->getByName($taskTypeName);
+        $taskType = $taskTypeService->get($taskTypeName);
         $states = $stateService->getCollection($stateNames);
 
         $equivalentTasks = $this->taskService->getEquivalentTasks($url, $taskType, $parameterHash, $states);

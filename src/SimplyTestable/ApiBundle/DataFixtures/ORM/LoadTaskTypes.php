@@ -58,10 +58,10 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, 
     public function load(ObjectManager $manager)
     {
         $taskTypeClassRepository = $this->container->get('simplytestable.repository.tasktypeclass');
-        $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         foreach ($this->taskTypes as $name => $properties) {
-            $taskType = $taskTypeRepository->findOneByName($name);
+            $taskType = $taskTypeService->get($name);
 
             if (is_null($taskType)) {
                 $taskType = new TaskType();

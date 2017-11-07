@@ -1,9 +1,11 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 
-class TaskTypeService extends EntityService
+class TaskTypeService
 {
     const HTML_VALIDATION_TYPE = 'HTML validation';
     const CSS_VALIDATION_TYPE = 'CSS validation';
@@ -12,50 +14,68 @@ class TaskTypeService extends EntityService
     const LINK_INTEGRITY_TYPE = 'Link integrity';
 
     /**
-     * {@inheritdoc}
+     * @var EntityManagerInterface
      */
-    protected function getEntityName()
+    private $entityManager;
+
+    /**
+     * @var EntityRepository
+     */
+    private $taskTypeRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        return TaskType::class;
+        $this->entityManager = $entityManager;
+        $this->taskTypeRepository = $entityManager->getRepository(TaskType::class);
     }
 
     /**
-     * @param string $taskTypeName
-     *
-     * @return bool
+     * @return TaskType
      */
-    public function exists($taskTypeName)
+    public function getHtmlValidationTaskType()
     {
-        return !is_null($this->getByName($taskTypeName));
+        return $this->get(self::HTML_VALIDATION_TYPE);
     }
 
     /**
-     * @param string $taskTypeName
+     * @return TaskType
+     */
+    public function getCssValidationTaskType()
+    {
+        return $this->get(self::CSS_VALIDATION_TYPE);
+    }
+
+    /**
+     * @return TaskType
+     */
+    public function getJsStaticAnalysisTaskType()
+    {
+        return $this->get(self::JS_STATIC_ANALYSIS_TYPE);
+    }
+
+    /**
+     * @return TaskType
+     */
+    public function getUrlDiscoveryTaskType()
+    {
+        return $this->get(self::URL_DISCOVERY_TYPE);
+    }
+
+    /**
+     * @param string $name
      *
      * @return TaskType
      */
-    public function getByName($taskTypeName)
+    public function get($name)
     {
         /* @var TaskType $taskType */
-        $taskType = $this->getEntityRepository()->findOneBy([
-            'name' => $taskTypeName
+        $taskType = $this->taskTypeRepository->findOneBy([
+            'name' => $name
         ]);
 
         return $taskType;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSelectableCount()
-    {
-        $queryBuilder = $this->getEntityRepository()->createQueryBuilder('TaskType');
-
-        $queryBuilder->setMaxResults(1);
-        $queryBuilder->select('count(TaskType.id) as task_type_total');
-        $queryBuilder->where('TaskType.selectable = 1');
-
-        $result = $queryBuilder->getQuery()->getResult();
-        return (int)($result[0]['task_type_total']);
     }
 }

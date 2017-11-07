@@ -3,9 +3,8 @@
 namespace SimplyTestable\ApiBundle\Command\Migrate;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -35,9 +34,9 @@ class NormaliseJsLintOutputCommand extends Command
     private $taskRepository;
 
     /**
-     * @var EntityRepository
+     * @var TaskTypeService
      */
-    private $taskTypeRepository;
+    private $taskTypeService;
 
     /**
      * @var TaskOutputRepository
@@ -47,26 +46,23 @@ class NormaliseJsLintOutputCommand extends Command
     /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
-     * @param TaskRepository $taskRepository
-     * @param EntityRepository $taskTypeRepository
-     * @param TaskOutputRepository $taskOutputRepository
+     * @param TaskTypeService $taskTypeService
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
-        TaskRepository $taskRepository,
-        EntityRepository $taskTypeRepository,
-        TaskOutputRepository $taskOutputRepository,
+        TaskTypeService $taskTypeService,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-        $this->taskRepository = $taskRepository;
-        $this->taskTypeRepository = $taskTypeRepository;
-        $this->taskOutputRepository = $taskOutputRepository;
+        $this->taskTypeService = $taskTypeService;
+
+        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**
@@ -99,10 +95,7 @@ class NormaliseJsLintOutputCommand extends Command
 
         $output->writeln('Finding jslint output ...');
 
-        /* @var TaskType $jsStaticAnalysisType */
-        $jsStaticAnalysisType = $this->taskTypeRepository->findOneBy([
-            'name' => TaskTypeService::JS_STATIC_ANALYSIS_TYPE,
-        ]);
+        $jsStaticAnalysisType = $this->taskTypeService->getJsStaticAnalysisTaskType();
 
         $jsLintOutputIds = $this->taskRepository->getTaskOutputByType($jsStaticAnalysisType);
 
