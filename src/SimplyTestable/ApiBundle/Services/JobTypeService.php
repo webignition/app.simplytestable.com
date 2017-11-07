@@ -19,18 +19,6 @@ class JobTypeService extends EntityService
     }
 
     /**
-     * @return Type
-     */
-    public function getDefaultType()
-    {
-        /* @var Type $type */
-        $type = $this->getEntityRepository()->find(self::DEFAULT_TYPE_ID);
-
-        return $type;
-    }
-
-
-    /**
      * @param string $name
      *
      * @return Type
