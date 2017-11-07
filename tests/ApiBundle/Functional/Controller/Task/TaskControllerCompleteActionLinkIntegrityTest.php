@@ -316,12 +316,12 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
 
     private function setJobTypeConstraintLimits()
     {
-        $jobService = $this->container->get('simplytestable.services.jobservice');
         $jobUserAccountPlanEnforcementService = $this->container->get(
             'simplytestable.services.jobuseraccountplanenforcementservice'
         );
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $user = $userService->getPublicUser();
         $userAccountPlan = $userAccountPlanService->getForUser($user);
@@ -340,7 +340,8 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
         $fullSiteJobsPerSiteConstraint->setLimit(10);
         $singleUrlJobsPerUrlConstraint->setLimit(10);
 
-        $jobService->getManager()->persist($fullSiteJobsPerSiteConstraint);
-        $jobService->getManager()->persist($singleUrlJobsPerUrlConstraint);
+        $entityManager->persist($fullSiteJobsPerSiteConstraint);
+        $entityManager->persist($singleUrlJobsPerUrlConstraint);
+        $entityManager->flush();
     }
 }
