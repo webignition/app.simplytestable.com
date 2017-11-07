@@ -2,9 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-use Doctrine\ORM\EntityRepository;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
@@ -16,16 +15,16 @@ use webignition\Model\Stripe\Subscription as StripeSubscriptionModel;
 class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionListener
 {
     /**
-     * @var EntityRepository
+     * @var AccountPlanService
      */
-    private $accountPlanRepository;
+    private $accountPlanService;
 
     /**
      * @param StripeService $stripeService
      * @param StripeEventService $stripeEventService
      * @param UserAccountPlanService $userAccountPlanService
      * @param HttpClientService $httpClientService
-     * @param EntityRepository $accountPlanRepository
+     * @param AccountPlanService $accountPlanService
      * @param $webClientProperties
      */
     public function __construct(
@@ -34,7 +33,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
         $webClientProperties,
         StripeService $stripeService,
         UserAccountPlanService $userAccountPlanService,
-        EntityRepository $accountPlanRepository
+        AccountPlanService $accountPlanService
     ) {
         parent::__construct(
             $stripeEventService,
@@ -44,7 +43,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
             $userAccountPlanService
         );
 
-        $this->accountPlanRepository = $accountPlanRepository;
+        $this->accountPlanService = $accountPlanService;
     }
 
     /**
@@ -119,11 +118,7 @@ class CustomerSubscriptionUpdatedListener extends AbstractCustomerSubscriptionLi
             );
 
             if ($stripeCustomer->hasCard() === false) {
-                /* @var Plan $basicPlan */
-                $basicPlan = $this->accountPlanRepository->findOneBy([
-                    'name' => 'basic',
-                ]);
-
+                $basicPlan = $this->accountPlanService->getBasicPlan();
                 $this->userAccountPlanService->subscribe($user, $basicPlan);
             }
 

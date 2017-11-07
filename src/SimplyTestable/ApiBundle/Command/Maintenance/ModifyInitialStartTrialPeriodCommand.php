@@ -2,8 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\Maintenance;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,27 +26,27 @@ class ModifyInitialStartTrialPeriodCommand extends Command
     private $entityManager;
 
     /**
-     * @var EntityRepository
+     * @var AccountPlanService
      */
-    private $accountPlanRepository;
+    private $accountPlanService;
 
     /**
      * @param UserAccountPlanService $userAccountPlanService
      * @param EntityManager $entityManager
-     * @param EntityRepository $accountPlanRepository
+     * @param AccountPlanService $accountPlanService
      * @param null $name
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
         EntityManager $entityManager,
-        EntityRepository $accountPlanRepository,
+        AccountPlanService $accountPlanService,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->userAccountPlanService = $userAccountPlanService;
         $this->entityManager = $entityManager;
-        $this->accountPlanRepository = $accountPlanRepository;
+        $this->accountPlanService = $accountPlanService;
     }
 
     /**
@@ -111,9 +110,7 @@ class ModifyInitialStartTrialPeriodCommand extends Command
             $output->writeln('<info>New trial period: '.$new.'</info>');
         }
 
-        $basicPlan = $this->accountPlanRepository->findOneBy([
-            'name' => 'basic',
-        ]);
+        $basicPlan = $this->accountPlanService->getBasicPlan();
 
         $output->write('<info>Finding users on basic plan:</info>');
 

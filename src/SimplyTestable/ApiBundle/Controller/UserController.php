@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,16 +15,13 @@ class UserController extends Controller
     public function getAction()
     {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
 
         $user = $this->getUser();
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         if (empty($userAccountPlan)) {
-            /* @var Plan $basicPlan */
-            $basicPlan = $accountPlanRepository->findOneBy([
-                'name' => 'basic',
-            ]);
+            $basicPlan = $accountPlanService->getBasicPlan();
 
             $userAccountPlanService->subscribe(
                 $user,

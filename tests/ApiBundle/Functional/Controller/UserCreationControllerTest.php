@@ -393,12 +393,9 @@ class UserCreationControllerTest extends AbstractBaseTestCase
         );
 
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
 
-        /* @var Plan $agencyAccountPlan */
-        $agencyAccountPlan = $accountPlanRepository->findOneBy([
-            'name' => 'agency',
-        ]);
+        $agencyAccountPlan = $accountPlanService->get('agency');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();

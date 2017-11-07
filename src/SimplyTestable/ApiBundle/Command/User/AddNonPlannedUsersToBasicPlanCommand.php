@@ -2,8 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\User;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,22 +30,22 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
     private $entityManager;
 
     /**
-     * @var EntityRepository
+     * @var AccountPlanService
      */
-    private $accountPlanRepository;
+    private $accountPlanService;
 
     /**
      * @param ApplicationStateService $applicationStateService
      * @param UserAccountPlanService $userAccountPlanService
      * @param EntityManager $entityManager
-     * @param EntityRepository $accountPlanRepository
+     * @param AccountPlanService $accountPlanService
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         UserAccountPlanService $userAccountPlanService,
         EntityManager $entityManager,
-        EntityRepository $accountPlanRepository,
+        AccountPlanService $accountPlanService,
         $name = null
     ) {
         parent::__construct($name);
@@ -54,7 +53,7 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
         $this->applicationStateService = $applicationStateService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->entityManager = $entityManager;
-        $this->accountPlanRepository = $accountPlanRepository;
+        $this->accountPlanService = $accountPlanService;
     }
 
     /**
@@ -98,10 +97,7 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
 
         $output->writeln('['.count($users).'] users found with no plan');
 
-        /* @var Plan $basicPlan */
-        $basicPlan = $this->accountPlanRepository->findOneBy([
-            'name' => 'basic',
-        ]);
+        $basicPlan = $this->accountPlanService->getBasicPlan();
 
         foreach ($users as $user) {
             $output->writeln('Setting basic plan for ' . $user->getUsername());

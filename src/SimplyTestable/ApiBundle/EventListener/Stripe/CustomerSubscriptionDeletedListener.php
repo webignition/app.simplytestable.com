@@ -2,9 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
-use Doctrine\ORM\EntityRepository;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
@@ -17,17 +16,17 @@ use webignition\Model\Stripe\Subscription;
 class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionListener
 {
     /**
-     * @var EntityRepository
+     * @var AccountPlanService
      */
-    private $accountPlanRepository;
+    private $accountPlanService;
 
     /**
-     * @param StripeService $stripeService
      * @param StripeEventService $stripeEventService
-     * @param UserAccountPlanService $userAccountPlanService
      * @param HttpClientService $httpClientService
-     * @param EntityRepository $accountPlanRepository
      * @param $webClientProperties
+     * @param StripeService $stripeService
+     * @param UserAccountPlanService $userAccountPlanService
+     * @param AccountPlanService $accountPlanService
      */
     public function __construct(
         StripeEventService $stripeEventService,
@@ -35,7 +34,7 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
         $webClientProperties,
         StripeService $stripeService,
         UserAccountPlanService $userAccountPlanService,
-        EntityRepository $accountPlanRepository
+        AccountPlanService $accountPlanService
     ) {
         parent::__construct(
             $stripeEventService,
@@ -45,7 +44,7 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
             $userAccountPlanService
         );
 
-        $this->accountPlanRepository = $accountPlanRepository;
+        $this->accountPlanService = $accountPlanService;
     }
 
     /**
@@ -75,11 +74,7 @@ class CustomerSubscriptionDeletedListener extends AbstractCustomerSubscriptionLi
 
         if ($this->hasInvoicePaymentFailedEventForSubscription($stripeSubscription)) {
             // System has cancelled following payment failure
-
-            /* @var Plan $basicPlan */
-            $basicPlan = $this->accountPlanRepository->findOneBy([
-                'name' => 'basic',
-            ]);
+            $basicPlan = $this->accountPlanService->getBasicPlan();
 
             $this->userAccountPlanService->subscribe($user, $basicPlan);
             $this->issueWebClientEvent(array_merge($this->getDefaultWebClientData(), [
