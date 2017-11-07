@@ -76,7 +76,7 @@ class JobLoader
             }
 
             if (isset($jobValues['state'])) {
-                $state = $stateService->fetch($jobValues['state']);
+                $state = $stateService->get($jobValues['state']);
                 $job->setState($state);
                 $jobFactory->save($job);
             }

@@ -74,7 +74,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobInProgressState = $stateService->fetch(JobService::IN_PROGRESS_STATE);
+        $jobInProgressState = $stateService->get(JobService::IN_PROGRESS_STATE);
 
         $this->crawlJob->setState($jobInProgressState);
 

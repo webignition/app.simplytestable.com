@@ -72,7 +72,7 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
                 $state->setName($name);
 
                 if (!is_null($nextStateName)) {
-                    $state->setNextState($stateService->fetch($nextStateName));
+                    $state->setNextState($stateService->get($nextStateName));
                 }
 
                 $manager->persist($state);

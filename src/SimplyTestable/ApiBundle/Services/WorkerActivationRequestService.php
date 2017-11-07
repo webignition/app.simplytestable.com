@@ -131,7 +131,7 @@ class WorkerActivationRequestService extends EntityService
 
         $worker = $activationRequest->getWorker();
 
-        $worker->setState($this->stateService->fetch('worker-active'));
+        $worker->setState($this->stateService->get('worker-active'));
 
         $this->getManager()->persist($worker);
         $this->getManager()->flush();
@@ -147,7 +147,7 @@ class WorkerActivationRequestService extends EntityService
      */
     public function create(Worker $worker, $token)
     {
-        $state = $this->stateService->fetch(self::STARTING_STATE);
+        $state = $this->stateService->get(self::STARTING_STATE);
 
         $activationRequest = new WorkerActivationRequest();
         $activationRequest->setState($state);
@@ -174,6 +174,6 @@ class WorkerActivationRequestService extends EntityService
      */
     public function getStartingState()
     {
-        return $this->stateService->fetch(self::STARTING_STATE);
+        return $this->stateService->get(self::STARTING_STATE);
     }
 }

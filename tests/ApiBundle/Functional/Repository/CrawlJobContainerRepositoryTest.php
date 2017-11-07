@@ -58,7 +58,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $parentJob = new Job();
         $parentJob->setUser($user);
         $parentJob->setWebsite($website);
-        $parentJob->setState($stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE));
+        $parentJob->setState($stateService->get(JobService::FAILED_NO_SITEMAP_STATE));
 
         $entityManager->persist($parentJob);
         $entityManager->flush();
@@ -66,7 +66,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $crawlJob = new Job();
         $crawlJob->setUser($user);
         $crawlJob->setWebsite($website);
-        $crawlJob->setState($stateService->fetch(JobService::IN_PROGRESS_STATE));
+        $crawlJob->setState($stateService->get(JobService::IN_PROGRESS_STATE));
 
         $entityManager->persist($crawlJob);
         $entityManager->flush();
@@ -75,7 +75,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $task->setType($taskTypeService->getByName(TaskTypeService::URL_DISCOVERY_TYPE));
         $task->setJob($crawlJob);
         $task->setUrl('http://example.com/');
-        $task->setState($stateService->fetch(TaskService::COMPLETED_STATE));
+        $task->setState($stateService->get(TaskService::COMPLETED_STATE));
 
         $entityManager->persist($task);
         $entityManager->flush();
@@ -92,14 +92,14 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $this->assertTrue(
             $this->crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
                 $task,
-                $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE)
+                $stateService->get(JobService::FAILED_NO_SITEMAP_STATE)
             )
         );
 
         $this->assertFalse(
             $this->crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
                 $task,
-                $stateService->fetch(JobService::COMPLETED_STATE)
+                $stateService->get(JobService::COMPLETED_STATE)
             )
         );
     }
@@ -178,7 +178,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
             ]);
         }
 
-        $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+        $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
 
         $crawlJobContainerIds = [];
 
@@ -188,7 +188,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
                 $website = $websiteService->fetch($url);
 
                 $crawlJob = new Job();
-                $crawlJob->setState($stateService->fetch($jobStateName));
+                $crawlJob->setState($stateService->get($jobStateName));
                 $crawlJob->setUser($user);
                 $crawlJob->setWebsite($website);
 
@@ -219,7 +219,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
             $expectedCrawlJobContainerIds[] = $crawlJobContainerIds[$expectedCrawlJobContainerIndex];
         }
 
-        $stateCollection = $stateService->fetchCollection($stateNames);
+        $stateCollection = $stateService->getCollection($stateNames);
         $states = $keyStatesNumerically
             ? array_values($stateCollection)
             : $stateCollection;

@@ -54,7 +54,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $finishedStateNames = $this->taskService->getFinishedStateNames();
 
         foreach ($finishedStateNames as $stateName) {
-            $this->task->setState($stateService->fetch($stateName));
+            $this->task->setState($stateService->get($stateName));
 
             $this->taskService->cancel($this->task);
             $this->assertEquals($stateName, $this->task->getState()->getName());
@@ -155,7 +155,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         ];
 
         foreach ($disallowedStateNames as $stateName) {
-            $this->task->setState($stateService->fetch($stateName));
+            $this->task->setState($stateService->get($stateName));
 
             $this->taskService->setAwaitingCancellation($this->task);
             $this->assertEquals($stateName, $this->task->getState()->getName());
@@ -176,7 +176,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $finishedStateNames = $this->taskService->getFinishedStateNames();
 
         foreach ($finishedStateNames as $stateName) {
-            $this->task->setState($stateService->fetch($stateName));
+            $this->task->setState($stateService->get($stateName));
 
             $this->assertTrue($this->taskService->isFinished($this->task));
         }
@@ -189,7 +189,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         ];
 
         foreach ($unfinishedStateNames as $stateName) {
-            $this->task->setState($stateService->fetch($stateName));
+            $this->task->setState($stateService->get($stateName));
 
             $this->assertFalse($this->taskService->isFinished($this->task));
         }
@@ -202,7 +202,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $cancellableStateNames = $this->taskService->getCancellableStateNames();
 
         foreach ($cancellableStateNames as $stateName) {
-            $this->task->setState($stateService->fetch($stateName));
+            $this->task->setState($stateService->get($stateName));
 
             $this->assertTrue($this->taskService->isCancellable($this->task));
         }
@@ -217,7 +217,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         ];
 
         foreach ($uncancellableStateNames as $stateName) {
-            $this->task->setState($stateService->fetch($stateName));
+            $this->task->setState($stateService->get($stateName));
 
             $this->assertFalse($this->taskService->isCancellable($this->task));
         }
@@ -288,12 +288,12 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testCompleteIncorrectState()
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $completedState = $stateService->fetch(TaskService::COMPLETED_STATE);
+        $completedState = $stateService->get(TaskService::COMPLETED_STATE);
 
         $incorrectStateNames = $this->taskService->getFinishedStateNames();
 
         foreach ($incorrectStateNames as $stateName) {
-            $this->task->setState($stateService->fetch($stateName));
+            $this->task->setState($stateService->get($stateName));
 
             $this->taskService->complete($this->task, new \DateTime(), new Output(), $completedState);
 
@@ -305,7 +305,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $completedState = $stateService->fetch(TaskService::COMPLETED_STATE);
+        $completedState = $stateService->get(TaskService::COMPLETED_STATE);
 
         $output = new Output();
         $output->generateHash();
@@ -350,7 +350,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         }
 
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $state = $stateService->fetch($stateName);
+        $state = $stateService->get($stateName);
 
         $output = new Output();
         $output->setOutput($outputContent);
@@ -451,7 +451,7 @@ class TaskServiceTest extends AbstractBaseTestCase
             }
 
             if (isset($currentTaskValues[TaskFactory::KEY_STATE])) {
-                $currentState = $stateService->fetch($currentTaskValues[TaskFactory::KEY_STATE]);
+                $currentState = $stateService->get($currentTaskValues[TaskFactory::KEY_STATE]);
                 $currentTaskValues[TaskFactory::KEY_STATE] = $currentState;
             }
 
@@ -459,7 +459,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         }
 
         $taskType = $taskTypeService->getByName($taskTypeName);
-        $states = $stateService->fetchCollection($stateNames);
+        $states = $stateService->getCollection($stateNames);
 
         $equivalentTasks = $this->taskService->getEquivalentTasks($url, $taskType, $parameterHash, $states);
 

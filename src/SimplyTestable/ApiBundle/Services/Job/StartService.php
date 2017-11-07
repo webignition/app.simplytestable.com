@@ -203,7 +203,7 @@ class StartService
      */
     private function getExistingJob(JobConfiguration $jobConfiguration)
     {
-        $incompleteJobStates = $this->stateService->fetchCollection(
+        $incompleteJobStates = $this->stateService->getCollection(
             $this->jobService->getIncompleteStateNames()
         );
 

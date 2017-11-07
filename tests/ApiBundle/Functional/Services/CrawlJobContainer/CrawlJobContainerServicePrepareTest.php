@@ -121,7 +121,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $website = $websiteService->fetch($url);
 
         $crawlJob = new Job();
-        $crawlJob->setState($stateService->fetch(JobService::STARTING_STATE));
+        $crawlJob->setState($stateService->get(JobService::STARTING_STATE));
         $crawlJob->setUser($user);
         $crawlJob->setWebsite($website);
         $crawlJob->setParameters($jobParameters);

@@ -247,7 +247,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $tasks = $job->getTasks();
 
         foreach ($taskStateNames as $taskStateIndex => $taskStateName) {
-            $taskState = $stateService->fetch($taskStateName);
+            $taskState = $stateService->get($taskStateName);
 
             /* @var Task $task */
             $task = $tasks->get($taskStateIndex);
@@ -349,7 +349,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $tasks = $job->getTasks();
 
         foreach ($taskStateNames as $taskStateIndex => $taskStateName) {
-            $taskState = $stateService->fetch($taskStateName);
+            $taskState = $stateService->get($taskStateName);
 
             /* @var Task $task */
             $task = $tasks->get($taskStateIndex);

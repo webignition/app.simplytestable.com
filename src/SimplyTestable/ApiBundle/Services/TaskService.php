@@ -143,7 +143,7 @@ class TaskService extends EntityService
             return;
         }
 
-        $cancelledState = $this->stateService->fetch(self::CANCELLED_STATE);
+        $cancelledState = $this->stateService->get(self::CANCELLED_STATE);
 
         $task->setState($cancelledState);
         $task->clearWorker();
@@ -177,7 +177,7 @@ class TaskService extends EntityService
             return;
         }
 
-        $awaitingCancellationState = $this->stateService->fetch(self::AWAITING_CANCELLATION_STATE);
+        $awaitingCancellationState = $this->stateService->get(self::AWAITING_CANCELLATION_STATE);
 
         $task->setState($awaitingCancellationState);
     }
@@ -248,7 +248,7 @@ class TaskService extends EntityService
      */
     public function setStarted(Task $task, Worker $worker, $remoteId)
     {
-        $inProgressState = $this->stateService->fetch(self::IN_PROGRESS_STATE);
+        $inProgressState = $this->stateService->get(self::IN_PROGRESS_STATE);
 
         $timePeriod = new TimePeriod();
         $timePeriod->setStartDateTime(new \DateTime());

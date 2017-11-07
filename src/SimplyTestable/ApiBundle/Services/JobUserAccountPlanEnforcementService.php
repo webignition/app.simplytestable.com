@@ -178,7 +178,7 @@ class JobUserAccountPlanEnforcementService
 
         return $this->taskService->getEntityRepository()->getCountByUsersAndStatesForPeriod(
             $this->teamService->getPeopleForUser($this->user),
-            $this->stateService->fetchCollection([
+            $this->stateService->getCollection([
                 TaskService::COMPLETED_STATE,
                 TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
                 TaskService::TASK_FAILED_RETRY_AVAILABLE_STATE,

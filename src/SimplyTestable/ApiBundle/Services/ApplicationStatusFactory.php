@@ -60,7 +60,7 @@ class ApplicationStatusFactory
      */
     public function create()
     {
-        $jobInProgressState = $this->stateService->fetch(JobService::IN_PROGRESS_STATE);
+        $jobInProgressState = $this->stateService->get(JobService::IN_PROGRESS_STATE);
 
         $applicationStatus = new ApplicationStatus(
             $this->applicationStateService->getState(),

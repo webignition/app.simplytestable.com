@@ -49,8 +49,8 @@ class QueueService
         $this->taskService = $taskService;
         $this->jobRepository = $jobRepository;
 
-        $this->incompleteJobStates = $stateService->fetchCollection($jobService->getIncompleteStateNames());
-        $this->taskQueuedState = $stateService->fetch(TaskService::QUEUED_STATE);
+        $this->incompleteJobStates = $stateService->getCollection($jobService->getIncompleteStateNames());
+        $this->taskQueuedState = $stateService->get(TaskService::QUEUED_STATE);
     }
 
     /**

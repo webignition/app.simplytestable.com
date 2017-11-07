@@ -125,7 +125,7 @@ class JobService
             $job->setParameters($jobConfigurationParameters);
         }
 
-        $startingState = $this->stateService->fetch(self::STARTING_STATE);
+        $startingState = $this->stateService->get(self::STARTING_STATE);
 
         $job->setState($startingState);
         $this->entityManager->persist($job);
@@ -182,7 +182,7 @@ class JobService
             $job->getTimePeriod()->setEndDateTime(new \DateTime());
         }
 
-        $cancelledState = $this->stateService->fetch(self::CANCELLED_STATE);
+        $cancelledState = $this->stateService->get(self::CANCELLED_STATE);
 
         $job->setState($cancelledState);
 
@@ -221,7 +221,7 @@ class JobService
             return;
         }
 
-        $rejectedState = $this->stateService->fetch(self::REJECTED_STATE);
+        $rejectedState = $this->stateService->get(self::REJECTED_STATE);
         $job->setState($rejectedState);
 
         $rejectionReason = new JobRejectionReason();
@@ -257,7 +257,7 @@ class JobService
     {
         $incompleteTaskCount = $this->taskService->getEntityRepository()->getCountByJobAndStates(
             $job,
-            $this->stateService->fetchCollection($this->taskService->getIncompleteStateNames())
+            $this->stateService->getCollection($this->taskService->getIncompleteStateNames())
         );
 
         return $incompleteTaskCount > 0;
@@ -276,7 +276,7 @@ class JobService
             return;
         }
 
-        $completedState = $this->stateService->fetch(self::COMPLETED_STATE);
+        $completedState = $this->stateService->get(self::COMPLETED_STATE);
 
         $job->getTimePeriod()->setEndDateTime(new \DateTime());
         $job->setState($completedState);
@@ -290,7 +290,7 @@ class JobService
      */
     public function getUnfinishedJobsWithTasksAndNoIncompleteTasks()
     {
-        $incompleteStates = $this->stateService->fetchCollection($this->getIncompleteStateNames());
+        $incompleteStates = $this->stateService->getCollection($this->getIncompleteStateNames());
 
         /* @var Job[] $jobs */
         $jobs = $this->jobRepository->findBy([
@@ -343,7 +343,7 @@ class JobService
         return $this->taskService->getEntityRepository()->getCountWithIssuesByJob(
             $job,
             $issueType,
-            $this->stateService->fetchCollection([
+            $this->stateService->getCollection([
                 TaskService::CANCELLED_STATE,
                 TaskService::AWAITING_CANCELLATION_STATE,
             ])
@@ -360,7 +360,7 @@ class JobService
     {
         return $this->taskService->getEntityRepository()->getCountByJobAndStates(
             $job,
-            $this->stateService->fetchCollection([
+            $this->stateService->getCollection([
                 TaskService::CANCELLED_STATE,
                 TaskService::AWAITING_CANCELLATION_STATE,
             ])
@@ -375,7 +375,7 @@ class JobService
     public function getSkippedTaskCount(Job $job)
     {
         return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, [
-            $this->stateService->fetch(TaskService::TASK_SKIPPED_STATE),
+            $this->stateService->get(TaskService::TASK_SKIPPED_STATE),
         ]);
     }
 

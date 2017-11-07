@@ -140,7 +140,7 @@ class CrawlJobContainerService
             (string)$crawlJobContainer->getParentJob()->getWebsite()
         );
 
-        $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
+        $jobQueuedState = $this->stateService->get(JobService::QUEUED_STATE);
 
         $crawlJob->addTask($task);
         $crawlJob->setState($jobQueuedState);
@@ -192,7 +192,7 @@ class CrawlJobContainerService
             );
         }
 
-        $taskQueuedState = $this->stateService->fetch(TaskService::QUEUED_STATE);
+        $taskQueuedState = $this->stateService->get(TaskService::QUEUED_STATE);
 
         $task = new Task();
         $task->setJob($crawlJobContainer->getCrawlJob());
@@ -318,7 +318,7 @@ class CrawlJobContainerService
     {
         return $this->taskService->getEntityRepository()->findUrlsByJobAndState(
             $crawlJobContainer->getCrawlJob(),
-            $this->stateService->fetch(TaskService::COMPLETED_STATE)
+            $this->stateService->get(TaskService::COMPLETED_STATE)
         );
     }
 
@@ -336,7 +336,7 @@ class CrawlJobContainerService
 
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
-        $taskCompletedState = $this->stateService->fetch(TaskService::COMPLETED_STATE);
+        $taskCompletedState = $this->stateService->get(TaskService::COMPLETED_STATE);
 
         $completedTaskUrls = $this->taskService->getEntityRepository()->findUrlsByJobAndState(
             $crawlJob,
@@ -400,7 +400,7 @@ class CrawlJobContainerService
      */
     private function create(Job $job)
     {
-        $jobStartingState = $this->stateService->fetch(JobService::STARTING_STATE);
+        $jobStartingState = $this->stateService->get(JobService::STARTING_STATE);
         $crawlJobType = $this->jobTypeService->getCrawlType();
 
         $crawlJob = new Job();
@@ -431,7 +431,7 @@ class CrawlJobContainerService
     {
         return $this->entityRepository->getAllForUserByCrawlJobStates(
             $user,
-            $this->stateService->fetchCollection($this->jobService->getIncompleteStateNames())
+            $this->stateService->getCollection($this->jobService->getIncompleteStateNames())
         );
     }
 }

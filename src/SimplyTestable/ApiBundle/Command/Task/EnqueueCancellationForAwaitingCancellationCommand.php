@@ -94,7 +94,7 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $taskAwaitingCancellationState = $this->stateService->fetch(TaskService::AWAITING_CANCELLATION_STATE);
+        $taskAwaitingCancellationState = $this->stateService->get(TaskService::AWAITING_CANCELLATION_STATE);
 
         $taskIds = $this->taskRepository->getIdsByState(
             $taskAwaitingCancellationState

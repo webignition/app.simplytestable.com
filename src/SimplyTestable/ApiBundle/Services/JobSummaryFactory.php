@@ -112,7 +112,7 @@ class JobSummaryFactory
             $this->taskRepository->getCountByJob($job),
             $this->createTaskCountByState(
                 $job,
-                $this->stateService->fetchCollection($this->taskService->getAvailableStateNames())
+                $this->stateService->getCollection($this->taskService->getAvailableStateNames())
             ),
             $this->jobService->getCountOfTasksWithErrors($job),
             $this->jobService->getCountOfTasksWithWarnings($job),

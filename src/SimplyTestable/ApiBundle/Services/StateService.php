@@ -40,7 +40,7 @@ class StateService
      *
      * @return State
      */
-    public function fetch($name)
+    public function get($name)
     {
         if (!isset($this->states[$name])) {
             $state = $this->stateRepository->findOneBy([
@@ -68,12 +68,12 @@ class StateService
      *
      * @return State[]
      */
-    public function fetchCollection($stateNames)
+    public function getCollection($stateNames)
     {
         $states = [];
 
         foreach ($stateNames as $stateName) {
-            $states[$stateName] = $this->fetch($stateName);
+            $states[$stateName] = $this->get($stateName);
         }
 
         return $states;

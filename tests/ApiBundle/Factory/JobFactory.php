@@ -92,7 +92,7 @@ class JobFactory
         $httpClientService->getMockPlugin()->clearQueue();
 
         if (isset($jobValues[self::KEY_STATE])) {
-            $job->setState($stateService->fetch($jobValues[self::KEY_STATE]));
+            $job->setState($stateService->get($jobValues[self::KEY_STATE]));
 
             $entityManager->persist($job);
             $entityManager->flush();
@@ -112,7 +112,7 @@ class JobFactory
 
                     if (isset($taskValues[self::KEY_TASK_STATE])) {
                         $stateName = $taskValues[self::KEY_TASK_STATE];
-                        $task->setState($stateService->fetch($stateName));
+                        $task->setState($stateService->get($stateName));
                         $taskIsUpdated = true;
                     }
 
@@ -230,7 +230,7 @@ class JobFactory
         $job = $jobStartService->start($jobConfiguration);
 
         if (isset($jobValues[self::KEY_STATE]) && !$ignoreState) {
-            $state = $stateService->fetch($jobValues[self::KEY_STATE]);
+            $state = $stateService->get($jobValues[self::KEY_STATE]);
             $job->setState($state);
 
             $entityManager->persist($job);

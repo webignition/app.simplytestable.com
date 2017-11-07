@@ -103,9 +103,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
-        $jobCancelledState = $stateService->fetch(JobService::CANCELLED_STATE);
-        $jobQueuedState = $stateService->fetch(JobService::QUEUED_STATE);
+        $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
+        $jobCancelledState = $stateService->get(JobService::CANCELLED_STATE);
+        $jobQueuedState = $stateService->get(JobService::QUEUED_STATE);
 
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);
@@ -172,8 +172,8 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
-        $jobCancelledState = $stateService->fetch(JobService::CANCELLED_STATE);
+        $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
+        $jobCancelledState = $stateService->get(JobService::CANCELLED_STATE);
 
         $user = $this->userFactory->createAndActivateUser();
         $this->setUser($user);

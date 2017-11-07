@@ -93,7 +93,7 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->create($jobValues);
 
-        $jobResolvedState = $stateService->fetch(JobService::RESOLVED_STATE);
+        $jobResolvedState = $stateService->get(JobService::RESOLVED_STATE);
         $job->setState($jobResolvedState);
 
         $entityManager->persist($job);

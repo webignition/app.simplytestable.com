@@ -83,8 +83,8 @@ class WebsiteResolutionService
             );
         }
 
-        $jobResolvingState = $this->stateService->fetch(JobService::RESOLVING_STATE);
-        $jobResolvedState = $this->stateService->fetch(JobService::RESOLVED_STATE);
+        $jobResolvingState = $this->stateService->get(JobService::RESOLVING_STATE);
+        $jobResolvedState = $this->stateService->get(JobService::RESOLVED_STATE);
 
         $job->setState($jobResolvingState);
 

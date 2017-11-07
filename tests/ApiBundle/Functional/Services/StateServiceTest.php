@@ -65,7 +65,7 @@ class StateServiceTest extends AbstractBaseTestCase
         ));
         $this->expectExceptionCode(StateService::EXCEPTION_CODE_UNKNOWN_STATE);
 
-        $this->stateService->fetch('foo');
+        $this->stateService->get('foo');
     }
 
     /**
@@ -75,7 +75,7 @@ class StateServiceTest extends AbstractBaseTestCase
      */
     public function testFetch($stateName)
     {
-        $state = $this->stateService->fetch($stateName);
+        $state = $this->stateService->get($stateName);
 
         $this->assertInstanceOf(State::class, $state);
     }
@@ -98,7 +98,7 @@ class StateServiceTest extends AbstractBaseTestCase
 
     public function testFetchCollection()
     {
-        $states = $this->stateService->fetchCollection($this->stateNames);
+        $states = $this->stateService->getCollection($this->stateNames);
 
         $this->assertEquals($this->stateNames, array_keys($states));
 

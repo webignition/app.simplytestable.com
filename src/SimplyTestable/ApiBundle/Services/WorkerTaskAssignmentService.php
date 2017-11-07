@@ -93,7 +93,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService
             }
 
             if (!empty($failedTasks)) {
-                $taskQueuedState = $this->stateService->fetch(TaskService::QUEUED_STATE);
+                $taskQueuedState = $this->stateService->get(TaskService::QUEUED_STATE);
 
                 foreach ($failedTasks as $task) {
                     $task->setState($taskQueuedState);

@@ -86,7 +86,7 @@ class EnqueuePrepareAllCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $jobStartingState = $this->stateService->fetch(JobService::STARTING_STATE);
+        $jobStartingState = $this->stateService->get(JobService::STARTING_STATE);
 
         $jobIds = $this->jobRepository->getIdsByState($jobStartingState);
         $output->writeln(count($jobIds).' new jobs to prepare');

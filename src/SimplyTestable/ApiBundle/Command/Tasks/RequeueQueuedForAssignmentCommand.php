@@ -85,7 +85,7 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $taskQueuedForAssignmentState = $this->stateService->fetch(TaskService::QUEUED_FOR_ASSIGNMENT_STATE);
+        $taskQueuedForAssignmentState = $this->stateService->get(TaskService::QUEUED_FOR_ASSIGNMENT_STATE);
 
         /* @var Task[] $tasks */
         $tasks = $this->taskRepository->findBy([
@@ -96,7 +96,7 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
             return self::RETURN_CODE_OK;
         }
 
-        $taskQueuedState = $this->stateService->fetch(TaskService::QUEUED_STATE);
+        $taskQueuedState = $this->stateService->get(TaskService::QUEUED_STATE);
 
         foreach ($tasks as $task) {
             $task->setState($taskQueuedState);

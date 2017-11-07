@@ -56,7 +56,7 @@ class WorkerController extends Controller
         if (empty($worker)) {
             $worker = new Worker();
             $worker->setHostname($hostname);
-            $worker->setState($stateService->fetch(Worker::STATE_UNACTIVATED));
+            $worker->setState($stateService->get(Worker::STATE_UNACTIVATED));
 
             $entityManager->persist($worker);
             $entityManager->flush($worker);
@@ -74,7 +74,7 @@ class WorkerController extends Controller
             $activationRequest = $workerRequestActivationService->create($worker, $token);
         }
 
-        $activationRequestStartingState = $stateService->fetch(WorkerActivationRequestService::STARTING_STATE);
+        $activationRequestStartingState = $stateService->get(WorkerActivationRequestService::STARTING_STATE);
         $activationRequest->setState($activationRequestStartingState);
 
         $workerRequestActivationService->persistAndFlush($activationRequest);
