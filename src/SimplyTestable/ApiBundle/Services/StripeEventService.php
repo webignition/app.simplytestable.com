@@ -45,7 +45,10 @@ class StripeEventService extends EntityService
             $stripeEvent->setUser($user);
         }
 
-        return $this->persistAndFlush($stripeEvent);
+        $this->entityManager->persist($stripeEvent);
+        $this->entityManager->flush();
+
+        return $stripeEvent;
     }
 
     /**
@@ -66,18 +69,5 @@ class StripeEventService extends EntityService
         ], [
             'id' => 'DESC'
         ]);
-    }
-
-    /**
-     * @param StripeEvent $stripeEvent
-     *
-     * @return StripeEvent
-     */
-    public function persistAndFlush(StripeEvent $stripeEvent)
-    {
-        $this->getManager()->persist($stripeEvent);
-        $this->getManager()->flush();
-
-        return $stripeEvent;
     }
 }

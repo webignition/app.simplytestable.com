@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Stripe\Event;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
@@ -13,11 +14,6 @@ class UpdateDataCommand extends Command
 {
     const RETURN_CODE_OK = 0;
     const RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE = 2;
-
-    /**
-     * @var InputInterface
-     */
-    private $input;
 
     /**
      * @var ApplicationStateService
@@ -35,14 +31,21 @@ class UpdateDataCommand extends Command
     private $stripeKey;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param StripeEventService $stripeEventService
+     * @param EntityManagerInterface $entityManager
      * @param string $stripeKey
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         StripeEventService $stripeEventService,
+        EntityManagerInterface $entityManager,
         $stripeKey,
         $name = null
     ) {
@@ -51,6 +54,7 @@ class UpdateDataCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->stripeEventService = $stripeEventService;
         $this->stripeKey = $stripeKey;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -116,7 +120,8 @@ class UpdateDataCommand extends Command
             $event->setStripeEventData(json_encode($response));
 
             if (!$isDryRun) {
-                $this->stripeEventService->persistAndFlush($event);
+                $this->entityManager->persist($event);
+                $this->entityManager->flush();
             }
 
             $output->writeln('<info>done</info>');

@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
@@ -25,6 +26,7 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
     /**
      * @param StripeEventService $stripeEventService
      * @param HttpClientService $httpClientService
+     * @param EntityManagerInterface $entityManager
      * @param $webClientProperties
      * @param StripeService $stripeService
      * @param UserAccountPlanService $userAccountPlanService
@@ -32,6 +34,7 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
     public function __construct(
         StripeEventService $stripeEventService,
         HttpClientService $httpClientService,
+        EntityManagerInterface $entityManager,
         $webClientProperties,
         StripeService $stripeService,
         UserAccountPlanService $userAccountPlanService
@@ -39,6 +42,7 @@ abstract class AbstractCustomerSubscriptionListener extends AbstractListener
         parent::__construct(
             $stripeEventService,
             $httpClientService,
+            $entityManager,
             $webClientProperties
         );
 

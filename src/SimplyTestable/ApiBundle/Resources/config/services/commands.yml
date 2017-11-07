@@ -140,6 +140,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       stripeEventService: '@simplytestable.services.stripeeventservice'
+      entityManager: '@doctrine.orm.entity_manager'
       stripeKey: '%stripe_key%'
     tags:
       - { name: console.command }
