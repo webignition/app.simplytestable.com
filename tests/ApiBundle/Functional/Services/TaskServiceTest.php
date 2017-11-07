@@ -260,7 +260,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $entityManager->clear();
 
         /* @var Task $retrievedTask */
-        $retrievedTask = $taskRepository->getEntityRepository()->find($this->task->getId());
+        $retrievedTask = $taskRepository->find($this->task->getId());
 
         $this->assertEquals('foo', $retrievedTask->getUrl());
         $this->assertEquals('foo', $this->task->getUrl());
