@@ -784,7 +784,7 @@ class JobServiceTest extends AbstractBaseTestCase
     public function testRejectInWrongState($stateName)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobRejectionReasonService = $this->container->get('simplytestable.services.jobrejectionreasonservice');
+        $jobRejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
 
         $job = $this->jobFactory->create();
         $job->setState($stateService->fetch($stateName));
@@ -793,7 +793,12 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->jobService->reject($job, '');
 
         $this->assertEquals($stateName, $job->getState()->getName());
-        $this->assertNull($jobRejectionReasonService->getForJob($job));
+
+        $rejectionReason = $jobRejectionReasonRepository->findOneBy([
+            'job' => $job,
+        ]);
+
+        $this->assertNull($rejectionReason);
     }
 
     /**
@@ -838,8 +843,8 @@ class JobServiceTest extends AbstractBaseTestCase
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createPublicAndPrivateUserSet()[$userName];
 
-        $jobRejectionReasonService = $this->container->get('simplytestable.services.jobrejectionreasonservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $jobRejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
 
         $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $user,
@@ -855,7 +860,10 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->jobService->reject($job, $reason, $constraint);
 
         $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
-        $rejectionReason = $jobRejectionReasonService->getForJob($job);
+
+        $rejectionReason = $jobRejectionReasonRepository->findOneBy([
+            'job' => $job,
+        ]);
 
         $this->assertInstanceOf(RejectionReason::class, $rejectionReason);
         $this->assertEquals($reason, $rejectionReason->getReason());

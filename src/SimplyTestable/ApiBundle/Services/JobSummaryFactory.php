@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -39,11 +40,6 @@ class JobSummaryFactory
     private $teamService;
 
     /**
-     * @var JobRejectionReasonService
-     */
-    private $jobRejectionReasonService;
-
-    /**
      * @var CrawlJobContainerService
      */
     private $crawlJobContainerService;
@@ -59,15 +55,20 @@ class JobSummaryFactory
     private $taskRepository;
 
     /**
+     * @var EntityRepository
+     */
+    private $jobRejectionReasonRepository;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param TaskService $taskService
      * @param StateService $stateService
      * @param JobService $jobService
      * @param TeamService $teamService
-     * @param JobRejectionReasonService $jobRejectionReasonService
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param UserAccountPlanService $userAccountPlanService
      * @param TaskRepository $taskRepository
+     * @param EntityRepository $jobRejectionReasonRepository
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -75,20 +76,20 @@ class JobSummaryFactory
         StateService $stateService,
         JobService $jobService,
         TeamService $teamService,
-        JobRejectionReasonService $jobRejectionReasonService,
         CrawlJobContainerService $crawlJobContainerService,
         UserAccountPlanService $userAccountPlanService,
-        TaskRepository $taskRepository
+        TaskRepository $taskRepository,
+        EntityRepository $jobRejectionReasonRepository
     ) {
         $this->entityManager = $entityManager;
         $this->taskService = $taskService;
         $this->stateService = $stateService;
         $this->jobService = $jobService;
         $this->teamService = $teamService;
-        $this->jobRejectionReasonService = $jobRejectionReasonService;
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->taskRepository = $taskRepository;
+        $this->jobRejectionReasonRepository = $jobRejectionReasonRepository;
     }
 
     /**
@@ -124,9 +125,11 @@ class JobSummaryFactory
         );
 
         if (JobService::REJECTED_STATE === $job->getState()->getName()) {
-            $jobSummary->setRejectionReason(
-                $this->jobRejectionReasonService->getForJob($job)
-            );
+            $jobRejectionReason = $this->jobRejectionReasonRepository->findOneBy([
+                'job' => $job,
+            ]);
+
+            $jobSummary->setRejectionReason($jobRejectionReason);
         }
 
         $ammendments = $job->getAmmendments()->toArray();
