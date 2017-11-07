@@ -89,7 +89,8 @@ class UpdateDataCommand extends Command
             $output->writeln('<comment>This is a DRY RUN, no data will be written</comment>');
         }
 
-        $events = $this->stripeEventService->getEntityRepository()->findAll();
+        $stripeEventRepository = $this->entityManager->getRepository(Event::class);
+        $events = $stripeEventRepository->findAll();
 
         foreach ($events as $event) {
             /* @var Event $event */
