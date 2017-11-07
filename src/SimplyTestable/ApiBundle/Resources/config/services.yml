@@ -140,10 +140,8 @@ services:
         userAccountPlanService: "@simplytestable.services.userAccountPlanService"
         taskService: "@simplytestable.services.taskservice"
         teamService: "@simplytestable.services.teamservice"
-        jobTypeService: '@simplytestable.services.jobtypeservice'
         stateService: '@simplytestable.services.stateservice'
         jobRepository: '@simplytestable.repository.job'
-        jobTypeRepository: '@simplytestable.repository.jobtype'
         jobTypeService: '@simplytestable.services.jobtypeservice'
 
   simplytestable.services.jobPreparationService:

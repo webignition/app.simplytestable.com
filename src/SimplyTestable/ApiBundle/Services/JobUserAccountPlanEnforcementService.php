@@ -1,8 +1,6 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityRepository;
-use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -54,19 +52,18 @@ class JobUserAccountPlanEnforcementService
      * @param UserAccountPlanService $userAccountPlanService
      * @param TaskService $taskService
      * @param TeamService $teamService
+     * @param JobTypeService $jobTypeService
      * @param StateService $stateService
-     * @param EntityRepository $jobTypeRepository
      * @param JobRepository $jobRepository
+     * @param StateService $stateService
      * @param JobTypeService $jobTypeService
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
         TaskService $taskService,
         TeamService $teamService,
-        JobTypeService $jobTypeService,
         StateService $stateService,
         JobRepository $jobRepository,
-        StateService $stateService,
         JobTypeService $jobTypeService
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
@@ -77,7 +74,6 @@ class JobUserAccountPlanEnforcementService
         $this->stateService = $stateService;
         $this->jobTypeService = $jobTypeService;
         $this->jobRepository = $jobRepository;
-        $this->jobTypeRepository = $jobTypeRepository;
     }
 
     /**
@@ -134,7 +130,7 @@ class JobUserAccountPlanEnforcementService
             return false;
         }
 
-        $jobType = $this->jobTypeService->getByName($jobTypeName);
+        $jobType = $this->jobTypeService->get($jobTypeName);
         $startDateTime = new \DateTime('first day of this month');
         $endDateTime = new \DateTime('last day of this month');
 
