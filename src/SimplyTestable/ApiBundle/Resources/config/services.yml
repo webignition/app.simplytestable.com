@@ -38,7 +38,6 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         stateService: "@simplytestable.services.stateservice"
         resqueQueueService: "@simplytestable.services.resque.queueService"
-        taskOutputRepository: '@simplytestable.repository.taskoutput'
 
   simplytestable.services.jobservice:
     class:  SimplyTestable\ApiBundle\Services\JobService
@@ -91,6 +90,7 @@ services:
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
         taskService: "@simplytestable.services.taskservice"
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.workertaskcancellationservice:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
@@ -148,6 +148,7 @@ services:
         stateService: '@simplytestable.services.stateservice'
         jobRepository: '@simplytestable.repository.job'
         jobTypeService: '@simplytestable.services.jobtypeservice'
+        taskRepository: '@simplytestable.repository.task'
 
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
@@ -193,6 +194,7 @@ services:
       httpClientService: '@simplytestable.services.httpclientservice'
       logger: '@logger'
       stateService: '@simplytestable.services.stateservice'
+      taskRepository: '@simplytestable.repository.task'
 
   simplytestable.services.taskpreprocessor.factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
@@ -326,6 +328,7 @@ services:
         taskService: "@simplytestable.services.taskservice"
         stateService: '@simplytestable.services.stateservice'
         jobRepository: '@simplytestable.repository.job'
+        taskRepository: '@simplytestable.repository.task'
 
   simplytestable.services.worker.taskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Resque\Job\Task;
 
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -38,11 +39,15 @@ class CancelCollectionJob extends CommandJob
         /* @var LoggerInterface $logger */
         $logger = $this->getContainer()->get($this->args['serviceIds'][3]);
 
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $this->getContainer()->get($this->args['serviceIds'][4]);
+
         return new CollectionCommand(
             $applicationStateService,
             $taskService,
             $workerTaskCancellationService,
-            $logger
+            $logger,
+            $taskRepository
         );
     }
 

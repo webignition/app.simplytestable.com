@@ -272,7 +272,7 @@ class JobController extends Controller
         $jobService->cancel($job);
 
         $tasksToDeAssign = array();
-        $taskIds = $taskService->getEntityRepository()->getIdsByJob($job);
+        $taskIds = $taskRepository->getIdsByJob($job);
         foreach ($taskIds as $taskId) {
             $tasksToDeAssign[] = array(
                 'id' => $taskId

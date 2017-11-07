@@ -63,6 +63,7 @@ services:
               - simplytestable.services.taskservice
               - simplytestable.services.workertaskcancellationservice
               - logger
+              - simplytestable.repository.task
           worker-activate-verify:
             queue: worker-activate-verify
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob

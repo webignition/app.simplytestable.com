@@ -167,6 +167,7 @@ services:
       taskService: '@simplytestable.services.taskservice'
       workerTaskCancellationService: '@simplytestable.services.workertaskcancellationservice'
       logger: '@logger'
+      taskRepository: '@simplytestable.repository.task'
     tags:
       - { name: console.command }
 

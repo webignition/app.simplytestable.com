@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Services\Task;
 
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -35,19 +36,27 @@ class QueueService
     private $jobRepository;
 
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
      * @param JobService $jobService
      * @param TaskService $taskService
      * @param StateService $stateService
      * @param JobRepository $jobRepository
+     * @param TaskRepository $taskRepository
      */
     public function __construct(
         JobService $jobService,
         TaskService $taskService,
         StateService $stateService,
-        JobRepository $jobRepository
+        JobRepository $jobRepository,
+        TaskRepository $taskRepository
     ) {
         $this->taskService = $taskService;
         $this->jobRepository = $jobRepository;
+        $this->taskRepository = $taskRepository;
 
         $this->incompleteJobStates = $stateService->getCollection($jobService->getIncompleteStateNames());
         $this->taskQueuedState = $stateService->get(TaskService::QUEUED_STATE);
@@ -79,7 +88,7 @@ class QueueService
 
         $jobTaskIds = [];
         foreach ($incompleteJobsWithQueuedTasks as $job) {
-            $taskIdsForJob = $this->taskService->getEntityRepository()->getIdsByJobAndStates(
+            $taskIdsForJob = $this->taskRepository->getIdsByJobAndStates(
                 $job,
                 [$this->taskQueuedState],
                 $this->limit

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Services;
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
@@ -74,6 +75,11 @@ class JobService
     private $jobRepository;
 
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param StateService $stateService
      * @param TaskService $taskService
@@ -91,6 +97,7 @@ class JobService
         $this->taskTypeService = $taskTypeService;
 
         $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**
@@ -255,7 +262,7 @@ class JobService
      */
     public function hasIncompleteTasks(Job $job)
     {
-        $incompleteTaskCount = $this->taskService->getEntityRepository()->getCountByJobAndStates(
+        $incompleteTaskCount = $this->taskRepository->getCountByJobAndStates(
             $job,
             $this->stateService->getCollection($this->taskService->getIncompleteStateNames())
         );
@@ -340,7 +347,7 @@ class JobService
      */
     private function getCountOfTasksWithIssues(Job $job, $issueType)
     {
-        return $this->taskService->getEntityRepository()->getCountWithIssuesByJob(
+        return $this->taskRepository->getCountWithIssuesByJob(
             $job,
             $issueType,
             $this->stateService->getCollection([
@@ -358,7 +365,7 @@ class JobService
      */
     public function getCancelledTaskCount(Job $job)
     {
-        return $this->taskService->getEntityRepository()->getCountByJobAndStates(
+        return $this->taskRepository->getCountByJobAndStates(
             $job,
             $this->stateService->getCollection([
                 TaskService::CANCELLED_STATE,
@@ -374,7 +381,7 @@ class JobService
      */
     public function getSkippedTaskCount(Job $job)
     {
-        return $this->taskService->getEntityRepository()->getCountByJobAndStates($job, [
+        return $this->taskRepository->getCountByJobAndStates($job, [
             $this->stateService->get(TaskService::TASK_SKIPPED_STATE),
         ]);
     }
