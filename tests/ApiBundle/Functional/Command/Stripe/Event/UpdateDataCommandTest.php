@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Command\Stripe\Event;
 
 use phpmock\mockery\PHPMockery;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand;
-use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -53,7 +52,7 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
     public function testRun($stripeApiResponses, $args, $expectedStripeEventData)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stripeEventRepository = $this->container->get('simplytestable.repository.stripeevent');
 
         $user = $userService->getPublicUser();
 
@@ -74,7 +73,6 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
             $returnCode
         );
 
-        $stripeEventRepository = $entityManager->getRepository(StripeEvent::class);
         $updatedStripeEvent = $stripeEventRepository->findOneBy([
             'stripeId' => $stripeEvent->getStripeId(),
         ]);

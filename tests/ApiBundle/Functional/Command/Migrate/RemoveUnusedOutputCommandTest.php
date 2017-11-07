@@ -61,6 +61,7 @@ class RemoveUnusedOutputCommandTest extends AbstractBaseTestCase
         $expectedTaskOutputIndicesInUse
     ) {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskOutputRepository = $this->container->get('simplytestable.repository.taskoutput');
 
         $jobFactory = new JobFactory($this->container);
         $taskOutputFactory = new TaskOutputFactory($this->container);
@@ -99,8 +100,6 @@ class RemoveUnusedOutputCommandTest extends AbstractBaseTestCase
         $returnCode = $this->command->run(new ArrayInput($args), new BufferedOutput());
 
         $this->assertEquals(RemoveUnusedOutputCommand::RETURN_CODE_OK, $returnCode);
-
-        $taskOutputRepository = $entityManager->getRepository(Output::class);
 
         /* @var Output[] $allTaskOutput */
         $allTaskOutput = $taskOutputRepository->findAll();

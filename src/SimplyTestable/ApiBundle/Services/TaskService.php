@@ -2,13 +2,13 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
-use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use webignition\Url\Encoder as UrlEncoder;
@@ -36,6 +36,11 @@ class TaskService extends EntityService
      * @var ResqueQueueService
      */
     private $resqueQueueService;
+
+    /**
+     * @var TaskOutputRepository
+     */
+    private $taskOutputRepository;
 
     /**
      * All the states a task could be in
@@ -90,16 +95,19 @@ class TaskService extends EntityService
      * @param EntityManager $entityManager
      * @param StateService $stateService
      * @param ResqueQueueService $resqueQueueService
+     * @param TaskOutputRepository $taskOutputRepository
      */
     public function __construct(
         EntityManager $entityManager,
         StateService $stateService,
-        ResqueQueueService $resqueQueueService
+        ResqueQueueService $resqueQueueService,
+        TaskOutputRepository $taskOutputRepository
     ) {
         parent::__construct($entityManager);
 
         $this->stateService = $stateService;
         $this->resqueQueueService = $resqueQueueService;
+        $this->taskOutputRepository = $taskOutputRepository;
     }
 
     /**
@@ -196,7 +204,7 @@ class TaskService extends EntityService
 
     /**
      * @param Task $task
-     * @param string $stateNames
+     * @param string[] $stateNames
      *
      * @return bool
      */
@@ -273,9 +281,7 @@ class TaskService extends EntityService
 
         $output->generateHash();
 
-        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
-
-        $existingOutput = $taskOutputRepository->findOneBy([
+        $existingOutput = $this->taskOutputRepository->findOneBy([
             'hash' => $output->getHash(),
         ]);
 

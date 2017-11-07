@@ -8,7 +8,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class NormalisePublicUserJobVisibility extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class NormalisePublicUserJobVisibility extends AbstractFixture implements
+    OrderedFixtureInterface,
+    ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
@@ -21,29 +23,29 @@ class NormalisePublicUserJobVisibility extends AbstractFixture implements Ordere
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-    }     
-    
-    
+    }
+
+
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
-    {   
-        $jobRepository = $manager->getRepository('SimplyTestable\ApiBundle\Entity\Job\Job');        
+    {
+        $jobRepository = $this->container->get('simplytestable.repository.job');
         $publicUserPrivateJobs = $jobRepository->findBy(array(
             'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser(),
             'isPublic' => false
         ));
-        
+
         if (count($publicUserPrivateJobs) === 0) {
             return true;
         }
-        
+
         foreach ($publicUserPrivateJobs as $job) {
             $job->setIsPublic(true);
             $manager->persist($job);
         }
-        
+
         $manager->flush();
     }
 

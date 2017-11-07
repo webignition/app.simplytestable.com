@@ -10,8 +10,8 @@ services:
       resqueQueueService: '@simplytestable.services.resque.queueservice'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       stateService: '@simplytestable.services.stateservice'
-      entityManager: '@doctrine.orm.entity_manager'
       applicationStateService: '@simplytestable.services.applicationstateservice'
+      jobRepository: '@simplytestable.repository.job'
     tags:
       - { name: console.command }
 
@@ -80,6 +80,7 @@ services:
     arguments:
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
       entityManager: '@doctrine.orm.entity_manager'
+      accountPlanRepository: '@simplytestable.repository.accountplan'
     tags:
       - { name: console.command }
 
@@ -88,6 +89,7 @@ services:
     arguments:
       taskTypeService: '@simplytestable.services.tasktypeservice'
       entityManager: '@doctrine.orm.entity_manager'
+      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }
 
@@ -96,6 +98,7 @@ services:
     arguments:
       taskTypeService: '@simplytestable.services.tasktypeservice'
       entityManager: '@doctrine.orm.entity_manager'
+      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }
 
@@ -117,6 +120,7 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
       jobStartService: '@simplytestable.services.job.startservice'
       jobService: '@simplytestable.services.jobservice'
+      scheduledJobRepository: '@simplytestable.repository.scheduledjob'
     tags:
       - { name: console.command }
 
@@ -127,6 +131,7 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
       logger: '@logger'
       eventDispatcher: '@event_dispatcher'
+      stripeEventRepository: '@simplytestable.repository.stripeevent'
     tags:
       - { name: console.command }
 
@@ -150,6 +155,8 @@ services:
       stateService: '@simplytestable.services.stateservice'
       workerTaskAssignmentService: '@simplytestable.services.workertaskassignmentservice'
       logger: '@logger'
+      taskRepository: '@simplytestable.repository.task'
+      workerRepository: '@simplytestable.repository.worker'
     tags:
       - { name: console.command }
 
@@ -171,6 +178,7 @@ services:
       stateService: '@simplytestable.services.stateservice'
       resqueQueueService: '@simplytestable.services.resque.queueservice'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      taskRepository: '@simplytestable.repository.task'
     tags:
       - { name: console.command }
 
@@ -180,6 +188,7 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       stateService: '@simplytestable.services.stateservice'
       entityManager: '@doctrine.orm.entity_manager'
+      taskRepository: '@simplytestable.repository.task'
     tags:
       - { name: console.command }
 
@@ -189,6 +198,7 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
       entityManager: '@doctrine.orm.entity_manager'
+      accountPlanRepository: '@simplytestable.repository.accountplan'
     tags:
       - { name: console.command }
 
@@ -197,6 +207,8 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
+      workerRepository: '@simplytestable.repository.worker'
+      workerActivationRequestRepository: '@simplytestable.repository.workeractivationrequest'
     tags:
       - { name: console.command }
 
@@ -211,8 +223,9 @@ services:
     class:  SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
-      entityManager: '@doctrine.orm.entity_manager'
       workerActivationRequestService: '@simplytestable.services.workeractivationrequestservice'
+      workerRepository: '@simplytestable.repository.worker'
+      workerActivationRequestRepository: '@simplytestable.repository.workeractivationrequest'
     tags:
       - { name: console.command }
 
@@ -221,6 +234,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
+      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }
 
@@ -229,6 +243,8 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
+      taskRepository: '@simplytestable.repository.task'
+      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }
 
@@ -237,6 +253,9 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
+      taskRepository: '@simplytestable.repository.task'
+      taskTypeRepository: '@simplytestable.repository.tasktype'
+      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }
 
@@ -245,5 +264,6 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
+      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }

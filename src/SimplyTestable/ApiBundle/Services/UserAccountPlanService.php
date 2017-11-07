@@ -33,10 +33,16 @@ class UserAccountPlanService extends EntityService
     private $defaultTrialPeriod = null;
 
     /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
      * @param EntityManager $entityManager
      * @param UserService $userService
      * @param StripeService $stripeService
      * @param TeamService $teamService
+     * @param UserRepository $userRepository
      * @param $defaultTrialPeriod
      */
     public function __construct(
@@ -44,6 +50,7 @@ class UserAccountPlanService extends EntityService
         UserService $userService,
         StripeService $stripeService,
         TeamService $teamService,
+        UserRepository $userRepository,
         $defaultTrialPeriod
     ) {
         parent::__construct($entityManager);
@@ -51,6 +58,7 @@ class UserAccountPlanService extends EntityService
         $this->userService = $userService;
         $this->stripeService = $stripeService;
         $this->teamService = $teamService;
+        $this->userRepository = $userRepository;
         $this->defaultTrialPeriod = $defaultTrialPeriod;
     }
 
@@ -288,10 +296,7 @@ class UserAccountPlanService extends EntityService
      */
     public function findUsersWithNoPlan()
     {
-        /* @var UserRepository $userRepository */
-        $userRepository = $this->entityManager->getRepository(User::class);
-
-        return $userRepository->findAllNotWithIds(array_merge(
+        return $this->userRepository->findAllNotWithIds(array_merge(
             $this->getEntityRepository()->findUserIdsWithPlan(),
             array($this->userService->getAdminUser()->getId())
         ));

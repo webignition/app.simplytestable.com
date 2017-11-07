@@ -31,6 +31,8 @@ class WebHookControllerTest extends AbstractBaseTestCase
 
     public function testIndexActionPostRequest()
     {
+        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
+
         $fixtureName = 'customer.subscription.created.active';
         $fixtureModifications = [
             'data' => [
@@ -47,8 +49,6 @@ class WebHookControllerTest extends AbstractBaseTestCase
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
-
-        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         /* @var UserAccountPlan $userAccountPlan */
         $userAccountPlan = $userAccountPlanRepository->findOneBy([
@@ -199,11 +199,11 @@ class WebHookControllerTest extends AbstractBaseTestCase
     ) {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $stripeEventRepository = $this->container->get('simplytestable.repository.stripeevent');
+        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
-
-        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         /* @var UserAccountPlan $userAccountPlan */
         $userAccountPlan = $userAccountPlanRepository->findOneBy([
@@ -229,7 +229,6 @@ class WebHookControllerTest extends AbstractBaseTestCase
 
         $this->assertEquals($stripeId, $responseData['stripe_id']);
 
-        $stripeEventRepository = $entityManager->getRepository(StripeEvent::class);
         $stripeEvent = $stripeEventRepository->findOneBy([
             'stripeId' => $stripeId,
         ]);

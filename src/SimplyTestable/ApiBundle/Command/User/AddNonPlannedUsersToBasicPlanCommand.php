@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\User;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
@@ -30,15 +31,22 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
     private $entityManager;
 
     /**
+     * @var EntityRepository
+     */
+    private $accountPlanRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param UserAccountPlanService $userAccountPlanService
      * @param EntityManager $entityManager
+     * @param EntityRepository $accountPlanRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         UserAccountPlanService $userAccountPlanService,
         EntityManager $entityManager,
+        EntityRepository $accountPlanRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -46,6 +54,7 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
         $this->applicationStateService = $applicationStateService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->entityManager = $entityManager;
+        $this->accountPlanRepository = $accountPlanRepository;
     }
 
     /**
@@ -89,8 +98,8 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
 
         $output->writeln('['.count($users).'] users found with no plan');
 
-        $planRepository = $this->entityManager->getRepository(Plan::class);
-        $basicPlan = $planRepository->findOneBy([
+        /* @var Plan $basicPlan */
+        $basicPlan = $this->accountPlanRepository->findOneBy([
             'name' => 'basic',
         ]);
 

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Resque\Job\ScheduledJob;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -46,13 +47,17 @@ class ExecuteJob extends CommandJob
         /* @var JobService $jobService */
         $jobService = $this->getContainer()->get($this->args['serviceIds'][5]);
 
+        /* @var EntityRepository $scheduledJobRepository */
+        $scheduledJobRepository = $this->getContainer()->get($this->args['serviceIds'][6]);
+
         return new ExecuteCommand(
             $applicationStateService,
             $resqueQueueService,
             $resqueJobFactory,
             $entityManager,
             $jobStartService,
-            $jobService
+            $jobService,
+            $scheduledJobRepository
         );
     }
 

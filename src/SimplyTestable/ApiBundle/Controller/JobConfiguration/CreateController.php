@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
@@ -26,13 +26,12 @@ class CreateController extends Controller
      */
     public function createAction(Request $request)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $userService = $this->container->get('simplytestable.services.userservice');
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -76,7 +75,7 @@ class CreateController extends Controller
         }
 
         $website = $websiteService->fetch($requestWebsite);
-        $jobType = $this->getJobType($entityManager, $requestType);
+        $jobType = $this->getJobType($jobTypeRepository, $requestType);
         $taskConfigurationCollection = $this->getRequestTaskConfigurationCollection($request, $taskTypeService);
 
         $jobConfigurationValues = new JobConfigurationValues();
@@ -104,18 +103,18 @@ class CreateController extends Controller
     }
 
     /**
-     * @param EntityManager $entityManager
+     * @param EntityRepository $jobTypeRepository
      * @param string $requestType
      *
      * @return JobType
      */
-    private function getJobType(EntityManager $entityManager, $requestType)
+    private function getJobType(EntityRepository $jobTypeRepository, $requestType)
     {
-        $jobTypeRepository = $entityManager->getRepository(JobType::class);
-
+        /* @var JobType $jobType */
         $jobType = $jobTypeRepository->findOneBy([
             'name' => $requestType,
         ]);
+
         if (empty($jobType)) {
             $jobType = $jobTypeRepository->findOneBy([
                 'name' => JobTypeService::FULL_SITE_NAME,

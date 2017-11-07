@@ -151,7 +151,7 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
         $expectedJobIndicesToExclude,
         $expectedJobIndicesToInclude
     ) {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $crawlJobContainerRepository = $this->container->get('simplytestable.repository.crawljobcontainer');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create([
@@ -177,8 +177,6 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
 
         $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
         $jobListRequest = $jobListRequestFactory->create();
-
-        $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
 
         /* @var CrawlJobContainer[] $crawlJobContainers */
         $crawlJobContainers = $crawlJobContainerRepository->findAll();

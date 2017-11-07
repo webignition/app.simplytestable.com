@@ -37,6 +37,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         stateService: "@simplytestable.services.stateservice"
         resqueQueueService: "@simplytestable.services.resque.queueService"
+        taskOutputRepository: '@simplytestable.repository.taskoutput'
 
   simplytestable.services.jobservice:
     class:  SimplyTestable\ApiBundle\Services\JobService
@@ -122,6 +123,7 @@ services:
         userService: "@simplytestable.services.userservice"
         stripeService: "@simplytestable.services.stripeservice"
         teamService: "@simplytestable.services.teamservice"
+        userRepository: '@simplytestable.repository.user'
         defaultTrialPeriod: "%default_trial_period%"
 
   simplytestable.services.useremailchangerequestservice:
@@ -330,6 +332,7 @@ services:
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
         logger: "@logger"
+        workerRepository: '@simplytestable.repository.worker'
 
   simplytestable.services.job.configurationservice:
     class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService
@@ -386,7 +389,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
     arguments:
       teamService: '@simplytestable.services.teamservice'
-      entityManager: '@doctrine.orm.entity_manager'
+      jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.resourcelocator:
     class:  SimplyTestable\ApiBundle\Services\ResourceLocator
@@ -403,6 +406,8 @@ services:
         tokenStorage: '@security.token_storage'
         entityManager: '@doctrine.orm.entity_manager'
         websiteService: '@simplytestable.services.websiteservice'
+        taskTypeRepository: '@simplytestable.repository.tasktype'
+        jobTypeRepository: '@simplytestable.repository.jobtype'
 
   simplytestable.services.jobconfiguration.factory:
     class:   SimplyTestable\ApiBundle\Services\JobConfigurationFactory
@@ -415,13 +420,17 @@ services:
         jobService: '@simplytestable.services.jobservice'
         crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
         tokenStorage: '@security.token_storage'
+        stateRepository: '@simplytestable.repository.state'
+        jobTypeRepository: '@simplytestable.repository.jobtype'
 
   simplytestable.services.applicationstatusfactory:
     class:   SimplyTestable\ApiBundle\Services\ApplicationStatusFactory
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       stateService: '@simplytestable.services.stateservice'
-      entityManager: '@doctrine.orm.entity_manager'
+      taskRepository: '@simplytestable.repository.task'
+      workerRepository: '@simplytestable.repository.worker'
+      jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.usersummaryfactory:
     class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
@@ -444,6 +453,7 @@ services:
       jobRejectionReasonService: '@simplytestable.services.jobrejectionreasonservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      taskRepository: '@simplytestable.repository.task'
 
   simplytestable.services.joblistconfigurationfactory:
     class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory

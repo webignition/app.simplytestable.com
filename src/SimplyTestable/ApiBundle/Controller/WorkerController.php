@@ -28,6 +28,8 @@ class WorkerController extends Controller
             'simplytestable.services.workeractivationrequestservice'
         );
         $stateService = $this->container->get('simplytestable.services.stateservice');
+        $workerRepository = $this->container->get('simplytestable.repository.worker');
+        $activationRequestRepository = $this->container->get('simplytestable.repository.workeractivationrequest');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -47,7 +49,6 @@ class WorkerController extends Controller
             throw new BadRequestHttpException('"token" missing');
         }
 
-        $workerRepository = $entityManager->getRepository(Worker::class);
         $worker = $workerRepository->findOneBy([
             'hostname' => $hostname,
         ]);
@@ -65,7 +66,6 @@ class WorkerController extends Controller
             return new Response();
         }
 
-        $activationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
         $activationRequest = $activationRequestRepository->findOneBy([
             'worker' => $worker,
         ]);

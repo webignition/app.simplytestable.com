@@ -8,7 +8,6 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
-use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -81,8 +80,7 @@ class JobFactory
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $taskService = $this->container->get('simplytestable.services.taskservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $workerRepository = $entityManager->getRepository(Worker::class);
+        $workerRepository = $this->container->get('simplytestable.repository.worker');
 
         $ignoreState = true;
 
@@ -187,6 +185,8 @@ class JobFactory
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $tokenStorage = $this->container->get('security.token_storage');
         $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
+        $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
 
         foreach ($this->defaultJobValues as $key => $value) {
             if (!isset($jobValues[$key])) {
@@ -217,7 +217,9 @@ class JobFactory
             $requestStack,
             $this->container->get('security.token_storage'),
             $this->container->get('doctrine.orm.entity_manager'),
-            $websiteService
+            $websiteService,
+            $taskTypeRepository,
+            $jobTypeRepository
         );
 
         $jobStartRequest = $jobStartRequestFactory->create();
@@ -361,8 +363,7 @@ class JobFactory
      */
     public function getFromResponse(Response $response)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobRepository = $entityManager->getRepository(Job::class);
+        $jobRepository = $this->container->get('simplytestable.repository.job');
 
         $locationHeader = $response->headers->get('location');
         $locationHeaderParts = explode('/', rtrim($locationHeader, '/'));

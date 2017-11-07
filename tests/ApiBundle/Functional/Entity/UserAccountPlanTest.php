@@ -43,6 +43,8 @@ class UserAccountPlanTest extends AbstractBaseTestCase
 
     public function testUtf8StripeCustomer()
     {
+        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
+
         $stripeCustomer = 'test-ɸ';
 
         $user = $this->userFactory->create();
@@ -58,8 +60,6 @@ class UserAccountPlanTest extends AbstractBaseTestCase
         $userAccountPlanId = $userAccountPlan->getId();
 
         $this->entityManager->clear();
-
-        $userAccountPlanRepository = $this->entityManager->getRepository(UserAccountPlan::class);
 
         $this->assertEquals(
             $stripeCustomer,

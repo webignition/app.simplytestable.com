@@ -6,22 +6,37 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInterface
-{    
+class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+{
     private $taskTypeClasses = array(
         'verification' => 'For the verification of quality aspects such as the presence of a robots.txt file',
         'discovery' => 'For the discovery of information, such as collecting all unique URLs within a given page',
         'validation' => 'For the validation of syntactial correctness, such as HTML or CSS validation'
-    ); 
-    
+    );
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $repository = $manager->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass');
-        
+        $repository = $this->container->get('simplytestable.repository.tasktypeclass');
+
         foreach ($this->taskTypeClasses as $name => $description) {
             if (is_null($repository->findOneByName($name))) {
                 $taskTypeClass = new TaskTypeClass();
@@ -29,8 +44,8 @@ class LoadTaskTypeClasses extends AbstractFixture implements OrderedFixtureInter
                 $taskTypeClass->setDescription($description);
 
                 $manager->persist($taskTypeClass);
-                $manager->flush();                 
-            }            
+                $manager->flush();
+            }
         }
     }
 

@@ -12,6 +12,8 @@ class TaskTypeOptionsTest extends AbstractBaseTestCase
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeOptionsRepository = $this->container->get('simplytestable.repository.tasktypeoptions');
+
         $jobFactory = new JobFactory($this->container);
 
         $job = $jobFactory->create();
@@ -31,8 +33,6 @@ class TaskTypeOptionsTest extends AbstractBaseTestCase
         $optionsId = $options->getId();
 
         $entityManager->clear();
-
-        $taskTypeOptionsRepository = $entityManager->getRepository(TaskTypeOptions::class);
 
         $this->assertEquals(
             $optionsValue,

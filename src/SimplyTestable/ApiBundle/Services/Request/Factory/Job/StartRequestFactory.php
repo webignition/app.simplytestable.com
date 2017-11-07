@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Services\Request\Factory\Job;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
@@ -55,16 +56,30 @@ class StartRequestFactory
     private $websiteService;
 
     /**
+     * @var EntityRepository
+     */
+    private $taskTypeRepository;
+
+    /**
+     * @var EntityRepository
+     */
+    private $jobTypeRepository;
+
+    /**
      * @param RequestStack $requestStack
      * @param TokenStorageInterface $tokenStorage
      * @param EntityManager $entityManager
      * @param WebSiteService $websiteService
+     * @param EntityRepository $taskTypeRepository
+     * @param EntityRepository $jobTypeRepository
      */
     public function __construct(
         RequestStack $requestStack,
         TokenStorageInterface $tokenStorage,
         EntityManager $entityManager,
-        WebSiteService $websiteService
+        WebSiteService $websiteService,
+        EntityRepository $taskTypeRepository,
+        EntityRepository $jobTypeRepository
     ) {
         $request = $requestStack->getCurrentRequest();
 
@@ -73,6 +88,8 @@ class StartRequestFactory
         $this->tokenStorage = $tokenStorage;
         $this->entityManager = $entityManager;
         $this->websiteService = $websiteService;
+        $this->taskTypeRepository = $taskTypeRepository;
+        $this->jobTypeRepository = $jobTypeRepository;
 
         if (0 === $request->request->count() && 0 === $request->query->count()) {
             $this->requestPayload = new ParameterBag();
@@ -112,14 +129,13 @@ class StartRequestFactory
     {
         $requestJobType = $this->requestPayload->get(self::PARAMETER_JOB_TYPE);
 
-        $jobTypeRepository = $this->entityManager->getRepository(JobType::class);
-
-        $jobType = $jobTypeRepository->findOneBy([
+        /* @var JobType $jobType */
+        $jobType = $this->jobTypeRepository->findOneBy([
             'name' => $requestJobType,
         ]);
 
         if (empty($jobType)) {
-            $jobType = $jobTypeRepository->findOneBy([
+            $jobType = $this->jobTypeRepository->findOneBy([
                 'name' => JobTypeService::FULL_SITE_NAME,
             ]);
         }
@@ -135,8 +151,7 @@ class StartRequestFactory
         $collection = $this->getRequestTaskConfigurationCollection();
 
         if ($collection->isEmpty()) {
-            $taskTypeRepository = $this->entityManager->getRepository(TaskType::class);
-            $selectableTaskTypes = $taskTypeRepository->findBy([
+            $selectableTaskTypes = $this->taskTypeRepository->findBy([
                 'selectable' => true,
             ]);
 
@@ -167,10 +182,9 @@ class StartRequestFactory
 
         $requestTestTypes = $this->requestPayload->get(self::PARAMETER_TEST_TYPES);
 
-        $taskTypeRepository = $this->entityManager->getRepository(TaskType::class);
-
         foreach ($requestTestTypes as $taskTypeName) {
-            $taskType = $taskTypeRepository->findOneBy([
+            /* @var TaskType $taskType */
+            $taskType = $this->taskTypeRepository->findOneBy([
                 'name' => $taskTypeName,
             ]);
 

@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -18,8 +17,8 @@ class DeleteController extends Controller
     public function deleteAction($label)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -32,7 +31,6 @@ class DeleteController extends Controller
             throw new NotFoundHttpException();
         }
 
-        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
         $scheduledJob = $scheduledJobRepository->findOneBy([
             'jobConfiguration' => $jobConfiguration,
         ]);

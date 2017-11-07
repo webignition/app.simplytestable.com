@@ -119,11 +119,14 @@ class ProcessCommandTest extends AbstractBaseTestCase
                 }),
             ]);
 
+        $stripeEventRepository = $this->container->get('simplytestable.repository.stripeevent');
+
         $command = new ProcessCommand(
             $applicationStateService,
             $entityManager,
             $logger,
-            $eventDispatcher
+            $eventDispatcher,
+            $stripeEventRepository
         );
 
         $returnCode = $command->run(new ArrayInput([

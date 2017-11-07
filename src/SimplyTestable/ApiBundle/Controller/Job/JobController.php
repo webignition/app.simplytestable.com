@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -222,7 +223,9 @@ class JobController extends Controller
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $taskService = $this->get('simplytestable.services.taskservice');
         $stateService = $this->get('simplytestable.services.stateservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $this->container->get('simplytestable.repository.task');
 
         $jobRetrievalService->setUser($this->getUser());
 
@@ -272,9 +275,9 @@ class JobController extends Controller
             );
         }
 
-        $taskRepository = $entityManager->getRepository(Task::class);
         $taskAwaitingCancellationState = $stateService->fetch(TaskService::AWAITING_CANCELLATION_STATE);
 
+        /* @var Task[] $tasksAwaitingCancellation */
         $tasksAwaitingCancellation = $taskRepository->findBy([
             'job' => $job,
             'state' => $taskAwaitingCancellationState,
@@ -310,6 +313,9 @@ class JobController extends Controller
         $taskService = $this->container->get('simplytestable.services.taskservice');
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
 
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $this->container->get('simplytestable.repository.task');
+
         $jobRetrievalService->setUser($this->getUser());
 
         try {
@@ -319,9 +325,6 @@ class JobController extends Controller
             $response->setStatusCode(403);
             return $response;
         }
-
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskRepository = $entityManager->getRepository(Task::class);
 
         $taskIds = $this->getRequestTaskIds($request);
 
@@ -353,9 +356,10 @@ class JobController extends Controller
      */
     public function taskIdsAction($site_root_url, $test_id)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
-        $taskRepository = $entityManager->getRepository(Task::class);
+
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $this->container->get('simplytestable.repository.task');
 
         $jobRetrievalService->setUser($this->getUser());
 
@@ -380,9 +384,10 @@ class JobController extends Controller
      */
     public function listUrlsAction($site_root_url, $test_id)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
-        $taskRepository = $entityManager->getRepository(Task::class);
+
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $this->container->get('simplytestable.repository.task');
 
         $jobRetrievalService->setUser($this->getUser());
 

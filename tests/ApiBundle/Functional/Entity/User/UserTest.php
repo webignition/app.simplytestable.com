@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Entity\User;
 
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
-use SimplyTestable\ApiBundle\Entity\User;
 
 class UserTest extends AbstractBaseTestCase
 {
@@ -12,6 +11,7 @@ class UserTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userRepository = $this->container->get('simplytestable.repository.user');
 
         $email = 'ɸ@example.com';
 
@@ -19,8 +19,6 @@ class UserTest extends AbstractBaseTestCase
         $userId = $user->getId();
 
         $entityManager->clear();
-
-        $userRepository = $entityManager->getRepository(User::class);
 
         $this->assertEquals($email, $userRepository->find($userId)->getEmail());
     }

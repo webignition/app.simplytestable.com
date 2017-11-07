@@ -37,6 +37,8 @@ class CanonicalUrlTest extends AbstractBaseTestCase
 
     public function testUtf8()
     {
+        $websiteRepository = $this->container->get('simplytestable.repository.website');
+
         $sourceUrl = 'http://example.com/ɸ';
 
         $webSite = new WebSite();
@@ -49,8 +51,6 @@ class CanonicalUrlTest extends AbstractBaseTestCase
 
         $this->entityManager->clear();
 
-        $websiteRepository = $this->entityManager->getRepository(WebSite::class);
-
         $retrievedUrl = $websiteRepository->find($websiteId)->getCanonicalUrl();
 
         /* Last character of the URL will be incorrect if the DB collation is not storing UTF8 correctly */
@@ -59,6 +59,8 @@ class CanonicalUrlTest extends AbstractBaseTestCase
 
     public function testUrlGreaterThanVarcharLength()
     {
+        $websiteRepository = $this->container->get('simplytestable.repository.website');
+
         $canonicalUrl = str_repeat('+', 1280);
 
         $webSite = new WebSite();
@@ -70,8 +72,6 @@ class CanonicalUrlTest extends AbstractBaseTestCase
         $preId = $webSite->getId();
 
         $this->entityManager->clear();
-
-        $websiteRepository = $this->entityManager->getRepository(WebSite::class);
 
         $this->assertEquals($preId, $websiteRepository->find($preId)->getId());
     }

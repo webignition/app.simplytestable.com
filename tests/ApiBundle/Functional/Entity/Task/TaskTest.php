@@ -29,8 +29,7 @@ class TaskTest extends AbstractBaseTestCase
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-
-        $taskRepository = $entityManager->getRepository(Task::class);
+        $taskRepository = $this->container->get('simplytestable.repository.task');
 
         $taskUrl = 'http://example.com/ɸ';
         $parameterKey = 'key-ɸ';

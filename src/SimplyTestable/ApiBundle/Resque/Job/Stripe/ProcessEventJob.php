@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Resque\Job\Stripe;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
@@ -38,11 +39,15 @@ class ProcessEventJob extends CommandJob
         /* @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $this->getContainer()->get($this->args['serviceIds'][3]);
 
+        /* @var EntityRepository $stripeEventRepository */
+        $stripeEventRepository = $this->getContainer()->get($this->args['serviceIds'][4]);
+
         return new ProcessCommand(
             $applicationStateService,
             $entityManager,
             $logger,
-            $eventDispatcher
+            $eventDispatcher,
+            $stripeEventRepository
         );
     }
 

@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Services\Worker;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UrlService;
@@ -39,30 +40,38 @@ class TaskNotificationService
     private $logger;
 
     /**
+     * @var EntityRepository
+     */
+    private $workerRepository;
+
+    /**
      * @param EntityManager $entityManager
      * @param StateService $stateService
      * @param HttpClientService $httpClientService
      * @param UrlService $urlService
      * @param LoggerInterface $logger
+     * @param EntityRepository $workerRepository
      */
     public function __construct(
         EntityManager $entityManager,
         StateService $stateService,
         HttpClientService $httpClientService,
         UrlService $urlService,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        EntityRepository $workerRepository
     ) {
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->httpClientService = $httpClientService;
         $this->urlService = $urlService;
         $this->logger = $logger;
+        $this->workerRepository = $workerRepository;
     }
 
     public function notify()
     {
-        $workerRepository = $this->entityManager->getRepository(Worker::class);
-        $workers = $workerRepository->findBy([
+        /* @var Worker[] $workers */
+        $workers = $this->workerRepository->findBy([
             'state' => $this->stateService->fetch(Worker::STATE_ACTIVE),
         ]);
 

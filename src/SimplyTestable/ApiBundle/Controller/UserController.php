@@ -16,13 +16,12 @@ class UserController extends Controller
     public function getAction()
     {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
+
         $user = $this->getUser();
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         if (empty($userAccountPlan)) {
-            $accountPlanRepository = $entityManager->getRepository(Plan::class);
-
             /* @var Plan $basicPlan */
             $basicPlan = $accountPlanRepository->findOneBy([
                 'name' => 'basic',

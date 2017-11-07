@@ -6,9 +6,11 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface
-{    
+class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+{
     private $taskTypes = array(
         'HTML validation' => array(
             'description' => 'Validates the HTML markup for a given URL',
@@ -34,33 +36,46 @@ class LoadTaskTypes extends AbstractFixture implements OrderedFixtureInterface
             'description' => 'Check links in a HTML document and determine those that don\'t work',
             'class' => 'verification',
             'selectable' => true
-        ),        
+        ),
     );
-    
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $taskTypeClassRepository = $manager->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass');
-        $taskTypeRepository = $manager->getRepository('SimplyTestable\ApiBundle\Entity\Task\Type\Type');
-        
+        $taskTypeClassRepository = $this->container->get('simplytestable.repository.tasktypeclass');
+        $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
+
         foreach ($this->taskTypes as $name => $properties) {
             $taskType = $taskTypeRepository->findOneByName($name);
-            
+
             if (is_null($taskType)) {
                 $taskType = new TaskType();
             }
-            
+
             $taskTypeClass = $taskTypeClassRepository->findOneByName($properties['class']);
-            
+
             $taskType->setClass($taskTypeClass);
             $taskType->setDescription($properties['description']);
             $taskType->setName($name);
             $taskType->setSelectable($properties['selectable']);
-            
+
             $manager->persist($taskType);
-            $manager->flush();            
+            $manager->flush();
         }
     }
 

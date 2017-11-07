@@ -104,8 +104,7 @@ class UserEmailChangeControllerCreateActionTest extends AbstractUserEmailChangeC
 
     public function testCreateActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $emailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
+        $emailChangeRequestRepository = $this->container->get('simplytestable.repository.useremailchangerequest');
 
         $newEmail = 'new-email@example.com';
 

@@ -34,19 +34,20 @@ class ModifyInitialStartTrialPeriodCommand extends Command
     /**
      * @param UserAccountPlanService $userAccountPlanService
      * @param EntityManager $entityManager
+     * @param EntityRepository $accountPlanRepository
      * @param null $name
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
         EntityManager $entityManager,
+        EntityRepository $accountPlanRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->userAccountPlanService = $userAccountPlanService;
         $this->entityManager = $entityManager;
-
-        $this->accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $this->accountPlanRepository = $accountPlanRepository;
     }
 
     /**

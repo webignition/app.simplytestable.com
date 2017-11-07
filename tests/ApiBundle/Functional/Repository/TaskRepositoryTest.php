@@ -56,9 +56,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskRepository = $this->container->get('simplytestable.repository.task');
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
     }
@@ -457,47 +455,6 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $this->assertEquals($expectedCount, $count);
     }
 
-//    /**
-//     * @dataProvider getCountWithWarningsByJobDataProvider
-//     *
-//     * @param array $jobValuesCollection
-//     * @param array $taskOutputValuesCollection
-//     * @param int $jobIndex
-//     * @param string[] $stateNamesToExclude
-//     * @param int $expectedCountWithWarnings
-//     */
-//    public function testGetCountWithWarningsByJob(
-//        $jobValuesCollection,
-//        $taskOutputValuesCollection,
-//        $jobIndex,
-//        $stateNamesToExclude,
-//        $expectedCountWithWarnings
-//    ) {
-//        $stateService = $this->container->get('simplytestable.services.stateservice');
-//
-//        $users = $this->userFactory->createPublicAndPrivateUserSet();
-//        $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
-//
-//        $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
-//        $job = $jobs[$jobIndex];
-//        $tasks = $this->getTasksFromJobCollection($jobs);
-//        $statesToExclude = $stateService->fetchCollection($stateNamesToExclude);
-//
-//        $taskOutputFactory = new TaskOutputFactory($this->container);
-//
-//        foreach ($tasks as $taskIndex => $task) {
-//            if (isset($taskOutputValuesCollection[$taskIndex])) {
-//                $taskOutputValues = $taskOutputValuesCollection[$taskIndex];
-//
-//                $taskOutputFactory->create($task, $taskOutputValues);
-//            }
-//        }
-//
-//        $countWithWarnings = $this->taskRepository->getCountWithWarningsByJob($job, $statesToExclude);
-//
-//        $this->assertEquals($expectedCountWithWarnings, $countWithWarnings);
-//    }
-
     /**
      * @dataProvider getErrorCountByJobDataProvider
      *
@@ -609,7 +566,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $expectedOutputIndices
     ) {
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskOutputRepository = $this->container->get('simplytestable.repository.taskoutput');
 
         $taskType = $taskTypeService->getByName($taskTypeName);
 
@@ -630,7 +587,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
             }
         }
 
-        $taskOutputRepository = $entityManager->getRepository(Output::class);
+        /* @var Output[] $taskOutputs */
         $taskOutputs = $taskOutputRepository->findAll();
 
         $expectedOutputIds = [];

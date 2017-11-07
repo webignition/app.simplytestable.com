@@ -29,6 +29,7 @@ class RetrieveTest extends AbstractBaseTestCase
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $jobConfigurationRepository = $this->container->get('simplytestable.repository.jobconfiguration');
 
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
@@ -48,7 +49,6 @@ class RetrieveTest extends AbstractBaseTestCase
         $this->configurationId = $this->originalConfiguration->getId();
         $entityManager->clear();
 
-        $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
         $this->retrievedConfiguration = $jobConfigurationRepository->find($this->configurationId);
     }
 

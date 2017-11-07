@@ -1,7 +1,6 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Job;
 
-use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -10,7 +9,6 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
 
 class EnqueuePrepareAllCommand extends Command
@@ -34,29 +32,29 @@ class EnqueuePrepareAllCommand extends Command
     private $stateService;
 
     /**
-     * @var EntityManager
-     */
-    private $entityManager;
-
-    /**
      * @var ApplicationStateService
      */
     private $applicationStateService;
 
     /**
+     * @var JobRepository
+     */
+    private $jobRepository;
+
+    /**
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
      * @param StateService $stateService
-     * @param EntityManager $entityManager
      * @param ApplicationStateService $applicationStateService
+     * @param JobRepository $jobRepository
      * @param string|null $name
      */
     public function __construct(
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
         StateService $stateService,
-        EntityManager $entityManager,
         ApplicationStateService $applicationStateService,
+        JobRepository $jobRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -64,8 +62,8 @@ class EnqueuePrepareAllCommand extends Command
         $this->resqueQueueService = $resqueQueueService;
         $this->resqueJobFactory = $resqueJobFactory;
         $this->stateService = $stateService;
-        $this->entityManager = $entityManager;
         $this->applicationStateService = $applicationStateService;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -88,11 +86,9 @@ class EnqueuePrepareAllCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        /* @var JobRepository $jobRepository */
-        $jobRepository = $this->entityManager->getRepository(Job::class);
         $jobStartingState = $this->stateService->fetch(JobService::STARTING_STATE);
 
-        $jobIds = $jobRepository->getIdsByState($jobStartingState);
+        $jobIds = $this->jobRepository->getIdsByState($jobStartingState);
         $output->writeln(count($jobIds).' new jobs to prepare');
 
         foreach ($jobIds as $jobId) {

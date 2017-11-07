@@ -3,7 +3,9 @@
 namespace SimplyTestable\ApiBundle\Command\Migrate;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
+use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,19 +27,27 @@ class AddHashToHashlessOutputCommand extends Command
     private $entityManager;
 
     /**
+     * @var TaskOutputRepository
+     */
+    private $taskOutputRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
+     * @param TaskOutputRepository $taskOutputRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
+        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
+        $this->taskOutputRepository = $taskOutputRepository;
     }
 
     /**
@@ -68,8 +78,7 @@ class AddHashToHashlessOutputCommand extends Command
 
         $output->writeln('Finding hashless output ...');
 
-        $taskOutputRepository = $this->entityManager->getRepository(Output::class);
-        $hashlessOutputIds = $taskOutputRepository->findHashlessOutputIds($this->getLimit($input));
+        $hashlessOutputIds = $this->taskOutputRepository->findHashlessOutputIds($this->getLimit($input));
         $hashlessOutputCount = count($hashlessOutputIds);
 
         if (empty($hashlessOutputIds)) {
@@ -84,7 +93,7 @@ class AddHashToHashlessOutputCommand extends Command
 
         foreach ($hashlessOutputIds as $hashlessOutputId) {
             /* @var Output $taskOutput */
-            $taskOutput = $taskOutputRepository->find($hashlessOutputId);
+            $taskOutput = $this->taskOutputRepository->find($hashlessOutputId);
 
             $processedTaskOutputCount++;
             $remainingTaskCount = $hashlessOutputCount - $processedTaskOutputCount;

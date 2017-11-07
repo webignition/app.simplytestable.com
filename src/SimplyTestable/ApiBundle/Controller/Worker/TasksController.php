@@ -2,8 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Worker;
 
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,8 +26,11 @@ class TasksController extends Controller
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $taskQueueService = $this->container->get('simplytestable.services.task.queueservice');
 
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $this->container->get('simplytestable.repository.task');
+        $workerRepository = $this->container->get('simplytestable.repository.worker');
+
         $workerHostname = $request->request->get('worker_hostname');
-        $workerRepository = $entityManager->getRepository(Worker::class);
 
         $worker = $workerRepository->findOneBy([
             'hostname' => $workerHostname,
@@ -75,8 +78,6 @@ class TasksController extends Controller
         if (empty($taskIds)) {
             return new Response();
         }
-
-        $taskRepository = $entityManager->getRepository(Task::class);
 
         $tasks = $taskRepository->findBy([
             'id' => $taskIds,

@@ -28,8 +28,7 @@ class UserCreationController extends Controller
         $userPostActivationPropertiesService = $this->container->get(
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanRepository = $entityManager->getRepository(Plan::class);
+        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -107,6 +106,9 @@ class UserCreationController extends Controller
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
+        $userPostActivationPropertiesRepository = $this->container->get(
+            'simplytestable.repository.userpostactivationproperties'
+        );
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -124,7 +126,6 @@ class UserCreationController extends Controller
 
         $userManipulator->activate($user->getUsername());
 
-        $userPostActivationPropertiesRepository = $entityManager->getRepository(UserPostActivationProperties::class);
         $postActivationProperties = $userPostActivationPropertiesRepository->findOneBy([
             'user' => $user,
         ]);

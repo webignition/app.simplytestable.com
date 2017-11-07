@@ -34,6 +34,8 @@ class RejectionReasonTest extends AbstractBaseTestCase
 
     public function testUtf8Reason()
     {
+        $rejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
+
         $reason = 'ɸ';
         $job = $this->jobFactory->create();
 
@@ -47,8 +49,6 @@ class RejectionReasonTest extends AbstractBaseTestCase
         $rejectionReasonId = $rejectionReason->getId();
 
         $this->entityManager->clear();
-
-        $rejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
 
         $this->assertEquals(
             $reason,

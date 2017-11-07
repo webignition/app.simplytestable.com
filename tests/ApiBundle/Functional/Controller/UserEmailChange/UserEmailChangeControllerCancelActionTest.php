@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\Controller\UserEmailChange;
 
-use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use Tests\ApiBundle\Factory\UserFactory;
 
 class UserEmailChangeControllerCancelActionTest extends AbstractUserEmailChangeControllerTest
@@ -42,8 +41,7 @@ class UserEmailChangeControllerCancelActionTest extends AbstractUserEmailChangeC
 
     public function testCancelActionSuccess()
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $emailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
+        $emailChangeRequestRepository = $this->container->get('simplytestable.repository.useremailchangerequest');
 
         $this->createEmailChangeRequest($this->user, 'new-email@example.com');
 

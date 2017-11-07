@@ -25,7 +25,7 @@ class ClassTest extends AbstractBaseTestCase
 
         $entityManager->clear();
 
-        $taskTypeClassRepository = $entityManager->getRepository(TaskTypeClass::class);
+        $taskTypeClassRepository = $this->container->get('simplytestable.repository.tasktypeclass');
 
         $retrievedTaskType = $taskTypeClassRepository->find($taskTypeClassId);
 

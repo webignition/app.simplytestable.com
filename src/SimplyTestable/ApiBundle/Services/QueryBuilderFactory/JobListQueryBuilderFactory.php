@@ -1,9 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\QueryBuilderFactory;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
-use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\State;
@@ -25,12 +23,12 @@ class JobListQueryBuilderFactory
 
     /**
      * @param TeamService $teamService
-     * @param EntityManager $entityManager
+     * @param JobRepository $jobRepository
      */
-    public function __construct(TeamService $teamService, EntityManager $entityManager)
+    public function __construct(TeamService $teamService, JobRepository $jobRepository)
     {
         $this->teamService = $teamService;
-        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->jobRepository = $jobRepository;
     }
 
     /**

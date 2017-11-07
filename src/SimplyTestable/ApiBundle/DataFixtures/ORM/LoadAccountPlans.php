@@ -7,9 +7,11 @@ use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterface
-{    
+class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+{
     private $planDetails = array(
         array(
             'names' => array(
@@ -49,7 +51,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
                     'name' => 'credits_per_month',
                     'limit' => 500
                 )
-            )            
+            )
         ),
         array(
             'names' => array(
@@ -93,7 +95,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             'names' => array(
                 'business-59',
                 'business'
-            ),            
+            ),
             'stripeId' => 'business-59',
             'visible' => true,
             'isPremium' => true,
@@ -112,7 +114,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             'names' => array(
                 'enterprise-299',
                 'enterprise'
-            ),            
+            ),
             'name' => 'enterprise',
             'stripeId' => 'enterprise-299',
             'isPremium' => true,
@@ -144,86 +146,98 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
             )
         ),
     );
-    
-    
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     /**
      *
-     * @var \Doctrine\ORM\EntityRepository 
+     * @var \Doctrine\ORM\EntityRepository
      */
     private $planRepository = null;
-    
+
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $this->planRepository = $manager->getRepository('SimplyTestable\ApiBundle\Entity\Account\Plan\Plan');        
-        
+        $this->planRepository = $this->container->get('simplytestable.repository.accountplan');
+
         foreach ($this->planDetails as $planDetails) {
             $plan = $this->findPlanByNameHistory($planDetails['names']);
-            
+
             if (is_null($plan)) {
                 $plan = new Plan();
             }
-            
+
             $planNames = $planDetails['names'];
             $plan->setName($planNames[count($planNames) - 1]);
-            
+
             if (isset($planDetails['visible']) && $planDetails['visible'] === true) {
                 $plan->setIsVisible(true);
             }
-            
+
             if (isset($planDetails['isPremium']) && $planDetails['isPremium'] === true) {
                 $plan->setIsPremium(true);
-            }            
-            
+            }
+
             if (isset($planDetails['stripeId'])) {
                 $plan->setStripeId($planDetails['stripeId']);
-            }              
-            
-            if (isset($planDetails['constraints'])) {                
-                foreach ($planDetails['constraints'] as $constraintDetails) {                    
+            }
+
+            if (isset($planDetails['constraints'])) {
+                foreach ($planDetails['constraints'] as $constraintDetails) {
                     $constraint = $this->getConstraintFromPlanByName($plan, $constraintDetails['name']);
                     $isNewConstraint = false;
-                    
+
                     if (is_null($constraint)) {
                         $constraint = new Constraint();
                         $isNewConstraint = true;
                     }
-                    
+
                     $constraint->setName($constraintDetails['name']);
-                    
+
                     if (isset($constraintDetails['limit'])) {
                         $constraint->setLimit($constraintDetails['limit']);
                     }
-                    
+
                     if (isset($constraintDetails['available'])) {
                         $constraint->setIsAvailable($constraintDetails['available']);
-                    } 
-                    
+                    }
+
                     if ($isNewConstraint) {
                         $plan->addConstraint($constraint);
-                    }                    
+                    }
                 }
             }
-            
+
             $manager->persist($plan);
-            $manager->flush();              
+            $manager->flush();
         }
     }
-    
+
     private function findPlanByNameHistory($names) {
         foreach ($names as $name) {
             $plan = $this->planRepository->findOneByName($name);
             if (!is_null($plan)) {
                 return $plan;
             }
-        }      
+        }
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
      * @param string $constraintName
      * @return Constraint
