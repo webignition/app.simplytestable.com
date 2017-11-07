@@ -1,6 +1,8 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -34,14 +36,14 @@ class JobUserAccountPlanEnforcementService
     private $teamService;
 
     /**
-     * @var JobTypeService
-     */
-    private $jobTypeService;
-
-    /**
      * @var StateService
      */
     private $stateService;
+
+    /**
+     * @var EntityRepository
+     */
+    private $jobTypeRepository;
 
     /**
      * @var JobRepository
@@ -52,8 +54,8 @@ class JobUserAccountPlanEnforcementService
      * @param UserAccountPlanService $userAccountPlanService
      * @param TaskService $taskService
      * @param TeamService $teamService
-     * @param JobTypeService $jobTypeService
      * @param StateService $stateService
+     * @param EntityRepository $jobTypeRepository
      * @param JobRepository $jobRepository
      */
     public function __construct(
@@ -62,7 +64,9 @@ class JobUserAccountPlanEnforcementService
         TeamService $teamService,
         JobTypeService $jobTypeService,
         StateService $stateService,
-        JobRepository $jobRepository
+        JobRepository $jobRepository,
+        StateService $stateService,
+        EntityRepository $jobTypeRepository
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
 
@@ -71,6 +75,7 @@ class JobUserAccountPlanEnforcementService
         $this->jobTypeService = $jobTypeService;
         $this->stateService = $stateService;
         $this->jobRepository = $jobRepository;
+        $this->jobTypeRepository = $jobTypeRepository;
     }
 
     /**

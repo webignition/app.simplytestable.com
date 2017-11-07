@@ -143,6 +143,7 @@ services:
         jobTypeService: '@simplytestable.services.jobtypeservice'
         stateService: '@simplytestable.services.stateservice'
         jobRepository: '@simplytestable.repository.job'
+        jobTypeRepository: '@simplytestable.repository.jobtype'
 
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
