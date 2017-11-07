@@ -22,6 +22,11 @@ class StateService
     private $stateRepository;
 
     /**
+     * @var State[]
+     */
+    private $states = [];
+
+    /**
      * @param EntityManager $entityManager
      */
     public function __construct(EntityManager $entityManager)
@@ -29,11 +34,6 @@ class StateService
         $this->entityManager = $entityManager;
         $this->stateRepository = $entityManager->getRepository(State::class);
     }
-
-    /**
-     * @var State[]
-     */
-    private $states = [];
 
     /**
      * @param string $name
