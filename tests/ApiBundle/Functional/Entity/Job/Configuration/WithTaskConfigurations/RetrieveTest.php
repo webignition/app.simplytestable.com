@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Entity\Job\Configuration\WithTaskConfigurat
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class RetrieveTest extends AbstractBaseTestCase
@@ -50,7 +51,7 @@ class RetrieveTest extends AbstractBaseTestCase
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setJobConfiguration($this->originalConfiguration);
         $taskConfiguration->setType(
-            $taskTypeService->get('HTML validation')
+            $taskTypeService->get(TaskTypeService::HTML_VALIDATION_TYPE)
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'

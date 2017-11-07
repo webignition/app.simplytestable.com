@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Entity\Job;
 
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
@@ -18,7 +19,7 @@ class TaskTypeOptionsTest extends AbstractBaseTestCase
 
         $job = $jobFactory->create();
 
-        $taskType = $taskTypeService->get('HTML Validation');
+        $taskType = $taskTypeService->get(TaskTypeService::HTML_VALIDATION_TYPE);
 
         $optionsValue = 'ɸ';
 

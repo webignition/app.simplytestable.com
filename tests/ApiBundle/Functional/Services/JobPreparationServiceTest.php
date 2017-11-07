@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\SitemapFixtureFactory;
@@ -44,7 +45,7 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
 
         $this->jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $cssValidationTaskType = $taskTypeService->get('css validation');
+        $cssValidationTaskType = $taskTypeService->get(TaskTypeService::CSS_VALIDATION_TYPE);
 
         $this->jobPreparationService->setPredefinedDomainsToIgnore($cssValidationTaskType, [
             'predefined',

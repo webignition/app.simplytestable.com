@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Entity\Job\TaskConfiguration;
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 
 class PersistTest extends TaskConfigurationTest
 {
@@ -38,7 +39,7 @@ class PersistTest extends TaskConfigurationTest
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setJobConfiguration($jobConfiguration);
         $taskConfiguration->setType(
-            $taskTypeService->get('HTML validation')
+            $taskTypeService->get(TaskTypeService::HTML_VALIDATION_TYPE)
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'
