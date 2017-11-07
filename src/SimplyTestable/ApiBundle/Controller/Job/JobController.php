@@ -143,7 +143,7 @@ class JobController extends Controller
     {
         $userService = $this->get('simplytestable.services.userservice');
         $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
-        $jobService = $this->get('simplytestable.services.jobservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($userService->isPublicUser($this->getUser())) {
             return $this->createRedirectToJobStatus($siteRootUrl, $testId);
@@ -166,7 +166,9 @@ class JobController extends Controller
 
         if ($job->getIsPublic() !== $isPublic) {
             $job->setIsPublic(filter_var($isPublic, FILTER_VALIDATE_BOOLEAN));
-            $jobService->persistAndFlush($job);
+
+            $entityManager->persist($job);
+            $entityManager->flush();
         }
 
         return $this->createRedirectToJobStatus($siteRootUrl, $testId);

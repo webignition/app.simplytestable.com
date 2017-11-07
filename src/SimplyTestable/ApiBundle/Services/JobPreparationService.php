@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -71,6 +72,11 @@ class JobPreparationService
     private $userAccountPlanService;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * @param JobService $jobService
      * @param TaskService $taskService
      * @param JobTypeService $jobTypeService
@@ -80,6 +86,7 @@ class JobPreparationService
      * @param UrlFinder $urlFinder
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         JobService $jobService,
@@ -90,7 +97,8 @@ class JobPreparationService
         UserService $userService,
         UrlFinder $urlFinder,
         StateService $stateService,
-        UserAccountPlanService $userAccountPlanService
+        UserAccountPlanService $userAccountPlanService,
+        EntityManagerInterface $entityManager
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
@@ -101,6 +109,7 @@ class JobPreparationService
         $this->urlFinder = $urlFinder;
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -130,7 +139,9 @@ class JobPreparationService
 
         $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
         $job->setState($jobPreparingState);
-        $this->jobService->persistAndFlush($job);
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->processedUrls = array();
 
@@ -156,7 +167,8 @@ class JobPreparationService
                 }
             }
 
-            $this->jobService->persistAndFlush($job);
+            $this->entityManager->persist($job);
+            $this->entityManager->flush();
         } else {
             if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached(count($urls))) {
                 $this->jobService->addAmmendment(
@@ -177,7 +189,8 @@ class JobPreparationService
             $timePeriod->setStartDateTime(new \DateTime());
             $job->setTimePeriod($timePeriod);
 
-            $this->jobService->persistAndFlush($job);
+            $this->entityManager->persist($job);
+            $this->entityManager->flush();
         }
     }
 
@@ -202,7 +215,9 @@ class JobPreparationService
         $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
 
         $job->setState($jobPreparingState);
-        $this->jobService->persistAndFlush($job);
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $urls = $this->crawlJobContainerService->getDiscoveredUrls($crawlJobContainer, true);
 
@@ -229,7 +244,8 @@ class JobPreparationService
         $timePeriod->setStartDateTime(new \DateTime());
         $job->setTimePeriod($timePeriod);
 
-        $this->jobService->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         return self::RETURN_CODE_OK;
     }

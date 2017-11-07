@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
@@ -64,6 +65,11 @@ class StartService
     private $jobRepository;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param JobTypeService $jobTypeService
      * @param JobService $jobService
@@ -73,6 +79,7 @@ class StartService
      * @param UserAccountPlanService $userAccountPlanService
      * @param ResqueJobFactory $resqueJobFactory
      * @param JobRepository $jobRepository
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
@@ -83,7 +90,8 @@ class StartService
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
         ResqueJobFactory $resqueJobFactory,
-        JobRepository $jobRepository
+        JobRepository $jobRepository,
+        EntityManagerInterface $entityManager
     ) {
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->jobTypeService = $jobTypeService;
@@ -94,6 +102,7 @@ class StartService
         $this->userAccountPlanService = $userAccountPlanService;
         $this->resqueJobFactory = $resqueJobFactory;
         $this->jobRepository = $jobRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -172,7 +181,9 @@ class StartService
 
         if ($this->userService->isPublicUser($jobConfiguration->getUser())) {
             $job->setIsPublic(true);
-            $this->jobService->persistAndFlush($job);
+
+            $this->entityManager->persist($job);
+            $this->entityManager->flush();
         }
 
         $this->resqueQueueService->enqueue(

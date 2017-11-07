@@ -155,6 +155,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = [
             JobService::STARTING_STATE,
@@ -176,8 +177,6 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
                 UserFactory::KEY_EMAIL => $email,
             ]);
         }
-
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
 
@@ -202,8 +201,11 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
                 $crawlJobContainer->setCrawlJob($crawlJob);
                 $crawlJobContainer->setParentJob($parentJob);
 
-                $jobService->persistAndFlush($crawlJob);
-                $jobService->persistAndFlush($parentJob);
+                $entityManager->persist($parentJob);
+                $entityManager->flush();
+
+                $entityManager->persist($crawlJob);
+                $entityManager->flush();
 
                 $entityManager->persist($crawlJobContainer);
                 $entityManager->flush();

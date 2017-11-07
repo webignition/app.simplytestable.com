@@ -55,7 +55,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $user = $users[$userName];
 
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobFactory = new JobFactory($this->container);
 
@@ -64,7 +64,9 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
             $job = $jobFactory->create($jobValues);
 
             $job->setTimePeriod($this->createTimePeriod());
-            $jobService->persistAndFlush($job);
+
+            $entityManager->persist($job);
+            $entityManager->flush();
         }
 
         $website = $websiteService->fetch($websiteUrl);

@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Guzzle\Http\Exception\CurlException;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
@@ -39,24 +40,32 @@ class WebsiteResolutionService
     private $stateService;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * @param JobService $jobService
      * @param HttpClientService $httpClientService
      * @param WebSiteService $websiteService
      * @param UrlResolver $urlResolver
      * @param StateService $stateService
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         JobService $jobService,
         HttpClientService $httpClientService,
         WebSiteService $websiteService,
         UrlResolver $urlResolver,
-        StateService $stateService
+        StateService $stateService,
+        EntityManagerInterface $entityManager
     ) {
         $this->jobService = $jobService;
         $this->httpClientService = $httpClientService;
         $this->websiteService = $websiteService;
         $this->urlResolver = $urlResolver;
         $this->stateService = $stateService;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -78,7 +87,9 @@ class WebsiteResolutionService
         $jobResolvedState = $this->stateService->fetch(JobService::RESOLVED_STATE);
 
         $job->setState($jobResolvingState);
-        $this->jobService->persistAndFlush($job);
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->urlResolver->configureForJob($job);
 
@@ -98,7 +109,8 @@ class WebsiteResolutionService
             $this->jobService->reject($job, 'curl-' . $curlException->getErrorNo());
         }
 
-        $this->jobService->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
     }
 
     /**

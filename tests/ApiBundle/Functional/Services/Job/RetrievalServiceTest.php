@@ -132,7 +132,7 @@ class RetrievalServiceTest extends AbstractBaseTestCase
         $owner = $users[$owner];
         $requester = $users[$requester];
 
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $owner,
@@ -140,7 +140,9 @@ class RetrievalServiceTest extends AbstractBaseTestCase
 
         if ($callSetPublic) {
             $job->setIsPublic(true);
-            $jobService->persistAndFlush($job);
+
+            $entityManager->persist($job);
+            $entityManager->flush();
         }
 
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');

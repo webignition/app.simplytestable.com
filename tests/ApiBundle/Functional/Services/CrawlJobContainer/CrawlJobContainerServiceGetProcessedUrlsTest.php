@@ -22,6 +22,8 @@ class CrawlJobContainerServiceGetProcessedUrlsTest extends AbstractCrawlJobConta
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
 
         $user = $this->userFactory->create();
         $this->setUser($user);
@@ -37,7 +39,9 @@ class CrawlJobContainerServiceGetProcessedUrlsTest extends AbstractCrawlJobConta
 
         $crawlJob = $crawlJobContainer->getCrawlJob();
         $crawlJob->setState($stateService->fetch(JobService::IN_PROGRESS_STATE));
-        $jobService->persistAndFlush($crawlJob);
+
+        $entityManager->persist($crawlJob);
+        $entityManager->flush();
 
         $crawlJobTasks = $crawlJob->getTasks();
 

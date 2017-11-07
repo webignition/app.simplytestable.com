@@ -25,6 +25,7 @@ services:
         websiteService: "@simplytestable.services.websiteservice"
         urlResolver: '@simplytestable.services.urlresolver'
         stateService: '@simplytestable.services.stateservice'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService
@@ -155,6 +156,7 @@ services:
         urlFinder: '@simplytestable.services.urlfinder'
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
@@ -357,6 +359,7 @@ services:
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         resqueJobFactory: '@simplytestable.services.resque.jobfactory'
         jobRepository: '@simplytestable.repository.job'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.scheduledjob.cronmodifier.validationservice:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService

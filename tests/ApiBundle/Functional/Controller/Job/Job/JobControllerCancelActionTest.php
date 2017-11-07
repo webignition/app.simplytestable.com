@@ -101,7 +101,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
     public function testCancelCrawlJob()
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
         $jobCancelledState = $stateService->fetch(JobService::CANCELLED_STATE);
@@ -120,7 +120,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         ]);
 
         $parentJob->setState($jobFailedNoSitemapState);
-        $jobService->persistAndFlush($parentJob);
+
+        $entityManager->persist($parentJob);
+        $entityManager->flush();
 
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $crawlJobContainer = $crawlJobContainerService->getForJob($parentJob);
@@ -168,8 +170,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
     public function testCancelParentOfCrawlJob()
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
         $jobCancelledState = $stateService->fetch(JobService::CANCELLED_STATE);
@@ -187,7 +188,9 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         ]);
 
         $parentJob->setState($jobFailedNoSitemapState);
-        $jobService->persistAndFlush($parentJob);
+
+        $entityManager->persist($parentJob);
+        $entityManager->flush();
 
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $crawlJobContainer = $crawlJobContainerService->getForJob($parentJob);

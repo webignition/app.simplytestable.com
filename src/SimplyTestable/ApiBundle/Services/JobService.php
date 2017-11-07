@@ -156,6 +156,7 @@ class JobService
 
     /**
      * @param Job $job
+     *
      * @return Job
      */
     public function cancel(Job $job)
@@ -186,7 +187,11 @@ class JobService
         $cancelledState = $this->stateService->fetch(self::CANCELLED_STATE);
 
         $job->setState($cancelledState);
-        return $this->persistAndFlush($job);
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
+
+        return $job;
     }
 
     /**
@@ -232,7 +237,10 @@ class JobService
 
         $this->entityManager->persist($rejectionReason);
 
-        return $this->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
+
+        return $job;
     }
 
     /**
@@ -246,18 +254,6 @@ class JobService
             $job->getState()->getName(),
             $this->finishedStates
         );
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return Job
-     */
-    public function persistAndFlush(Job $job)
-    {
-        $this->entityManager->persist($job);
-        $this->entityManager->flush();
-        return $job;
     }
 
     /**
@@ -295,7 +291,10 @@ class JobService
         $job->getTimePeriod()->setEndDateTime(new \DateTime());
         $job->setState($completedState);
 
-        return $this->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
+
+        return $job;
     }
 
     /**

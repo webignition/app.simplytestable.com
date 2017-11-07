@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
@@ -30,6 +31,11 @@ class JobServiceTest extends AbstractBaseTestCase
     private $jobFactory;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -37,6 +43,7 @@ class JobServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->jobService = $this->container->get('simplytestable.services.jobservice');
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
         $this->jobFactory = new JobFactory($this->container);
     }
 
@@ -306,7 +313,9 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->create();
         $job->setState($state);
-        $this->jobService->persistAndFlush($job);
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->assertEquals($expectedIsFinished, $this->jobService->isFinished($job));
         $this->assertEquals($expectedIsNew, JobService::STARTING_STATE == $job->getState());
@@ -394,7 +403,8 @@ class JobServiceTest extends AbstractBaseTestCase
         $job = $this->jobFactory->create();
         $job->setState($stateService->fetch($stateName));
 
-        $this->jobService->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->jobService->cancel($job);
 
@@ -634,7 +644,8 @@ class JobServiceTest extends AbstractBaseTestCase
         $state = $stateService->fetch($stateName);
         $job->setState($state);
 
-        $this->jobService->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->jobService->complete($job);
 
@@ -774,7 +785,9 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->create();
         $job->setState($stateService->fetch($stateName));
-        $this->jobService->persistAndFlush($job);
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->jobService->reject($job, '');
 
@@ -1123,8 +1136,8 @@ class JobServiceTest extends AbstractBaseTestCase
             if ($callSetPublic) {
                 $job->setIsPublic(true);
 
-                $jobService = $this->container->get('simplytestable.services.jobservice');
-                $jobService->persistAndFlush($job);
+                $this->entityManager->persist($job);
+                $this->entityManager->flush();
             }
         }
 
