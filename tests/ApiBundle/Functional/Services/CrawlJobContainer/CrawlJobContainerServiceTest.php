@@ -47,8 +47,8 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
     public function testGetAllActiveForUser()
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = [
             JobService::STARTING_STATE,
@@ -108,10 +108,14 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
                 $crawlJobContainer->setCrawlJob($crawlJob);
                 $crawlJobContainer->setParentJob($parentJob);
 
-                $jobService->persistAndFlush($crawlJob);
-                $jobService->persistAndFlush($parentJob);
+                $entityManager->persist($crawlJob);
+                $entityManager->flush();
 
-                $this->crawlJobContainerService->persistAndFlush($crawlJobContainer);
+                $entityManager->persist($parentJob);
+                $entityManager->flush();
+
+                $entityManager->persist($crawlJobContainer);
+                $entityManager->flush();
 
                 if (in_array($jobStateName, $incompleteStateNames)) {
                     $expectedCrawlJobContainerIds[$user->getEmail()][] = $crawlJobContainer->getId();

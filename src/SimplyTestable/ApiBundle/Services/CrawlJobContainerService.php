@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -10,7 +10,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use webignition\NormalisedUrl\NormalisedUrl;
 
-class CrawlJobContainerService extends EntityService
+class CrawlJobContainerService
 {
     /**
      * @var TaskService
@@ -48,7 +48,17 @@ class CrawlJobContainerService extends EntityService
     private $userAccountPlanService;
 
     /**
-     * @param EntityManager $entityManager
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var CrawlJobContainerRepository
+     */
+    private $entityRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
      * @param TaskService $taskService
      * @param TaskTypeService $taskTypeService
      * @param JobTypeService $jobTypeService
@@ -58,7 +68,7 @@ class CrawlJobContainerService extends EntityService
      * @param UserAccountPlanService $userAccountPlanService
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         TaskService $taskService,
         TaskTypeService $taskTypeService,
         JobTypeService $jobTypeService,
@@ -67,7 +77,7 @@ class CrawlJobContainerService extends EntityService
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService
     ) {
-        parent::__construct($entityManager);
+        $this->entityManager = $entityManager;
         $this->taskService = $taskService;
         $this->taskTypeService = $taskTypeService;
         $this->jobTypeService = $jobTypeService;
@@ -75,14 +85,8 @@ class CrawlJobContainerService extends EntityService
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
-    }
 
-    /**
-     * @return string
-     */
-    protected function getEntityName()
-    {
-        return CrawlJobContainer::class;
+        $this->entityRepository = $entityManager->getRepository(CrawlJobContainer::class);
     }
 
     /**
@@ -92,10 +96,7 @@ class CrawlJobContainerService extends EntityService
      */
     public function hasForJob(Job $job)
     {
-        /* @var CrawlJobContainerRepository $entityRepository */
-        $entityRepository = $this->getManager()->getRepository($this->getEntityName());
-
-        return $entityRepository->hasForJob($job);
+        return $this->entityRepository->hasForJob($job);
     }
 
     /**
@@ -109,10 +110,7 @@ class CrawlJobContainerService extends EntityService
             return $this->create($job);
         }
 
-        /* @var CrawlJobContainerRepository $entityRepository */
-        $entityRepository = $this->getManager()->getRepository($this->getEntityName());
-
-        return $entityRepository->getForJob($job);
+        return $this->entityRepository->getForJob($job);
     }
 
     /**
@@ -151,9 +149,9 @@ class CrawlJobContainerService extends EntityService
         $timePeriod->setStartDateTime(new \DateTime());
         $crawlJob->setTimePeriod($timePeriod);
 
-        $this->getManager()->persist($task);
-        $this->getManager()->persist($crawlJob);
-        $this->getManager()->flush();
+        $this->entityManager->persist($task);
+        $this->entityManager->persist($crawlJob);
+        $this->entityManager->flush();
 
         return true;
     }
@@ -229,11 +227,8 @@ class CrawlJobContainerService extends EntityService
             return false;
         }
 
-        /* @var CrawlJobContainerRepository $entityRepository */
-        $entityRepository = $this->getManager()->getRepository($this->getEntityName());
-
         /* @var $crawlJobContainer CrawlJobContainer */
-        $crawlJobContainer = $entityRepository->getForJob($task->getJob());
+        $crawlJobContainer = $this->entityRepository->getForJob($task->getJob());
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
         $this->jobUserAccountPlanEnforcementService->setUser($crawlJob->getUser());
@@ -269,15 +264,15 @@ class CrawlJobContainerService extends EntityService
         foreach ($taskDiscoveredUrlSet as $url) {
             if (!$this->isTaskUrl($task->getJob(), $url)) {
                 $task = $this->createUrlDiscoveryTask($crawlJobContainer, $url);
-                $this->getManager()->persist($task);
+                $this->entityManager->persist($task);
                 $crawlJob->addTask($task);
                 $isFlushRequired = true;
             }
         }
 
         if ($isFlushRequired) {
-            $this->getManager()->persist($crawlJob);
-            $this->getManager()->flush();
+            $this->entityManager->persist($crawlJob);
+            $this->entityManager->flush();
         }
 
         return true;
@@ -413,24 +408,14 @@ class CrawlJobContainerService extends EntityService
         $crawlJob->setWebsite($job->getWebsite());
         $crawlJob->setParameters($job->getParameters());
 
-        $this->getManager()->persist($crawlJob);
+        $this->entityManager->persist($crawlJob);
 
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setParentJob($job);
         $crawlJobContainer->setCrawlJob($crawlJob);
 
-        return $this->persistAndFlush($crawlJobContainer);
-    }
-
-    /**
-     * @param CrawlJobContainer $crawlJobContainer
-     *
-     * @return CrawlJobContainer
-     */
-    public function persistAndFlush(CrawlJobContainer $crawlJobContainer)
-    {
-        $this->getManager()->persist($crawlJobContainer);
-        $this->getManager()->flush();
+        $this->entityManager->persist($crawlJobContainer);
+        $this->entityManager->flush();
 
         return $crawlJobContainer;
     }
@@ -442,10 +427,7 @@ class CrawlJobContainerService extends EntityService
      */
     public function getAllActiveForUser(User $user)
     {
-        /* @var CrawlJobContainerRepository $entityRepository */
-        $entityRepository = $this->getManager()->getRepository($this->getEntityName());
-
-        return $entityRepository->getAllForUserByCrawlJobStates(
+        return $this->entityRepository->getAllForUserByCrawlJobStates(
             $user,
             $this->stateService->fetchCollection($this->jobService->getIncompleteStateNames())
         );
