@@ -169,7 +169,7 @@ class CollectionCommand extends Command
         }
 
         $activeWorkers = $this->workerRepository->findBy([
-            'state' => $this->stateService->fetch(Worker::STATE_ACTIVE),
+            'state' => $this->stateService->get(Worker::STATE_ACTIVE),
         ]);
 
         $workers = [];
@@ -193,7 +193,7 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_FAILED_NO_WORKERS;
         }
 
-        $jobInProgressState = $this->stateService->fetch(JobService::IN_PROGRESS_STATE);
+        $jobInProgressState = $this->stateService->get(JobService::IN_PROGRESS_STATE);
 
         $response = $this->workerTaskAssignmentService->assignCollection($tasks, $workers);
         if ($response === 0) {

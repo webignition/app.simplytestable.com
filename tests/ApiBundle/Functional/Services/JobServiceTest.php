@@ -109,7 +109,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $this->assertInstanceOf(Job::class, $job);
 
-        $jobStartingState = $stateService->fetch(JobService::STARTING_STATE);
+        $jobStartingState = $stateService->get(JobService::STARTING_STATE);
 
         $this->assertEquals($expectedUserEmail, $job->getUser()->getEmail());
         $this->assertEquals($expectedWebsiteUrl, $job->getWebsite()->getCanonicalUrl());
@@ -310,7 +310,7 @@ class JobServiceTest extends AbstractBaseTestCase
     public function testIsState($stateName, $expectedIsFinished, $expectedIsNew, $expectedIsPreparing)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $state = $stateService->fetch($stateName);
+        $state = $stateService->get($stateName);
 
         $job = $this->jobFactory->create();
         $job->setState($state);
@@ -402,7 +402,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
         $job = $this->jobFactory->create();
-        $job->setState($stateService->fetch($stateName));
+        $job->setState($stateService->get($stateName));
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();
@@ -453,7 +453,7 @@ class JobServiceTest extends AbstractBaseTestCase
             /* @var Task $task */
             $task = $tasks->first();
 
-            $task->setState($stateService->fetch(TaskService::IN_PROGRESS_STATE));
+            $task->setState($stateService->get(TaskService::IN_PROGRESS_STATE));
             $taskService->persistAndFlush($task);
         }
 
@@ -604,7 +604,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         foreach ($finishedTaskStates as $stateIndex => $stateName) {
             $task = $tasksToRemainUnchanged[$stateIndex];
-            $state = $stateService->fetch($stateName);
+            $state = $stateService->get($stateName);
 
             $task->setState($state);
             $taskService->persistAndFlush($task);
@@ -612,7 +612,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         foreach ($incompleteTaskStates as $stateIndex => $stateName) {
             $task = $tasksToChange[$stateIndex];
-            $state = $stateService->fetch($stateName);
+            $state = $stateService->get($stateName);
 
             $task->setState($state);
             $taskService->persistAndFlush($task);
@@ -642,7 +642,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->create();
 
-        $state = $stateService->fetch($stateName);
+        $state = $stateService->get($stateName);
         $job->setState($state);
 
         $this->entityManager->persist($job);
@@ -692,7 +692,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
         $this->assertNull($job->getTimePeriod()->getEndDateTime());
 
-        $this->jobFactory->setTaskStates($job, $stateService->fetch(TaskService::COMPLETED_STATE));
+        $this->jobFactory->setTaskStates($job, $stateService->get(TaskService::COMPLETED_STATE));
 
         $this->jobService->complete($job);
 
@@ -753,12 +753,12 @@ class JobServiceTest extends AbstractBaseTestCase
                 );
             }
 
-            $job->setState($stateService->fetch($stateName));
+            $job->setState($stateService->get($stateName));
 
             $jobs[$stateName] = $job;
         }
 
-        $taskCompletedState = $stateService->fetch(TaskService::COMPLETED_STATE);
+        $taskCompletedState = $stateService->get(TaskService::COMPLETED_STATE);
 
         foreach ($completedTasksStates as $stateName) {
             $job = $jobs[$stateName];
@@ -785,7 +785,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $jobRejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
 
         $job = $this->jobFactory->create();
-        $job->setState($stateService->fetch($stateName));
+        $job->setState($stateService->get($stateName));
 
         $this->entityManager->persist($job);
         $this->entityManager->flush();

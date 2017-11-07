@@ -84,7 +84,7 @@ class TasksController extends Controller
         ]);
 
         foreach ($tasks as $task) {
-            $task->setState($stateService->fetch(TaskService::QUEUED_FOR_ASSIGNMENT_STATE));
+            $task->setState($stateService->get(TaskService::QUEUED_FOR_ASSIGNMENT_STATE));
             $entityManager->persist($task);
             $entityManager->flush($task);
         }

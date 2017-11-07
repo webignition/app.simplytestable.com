@@ -57,8 +57,8 @@ class JobRepositoryTest extends AbstractBaseTestCase
 
         $expectedJobIds = $this->createExpectedJobIdsFromExpectedJobIndices($jobs, $expectedJobIndices);
 
-        $jobStates = $stateService->fetchCollection($jobStateNames);
-        $taskStates = $stateService->fetchCollection($taskStateNames);
+        $jobStates = $stateService->getCollection($jobStateNames);
+        $taskStates = $stateService->getCollection($taskStateNames);
 
         $retrievedJobs = $this->jobRepository->getByStatesAndTaskStates($jobStates, $taskStates);
 
@@ -131,7 +131,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
     public function testGetIdsByState($jobValuesCollection, $stateName, $expectedJobIndices)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $state = $stateService->fetch($stateName);
+        $state = $stateService->get($stateName);
 
         $jobs = $this->createJobs($jobValuesCollection);
 
@@ -183,7 +183,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
     public function testGetCountByState($jobValuesCollection, $stateName, $expectedCount)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $state = $stateService->fetch($stateName);
+        $state = $stateService->get($stateName);
 
         $this->createJobs($jobValuesCollection);
 
@@ -582,7 +582,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $taskStateCount = count($taskStateNames);
 
         foreach ($tasks as $taskIndex => $task) {
-            $taskState = $stateService->fetch($taskStateNames[$taskIndex % $taskStateCount]);
+            $taskState = $stateService->get($taskStateNames[$taskIndex % $taskStateCount]);
             $task->setState($taskState);
             $entityManager->persist($task);
         }

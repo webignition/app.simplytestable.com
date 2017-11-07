@@ -72,7 +72,7 @@ class TaskNotificationService
     {
         /* @var Worker[] $workers */
         $workers = $this->workerRepository->findBy([
-            'state' => $this->stateService->fetch(Worker::STATE_ACTIVE),
+            'state' => $this->stateService->get(Worker::STATE_ACTIVE),
         ]);
 
         foreach ($workers as $worker) {

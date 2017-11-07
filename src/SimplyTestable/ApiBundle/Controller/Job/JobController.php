@@ -279,7 +279,7 @@ class JobController extends Controller
             );
         }
 
-        $taskAwaitingCancellationState = $stateService->fetch(TaskService::AWAITING_CANCELLATION_STATE);
+        $taskAwaitingCancellationState = $stateService->get(TaskService::AWAITING_CANCELLATION_STATE);
 
         /* @var Task[] $tasksAwaitingCancellation */
         $tasksAwaitingCancellation = $taskRepository->findBy([

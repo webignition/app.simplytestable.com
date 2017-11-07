@@ -192,7 +192,7 @@ class WorkerControllerTest extends AbstractBaseTestCase
 
         if (!empty($existingActivationRequestStateName)) {
             $activationRequest = new WorkerActivationRequest();
-            $activationRequest->setState($stateService->fetch($existingActivationRequestStateName));
+            $activationRequest->setState($stateService->get($existingActivationRequestStateName));
             $activationRequest->setWorker($worker);
             $activationRequest->setToken($token);
 

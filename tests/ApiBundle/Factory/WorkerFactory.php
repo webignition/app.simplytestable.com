@@ -57,7 +57,7 @@ class WorkerFactory
         }
 
         $worker->setToken($workerValues[self::KEY_TOKEN]);
-        $worker->setState($stateService->fetch($workerValues[self::KEY_STATE]));
+        $worker->setState($stateService->get($workerValues[self::KEY_STATE]));
 
         $entityManager->persist($worker);
         $entityManager->flush($worker);

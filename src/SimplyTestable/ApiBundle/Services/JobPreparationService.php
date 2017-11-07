@@ -137,7 +137,7 @@ class JobPreparationService
 
         $user = $job->getUser();
 
-        $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
+        $jobPreparingState = $this->stateService->get(JobService::PREPARING_STATE);
         $job->setState($jobPreparingState);
 
         $this->entityManager->persist($job);
@@ -156,7 +156,7 @@ class JobPreparationService
         $urls = $this->collectUrlsForJob($job, $urlsPerJobConstraint->getLimit());
 
         if (empty($urls)) {
-            $jobFailedNoSitemapState = $this->stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+            $jobFailedNoSitemapState = $this->stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
 
             $job->setState($jobFailedNoSitemapState);
 
@@ -181,7 +181,7 @@ class JobPreparationService
 
             $this->prepareTasksFromCollectedUrls($job, $urls);
 
-            $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
+            $jobQueuedState = $this->stateService->get(JobService::QUEUED_STATE);
 
             $job->setState($jobQueuedState);
 
@@ -212,7 +212,7 @@ class JobPreparationService
             );
         }
 
-        $jobPreparingState = $this->stateService->fetch(JobService::PREPARING_STATE);
+        $jobPreparingState = $this->stateService->get(JobService::PREPARING_STATE);
 
         $job->setState($jobPreparingState);
 
@@ -236,7 +236,7 @@ class JobPreparationService
 
         $this->prepareTasksFromCollectedUrls($job, $urls);
 
-        $jobQueuedState = $this->stateService->fetch(JobService::QUEUED_STATE);
+        $jobQueuedState = $this->stateService->get(JobService::QUEUED_STATE);
 
         $job->setState($jobQueuedState);
 
@@ -258,7 +258,7 @@ class JobPreparationService
     {
         $requestedTaskTypes = $job->getRequestedTaskTypes();
 
-        $newTaskState = $this->stateService->fetch(TaskService::QUEUED_STATE);
+        $newTaskState = $this->stateService->get(TaskService::QUEUED_STATE);
 
         foreach ($urls as $url) {
             $comparatorUrl = new NormalisedUrl($url);

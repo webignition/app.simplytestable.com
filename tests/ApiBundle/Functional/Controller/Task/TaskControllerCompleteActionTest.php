@@ -121,7 +121,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
 
         $this->setJobTaskStates(
             $job,
-            $stateService->fetch(TaskService::IN_PROGRESS_STATE)
+            $stateService->get(TaskService::IN_PROGRESS_STATE)
         );
 
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
@@ -209,7 +209,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
 
             $this->setJobTaskStates(
                 $job,
-                $stateService->fetch(TaskService::IN_PROGRESS_STATE)
+                $stateService->get(TaskService::IN_PROGRESS_STATE)
             );
 
             $jobs[] = $job;

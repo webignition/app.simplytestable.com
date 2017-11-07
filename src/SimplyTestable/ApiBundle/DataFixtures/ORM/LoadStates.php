@@ -59,21 +59,26 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
      */
     public function load(ObjectManager $manager)
     {
+        $stateRepository = $this->container->get('simplytestable.repository.state');
+        $stateService = $this->container->get('simplytestable.services.stateservice');
+
         foreach ($this->stateDetails as $name => $nextStateName) {
-            if (!$this->getStateService()->has($name)) {
+            $state = $stateRepository->findOneBy([
+                'name' => $name,
+            ]);
+
+            if (empty($state)) {
                 $state = new State();
                 $state->setName($name);
 
                 if (!is_null($nextStateName)) {
-                    $state->setNextState($this->getStateService()->fetch($nextStateName));
+                    $state->setNextState($stateService->get($nextStateName));
                 }
 
                 $manager->persist($state);
                 $manager->flush();
             }
         }
-
-
     }
 
     /**
@@ -82,14 +87,5 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
     public function getOrder()
     {
         return 2; // the order in which fixtures will be loaded
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Services\StateService
-     */
-    public function getStateService() {
-        return $this->container->get('simplytestable.services.stateservice');
     }
 }

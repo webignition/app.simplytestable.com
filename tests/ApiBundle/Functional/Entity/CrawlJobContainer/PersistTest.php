@@ -24,7 +24,7 @@ class PersistTest extends AbstractBaseTestCase
 
         $crawlJob = new Job();
         $crawlJob->setType($crawlJobType);
-        $crawlJob->setState($stateService->fetch(JobService::STARTING_STATE));
+        $crawlJob->setState($stateService->get(JobService::STARTING_STATE));
         $crawlJob->setUser($parentJob->getUser());
         $crawlJob->setWebsite($parentJob->getWebsite());
 

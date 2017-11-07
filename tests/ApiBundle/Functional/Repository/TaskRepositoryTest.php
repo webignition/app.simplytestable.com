@@ -152,7 +152,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->createResolveAndPrepare($jobValues);
 
-        $urls = $this->taskRepository->findUrlsByJobAndState($job, $stateService->fetch($taskStateName));
+        $urls = $this->taskRepository->findUrlsByJobAndState($job, $stateService->get($taskStateName));
 
         $this->assertEquals(
             $expectedUrls,
@@ -217,7 +217,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
         $taskType = $taskTypeService->getByName($taskTypeName);
-        $state = $stateService->fetch($taskStateName);
+        $state = $stateService->get($taskStateName);
 
         $this->assertEquals(
             $expectedCount,
@@ -252,7 +252,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
             }
         }
 
-        $state = $stateService->fetch($taskStateName);
+        $state = $stateService->get($taskStateName);
 
         $this->assertEquals(
             $expectedTaskIds,
@@ -284,7 +284,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
         $taskType = $taskTypeService->getByName($taskTypeName);
-        $states = $stateService->fetchCollection($stateNames);
+        $states = $stateService->getCollection($stateNames);
 
         $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
 
@@ -329,7 +329,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $expectedTaskOutputValues
     ) {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $state = $stateService->fetch($taskStateName);
+        $state = $stateService->get($taskStateName);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
         $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
@@ -401,7 +401,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
 
         $job = $jobs[$jobIndex];
 
-        $states = $stateService->fetchCollection($taskStateNames);
+        $states = $stateService->getCollection($taskStateNames);
 
         $retrievedTaskIds = $this->taskRepository->getIdsByJobAndStates($job, $states, $limit);
 
@@ -434,7 +434,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
         $job = $jobs[$jobIndex];
         $tasks = $this->getTasksFromJobCollection($jobs);
-        $statesToExclude = $stateService->fetchCollection($stateNamesToExclude);
+        $statesToExclude = $stateService->getCollection($stateNamesToExclude);
 
         $taskOutputFactory = new TaskOutputFactory($this->container);
 
@@ -538,7 +538,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
     public function testGetCountByJobAndStates($jobValuesCollection, $jobIndex, $stateNames, $expectedTaskCount)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $states = $stateService->fetchCollection($stateNames);
+        $states = $stateService->getCollection($stateNames);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
         $jobValuesCollection = $this->populateJobValuesCollectionUsers($jobValuesCollection, $users);
@@ -726,7 +726,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
             }
         }
 
-        $states = $stateService->fetchCollection($stateNames);
+        $states = $stateService->getCollection($stateNames);
 
         $count = $this->taskRepository->getCountByUsersAndStatesForPeriod($users, $states, $periodStart, $periodEnd);
 

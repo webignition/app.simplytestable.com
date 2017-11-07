@@ -47,7 +47,7 @@ class CrawlJobContainerServiceProcessTaskResultsTest extends AbstractCrawlJobCon
         $this->stateService = $this->container->get('simplytestable.services.stateservice');
 
         $this->urlDiscoveryTaskType = $this->taskTypeService->getByName(TaskTypeService::URL_DISCOVERY_TYPE);
-        $this->taskCompletedState = $this->stateService->fetch(TaskService::COMPLETED_STATE);
+        $this->taskCompletedState = $this->stateService->get(TaskService::COMPLETED_STATE);
     }
 
     /**
@@ -94,7 +94,7 @@ class CrawlJobContainerServiceProcessTaskResultsTest extends AbstractCrawlJobCon
     public function testTaskInWrongState($stateName)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $state = $stateService->fetch($stateName);
+        $state = $stateService->get($stateName);
 
         $task = new Task();
         $task->setType($this->urlDiscoveryTaskType);
@@ -195,14 +195,14 @@ class CrawlJobContainerServiceProcessTaskResultsTest extends AbstractCrawlJobCon
         $crawlJobContainerService->prepare($crawlJobContainer);
 
         $crawlJob = $crawlJobContainer->getCrawlJob();
-        $crawlJob->setState($stateService->fetch(JobService::IN_PROGRESS_STATE));
+        $crawlJob->setState($stateService->get(JobService::IN_PROGRESS_STATE));
 
         $entityManager->persist($crawlJob);
         $entityManager->flush();
 
         $crawlJobTasks = $crawlJob->getTasks();
 
-        $taskCompletedState = $this->stateService->fetch(TaskService::COMPLETED_STATE);
+        $taskCompletedState = $this->stateService->get(TaskService::COMPLETED_STATE);
 
         foreach ($discoveredUrlSets as $urlSetIndex => $discoveredUrlSet) {
             $task = $crawlJobTasks->get($urlSetIndex);

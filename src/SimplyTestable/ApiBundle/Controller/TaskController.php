@@ -91,7 +91,7 @@ class TaskController extends Controller
                 $stateService = $this->container->get('simplytestable.services.stateservice');
 
                 if (JobService::COMPLETED_STATE === $task->getJob()->getState()->getName()) {
-                    $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+                    $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
 
                     if ($crawlJobContainerRepository->doesCrawlTaskParentJobStateMatchState(
                         $task,

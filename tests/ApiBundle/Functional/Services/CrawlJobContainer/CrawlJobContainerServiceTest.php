@@ -87,7 +87,7 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
             $users[1]->getEmail() => [],
         ];
 
-        $jobFailedNoSitemapState = $stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE);
+        $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
 
         foreach ($users as $userIndex => $user) {
             foreach ($jobStateNames as $jobStateName) {
@@ -95,7 +95,7 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
                 $website = $websiteService->fetch($url);
 
                 $crawlJob = new Job();
-                $crawlJob->setState($stateService->fetch($jobStateName));
+                $crawlJob->setState($stateService->get($jobStateName));
                 $crawlJob->setUser($user);
                 $crawlJob->setWebsite($website);
 

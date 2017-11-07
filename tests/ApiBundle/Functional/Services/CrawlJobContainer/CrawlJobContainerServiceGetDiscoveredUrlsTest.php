@@ -33,7 +33,7 @@ class CrawlJobContainerServiceGetDiscoveredUrlsTest extends AbstractCrawlJobCont
 
         $parentJob = new Job();
         $parentJob->setUser($user);
-        $parentJob->setState($stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE));
+        $parentJob->setState($stateService->get(JobService::FAILED_NO_SITEMAP_STATE));
         $parentJob->setWebsite($website);
 
         $entityManager->persist($parentJob);
@@ -41,7 +41,7 @@ class CrawlJobContainerServiceGetDiscoveredUrlsTest extends AbstractCrawlJobCont
 
         $crawlJob = new Job();
         $crawlJob->setUser($user);
-        $crawlJob->setState($stateService->fetch(JobService::COMPLETED_STATE));
+        $crawlJob->setState($stateService->get(JobService::COMPLETED_STATE));
         $crawlJob->setWebsite($website);
 
         $entityManager->persist($crawlJob);
@@ -58,7 +58,7 @@ class CrawlJobContainerServiceGetDiscoveredUrlsTest extends AbstractCrawlJobCont
 
         foreach ($discoveredUrlSets as $taskUrl => $discoveredUrlSet) {
             $task = new Task();
-            $task->setState($stateService->fetch(TaskService::COMPLETED_STATE));
+            $task->setState($stateService->get(TaskService::COMPLETED_STATE));
             $task->setUrl($taskUrl);
             $task->setJob($crawlJob);
             $task->setType($taskTypeService->getByName(TaskTypeService::URL_DISCOVERY_TYPE));
