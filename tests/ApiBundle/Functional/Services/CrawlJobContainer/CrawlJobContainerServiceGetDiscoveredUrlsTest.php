@@ -3,56 +3,16 @@
 namespace Tests\ApiBundle\Functional\Services\CrawlJobContainer;
 
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
-use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use Tests\ApiBundle\Factory\HttpFixtureFactory;
-use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 
 class CrawlJobContainerServiceGetDiscoveredUrlsTest extends AbstractCrawlJobContainerServiceTest
 {
-//    /**
-//     * @var TaskTypeService
-//     */
-//    private $taskTypeService;
-//
-//    /**
-//     * @var StateService
-//     */
-//    private $stateService;
-//
-//    /**
-//     * @var Type
-//     */
-//    private $urlDiscoveryTaskType;
-//
-//    /**
-//     * @var State
-//     */
-//    private $taskCompletedState;
-//
-//    /**
-//     * {@inheritdoc}
-//     */
-//    protected function setUp()
-//    {
-//        parent::setUp();
-//
-//        $this->taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-//        $this->stateService = $this->container->get('simplytestable.services.stateservice');
-//
-//        $this->urlDiscoveryTaskType = $this->taskTypeService->getByName(TaskTypeService::URL_DISCOVERY_TYPE);
-//        $this->taskCompletedState = $this->stateService->fetch(TaskService::COMPLETED_STATE);
-//    }
-
     /**
      * @dataProvider discoveredUrlsDataProvider
      *
@@ -64,10 +24,9 @@ class CrawlJobContainerServiceGetDiscoveredUrlsTest extends AbstractCrawlJobCont
     {
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $userFactory = new UserFactory($this->container);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $user = $userFactory->create();
         $website = $websiteService->fetch('http://example.com');
@@ -77,19 +36,23 @@ class CrawlJobContainerServiceGetDiscoveredUrlsTest extends AbstractCrawlJobCont
         $parentJob->setState($stateService->fetch(JobService::FAILED_NO_SITEMAP_STATE));
         $parentJob->setWebsite($website);
 
-        $jobService->persistAndFlush($parentJob);
+        $entityManager->persist($parentJob);
+        $entityManager->flush();
 
         $crawlJob = new Job();
         $crawlJob->setUser($user);
         $crawlJob->setState($stateService->fetch(JobService::COMPLETED_STATE));
         $crawlJob->setWebsite($website);
 
-        $jobService->persistAndFlush($crawlJob);
+        $entityManager->persist($crawlJob);
+        $entityManager->flush();
 
         $crawlJobContainer = new CrawlJobContainer();
         $crawlJobContainer->setParentJob($parentJob);
         $crawlJobContainer->setCrawlJob($crawlJob);
-        $this->crawlJobContainerService->persistAndFlush($crawlJobContainer);
+
+        $entityManager->persist($crawlJobContainer);
+        $entityManager->flush();
 
         $crawlJobTasks = $crawlJob->getTasks();
 
@@ -105,10 +68,13 @@ class CrawlJobContainerServiceGetDiscoveredUrlsTest extends AbstractCrawlJobCont
 
             $task->setOutput($output);
 
-            $taskService->persistAndFlush($task);
+            $entityManager->persist($task);
+            $entityManager->flush();
 
             $crawlJobTasks->add($task);
-            $jobService->persistAndFlush($crawlJob);
+
+            $entityManager->persist($crawlJob);
+            $entityManager->flush();
         }
 
         $this->assertEquals(

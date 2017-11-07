@@ -414,16 +414,6 @@ class CrawlJobContainerService
         $crawlJobContainer->setParentJob($job);
         $crawlJobContainer->setCrawlJob($crawlJob);
 
-        return $this->persistAndFlush($crawlJobContainer);
-    }
-
-    /**
-     * @param CrawlJobContainer $crawlJobContainer
-     *
-     * @return CrawlJobContainer
-     */
-    public function persistAndFlush(CrawlJobContainer $crawlJobContainer)
-    {
         $this->entityManager->persist($crawlJobContainer);
         $this->entityManager->flush();
 
