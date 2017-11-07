@@ -225,14 +225,6 @@ class TaskService
 
     /**
      * @param Task $task
-     */
-    public function persist(Task $task)
-    {
-        $this->entityManager->persist($task);
-    }
-
-    /**
-     * @param Task $task
      *
      * @return Task
      */

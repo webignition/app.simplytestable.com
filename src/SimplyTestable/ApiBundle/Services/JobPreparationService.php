@@ -295,7 +295,7 @@ class JobPreparationService
 
                     $task->setParameters(json_encode($parameters));
 
-                    $this->taskService->persist($task);
+                    $this->entityManager->persist($task);
                 }
 
                 $this->processedUrls[] = (string)$comparatorUrl;

@@ -239,7 +239,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $originalTaskUrl = $this->task->getUrl();
 
         $this->task->setUrl('foo');
-        $this->taskService->persist($this->task);
+        $entityManager->persist($this->task);
 
         $entityManager->clear();
 
