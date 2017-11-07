@@ -4,16 +4,11 @@ namespace SimplyTestable\ApiBundle\Services\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
-use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 
 class RetrievalService
 {
-    /**
-     * @var JobService
-     */
-    private $jobService;
-
     /**
      * @var TeamService
      */
@@ -25,13 +20,18 @@ class RetrievalService
     private $user = null;
 
     /**
-     * @param JobService $jobService
-     * @param TeamService $teamService
+     * @var JobRepository
      */
-    public function __construct(JobService $jobService, TeamService $teamService)
+    private $jobRepository;
+
+    /**
+     * @param TeamService $teamService
+     * @param JobRepository $jobRepository
+     */
+    public function __construct(TeamService $teamService, JobRepository $jobRepository)
     {
-        $this->jobService = $jobService;
         $this->teamService = $teamService;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -57,7 +57,7 @@ class RetrievalService
             );
         }
 
-        $job = $this->jobService->getById($jobId);
+        $job = $this->jobRepository->find($jobId);
         if (!$job instanceof Job) {
             throw new JobRetrievalServiceException(
                 'Job [' . $jobId . '] not found',

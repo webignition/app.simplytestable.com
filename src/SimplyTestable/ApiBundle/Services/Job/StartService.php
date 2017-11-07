@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Services\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
@@ -58,6 +59,11 @@ class StartService
     private $resqueJobFactory;
 
     /**
+     * @var JobRepository
+     */
+    private $jobRepository;
+
+    /**
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param JobTypeService $jobTypeService
      * @param JobService $jobService
@@ -66,6 +72,7 @@ class StartService
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
      * @param ResqueJobFactory $resqueJobFactory
+     * @param JobRepository $jobRepository
      */
     public function __construct(
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
@@ -75,7 +82,8 @@ class StartService
         ResqueQueueService $resqueQueueService,
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
-        ResqueJobFactory $resqueJobFactory
+        ResqueJobFactory $resqueJobFactory,
+        JobRepository $jobRepository
     ) {
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->jobTypeService = $jobTypeService;
@@ -85,6 +93,7 @@ class StartService
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->resqueJobFactory = $resqueJobFactory;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -188,7 +197,7 @@ class StartService
         );
 
         /* @var $existingJob Job */
-        $existingJobs = $this->jobService->getEntityRepository()->findBy([
+        $existingJobs = $this->jobRepository->findBy([
             'website' => $jobConfiguration->getWebsite(),
             'state' => $incompleteJobStates,
             'user' => $jobConfiguration->getUser(),

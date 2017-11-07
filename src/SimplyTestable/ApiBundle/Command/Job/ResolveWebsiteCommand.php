@@ -1,7 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Job;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
@@ -37,11 +39,6 @@ class ResolveWebsiteCommand extends Command
     private $resqueJobFactory;
 
     /**
-     * @var JobService
-     */
-    private $jobService;
-
-    /**
      * @var WebsiteResolutionService
      */
     private $websiteResolutionService;
@@ -57,23 +54,28 @@ class ResolveWebsiteCommand extends Command
     private $predefinedDomainsToIgnore;
 
     /**
+     * @var JobRepository
+     */
+    private $jobRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
-     * @param JobService $jobService
      * @param WebsiteResolutionService $websiteResolutionService
      * @param JobPreparationService $jobPreparationService
      * @param array $predefinedDomainsToIgnore
+     * @param JobRepository $jobRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
-        JobService $jobService,
         WebsiteResolutionService $websiteResolutionService,
         JobPreparationService $jobPreparationService,
         $predefinedDomainsToIgnore,
+        JobRepository $jobRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -81,10 +83,10 @@ class ResolveWebsiteCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->resqueQueueService = $resqueQueueService;
         $this->resqueJobFactory = $resqueJobFactory;
-        $this->jobService = $jobService;
         $this->websiteResolutionService = $websiteResolutionService;
         $this->jobPreparationService = $jobPreparationService;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -108,7 +110,8 @@ class ResolveWebsiteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
-        $job = $this->jobService->getById((int)$input->getArgument('id'));
+        /* @var Job $job */
+        $job = $this->jobRepository->find((int)$input->getArgument('id'));
 
         try {
             $this->websiteResolutionService->resolve($job);

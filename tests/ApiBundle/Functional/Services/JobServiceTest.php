@@ -291,20 +291,6 @@ class JobServiceTest extends AbstractBaseTestCase
         ];
     }
 
-    public function testGetJobById()
-    {
-        $jobs[] = $this->jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',
-        ]);
-
-        $jobs[] = $this->jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://bar.example.com',
-        ]);
-
-        $this->assertEquals($jobs[0], $this->jobService->getById($jobs[0]->getId()));
-        $this->assertEquals($jobs[1], $this->jobService->getById($jobs[1]->getId()));
-    }
-
     /**
      * @dataProvider isStateDataProvider
      *

@@ -31,9 +31,9 @@ class JobController extends Controller
     public function latestAction($site_root_url)
     {
         $websiteService = $this->get('simplytestable.services.websiteservice');
-        $jobService = $this->get('simplytestable.services.jobservice');
         $userService = $this->get('simplytestable.services.userservice');
         $teamService = $this->get('simplytestable.services.teamservice');
+        $jobRepository = $this->container->get('simplytestable.repository.job');
 
         $website = $websiteService->fetch($site_root_url);
         $latestJob = null;
@@ -44,7 +44,7 @@ class JobController extends Controller
         if ($userHasTeam || $userBelongsToTeam) {
             $team = $teamService->getForUser($this->getUser());
 
-            $latestJob = $jobService->getEntityRepository()->findOneBy([
+            $latestJob = $jobRepository->findOneBy([
                 'website' => $website,
                 'user' => $teamService->getPeople($team),
             ], [
@@ -60,7 +60,7 @@ class JobController extends Controller
         }
 
         if (!$userService->isPublicUser($this->getUser())) {
-            $latestJob = $jobService->getEntityRepository()->findOneBy([
+            $latestJob = $jobRepository->findOneBy([
                 'website' => $website,
                 'user' => $this->getUser(),
             ], [
@@ -75,7 +75,7 @@ class JobController extends Controller
             }
         }
 
-        $latestJob = $jobService->getEntityRepository()->findOneBy([
+        $latestJob = $jobRepository->findOneBy([
             'website' => $website,
             'user' => $userService->getPublicUser()
         ], [

@@ -29,13 +29,13 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       resqueQueueService: '@simplytestable.services.resque.queueservice'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-      jobService: '@simplytestable.services.jobservice'
       jobPreparationService: '@simplytestable.services.jobpreparationservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       logger: '@logger'
       predefinedDomainsToIgnore:
         css-validation: '%css_validation_domains_to_ignore%'
         js-static-analysis: '%js_static_analysis_domains_to_ignore%'
+      jobRepository: '@simplytestable.repository.job'
     tags:
       - { name: console.command }
 

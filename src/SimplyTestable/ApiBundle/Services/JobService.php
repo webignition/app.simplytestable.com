@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
@@ -13,7 +13,7 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstr
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 
-class JobService extends EntityService
+class JobService
 {
     const STARTING_STATE = 'job-new';
     const CANCELLED_STATE = 'job-cancelled';
@@ -64,39 +64,33 @@ class JobService extends EntityService
     private $taskTypeService;
 
     /**
-     * @param EntityManager $entityManager
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var JobRepository
+     */
+    private $jobRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
      * @param StateService $stateService
      * @param TaskService $taskService
      * @param TaskTypeService $taskTypeService
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         StateService $stateService,
         TaskService $taskService,
         TaskTypeService $taskTypeService
     ) {
-        parent::__construct($entityManager);
+        $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->taskService = $taskService;
         $this->taskTypeService = $taskTypeService;
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEntityName()
-    {
-        return Job::class;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return Job
-     */
-    public function getById($id)
-    {
-        return $this->getEntityRepository()->find($id);
+        $this->jobRepository = $entityManager->getRepository(Job::class);
     }
 
     /**

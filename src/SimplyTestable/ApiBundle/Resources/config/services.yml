@@ -303,8 +303,8 @@ services:
   simplytestable.services.job.retrievalservice:
     class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
     arguments:
-        jobService: "@simplytestable.services.jobservice"
         teamService: "@simplytestable.services.teamservice"
+        jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.job.UserPostActivationPropertiesService:
     class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
@@ -315,9 +315,9 @@ services:
   simplytestable.services.task.queueService:
     class:  SimplyTestable\ApiBundle\Services\Task\QueueService
     arguments:
-        jobService: "@simplytestable.services.jobservice"
         taskService: "@simplytestable.services.taskservice"
         stateService: '@simplytestable.services.stateservice'
+        jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.worker.taskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
@@ -356,6 +356,7 @@ services:
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+        jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.scheduledjob.cronmodifier.validationservice:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService
