@@ -1,16 +1,13 @@
 <?php
 
-namespace Tests\ApiBundle\Request\Factory\Job;
+namespace Tests\ApiBundle\Functional\Services\Request\Factory\Job;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Mockery\MockInterface;
-use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class StartRequestFactoryTest extends AbstractBaseTestCase
 {

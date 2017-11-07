@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\ApiBundle\Request\Factory\Task;
+namespace Tests\ApiBundle\Functional\Services\Request\Factory\Task;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use Mockery\MockInterface;

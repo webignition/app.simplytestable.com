@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\ApiBundle\Request\Factory\Job;
+namespace Tests\ApiBundle\Functional\Services\Request\Factory\Job;
 
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use Tests\ApiBundle\Factory\JobFactory;
