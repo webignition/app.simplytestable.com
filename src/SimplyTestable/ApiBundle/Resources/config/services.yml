@@ -174,7 +174,6 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         taskService: "@simplytestable.services.taskservice"
         taskTypeService: "@simplytestable.services.tasktypeservice"
-        jobTypeService: "@simplytestable.services.jobtypeservice"
         jobService: "@simplytestable.services.jobservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         stateService: '@simplytestable.services.stateservice'

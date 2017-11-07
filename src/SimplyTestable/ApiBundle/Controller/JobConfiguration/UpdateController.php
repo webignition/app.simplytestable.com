@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
+use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
@@ -26,8 +27,8 @@ class UpdateController extends Controller
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -42,11 +43,20 @@ class UpdateController extends Controller
 
         $requestData = $request->request;
 
-        $website = $websiteService->fetch(trim($requestData->get('website')));
-        $jobType = $jobTypeService->getByName(trim($requestData->get('type')));
+        $requestWebsite = trim($requestData->get('website'));
+        $website = $websiteService->fetch($requestWebsite);
+
+        $requestJobType = trim($requestData->get('type'));
+
+        /* @var JobType $jobType */
+        $jobType = $jobTypeRepository->findOneBy([
+            'name' => $requestJobType,
+        ]);
 
         if (empty($jobType)) {
-            $jobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+            $jobType = $jobTypeRepository->findOneBy([
+                'name' => JobTypeService::FULL_SITE_NAME,
+            ]);
         }
 
         $adapter = new RequestAdapter();
