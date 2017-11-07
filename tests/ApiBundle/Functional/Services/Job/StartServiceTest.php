@@ -24,11 +24,6 @@ class StartServiceTest extends AbstractBaseTestCase
     use MockeryPHPUnitIntegration;
 
     /**
-     * @var JobTypeService
-     */
-    private $jobTypeService;
-
-    /**
      * @var WebSiteService
      */
     private $websiteService;
@@ -40,7 +35,6 @@ class StartServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $this->websiteService = $this->container->get('simplytestable.services.websiteservice');
     }
 
@@ -87,6 +81,7 @@ class StartServiceTest extends AbstractBaseTestCase
         $jobUserAccountPlanEnforcementService = $this->container->get(
             'simplytestable.services.jobuseraccountplanenforcementservice'
         );
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create([
@@ -95,7 +90,11 @@ class StartServiceTest extends AbstractBaseTestCase
         ]);
 
         $jobUserAccountPlanEnforcementService->setUser($user);
-        $jobType = $this->jobTypeService->getByName($jobTypeName);
+
+        /* @var Type $jobType */
+        $jobType = $jobTypeRepository->findOneBy([
+            'name' => $jobTypeName,
+        ]);
 
         $website = $this->websiteService->fetch('http://example.com');
         $constraint = $userAccountPlanService->getForUser($user)->getPlan()->getConstraintNamed($constraintName);
@@ -179,9 +178,15 @@ class StartServiceTest extends AbstractBaseTestCase
     public function testReuseExistingJob()
     {
         $userService = $this->container->get('simplytestable.services.userservice');
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
 
         $user = $userService->getPublicUser();
-        $jobType = $this->jobTypeService->getByName('Full site');
+
+        /* @var Type $jobType */
+        $jobType = $jobTypeRepository->findOneBy([
+            'name' => JobTypeService::FULL_SITE_NAME,
+        ]);
+
         $website = $this->websiteService->fetch('http://example.com');
 
         $jobConfiguration = new JobConfiguration();
@@ -212,13 +217,18 @@ class StartServiceTest extends AbstractBaseTestCase
     public function testStart($userEmail, $url, $jobTypeName, $expectedIsPublic)
     {
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
 
-        $jobType = $this->jobTypeService->getByName($jobTypeName);
+        /* @var Type $jobType */
+        $jobType = $jobTypeRepository->findOneBy([
+            'name' => $jobTypeName,
+        ]);
+
         $website = $this->websiteService->fetch($url);
 
         $jobConfiguration = new JobConfiguration();

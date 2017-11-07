@@ -2,12 +2,12 @@
 
 namespace Tests\ApiBundle\Functional\Entity\ScheduledJob;
 
+use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use Cron\CronBundle\Entity\CronJob;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
-
 
 abstract class ScheduledJobTest extends AbstractBaseTestCase {
 
@@ -45,10 +45,14 @@ abstract class ScheduledJobTest extends AbstractBaseTestCase {
      */
     protected function getJobConfiguration()
     {
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $userService = $this->container->get('simplytestable.services.userservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+
+        /* @var Type $fullSiteJobType */
+        $fullSiteJobType = $jobTypeRepository->findOneBy([
+            'name' => JobTypeService::FULL_SITE_NAME,
+        ]);
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setLabel('label');

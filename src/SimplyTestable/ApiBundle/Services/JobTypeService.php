@@ -17,19 +17,4 @@ class JobTypeService extends EntityService
     {
         return Type::class;
     }
-
-    /**
-     * @param string $name
-     *
-     * @return Type
-     */
-    public function getByName($name)
-    {
-        /* @var Type $type */
-        $type = $this->getEntityRepository()->findOneBy([
-            'name' => $name
-        ]);
-
-        return $type;
-    }
 }

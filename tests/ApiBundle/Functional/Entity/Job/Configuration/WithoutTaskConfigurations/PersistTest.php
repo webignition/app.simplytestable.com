@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Entity\Job\Configuration\WithoutTaskConfigurations;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
+use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
@@ -17,10 +18,14 @@ class PersistTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
-        $fullSiteJobType = $jobTypeService->getByName(JobTypeService::FULL_SITE_NAME);
         $userService = $this->container->get('simplytestable.services.userservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+
+        /* @var Type $fullSiteJobType */
+        $fullSiteJobType = $jobTypeRepository->findOneBy([
+            'name' => JobTypeService::FULL_SITE_NAME,
+        ]);
 
         $this->configuration = new Configuration();
         $this->configuration->setLabel('foo');

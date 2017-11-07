@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -74,8 +75,8 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
         $expectedReturnCode,
         $expectedJobStateNames
     ) {
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 
@@ -88,7 +89,10 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
 
         $jobs = $this->jobFactory->createResolveAndPrepareCollection($jobValuesCollection);
 
-        $crawlJobType = $jobTypeService->getByName(JobTypeService::CRAWL_NAME);
+        /* @var Type $crawlJobType */
+        $crawlJobType = $jobTypeRepository->findOneBy([
+            'name' => JobTypeService::CRAWL_NAME,
+        ]);
 
         foreach ($jobs as $jobIndex => $job) {
             if (in_array($jobIndex, $crawlJobIndices)) {

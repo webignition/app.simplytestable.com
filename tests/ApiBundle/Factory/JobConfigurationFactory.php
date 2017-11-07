@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Factory;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
+use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -59,10 +60,14 @@ class JobConfigurationFactory
         }
 
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+
         $website = $websiteService->fetch($jobConfigurationValues[self::KEY_WEBSITE_URL]);
 
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
-        $jobType = $jobTypeService->getByName($jobConfigurationValues[self::KEY_TYPE]);
+        /* @var Type $jobType */
+        $jobType = $jobTypeRepository->findOneBy([
+            'name' => $jobConfigurationValues[self::KEY_TYPE],
+        ]);
 
         $jobConfiguration = new Configuration();
         $jobConfiguration->setLabel($jobConfigurationValues[self::KEY_LABEL]);
