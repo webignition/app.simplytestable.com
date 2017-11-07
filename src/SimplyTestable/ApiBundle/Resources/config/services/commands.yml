@@ -255,9 +255,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
-      taskRepository: '@simplytestable.repository.task'
-      taskTypeRepository: '@simplytestable.repository.tasktype'
-      taskOutputRepository: '@simplytestable.repository.taskoutput'
+      taskTypeService: '@simplytestable.services.tasktypeservice'
     tags:
       - { name: console.command }
 

@@ -39,7 +39,7 @@ class PersistTest extends TaskConfigurationTest
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setJobConfiguration($jobConfiguration);
         $taskConfiguration->setType(
-            $taskTypeService->get(TaskTypeService::HTML_VALIDATION_TYPE)
+            $taskType = $taskTypeService->getHtmlValidationTaskType()
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'

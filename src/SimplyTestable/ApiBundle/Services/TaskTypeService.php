@@ -35,6 +35,30 @@ class TaskTypeService
     /**
      * @return TaskType
      */
+    public function getHtmlValidationTaskType()
+    {
+        return $this->get(self::HTML_VALIDATION_TYPE);
+    }
+
+    /**
+     * @return TaskType
+     */
+    public function getCssValidationTaskType()
+    {
+        return $this->get(self::CSS_VALIDATION_TYPE);
+    }
+
+    /**
+     * @return TaskType
+     */
+    public function getJsStaticAnalysisTaskType()
+    {
+        return $this->get(self::JS_STATIC_ANALYSIS_TYPE);
+    }
+
+    /**
+     * @return TaskType
+     */
     public function getUrlDiscoveryTaskType()
     {
         return $this->get(self::URL_DISCOVERY_TYPE);

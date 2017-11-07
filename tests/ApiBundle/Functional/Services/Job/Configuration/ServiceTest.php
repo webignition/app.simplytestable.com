@@ -34,7 +34,7 @@ abstract class ServiceTest extends AbstractBaseTestCase {
 
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setType(
-            $taskTypeService->get(TaskTypeService::HTML_VALIDATION_TYPE)
+            $taskTypeService->getHtmlValidationTaskType()
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'
