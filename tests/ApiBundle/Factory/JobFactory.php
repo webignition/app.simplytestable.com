@@ -187,7 +187,6 @@ class JobFactory
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $tokenStorage = $this->container->get('security.token_storage');
         $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
-        $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
@@ -221,7 +220,6 @@ class JobFactory
             $this->container->get('security.token_storage'),
             $this->container->get('doctrine.orm.entity_manager'),
             $websiteService,
-            $taskTypeRepository,
             $jobTypeService
         );
 
