@@ -450,10 +450,10 @@ services:
       stateService: '@simplytestable.services.stateservice'
       jobService: '@simplytestable.services.jobservice'
       teamService: '@simplytestable.services.teamservice'
-      jobRejectionReasonService: '@simplytestable.services.jobrejectionreasonservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
       taskRepository: '@simplytestable.repository.task'
+      jobRejectionReasonRepository: '@simplytestable.repository.jobrejectionreason'
 
   simplytestable.services.joblistconfigurationfactory:
     class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory

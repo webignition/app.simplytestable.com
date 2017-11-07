@@ -13,12 +13,6 @@ services:
     arguments:
         - Cron\CronBundle\Entity\CronReport
 
-  simplytestable.repository.jobrejectionreason:
-    class: Doctrine\ORM\EntityRepository
-    factory: ["@doctrine.orm.entity_manager", getRepository]
-    arguments:
-        - SimplyTestable\ApiBundle\Entity\Job\RejectionReason
-
   simplytestable.repository.jobconfiguration:
     class: Doctrine\ORM\EntityRepository
     factory: ["@doctrine.orm.entity_manager", getRepository]

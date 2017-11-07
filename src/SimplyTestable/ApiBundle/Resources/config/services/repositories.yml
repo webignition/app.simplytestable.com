@@ -106,3 +106,9 @@ services:
     factory: ["@doctrine.orm.entity_manager", getRepository]
     arguments:
         - SimplyTestable\ApiBundle\Entity\CrawlJobContainer
+
+  simplytestable.repository.jobrejectionreason:
+    class: Doctrine\ORM\EntityRepository
+    factory: ["@doctrine.orm.entity_manager", getRepository]
+    arguments:
+        - SimplyTestable\ApiBundle\Entity\Job\RejectionReason
