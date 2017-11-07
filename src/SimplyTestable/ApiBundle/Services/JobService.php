@@ -306,9 +306,9 @@ class JobService
         $incompleteStates = $this->stateService->fetchCollection($this->getIncompleteStateNames());
 
         /* @var Job[] $jobs */
-        $jobs = $this->getEntityRepository()->findBy(array(
+        $jobs = $this->jobRepository->findBy([
             'state' => $incompleteStates,
-        ));
+        ]);
 
         foreach ($jobs as $jobIndex => $job) {
             // Exclude jobs with no tasks
@@ -409,23 +409,12 @@ class JobService
     }
 
     /**
-     * @return JobRepository
-     */
-    public function getEntityRepository()
-    {
-        /* @var JobRepository $jobRepository */
-        $jobRepository = parent::getEntityRepository();
-
-        return $jobRepository;
-    }
-
-    /**
      * @param int $jobId
      *
      * @return bool
      */
     public function getIsPublic($jobId)
     {
-        return $this->getEntityRepository()->getIsPublicByJobId($jobId);
+        return $this->jobRepository->getIsPublicByJobId($jobId);
     }
 }

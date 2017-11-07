@@ -137,11 +137,11 @@ services:
     class:   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
     arguments:
         userAccountPlanService: "@simplytestable.services.userAccountPlanService"
-        jobService: "@simplytestable.services.jobservice"
         taskService: "@simplytestable.services.taskservice"
         teamService: "@simplytestable.services.teamservice"
         jobTypeService: '@simplytestable.services.jobtypeservice'
         stateService: '@simplytestable.services.stateservice'
+        jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService

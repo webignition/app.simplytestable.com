@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
@@ -16,11 +17,6 @@ class JobUserAccountPlanEnforcementService
      * @var UserAccountPlanService
      */
     private $userAccountPlanService;
-
-    /**
-     * @var JobService
-     */
-    private $jobService;
 
     /**
      * @var TaskService
@@ -48,27 +44,33 @@ class JobUserAccountPlanEnforcementService
     private $stateService;
 
     /**
+     * @var JobRepository
+     */
+    private $jobRepository;
+
+    /**
      * @param UserAccountPlanService $userAccountPlanService
-     * @param JobService $jobService
      * @param TaskService $taskService
      * @param TeamService $teamService
      * @param JobTypeService $jobTypeService
      * @param StateService $stateService
+     * @param JobRepository $jobRepository
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
-        JobService $jobService,
         TaskService $taskService,
         TeamService $teamService,
         JobTypeService $jobTypeService,
-        StateService $stateService
+        StateService $stateService,
+        JobRepository $jobRepository
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
-        $this->jobService = $jobService;
+
         $this->taskService = $taskService;
         $this->teamService = $teamService;
         $this->jobTypeService = $jobTypeService;
         $this->stateService = $stateService;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -125,12 +127,11 @@ class JobUserAccountPlanEnforcementService
             return false;
         }
 
-        $jobRepository = $this->jobService->getEntityRepository();
         $jobType = $this->jobTypeService->getByName($jobTypeName);
         $startDateTime = new \DateTime('first day of this month');
         $endDateTime = new \DateTime('last day of this month');
 
-        $currentCount = $jobRepository->getJobCountByUserAndJobTypeAndWebsiteForPeriod(
+        $currentCount = $this->jobRepository->getJobCountByUserAndJobTypeAndWebsiteForPeriod(
             $this->user,
             $jobType,
             $website,
