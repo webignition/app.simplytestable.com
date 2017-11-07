@@ -33,16 +33,6 @@ class TaskTypeService
     }
 
     /**
-     * @param string $taskTypeName
-     *
-     * @return bool
-     */
-    public function exists($taskTypeName)
-    {
-        return !is_null($this->get($taskTypeName));
-    }
-
-    /**
      * @param string $name
      *
      * @return TaskType

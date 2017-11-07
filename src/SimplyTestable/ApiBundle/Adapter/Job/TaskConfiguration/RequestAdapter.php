@@ -67,11 +67,12 @@ class RequestAdapter
         }
 
         foreach ($this->request->get(self::REQUEST_TASK_CONFIGURATION_KEY) as $taskTypeName => $taskTypeOptions) {
-            if (!$this->taskTypeService->exists($taskTypeName)) {
+            $taskType = $this->taskTypeService->get($taskTypeName);
+
+            if (empty($taskType)) {
                 continue;
             }
 
-            $taskType = $this->taskTypeService->get($taskTypeName);
             if (!$taskType->getSelectable()) {
                 continue;
             }
