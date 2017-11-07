@@ -2,8 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
-use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +26,7 @@ class UserCreationController extends Controller
         $userPostActivationPropertiesService = $this->container->get(
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
-        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -69,16 +67,10 @@ class UserCreationController extends Controller
         }
 
         $planName = rawurldecode(trim($requestData->get('plan')));
-
-        /* @var Plan $plan */
-        $plan = $accountPlanRepository->findOneBy([
-            'name' => $planName,
-        ]);
+        $plan = $accountPlanService->get($planName);
 
         if (empty($plan)) {
-            $plan = $accountPlanRepository->findOneBy([
-                'name' => self::DEFAULT_ACCOUNT_PLAN_NAME,
-            ]);
+            $plan = $accountPlanService->get(self::DEFAULT_ACCOUNT_PLAN_NAME);
         }
 
         if ($plan->getIsPremium()) {

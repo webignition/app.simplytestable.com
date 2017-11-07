@@ -2,7 +2,6 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -28,6 +27,7 @@ class TeamInviteController extends Controller
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
 
         $inviter = $this->getUser();
 
@@ -44,16 +44,10 @@ class TeamInviteController extends Controller
             $requestData = $request->query;
 
             $planName = rawurldecode(trim($requestData->get('plan')));
-
-            /* @var Plan $plan */
-            $plan = $accountPlanRepository->findOneBy([
-                'name' => $planName,
-            ]);
+            $plan = $accountPlanService->get($planName);
 
             if (empty($plan)) {
-                $plan = $accountPlanRepository->findOneBy([
-                    'name' => self::DEFAULT_ACCOUNT_PLAN_NAME,
-                ]);
+                $plan = $accountPlanService->get(self::DEFAULT_ACCOUNT_PLAN_NAME);
             }
 
             $userAccountPlanService->subscribe($user, $plan);

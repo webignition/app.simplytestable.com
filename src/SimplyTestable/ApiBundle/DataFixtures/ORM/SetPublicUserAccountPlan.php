@@ -5,7 +5,6 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -31,15 +30,12 @@ class SetPublicUserAccountPlan extends AbstractFixture implements OrderedFixture
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
 
         $user = $userService->getPublicUser();
 
         if (!$userAccountPlanService->hasForUser($user)) {
-            /* @var Plan $plan */
-            $plan = $accountPlanRepository->findOneBy([
-                'name' => 'public',
-            ]);
+            $plan = $accountPlanService->get('public');
             $userAccountPlanService->subscribe($user, $plan);
         }
     }

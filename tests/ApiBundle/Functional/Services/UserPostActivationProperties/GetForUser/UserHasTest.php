@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\Services\UserPostActivationProperties\GetForUser;
 
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use Tests\ApiBundle\Factory\UserFactory;
 
 class UserHasTest extends ServiceTest {
@@ -10,12 +9,9 @@ class UserHasTest extends ServiceTest {
     protected function setUp() {
         parent::setUp();
 
-        $accountPlanRepository = $this->container->get('simplytestable.repository.accountplan');
+        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
 
-        /* @var Plan $plan */
-        $plan = $accountPlanRepository->findOneBy([
-            'name' => 'personal',
-        ]);
+        $plan = $accountPlanService->get('personal');
 
         $userFactory = new UserFactory($this->container);
 
