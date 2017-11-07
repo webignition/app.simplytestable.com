@@ -394,14 +394,4 @@ class JobService
     {
         return $this->finishedStates;
     }
-
-    /**
-     * @param int $jobId
-     *
-     * @return bool
-     */
-    public function getIsPublic($jobId)
-    {
-        return $this->jobRepository->getIsPublicByJobId($jobId);
-    }
 }

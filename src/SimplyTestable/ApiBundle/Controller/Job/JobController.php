@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -124,11 +125,12 @@ class JobController extends Controller
      */
     public function isPublicAction($site_root_url, $test_id)
     {
-        $jobService = $this->get('simplytestable.services.jobservice');
+        /* @var JobRepository $jobRepository */
+        $jobRepository = $this->container->get('simplytestable.repository.job');
 
         return new Response(
             '',
-            $jobService->getIsPublic($test_id) ? 200 : 404
+            $jobRepository->getIsPublicByJobId($test_id) ? 200 : 404
         );
     }
 
