@@ -32,14 +32,4 @@ class JobTypeService extends EntityService
 
         return $type;
     }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function has($name)
-    {
-        return !is_null($this->getByName($name));
-    }
 }
