@@ -2,9 +2,10 @@
 
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Mockery\MockInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener;
-use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
@@ -60,21 +61,35 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userService = $this->container->get('simplytestable.services.userservice');
         $user = $userService->getPublicUser();
 
+        /* @var MockInterface|StripeService $stripeService */
         $stripeService = \Mockery::mock(StripeService::class);
+
+        /* @var MockInterface|StripeEventService $stripeEventService */
         $stripeEventService = \Mockery::mock(StripeEventService::class);
+
+        /* @var MockInterface|UserAccountPlanService $userAccountPlanService */
         $userAccountPlanService = \Mockery::mock(UserAccountPlanService::class);
+
+        /* @var MockInterface|HttpClientService $httpClientService */
         $httpClientService = \Mockery::mock(HttpClientService::class);
+
+        /* @var MockInterface|EntityManagerInterface $entityManager */
+        $entityManager = \Mockery::mock(EntityManagerInterface::class);
+
+        $entityManager
+            ->shouldReceive('persist');
+
+        $entityManager
+            ->shouldReceive('flush');
 
         $stripeEventService
             ->shouldReceive('getForUserAndType')
             ->andReturn([]);
 
-        $stripeEventService
-            ->shouldReceive('persistAndFlush');
-
         $listener = new CustomerSubscriptionCreatedListener(
             $stripeEventService,
             $httpClientService,
+            $entityManager,
             $webClientProperties,
             $stripeService,
             $userAccountPlanService
