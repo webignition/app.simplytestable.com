@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Repository\JobRepository;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
@@ -49,14 +50,18 @@ class JobUserAccountPlanEnforcementService
     private $jobRepository;
 
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
      * @param UserAccountPlanService $userAccountPlanService
      * @param TaskService $taskService
      * @param TeamService $teamService
-     * @param JobTypeService $jobTypeService
      * @param StateService $stateService
      * @param JobRepository $jobRepository
-     * @param StateService $stateService
      * @param JobTypeService $jobTypeService
+     * @param TaskRepository $taskRepository
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
@@ -64,7 +69,8 @@ class JobUserAccountPlanEnforcementService
         TeamService $teamService,
         StateService $stateService,
         JobRepository $jobRepository,
-        JobTypeService $jobTypeService
+        JobTypeService $jobTypeService,
+        TaskRepository $taskRepository
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
 
@@ -74,6 +80,7 @@ class JobUserAccountPlanEnforcementService
         $this->stateService = $stateService;
         $this->jobTypeService = $jobTypeService;
         $this->jobRepository = $jobRepository;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -176,7 +183,7 @@ class JobUserAccountPlanEnforcementService
         $startDateTime = new \DateTime('first day of this month');
         $endDateTime = new \DateTime('last day of this month');
 
-        return $this->taskService->getEntityRepository()->getCountByUsersAndStatesForPeriod(
+        return $this->taskRepository->getCountByUsersAndStatesForPeriod(
             $this->teamService->getPeopleForUser($this->user),
             $this->stateService->getCollection([
                 TaskService::COMPLETED_STATE,

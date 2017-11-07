@@ -1,8 +1,10 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Http\Exception\CurlException;
+use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 
@@ -11,6 +13,32 @@ class WorkerTaskAssignmentService extends WorkerTaskService
     const ASSIGN_COLLECTION_OK_STATUS_CODE = 0;
     const ASSIGN_COLLECTION_NO_WORKERS_STATUS_CODE = 1;
     const ASSIGN_COLLECTION_COULD_NOT_ASSIGN_TO_ANY_WORKERS_STATUS_CODE = 2;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param LoggerInterface $logger
+     * @param StateService $stateService
+     * @param HttpClientService $httpClientService
+     * @param UrlService $urlService
+     * @param TaskService $taskService
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(
+        LoggerInterface $logger,
+        StateService $stateService,
+        HttpClientService $httpClientService,
+        UrlService $urlService,
+        TaskService $taskService,
+        EntityManagerInterface $entityManager
+    ) {
+        parent::__construct($logger, $stateService, $httpClientService, $urlService, $taskService);
+
+        $this->entityManager = $entityManager;
+    }
 
     /**
      * @param Task[] $tasks
@@ -48,6 +76,7 @@ class WorkerTaskAssignmentService extends WorkerTaskService
         $failedWorkers = [];
         $failedGroups = [];
 
+        /* @var Task[] $tasks */
         foreach ($taskGroups as $workerIndex => $tasks) {
             $worker = $workers[$workerIndex];
 
@@ -59,10 +88,10 @@ class WorkerTaskAssignmentService extends WorkerTaskService
                         $task->getRemoteId()
                     );
 
-                    $this->taskService->getManager()->persist($task);
+                    $this->entityManager->persist($task);
                 }
 
-                $this->taskService->getManager()->flush();
+                $this->entityManager->flush();
             } else {
                 if (!in_array($worker->getHostname(), $failedWorkers)) {
                     $failedWorkers[] = $worker->getHostname();
@@ -97,7 +126,9 @@ class WorkerTaskAssignmentService extends WorkerTaskService
 
                 foreach ($failedTasks as $task) {
                     $task->setState($taskQueuedState);
-                    $this->taskService->persistAndFlush($task);
+
+                    $this->entityManager->persist($task);
+                    $this->entityManager->flush();
                 }
             }
 

@@ -2,6 +2,8 @@
 namespace SimplyTestable\ApiBundle\Command\Task\Cancel;
 
 use Psr\Log\LoggerInterface;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService;
@@ -36,10 +38,16 @@ class CollectionCommand extends Command
     private $logger;
 
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param TaskService $taskService
      * @param WorkerTaskCancellationService $workerTaskCancellationService
      * @param LoggerInterface $logger
+     * @param TaskRepository $taskRepository
      * @param string|null $name
      */
     public function __construct(
@@ -47,6 +55,7 @@ class CollectionCommand extends Command
         TaskService $taskService,
         WorkerTaskCancellationService $workerTaskCancellationService,
         LoggerInterface $logger,
+        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -55,6 +64,7 @@ class CollectionCommand extends Command
         $this->taskService = $taskService;
         $this->workerTaskCancellationService = $workerTaskCancellationService;
         $this->logger = $logger;
+        $this->taskRepository = $taskRepository;
     }
 
     /**
@@ -87,7 +97,9 @@ class CollectionCommand extends Command
 
         $taskIdsByWorker = array();
         foreach ($taskIds as $taskId) {
-            $task = $this->taskService->getEntityRepository()->find($taskId);
+            /* @var Task $task */
+            $task = $this->taskRepository->find($taskId);
+
             $taskWorker = $task->getWorker();
 
             if (empty($taskWorker)) {

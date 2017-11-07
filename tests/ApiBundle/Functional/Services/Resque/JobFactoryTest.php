@@ -252,6 +252,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.taskservice',
                         'simplytestable.services.workertaskcancellationservice',
                         'logger',
+                        'simplytestable.repository.task',
                     ],
                 ],
             ],

@@ -127,7 +127,8 @@ class JobFactory
                     }
 
                     if ($taskIsUpdated) {
-                        $taskService->persistAndFlush($task);
+                        $entityManager->persist($task);
+                        $entityManager->flush();
                     }
                 }
             }
@@ -325,11 +326,13 @@ class JobFactory
      */
     public function setTaskStates(Job $job, State $state)
     {
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         foreach ($job->getTasks() as $task) {
             $task->setState($state);
-            $taskService->persistAndFlush($task);
+
+            $entityManager->persist($task);
+            $entityManager->flush();
         }
     }
 

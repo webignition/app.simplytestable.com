@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use webignition\NormalisedUrl\NormalisedUrl;
 
 class CrawlJobContainerService
@@ -58,6 +59,11 @@ class CrawlJobContainerService
     private $jobTypeService;
 
     /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param TaskService $taskService
      * @param TaskTypeService $taskTypeService
@@ -87,6 +93,7 @@ class CrawlJobContainerService
         $this->jobTypeService = $jobTypeService;
 
         $this->entityRepository = $entityManager->getRepository(CrawlJobContainer::class);
+        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**
@@ -254,7 +261,7 @@ class CrawlJobContainerService
 
             if (JobService::COMPLETED_STATE !== $crawlJob->getState()->getName()) {
                 $this->jobService->cancelIncompleteTasks($crawlJob);
-                $this->taskService->getManager()->flush();
+                $this->entityManager->flush();
             }
 
             return true;
@@ -316,7 +323,7 @@ class CrawlJobContainerService
      */
     public function getProcessedUrls(CrawlJobContainer $crawlJobContainer)
     {
-        return $this->taskService->getEntityRepository()->findUrlsByJobAndState(
+        return $this->taskRepository->findUrlsByJobAndState(
             $crawlJobContainer->getCrawlJob(),
             $this->stateService->get(TaskService::COMPLETED_STATE)
         );
@@ -338,7 +345,7 @@ class CrawlJobContainerService
 
         $taskCompletedState = $this->stateService->get(TaskService::COMPLETED_STATE);
 
-        $completedTaskUrls = $this->taskService->getEntityRepository()->findUrlsByJobAndState(
+        $completedTaskUrls = $this->taskRepository->findUrlsByJobAndState(
             $crawlJob,
             $taskCompletedState
         );
@@ -349,7 +356,7 @@ class CrawlJobContainerService
             }
         }
 
-        $completedTaskOutputs = $this->taskService->getEntityRepository()->getOutputCollectionByJobAndState(
+        $completedTaskOutputs = $this->taskRepository->getOutputCollectionByJobAndState(
             $crawlJob,
             $taskCompletedState
         );
@@ -387,7 +394,7 @@ class CrawlJobContainerService
     {
         $url = (string)new NormalisedUrl($url);
 
-        return $this->taskService->getEntityRepository()->findUrlExistsByJobAndUrl(
+        return $this->taskRepository->findUrlExistsByJobAndUrl(
             $job,
             $url
         );

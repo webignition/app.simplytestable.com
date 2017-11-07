@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
-use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -235,15 +234,16 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testPersist()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskRepository = $this->container->get('simplytestable.repository.task');
 
         $originalTaskUrl = $this->task->getUrl();
 
         $this->task->setUrl('foo');
-        $this->taskService->persist($this->task);
+        $entityManager->persist($this->task);
 
         $entityManager->clear();
 
-        $retrievedTask = $this->taskService->getEntityRepository()->find($this->task->getId());
+        $retrievedTask = $taskRepository->find($this->task->getId());
 
         $this->assertEquals($originalTaskUrl, $retrievedTask->getUrl());
         $this->assertEquals('foo', $this->task->getUrl());
@@ -252,13 +252,17 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testPersistAndFlush()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskRepository = $this->container->get('simplytestable.repository.task');
 
         $this->task->setUrl('foo');
-        $this->taskService->persistAndFlush($this->task);
+
+        $entityManager->persist($this->task);
+        $entityManager->flush();
 
         $entityManager->clear();
 
-        $retrievedTask = $this->taskService->getEntityRepository()->find($this->task->getId());
+        /* @var Task $retrievedTask */
+        $retrievedTask = $taskRepository->find($this->task->getId());
 
         $this->assertEquals('foo', $retrievedTask->getUrl());
         $this->assertEquals('foo', $this->task->getUrl());
@@ -408,11 +412,6 @@ class TaskServiceTest extends AbstractBaseTestCase
             TaskService::TASK_FAILED_RETRY_LIMIT_REACHED_STATE,
             TaskService::TASK_SKIPPED_STATE
         ], $this->taskService->getAvailableStateNames());
-    }
-
-    public function testGetEntityRepository()
-    {
-        $this->assertInstanceOf(TaskRepository::class, $this->taskService->getEntityRepository());
     }
 
     /**

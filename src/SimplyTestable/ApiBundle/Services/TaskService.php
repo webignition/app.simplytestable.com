@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use SimplyTestable\ApiBundle\Entity\Task\Output as TaskOutput;
@@ -14,7 +15,7 @@ use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use webignition\Url\Encoder as UrlEncoder;
 use webignition\Url\Url;
 
-class TaskService extends EntityService
+class TaskService
 {
     const CANCELLED_STATE = 'task-cancelled';
     const QUEUED_STATE = 'task-queued';
@@ -28,6 +29,11 @@ class TaskService extends EntityService
     const TASK_SKIPPED_STATE = 'task-skipped';
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * @var StateService
      */
     private $stateService;
@@ -36,6 +42,11 @@ class TaskService extends EntityService
      * @var ResqueQueueService
      */
     private $resqueQueueService;
+
+    /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
 
     /**
      * @var TaskOutputRepository
@@ -95,27 +106,18 @@ class TaskService extends EntityService
      * @param EntityManager $entityManager
      * @param StateService $stateService
      * @param ResqueQueueService $resqueQueueService
-     * @param TaskOutputRepository $taskOutputRepository
      */
     public function __construct(
         EntityManager $entityManager,
         StateService $stateService,
-        ResqueQueueService $resqueQueueService,
-        TaskOutputRepository $taskOutputRepository
+        ResqueQueueService $resqueQueueService
     ) {
-        parent::__construct($entityManager);
-
+        $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->resqueQueueService = $resqueQueueService;
-        $this->taskOutputRepository = $taskOutputRepository;
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEntityName()
-    {
-        return Task::class;
+        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskOutputRepository = $entityManager->getRepository(TaskOutput::class);
     }
 
     /**
@@ -159,7 +161,7 @@ class TaskService extends EntityService
 
         $timePeriod->setEndDateTime(new \DateTime());
 
-        $this->getManager()->persist($task);
+        $this->entityManager->persist($task);
     }
 
     /**
@@ -223,26 +225,6 @@ class TaskService extends EntityService
 
     /**
      * @param Task $task
-     */
-    public function persist(Task $task)
-    {
-        $this->getManager()->persist($task);
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @return Task
-     */
-    public function persistAndFlush(Task $task)
-    {
-        $this->getManager()->persist($task);
-        $this->getManager()->flush();
-        return $task;
-    }
-
-    /**
-     * @param Task $task
      * @param Worker $worker
      * @param int $remoteId
      */
@@ -301,7 +283,8 @@ class TaskService extends EntityService
         $task->clearWorker();
         $task->clearRemoteId();
 
-        $this->persistAndFlush($task);
+        $this->entityManager->persist($task);
+        $this->entityManager->flush();
     }
 
     /**
@@ -310,14 +293,6 @@ class TaskService extends EntityService
     public function getAvailableStateNames()
     {
         return $this->availableStateNames;
-    }
-
-    /**
-     * @return TaskRepository
-     */
-    public function getEntityRepository()
-    {
-        return parent::getEntityRepository();
     }
 
     /**
@@ -338,7 +313,7 @@ class TaskService extends EntityService
             (string)$urlEncoder->encode(new Url(($url)))
         ]);
 
-        $tasks = $this->getEntityRepository()->getCollectionByUrlSetAndTaskTypeAndStates(
+        $tasks = $this->taskRepository->getCollectionByUrlSetAndTaskTypeAndStates(
             $urlSet,
             $taskType,
             $states

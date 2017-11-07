@@ -1,11 +1,13 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\TaskPreProcessor;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Exception\TooManyRedirectsException;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -47,18 +49,41 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
      */
     private $logger;
 
+    /**
+     * @var TaskRepository
+     */
+    private $taskRepository;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param TaskService $taskService
+     * @param WebResourceService $webResourceService
+     * @param HttpClientService $httpClientService
+     * @param LoggerInterface $logger
+     * @param StateService $stateService
+     * @param TaskRepository $taskRepository
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(
         TaskService $taskService,
         WebResourceService $webResourceService,
         HttpClientService $httpClientService,
         LoggerInterface $logger,
-        StateService $stateService
+        StateService $stateService,
+        TaskRepository $taskRepository,
+        EntityManagerInterface $entityManager
     ) {
         $this->taskService = $taskService;
         $this->webResourceService = $webResourceService;
         $this->httpClientService = $httpClientService;
         $this->logger = $logger;
         $this->stateService = $stateService;
+        $this->taskRepository = $taskRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -78,7 +103,7 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
      */
     public function process(Task $task)
     {
-        $rawTaskOutputs = $this->taskService->getEntityRepository()->findOutputByJobAndType($task);
+        $rawTaskOutputs = $this->taskRepository->findOutputByJobAndType($task);
 
         if (empty($rawTaskOutputs)) {
             return false;
@@ -128,7 +153,8 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
 
             $task->setOutput($output);
 
-            $this->taskService->persistAndFlush($task);
+            $this->entityManager->persist($task);
+            $this->entityManager->flush();
         }
 
         return false;
