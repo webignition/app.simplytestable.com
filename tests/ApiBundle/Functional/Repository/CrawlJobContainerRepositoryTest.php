@@ -72,7 +72,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $entityManager->flush();
 
         $task = new Task();
-        $task->setType($taskTypeService->get(TaskTypeService::URL_DISCOVERY_TYPE));
+        $task->setType($taskTypeService->getUrlDiscoveryTaskType());
         $task->setJob($crawlJob);
         $task->setUrl('http://example.com/');
         $task->setState($stateService->get(TaskService::COMPLETED_STATE));

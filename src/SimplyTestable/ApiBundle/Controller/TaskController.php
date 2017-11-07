@@ -61,7 +61,7 @@ class TaskController extends Controller
 
         $state = $completeRequest->getState();
 
-        $urlDiscoveryTaskType = $taskTypeService->get('URL discovery');
+        $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
         foreach ($tasks as $task) {
             $currentTaskOutput = $task->getOutput();

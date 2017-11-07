@@ -61,7 +61,7 @@ class CrawlJobContainerServiceGetDiscoveredUrlsTest extends AbstractCrawlJobCont
             $task->setState($stateService->get(TaskService::COMPLETED_STATE));
             $task->setUrl($taskUrl);
             $task->setJob($crawlJob);
-            $task->setType($taskTypeService->get(TaskTypeService::URL_DISCOVERY_TYPE));
+            $task->setType($taskTypeService->getUrlDiscoveryTaskType());
 
             $output = new Output();
             $output->setOutput(json_encode($discoveredUrlSet));

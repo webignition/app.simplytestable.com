@@ -33,6 +33,14 @@ class TaskTypeService
     }
 
     /**
+     * @return TaskType
+     */
+    public function getUrlDiscoveryTaskType()
+    {
+        return $this->get(self::URL_DISCOVERY_TYPE);
+    }
+
+    /**
      * @param string $name
      *
      * @return TaskType
