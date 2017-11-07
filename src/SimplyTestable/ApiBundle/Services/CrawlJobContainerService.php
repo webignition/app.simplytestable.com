@@ -247,7 +247,9 @@ class CrawlJobContainerService
                     'plan-url-limit-reached:discovered-url-count-' . $crawlDiscoveredUrlCount,
                     $urlsPerJobConstraint
                 );
-                $this->jobService->persistAndFlush($crawlJob);
+
+                $this->entityManager->persist($crawlJob);
+                $this->entityManager->flush();
             }
 
             if (JobService::COMPLETED_STATE !== $crawlJob->getState()->getName()) {

@@ -3,11 +3,11 @@
 namespace SimplyTestable\ApiBundle\Resque\Job\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 
@@ -37,25 +37,25 @@ class ResolveJob extends CommandJob
         /* @var ResqueJobFactory $resqueJobFactory */
         $resqueJobFactory = $this->getContainer()->get($this->args['serviceIds'][2]);
 
-        /* @var JobService $jobService */
-        $jobService = $this->getContainer()->get($this->args['serviceIds'][3]);
-
         /* @var WebsiteResolutionService $websiteResolutionService */
-        $websiteResolutionService = $this->getContainer()->get($this->args['serviceIds'][4]);
+        $websiteResolutionService = $this->getContainer()->get($this->args['serviceIds'][3]);
 
         /* @var JobPreparationService $jobPreparationService */
-        $jobPreparationService = $this->getContainer()->get($this->args['serviceIds'][5]);
+        $jobPreparationService = $this->getContainer()->get($this->args['serviceIds'][4]);
 
         $predefinedDomainsToIgnore = $this->args['parameters']['predefinedDomainsToIgnore'];
+
+        /* @var JobRepository $jobRepository */
+        $jobRepository = $this->getContainer()->get($this->args['serviceIds'][5]);
 
         return new ResolveWebsiteCommand(
             $applicationStateService,
             $resqueQueueService,
             $resqueJobFactory,
-            $jobService,
             $websiteResolutionService,
             $jobPreparationService,
-            $predefinedDomainsToIgnore
+            $predefinedDomainsToIgnore,
+            $jobRepository
         );
     }
 

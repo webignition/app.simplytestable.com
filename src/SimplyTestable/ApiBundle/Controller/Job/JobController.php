@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -31,9 +32,9 @@ class JobController extends Controller
     public function latestAction($site_root_url)
     {
         $websiteService = $this->get('simplytestable.services.websiteservice');
-        $jobService = $this->get('simplytestable.services.jobservice');
         $userService = $this->get('simplytestable.services.userservice');
         $teamService = $this->get('simplytestable.services.teamservice');
+        $jobRepository = $this->container->get('simplytestable.repository.job');
 
         $website = $websiteService->fetch($site_root_url);
         $latestJob = null;
@@ -44,7 +45,7 @@ class JobController extends Controller
         if ($userHasTeam || $userBelongsToTeam) {
             $team = $teamService->getForUser($this->getUser());
 
-            $latestJob = $jobService->getEntityRepository()->findOneBy([
+            $latestJob = $jobRepository->findOneBy([
                 'website' => $website,
                 'user' => $teamService->getPeople($team),
             ], [
@@ -60,7 +61,7 @@ class JobController extends Controller
         }
 
         if (!$userService->isPublicUser($this->getUser())) {
-            $latestJob = $jobService->getEntityRepository()->findOneBy([
+            $latestJob = $jobRepository->findOneBy([
                 'website' => $website,
                 'user' => $this->getUser(),
             ], [
@@ -75,7 +76,7 @@ class JobController extends Controller
             }
         }
 
-        $latestJob = $jobService->getEntityRepository()->findOneBy([
+        $latestJob = $jobRepository->findOneBy([
             'website' => $website,
             'user' => $userService->getPublicUser()
         ], [
@@ -124,11 +125,12 @@ class JobController extends Controller
      */
     public function isPublicAction($site_root_url, $test_id)
     {
-        $jobService = $this->get('simplytestable.services.jobservice');
+        /* @var JobRepository $jobRepository */
+        $jobRepository = $this->container->get('simplytestable.repository.job');
 
         return new Response(
             '',
-            $jobService->getIsPublic($test_id) ? 200 : 404
+            $jobRepository->getIsPublicByJobId($test_id) ? 200 : 404
         );
     }
 
@@ -143,7 +145,7 @@ class JobController extends Controller
     {
         $userService = $this->get('simplytestable.services.userservice');
         $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
-        $jobService = $this->get('simplytestable.services.jobservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($userService->isPublicUser($this->getUser())) {
             return $this->createRedirectToJobStatus($siteRootUrl, $testId);
@@ -166,7 +168,9 @@ class JobController extends Controller
 
         if ($job->getIsPublic() !== $isPublic) {
             $job->setIsPublic(filter_var($isPublic, FILTER_VALIDATE_BOOLEAN));
-            $jobService->persistAndFlush($job);
+
+            $entityManager->persist($job);
+            $entityManager->flush();
         }
 
         return $this->createRedirectToJobStatus($siteRootUrl, $testId);

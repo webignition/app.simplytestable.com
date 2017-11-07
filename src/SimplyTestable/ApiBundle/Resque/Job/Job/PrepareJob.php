@@ -4,11 +4,11 @@ namespace SimplyTestable\ApiBundle\Resque\Job\Job;
 
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 
@@ -38,29 +38,29 @@ class PrepareJob extends CommandJob
         /* @var ResqueJobFactory $resqueJobFactory */
         $resqueJobFactory = $this->getContainer()->get($this->args['serviceIds'][2]);
 
-        /* @var JobService $jobService */
-        $jobService = $this->getContainer()->get($this->args['serviceIds'][3]);
-
         /* @var JobPreparationService $jobPreparationService */
-        $jobPreparationService = $this->getContainer()->get($this->args['serviceIds'][4]);
+        $jobPreparationService = $this->getContainer()->get($this->args['serviceIds'][3]);
 
         /* @var CrawlJobContainerService $crawlJobContainerService */
-        $crawlJobContainerService = $this->getContainer()->get($this->args['serviceIds'][5]);
+        $crawlJobContainerService = $this->getContainer()->get($this->args['serviceIds'][4]);
 
         /* @var LoggerInterface $logger */
-        $logger = $this->getContainer()->get($this->args['serviceIds'][6]);
+        $logger = $this->getContainer()->get($this->args['serviceIds'][5]);
 
         $predefinedDomainsToIgnore = $this->args['parameters']['predefinedDomainsToIgnore'];
+
+        /* @var JobRepository $jobRepository */
+        $jobRepository = $this->getContainer()->get($this->args['serviceIds'][6]);
 
         return new PrepareCommand(
             $applicationStateService,
             $resqueQueueService,
             $resqueJobFactory,
-            $jobService,
             $jobPreparationService,
             $crawlJobContainerService,
             $logger,
-            $predefinedDomainsToIgnore
+            $predefinedDomainsToIgnore,
+            $jobRepository
         );
     }
 

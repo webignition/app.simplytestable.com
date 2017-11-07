@@ -25,6 +25,7 @@ services:
         websiteService: "@simplytestable.services.websiteservice"
         urlResolver: '@simplytestable.services.urlresolver'
         stateService: '@simplytestable.services.stateservice'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.stateservice:
     class:  SimplyTestable\ApiBundle\Services\StateService
@@ -137,11 +138,11 @@ services:
     class:   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
     arguments:
         userAccountPlanService: "@simplytestable.services.userAccountPlanService"
-        jobService: "@simplytestable.services.jobservice"
         taskService: "@simplytestable.services.taskservice"
         teamService: "@simplytestable.services.teamservice"
         jobTypeService: '@simplytestable.services.jobtypeservice'
         stateService: '@simplytestable.services.stateservice'
+        jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
@@ -155,6 +156,7 @@ services:
         urlFinder: '@simplytestable.services.urlfinder'
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
@@ -303,8 +305,8 @@ services:
   simplytestable.services.job.retrievalservice:
     class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
     arguments:
-        jobService: "@simplytestable.services.jobservice"
         teamService: "@simplytestable.services.teamservice"
+        jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.job.UserPostActivationPropertiesService:
     class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
@@ -315,9 +317,10 @@ services:
   simplytestable.services.task.queueService:
     class:  SimplyTestable\ApiBundle\Services\Task\QueueService
     arguments:
-        jobService: "@simplytestable.services.jobservice"
+        jobService: '@simplytestable.services.jobservice'
         taskService: "@simplytestable.services.taskservice"
         stateService: '@simplytestable.services.stateservice'
+        jobRepository: '@simplytestable.repository.job'
 
   simplytestable.services.worker.taskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
@@ -356,6 +359,8 @@ services:
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+        jobRepository: '@simplytestable.repository.job'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.scheduledjob.cronmodifier.validationservice:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService

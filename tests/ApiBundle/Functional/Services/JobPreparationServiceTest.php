@@ -83,9 +83,9 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
     ) {
         $this->queueHttpFixtures($httpFixtures);
 
-        $jobService = $this->container->get('simplytestable.services.jobservice');
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicAndPrivateUserSet();
@@ -95,7 +95,9 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
 
         $jobResolvedState = $stateService->fetch(JobService::RESOLVED_STATE);
         $job->setState($jobResolvedState);
-        $jobService->persistAndFlush($job);
+
+        $entityManager->persist($job);
+        $entityManager->flush();
 
         $this->jobPreparationService->prepare($job);
 

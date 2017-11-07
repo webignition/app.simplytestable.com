@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -60,8 +61,10 @@ class StartController extends Controller
     public function retestAction(Request $request, $site_root_url, $test_id)
     {
         $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobRepository = $this->container->get('simplytestable.repository.job');
 
-        $job = $jobService->getById($test_id);
+        /* @var Job $job */
+        $job = $jobRepository->find($test_id);
         if (is_null($job)) {
             return Response::create('', 400);
         }

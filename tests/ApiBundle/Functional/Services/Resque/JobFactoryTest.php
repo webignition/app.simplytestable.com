@@ -151,10 +151,10 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.applicationstateservice',
                         'simplytestable.services.resque.queueservice',
                         'simplytestable.services.resque.jobfactory',
-                        'simplytestable.services.jobservice',
                         'simplytestable.services.jobpreparationservice',
                         'simplytestable.services.crawljobcontainerservice',
-                        'logger'
+                        'logger',
+                        'simplytestable.repository.job',
                     ],
                     'parameters' => [
                         'predefinedDomainsToIgnore' => [
@@ -190,9 +190,9 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.applicationstateservice',
                         'simplytestable.services.resque.queueservice',
                         'simplytestable.services.resque.jobfactory',
-                        'simplytestable.services.jobservice',
                         'simplytestable.services.jobwebsiteresolutionservice',
                         'simplytestable.services.jobpreparationservice',
+                        'simplytestable.repository.job',
                     ],
                     'parameters' => [
                         'predefinedDomainsToIgnore' => [

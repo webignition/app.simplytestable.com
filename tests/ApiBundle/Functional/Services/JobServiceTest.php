@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
@@ -30,6 +31,11 @@ class JobServiceTest extends AbstractBaseTestCase
     private $jobFactory;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -37,6 +43,7 @@ class JobServiceTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->jobService = $this->container->get('simplytestable.services.jobservice');
+        $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
         $this->jobFactory = new JobFactory($this->container);
     }
 
@@ -291,20 +298,6 @@ class JobServiceTest extends AbstractBaseTestCase
         ];
     }
 
-    public function testGetJobById()
-    {
-        $jobs[] = $this->jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://foo.example.com',
-        ]);
-
-        $jobs[] = $this->jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => 'http://bar.example.com',
-        ]);
-
-        $this->assertEquals($jobs[0], $this->jobService->getById($jobs[0]->getId()));
-        $this->assertEquals($jobs[1], $this->jobService->getById($jobs[1]->getId()));
-    }
-
     /**
      * @dataProvider isStateDataProvider
      *
@@ -320,7 +313,9 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->create();
         $job->setState($state);
-        $this->jobService->persistAndFlush($job);
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->assertEquals($expectedIsFinished, $this->jobService->isFinished($job));
         $this->assertEquals($expectedIsNew, JobService::STARTING_STATE == $job->getState());
@@ -408,7 +403,8 @@ class JobServiceTest extends AbstractBaseTestCase
         $job = $this->jobFactory->create();
         $job->setState($stateService->fetch($stateName));
 
-        $this->jobService->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->jobService->cancel($job);
 
@@ -648,7 +644,8 @@ class JobServiceTest extends AbstractBaseTestCase
         $state = $stateService->fetch($stateName);
         $job->setState($state);
 
-        $this->jobService->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->jobService->complete($job);
 
@@ -788,7 +785,9 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->create();
         $job->setState($stateService->fetch($stateName));
-        $this->jobService->persistAndFlush($job);
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         $this->jobService->reject($job, '');
 
@@ -1112,73 +1111,5 @@ class JobServiceTest extends AbstractBaseTestCase
             ],
             $this->jobService->getFinishedStateNames()
         );
-    }
-
-    /**
-     * @dataProvider getIsPublicDataProvider
-     *
-     * @param array $jobValues
-     * @param bool $callSetPublic
-     * @param bool $expectedIsPublic
-     */
-    public function testGetIsPublic($jobValues, $callSetPublic, $expectedIsPublic)
-    {
-        $userFactory = new UserFactory($this->container);
-
-        $users = $userFactory->createPublicPrivateAndTeamUserSet();
-
-        if (empty($jobValues)) {
-            $jobId = 1;
-        } else {
-            $jobValues[JobFactory::KEY_USER] = $users[$jobValues[JobFactory::KEY_USER]];
-            $job = $this->jobFactory->create($jobValues);
-            $jobId = $job->getId();
-
-            if ($callSetPublic) {
-                $job->setIsPublic(true);
-
-                $jobService = $this->container->get('simplytestable.services.jobservice');
-                $jobService->persistAndFlush($job);
-            }
-        }
-
-        $isPublic = $this->jobService->getIsPublic($jobId);
-
-        $this->assertEquals($expectedIsPublic, $isPublic);
-    }
-
-    /**
-     * @return array
-     */
-    public function getIsPublicDataProvider()
-    {
-        return [
-            'no jobs' => [
-                'jobValues' => [],
-                'callSetPublic' => false,
-                'expectedIsPublic' => false,
-            ],
-            'public job is public' => [
-                'jobValues' => [
-                    JobFactory::KEY_USER => 'public',
-                ],
-                'callSetPublic' => false,
-                'expectedIsPublic' => true,
-            ],
-            'private job is not public' => [
-                'jobValuesCollection' => [
-                    JobFactory::KEY_USER => 'private',
-                ],
-                'callSetPublic' => false,
-                'expectedIsPublic' => false,
-            ],
-            'private job made public is not public' => [
-                'jobValuesCollection' => [
-                    JobFactory::KEY_USER => 'private',
-                ],
-                'callSetPublic' => true,
-                'expectedIsPublic' => true,
-            ],
-        ];
     }
 }

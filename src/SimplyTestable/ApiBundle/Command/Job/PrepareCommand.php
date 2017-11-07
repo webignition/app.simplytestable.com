@@ -3,10 +3,10 @@ namespace SimplyTestable\ApiBundle\Command\Job;
 
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
+use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use Symfony\Component\Console\Command\Command;
@@ -38,11 +38,6 @@ class PrepareCommand extends Command
     private $resqueJobFactory;
 
     /**
-     * @var JobService
-     */
-    private $jobService;
-
-    /**
      * @var JobPreparationService
      */
     private $jobPreparationService;
@@ -63,25 +58,30 @@ class PrepareCommand extends Command
     private $predefinedDomainsToIgnore;
 
     /**
+     * @var JobRepository
+     */
+    private $jobRepository;
+
+    /**
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
-     * @param JobService $jobService
      * @param JobPreparationService $jobPreparationService
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param LoggerInterface $logger
      * @param array $predefinedDomainsToIgnore
+     * @param JobRepository $jobRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
-        JobService $jobService,
         JobPreparationService $jobPreparationService,
         CrawlJobContainerService $crawlJobContainerService,
         LoggerInterface $logger,
         $predefinedDomainsToIgnore,
+        JobRepository $jobRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -89,11 +89,11 @@ class PrepareCommand extends Command
         $this->applicationStateService = $applicationStateService;
         $this->resqueQueueService = $resqueQueueService;
         $this->resqueJobFactory = $resqueJobFactory;
-        $this->jobService = $jobService;
         $this->jobPreparationService = $jobPreparationService;
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->logger = $logger;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
+        $this->jobRepository = $jobRepository;
     }
 
     /**
@@ -129,7 +129,7 @@ class PrepareCommand extends Command
             $input->getArgument('id')
         ));
 
-        $job = $this->jobService->getById((int)$input->getArgument('id'));
+        $job = $this->jobRepository->find((int)$input->getArgument('id'));
 
         foreach ($job->getRequestedTaskTypes() as $taskType) {
             /* @var TaskType $taskType */

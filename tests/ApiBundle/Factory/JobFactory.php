@@ -78,9 +78,9 @@ class JobFactory
     {
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
         $taskService = $this->container->get('simplytestable.services.taskservice');
         $workerRepository = $this->container->get('simplytestable.repository.worker');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $ignoreState = true;
 
@@ -93,7 +93,9 @@ class JobFactory
 
         if (isset($jobValues[self::KEY_STATE])) {
             $job->setState($stateService->fetch($jobValues[self::KEY_STATE]));
-            $jobService->persistAndFlush($job);
+
+            $entityManager->persist($job);
+            $entityManager->flush();
         }
 
         if (isset($jobValues[self::KEY_TASKS])) {
@@ -187,6 +189,7 @@ class JobFactory
         $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
         $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
         $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         foreach ($this->defaultJobValues as $key => $value) {
             if (!isset($jobValues[$key])) {
@@ -230,7 +233,9 @@ class JobFactory
         if (isset($jobValues[self::KEY_STATE]) && !$ignoreState) {
             $state = $stateService->fetch($jobValues[self::KEY_STATE]);
             $job->setState($state);
-            $jobService->persistAndFlush($job);
+
+            $entityManager->persist($job);
+            $entityManager->flush();
         }
 
         if (isset($jobValues[self::KEY_TIME_PERIOD_START]) && isset($jobValues[self::KEY_TIME_PERIOD_END])) {
@@ -239,7 +244,9 @@ class JobFactory
             $timePeriod->setEndDateTime(new \DateTime($jobValues[self::KEY_TIME_PERIOD_END]));
 
             $job->setTimePeriod($timePeriod);
-            $jobService->persistAndFlush($job);
+
+            $entityManager->persist($job);
+            $entityManager->flush();
         }
 
         if (isset($jobValues[self::KEY_AMMENDMENTS])) {
@@ -256,7 +263,9 @@ class JobFactory
 
         if (isset($jobValues[self::KEY_SET_PUBLIC]) && $jobValues[self::KEY_SET_PUBLIC]) {
             $job->setIsPublic(true);
-            $jobService->persistAndFlush($job);
+
+            $entityManager->persist($job);
+            $entityManager->flush();
         }
 
         return $job;
@@ -342,8 +351,10 @@ class JobFactory
      */
     public function save(Job $job)
     {
-        $jobService = $this->container->get('simplytestable.services.jobservice');
-        $jobService->persistAndFlush($job);
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $entityManager->persist($job);
+        $entityManager->flush();
     }
 
     /**

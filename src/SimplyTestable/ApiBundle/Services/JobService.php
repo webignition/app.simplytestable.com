@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
@@ -13,7 +13,7 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstr
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason as JobRejectionReason;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 
-class JobService extends EntityService
+class JobService
 {
     const STARTING_STATE = 'job-new';
     const CANCELLED_STATE = 'job-cancelled';
@@ -64,39 +64,33 @@ class JobService extends EntityService
     private $taskTypeService;
 
     /**
-     * @param EntityManager $entityManager
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var JobRepository
+     */
+    private $jobRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
      * @param StateService $stateService
      * @param TaskService $taskService
      * @param TaskTypeService $taskTypeService
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         StateService $stateService,
         TaskService $taskService,
         TaskTypeService $taskTypeService
     ) {
-        parent::__construct($entityManager);
+        $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->taskService = $taskService;
         $this->taskTypeService = $taskTypeService;
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEntityName()
-    {
-        return Job::class;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return Job
-     */
-    public function getById($id)
-    {
-        return $this->getEntityRepository()->find($id);
+        $this->jobRepository = $entityManager->getRepository(Job::class);
     }
 
     /**
@@ -120,7 +114,7 @@ class JobService extends EntityService
                 $taskTypeOptions->setTaskType($taskConfiguration->getType());
                 $taskTypeOptions->setOptions($taskConfiguration->getOptions());
 
-                $this->getManager()->persist($taskTypeOptions);
+                $this->entityManager->persist($taskTypeOptions);
                 $job->getTaskTypeOptions()->add($taskTypeOptions);
             }
         }
@@ -134,8 +128,8 @@ class JobService extends EntityService
         $startingState = $this->stateService->fetch(self::STARTING_STATE);
 
         $job->setState($startingState);
-        $this->getManager()->persist($job);
-        $this->getManager()->flush();
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         return $job;
     }
@@ -156,13 +150,12 @@ class JobService extends EntityService
             $ammendment->setConstraint($constraint);
         }
 
-        $this->getManager()->persist($ammendment);
-        $this->getManager()->flush();
+        $this->entityManager->persist($ammendment);
+        $this->entityManager->flush();
     }
 
     /**
      * @param Job $job
-     * @return Job
      */
     public function cancel(Job $job)
     {
@@ -192,7 +185,9 @@ class JobService extends EntityService
         $cancelledState = $this->stateService->fetch(self::CANCELLED_STATE);
 
         $job->setState($cancelledState);
-        return $this->persistAndFlush($job);
+
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
     }
 
     /**
@@ -211,8 +206,6 @@ class JobService extends EntityService
      * @param Job $job
      * @param string $reason
      * @param AccountPlanConstraint|null $constraint
-     *
-     * @return Job
      */
     public function reject(Job $job, $reason, AccountPlanConstraint $constraint = null)
     {
@@ -225,7 +218,7 @@ class JobService extends EntityService
         ];
 
         if (!in_array($jobStateName, $allowedStateNames)) {
-            return $job;
+            return;
         }
 
         $rejectedState = $this->stateService->fetch(self::REJECTED_STATE);
@@ -236,9 +229,10 @@ class JobService extends EntityService
         $rejectionReason->setJob($job);
         $rejectionReason->setReason($reason);
 
-        $this->getManager()->persist($rejectionReason);
+        $this->entityManager->persist($rejectionReason);
 
-        return $this->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
     }
 
     /**
@@ -252,18 +246,6 @@ class JobService extends EntityService
             $job->getState()->getName(),
             $this->finishedStates
         );
-    }
-
-    /**
-     * @param Job $job
-     *
-     * @return Job
-     */
-    public function persistAndFlush(Job $job)
-    {
-        $this->getManager()->persist($job);
-        $this->getManager()->flush();
-        return $job;
     }
 
     /**
@@ -283,17 +265,15 @@ class JobService extends EntityService
 
     /**
      * @param Job $job
-     *
-     * @return Job
      */
     public function complete(Job $job)
     {
         if ($this->isFinished($job)) {
-            return $job;
+            return;
         }
 
         if ($this->hasIncompleteTasks($job)) {
-            return $job;
+            return;
         }
 
         $completedState = $this->stateService->fetch(self::COMPLETED_STATE);
@@ -301,7 +281,8 @@ class JobService extends EntityService
         $job->getTimePeriod()->setEndDateTime(new \DateTime());
         $job->setState($completedState);
 
-        return $this->persistAndFlush($job);
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
     }
 
     /**
@@ -312,9 +293,9 @@ class JobService extends EntityService
         $incompleteStates = $this->stateService->fetchCollection($this->getIncompleteStateNames());
 
         /* @var Job[] $jobs */
-        $jobs = $this->getEntityRepository()->findBy(array(
+        $jobs = $this->jobRepository->findBy([
             'state' => $incompleteStates,
-        ));
+        ]);
 
         foreach ($jobs as $jobIndex => $job) {
             // Exclude jobs with no tasks
@@ -412,26 +393,5 @@ class JobService extends EntityService
     public function getFinishedStateNames()
     {
         return $this->finishedStates;
-    }
-
-    /**
-     * @return JobRepository
-     */
-    public function getEntityRepository()
-    {
-        /* @var JobRepository $jobRepository */
-        $jobRepository = parent::getEntityRepository();
-
-        return $jobRepository;
-    }
-
-    /**
-     * @param int $jobId
-     *
-     * @return bool
-     */
-    public function getIsPublic($jobId)
-    {
-        return $this->getEntityRepository()->getIsPublicByJobId($jobId);
     }
 }

@@ -483,6 +483,9 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     public function testGetIsPublicByJobId($jobValues, $callSetPublic, $expectedIsPublic)
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
 
         if (empty($jobValues)) {
@@ -495,8 +498,8 @@ class JobRepositoryTest extends AbstractBaseTestCase
             if ($callSetPublic) {
                 $job->setIsPublic(true);
 
-                $jobService = $this->container->get('simplytestable.services.jobservice');
-                $jobService->persistAndFlush($job);
+                $entityManager->persist($job);
+                $entityManager->flush();
             }
         }
 
