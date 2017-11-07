@@ -41,7 +41,7 @@ services:
     class: Doctrine\ORM\EntityRepository
     factory: ["@doctrine.orm.entity_manager", getRepository]
     arguments:
-        - SimplyTestable\ApiBundle\Entity\Account\Job\Ammendment
+        - SimplyTestable\ApiBundle\Entity\Job\Ammendment
 
   simplytestable.repository.tasktypeoptions:
     class: Doctrine\ORM\EntityRepository
