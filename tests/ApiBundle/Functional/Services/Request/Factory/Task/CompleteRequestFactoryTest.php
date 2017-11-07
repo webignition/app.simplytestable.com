@@ -251,11 +251,11 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $stateService = \Mockery::mock(StateService::class);
         $stateService
-            ->shouldReceive('fetch')
+            ->shouldReceive('get')
             ->andReturn($stateToFetch);
 
         $stateService
-            ->shouldReceive('fetchCollection')
+            ->shouldReceive('getCollection')
             ->with([
                 TaskService::IN_PROGRESS_STATE,
                 TaskService::QUEUED_STATE,
