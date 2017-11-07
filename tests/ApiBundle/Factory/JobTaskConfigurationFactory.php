@@ -33,7 +33,7 @@ class JobTaskConfigurationFactory
         $jobTaskConfiguration = new TaskConfiguration();
 
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $taskType = $taskTypeService->getByName($jobTaskConfigurationValues[self::KEY_TYPE]);
+        $taskType = $taskTypeService->get($jobTaskConfigurationValues[self::KEY_TYPE]);
 
         $jobTaskConfiguration->setType($taskType);
 

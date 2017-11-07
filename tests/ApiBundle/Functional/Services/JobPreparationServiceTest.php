@@ -44,7 +44,7 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
 
         $this->jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $cssValidationTaskType = $taskTypeService->getByName('css validation');
+        $cssValidationTaskType = $taskTypeService->get('css validation');
 
         $this->jobPreparationService->setPredefinedDomainsToIgnore($cssValidationTaskType, [
             'predefined',

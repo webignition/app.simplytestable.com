@@ -151,7 +151,7 @@ class GetTopErrorsCommand extends Command
             $output->write('<info>Requested task type: ' . $taskTypeName . ' ... </info>');
         }
 
-        $taskType = $this->taskTypeService->getByName($taskTypeName);
+        $taskType = $this->taskTypeService->get($taskTypeName);
 
         if (empty($taskType)) {
             if (!$reportOnly) {

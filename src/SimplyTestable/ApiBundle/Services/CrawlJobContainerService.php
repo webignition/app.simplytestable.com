@@ -205,7 +205,7 @@ class CrawlJobContainerService
         $task->setJob($crawlJobContainer->getCrawlJob());
         $task->setParameters(json_encode($parameters));
         $task->setState($taskQueuedState);
-        $task->setType($this->taskTypeService->getByName('URL discovery'));
+        $task->setType($this->taskTypeService->get('URL discovery'));
         $task->setUrl($url);
 
         return $task;

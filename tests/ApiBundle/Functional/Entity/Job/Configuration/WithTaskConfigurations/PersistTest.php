@@ -39,7 +39,7 @@ class PersistTest extends AbstractBaseTestCase
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setJobConfiguration($this->configuration);
         $taskConfiguration->setType(
-            $taskTypeService->getByName('HTML validation')
+            $taskTypeService->get('HTML validation')
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'

@@ -169,7 +169,7 @@ class RunCommandTest extends AbstractBaseTestCase
 
             foreach ($rawValues['task_configuration'] as $taskTypeName => $taskTypeOptions) {
                 $taskConfiguration = new TaskConfiguration();
-                $taskConfiguration->setType($taskTypeService->getByName($taskTypeName));
+                $taskConfiguration->setType($taskTypeService->get($taskTypeName));
                 $taskConfiguration->setOptions($taskTypeOptions);
 
                 $taskConfigurationCollection->add($taskConfiguration);

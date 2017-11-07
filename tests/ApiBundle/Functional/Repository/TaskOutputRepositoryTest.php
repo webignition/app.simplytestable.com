@@ -93,7 +93,7 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
             }
         }
 
-        $taskType = $taskTypeService->getByName($taskTypeName);
+        $taskType = $taskTypeService->get($taskTypeName);
 
         $taskOutputIds = $this->taskOutputRepository->findIdsByTaskType($taskType, $limit, $offset);
 

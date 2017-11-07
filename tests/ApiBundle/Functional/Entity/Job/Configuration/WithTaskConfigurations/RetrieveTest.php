@@ -50,7 +50,7 @@ class RetrieveTest extends AbstractBaseTestCase
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setJobConfiguration($this->originalConfiguration);
         $taskConfiguration->setType(
-            $taskTypeService->getByName('HTML validation')
+            $taskTypeService->get('HTML validation')
         );
         $taskConfiguration->setOptions([
             'foo' => 'bar'

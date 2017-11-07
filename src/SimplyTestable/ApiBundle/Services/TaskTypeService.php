@@ -39,19 +39,19 @@ class TaskTypeService
      */
     public function exists($taskTypeName)
     {
-        return !is_null($this->getByName($taskTypeName));
+        return !is_null($this->get($taskTypeName));
     }
 
     /**
-     * @param string $taskTypeName
+     * @param string $name
      *
      * @return TaskType
      */
-    public function getByName($taskTypeName)
+    public function get($name)
     {
         /* @var TaskType $taskType */
         $taskType = $this->taskTypeRepository->findOneBy([
-            'name' => $taskTypeName
+            'name' => $name
         ]);
 
         return $taskType;

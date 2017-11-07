@@ -151,7 +151,7 @@ class CompleteRequestFactory
      */
     private function getTasks()
     {
-        $taskType = $this->taskTypeService->getByName(
+        $taskType = $this->taskTypeService->get(
             urldecode($this->routeParams[self::ROUTE_PARAM_TASK_TYPE])
         );
 

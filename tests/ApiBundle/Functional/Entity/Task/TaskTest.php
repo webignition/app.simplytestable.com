@@ -39,7 +39,7 @@ class TaskTest extends AbstractBaseTestCase
         $task->setJob($this->jobFactory->create());
         $task->setUrl($taskUrl);
         $task->setState($stateService->get(TaskService::QUEUED_STATE));
-        $task->setType($taskTypeService->getByName('HTML Validation'));
+        $task->setType($taskTypeService->get('HTML Validation'));
         $task->setParameters(json_encode([
             $parameterKey => $parameterValue,
         ]));

@@ -18,7 +18,7 @@ class TaskTypeOptionsTest extends AbstractBaseTestCase
 
         $job = $jobFactory->create();
 
-        $taskType = $taskTypeService->getByName('HTML Validation');
+        $taskType = $taskTypeService->get('HTML Validation');
 
         $optionsValue = 'ɸ';
 
