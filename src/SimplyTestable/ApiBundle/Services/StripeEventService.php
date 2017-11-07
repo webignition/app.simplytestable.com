@@ -1,17 +1,31 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class StripeEventService extends EntityService
+class StripeEventService
 {
     /**
-     * @return string
+     * @var EntityManagerInterface
      */
-    protected function getEntityName()
+    private $entityManager;
+
+    /**
+     * @var EntityRepository
+     */
+    private $entityRepository;
+
+    /**
+     * @param EntityManager $entityManager
+     */
+    public function __construct(EntityManager $entityManager)
     {
-        return StripeEvent::class;
+        $this->entityManager = $entityManager;
+        $this->entityRepository = $entityManager->getRepository(StripeEvent::class);
     }
 
     /**
@@ -26,7 +40,7 @@ class StripeEventService extends EntityService
     public function create($stripeId, $type, $isLiveMode, $data, $user = null)
     {
         /* @var StripeEvent $existingEvent */
-        $existingEvent = $this->getEntityRepository()->findOneBy([
+        $existingEvent = $this->entityRepository->findOneBy([
             'stripeId' => $stripeId,
         ]);
 
@@ -45,7 +59,10 @@ class StripeEventService extends EntityService
             $stripeEvent->setUser($user);
         }
 
-        return $this->persistAndFlush($stripeEvent);
+        $this->entityManager->persist($stripeEvent);
+        $this->entityManager->flush();
+
+        return $stripeEvent;
     }
 
     /**
@@ -60,24 +77,11 @@ class StripeEventService extends EntityService
             $type = trim($type);
         }
 
-        return $this->getEntityRepository()->findBy([
+        return $this->entityRepository->findBy([
             'user' => $user,
             'type' => $type,
         ], [
             'id' => 'DESC'
         ]);
-    }
-
-    /**
-     * @param StripeEvent $stripeEvent
-     *
-     * @return StripeEvent
-     */
-    public function persistAndFlush(StripeEvent $stripeEvent)
-    {
-        $this->getManager()->persist($stripeEvent);
-        $this->getManager()->flush();
-
-        return $stripeEvent;
     }
 }

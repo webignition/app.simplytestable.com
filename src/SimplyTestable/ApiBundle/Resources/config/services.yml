@@ -219,6 +219,7 @@ services:
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         httpClientService: "@simplytestable.services.httpclientservice"
+        entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
@@ -231,6 +232,7 @@ services:
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         httpClientService: "@simplytestable.services.httpclientservice"
+        entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
@@ -242,6 +244,7 @@ services:
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         httpClientService: "@simplytestable.services.httpclientservice"
+        entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
@@ -253,6 +256,7 @@ services:
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         httpClientService: "@simplytestable.services.httpclientservice"
+        entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"
@@ -265,6 +269,7 @@ services:
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         httpClientService: "@simplytestable.services.httpclientservice"
+        entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
@@ -274,6 +279,7 @@ services:
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
         httpClientService: "@simplytestable.services.httpclientservice"
+        entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
         userAccountPlanService: "@simplytestable.services.useraccountplanservice"

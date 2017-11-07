@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\EventListener\Stripe;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
@@ -29,18 +30,26 @@ abstract class AbstractListener
     protected $event;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * @param StripeEventService $stripeEventService
      * @param HttpClientService $httpClientService
+     * @param EntityManagerInterface $entityManager
      * @param $webClientProperties
      */
     public function __construct(
         StripeEventService $stripeEventService,
         HttpClientService $httpClientService,
+        EntityManagerInterface $entityManager,
         $webClientProperties
     ) {
         $this->stripeEventService = $stripeEventService;
         $this->httpClientService = $httpClientService;
         $this->webClientProperties = $webClientProperties;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -62,7 +71,9 @@ abstract class AbstractListener
     protected function markEntityProcessed()
     {
         $this->event->getEntity()->setIsProcessed(true);
-        $this->stripeEventService->persistAndFlush($this->event->getEntity());
+
+        $this->entityManager->persist($this->event->getEntity());
+        $this->entityManager->flush();
     }
 
     /**
