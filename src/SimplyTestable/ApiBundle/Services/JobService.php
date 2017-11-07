@@ -120,7 +120,7 @@ class JobService extends EntityService
                 $taskTypeOptions->setTaskType($taskConfiguration->getType());
                 $taskTypeOptions->setOptions($taskConfiguration->getOptions());
 
-                $this->getManager()->persist($taskTypeOptions);
+                $this->entityManager->persist($taskTypeOptions);
                 $job->getTaskTypeOptions()->add($taskTypeOptions);
             }
         }
@@ -134,8 +134,8 @@ class JobService extends EntityService
         $startingState = $this->stateService->fetch(self::STARTING_STATE);
 
         $job->setState($startingState);
-        $this->getManager()->persist($job);
-        $this->getManager()->flush();
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
 
         return $job;
     }
@@ -156,8 +156,8 @@ class JobService extends EntityService
             $ammendment->setConstraint($constraint);
         }
 
-        $this->getManager()->persist($ammendment);
-        $this->getManager()->flush();
+        $this->entityManager->persist($ammendment);
+        $this->entityManager->flush();
     }
 
     /**
@@ -236,7 +236,7 @@ class JobService extends EntityService
         $rejectionReason->setJob($job);
         $rejectionReason->setReason($reason);
 
-        $this->getManager()->persist($rejectionReason);
+        $this->entityManager->persist($rejectionReason);
 
         return $this->persistAndFlush($job);
     }
@@ -261,8 +261,8 @@ class JobService extends EntityService
      */
     public function persistAndFlush(Job $job)
     {
-        $this->getManager()->persist($job);
-        $this->getManager()->flush();
+        $this->entityManager->persist($job);
+        $this->entityManager->flush();
         return $job;
     }
 
