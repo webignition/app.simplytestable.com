@@ -103,19 +103,6 @@ class InviteService
     }
 
     /**
-     * @param Invite $invite
-     *
-     * @return Invite
-     */
-    public function remove(Invite $invite)
-    {
-        $this->entityManager->remove($invite);
-        $this->entityManager->flush($invite);
-
-        return $invite;
-    }
-
-    /**
      * @param $inviter
      * @param $invitee
      *

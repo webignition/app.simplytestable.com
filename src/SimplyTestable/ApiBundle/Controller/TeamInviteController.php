@@ -92,6 +92,7 @@ class TeamInviteController extends Controller
         $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
@@ -130,7 +131,8 @@ class TeamInviteController extends Controller
         $invites = $teamInviteService->getForUser($this->getUser());
 
         foreach ($invites as $invite) {
-            $teamInviteService->remove($invite);
+            $entityManager->remove($invite);
+            $entityManager->flush();
         }
 
         return new Response();
@@ -191,6 +193,7 @@ class TeamInviteController extends Controller
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if (!$teamService->hasTeam($this->getUser())) {
             return Response::create('', 400, [
@@ -217,7 +220,8 @@ class TeamInviteController extends Controller
             ]);
         }
 
-        $teamInviteService->remove($invite);
+        $entityManager->remove($invite);
+        $entityManager->flush();
 
         return new Response();
     }
@@ -231,6 +235,7 @@ class TeamInviteController extends Controller
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
@@ -243,7 +248,8 @@ class TeamInviteController extends Controller
             $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
 
             if (!empty($invite)) {
-                $teamInviteService->remove($invite);
+                $entityManager->remove($invite);
+                $entityManager->flush();
             }
         }
 
@@ -277,6 +283,7 @@ class TeamInviteController extends Controller
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $requestData = $request->request;
         $token = trim($requestData->get('token'));
@@ -304,7 +311,8 @@ class TeamInviteController extends Controller
         $invites = $teamInviteService->getForUser($invitee);
 
         foreach ($invites as $invite) {
-            $teamInviteService->remove($invite);
+            $entityManager->remove($invite);
+            $entityManager->flush();
         }
 
         return new Response();
