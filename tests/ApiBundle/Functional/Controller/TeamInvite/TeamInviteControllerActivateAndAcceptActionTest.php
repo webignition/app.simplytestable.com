@@ -68,7 +68,7 @@ class TeamInviteControllerActivateAndAcceptActionTest extends AbstractTeamInvite
         $this->assertTrue($inviteeUser->isEnabled());
         $this->assertFalse($teamInviteService->hasAnyForUser($inviteeUser));
 
-        $team = $teamMemberService->getTeamByUser($inviteeUser);
+        $team = $teamMemberService->getTeamByMember($inviteeUser);
         $this->assertEquals($invite->getTeam(), $team);
         $this->assertNotEquals($initialUserPassword, $inviteeUser->getPassword());
     }

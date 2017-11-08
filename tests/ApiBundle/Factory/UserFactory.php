@@ -114,6 +114,7 @@ class UserFactory
         );
 
         $team = $teamService->create('Foo', $users['leader']);
+
         $teamMemberService = $teamService->getMemberService();
 
         $teamMemberService->add($team, $users['member1']);

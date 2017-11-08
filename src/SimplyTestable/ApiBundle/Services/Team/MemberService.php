@@ -1,42 +1,53 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Team;
 
-use Doctrine\ORM\EntityManager;
-use SimplyTestable\ApiBundle\Services\EntityService;
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Repository\TeamMemberRepository;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\Team\Member;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\TeamMember\Exception as TeamMemberServiceException;
 
-class MemberService extends EntityService {
-
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Team\Member';
-
+class MemberService
+{
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
     /**
-     *
-     * @return string
+     * @var TeamMemberRepository
      */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
+    private $teamMemberRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+        $this->teamMemberRepository = $entityManager->getRepository(Member::class);
     }
 
     /**
      * @param User $user
+     *
      * @return bool
      */
-    public function belongsToTeam(User $user) {
-        return $this->getEntityRepository()->getMemberCountByUser($user) > 0;
+    public function belongsToTeam(User $user)
+    {
+        return $this->teamMemberRepository->getMemberCountByUser($user) > 0;
     }
-
 
     /**
      * @param Team $team
      * @param User $user
+     *
      * @return Member
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\TeamMember\Exception
+     * @throws TeamMemberServiceException
      */
-    public function add(Team $team, User $user) {
+    public function add(Team $team, User $user)
+    {
         if ($this->belongsToTeam($user)) {
             throw new TeamMemberServiceException(
                 'User is already on a team',
@@ -48,82 +59,63 @@ class MemberService extends EntityService {
         $member->setTeam($team);
         $member->setUser($user);
 
-        return $this->persistAndFlush($member);
-    }
+        $this->entityManager->persist($member);
+        $this->entityManager->flush();
 
-
-    /**
-     * @param User $user
-     * @return bool
-     */
-    public function remove(User $user) {
-        if (!$this->belongsToTeam($user)) {
-            return true;
-        }
-
-        $member = $this->getEntityRepository()->getMemberByUser($user);
-
-        $this->getManager()->remove($member);
-        $this->getManager()->flush($member);
-
-        $member->clear();
-
-        return true;
-    }
-
-
-    /**
-     * @param Member $member
-     * @return Member
-     */
-    public function persistAndFlush(Member $member) {
-        $this->getManager()->persist($member);
-        $this->getManager()->flush();
         return $member;
     }
 
-
     /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TeamMemberRepository
+     * @param User $user
      */
-    public function getEntityRepository() {
-        return parent::getEntityRepository();
-    }
+    public function remove(User $user)
+    {
+        if ($this->belongsToTeam($user)) {
+            $member = $this->teamMemberRepository->getMemberByUser($user);
 
+            $this->entityManager->remove($member);
+            $this->entityManager->flush();
+
+            $member->clear();
+        }
+    }
 
     /**
      * @param Team $team
      * @param User $user
+     *
      * @return bool
      */
-    public function contains(Team $team, User $user) {
-        return $this->getEntityRepository()->getTeamContainsUser($team, $user);
+    public function contains(Team $team, User $user)
+    {
+        return $this->teamMemberRepository->getTeamContainsUser($team, $user);
     }
-
 
     /**
      * @param User $user
+     *
      * @return null|Team
      */
-    public function getTeamByUser(User $user) {
+    public function getTeamByMember(User $user)
+    {
         if (!$this->belongsToTeam($user)) {
             return null;
         }
 
-        $member = $this->getEntityRepository()->getMemberByUser($user);
+        $member = $this->teamMemberRepository->getMemberByUser($user);
+
         return $member->getTeam();
     }
 
-
     /**
      * @param Team $team
+     *
      * @return Member[]
      */
-    public function getMembers(Team $team) {
-        return $this->getEntityRepository()->findBy([
+    public function getMembers(Team $team)
+    {
+        return $this->teamMemberRepository->findBy([
             'team' => $team
         ]);
     }
-
 }
