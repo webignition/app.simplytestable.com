@@ -108,7 +108,9 @@ class TeamInviteController extends Controller
             ]);
         }
 
-        if (!$teamInviteService->hasForTeamAndUser($team, $this->getUser())) {
+        $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
+
+        if (empty($invite)) {
             return Response::create('', 400, [
                 'X-TeamInviteAccept-Error-Code' => 2,
                 'X-TeamInviteAccept-Error-Message' => 'User has not been invited to join this team',
@@ -122,8 +124,6 @@ class TeamInviteController extends Controller
         $scheduledJobService->removeAll();
 
         $jobConfigurationService->removeAll();
-
-        $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
 
         $teamMemberService->add($invite->getTeam(), $invite->getUser());
 
@@ -207,17 +207,17 @@ class TeamInviteController extends Controller
         }
 
         $team = $teamService->getForUser($this->getUser());
-
         $invitee = $userService->findUserByEmail($invitee_email);
+        $invite = $teamInviteService->getForTeamAndUser($team, $invitee);
 
-        if (!$teamInviteService->hasForTeamAndUser($team, $invitee)) {
+        if (empty($invite)) {
             return Response::create('', 400, [
                 'X-TeamInviteRemove-Error-Code' => 3,
                 'X-TeamInviteRemove-Error-Message' => 'Invitee does not have an invite for this team',
             ]);
         }
 
-        $teamInviteService->remove($teamInviteService->getForTeamAndUser($team, $invitee));
+        $teamInviteService->remove($invite);
 
         return new Response();
     }
@@ -239,9 +239,12 @@ class TeamInviteController extends Controller
             'name' => $requestTeam,
         ]);
 
-        if ($team instanceof Team && $teamInviteService->hasForTeamAndUser($team, $this->getUser())) {
+        if ($team instanceof Team) {
             $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
-            $teamInviteService->remove($invite);
+
+            if (!empty($invite)) {
+                $teamInviteService->remove($invite);
+            }
         }
 
         return new Response();

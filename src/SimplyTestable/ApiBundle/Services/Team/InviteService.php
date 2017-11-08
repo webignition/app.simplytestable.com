@@ -102,17 +102,6 @@ class InviteService
     }
 
     /**
-     * @param Team $team
-     * @param User $user
-     *
-     * @return bool
-     */
-    public function hasForTeamAndUser(Team $team, User $user)
-    {
-        return !is_null($this->getForTeamAndUser($team, $user));
-    }
-
-    /**
      * @param User $user
      *
      * @return bool
@@ -230,6 +219,7 @@ class InviteService
 
     /**
      * @param User $user
+     *
      * @return Invite[]
      */
     public function getForUser(User $user)

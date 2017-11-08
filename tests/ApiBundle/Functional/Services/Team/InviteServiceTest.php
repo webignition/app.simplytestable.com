@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
+use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\TeamInviteRepository;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
@@ -96,5 +97,100 @@ class InviteServiceTest extends AbstractBaseTestCase
         $this->assertNotNull($invite->getToken());
 
         $this->assertEquals($invite, $this->inviteService->get($inviter, $invitee));
+    }
+
+    public function testGetForTeam()
+    {
+        $teamRepository = $this->container->get('simplytestable.repository.team');
+        $userFactory = new UserFactory($this->container);
+
+        $leader = $this->users['leader'];
+
+        /* @var Team $team */
+        $team = $teamRepository->findOneBy([
+            'name' => 'Foo',
+        ]);
+
+        $teamInvites = $this->inviteService->getForTeam($team);
+        $this->assertEmpty($teamInvites);
+
+        $invitee1 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee1@example.com',
+        ]);
+
+        $invite1 = $this->inviteService->get($leader, $invitee1);
+
+        $teamInvites = $this->inviteService->getForTeam($team);
+        $this->assertNotEmpty($teamInvites);
+        $this->assertEquals([$invite1], $teamInvites);
+
+        $invitee2 = $userFactory->createAndActivateUser([
+            UserFactory::KEY_EMAIL => 'invitee2@example.com',
+        ]);
+
+        $invite2 = $this->inviteService->get($leader, $invitee2);
+
+        $teamInvites = $this->inviteService->getForTeam($team);
+        $this->assertEquals([$invite1, $invite2], $teamInvites);
+    }
+
+    public function testGetForTeamAndUser()
+    {
+        $teamRepository = $this->container->get('simplytestable.repository.team');
+
+        $leader = $this->users['leader'];
+        $invitee = $this->users['private'];
+
+        /* @var Team $team */
+        $team = $teamRepository->findOneBy([
+            'name' => 'Foo',
+        ]);
+
+        $this->assertEmpty($this->inviteService->getForTeamAndUser($team, $invitee));
+
+        $invite = $this->inviteService->get($leader, $invitee);
+
+        $this->assertEquals(
+            $invite,
+            $this->inviteService->getForTeamAndUser($team, $invitee)
+        );
+    }
+
+    public function testGetForToken()
+    {
+        $leader = $this->users['leader'];
+        $invitee = $this->users['private'];
+
+        $invite = $this->inviteService->get($leader, $invitee);
+
+        $this->assertEquals(
+            $invite,
+            $this->inviteService->getForToken($invite->getToken())
+        );
+    }
+
+    public function testGetForUser()
+    {
+        $leader = $this->users['leader'];
+        $invitee = $this->users['private'];
+
+        $invite = $this->inviteService->get($leader, $invitee);
+
+        $this->assertEquals(
+            [$invite],
+            $this->inviteService->getForUser($invitee)
+        );
+    }
+
+    public function testHasAnyForUser()
+    {
+        $leader = $this->users['leader'];
+        $invitee = $this->users['private'];
+
+        $this->assertFalse($this->inviteService->hasAnyForUser($invitee));
+
+        $this->inviteService->get($leader, $invitee);
+
+        $this->assertTrue($this->inviteService->hasAnyForUser($invitee));
     }
 }
