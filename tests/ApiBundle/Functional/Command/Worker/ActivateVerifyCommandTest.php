@@ -4,6 +4,8 @@ namespace Tests\ApiBundle\Functional\Command\Worker;
 
 use SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
+use Tests\ApiBundle\Factory\CurlExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -71,7 +73,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
         $request = $workerActivationRequestService->create($worker, $token);
 
         $this->assertEquals($worker->getHostname(), $request->getWorker()->getHostname());
-        $this->assertEquals($workerActivationRequestService->getStartingState(), $request->getState());
+        $this->assertEquals(WorkerActivationRequestService::STARTING_STATE, $request->getState()->getName());
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => $worker->getId(),
@@ -95,23 +97,17 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
                 ],
                 'expectedReturnCode' => 400,
             ],
-            'Not Found' => [
-                'httpFixtures' => [
-                    GuzzleResponse::fromMessage('HTTP/1.1 404 Not Found'),
-                ],
-                'expectedReturnCode' => 404,
-            ],
-            'Internal Server Error' => [
-                'httpFixtures' => [
-                    GuzzleResponse::fromMessage('HTTP/1.1 500 Internal Server Error'),
-                ],
-                'expectedReturnCode' => 500,
-            ],
             'Service Unavailable' => [
                 'httpFixtures' => [
                     GuzzleResponse::fromMessage('HTTP/1.1 503 Service Unavailable'),
                 ],
                 'expectedReturnCode' => 503,
+            ],
+            'curl failure' => [
+                'httpFixtures' => [
+                    CurlExceptionFactory::create('Operation timed out', 28),
+                ],
+                'expectedReturnCode' => false,
             ],
         ];
     }
@@ -132,7 +128,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
         $request = $workerActivationRequestService->create($worker, $token);
 
         $this->assertEquals($worker->getHostname(), $request->getWorker()->getHostname());
-        $this->assertEquals($workerActivationRequestService->getStartingState(), $request->getState());
+        $this->assertEquals(WorkerActivationRequestService::STARTING_STATE, $request->getState()->getName());
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => $worker->getId(),
