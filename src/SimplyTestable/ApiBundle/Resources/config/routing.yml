@@ -259,9 +259,9 @@ jobconfiguration_get:
     path: /jobconfiguration/{label}/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:get, _format: json }
 
-scheduledjob_create_create:
+scheduledjob_create:
     path: /scheduledjob/create/
-    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Create:create }
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:create }
 
 scheduledjob_getlist_list:
     path: /scheduledjob/list/
