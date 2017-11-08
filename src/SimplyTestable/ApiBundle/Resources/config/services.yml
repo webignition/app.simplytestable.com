@@ -479,3 +479,9 @@ services:
     class: SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator
     arguments:
       teamInviteRepository: '@simplytestable.repository.teaminvite'
+
+  simplytestable.services.task.urldiscovery:
+    class: SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService
+    arguments:
+      stateService: '@simplytestable.services.stateservice'
+      taskTypeService: '@simplytestable.services.tasktypeservice'
