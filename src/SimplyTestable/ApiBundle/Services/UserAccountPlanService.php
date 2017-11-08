@@ -118,7 +118,9 @@ class UserAccountPlanService
             );
         }
 
-        if (!$this->hasForUser($user)) {
+        $currentUserAccountPlan = $this->getForUser($user);
+
+        if (empty($currentUserAccountPlan)) {
             if ($newPlan->getIsPremium()) {
                 $stripeCustomer = $this->stripeService->createCustomer($user, $coupon);
 
@@ -136,7 +138,6 @@ class UserAccountPlanService
             }
         }
 
-        $currentUserAccountPlan = $this->getForUser($user);
         $currentPlan = $currentUserAccountPlan->getPlan();
 
         $isNewPlanCurrentPlan = $currentPlan->getName() === $newPlan->getName();
@@ -273,15 +274,6 @@ class UserAccountPlanService
         if (count($userAccountPlans)) {
             $this->entityManager->flush();
         }
-    }
-
-    /**
-     * @param User $user
-     * @return boolean
-     */
-    public function hasForUser(User $user)
-    {
-        return !is_null($this->getForUser($user));
     }
 
     /**
