@@ -82,7 +82,10 @@ class Service
         $team->setName($name);
         $team->setLeader($leader);
 
-        return $this->persistAndFlush($team);
+        $this->entityManager->persist($team);
+        $this->entityManager->flush();
+
+        return $team;
     }
 
     /**
@@ -93,19 +96,6 @@ class Service
     public function hasTeam(User $leader)
     {
         return $this->teamRepository->getTeamCountByLeader($leader) > 0;
-    }
-
-    /**
-     * @param Team $team
-     *
-     * @return Team
-     */
-    public function persistAndFlush(Team $team)
-    {
-        $this->entityManager->persist($team);
-        $this->entityManager->flush();
-
-        return $team;
     }
 
     /**
