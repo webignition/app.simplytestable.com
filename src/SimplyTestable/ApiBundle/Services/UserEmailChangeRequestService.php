@@ -75,11 +75,11 @@ class UserEmailChangeRequestService
 
     /**
      * @param User $user
-     * @param string $new_email
+     * @param string $newEmail
      *
      * @return UserEmailChangeRequest
      */
-    public function create(User $user, $new_email)
+    public function create(User $user, $newEmail)
     {
         $emailChangeRequest = $this->getForUser($user);
 
@@ -88,7 +88,7 @@ class UserEmailChangeRequestService
         }
 
         $emailChangeRequest = new UserEmailChangeRequest();
-        $emailChangeRequest->setNewEmail($new_email);
+        $emailChangeRequest->setNewEmail($newEmail);
         $emailChangeRequest->setToken($this->tokenGenerator->generateToken());
         $emailChangeRequest->setUser($user);
 
