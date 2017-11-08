@@ -1,16 +1,15 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Team;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Repository\TeamInviteRepository;
-use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 
-class InviteService extends EntityService
+class InviteService
 {
     /**
      * @var TeamService
@@ -23,23 +22,19 @@ class InviteService extends EntityService
     private $teamInviteRepository;
 
     /**
-     * @param Service $teamService
-     * @param EntityManager $entityManager
+     * @var EntityManagerInterface
      */
-    public function __construct(TeamService $teamService, EntityManager $entityManager)
-    {
-        parent::__construct($entityManager);
-
-        $this->teamService = $teamService;
-        $this->teamInviteRepository = $entityManager->getRepository(Invite::class);
-    }
+    private $entityManager;
 
     /**
-     * @return string
+     * @param Service $teamService
+     * @param EntityManagerInterface $entityManager
      */
-    protected function getEntityName()
+    public function __construct(TeamService $teamService, EntityManagerInterface $entityManager)
     {
-        return Invite::class;
+        $this->entityManager = $entityManager;
+        $this->teamService = $teamService;
+        $this->teamInviteRepository = $entityManager->getRepository(Invite::class);
     }
 
     /**
@@ -49,8 +44,8 @@ class InviteService extends EntityService
      */
     public function persistAndFlush(Invite $invite)
     {
-        $this->getManager()->persist($invite);
-        $this->getManager()->flush();
+        $this->entityManager->persist($invite);
+        $this->entityManager->flush();
 
         return $invite;
     }
@@ -138,8 +133,8 @@ class InviteService extends EntityService
      */
     public function remove(Invite $invite)
     {
-        $this->getManager()->remove($invite);
-        $this->getManager()->flush($invite);
+        $this->entityManager->remove($invite);
+        $this->entityManager->flush($invite);
 
         return $invite;
     }
