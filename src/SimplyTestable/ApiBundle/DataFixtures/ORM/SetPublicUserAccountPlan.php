@@ -36,7 +36,7 @@ class SetPublicUserAccountPlan extends AbstractFixture implements OrderedFixture
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
 
-        if (!empty($userAccountPlan)) {
+        if (empty($userAccountPlan)) {
             $plan = $accountPlanService->get('public');
             $userAccountPlanService->subscribe($user, $plan);
         }
