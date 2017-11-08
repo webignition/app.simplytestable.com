@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -146,5 +147,24 @@ class JobConfigurationController extends Controller
                 'message' => 'Job configuration is in use by a scheduled job'
             ])
         ]);
+    }
+
+    /**
+     * @param string $label
+     *
+     * @return JsonResponse
+     */
+    public function getAction($label)
+    {
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+
+        $label = trim($label);
+
+        $jobConfiguration = $jobConfigurationService->get($label);
+        if (empty($jobConfiguration)) {
+            throw new NotFoundHttpException();
+        }
+
+        return new JsonResponse($jobConfiguration);
     }
 }

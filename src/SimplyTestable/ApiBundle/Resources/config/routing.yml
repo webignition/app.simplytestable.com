@@ -255,9 +255,9 @@ jobconfiguration_update_update:
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Update:update, _format: json }
     methods:  [POST]
 
-jobconfiguration_get_get:
+jobconfiguration_get:
     path: /jobconfiguration/{label}/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Get:get, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:get, _format: json }
 
 scheduledjob_create_create:
     path: /scheduledjob/create/
