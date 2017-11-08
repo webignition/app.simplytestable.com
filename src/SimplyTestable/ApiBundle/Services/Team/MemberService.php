@@ -9,10 +9,10 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\TeamMember\Exception as TeamMemberServiceException;
 
 class MemberService extends EntityService {
-    
+
     const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Team\Member';
 
-    
+
     /**
      *
      * @return string
@@ -20,17 +20,6 @@ class MemberService extends EntityService {
     protected function getEntityName() {
         return self::ENTITY_NAME;
     }
-
-
-    /**
-     * @param Team $team
-     * @return MemberService
-     */
-    public function setTeam(Team $team) {
-        $this->team = $team;
-        return $this;
-    }
-
 
     /**
      * @param User $user
@@ -93,7 +82,7 @@ class MemberService extends EntityService {
         return $member;
     }
 
-    
+
     /**
      *
      * @return \SimplyTestable\ApiBundle\Repository\TeamMemberRepository
@@ -136,5 +125,5 @@ class MemberService extends EntityService {
             'team' => $team
         ]);
     }
-    
+
 }
