@@ -15,11 +15,6 @@ use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 class CreateController extends Controller
 {
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @param Request $request
      *
      * @return RedirectResponse|Response
@@ -33,8 +28,6 @@ class CreateController extends Controller
         $cronModifierValidationService = $this->container->get(
             'simplytestable.services.scheduledjob.cronmodifier.validationservice'
         );
-
-        $this->request = $request;
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -105,8 +98,8 @@ class CreateController extends Controller
         try {
             $scheduledJob = $scheduledJobService->create(
                 $jobConfiguration,
-                $this->request->request->get('schedule'),
-                $this->request->request->get('schedule-modifier'),
+                $request->request->get('schedule'),
+                $request->request->get('schedule-modifier'),
                 $requestData->getBoolean('is-recurring')
             );
 
