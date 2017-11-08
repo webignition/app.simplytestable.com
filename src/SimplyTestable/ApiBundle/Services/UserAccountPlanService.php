@@ -98,7 +98,10 @@ class UserAccountPlanService
 
         $userAccountPlan->setStartTrialPeriod($startTrialPeriod);
 
-        return $this->persistAndFlush($userAccountPlan);
+        $this->entityManager->persist($userAccountPlan);
+        $this->entityManager->flush();
+
+        return $userAccountPlan;
     }
 
     /**
@@ -274,19 +277,6 @@ class UserAccountPlanService
         if (count($userAccountPlans)) {
             $this->entityManager->flush();
         }
-    }
-
-    /**
-     * @param UserAccountPlan $userAccountPlan
-     *
-     * @return UserAccountPlan
-     */
-    private function persistAndFlush(UserAccountPlan $userAccountPlan)
-    {
-        $this->entityManager->persist($userAccountPlan);
-        $this->entityManager->flush();
-
-        return $userAccountPlan;
     }
 
     /**
