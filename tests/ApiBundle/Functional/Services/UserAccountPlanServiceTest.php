@@ -414,21 +414,6 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
         );
     }
 
-    public function testHasForUser()
-    {
-        $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
-
-        $user = $this->userFactory->create([
-            UserFactory::KEY_PLAN_NAME => null,
-        ]);
-
-        $this->assertFalse($this->userAccountPlanService->hasForUser($user));
-
-        $userAccountPlanFactory->create($user, 'personal');
-
-        $this->assertTrue($this->userAccountPlanService->hasForUser($user));
-    }
-
     public function testFindUsersWithNoPlan()
     {
         $this->userFactory->createPublicPrivateAndTeamUserSet();
