@@ -49,16 +49,6 @@ class UserEmailChangeRequestService extends EntityService
     }
 
     /**
-     * @param string $email
-     *
-     * @return string
-     */
-    public function canonicalizeEmail($email)
-    {
-        return $this->emailCanonicalizer->canonicalize($email);
-    }
-
-    /**
      * @param string $new_email
      *
      * @return UserEmailChangeRequest
