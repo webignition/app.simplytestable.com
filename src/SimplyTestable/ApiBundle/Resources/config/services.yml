@@ -322,6 +322,7 @@ services:
     arguments:
         teamService: "@simplytestable.services.teamservice"
         jobRepository: '@simplytestable.repository.job'
+        tokenStorage: '@security.token_storage'
 
   simplytestable.services.job.UserPostActivationPropertiesService:
     class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
