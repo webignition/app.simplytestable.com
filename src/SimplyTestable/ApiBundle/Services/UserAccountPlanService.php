@@ -244,8 +244,8 @@ class UserAccountPlanService extends EntityService
         ]);
 
         if (!empty($userAccountPlan)) {
-            $this->getManager()->remove($userAccountPlan);
-            $this->getManager()->flush();
+            $this->entityManager->remove($userAccountPlan);
+            $this->entityManager->flush();
         }
     }
 
@@ -261,11 +261,11 @@ class UserAccountPlanService extends EntityService
         foreach ($userAccountPlans as $userAccountPlan) {
             /* @var $userAccountPlan UserAccountPlan */
             $userAccountPlan->setIsActive(false);
-            $this->getManager()->persist($userAccountPlan);
+            $this->entityManager->persist($userAccountPlan);
         }
 
         if (count($userAccountPlans)) {
-            $this->getManager()->flush();
+            $this->entityManager->flush();
         }
     }
 
@@ -285,8 +285,8 @@ class UserAccountPlanService extends EntityService
      */
     private function persistAndFlush(UserAccountPlan $userAccountPlan)
     {
-        $this->getManager()->persist($userAccountPlan);
-        $this->getManager()->flush();
+        $this->entityManager->persist($userAccountPlan);
+        $this->entityManager->flush();
 
         return $userAccountPlan;
     }
