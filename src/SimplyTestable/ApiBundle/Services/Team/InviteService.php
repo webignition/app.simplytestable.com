@@ -67,11 +67,22 @@ class InviteService
             );
         }
 
-        if ($this->has($inviter, $invitee)) {
-            return $this->fetch($inviter, $invitee);
+        $invite = $this->teamInviteRepository->findOneBy([
+            'team' => $this->teamService->getForUser($inviter),
+            'user' => $invitee
+        ]);
+
+        if (empty($invite)) {
+            $invite = new Invite();
+            $invite->setTeam($this->teamService->getForUser($inviter));
+            $invite->setUser($invitee);
+            $invite->setToken($this->generateToken());
+
+            $this->entityManager->persist($invite);
+            $this->entityManager->flush();
         }
 
-        return $this->create($inviter, $invitee);
+        return $invite;
     }
 
     /**
@@ -100,25 +111,6 @@ class InviteService
         ]);
 
         return $invite instanceof Invite;
-    }
-
-    /**
-     * @param $inviter
-     * @param $invitee
-     *
-     * @return Invite
-     */
-    private function create($inviter, $invitee)
-    {
-        $invite = new Invite();
-        $invite->setTeam($this->teamService->getForUser($inviter));
-        $invite->setUser($invitee);
-        $invite->setToken($this->generateToken());
-
-        $this->entityManager->persist($invite);
-        $this->entityManager->flush();
-
-        return $invite;
     }
 
     /**
@@ -155,31 +147,6 @@ class InviteService
         return $this->teamInviteRepository->findOneBy([
             'token' => $token
         ]);
-    }
-
-    /**
-     * @param $inviter
-     * @param $invitee
-     *
-     * @return null|Invite
-     */
-    private function fetch($inviter, $invitee)
-    {
-        return $this->teamInviteRepository->findOneBy([
-            'team' => $this->teamService->getForUser($inviter),
-            'user' => $invitee
-        ]);
-    }
-
-    /**
-     * @param User $inviter
-     * @param User $invitee
-     *
-     * @return bool
-     */
-    private function has(User $inviter, User $invitee)
-    {
-        return $this->fetch($inviter, $invitee) instanceof Invite;
     }
 
     /**
