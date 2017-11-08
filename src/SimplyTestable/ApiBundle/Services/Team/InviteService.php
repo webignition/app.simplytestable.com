@@ -18,6 +18,11 @@ class InviteService extends EntityService
     private $teamService;
 
     /**
+     * @var TeamInviteRepository
+     */
+    private $teamInviteRepository;
+
+    /**
      * @param Service $teamService
      * @param EntityManager $entityManager
      */
@@ -26,6 +31,7 @@ class InviteService extends EntityService
         parent::__construct($entityManager);
 
         $this->teamService = $teamService;
+        $this->teamInviteRepository = $entityManager->getRepository(Invite::class);
     }
 
     /**
@@ -47,14 +53,6 @@ class InviteService extends EntityService
         $this->getManager()->flush();
 
         return $invite;
-    }
-
-    /**
-     * @return TeamInviteRepository
-     */
-    public function getEntityRepository()
-    {
-        return parent::getEntityRepository();
     }
 
     /**
@@ -102,7 +100,7 @@ class InviteService extends EntityService
      */
     public function getForTeamAndUser(Team $team, User $user)
     {
-        return $this->getEntityRepository()->findOneBy([
+        return $this->teamInviteRepository->findOneBy([
             'team' => $team,
             'user' => $user
         ]);
@@ -126,7 +124,7 @@ class InviteService extends EntityService
      */
     public function hasAnyForUser(User $user)
     {
-        $invite = $this->getEntityRepository()->findOneBy([
+        $invite = $this->teamInviteRepository->findOneBy([
             'user' => $user
         ]);
 
@@ -193,7 +191,7 @@ class InviteService extends EntityService
      */
     public function getForToken($token)
     {
-        return $this->getEntityRepository()->findOneBy([
+        return $this->teamInviteRepository->findOneBy([
             'token' => $token
         ]);
     }
@@ -206,7 +204,7 @@ class InviteService extends EntityService
      */
     private function fetch($inviter, $invitee)
     {
-        return $this->getEntityRepository()->findOneBy([
+        return $this->teamInviteRepository->findOneBy([
             'team' => $this->teamService->getForUser($inviter),
             'user' => $invitee
         ]);
@@ -230,7 +228,7 @@ class InviteService extends EntityService
      */
     public function getForTeam(Team $team)
     {
-        return $this->getEntityRepository()->findBy([
+        return $this->teamInviteRepository->findBy([
             'team' => $team
         ]);
     }
@@ -241,7 +239,7 @@ class InviteService extends EntityService
      */
     public function getForUser(User $user)
     {
-        return $this->getEntityRepository()->findBy([
+        return $this->teamInviteRepository->findBy([
             'user' => $user
         ]);
     }
