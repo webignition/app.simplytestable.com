@@ -237,9 +237,9 @@ worker_tasks_request:
     path: /worker/tasks/request/
     defaults: { _controller: SimplyTestableApiBundle:Worker\Tasks:request }
 
-jobconfiguration_create_create:
+jobconfiguration_create:
     path: /jobconfiguration/create/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Create:create }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:create }
 
 jobconfiguration_getlist_list:
     path: /jobconfiguration/list/
