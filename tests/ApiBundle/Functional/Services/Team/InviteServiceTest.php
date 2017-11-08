@@ -2,10 +2,10 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
+use phpmock\mockery\PHPMockery;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Repository\TeamInviteRepository;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -85,6 +85,15 @@ class InviteServiceTest extends AbstractBaseTestCase
 
     public function testGetSuccess()
     {
+        $inviteToken = 'foo';
+
+        PHPMockery::mock(
+            'SimplyTestable\ApiBundle\Services\Team',
+            'md5'
+        )->andReturnValues([
+            $inviteToken,
+        ]);
+
         $inviter = $this->users['leader'];
         $invitee = $this->users['private'];
 
@@ -93,10 +102,33 @@ class InviteServiceTest extends AbstractBaseTestCase
         $this->assertInstanceOf(Invite::class, $invite);
         $this->assertEquals($invitee, $invite->getUser());
         $this->assertEquals('Foo', $invite->getTeam()->getName());
-        $this->assertNotNull($invite->getId());
-        $this->assertNotNull($invite->getToken());
-
+        $this->assertEquals($inviteToken, $invite->getToken());
         $this->assertEquals($invite, $this->inviteService->get($inviter, $invitee));
+    }
+
+    public function testGetSuccessTokenIsAlwaysUnique()
+    {
+        $inviter = $this->users['leader'];
+        $invitee1 = $this->users['private'];
+        $invitee2 = $this->users['public'];
+
+        $invite1Token = 'foo';
+        $invite2Token = 'bar';
+
+        PHPMockery::mock(
+            'SimplyTestable\ApiBundle\Services\Team',
+            'md5'
+        )->andReturnValues([
+            $invite1Token,
+            $invite1Token,
+            $invite2Token,
+        ]);
+
+        $invite1 = $this->inviteService->get($inviter, $invitee1);
+        $invite2 = $this->inviteService->get($inviter, $invitee2);
+
+        $this->assertEquals($invite1Token, $invite1->getToken());
+        $this->assertEquals($invite2Token, $invite2->getToken());
     }
 
     public function testGetForTeam()
@@ -192,5 +224,15 @@ class InviteServiceTest extends AbstractBaseTestCase
         $this->inviteService->get($leader, $invitee);
 
         $this->assertTrue($this->inviteService->hasAnyForUser($invitee));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        parent::tearDown();
+
+        \Mockery::close();
     }
 }
