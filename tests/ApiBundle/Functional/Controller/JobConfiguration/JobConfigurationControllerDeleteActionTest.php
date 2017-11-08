@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfiguration\DeleteController;
 use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;

@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfiguration\GetController;
 use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
@@ -14,7 +13,7 @@ use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class JobConfigurationGetControllerTest extends AbstractBaseTestCase
+class JobConfigurationControllerGetActionTest extends AbstractBaseTestCase
 {
     /**
      * @var JobConfigurationController

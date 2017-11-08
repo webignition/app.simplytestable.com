@@ -167,4 +167,14 @@ class JobConfigurationController extends Controller
 
         return new JsonResponse($jobConfiguration);
     }
+
+    /**
+     * @return JsonResponse
+     */
+    public function listAction()
+    {
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+
+        return new JsonResponse($jobConfigurationService->getList());
+    }
 }

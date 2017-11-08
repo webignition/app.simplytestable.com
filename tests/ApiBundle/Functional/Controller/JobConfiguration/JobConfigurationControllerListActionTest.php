@@ -2,19 +2,19 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfiguration\GetListController;
+use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\User;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 
-class JobConfigurationGetListControllerTest extends AbstractBaseTestCase
+class JobConfigurationControllerListActionTest extends AbstractBaseTestCase
 {
     /**
-     * @var GetListController
+     * @var JobConfigurationController
      */
-    private $jobConfigurationGetListController;
+    private $jobConfigurationController;
 
     /**
      * @var JobConfiguration
@@ -33,8 +33,8 @@ class JobConfigurationGetListControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobConfigurationGetListController = new GetListController();
-        $this->jobConfigurationGetListController->setContainer($this->container);
+        $this->jobConfigurationController = new JobConfigurationController();
+        $this->jobConfigurationController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -49,7 +49,7 @@ class JobConfigurationGetListControllerTest extends AbstractBaseTestCase
     public function testRequest()
     {
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('jobconfiguration_getlist_list');
+        $requestUrl = $router->generate('jobconfiguration_list');
 
         $this->getCrawler([
             'url' => $requestUrl,
@@ -63,7 +63,7 @@ class JobConfigurationGetListControllerTest extends AbstractBaseTestCase
 
     public function testListAction()
     {
-        $response = $this->jobConfigurationGetListController->listAction();
+        $response = $this->jobConfigurationController->listAction();
 
         $this->assertTrue($response->isSuccessful());
 

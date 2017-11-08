@@ -241,9 +241,9 @@ jobconfiguration_create:
     path: /jobconfiguration/create/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:create }
 
-jobconfiguration_getlist_list:
+jobconfiguration_list:
     path: /jobconfiguration/list/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\GetList:list, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:list, _format: json }
 
 jobconfiguration_delete:
     path: /jobconfiguration/{label}/delete/
