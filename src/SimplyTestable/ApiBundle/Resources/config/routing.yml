@@ -272,9 +272,9 @@ scheduledjob_delete:
     defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:delete, _format: json }
     methods:  [POST]
 
-scheduledjob_get_get:
+scheduledjob_get:
     path: /scheduledjob/{id}/
-    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Get:get, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:get, _format: json }
 
 scheduledjob_update_update:
     path: /scheduledjob/{id}/update/

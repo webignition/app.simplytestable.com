@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
-use SimplyTestable\ApiBundle\Controller\ScheduledJob\GetController;
+use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
@@ -11,12 +11,12 @@ use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ScheduledJobGetControllerTest extends AbstractBaseTestCase
+class ScheduledJobControllerGetActionTest extends AbstractBaseTestCase
 {
     /**
-     * @var GetController
+     * @var ScheduledJobController
      */
-    private $scheduledJobGetController;
+    private $scheduledJobController;
 
     /**
      * @var ScheduledJobService
@@ -40,8 +40,8 @@ class ScheduledJobGetControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->scheduledJobGetController = new GetController();
-        $this->scheduledJobGetController->setContainer($this->container);
+        $this->scheduledJobController = new ScheduledJobController();
+        $this->scheduledJobController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -56,12 +56,12 @@ class ScheduledJobGetControllerTest extends AbstractBaseTestCase
         $this->scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
     }
 
-    public function testGetRequest()
+    public function testGetActionGetRequest()
     {
         $scheduledJob = $this->scheduledJobService->create($this->jobConfiguration);
 
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('scheduledjob_get_get', [
+        $requestUrl = $router->generate('scheduledjob_get', [
             'id' => $scheduledJob->getId(),
         ]);
 
@@ -80,7 +80,7 @@ class ScheduledJobGetControllerTest extends AbstractBaseTestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $this->scheduledJobGetController->getAction(0);
+        $this->scheduledJobController->getAction(0);
     }
 
     /**
@@ -100,7 +100,7 @@ class ScheduledJobGetControllerTest extends AbstractBaseTestCase
             $isRecurring
         );
 
-        $response = $this->scheduledJobGetController->getAction($scheduledJob->getId());
+        $response = $this->scheduledJobController->getAction($scheduledJob->getId());
 
         $this->assertTrue($response->isSuccessful());
 

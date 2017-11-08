@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Cron\Validator\CrontabValidator;
@@ -105,7 +106,7 @@ class ScheduledJobController extends Controller
             );
 
             return $this->redirect($this->generateUrl(
-                'scheduledjob_get_get',
+                'scheduledjob_get',
                 ['id' => $scheduledJob->getId()]
             ));
         } catch (ScheduledJobException $scheduledJobException) {
@@ -136,5 +137,23 @@ class ScheduledJobController extends Controller
         $scheduledJobService->delete($scheduledJob);
 
         return new Response();
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return JsonResponse|Response
+     */
+    public function getAction($id)
+    {
+        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+
+        $scheduledJob = $scheduledJobService->get($id);
+
+        if (empty($scheduledJob)) {
+            throw new NotFoundHttpException();
+        }
+
+        return new JsonResponse($scheduledJob);
     }
 }

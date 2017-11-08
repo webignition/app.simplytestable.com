@@ -111,7 +111,7 @@ class UpdateController extends Controller
         }
 
         return $this->redirect($this->generateUrl(
-            'scheduledjob_get_get',
+            'scheduledjob_get',
             ['id' => $scheduledJob->getId()]
         ));
     }
