@@ -32,7 +32,7 @@ class WebSiteService
      *
      * @return WebSite
      */
-    public function fetch($canonicalUrl)
+    public function get($canonicalUrl)
     {
         $normalisedUrl = (string)new NormalisedUrl($canonicalUrl);
 

@@ -92,7 +92,7 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
         foreach ($users as $userIndex => $user) {
             foreach ($jobStateNames as $jobStateName) {
                 $url = 'http://' . $jobStateName . '.example.com/';
-                $website = $websiteService->fetch($url);
+                $website = $websiteService->get($url);
 
                 $crawlJob = new Job();
                 $crawlJob->setState($stateService->get($jobStateName));

@@ -53,7 +53,7 @@ abstract class ScheduledJobTest extends AbstractBaseTestCase
         $jobConfiguration->setParameters('');
         $jobConfiguration->setType($fullSiteJobType);
         $jobConfiguration->setUser($userService->getPublicUser());
-        $jobConfiguration->setWebsite($websiteService->fetch('http://example.com/'));
+        $jobConfiguration->setWebsite($websiteService->get('http://example.com/'));
 
         return $jobConfiguration;
     }

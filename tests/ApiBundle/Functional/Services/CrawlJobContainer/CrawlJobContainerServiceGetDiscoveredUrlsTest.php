@@ -29,7 +29,7 @@ class CrawlJobContainerServiceGetDiscoveredUrlsTest extends AbstractCrawlJobCont
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $user = $userFactory->create();
-        $website = $websiteService->fetch('http://example.com');
+        $website = $websiteService->get('http://example.com');
 
         $parentJob = new Job();
         $parentJob->setUser($user);

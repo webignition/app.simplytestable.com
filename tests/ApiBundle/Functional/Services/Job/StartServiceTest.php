@@ -93,7 +93,7 @@ class StartServiceTest extends AbstractBaseTestCase
 
           $jobType = $jobTypeService->get($jobTypeName);
 
-        $website = $this->websiteService->fetch('http://example.com');
+        $website = $this->websiteService->get('http://example.com');
         $constraint = $userAccountPlanService->getForUser($user)->getPlan()->getConstraintNamed($constraintName);
 
         $jobConfiguration = new JobConfiguration();
@@ -179,7 +179,7 @@ class StartServiceTest extends AbstractBaseTestCase
 
         $user = $userService->getPublicUser();
         $jobType = $jobTypeService->getFullSiteType();
-        $website = $this->websiteService->fetch('http://example.com');
+        $website = $this->websiteService->get('http://example.com');
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setWebsite($website);
@@ -217,7 +217,7 @@ class StartServiceTest extends AbstractBaseTestCase
         ]);
 
         $jobType = $jobTypeService->get($jobTypeName);
-        $website = $this->websiteService->fetch($url);
+        $website = $this->websiteService->get($url);
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setWebsite($website);

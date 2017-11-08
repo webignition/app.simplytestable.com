@@ -26,7 +26,7 @@ class PersistTest extends AbstractBaseTestCase
         $this->configuration->setLabel('foo');
         $this->configuration->setUser($userService->getPublicUser());
         $this->configuration->setWebsite(
-            $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
+            $this->container->get('simplytestable.services.websiteservice')->get('http://example.com/')
         );
         $this->configuration->setType($fullSiteJobType);
         $this->configuration->setParameters('bar');

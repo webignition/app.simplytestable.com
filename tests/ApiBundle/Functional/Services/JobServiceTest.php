@@ -84,7 +84,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $user = $userFactory->create([
             UserFactory::KEY_EMAIL => $userEmail,
         ]);
-        $website = $websiteService->fetch($url);
+        $website = $websiteService->get($url);
 
         $jobType = $jobTypeService->get($jobTypeName);
 

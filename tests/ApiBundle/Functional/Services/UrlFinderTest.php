@@ -34,7 +34,7 @@ class UrlFinderTest extends AbstractBaseTestCase
         $webResourceService->getConfiguration()->disableRetryWithUrlEncodingDisabled();
 
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $website = $websiteService->fetch($websiteUrl);
+        $website = $websiteService->get($websiteUrl);
 
         $urlFinder = new UrlFinder(
             $this->container->get('simplytestable.services.httpclientservice'),

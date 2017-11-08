@@ -40,7 +40,7 @@ class RetrieveTest extends AbstractBaseTestCase
         $this->originalConfiguration->setLabel('foo');
         $this->originalConfiguration->setUser($userService->getPublicUser());
         $this->originalConfiguration->setWebsite(
-            $this->container->get('simplytestable.services.websiteservice')->fetch('http://example.com/')
+            $this->container->get('simplytestable.services.websiteservice')->get('http://example.com/')
         );
         $this->originalConfiguration->setType($fullSiteJobType);
         $this->originalConfiguration->setParameters('bar');

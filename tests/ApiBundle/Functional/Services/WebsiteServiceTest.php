@@ -12,7 +12,7 @@ class WebsiteServiceTest extends AbstractBaseTestCase
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
 
         $url = 'http://example.com/';
-        $website = $websiteService->fetch($url);
+        $website = $websiteService->get($url);
 
         $this->assertInstanceOf(Website::class, $website);
         $this->assertEquals($url, $website->getCanonicalUrl());
