@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
-use SimplyTestable\ApiBundle\Controller\ScheduledJob\DeleteController;
+use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
@@ -10,12 +10,12 @@ use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class ScheduledJobDeleteControllerTest extends AbstractBaseTestCase
+class ScheduledJobControllerDeleteActionTest extends AbstractBaseTestCase
 {
     /**
-     * @var DeleteController
+     * @var ScheduledJobController
      */
-    private $scheduledJobDeleteController;
+    private $scheduledJobController;
 
     /**
      * @var ScheduledJob
@@ -34,8 +34,8 @@ class ScheduledJobDeleteControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->scheduledJobDeleteController = new DeleteController();
-        $this->scheduledJobDeleteController->setContainer($this->container);
+        $this->scheduledJobController = new ScheduledJobController();
+        $this->scheduledJobController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -51,10 +51,10 @@ class ScheduledJobDeleteControllerTest extends AbstractBaseTestCase
         $this->scheduledJob = $scheduledJobService->create($jobConfiguration);
     }
 
-    public function testGetRequest()
+    public function testDeleteActionGetRequest()
     {
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('scheduledjob_delete_delete', [
+        $requestUrl = $router->generate('scheduledjob_delete', [
             'id' => 0,
         ]);
 
@@ -69,10 +69,10 @@ class ScheduledJobDeleteControllerTest extends AbstractBaseTestCase
         $this->assertEquals(405, $response->getStatusCode());
     }
 
-    public function testPostRequest()
+    public function testDeleteActionPostRequest()
     {
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('scheduledjob_delete_delete', [
+        $requestUrl = $router->generate('scheduledjob_delete', [
             'id' => $this->scheduledJob->getId(),
         ]);
 
@@ -91,7 +91,7 @@ class ScheduledJobDeleteControllerTest extends AbstractBaseTestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $this->scheduledJobDeleteController->deleteAction(0);
+        $this->scheduledJobController->deleteAction(0);
     }
 
     public function testDeleteSuccess()
@@ -100,7 +100,7 @@ class ScheduledJobDeleteControllerTest extends AbstractBaseTestCase
 
         $scheduledJobId = $this->scheduledJob->getId();
 
-        $response = $this->scheduledJobDeleteController->deleteAction($this->scheduledJob->getId());
+        $response = $this->scheduledJobController->deleteAction($this->scheduledJob->getId());
 
         $this->assertTrue($response->isSuccessful());
 

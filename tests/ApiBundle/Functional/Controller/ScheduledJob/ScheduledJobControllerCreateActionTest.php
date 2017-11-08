@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
 use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
-use SimplyTestable\ApiBundle\Controller\ScheduledJob\CreateController;
+use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -13,12 +13,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
+class ScheduledJobControllerCreateActionTest extends AbstractBaseTestCase
 {
     /**
-     * @var CreateController
+     * @var ScheduledJobController
      */
-    private $scheduledJobCreateController;
+    private $scheduledJobController;
 
     /**
      * {@inheritdoc}
@@ -27,11 +27,11 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->scheduledJobCreateController = new CreateController();
-        $this->scheduledJobCreateController->setContainer($this->container);
+        $this->scheduledJobController = new ScheduledJobController();
+        $this->scheduledJobController->setContainer($this->container);
     }
 
-    public function testRequest()
+    public function testCreateActionPostRequest()
     {
         $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
 
@@ -42,7 +42,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
         $this->createJobConfiguration();
 
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('scheduledjob_create_create');
+        $requestUrl = $router->generate('scheduledjob_create');
 
         $this->getCrawler([
             'url' => $requestUrl,
@@ -69,7 +69,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
-            $this->scheduledJobCreateController->createAction(new Request());
+            $this->scheduledJobController->createAction(new Request());
             $this->fail('ServiceUnavailableHttpException not thrown');
         } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
             $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
@@ -93,7 +93,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage($expectedExceptionMessage);
 
-        $this->scheduledJobCreateController->createAction($request);
+        $this->scheduledJobController->createAction($request);
     }
 
     /**
@@ -132,7 +132,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
             'schedule' => '* * * * *',
         ]);
 
-        $response = $this->scheduledJobCreateController->createAction($request);
+        $response = $this->scheduledJobController->createAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(
@@ -168,7 +168,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
             'schedule' => '* * * * *',
         ]);
 
-        $response = $this->scheduledJobCreateController->createAction($request);
+        $response = $this->scheduledJobController->createAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(
@@ -195,7 +195,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
             'job-configuration' => 'job-configuration-label',
         ], $requestData));
 
-        $response = $this->scheduledJobCreateController->createAction($request);
+        $response = $this->scheduledJobController->createAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(
@@ -240,8 +240,8 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
             'schedule-modifier' => null,
         ]);
 
-        $this->scheduledJobCreateController->createAction($request);
-        $response = $this->scheduledJobCreateController->createAction($request);
+        $this->scheduledJobController->createAction($request);
+        $response = $this->scheduledJobController->createAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(
@@ -266,7 +266,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
             'schedule-modifier' => '[ `date +\%d` -le 7 ]',
         ]);
 
-        $response = $this->scheduledJobCreateController->createAction($request);
+        $response = $this->scheduledJobController->createAction($request);
 
         /* @var ScheduledJob $scheduledJob */
         $scheduledJob = $scheduledJobRepository->findAll()[0];

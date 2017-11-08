@@ -259,24 +259,24 @@ jobconfiguration_get:
     path: /jobconfiguration/{label}/
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:get, _format: json }
 
-scheduledjob_create_create:
+scheduledjob_create:
     path: /scheduledjob/create/
-    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Create:create }
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:create }
 
-scheduledjob_getlist_list:
+scheduledjob_list:
     path: /scheduledjob/list/
-    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\GetList:list }
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:list }
 
-scheduledjob_delete_delete:
+scheduledjob_delete:
     path: /scheduledjob/{id}/delete/
-    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Delete:delete, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:delete, _format: json }
     methods:  [POST]
 
-scheduledjob_get_get:
+scheduledjob_get:
     path: /scheduledjob/{id}/
-    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Get:get, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:get, _format: json }
 
-scheduledjob_update_update:
+scheduledjob_update:
     path: /scheduledjob/{id}/update/
-    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\Update:update, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:update, _format: json }
     methods:  [POST]
