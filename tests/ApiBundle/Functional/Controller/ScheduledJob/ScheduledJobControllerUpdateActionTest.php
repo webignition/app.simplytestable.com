@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
-use SimplyTestable\ApiBundle\Controller\ScheduledJob\UpdateController;
+use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -13,12 +13,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
+class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
 {
     /**
-     * @var UpdateController
+     * @var ScheduledJobController
      */
-    private $scheduledJobUpdateController;
+    private $scheduledJobController;
 
     /**
      * @var ScheduledJob
@@ -37,8 +37,8 @@ class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->scheduledJobUpdateController = new UpdateController();
-        $this->scheduledJobUpdateController->setContainer($this->container);
+        $this->scheduledJobController = new ScheduledJobController();
+        $this->scheduledJobController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -58,10 +58,10 @@ class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
         );
     }
 
-    public function testGetRequest()
+    public function testUpdateActionGetRequest()
     {
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('scheduledjob_update_update', [
+        $requestUrl = $router->generate('scheduledjob_update', [
             'id' => 0,
         ]);
 
@@ -76,10 +76,10 @@ class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
         $this->assertEquals(405, $response->getStatusCode());
     }
 
-    public function testPostRequest()
+    public function testUpdateActionPostRequest()
     {
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('scheduledjob_update_update', [
+        $requestUrl = $router->generate('scheduledjob_update', [
             'id' => $this->scheduledJob->getId(),
         ]);
 
@@ -100,7 +100,7 @@ class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
-            $this->scheduledJobUpdateController->updateAction(new Request(), 0);
+            $this->scheduledJobController->updateAction(new Request(), 0);
             $this->fail('ServiceUnavailableHttpException not thrown');
         } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
             $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
@@ -111,7 +111,7 @@ class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $this->scheduledJobUpdateController->updateAction(new Request(), 0);
+        $this->scheduledJobController->updateAction(new Request(), 0);
     }
 
     /**
@@ -157,7 +157,7 @@ class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
             }
         }
 
-        $response = $this->scheduledJobUpdateController->updateAction(
+        $response = $this->scheduledJobController->updateAction(
             new Request([], $postData),
             $this->scheduledJob->getId()
         );
@@ -283,7 +283,7 @@ class ScheduledJobUpdateControllerTest extends AbstractBaseTestCase
             }
         }
 
-        $response = $this->scheduledJobUpdateController->updateAction(
+        $response = $this->scheduledJobController->updateAction(
             new Request([], $postData),
             $this->scheduledJob->getId()
         );

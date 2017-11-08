@@ -19,6 +19,7 @@ class UpdateController extends Controller
     /**
      * @param Request $request
      * @param int $id
+     *
      * @return RedirectResponse|Response
      */
     public function updateAction(Request $request, $id)
