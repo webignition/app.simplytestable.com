@@ -1,16 +1,17 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use SimplyTestable\ApiBundle\Repository\UserAccountPlanRepository;
 use SimplyTestable\ApiBundle\Repository\UserRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 use webignition\Model\Stripe\Customer as StripeCustomerModel;
 
-class UserAccountPlanService extends EntityService
+class UserAccountPlanService
 {
     /**
      * @var UserService
@@ -38,7 +39,17 @@ class UserAccountPlanService extends EntityService
     private $userRepository;
 
     /**
-     * @param EntityManager $entityManager
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var UserAccountPlanRepository
+     */
+    private $userAccountPlanRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
      * @param UserService $userService
      * @param StripeService $stripeService
      * @param TeamService $teamService
@@ -46,28 +57,21 @@ class UserAccountPlanService extends EntityService
      * @param $defaultTrialPeriod
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         UserService $userService,
         StripeService $stripeService,
         TeamService $teamService,
         UserRepository $userRepository,
         $defaultTrialPeriod
     ) {
-        parent::__construct($entityManager);
-
+        $this->entityManager = $entityManager;
         $this->userService = $userService;
         $this->stripeService = $stripeService;
         $this->teamService = $teamService;
         $this->userRepository = $userRepository;
         $this->defaultTrialPeriod = $defaultTrialPeriod;
-    }
 
-    /**
-     * @return string
-     */
-    protected function getEntityName()
-    {
-        return UserAccountPlan::class;
+        $this->userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
     }
 
     /**
@@ -219,10 +223,10 @@ class UserAccountPlanService extends EntityService
         ];
 
         foreach ($isActiveValues as $isActiveValue) {
-            $userAccountPlans = $this->getEntityRepository()->findBy(array(
+            $userAccountPlans = $this->userAccountPlanRepository->findBy([
                 'user' => $targetUser,
                 'isActive' => $isActiveValue
-            ), [
+            ], [
                 'id' => 'DESC'
             ], 1);
 
@@ -230,6 +234,8 @@ class UserAccountPlanService extends EntityService
                 return $userAccountPlans[0];
             }
         }
+
+        return null;
     }
 
     /**
@@ -237,7 +243,7 @@ class UserAccountPlanService extends EntityService
      */
     public function removeCurrentForUser(User $user)
     {
-        $userAccountPlan = $this->getEntityRepository()->findOneBy([
+        $userAccountPlan = $this->userAccountPlanRepository->findOneBy([
             'user' => $user,
         ], [
             'id' => 'DESC'
@@ -254,7 +260,7 @@ class UserAccountPlanService extends EntityService
      */
     public function deactivateAllForUser(User $user)
     {
-        $userAccountPlans = $this->getEntityRepository()->findBy([
+        $userAccountPlans = $this->userAccountPlanRepository->findBy([
             'user' => $user
         ]);
 
@@ -297,8 +303,8 @@ class UserAccountPlanService extends EntityService
     public function findUsersWithNoPlan()
     {
         return $this->userRepository->findAllNotWithIds(array_merge(
-            $this->getEntityRepository()->findUserIdsWithPlan(),
-            array($this->userService->getAdminUser()->getId())
+            $this->userAccountPlanRepository->findUserIdsWithPlan(),
+            [$this->userService->getAdminUser()->getId()]
         ));
     }
 
@@ -309,8 +315,8 @@ class UserAccountPlanService extends EntityService
      */
     public function findAllByPlan(AccountPlan $plan)
     {
-        return $this->getEntityRepository()->findBy(array(
+        return $this->userAccountPlanRepository->findBy([
             'plan' => $plan
-        ));
+        ]);
     }
 }
