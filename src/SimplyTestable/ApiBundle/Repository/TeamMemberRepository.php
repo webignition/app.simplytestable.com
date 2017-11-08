@@ -3,17 +3,17 @@ namespace SimplyTestable\ApiBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
-use SimplyTestable\ApiBundle\Entity\Team\Member;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class TeamMemberRepository extends EntityRepository {
-
-
+class TeamMemberRepository extends EntityRepository
+{
     /**
      * @param User $user
+     *
      * @return int
      */
-    public function getMemberCountByUser(User $user) {
+    public function getMemberCountByUser(User $user)
+    {
         $queryBuilder = $this->createQueryBuilder('TeamMember');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(TeamMember.id) as total');
@@ -28,9 +28,11 @@ class TeamMemberRepository extends EntityRepository {
     /**
      * @param Team $team
      * @param User $user
+     *
      * @return bool
      */
-    public function getTeamContainsUser(Team $team, User $user) {
+    public function getTeamContainsUser(Team $team, User $user)
+    {
         $queryBuilder = $this->createQueryBuilder('TeamMember');
         $queryBuilder->setMaxResults(1);
         $queryBuilder->select('count(TeamMember.id) as total');
@@ -42,5 +44,5 @@ class TeamMemberRepository extends EntityRepository {
 
         return (int)($result[0]['total']) === 1;
     }
-
 }
+
