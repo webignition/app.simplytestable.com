@@ -73,7 +73,7 @@ class CreateController extends Controller
             ]);
         }
 
-        $website = $websiteService->fetch($requestWebsite);
+        $website = $websiteService->get($requestWebsite);
         $jobType = $this->getJobType($jobTypeService, $requestType);
         $taskConfigurationCollection = $this->getRequestTaskConfigurationCollection($request, $taskTypeService);
 

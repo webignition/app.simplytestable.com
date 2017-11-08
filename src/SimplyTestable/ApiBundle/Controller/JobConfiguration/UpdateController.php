@@ -45,7 +45,7 @@ class UpdateController extends Controller
         $requestData = $request->request;
 
         $requestWebsite = trim($requestData->get('website'));
-        $website = $websiteService->fetch($requestWebsite);
+        $website = $websiteService->get($requestWebsite);
 
         $requestJobType = trim($requestData->get('type'));
         $jobType = $jobTypeService->get($requestJobType);

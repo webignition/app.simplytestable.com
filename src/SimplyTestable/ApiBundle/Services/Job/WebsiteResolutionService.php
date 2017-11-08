@@ -101,7 +101,7 @@ class WebsiteResolutionService
             }
 
             if ($job->getWebsite()->getCanonicalUrl() != $resolvedUrl) {
-                $job->setWebsite($this->websiteService->fetch($resolvedUrl));
+                $job->setWebsite($this->websiteService->get($resolvedUrl));
             }
 
             $job->setState($jobResolvedState);

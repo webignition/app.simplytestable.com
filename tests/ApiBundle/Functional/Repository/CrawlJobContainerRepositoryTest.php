@@ -52,7 +52,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
 
         $userFactory = new UserFactory($this->container);
 
-        $website = $websiteService->fetch('http://example.com/');
+        $website = $websiteService->get('http://example.com/');
         $user = $userFactory->create();
 
         $parentJob = new Job();
@@ -185,7 +185,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         foreach ($users as $userIndex => $user) {
             foreach ($jobStateNames as $jobStateName) {
                 $url = 'http://' . $jobStateName . '.example.com/';
-                $website = $websiteService->fetch($url);
+                $website = $websiteService->get($url);
 
                 $crawlJob = new Job();
                 $crawlJob->setState($stateService->get($jobStateName));

@@ -1,26 +1,30 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use webignition\NormalisedUrl\NormalisedUrl;
 
-class WebSiteService extends EntityService
+class WebSiteService
 {
     /**
-     * @param EntityManager $entityManager
+     * @var EntityManagerInterface
      */
-    public function __construct(EntityManager $entityManager)
-    {
-        parent::__construct($entityManager);
-    }
+    private $entityManager;
 
     /**
-     * @return string
+     * @var EntityRepository
      */
-    protected function getEntityName()
+    private $websiteRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        return WebSite::class;
+        $this->entityManager = $entityManager;
+        $this->websiteRepository = $entityManager->getRepository(WebSite::class);
     }
 
     /**
@@ -28,48 +32,21 @@ class WebSiteService extends EntityService
      *
      * @return WebSite
      */
-    public function fetch($canonicalUrl)
+    public function get($canonicalUrl)
     {
         $normalisedUrl = (string)new NormalisedUrl($canonicalUrl);
-        if (!$this->has($normalisedUrl)) {
-            $this->create($normalisedUrl);
+
+        $website = $this->websiteRepository->findOneBy([
+            'canonicalUrl' => $normalisedUrl,
+        ]);
+
+        if (empty($website)) {
+            $website = new WebSite();
+            $website->setCanonicalUrl($normalisedUrl);
+
+            $this->entityManager->persist($website);
+            $this->entityManager->flush();
         }
-
-        return $this->find($normalisedUrl);
-    }
-
-    /**
-     * @param string $canonicalUrl
-     *
-     * @return WebSite
-     */
-    private function find($canonicalUrl)
-    {
-        return $this->getEntityRepository()->findOneByCanonicalUrl($canonicalUrl);
-    }
-
-    /**
-     * @param string $canonicalUrl
-     *
-     * @return bool
-     */
-    private function has($canonicalUrl)
-    {
-        return !is_null($this->find($canonicalUrl));
-    }
-
-    /**
-     * @param string $canonicalUrl
-     *
-     * @return WebSite
-     */
-    private function create($canonicalUrl)
-    {
-        $website = new WebSite();
-        $website->setCanonicalUrl($canonicalUrl);
-
-        $this->getManager()->persist($website);
-        $this->getManager()->flush();
 
         return $website;
     }

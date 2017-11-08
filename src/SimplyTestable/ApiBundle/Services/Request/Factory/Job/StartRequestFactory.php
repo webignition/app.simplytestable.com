@@ -118,7 +118,7 @@ class StartRequestFactory
      */
     private function getWebsiteFromRequest()
     {
-        return $this->websiteService->fetch($this->requestAttributes->get(self::PARAMETER_SITE_ROOT_URL));
+        return $this->websiteService->get($this->requestAttributes->get(self::PARAMETER_SITE_ROOT_URL));
     }
 
     /**

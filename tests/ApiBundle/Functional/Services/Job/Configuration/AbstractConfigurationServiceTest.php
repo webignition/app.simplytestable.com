@@ -45,7 +45,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
         }
 
         if (isset($jobConfigurationValues['website'])) {
-            $website = $websiteService->fetch($jobConfigurationValues['website']);
+            $website = $websiteService->get($jobConfigurationValues['website']);
             $configurationValuesModel->setWebsite($website);
         }
 

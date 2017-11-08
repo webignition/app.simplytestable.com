@@ -36,7 +36,7 @@ class JobController extends Controller
         $teamService = $this->get('simplytestable.services.teamservice');
         $jobRepository = $this->container->get('simplytestable.repository.job');
 
-        $website = $websiteService->fetch($site_root_url);
+        $website = $websiteService->get($site_root_url);
         $latestJob = null;
 
         $userHasTeam = $teamService->hasTeam($this->getUser());

@@ -161,7 +161,7 @@ class RunCommandTest extends AbstractBaseTestCase
         }
 
         if (isset($rawValues['website'])) {
-            $jobConfigurationValues->setWebsite($websiteService->fetch($rawValues['website']));
+            $jobConfigurationValues->setWebsite($websiteService->get($rawValues['website']));
         }
 
         if (isset($rawValues['task_configuration'])) {

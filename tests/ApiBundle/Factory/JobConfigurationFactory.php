@@ -61,7 +61,7 @@ class JobConfigurationFactory
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
-        $website = $websiteService->fetch($jobConfigurationValues[self::KEY_WEBSITE_URL]);
+        $website = $websiteService->get($jobConfigurationValues[self::KEY_WEBSITE_URL]);
         $jobType = $jobTypeService->get($jobConfigurationValues[self::KEY_TYPE]);
 
         $jobConfiguration = new Configuration();

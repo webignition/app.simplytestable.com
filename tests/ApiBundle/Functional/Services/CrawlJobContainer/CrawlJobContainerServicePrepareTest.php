@@ -118,7 +118,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
 
         $user = $this->userFactory->create();
-        $website = $websiteService->fetch($url);
+        $website = $websiteService->get($url);
 
         $crawlJob = new Job();
         $crawlJob->setState($stateService->get(JobService::STARTING_STATE));

@@ -68,7 +68,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
             $entityManager->flush();
         }
 
-        $website = $websiteService->fetch($websiteUrl);
+        $website = $websiteService->get($websiteUrl);
 
         $this->jobUserAccountPlanEnforcementService->setUser($user);
 
