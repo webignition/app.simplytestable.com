@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController;
+use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -12,12 +12,12 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
+class JobConfigurationControllerCreateActionTest extends AbstractBaseTestCase
 {
     /**
-     * @var CreateController
+     * @var JobConfigurationController
      */
-    private $jobConfigurationCreateController;
+    private $jobConfigurationController;
 
     /**
      * {@inheritdoc}
@@ -26,17 +26,17 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobConfigurationCreateController = new CreateController();
-        $this->jobConfigurationCreateController->setContainer($this->container);
+        $this->jobConfigurationController = new JobConfigurationController();
+        $this->jobConfigurationController->setContainer($this->container);
     }
 
-    public function testRequest()
+    public function testCreateActionPostRequest()
     {
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();
 
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('jobconfiguration_create_create');
+        $requestUrl = $router->generate('jobconfiguration_create');
 
         $this->getCrawler([
             'url' => $requestUrl,
@@ -64,7 +64,7 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
-            $this->jobConfigurationCreateController->createAction(new Request());
+            $this->jobConfigurationController->createAction(new Request());
             $this->fail('ServiceUnavailableHttpException not thrown');
         } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
             $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
@@ -92,7 +92,7 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
         $this->expectException(BadRequestHttpException::class);
         $this->expectExceptionMessage($expectedExceptionMessage);
 
-        $this->jobConfigurationCreateController->createAction($request);
+        $this->jobConfigurationController->createAction($request);
     }
 
     /**
@@ -153,7 +153,7 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
             ],
         ]);
 
-        $response = $this->jobConfigurationCreateController->createAction($request);
+        $response = $this->jobConfigurationController->createAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(
@@ -192,8 +192,8 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
             ],
         ]);
 
-        $this->jobConfigurationCreateController->createAction($request);
-        $response = $this->jobConfigurationCreateController->createAction($request);
+        $this->jobConfigurationController->createAction($request);
+        $response = $this->jobConfigurationController->createAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(
@@ -217,11 +217,11 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
             ],
         ]);
 
-        $this->jobConfigurationCreateController->createAction($request);
+        $this->jobConfigurationController->createAction($request);
 
         $request->request->set('label', 'different label value');
 
-        $response = $this->jobConfigurationCreateController->createAction($request);
+        $response = $this->jobConfigurationController->createAction($request);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(
@@ -250,7 +250,7 @@ class JobConfigurationCreateControllerTest extends AbstractBaseTestCase
         ]);
 
         /* @var RedirectResponse $response */
-        $response = $this->jobConfigurationCreateController->createAction($request);
+        $response = $this->jobConfigurationController->createAction($request);
 
         $this->assertEquals(
             '/jobconfiguration/label%20value/',

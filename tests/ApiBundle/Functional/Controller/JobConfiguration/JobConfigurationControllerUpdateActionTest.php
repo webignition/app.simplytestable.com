@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfiguration\UpdateController;
+use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
@@ -14,7 +14,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
+class JobConfigurationControllerUpdateActionTest extends AbstractBaseTestCase
 {
     const LABEL_ONE = 'job-configuration-label-one';
     const LABEL_TWO = 'job-configuration-label-two';
@@ -23,9 +23,9 @@ class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
     const WEBSITE_URL_TWO = 'http://two.example.com/';
 
     /**
-     * @var UpdateController
+     * @var JobConfigurationController
      */
-    private $jobConfigurationUpdateController;
+    private $jobConfigurationController;
 
     /**
      * @var JobConfigurationFactory
@@ -49,8 +49,8 @@ class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobConfigurationUpdateController = new UpdateController();
-        $this->jobConfigurationUpdateController->setContainer($this->container);
+        $this->jobConfigurationController = new JobConfigurationController();
+        $this->jobConfigurationController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -70,10 +70,10 @@ class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
         ]);
     }
 
-    public function testGetRequest()
+    public function testUpdateActionGetRequest()
     {
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('jobconfiguration_update_update', ['label' => 'foo']);
+        $requestUrl = $router->generate('jobconfiguration_update', ['label' => 'foo']);
 
         $this->getCrawler([
             'url' => $requestUrl,
@@ -87,10 +87,10 @@ class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
         $this->assertEquals(405, $response->getStatusCode());
     }
 
-    public function testPostRequest()
+    public function testUpdateActionPostRequest()
     {
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('jobconfiguration_update_update', [
+        $requestUrl = $router->generate('jobconfiguration_update', [
             'label' => $this->jobConfiguration->getLabel()
         ]);
 
@@ -115,7 +115,7 @@ class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
-            $this->jobConfigurationUpdateController->updateAction(new Request(), 'foo');
+            $this->jobConfigurationController->updateAction(new Request(), 'foo');
             $this->fail('ServiceUnavailableHttpException not thrown');
         } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
             $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
@@ -126,7 +126,7 @@ class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $this->jobConfigurationUpdateController->updateAction(new Request(), 'foo');
+        $this->jobConfigurationController->updateAction(new Request(), 'foo');
     }
 
     /**
@@ -137,7 +137,7 @@ class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
      */
     public function testUpdateActionFailureException($postData, $expectedResponseHeaderError)
     {
-        $response = $this->jobConfigurationUpdateController->updateAction(
+        $response = $this->jobConfigurationController->updateAction(
             new Request([], $postData),
             $this->jobConfiguration->getLabel()
         );
@@ -179,7 +179,7 @@ class JobConfigurationUpdateControllerTest extends AbstractBaseTestCase
 
     public function testUpdateActionSuccess()
     {
-        $response = $this->jobConfigurationUpdateController->updateAction(
+        $response = $this->jobConfigurationController->updateAction(
             new Request([], [
                 'parameters' => 'foo',
             ]),

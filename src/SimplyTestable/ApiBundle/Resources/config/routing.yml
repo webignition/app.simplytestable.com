@@ -237,27 +237,27 @@ worker_tasks_request:
     path: /worker/tasks/request/
     defaults: { _controller: SimplyTestableApiBundle:Worker\Tasks:request }
 
-jobconfiguration_create_create:
+jobconfiguration_create:
     path: /jobconfiguration/create/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Create:create }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:create }
 
-jobconfiguration_getlist_list:
+jobconfiguration_list:
     path: /jobconfiguration/list/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\GetList:list, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:list, _format: json }
 
-jobconfiguration_delete_delete:
+jobconfiguration_delete:
     path: /jobconfiguration/{label}/delete/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Delete:delete, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:delete, _format: json }
     methods:  [POST]
 
-jobconfiguration_update_update:
+jobconfiguration_update:
     path: /jobconfiguration/{label}/update/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Update:update, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:update, _format: json }
     methods:  [POST]
 
-jobconfiguration_get_get:
+jobconfiguration_get:
     path: /jobconfiguration/{label}/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Get:get, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:get, _format: json }
 
 scheduledjob_create_create:
     path: /scheduledjob/create/

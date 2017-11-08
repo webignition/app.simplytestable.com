@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfiguration\GetController;
+use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -13,12 +13,12 @@ use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class JobConfigurationGetControllerTest extends AbstractBaseTestCase
+class JobConfigurationControllerGetActionTest extends AbstractBaseTestCase
 {
     /**
-     * @var GetController
+     * @var JobConfigurationController
      */
-    private $jobConfigurationGetController;
+    private $jobConfigurationController;
 
     /**
      * @var User
@@ -32,15 +32,15 @@ class JobConfigurationGetControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobConfigurationGetController = new GetController();
-        $this->jobConfigurationGetController->setContainer($this->container);
+        $this->jobConfigurationController = new JobConfigurationController();
+        $this->jobConfigurationController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
         $this->setUser($this->user);
     }
 
-    public function testRequest()
+    public function testGetActionGetRequest()
     {
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
         $jobConfiguration = $jobConfigurationFactory->create([
@@ -48,7 +48,7 @@ class JobConfigurationGetControllerTest extends AbstractBaseTestCase
         ]);
 
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('jobconfiguration_get_get', [
+        $requestUrl = $router->generate('jobconfiguration_get', [
             'label' => $jobConfiguration->getLabel(),
         ]);
 
@@ -67,7 +67,7 @@ class JobConfigurationGetControllerTest extends AbstractBaseTestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $this->jobConfigurationGetController->getAction('foo');
+        $this->jobConfigurationController->getAction('foo');
     }
 
     /**
@@ -83,7 +83,7 @@ class JobConfigurationGetControllerTest extends AbstractBaseTestCase
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
         $jobConfiguration = $jobConfigurationFactory->create($jobConfigurationValues);
 
-        $response = $this->jobConfigurationGetController->getAction($jobConfiguration->getLabel());
+        $response = $this->jobConfigurationController->getAction($jobConfiguration->getLabel());
 
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals($response->headers->get('content-type'), 'application/json');

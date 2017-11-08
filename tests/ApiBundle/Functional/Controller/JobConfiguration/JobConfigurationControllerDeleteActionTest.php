@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfiguration\DeleteController;
+use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
@@ -12,12 +12,12 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
+class JobConfigurationControllerDeleteActionTest extends AbstractBaseTestCase
 {
     /**
-     * @var DeleteController
+     * @var JobConfigurationController
      */
-    private $jobConfigurationDeleteController;
+    private $jobConfigurationController;
 
     /**
      * @var JobConfiguration
@@ -36,8 +36,8 @@ class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobConfigurationDeleteController = new DeleteController();
-        $this->jobConfigurationDeleteController->setContainer($this->container);
+        $this->jobConfigurationController = new JobConfigurationController();
+        $this->jobConfigurationController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -49,10 +49,10 @@ class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
         ]);
     }
 
-    public function testGetRequest()
+    public function testDeleteActionGetRequest()
     {
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('jobconfiguration_delete_delete', [
+        $requestUrl = $router->generate('jobconfiguration_delete', [
             'label' => $this->jobConfiguration->getLabel(),
         ]);
 
@@ -68,10 +68,10 @@ class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
     }
 
 
-    public function testPostRequest()
+    public function testDeleteActionPostRequest()
     {
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('jobconfiguration_delete_delete', [
+        $requestUrl = $router->generate('jobconfiguration_delete', [
             'label' => $this->jobConfiguration->getLabel(),
         ]);
 
@@ -92,7 +92,7 @@ class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
-            $this->jobConfigurationDeleteController->deleteAction('foo');
+            $this->jobConfigurationController->deleteAction('foo');
             $this->fail('ServiceUnavailableHttpException not thrown');
         } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
             $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
@@ -103,7 +103,7 @@ class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $this->jobConfigurationDeleteController->deleteAction('foo');
+        $this->jobConfigurationController->deleteAction('foo');
     }
 
     public function testDeleteActionJobConfigurationBelongsToScheduledJob()
@@ -113,7 +113,7 @@ class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
             $this->jobConfiguration
         );
 
-        $response = $this->jobConfigurationDeleteController->deleteAction($this->jobConfiguration->getLabel());
+        $response = $this->jobConfigurationController->deleteAction($this->jobConfiguration->getLabel());
 
         $this->assertTrue($response->isClientError());
 
@@ -127,7 +127,7 @@ class JobConfigurationDeleteControllerTest extends AbstractBaseTestCase
     {
         $jobConfigurationRepository = $this->container->get('simplytestable.repository.jobconfiguration');
 
-        $response = $this->jobConfigurationDeleteController->deleteAction($this->jobConfiguration->getLabel());
+        $response = $this->jobConfigurationController->deleteAction($this->jobConfiguration->getLabel());
 
         $this->assertTrue($response->isSuccessful());
 
