@@ -3,6 +3,8 @@
 namespace SimplyTestable\ApiBundle\Services\Team;
 
 use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\Team\Member;
+use SimplyTestable\ApiBundle\Repository\TeamMemberRepository;
 use SimplyTestable\ApiBundle\Repository\TeamRepository;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -26,6 +28,11 @@ class Service
     private $teamRepository;
 
     /**
+     * @var TeamMemberRepository
+     */
+    private $teamMemberRepository;
+
+    /**
      * @param MemberService $memberService
      * @param EntityManagerInterface $entityManager
      */
@@ -35,6 +42,7 @@ class Service
         $this->memberService = $memberService;
 
         $this->teamRepository = $entityManager->getRepository(Team::class);
+        $this->teamMemberRepository = $entityManager->getRepository(Member::class);
     }
 
     /**
@@ -118,7 +126,7 @@ class Service
         }
 
         if ($this->memberService->belongsToTeam($user)) {
-            return $this->memberService->getTeamByUser($user)->getLeader();
+            return $this->memberService->getTeamByMember($user)->getLeader();
         }
 
         return null;
@@ -136,7 +144,11 @@ class Service
         }
 
         if ($this->memberService->belongsToTeam($user)) {
-            return $this->memberService->getEntityRepository()->getMemberByUser($user)->getTeam();
+            $member = $this->teamMemberRepository->findOneBy([
+                'user' => $user,
+            ]);
+
+            return $member->getTeam();
         }
 
         return null;
@@ -172,7 +184,6 @@ class Service
      * @param User $leader
      * @param User $member
      *
-     * @return bool
      * @throws TeamServiceException
      */
     public function remove(User $leader, User $member)
@@ -192,7 +203,7 @@ class Service
             );
         }
 
-        return $this->memberService->remove($member);
+        $this->memberService->remove($member);
     }
 
     /**
