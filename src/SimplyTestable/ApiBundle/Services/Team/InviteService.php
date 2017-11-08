@@ -38,19 +38,6 @@ class InviteService
     }
 
     /**
-     * @param Invite $invite
-     *
-     * @return Invite
-     */
-    public function persistAndFlush(Invite $invite)
-    {
-        $this->entityManager->persist($invite);
-        $this->entityManager->flush();
-
-        return $invite;
-    }
-
-    /**
      * @param User $inviter
      * @param User $invitee
      *
@@ -141,7 +128,10 @@ class InviteService
         $invite->setUser($invitee);
         $invite->setToken($this->generateToken());
 
-        return $this->persistAndFlush($invite);
+        $this->entityManager->persist($invite);
+        $this->entityManager->flush();
+
+        return $invite;
     }
 
     /**
