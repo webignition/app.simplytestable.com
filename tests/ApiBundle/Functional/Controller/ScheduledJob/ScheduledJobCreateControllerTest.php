@@ -2,8 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
+use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Controller\ScheduledJob\CreateController;
-use SimplyTestable\ApiBundle\Controller\JobConfiguration\CreateController as JobConfigurationCreateController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -276,7 +276,7 @@ class ScheduledJobCreateControllerTest extends AbstractBaseTestCase
 
     private function createJobConfiguration()
     {
-        $jobConfigurationCreateController = new JobConfigurationCreateController();
+        $jobConfigurationCreateController = new JobConfigurationController();
         $jobConfigurationCreateController->setContainer($this->container);
         $jobConfigurationCreateController->createAction(new Request([], [
             'label' => 'job-configuration-label',
