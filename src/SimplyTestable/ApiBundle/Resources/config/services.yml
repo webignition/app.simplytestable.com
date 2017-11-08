@@ -186,6 +186,7 @@ services:
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         jobTypeService: '@simplytestable.services.jobtypeservice'
+        urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
 
   simplytestable.services.taskpreprocessor.linkintegrity:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor

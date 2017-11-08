@@ -64,6 +64,11 @@ class CrawlJobContainerService
     private $taskRepository;
 
     /**
+     * @var UrlDiscoveryTaskService
+     */
+    private $urlDiscoveryTaskService;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param TaskService $taskService
      * @param TaskTypeService $taskTypeService
@@ -72,6 +77,7 @@ class CrawlJobContainerService
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
      * @param JobTypeService $jobTypeService
+     * @param UrlDiscoveryTaskService $urlDiscoveryTaskService
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -81,7 +87,8 @@ class CrawlJobContainerService
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
-        JobTypeService $jobTypeService
+        JobTypeService $jobTypeService,
+        UrlDiscoveryTaskService $urlDiscoveryTaskService
     ) {
         $this->entityManager = $entityManager;
         $this->taskService = $taskService;
@@ -91,6 +98,7 @@ class CrawlJobContainerService
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->jobTypeService = $jobTypeService;
+        $this->urlDiscoveryTaskService = $urlDiscoveryTaskService;
 
         $this->entityRepository = $entityManager->getRepository(CrawlJobContainer::class);
         $this->taskRepository = $entityManager->getRepository(Task::class);
@@ -142,8 +150,9 @@ class CrawlJobContainerService
             return false;
         }
 
-        $task = $this->createUrlDiscoveryTask(
-            $crawlJobContainer,
+        $task = $this->urlDiscoveryTaskService->create(
+            $crawlJob,
+            $crawlJobContainer->getParentJob()->getWebsite()->getCanonicalUrl(),
             (string)$crawlJobContainer->getParentJob()->getWebsite()
         );
 
@@ -161,54 +170,6 @@ class CrawlJobContainerService
         $this->entityManager->flush();
 
         return true;
-    }
-
-    /**
-     * @param CrawlJobContainer $crawlJobContainer
-     * @param string $url
-     *
-     * @return Task
-     */
-    private function createUrlDiscoveryTask(CrawlJobContainer $crawlJobContainer, $url)
-    {
-        $parentCanonicalUrl = new NormalisedUrl($crawlJobContainer->getParentJob()->getWebsite()->getCanonicalUrl());
-
-        $scope = array(
-            (string)$parentCanonicalUrl
-        );
-
-        $hostParts = $parentCanonicalUrl->getHost()->getParts();
-        if ($hostParts[0] === 'www') {
-            $variant = clone $parentCanonicalUrl;
-            $variant->setHost(implode('.', array_slice($parentCanonicalUrl->getHost()->getParts(), 1)));
-            $scope[] = (string)$variant;
-        } else {
-            $variant = new NormalisedUrl($parentCanonicalUrl);
-            $variant->setHost('www.' . (string)$variant->getHost());
-            $scope[] = (string)$variant;
-        }
-
-        $parameters = array(
-            'scope' => $scope
-        );
-
-        if ($crawlJobContainer->getCrawlJob()->hasParameters()) {
-            $parameters = array_merge(
-                $parameters,
-                json_decode($crawlJobContainer->getCrawlJob()->getParameters(), true)
-            );
-        }
-
-        $taskQueuedState = $this->stateService->get(TaskService::QUEUED_STATE);
-
-        $task = new Task();
-        $task->setJob($crawlJobContainer->getCrawlJob());
-        $task->setParameters(json_encode($parameters));
-        $task->setState($taskQueuedState);
-        $task->setType($this->taskTypeService->getUrlDiscoveryTaskType());
-        $task->setUrl($url);
-
-        return $task;
     }
 
     /**
@@ -271,7 +232,13 @@ class CrawlJobContainerService
 
         foreach ($taskDiscoveredUrlSet as $url) {
             if (!$this->isTaskUrl($task->getJob(), $url)) {
-                $task = $this->createUrlDiscoveryTask($crawlJobContainer, $url);
+                $task = $this->urlDiscoveryTaskService->create(
+                    $crawlJob,
+                    $crawlJobContainer->getParentJob()->getWebsite()->getCanonicalUrl(),
+                    $url
+                );
+
+
                 $this->entityManager->persist($task);
                 $crawlJob->addTask($task);
                 $isFlushRequired = true;
