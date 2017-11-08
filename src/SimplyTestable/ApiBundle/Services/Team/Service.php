@@ -2,14 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Services\Team;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Repository\TeamRepository;
-use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
 
-class Service extends EntityService
+class Service
 {
     /**
      * @var MemberService
@@ -17,22 +16,25 @@ class Service extends EntityService
     private $memberService;
 
     /**
-     * @return string
+     * @var EntityManagerInterface
      */
-    protected function getEntityName()
-    {
-        return Team::class;
-    }
+    private $entityManager;
+
+    /**
+     * @var TeamRepository
+     */
+    private $teamRepository;
 
     /**
      * @param MemberService $memberService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(MemberService $memberService, EntityManager $entityManager)
+    public function __construct(MemberService $memberService, EntityManagerInterface $entityManager)
     {
-        parent::__construct($entityManager);
-
+        $this->entityManager = $entityManager;
         $this->memberService = $memberService;
+
+        $this->teamRepository = $entityManager->getRepository(Team::class);
     }
 
     /**
@@ -66,7 +68,7 @@ class Service extends EntityService
             );
         }
 
-        $isNameTaken = $this->getEntityRepository()->getTeamCountByName($name) > 0;
+        $isNameTaken = $this->teamRepository->getTeamCountByName($name) > 0;
         if ($isNameTaken) {
             throw new TeamServiceException(
                 'Team name is already taken',
@@ -80,7 +82,10 @@ class Service extends EntityService
         $team->setName($name);
         $team->setLeader($leader);
 
-        return $this->persistAndFlush($team);
+        $this->entityManager->persist($team);
+        $this->entityManager->flush();
+
+        return $team;
     }
 
     /**
@@ -90,28 +95,7 @@ class Service extends EntityService
      */
     public function hasTeam(User $leader)
     {
-        return $this->getEntityRepository()->getTeamCountByLeader($leader) > 0;
-    }
-
-    /**
-     * @param Team $team
-     *
-     * @return Team
-     */
-    public function persistAndFlush(Team $team)
-    {
-        $this->getManager()->persist($team);
-        $this->getManager()->flush();
-
-        return $team;
-    }
-
-    /**
-     * @return TeamRepository
-     */
-    public function getEntityRepository()
-    {
-        return parent::getEntityRepository();
+        return $this->teamRepository->getTeamCountByLeader($leader) > 0;
     }
 
     /**
@@ -148,7 +132,7 @@ class Service extends EntityService
     public function getForUser(User $user)
     {
         if ($this->hasTeam($user)) {
-            return $this->getEntityRepository()->getTeamByLeader($user);
+            return $this->teamRepository->getTeamByLeader($user);
         }
 
         if ($this->memberService->belongsToTeam($user)) {
