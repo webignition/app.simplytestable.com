@@ -2,14 +2,14 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Http\Exception\CurlException;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
-use SimplyTestable\ApiBundle\Entity\State;
 
-class WorkerActivationRequestService extends EntityService
+class WorkerActivationRequestService
 {
     const STARTING_STATE = 'worker-activation-request-awaiting-verification';
     const VERIFIED_STATE = 'worker-activation-request-verified';
@@ -36,11 +36,16 @@ class WorkerActivationRequestService extends EntityService
     private $urlService;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
      * @param EntityManager $entityManager
      * @param LoggerInterface $logger
      * @param StateService $stateService
      * @param HttpClientService $httpClientService
-     * @param \SimplyTestable\ApiBundle\Services\UrlService $urlService
+     * @param UrlService $urlService
      */
     public function __construct(
         EntityManager $entityManager,
@@ -49,20 +54,11 @@ class WorkerActivationRequestService extends EntityService
         HttpClientService $httpClientService,
         UrlService $urlService
     ) {
-        parent::__construct($entityManager);
-
+        $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->stateService = $stateService;
         $this->httpClientService = $httpClientService;
         $this->urlService = $urlService;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getEntityName()
-    {
-        return WorkerActivationRequest::class;
     }
 
     /**
@@ -94,6 +90,7 @@ class WorkerActivationRequestService extends EntityService
                 $curlException->getErrorNo(),
                 $curlException->getError()
             ));
+
             return false;
         } catch (BadResponseException $badResponseException) {
             $response = $badResponseException->getResponse();
@@ -127,14 +124,16 @@ class WorkerActivationRequestService extends EntityService
         }
 
         $activationRequest->setNextState();
-        $this->persistAndFlush($activationRequest);
+
+        $this->entityManager->persist($activationRequest);
+        $this->entityManager->flush();
 
         $worker = $activationRequest->getWorker();
 
         $worker->setState($this->stateService->get('worker-active'));
 
-        $this->getManager()->persist($worker);
-        $this->getManager()->flush();
+        $this->entityManager->persist($worker);
+        $this->entityManager->flush();
 
         return 0;
     }
@@ -154,26 +153,9 @@ class WorkerActivationRequestService extends EntityService
         $activationRequest->setWorker($worker);
         $activationRequest->setToken($token);
 
-        return $this->persistAndFlush($activationRequest);
-    }
+        $this->entityManager->persist($activationRequest);
+        $this->entityManager->flush();
 
-    /**
-     * @param WorkerActivationRequest $workerActivationRequest
-     *
-     * @return WorkerActivationRequest
-     */
-    public function persistAndFlush(WorkerActivationRequest $workerActivationRequest)
-    {
-        $this->getManager()->persist($workerActivationRequest);
-        $this->getManager()->flush();
-        return $workerActivationRequest;
-    }
-
-    /**
-     * @return State
-     */
-    public function getStartingState()
-    {
-        return $this->stateService->get(self::STARTING_STATE);
+        return $activationRequest;
     }
 }

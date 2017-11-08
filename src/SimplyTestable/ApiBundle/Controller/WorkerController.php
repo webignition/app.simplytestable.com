@@ -77,7 +77,8 @@ class WorkerController extends Controller
         $activationRequestStartingState = $stateService->get(WorkerActivationRequestService::STARTING_STATE);
         $activationRequest->setState($activationRequestStartingState);
 
-        $workerRequestActivationService->persistAndFlush($activationRequest);
+        $entityManager->persist($activationRequest);
+        $entityManager->flush();
 
         $resqueQueueService->enqueue(
             $resqueJobFactory->create(
