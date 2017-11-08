@@ -1,33 +1,34 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 
-class UserPostActivationPropertiesService extends EntityService {
-    
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\UserPostActivationProperties';
-    
+class UserPostActivationPropertiesService
+{
     /**
-     *
-     * @return string
+     * @var EntityManagerInterface
      */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
-    }
-
+    private $entityManager;
 
     /**
-     * @param User $user
-     * @return UserPostActivationProperties
+     * @var EntityRepository
      */
-    public function getForUser(User $user) {
-        return $this->getEntityRepository()->findOneBy([
-            'user' => $user
-        ]);
-    }
+    private $userPostActivationPropertiesRepository;
 
+    /**
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+        $this->userPostActivationPropertiesRepository = $entityManager->getRepository(
+            UserPostActivationProperties::class
+        );
+    }
 
     /**
      * @param User $user
@@ -35,39 +36,22 @@ class UserPostActivationPropertiesService extends EntityService {
      * @param string|null $coupon
      * @return UserPostActivationProperties
      */
-    public function create(User $user, AccountPlan $accountPlan, $coupon = null) {
-        if ($this->hasForUser($user)) {
-            return $this->updateForUser($this->getForUser($user), $accountPlan, $coupon);
+    public function create(User $user, AccountPlan $accountPlan, $coupon = null)
+    {
+        $userPostActivationProperties = $this->userPostActivationPropertiesRepository->findOneBy([
+            'user' => $user,
+        ]);
+
+        if (empty($userPostActivationProperties)) {
+            $userPostActivationProperties = new UserPostActivationProperties();
+            $userPostActivationProperties->setUser($user);
         }
 
-        $userPostActivationProperties = new UserPostActivationProperties();
-        $userPostActivationProperties->setUser($user);
-
-        return $this->updateForUser($userPostActivationProperties, $accountPlan, $coupon);
-    }
-
-
-    /**
-     * @param User $user
-     * @return bool
-     */
-    public function hasForUser(User $user) {
-        return !is_null($this->getForUser($user));
-    }
-
-
-    /**
-     * @param UserPostActivationProperties $userPostActivationProperties
-     * @param AccountPlan $accountPlan
-     * @param string|null $coupon
-     * @return UserPostActivationProperties
-     */
-    private function updateForUser(UserPostActivationProperties $userPostActivationProperties, AccountPlan $accountPlan, $coupon = null) {
         $userPostActivationProperties->setAccountPlan($accountPlan);
         $userPostActivationProperties->setCoupon($coupon);
 
-        $this->getManager()->persist($userPostActivationProperties);
-        $this->getManager()->flush($userPostActivationProperties);
+        $this->entityManager->persist($userPostActivationProperties);
+        $this->entityManager->flush();
 
         return $userPostActivationProperties;
     }
