@@ -49,16 +49,6 @@ class UserEmailChangeRequestService extends EntityService
     }
 
     /**
-     * @param string $new_email
-     *
-     * @return bool
-     */
-    public function hasForNewEmail($new_email)
-    {
-        return !is_null($this->getEntityRepository()->findOneByNewEmail($new_email));
-    }
-
-    /**
      * @param User $user
      *
      * @return UserEmailChangeRequest
