@@ -187,10 +187,10 @@ class UserCreationControllerTest extends AbstractBaseTestCase
         $expectedPostActivationProperties
     ) {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $userPostActivationPropertiesService = $this->container->get(
-            'simplytestable.services.job.userpostactivationpropertiesservice'
-        );
         $userService = $this->container->get('simplytestable.services.userservice');
+        $userPostActivationPropertiesRepository = $this->container->get(
+            'simplytestable.repository.userpostactivationproperties'
+        );
 
         if ($createUser) {
             $userFactory = new UserFactory($this->container);
@@ -222,7 +222,9 @@ class UserCreationControllerTest extends AbstractBaseTestCase
         $this->assertInstanceOf(User::class, $user);
 
         $userAccountPlan = $userAccountPlanService->getForUser($user);
-        $postActivationProperties = $userPostActivationPropertiesService->getForUser($user);
+        $postActivationProperties = $userPostActivationPropertiesRepository->findOneBy([
+            'user' => $user,
+        ]);
 
         if (is_null($expectedPlanName)) {
             $this->assertNull($userAccountPlan);
