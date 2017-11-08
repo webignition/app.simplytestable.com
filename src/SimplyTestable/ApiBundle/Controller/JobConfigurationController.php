@@ -177,4 +177,73 @@ class JobConfigurationController extends Controller
 
         return new JsonResponse($jobConfigurationService->getList());
     }
+
+    /**
+     * @param Request $request
+     * @param string $label
+     *
+     * @return RedirectResponse|Response
+     */
+    public function updateAction(Request $request, $label)
+    {
+        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+
+        if ($applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
+        }
+
+        $jobConfiguration = $jobConfigurationService->get($label);
+        if (empty($jobConfiguration)) {
+            throw new NotFoundHttpException();
+        }
+
+        $newJobConfigurationValues = new JobConfigurationValues();
+
+        $requestData = $request->request;
+
+        $requestWebsite = trim($requestData->get('website'));
+        $website = $websiteService->get($requestWebsite);
+
+        $requestJobType = trim($requestData->get('type'));
+        $jobType = $jobTypeService->get($requestJobType);
+
+        if (empty($jobType)) {
+            $jobType = $jobTypeService->getFullSiteType();
+        }
+
+        $adapter = new RequestAdapter();
+        $adapter->setRequest($request);
+        $adapter->setTaskTypeService($taskTypeService);
+
+        $taskConfigurationCollection = $adapter->getCollection();
+
+        $newJobConfigurationValues->setLabel($requestData->get('label'));
+        $newJobConfigurationValues->setParameters($requestData->get('parameters'));
+        $newJobConfigurationValues->setTaskConfigurationCollection($taskConfigurationCollection);
+        $newJobConfigurationValues->setWebsite($website);
+        $newJobConfigurationValues->setType($jobType);
+
+        try {
+            $jobConfigurationService->update(
+                $jobConfiguration,
+                $newJobConfigurationValues
+            );
+
+            return $this->redirect($this->generateUrl(
+                'jobconfiguration_get',
+                ['label' => $jobConfiguration->getLabel()]
+            ));
+        } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
+            return Response::create('', 400, [
+                'X-JobConfigurationUpdate-Error' => json_encode([
+                    'code' => $jobConfigurationServiceException->getCode(),
+                    'message' => $jobConfigurationServiceException->getMessage()
+                ])
+            ]);
+        }
+    }
 }

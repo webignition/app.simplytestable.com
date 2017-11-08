@@ -250,9 +250,9 @@ jobconfiguration_delete:
     defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:delete, _format: json }
     methods:  [POST]
 
-jobconfiguration_update_update:
+jobconfiguration_update:
     path: /jobconfiguration/{label}/update/
-    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration\Update:update, _format: json }
+    defaults: { _controller: SimplyTestableApiBundle:JobConfiguration:update, _format: json }
     methods:  [POST]
 
 jobconfiguration_get:
