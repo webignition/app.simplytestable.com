@@ -2,7 +2,6 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
-use phpmock\mockery\PHPMockery;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;

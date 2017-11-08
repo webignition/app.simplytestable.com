@@ -265,11 +265,13 @@ class TeamInviteController extends Controller
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
-        if (!$teamInviteService->hasForToken(trim($token))) {
+        $invite = $teamInviteService->getForToken($token);
+
+        if (empty($token)) {
             throw new NotFoundHttpException();
         }
 
-        return new JsonResponse($teamInviteService->getForToken($token));
+        return new JsonResponse($invite);
     }
 
     /**
@@ -288,14 +290,15 @@ class TeamInviteController extends Controller
         $requestData = $request->request;
         $token = trim($requestData->get('token'));
 
-        if (!$teamInviteService->hasForToken($token)) {
+        $invite = $teamInviteService->getForToken($token);
+
+        if (empty($invite)) {
             return Response::create('', 400, [
                 'X-TeamInviteActivateAndAccept-Error-Code' => 1,
                 'X-TeamInviteActivateAndAccept-Error-Message' => 'No invite for token',
             ]);
         }
 
-        $invite = $teamInviteService->getForToken($token);
         $invitee = $invite->getUser();
         $team = $invite->getTeam();
 

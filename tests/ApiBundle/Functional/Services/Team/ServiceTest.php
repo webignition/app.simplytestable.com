@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\ApiBundle\Functional\Services;
+namespace Tests\ApiBundle\Functional\Services\Team;
 
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;

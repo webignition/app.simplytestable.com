@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 
 class InviteService
 {
@@ -27,13 +28,24 @@ class InviteService
     private $entityManager;
 
     /**
+     * @var TokenGeneratorInterface
+     */
+    private $tokenGenerator;
+
+    /**
      * @param Service $teamService
      * @param EntityManagerInterface $entityManager
+     * @param TokenGeneratorInterface $tokenGenerator
      */
-    public function __construct(TeamService $teamService, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        TeamService $teamService,
+        EntityManagerInterface $entityManager,
+        TokenGeneratorInterface $tokenGenerator
+    ) {
         $this->entityManager = $entityManager;
         $this->teamService = $teamService;
+        $this->tokenGenerator = $tokenGenerator;
+
         $this->teamInviteRepository = $entityManager->getRepository(Invite::class);
     }
 
@@ -76,7 +88,7 @@ class InviteService
             $invite = new Invite();
             $invite->setTeam($this->teamService->getForUser($inviter));
             $invite->setUser($invitee);
-            $invite->setToken($this->generateToken());
+            $invite->setToken($this->tokenGenerator->generateToken());
 
             $this->entityManager->persist($invite);
             $this->entityManager->flush();
@@ -111,30 +123,6 @@ class InviteService
         ]);
 
         return $invite instanceof Invite;
-    }
-
-    /**
-     * @return string
-     */
-    private function generateToken()
-    {
-        $token = md5(rand());
-
-        if ($this->hasForToken($token)) {
-            return $this->generateToken();
-        }
-
-        return $token;
-    }
-
-    /**
-     * @param $token
-     *
-     * @return bool
-     */
-    public function hasForToken($token)
-    {
-        return !is_null($this->getForToken($token));
     }
 
     /**

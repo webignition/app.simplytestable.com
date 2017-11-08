@@ -315,6 +315,7 @@ services:
     arguments:
         teamService: "@simplytestable.services.teamservice"
         entityManager: "@doctrine.orm.entity_manager"
+        tokenGenerator: '@simplytestable.services.invite.tokengenerator'
 
   simplytestable.services.job.retrievalservice:
     class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
@@ -471,3 +472,8 @@ services:
 
   simplytestable.services.joblistconfigurationfactory:
     class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory
+
+  simplytestable.services.invite.tokengenerator:
+    class: SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator
+    arguments:
+      teamInviteRepository: '@simplytestable.repository.teaminvite'
