@@ -2,50 +2,50 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use FOS\UserBundle\Util\CanonicalizerInterface;
-use FOS\UserBundle\Util\TokenGenerator;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class UserEmailChangeRequestService extends EntityService
+class UserEmailChangeRequestService
 {
-    /**
-     * @var string
-     */
-    private $tokenGeneratorClass;
-
     /**
      * @var CanonicalizerInterface
      */
     private $emailCanonicalizer;
 
     /**
-     * @var TokenGenerator
+     * @var TokenGeneratorInterface
      */
     private $tokenGenerator;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var EntityRepository
+     */
+    private $userEmailChangeRequestRepository;
+
+    /**
      * @param EntityManager $entityManager
      * @param CanonicalizerInterface $emailCanonicalizer
-     * @param string $tokenGeneratorClass
+     * @param TokenGeneratorInterface $tokenGenerator
      */
     public function __construct(
         EntityManager $entityManager,
         CanonicalizerInterface $emailCanonicalizer,
-        $tokenGeneratorClass
+        TokenGeneratorInterface $tokenGenerator
     ) {
-        parent::__construct($entityManager);
-
+        $this->entityManager = $entityManager;
         $this->emailCanonicalizer = $emailCanonicalizer;
-        $this->tokenGeneratorClass = $tokenGeneratorClass;
-    }
+        $this->tokenGenerator = $tokenGenerator;
 
-    /**
-     * @return string
-     */
-    protected function getEntityName()
-    {
-        return UserEmailChangeRequest::class;
+        $this->userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
     }
 
     /**
@@ -53,34 +53,24 @@ class UserEmailChangeRequestService extends EntityService
      *
      * @return UserEmailChangeRequest
      */
-    public function findByUser(User $user)
+    public function getForUser(User $user)
     {
-        return $this->getEntityRepository()->findOneByUser($user);
+        return $this->userEmailChangeRequestRepository->findOneBy([
+            'user' => $user,
+        ]);
     }
 
     /**
      * @param User $user
-     *
-     * @return bool
-     */
-    public function hasForUser(User $user)
-    {
-        return !is_null($this->findByUser($user));
-    }
-
-    /**
-     * @param User $user
-     *
-     * @return bool
      */
     public function removeForUser(User $user)
     {
-        if ($this->hasForUser($user)) {
-            $this->getManager()->remove($this->findByUser($user));
-            $this->getManager()->flush();
-        }
+        $emailChangeRequest = $this->getForUser($user);
 
-        return true;
+        if (!empty($emailChangeRequest)) {
+            $this->entityManager->remove($emailChangeRequest);
+            $this->entityManager->flush();
+        }
     }
 
     /**
@@ -91,39 +81,20 @@ class UserEmailChangeRequestService extends EntityService
      */
     public function create(User $user, $new_email)
     {
-        if ($this->hasForUser($user)) {
-            return $this->findByUser($user);
+        $emailChangeRequest = $this->getForUser($user);
+
+        if (!empty($emailChangeRequest)) {
+            return $this->getForUser($user);
         }
 
         $emailChangeRequest = new UserEmailChangeRequest();
         $emailChangeRequest->setNewEmail($new_email);
-        $emailChangeRequest->setToken($this->getTokenGenerator()->generateToken());
+        $emailChangeRequest->setToken($this->tokenGenerator->generateToken());
         $emailChangeRequest->setUser($user);
 
-        return $this->persistAndFlush($emailChangeRequest);
-    }
+        $this->entityManager->persist($emailChangeRequest);
+        $this->entityManager->flush();
 
-    /**
-     * @return TokenGenerator
-     */
-    private function getTokenGenerator()
-    {
-        if (is_null($this->tokenGenerator)) {
-            $this->tokenGenerator = new $this->tokenGeneratorClass;
-        }
-
-        return $this->tokenGenerator;
-    }
-
-    /**
-     * @param UserEmailChangeRequest $emailChangeRequest
-     *
-     * @return UserEmailChangeRequest
-     */
-    private function persistAndFlush(UserEmailChangeRequest $emailChangeRequest)
-    {
-        $this->getManager()->persist($emailChangeRequest);
-        $this->getManager()->flush();
         return $emailChangeRequest;
     }
 }

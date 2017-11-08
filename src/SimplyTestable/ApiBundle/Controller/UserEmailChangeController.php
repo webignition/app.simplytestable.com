@@ -120,7 +120,7 @@ class UserEmailChangeController extends Controller
         $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
         $user = $this->getUser();
 
-        $emailChangeRequest = $userEmailChangeRequestService->findByUser($user);
+        $emailChangeRequest = $userEmailChangeRequestService->getForUser($user);
         if (empty($emailChangeRequest)) {
             throw new NotFoundHttpException();
         }
