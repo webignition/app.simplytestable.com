@@ -71,7 +71,9 @@ class MemberService
     public function remove(User $user)
     {
         if ($this->belongsToTeam($user)) {
-            $member = $this->teamMemberRepository->getMemberByUser($user);
+            $member = $this->teamMemberRepository->findOneBy([
+                'user' => $user,
+            ]);
 
             $this->entityManager->remove($member);
             $this->entityManager->flush();
@@ -102,7 +104,9 @@ class MemberService
             return null;
         }
 
-        $member = $this->teamMemberRepository->getMemberByUser($user);
+        $member = $this->teamMemberRepository->findOneBy([
+            'user' => $user,
+        ]);
 
         return $member->getTeam();
     }
