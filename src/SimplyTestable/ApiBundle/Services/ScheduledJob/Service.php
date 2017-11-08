@@ -1,19 +1,18 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\ScheduledJob;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use Cron\CronBundle\Entity\CronJob;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Repository\ScheduledJobRepository;
-use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
-use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurationService;
 use Cron\CronBundle\Cron\Manager as CronManager;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class Service extends EntityService
+class Service
 {
     /**
      * @var JobConfigurationService
@@ -36,32 +35,36 @@ class Service extends EntityService
     private $tokenStorage;
 
     /**
-     * @param EntityManager $entityManager
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var ScheduledJobRepository
+     */
+    private $scheduledJobRepository;
+
+    /**
+     * @param EntityManagerInterface $entityManager
      * @param JobConfigurationService $jobConfigurationService
      * @param TeamService $teamService
      * @param CronManager $cronManager
      * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         JobConfigurationService $jobConfigurationService,
         TeamService $teamService,
         CronManager $cronManager,
         TokenStorageInterface $tokenStorage
     ) {
-        parent::__construct($entityManager);
+        $this->entityManager = $entityManager;
         $this->jobConfigurationService = $jobConfigurationService;
         $this->teamService = $teamService;
         $this->cronManager = $cronManager;
         $this->tokenStorage = $tokenStorage;
-    }
 
-    /**
-     * @return string
-     */
-    protected function getEntityName()
-    {
-        return ScheduledJob::class;
+        $this->scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
     }
 
     /**
@@ -79,7 +82,7 @@ class Service extends EntityService
         $cronModifier = null,
         $isRecurring = true
     ) {
-        if ($this->getEntityRepository()->has($jobConfiguration, $schedule, $cronModifier, $isRecurring)) {
+        if ($this->scheduledJobRepository->has($jobConfiguration, $schedule, $cronModifier, $isRecurring)) {
             throw new ScheduledJobException(
                 'Matching scheduled job exists',
                 ScheduledJobException::CODE_MATCHING_SCHEDULED_JOB_EXISTS
@@ -101,8 +104,8 @@ class Service extends EntityService
         $scheduledJob->setIsRecurring($isRecurring);
         $scheduledJob->setCronModifier($cronModifier);
 
-        $this->getManager()->persist($scheduledJob);
-        $this->getManager()->flush($scheduledJob);
+        $this->entityManager->persist($scheduledJob);
+        $this->entityManager->flush();
 
         $command = 'simplytestable:scheduledjob:enqueue ' . $scheduledJob->getId();
 
@@ -130,7 +133,7 @@ class Service extends EntityService
         $user = $this->tokenStorage->getToken()->getUser();
 
         /* @var $scheduledJob ScheduledJob */
-        $scheduledJob = $this->getEntityRepository()->find($id);
+        $scheduledJob = $this->scheduledJobRepository->find($id);
         if (is_null($scheduledJob)) {
             return null;
         }
@@ -161,7 +164,7 @@ class Service extends EntityService
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
-        return $this->getEntityRepository()->getList(
+        return $this->scheduledJobRepository->getList(
             ($this->teamService->hasForUser($user)
                 ? $this->teamService->getPeopleForUser($user)
                 : [$user])
@@ -173,9 +176,9 @@ class Service extends EntityService
      */
     public function delete(ScheduledJob $scheduledJob)
     {
-        $this->getManager()->remove($scheduledJob->getCronJob());
-        $this->getManager()->remove($scheduledJob);
-        $this->getManager()->flush();
+        $this->entityManager->remove($scheduledJob->getCronJob());
+        $this->entityManager->remove($scheduledJob);
+        $this->entityManager->flush();
     }
 
     /**
@@ -228,7 +231,7 @@ class Service extends EntityService
         $comparatorIsRecurringIsNull = is_null($comparatorIsRecurring);
 
         if (!$comparatorJobConfigurationIsNull && !$comparatorScheduleIsNull && !$comparatorIsRecurringIsNull) {
-            $hasExisting = $this->getEntityRepository()->has(
+            $hasExisting = $this->scheduledJobRepository->has(
                 $comparatorJobConfiguration,
                 $comparatorSchedule,
                 $cronModifier,
@@ -245,7 +248,7 @@ class Service extends EntityService
 
         if (!is_null($schedule)) {
             $scheduledJob->getCronJob()->setSchedule($schedule);
-            $this->getManager()->persist($scheduledJob->getCronJob());
+            $this->entityManager->persist($scheduledJob->getCronJob());
         }
 
         if (!is_null($cronModifier)) {
@@ -260,18 +263,10 @@ class Service extends EntityService
             $scheduledJob->setIsRecurring($isRecurring);
         }
 
-        $this->getManager()->persist($scheduledJob);
-        $this->getManager()->flush();
+        $this->entityManager->persist($scheduledJob);
+        $this->entityManager->flush();
 
         return;
-    }
-
-    /**
-     * @return ScheduledJobRepository
-     */
-    public function getEntityRepository()
-    {
-        return parent::getEntityRepository();
     }
 
     /**
@@ -288,14 +283,14 @@ class Service extends EntityService
             );
         }
 
-        $userScheduledJobs = $this->getEntityRepository()->getList([$user]);
+        $userScheduledJobs = $this->scheduledJobRepository->getList([$user]);
 
         foreach ($userScheduledJobs as $userScheduledJob) {
             /* @var $userScheduledJob ScheduledJob */
-            $this->getManager()->remove($userScheduledJob->getCronJob());
-            $this->getManager()->remove($userScheduledJob);
+            $this->entityManager->remove($userScheduledJob->getCronJob());
+            $this->entityManager->remove($userScheduledJob);
 
-            $this->getManager()->flush();
+            $this->entityManager->flush();
         }
     }
 }
