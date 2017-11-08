@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
-use SimplyTestable\ApiBundle\Controller\ScheduledJob\GetListController;
+use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
@@ -10,12 +10,12 @@ use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
-class ScheduledJobGetListControllerTest extends AbstractBaseTestCase
+class ScheduledJobControllerListActionTest extends AbstractBaseTestCase
 {
     /**
-     * @var GetListController
+     * @var ScheduledJobController
      */
-    private $scheduledJobGetListController;
+    private $scheduledJobController;
 
     /**
      * @var ScheduledJobService
@@ -39,8 +39,8 @@ class ScheduledJobGetListControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->scheduledJobGetListController = new GetListController();
-        $this->scheduledJobGetListController->setContainer($this->container);
+        $this->scheduledJobController = new ScheduledJobController();
+        $this->scheduledJobController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -55,12 +55,12 @@ class ScheduledJobGetListControllerTest extends AbstractBaseTestCase
         $this->scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
     }
 
-    public function testGetRequest()
+    public function testListActionGetRequest()
     {
         $this->scheduledJobService->create($this->jobConfiguration);
 
         $router = $this->container->get('router');
-        $requestUrl = $router->generate('scheduledjob_getlist_list');
+        $requestUrl = $router->generate('scheduledjob_list');
 
         $this->getCrawler([
             'url' => $requestUrl,
@@ -73,9 +73,9 @@ class ScheduledJobGetListControllerTest extends AbstractBaseTestCase
         $this->assertTrue($response->isSuccessful());
     }
 
-    public function testGetActionEmptyList()
+    public function testListActionEmptyList()
     {
-        $response = $this->scheduledJobGetListController->listAction();
+        $response = $this->scheduledJobController->listAction();
 
         $this->assertTrue($response->isSuccessful());
 
@@ -85,14 +85,14 @@ class ScheduledJobGetListControllerTest extends AbstractBaseTestCase
     }
 
     /**
-     * @dataProvider getListSuccessDataProvider
+     * @dataProvider listActionSuccessDataProvider
      *
      * @param string $schedule
      * @param string $cronModifier
      * @param bool $isRecurring
      * @param array $expectedResponseData
      */
-    public function testGetListSuccess($schedule, $cronModifier, $isRecurring, $expectedResponseData)
+    public function testListActionSuccess($schedule, $cronModifier, $isRecurring, $expectedResponseData)
     {
         $scheduledJob = $this->scheduledJobService->create(
             $this->jobConfiguration,
@@ -101,7 +101,7 @@ class ScheduledJobGetListControllerTest extends AbstractBaseTestCase
             $isRecurring
         );
 
-        $response = $this->scheduledJobGetListController->listAction();
+        $response = $this->scheduledJobController->listAction();
 
         $this->assertTrue($response->isSuccessful());
 
@@ -117,7 +117,7 @@ class ScheduledJobGetListControllerTest extends AbstractBaseTestCase
     /**
      * @return array
      */
-    public function getListSuccessDataProvider()
+    public function listActionSuccessDataProvider()
     {
         return [
             'without cron modififer' => [

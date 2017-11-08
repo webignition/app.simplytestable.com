@@ -263,9 +263,9 @@ scheduledjob_create:
     path: /scheduledjob/create/
     defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:create }
 
-scheduledjob_getlist_list:
+scheduledjob_list:
     path: /scheduledjob/list/
-    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob\GetList:list }
+    defaults: { _controller: SimplyTestableApiBundle:ScheduledJob:list }
 
 scheduledjob_delete:
     path: /scheduledjob/{id}/delete/

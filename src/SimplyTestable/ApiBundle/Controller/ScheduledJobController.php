@@ -156,4 +156,14 @@ class ScheduledJobController extends Controller
 
         return new JsonResponse($scheduledJob);
     }
+
+    /**
+     * @return JsonResponse|Response
+     */
+    public function listAction()
+    {
+        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+
+        return new JsonResponse($scheduledJobService->getList());
+    }
 }
