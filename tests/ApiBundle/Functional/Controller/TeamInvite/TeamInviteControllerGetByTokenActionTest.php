@@ -38,7 +38,7 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
     {
         $this->expectException(NotFoundHttpException::class);
 
-         $this->teamInviteController->getByTokenAction('foo');
+        $this->teamInviteController->getByTokenAction('foo');
     }
 
     public function testGetByTokenActionSuccess()

@@ -267,7 +267,7 @@ class TeamInviteController extends Controller
 
         $invite = $teamInviteService->getForToken($token);
 
-        if (empty($token)) {
+        if (empty($invite)) {
             throw new NotFoundHttpException();
         }
 
