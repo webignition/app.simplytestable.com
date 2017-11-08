@@ -2,17 +2,18 @@
 namespace SimplyTestable\ApiBundle\Services\Job;
 
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration as TaskConfiguration;
-use SimplyTestable\ApiBundle\Services\EntityService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use Doctrine\ORM\EntityManager;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class ConfigurationService extends EntityService
+class ConfigurationService
 {
     /**
      * @var TeamService
@@ -25,6 +26,16 @@ class ConfigurationService extends EntityService
     private $tokenStorage;
 
     /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var EntityRepository
+     */
+    private $jobConfigurationRepository;
+
+    /**
      * @param EntityManager $entityManager
      * @param TeamService $teamService
      * @param TokenStorageInterface $tokenStorage
@@ -34,18 +45,11 @@ class ConfigurationService extends EntityService
         TeamService $teamService,
         TokenStorageInterface $tokenStorage
     ) {
-        parent::__construct($entityManager);
-
+        $this->entityManager = $entityManager;
         $this->teamService = $teamService;
         $this->tokenStorage = $tokenStorage;
-    }
 
-    /**
-     * @return string
-     */
-    protected function getEntityName()
-    {
-        return Configuration::class;
+        $this->jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
     }
 
     /**
@@ -107,17 +111,17 @@ class ConfigurationService extends EntityService
         $jobConfiguration->setType($values->getType());
         $jobConfiguration->setParameters($values->getParameters());
 
-        $this->getManager()->persist($jobConfiguration);
+        $this->entityManager->persist($jobConfiguration);
 
         foreach ($values->getTaskConfigurationCollection()->get() as $taskConfiguration) {
             /* @var $taskConfiguration TaskConfiguration */
             $taskConfiguration->setJobConfiguration($jobConfiguration);
             $jobConfiguration->addTaskConfiguration($taskConfiguration);
-            $this->getManager()->persist($taskConfiguration);
+            $this->entityManager->persist($taskConfiguration);
         }
 
-        $this->getManager()->persist($jobConfiguration);
-        $this->getManager()->flush();
+        $this->entityManager->persist($jobConfiguration);
+        $this->entityManager->flush();
 
         return $jobConfiguration;
     }
@@ -132,7 +136,7 @@ class ConfigurationService extends EntityService
         $user = $this->tokenStorage->getToken()->getUser();
 
         /* @var Configuration $jobConfiguration */
-        $jobConfiguration = $this->getEntityRepository()->findOneBy([
+        $jobConfiguration = $this->jobConfigurationRepository->findOneBy([
             'label' => $label,
             'user' => ($this->teamService->hasForUser($user))
                 ? $this->teamService->getPeopleForUser($user)
@@ -143,7 +147,7 @@ class ConfigurationService extends EntityService
     }
 
     /**
-     * @param JobConfiguration $jobConfiguration
+     * @param Configuration $jobConfiguration
      * @param ConfigurationValues $newValues
      *
      * @throws JobConfigurationServiceException
@@ -151,7 +155,7 @@ class ConfigurationService extends EntityService
     public function update(JobConfiguration $jobConfiguration, ConfigurationValues $newValues)
     {
         if ($newValues->hasNonEmptyLabel()) {
-            if ($this->has($newValues->getLabel()) && $this->get($newValues->getLabel()) != $jobConfiguration) {
+            if ($this->has($newValues->getLabel()) && $this->get($newValues->getLabel()) !== $jobConfiguration) {
                 throw new JobConfigurationServiceException(
                     'Label "' . $newValues->getLabel() . '" is not unique',
                     JobConfigurationServiceException::CODE_LABEL_NOT_UNIQUE
@@ -211,7 +215,7 @@ class ConfigurationService extends EntityService
 
         if ($newValues->hasTaskConfigurationCollection()) {
             foreach ($jobConfiguration->getTaskConfigurations() as $oldTaskConfiguration) {
-                $this->getManager()->remove($oldTaskConfiguration);
+                $this->entityManager->remove($oldTaskConfiguration);
             }
 
             $jobConfiguration->getTaskConfigurations()->clear();
@@ -220,12 +224,12 @@ class ConfigurationService extends EntityService
                 /* @var $taskConfiguration TaskConfiguration */
                 $taskConfiguration->setJobConfiguration($jobConfiguration);
                 $jobConfiguration->addTaskConfiguration($taskConfiguration);
-                $this->getManager()->persist($taskConfiguration);
+                $this->entityManager->persist($taskConfiguration);
             }
         }
 
-        $this->getManager()->persist($jobConfiguration);
-        $this->getManager()->flush();
+        $this->entityManager->persist($jobConfiguration);
+        $this->entityManager->flush();
     }
 
     /**
@@ -243,14 +247,14 @@ class ConfigurationService extends EntityService
         }
 
         $configuration = $this->get($label);
-        $this->getManager()->remove($configuration);
+        $this->entityManager->remove($configuration);
 
         foreach ($configuration->getTaskConfigurations() as $taskConfiguration) {
-            $this->getManager()->remove($taskConfiguration);
+            $this->entityManager->remove($taskConfiguration);
         }
 
         try {
-            $this->getManager()->flush();
+            $this->entityManager->flush();
         } catch (ForeignKeyConstraintViolationException $foo) {
             throw new JobConfigurationServiceException(
                 'Job configuration is in use by one or more scheduled jobs',
@@ -267,7 +271,7 @@ class ConfigurationService extends EntityService
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
-        return $this->getEntityRepository()->findBy([
+        return $this->jobConfigurationRepository->findBy([
             'user' => ($this->teamService->hasForUser($user))
                 ? $this->teamService->getPeopleForUser($user)
                 : [$user]
@@ -288,28 +292,27 @@ class ConfigurationService extends EntityService
             );
         }
 
-        $userJobConfigurations = $this->getEntityRepository()->findBy([
+        $userJobConfigurations = $this->jobConfigurationRepository->findBy([
             'user' => $user
         ]);
 
         foreach ($userJobConfigurations as $userJobConfiguration) {
             /* @var $userJobConfiguration JobConfiguration */
             foreach ($userJobConfiguration->getTaskConfigurations() as $jobTaskConfiguration) {
-                $this->getManager()->remove($jobTaskConfiguration);
+                $this->entityManager->remove($jobTaskConfiguration);
                 $userJobConfiguration->removeTaskConfiguration($jobTaskConfiguration);
             }
 
-            $this->getManager()->remove($userJobConfiguration);
+            $this->entityManager->remove($userJobConfiguration);
 
             try {
-                $this->getManager()->flush($userJobConfiguration);
+                $this->entityManager->flush($userJobConfiguration);
             } catch (ForeignKeyConstraintViolationException $foo) {
                 throw new JobConfigurationServiceException(
                     'One or more job configurations are in use by one or more scheduled jobs',
                     JobConfigurationServiceException::CODE_IS_IN_USE_BY_SCHEDULED_JOB
                 );
             }
-
         }
     }
 
@@ -331,7 +334,7 @@ class ConfigurationService extends EntityService
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
-        $jobConfigurations = $this->getEntityRepository()->findBy([
+        $jobConfigurations = $this->jobConfigurationRepository->findBy([
             'website' => $values->getWebsite(),
             'type' => $values->getType(),
             'parameters' => $values->getParameters(),
