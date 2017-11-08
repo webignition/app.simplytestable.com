@@ -49,7 +49,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractBaseTestCase
         ]);
     }
 
-    public function testGetRequest()
+    public function testDeleteActionGetRequest()
     {
         $router = $this->container->get('router');
         $requestUrl = $router->generate('jobconfiguration_delete', [
@@ -68,7 +68,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractBaseTestCase
     }
 
 
-    public function testPostRequest()
+    public function testDeleteActionPostRequest()
     {
         $router = $this->container->get('router');
         $requestUrl = $router->generate('jobconfiguration_delete', [

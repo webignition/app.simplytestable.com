@@ -70,7 +70,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractBaseTestCase
         ]);
     }
 
-    public function testGetRequest()
+    public function testUpdateActionGetRequest()
     {
         $router = $this->container->get('router');
         $requestUrl = $router->generate('jobconfiguration_update', ['label' => 'foo']);
@@ -87,7 +87,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractBaseTestCase
         $this->assertEquals(405, $response->getStatusCode());
     }
 
-    public function testPostRequest()
+    public function testUpdateActionPostRequest()
     {
         $router = $this->container->get('router');
         $requestUrl = $router->generate('jobconfiguration_update', [

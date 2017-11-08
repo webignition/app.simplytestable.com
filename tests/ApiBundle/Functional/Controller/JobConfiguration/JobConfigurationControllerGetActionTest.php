@@ -40,7 +40,7 @@ class JobConfigurationControllerGetActionTest extends AbstractBaseTestCase
         $this->setUser($this->user);
     }
 
-    public function testRequest()
+    public function testGetActionGetRequest()
     {
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
         $jobConfiguration = $jobConfigurationFactory->create([

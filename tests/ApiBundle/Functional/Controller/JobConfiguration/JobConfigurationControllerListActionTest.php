@@ -46,7 +46,7 @@ class JobConfigurationControllerListActionTest extends AbstractBaseTestCase
         ]);
     }
 
-    public function testRequest()
+    public function testListActionGetRequest()
     {
         $router = $this->container->get('router');
         $requestUrl = $router->generate('jobconfiguration_list');

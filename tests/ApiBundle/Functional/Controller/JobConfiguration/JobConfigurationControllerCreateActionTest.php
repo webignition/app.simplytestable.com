@@ -30,7 +30,7 @@ class JobConfigurationControllerCreateActionTest extends AbstractBaseTestCase
         $this->jobConfigurationController->setContainer($this->container);
     }
 
-    public function testRequest()
+    public function testCreateActionPostRequest()
     {
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();

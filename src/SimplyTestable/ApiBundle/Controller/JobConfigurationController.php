@@ -96,7 +96,7 @@ class JobConfigurationController extends Controller
             $jobConfiguration = $jobConfigurationService->create($jobConfigurationValues);
 
             return $this->redirect($this->generateUrl(
-                'jobconfiguration_get_get',
+                'jobconfiguration_get',
                 ['label' => $jobConfiguration->getLabel()]
             ));
         } catch (JobConfigurationServiceException $jobConfigurationServiceException) {
