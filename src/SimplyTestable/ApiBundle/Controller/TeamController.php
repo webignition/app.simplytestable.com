@@ -51,6 +51,7 @@ class TeamController extends Controller
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($userService->isSpecialUser($this->getUser())) {
             return Response::create('', 400, [
@@ -69,7 +70,8 @@ class TeamController extends Controller
 
             $invites = $teamInviteService->getForUser($this->getUser());
             foreach ($invites as $invite) {
-                $teamInviteService->remove($invite);
+                $entityManager->remove($invite);
+                $entityManager->flush();
             }
 
         } catch (TeamServiceException $teamServiceException) {

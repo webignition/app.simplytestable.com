@@ -15,7 +15,7 @@ class InviteTest extends AbstractBaseTestCase
     public function testPersist()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteRepository = $this->container->get('simplytestable.repository.teaminvite');
 
         $userFactory = new UserFactory($this->container);
 
@@ -40,7 +40,7 @@ class InviteTest extends AbstractBaseTestCase
 
         $inviteId = $invite->getId();
 
-        $retrievedInvite = $teamInviteService->getEntityRepository()->find($inviteId);
+        $retrievedInvite = $teamInviteRepository->find($inviteId);
 
         $this->assertEquals($inviteId, $retrievedInvite->getId());
         $this->assertEquals(self::TOKEN, $retrievedInvite->getToken());

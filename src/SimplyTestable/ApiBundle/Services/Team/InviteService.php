@@ -1,71 +1,63 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Team;
 
-use Doctrine\ORM\EntityManager;
-use SimplyTestable\ApiBundle\Services\EntityService;
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Repository\TeamInviteRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
-use SimplyTestable\ApiBundle\Entity\Team\Member;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 
-class InviteService extends EntityService {
-    
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\Team\Invite';
-
+class InviteService
+{
     /**
      * @var TeamService
      */
     private $teamService;
 
+    /**
+     * @var TeamInviteRepository
+     */
+    private $teamInviteRepository;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var TokenGeneratorInterface
+     */
+    private $tokenGenerator;
 
     /**
      * @param Service $teamService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
+     * @param TokenGeneratorInterface $tokenGenerator
      */
-    public function __construct(TeamService $teamService, EntityManager $entityManager) {
+    public function __construct(
+        TeamService $teamService,
+        EntityManagerInterface $entityManager,
+        TokenGeneratorInterface $tokenGenerator
+    ) {
+        $this->entityManager = $entityManager;
         $this->teamService = $teamService;
-        parent::__construct($entityManager);
+        $this->tokenGenerator = $tokenGenerator;
+
+        $this->teamInviteRepository = $entityManager->getRepository(Invite::class);
     }
-
-
-    /**
-     *
-     * @return string
-     */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
-    }
-
-
-    /**
-     * @param Invite $invite
-     * @return Invite
-     */
-    public function persistAndFlush(Invite $invite) {
-        $this->getManager()->persist($invite);
-        $this->getManager()->flush();
-        return $invite;
-    }
-
-
-    /**
-     *
-     * @return \SimplyTestable\ApiBundle\Repository\TeamInviteRepository
-     */
-    public function getEntityRepository() {
-        return parent::getEntityRepository();
-    }
-
 
     /**
      * @param User $inviter
      * @param User $invitee
+     *
      * @return null|Invite
-     * @throws \SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception
+     * @throws TeamInviteServiceException
      */
-    public function get(User $inviter, User $invitee) {
+    public function get(User $inviter, User $invitee)
+    {
         if (!$this->teamService->hasTeam($inviter)) {
             throw new TeamInviteServiceException(
                 'Inviter is not a team leader',
@@ -80,162 +72,92 @@ class InviteService extends EntityService {
             );
         }
 
-        if($this->teamService->getMemberService()->belongsToTeam($invitee)) {
+        if ($this->teamService->getMemberService()->belongsToTeam($invitee)) {
             throw new TeamInviteServiceException(
                 'Invitee is on a team',
                 TeamInviteServiceException::INVITEE_IS_ON_A_TEAM
             );
         }
 
-        if ($this->has($inviter, $invitee)) {
-            return $this->fetch($inviter, $invitee);
+        $invite = $this->teamInviteRepository->findOneBy([
+            'team' => $this->teamService->getForUser($inviter),
+            'user' => $invitee
+        ]);
+
+        if (empty($invite)) {
+            $invite = new Invite();
+            $invite->setTeam($this->teamService->getForUser($inviter));
+            $invite->setUser($invitee);
+            $invite->setToken($this->tokenGenerator->generateToken());
+
+            $this->entityManager->persist($invite);
+            $this->entityManager->flush();
         }
 
-        return $this->create($inviter, $invitee);
+        return $invite;
     }
-
 
     /**
      * @param Team $team
      * @param User $user
+     *
      * @return Invite
      */
-    public function getForTeamAndUser(Team $team, User $user) {
-        return $this->getEntityRepository()->findOneBy([
+    public function getForTeamAndUser(Team $team, User $user)
+    {
+        return $this->teamInviteRepository->findOneBy([
             'team' => $team,
             'user' => $user
         ]);
     }
 
-
-    /**
-     * @param Team $team
-     * @param User $user
-     * @return bool
-     */
-    public function hasForTeamAndUser(Team $team, User $user) {
-        return !is_null($this->getForTeamAndUser($team, $user));
-    }
-
-
     /**
      * @param User $user
+     *
      * @return bool
      */
-    public function hasAnyForUser(User $user) {
-        $invite = $this->getEntityRepository()->findOneBy([
+    public function hasAnyForUser(User $user)
+    {
+        $invite = $this->teamInviteRepository->findOneBy([
             'user' => $user
         ]);
 
         return $invite instanceof Invite;
     }
 
-
-    /**
-     * @param Invite $invite
-     * @return Invite
-     */
-    public function remove(Invite $invite) {
-        $this->getManager()->remove($invite);
-        $this->getManager()->flush($invite);
-
-        return $invite;
-    }
-
-
-
-    /**
-     * @param $inviter
-     * @param $invitee
-     * @return Invite
-     */
-    private function create($inviter, $invitee) {
-        $invite = new Invite();
-        $invite->setTeam($this->teamService->getForUser($inviter));
-        $invite->setUser($invitee);
-        $invite->setToken($this->generateToken());
-
-        return $this->persistAndFlush($invite);
-    }
-
-
-    /**
-     * @return string
-     */
-    private function generateToken() {
-        $token = md5(rand());
-
-        if ($this->hasForToken($token)) {
-            return $this->generateToken();
-        }
-
-        return $token;
-    }
-
-
     /**
      * @param $token
-     * @return bool
-     */
-    public function hasForToken($token) {
-        return !is_null($this->getForToken($token));
-    }
-
-
-    /**
-     * @param $token
+     *
      * @return null|Invite
      */
-    public function getForToken($token) {
-        return $this->getEntityRepository()->findOneBy([
+    public function getForToken($token)
+    {
+        return $this->teamInviteRepository->findOneBy([
             'token' => $token
         ]);
     }
 
-
-    /**
-     * @param $inviter
-     * @param $invitee
-     * @return null|Invite
-     */
-    private function fetch($inviter, $invitee) {
-        return $this->getEntityRepository()->findOneBy([
-            'team' => $this->teamService->getForUser($inviter),
-            'user' => $invitee
-        ]);
-    }
-
-
-    /**
-     * @param User $inviter
-     * @param User $invitee
-     * @return bool
-     */
-    private function has(User $inviter, User $invitee) {
-        return $this->fetch($inviter, $invitee) instanceof Invite;
-    }
-
-
     /**
      * @param Team $team
+     *
      * @return Invite[]
      */
-    public function getForTeam(Team $team) {
-        return $this->getEntityRepository()->findBy([
+    public function getForTeam(Team $team)
+    {
+        return $this->teamInviteRepository->findBy([
             'team' => $team
         ]);
     }
 
-
     /**
      * @param User $user
+     *
      * @return Invite[]
      */
-    public function getForUser(User $user) {
-        return $this->getEntityRepository()->findBy([
+    public function getForUser(User $user)
+    {
+        return $this->teamInviteRepository->findBy([
             'user' => $user
         ]);
     }
-
-    
 }

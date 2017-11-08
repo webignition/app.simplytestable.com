@@ -92,6 +92,7 @@ class TeamInviteController extends Controller
         $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
@@ -108,7 +109,9 @@ class TeamInviteController extends Controller
             ]);
         }
 
-        if (!$teamInviteService->hasForTeamAndUser($team, $this->getUser())) {
+        $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
+
+        if (empty($invite)) {
             return Response::create('', 400, [
                 'X-TeamInviteAccept-Error-Code' => 2,
                 'X-TeamInviteAccept-Error-Message' => 'User has not been invited to join this team',
@@ -123,14 +126,13 @@ class TeamInviteController extends Controller
 
         $jobConfigurationService->removeAll();
 
-        $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
-
         $teamMemberService->add($invite->getTeam(), $invite->getUser());
 
         $invites = $teamInviteService->getForUser($this->getUser());
 
         foreach ($invites as $invite) {
-            $teamInviteService->remove($invite);
+            $entityManager->remove($invite);
+            $entityManager->flush();
         }
 
         return new Response();
@@ -191,6 +193,7 @@ class TeamInviteController extends Controller
         $userService = $this->container->get('simplytestable.services.userservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if (!$teamService->hasTeam($this->getUser())) {
             return Response::create('', 400, [
@@ -207,17 +210,18 @@ class TeamInviteController extends Controller
         }
 
         $team = $teamService->getForUser($this->getUser());
-
         $invitee = $userService->findUserByEmail($invitee_email);
+        $invite = $teamInviteService->getForTeamAndUser($team, $invitee);
 
-        if (!$teamInviteService->hasForTeamAndUser($team, $invitee)) {
+        if (empty($invite)) {
             return Response::create('', 400, [
                 'X-TeamInviteRemove-Error-Code' => 3,
                 'X-TeamInviteRemove-Error-Message' => 'Invitee does not have an invite for this team',
             ]);
         }
 
-        $teamInviteService->remove($teamInviteService->getForTeamAndUser($team, $invitee));
+        $entityManager->remove($invite);
+        $entityManager->flush();
 
         return new Response();
     }
@@ -231,6 +235,7 @@ class TeamInviteController extends Controller
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $requestData = $request->request;
         $requestTeam = $requestData->get('team');
@@ -239,9 +244,13 @@ class TeamInviteController extends Controller
             'name' => $requestTeam,
         ]);
 
-        if ($team instanceof Team && $teamInviteService->hasForTeamAndUser($team, $this->getUser())) {
+        if ($team instanceof Team) {
             $invite = $teamInviteService->getForTeamAndUser($team, $this->getUser());
-            $teamInviteService->remove($invite);
+
+            if (!empty($invite)) {
+                $entityManager->remove($invite);
+                $entityManager->flush();
+            }
         }
 
         return new Response();
@@ -256,11 +265,13 @@ class TeamInviteController extends Controller
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
-        if (!$teamInviteService->hasForToken(trim($token))) {
+        $invite = $teamInviteService->getForToken($token);
+
+        if (empty($invite)) {
             throw new NotFoundHttpException();
         }
 
-        return new JsonResponse($teamInviteService->getForToken($token));
+        return new JsonResponse($invite);
     }
 
     /**
@@ -274,18 +285,20 @@ class TeamInviteController extends Controller
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
         $userService = $this->container->get('simplytestable.services.userservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $requestData = $request->request;
         $token = trim($requestData->get('token'));
 
-        if (!$teamInviteService->hasForToken($token)) {
+        $invite = $teamInviteService->getForToken($token);
+
+        if (empty($invite)) {
             return Response::create('', 400, [
                 'X-TeamInviteActivateAndAccept-Error-Code' => 1,
                 'X-TeamInviteActivateAndAccept-Error-Message' => 'No invite for token',
             ]);
         }
 
-        $invite = $teamInviteService->getForToken($token);
         $invitee = $invite->getUser();
         $team = $invite->getTeam();
 
@@ -301,7 +314,8 @@ class TeamInviteController extends Controller
         $invites = $teamInviteService->getForUser($invitee);
 
         foreach ($invites as $invite) {
-            $teamInviteService->remove($invite);
+            $entityManager->remove($invite);
+            $entityManager->flush();
         }
 
         return new Response();
