@@ -2,163 +2,99 @@
 namespace SimplyTestable\ApiBundle\Services;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 use FOS\UserBundle\Util\CanonicalizerInterface;
+use FOS\UserBundle\Util\TokenGeneratorInterface;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use SimplyTestable\ApiBundle\Entity\User;
 
-class UserEmailChangeRequestService extends EntityService {
-
-    const ENTITY_NAME = 'SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest';
-
+class UserEmailChangeRequestService
+{
     /**
-     *
-     * @var string
-     */
-    private $tokenGeneratorClass;
-
-
-    /**
-     *
-     * @var \FOS\UserBundle\Util\CanonicalizerInterface
+     * @var CanonicalizerInterface
      */
     private $emailCanonicalizer;
 
-
     /**
-     *
-     * @var \FOS\UserBundle\Util\TokenGenerator
+     * @var TokenGeneratorInterface
      */
     private $tokenGenerator;
 
     /**
-     *
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var EntityRepository
+     */
+    private $userEmailChangeRequestRepository;
+
+    /**
      * @param EntityManager $entityManager
-     * @param \FOS\UserBundle\Util\CanonicalizerInterface  $emailCanonicalizer
+     * @param CanonicalizerInterface $emailCanonicalizer
+     * @param TokenGeneratorInterface $tokenGenerator
      */
     public function __construct(
-            EntityManager $entityManager,
-            \FOS\UserBundle\Util\CanonicalizerInterface  $emailCanonicalizer,
-            $tokenGeneratorClass) {
-        parent::__construct($entityManager);
+        EntityManager $entityManager,
+        CanonicalizerInterface $emailCanonicalizer,
+        TokenGeneratorInterface $tokenGenerator
+    ) {
+        $this->entityManager = $entityManager;
         $this->emailCanonicalizer = $emailCanonicalizer;
-        $this->tokenGeneratorClass = $tokenGeneratorClass;
+        $this->tokenGenerator = $tokenGenerator;
+
+        $this->userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
     }
 
-
     /**
+     * @param User $user
      *
-     * @return string
+     * @return UserEmailChangeRequest
      */
-    protected function getEntityName() {
-        return self::ENTITY_NAME;
-    }
-
-
-    /**
-     * Canonicalizes an email
-     *
-     * @param string $email
-     * @return string
-     */
-    public function canonicalizeEmail($email)
+    public function getForUser(User $user)
     {
-        return $this->emailCanonicalizer->canonicalize($email);
+        return $this->userEmailChangeRequestRepository->findOneBy([
+            'user' => $user,
+        ]);
     }
 
     /**
-     *
-     * @param string $new_email
-     * @return UserEmailChangeRequest
+     * @param User $user
      */
-    public function findByNewEmail($new_email) {
-        return $this->getEntityRepository()->findOneByNewEmail($new_email);
-    }
+    public function removeForUser(User $user)
+    {
+        $emailChangeRequest = $this->getForUser($user);
 
-    /**
-     *
-     * @param string $new_email
-     * @return boolean
-     */
-    public function hasForNewEmail($new_email) {
-        return !is_null($this->getEntityRepository()->findOneByNewEmail($new_email));
-    }
-
-
-    /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return UserEmailChangeRequest
-     */
-    public function findByUser(User $user) {
-        return $this->getEntityRepository()->findOneByUser($user);
-    }
-
-
-    /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return boolean
-     */
-    public function hasForUser(User $user) {
-        return !is_null($this->findByUser($user));
-    }
-
-
-    /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @return boolean
-     */
-    public function removeForUser(User $user) {
-        if ($this->hasForUser($user)) {
-            $this->getManager()->remove($this->findByUser($user));
-            $this->getManager()->flush();
+        if (!empty($emailChangeRequest)) {
+            $this->entityManager->remove($emailChangeRequest);
+            $this->entityManager->flush();
         }
-
-        return true;
     }
 
-
     /**
+     * @param User $user
+     * @param string $newEmail
      *
-     * @param \SimplyTestable\ApiBundle\Entity\User $user
-     * @param string $new_email
      * @return UserEmailChangeRequest
      */
-    public function create(User $user, $new_email) {
-        if ($this->hasForUser($user)) {
-            return $this->findByUser($user);
+    public function create(User $user, $newEmail)
+    {
+        $emailChangeRequest = $this->getForUser($user);
+
+        if (!empty($emailChangeRequest)) {
+            return $this->getForUser($user);
         }
 
         $emailChangeRequest = new UserEmailChangeRequest();
-        $emailChangeRequest->setNewEmail($new_email);
-        $emailChangeRequest->setToken($this->getTokenGenerator()->generateToken());
+        $emailChangeRequest->setNewEmail($newEmail);
+        $emailChangeRequest->setToken($this->tokenGenerator->generateToken());
         $emailChangeRequest->setUser($user);
 
-        return $this->persistAndFlush($emailChangeRequest);
-    }
+        $this->entityManager->persist($emailChangeRequest);
+        $this->entityManager->flush();
 
-    /**
-     *
-     * @return \FOS\UserBundle\Util\TokenGenerator
-     */
-    private function getTokenGenerator() {
-        if (is_null($this->tokenGenerator)) {
-            $this->tokenGenerator = new $this->tokenGeneratorClass;
-        }
-
-        return $this->tokenGenerator;
-    }
-
-
-    /**
-     *
-     * @param WebSite $job
-     * @return WebSite
-     */
-    private function persistAndFlush(UserEmailChangeRequest $emailChangeRequest) {
-        $this->getManager()->persist($emailChangeRequest);
-        $this->getManager()->flush();
         return $emailChangeRequest;
     }
 }

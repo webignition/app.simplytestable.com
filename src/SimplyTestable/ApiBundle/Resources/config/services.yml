@@ -137,7 +137,7 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
         emailCanonicalizer: "@fos_user.util.email_canonicalizer"
-        tokenGeneratorClass: \FOS\UserBundle\Util\TokenGenerator
+        tokenGenerator: '@fos_user.util.token_generator'
 
   simplytestable.services.jobUserAccountPlanEnforcementService:
     class:   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
