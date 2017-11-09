@@ -39,9 +39,8 @@ class RetrievalServiceTest extends AbstractBaseTestCase
      */
     public function testRetrieveFailure($userTeamStatus, $jobOwnerTeamStatus)
     {
-        $this->expectException(JobRetrievalServiceException::class);
-        $this->expectExceptionMessage('Not authorised');
-        $this->expectExceptionCode(JobRetrievalServiceException::CODE_NOT_AUTHORISED);
+        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         $user = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'user@example.com',
@@ -49,8 +48,6 @@ class RetrievalServiceTest extends AbstractBaseTestCase
         $jobOwner = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'jobowner@example.com',
         ]);
-
-        $teamService = $this->container->get('simplytestable.services.teamservice');
 
         if ($userTeamStatus == 'leader') {
             $teamService->create('userTeamAsLeader', $user);
@@ -76,8 +73,11 @@ class RetrievalServiceTest extends AbstractBaseTestCase
             JobFactory::KEY_USER => $jobOwner,
         ]);
 
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
-        $jobRetrievalService->setUser($user);
+        $this->setUser($user);
+
+        $this->expectException(JobRetrievalServiceException::class);
+        $this->expectExceptionMessage('Not authorised');
+        $this->expectExceptionCode(JobRetrievalServiceException::CODE_NOT_AUTHORISED);
 
         $jobRetrievalService->retrieve($job->getId());
     }
@@ -128,6 +128,8 @@ class RetrievalServiceTest extends AbstractBaseTestCase
      */
     public function testRetrieveSuccess($owner, $requester, $callSetPublic)
     {
+        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $owner = $users[$owner];
         $requester = $users[$requester];
@@ -145,8 +147,7 @@ class RetrievalServiceTest extends AbstractBaseTestCase
             $entityManager->flush();
         }
 
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
-        $jobRetrievalService->setUser($requester);
+        $this->setUser($requester);
 
         $retrievedJob = $jobRetrievalService->retrieve($job->getId());
         $this->assertEquals($job, $retrievedJob);

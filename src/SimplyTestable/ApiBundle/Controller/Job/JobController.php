@@ -8,7 +8,6 @@ use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
-use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -151,8 +150,6 @@ class JobController extends Controller
             return $this->createRedirectToJobStatus($siteRootUrl, $testId);
         }
 
-        $jobRetrievalService->setUser($this->getUser());
-
         try {
             $job = $jobRetrievalService->retrieve($testId);
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
@@ -186,8 +183,6 @@ class JobController extends Controller
     {
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
         $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
-
-        $jobRetrievalService->setUser($this->getUser());
 
         try {
             $job = $jobRetrievalService->retrieve($test_id);
@@ -225,13 +220,10 @@ class JobController extends Controller
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-        $taskService = $this->get('simplytestable.services.taskservice');
         $stateService = $this->get('simplytestable.services.stateservice');
 
         /* @var TaskRepository $taskRepository */
         $taskRepository = $this->container->get('simplytestable.repository.task');
-
-        $jobRetrievalService->setUser($this->getUser());
 
         try {
             $job = $jobRetrievalService->retrieve($test_id);
@@ -320,8 +312,6 @@ class JobController extends Controller
         /* @var TaskRepository $taskRepository */
         $taskRepository = $this->container->get('simplytestable.repository.task');
 
-        $jobRetrievalService->setUser($this->getUser());
-
         try {
             $job = ($jobRetrievalService->retrieve($test_id));
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
@@ -365,8 +355,6 @@ class JobController extends Controller
         /* @var TaskRepository $taskRepository */
         $taskRepository = $this->container->get('simplytestable.repository.task');
 
-        $jobRetrievalService->setUser($this->getUser());
-
         try {
             $job = ($jobRetrievalService->retrieve($test_id));
         } catch (JobRetrievalServiceException $jobRetrievalServiceException) {
@@ -392,8 +380,6 @@ class JobController extends Controller
 
         /* @var TaskRepository $taskRepository */
         $taskRepository = $this->container->get('simplytestable.repository.task');
-
-        $jobRetrievalService->setUser($this->getUser());
 
         try {
             $job = ($jobRetrievalService->retrieve($test_id));

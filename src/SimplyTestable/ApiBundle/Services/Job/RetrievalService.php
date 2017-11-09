@@ -2,10 +2,10 @@
 namespace SimplyTestable\ApiBundle\Services\Job;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class RetrievalService
 {
@@ -15,31 +15,28 @@ class RetrievalService
     private $teamService;
 
     /**
-     * @var User
-     */
-    private $user = null;
-
-    /**
      * @var JobRepository
      */
     private $jobRepository;
 
     /**
-     * @param TeamService $teamService
-     * @param JobRepository $jobRepository
+     * @var TokenStorageInterface
      */
-    public function __construct(TeamService $teamService, JobRepository $jobRepository)
-    {
-        $this->teamService = $teamService;
-        $this->jobRepository = $jobRepository;
-    }
+    private $tokenStorage;
 
     /**
-     * @param User $user
+     * @param TeamService $teamService
+     * @param JobRepository $jobRepository
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
+    public function __construct(
+        TeamService $teamService,
+        JobRepository $jobRepository,
+        TokenStorageInterface $tokenStorage
+    ) {
+        $this->teamService = $teamService;
+        $this->jobRepository = $jobRepository;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -50,13 +47,6 @@ class RetrievalService
      */
     public function retrieve($jobId)
     {
-        if (!$this->hasUser()) {
-            throw new JobRetrievalServiceException(
-                'User not set',
-                JobRetrievalServiceException::CODE_USER_NOT_SET
-            );
-        }
-
         $job = $this->jobRepository->find($jobId);
         if (!$job instanceof Job) {
             throw new JobRetrievalServiceException(
@@ -86,7 +76,9 @@ class RetrievalService
             return true;
         }
 
-        if ($job->getUser()->equals($this->user)) {
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        if ($job->getUser()->equals($user)) {
             return true;
         }
 
@@ -132,8 +124,9 @@ class RetrievalService
         }
 
         $team = $this->teamService->getForUser($job->getUser());
+        $user = $this->tokenStorage->getToken()->getUser();
 
-        return $this->teamService->getMemberService()->contains($team, $this->user);
+        return $this->teamService->getMemberService()->contains($team, $user);
     }
 
     /**
@@ -148,8 +141,9 @@ class RetrievalService
         }
 
         $team = $this->teamService->getForUser($job->getUser());
+        $user = $this->tokenStorage->getToken()->getUser();
 
-        return $this->teamService->getMemberService()->contains($team, $this->user);
+        return $this->teamService->getMemberService()->contains($team, $user);
     }
 
     /**
@@ -164,15 +158,8 @@ class RetrievalService
         }
 
         $team = $this->teamService->getForUser($job->getUser());
+        $user = $this->tokenStorage->getToken()->getUser();
 
-        return $team->getLeader()->equals($this->user);
-    }
-
-    /**
-     * @return bool
-     */
-    private function hasUser()
-    {
-        return $this->user instanceof User;
+        return $team->getLeader()->equals($user);
     }
 }
