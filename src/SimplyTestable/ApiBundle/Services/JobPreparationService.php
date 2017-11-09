@@ -151,6 +151,8 @@ class JobPreparationService
             JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME
         );
 
+        $this->jobUserAccountPlanEnforcementService->setUser($user);
+
         $urls = $this->collectUrlsForJob($job, $urlsPerJobConstraint->getLimit());
 
         if (empty($urls)) {

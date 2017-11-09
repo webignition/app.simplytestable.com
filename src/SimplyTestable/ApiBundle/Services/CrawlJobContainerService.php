@@ -238,6 +238,7 @@ class CrawlJobContainerService
         $crawlJobContainer = $this->entityRepository->getForJob($task->getJob());
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
+        $this->jobUserAccountPlanEnforcementService->setUser($crawlJob->getUser());
         $crawlDiscoveredUrlCount = count($this->getDiscoveredUrls($crawlJobContainer));
 
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($crawlDiscoveredUrlCount)) {

@@ -4,14 +4,24 @@ namespace Tests\ApiBundle\Functional\Controller\Task;
 
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
+use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+use Tests\ApiBundle\Factory\InternetMediaTypeFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
+use Tests\ApiBundle\Factory\TaskTypeFactory;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use webignition\InternetMediaType\InternetMediaType;
 
 class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
@@ -20,6 +30,11 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
      * @var TaskController
      */
     private $taskController;
+
+    /**
+     * @var JobFactory
+     */
+    private $jobFactory;
 
     /**
      * @var Job
@@ -42,6 +57,11 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
             'type' => JobTypeService::FULL_SITE_NAME,
             'testTypes' => ['link integrity'],
         ]);
+
+//        foreach ($this->job->getTasks() as $task) {
+//            var_dump($task->getUrl());
+//        }
+//        exit();
     }
 
     /**
@@ -282,8 +302,23 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
         ];
     }
 
+    /**
+     * @param Job $job
+     * @param State $state
+     */
+    private function setJobTaskStates(Job $job, State $state)
+    {
+        $this->jobFactory->setTaskStates(
+            $job,
+            $state
+        );
+    }
+
     private function setJobTypeConstraintLimits()
     {
+        $jobUserAccountPlanEnforcementService = $this->container->get(
+            'simplytestable.services.jobuseraccountplanenforcementservice'
+        );
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -292,7 +327,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $plan = $userAccountPlan->getPlan();
 
-        $this->setUser($user);
+        $jobUserAccountPlanEnforcementService->setUser($user);
 
         $fullSiteJobsPerSiteConstraint = $plan->getConstraintNamed(
             JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME

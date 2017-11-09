@@ -113,8 +113,6 @@ class ExecuteCommandTest extends AbstractBaseTestCase
 
         $scheduledJob = $scheduledJobService->create($jobConfiguration);
 
-        $this->setUser($user);
-
         $returnCode = $this->command->run(new ArrayInput([
             'id' => $scheduledJob->getId(),
         ]), new BufferedOutput());
@@ -128,16 +126,12 @@ class ExecuteCommandTest extends AbstractBaseTestCase
     public function testRunSuccess()
     {
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $user = $userService->getPublicUser();
 
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
 
         $jobConfiguration = $jobConfigurationFactory->create();
 
         $scheduledJob = $scheduledJobService->create($jobConfiguration);
-
-        $this->setUser($user);
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => $scheduledJob->getId(),
