@@ -38,11 +38,6 @@ class CrawlJobContainerService
     private $jobTypeService;
 
     /**
-     * @var TaskRepository
-     */
-    private $taskRepository;
-
-    /**
      * @var UrlDiscoveryTaskService
      */
     private $urlDiscoveryTaskService;
@@ -68,7 +63,6 @@ class CrawlJobContainerService
         $this->urlDiscoveryTaskService = $urlDiscoveryTaskService;
 
         $this->entityRepository = $entityManager->getRepository(CrawlJobContainer::class);
-        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**
@@ -137,19 +131,6 @@ class CrawlJobContainerService
         $this->entityManager->flush();
 
         return true;
-    }
-
-    /**
-     * @param CrawlJobContainer $crawlJobContainer
-     *
-     * @return string[]
-     */
-    public function getProcessedUrls(CrawlJobContainer $crawlJobContainer)
-    {
-        return $this->taskRepository->findUrlsByJobAndState(
-            $crawlJobContainer->getCrawlJob(),
-            $this->stateService->get(TaskService::COMPLETED_STATE)
-        );
     }
 
     /**

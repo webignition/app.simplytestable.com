@@ -158,9 +158,14 @@ class JobSummaryFactory
                 ? null
                 : $urlsPerJobConstraint->getLimit();
 
+            $processedUrls = $this->taskRepository->findUrlsByJobAndState(
+                $crawlJobContainer->getCrawlJob(),
+                $this->stateService->get(TaskService::COMPLETED_STATE)
+            );
+
             $crawlSummary = new CrawlSummary(
                 $crawlJob,
-                count($this->crawlJobContainerService->getProcessedUrls($crawlJobContainer)),
+                count($processedUrls),
                 count($this->crawlJobUrlCollector->getDiscoveredUrls($crawlJobContainer)),
                 $limit
             );
