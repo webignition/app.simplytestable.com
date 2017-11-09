@@ -70,7 +70,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
 
         $website = $websiteService->get($websiteUrl);
 
-        $this->jobUserAccountPlanEnforcementService->setUser($user);
+        $this->setUser($user);
 
         $this->assertEquals(
             $expectedIsFullSiteLimitReached,
@@ -186,7 +186,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
             $entityManager->flush();
         }
 
-        $this->jobUserAccountPlanEnforcementService->setUser($user);
+        $this->setUser($user);
 
         $this->assertEquals(
             $expectedIsJobUrlLimitReached,
@@ -258,7 +258,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
             $entityManager->flush($task);
         }
 
-        $this->jobUserAccountPlanEnforcementService->setUser($user);
+        $this->setUser($user);
         $creditsUsed = $this->jobUserAccountPlanEnforcementService->getCreditsUsedThisMonth();
 
         $this->assertEquals($expectedCreditsUsed, $creditsUsed);
@@ -360,7 +360,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
             $entityManager->flush($task);
         }
 
-        $this->jobUserAccountPlanEnforcementService->setUser($user);
+        $this->setUser($user);
 
         $this->assertEquals(
             $expectedIsLimitReached,
