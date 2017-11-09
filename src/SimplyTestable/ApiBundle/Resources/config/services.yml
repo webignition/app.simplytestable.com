@@ -486,3 +486,28 @@ services:
     arguments:
       stateService: '@simplytestable.services.stateservice'
       taskTypeService: '@simplytestable.services.tasktypeservice'
+
+  simplytestable.services.taskpostprocessor.urldiscovery:
+    class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor
+    arguments:
+      crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+#      taskService: '@simplytestable.services.taskservice'
+#      webResourceService: '@simplytestable.services.webresourceservice'
+#      httpClientService: '@simplytestable.services.httpclientservice'
+#      logger: '@logger'
+#      stateService: '@simplytestable.services.stateservice'
+#      taskRepository: '@simplytestable.repository.task'
+#      entityManager: "@doctrine.orm.entity_manager"
+
+  simplytestable.services.taskpostprocessor.factory:
+    class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
+    arguments:
+      taskPreprocessors:
+        - '@simplytestable.services.taskpostprocessor.urldiscovery'
+
+  simplytestable.services.crawljoburlcollector:
+    class:   SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector
+    arguments:
+      stateService: '@simplytestable.services.stateservice'
+      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      taskRepository: '@simplytestable.repository.task'
