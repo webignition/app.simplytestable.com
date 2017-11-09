@@ -14,16 +14,6 @@ use webignition\NormalisedUrl\NormalisedUrl;
 class CrawlJobContainerService
 {
     /**
-     * @var TaskService
-     */
-    private $taskService;
-
-    /**
-     * @var TaskTypeService
-     */
-    private $taskTypeService;
-
-    /**
      * @var JobService
      */
     private $jobService;
@@ -69,36 +59,38 @@ class CrawlJobContainerService
     private $urlDiscoveryTaskService;
 
     /**
+     * @var CrawlJobUrlCollector
+     */
+    private $crawlJobUrlCollector;
+
+    /**
      * @param EntityManagerInterface $entityManager
-     * @param TaskService $taskService
-     * @param TaskTypeService $taskTypeService
      * @param JobService $jobService
      * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
      * @param JobTypeService $jobTypeService
      * @param UrlDiscoveryTaskService $urlDiscoveryTaskService
+     * @param CrawlJobUrlCollector $crawlJobUrlCollector
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        TaskService $taskService,
-        TaskTypeService $taskTypeService,
         JobService $jobService,
         JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
         JobTypeService $jobTypeService,
-        UrlDiscoveryTaskService $urlDiscoveryTaskService
+        UrlDiscoveryTaskService $urlDiscoveryTaskService,
+        CrawlJobUrlCollector $crawlJobUrlCollector
     ) {
         $this->entityManager = $entityManager;
-        $this->taskService = $taskService;
-        $this->taskTypeService = $taskTypeService;
         $this->jobService = $jobService;
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->jobTypeService = $jobTypeService;
         $this->urlDiscoveryTaskService = $urlDiscoveryTaskService;
+        $this->crawlJobUrlCollector = $crawlJobUrlCollector;
 
         $this->entityRepository = $entityManager->getRepository(CrawlJobContainer::class);
         $this->taskRepository = $entityManager->getRepository(Task::class);
@@ -199,7 +191,8 @@ class CrawlJobContainerService
         $crawlJobContainer = $this->entityRepository->getForJob($task->getJob());
         $crawlJob = $crawlJobContainer->getCrawlJob();
 
-        $crawlDiscoveredUrlCount = count($this->getDiscoveredUrls($crawlJobContainer));
+        $discoveredUrls = $this->crawlJobUrlCollector->getDiscoveredUrls($crawlJobContainer);
+        $crawlDiscoveredUrlCount = count($discoveredUrls);
 
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($crawlDiscoveredUrlCount)) {
             if ($crawlJob->getAmmendments()->isEmpty()) {
@@ -268,21 +261,6 @@ class CrawlJobContainerService
     }
 
     /**
-     * @param string $taskOutput
-     *
-     * @return string[]
-     */
-    private function getDiscoveredUrlsFromRawTaskOutput($taskOutput)
-    {
-        $taskDiscoveredUrlSet = json_decode($taskOutput);
-
-        return is_array($taskDiscoveredUrlSet)
-            ? $taskDiscoveredUrlSet
-            : array();
-    }
-
-
-    /**
      * @param CrawlJobContainer $crawlJobContainer
      *
      * @return string[]
@@ -293,61 +271,6 @@ class CrawlJobContainerService
             $crawlJobContainer->getCrawlJob(),
             $this->stateService->get(TaskService::COMPLETED_STATE)
         );
-    }
-
-    /**
-     * @param CrawlJobContainer $crawlJobContainer
-     * @param bool $constrainToAccountPlan
-     *
-     * @return string[]
-     */
-    public function getDiscoveredUrls(CrawlJobContainer $crawlJobContainer, $constrainToAccountPlan = false)
-    {
-        $discoveredUrls = array(
-            $crawlJobContainer->getParentJob()->getWebsite()->getCanonicalUrl()
-        );
-
-        $crawlJob = $crawlJobContainer->getCrawlJob();
-
-        $taskCompletedState = $this->stateService->get(TaskService::COMPLETED_STATE);
-
-        $completedTaskUrls = $this->taskRepository->findUrlsByJobAndState(
-            $crawlJob,
-            $taskCompletedState
-        );
-
-        foreach ($completedTaskUrls as $taskUrl) {
-            if (!in_array($taskUrl, $discoveredUrls)) {
-                $discoveredUrls[] = $taskUrl;
-            }
-        }
-
-        $completedTaskOutputs = $this->taskRepository->getOutputCollectionByJobAndState(
-            $crawlJob,
-            $taskCompletedState
-        );
-
-        foreach ($completedTaskOutputs as $taskOutput) {
-            $urlSet = $this->getDiscoveredUrlsFromRawTaskOutput($taskOutput);
-
-            foreach ($urlSet as $url) {
-                if (!in_array($url, $discoveredUrls)) {
-                    $discoveredUrls[] = $url;
-                }
-            }
-        }
-
-        if ($constrainToAccountPlan) {
-            $accountPlan = $this->userAccountPlanService->getForUser($crawlJob->getUser())->getPlan();
-
-            $discoveredUrls = array_slice(
-                $discoveredUrls,
-                0,
-                $accountPlan->getConstraintNamed('urls_per_job')->getLimit()
-            );
-        }
-
-        return $discoveredUrls;
     }
 
     /**
