@@ -120,8 +120,6 @@ class StartService
             );
         }
 
-        $this->jobUserAccountPlanEnforcementService->setUser($jobConfiguration->getUser());
-
         $website = $jobConfiguration->getWebsite();
 
         if (JobTypeService::FULL_SITE_NAME == $jobConfiguration->getType()->getName()) {

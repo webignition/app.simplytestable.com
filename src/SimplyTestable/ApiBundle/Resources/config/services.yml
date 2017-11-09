@@ -149,6 +149,7 @@ services:
         jobRepository: '@simplytestable.repository.job'
         jobTypeService: '@simplytestable.services.jobtypeservice'
         taskRepository: '@simplytestable.repository.task'
+        tokenStorage: '@security.token_storage'
 
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService

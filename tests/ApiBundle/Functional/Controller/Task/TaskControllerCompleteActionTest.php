@@ -698,9 +698,6 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
 
     private function setJobTypeConstraintLimits()
     {
-        $jobUserAccountPlanEnforcementService = $this->container->get(
-            'simplytestable.services.jobuseraccountplanenforcementservice'
-        );
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -709,7 +706,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
         $userAccountPlan = $userAccountPlanService->getForUser($user);
         $plan = $userAccountPlan->getPlan();
 
-        $jobUserAccountPlanEnforcementService->setUser($user);
+        $this->setUser($user);
 
         $fullSiteJobsPerSiteConstraint = $plan->getConstraintNamed(
             JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME

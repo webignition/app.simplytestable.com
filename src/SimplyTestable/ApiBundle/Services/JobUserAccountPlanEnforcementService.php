@@ -4,8 +4,8 @@ namespace SimplyTestable\ApiBundle\Services;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
-use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class JobUserAccountPlanEnforcementService
 {
@@ -23,11 +23,6 @@ class JobUserAccountPlanEnforcementService
      * @var TaskService
      */
     private $taskService;
-
-    /**
-     * @var User
-     */
-    private $user;
 
     /**
      * @var TeamService
@@ -55,6 +50,11 @@ class JobUserAccountPlanEnforcementService
     private $taskRepository;
 
     /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    /**
      * @param UserAccountPlanService $userAccountPlanService
      * @param TaskService $taskService
      * @param TeamService $teamService
@@ -62,6 +62,7 @@ class JobUserAccountPlanEnforcementService
      * @param JobRepository $jobRepository
      * @param JobTypeService $jobTypeService
      * @param TaskRepository $taskRepository
+     * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
@@ -70,7 +71,8 @@ class JobUserAccountPlanEnforcementService
         StateService $stateService,
         JobRepository $jobRepository,
         JobTypeService $jobTypeService,
-        TaskRepository $taskRepository
+        TaskRepository $taskRepository,
+        TokenStorageInterface $tokenStorage
     ) {
         $this->userAccountPlanService = $userAccountPlanService;
 
@@ -81,14 +83,7 @@ class JobUserAccountPlanEnforcementService
         $this->jobTypeService = $jobTypeService;
         $this->jobRepository = $jobRepository;
         $this->taskRepository = $taskRepository;
-    }
-
-    /**
-     * @param User $user
-     */
-    public function setUser(User $user)
-    {
-        $this->user = $user;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -128,7 +123,9 @@ class JobUserAccountPlanEnforcementService
      */
     private function isJobLimitReachedForWebsite(WebSite $website, $constraintName, $jobTypeName)
     {
-        $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+        $user = $this->tokenStorage->getToken()->getUser();
+
+        $userAccountPlan = $this->userAccountPlanService->getForUser($user);
         $plan = $userAccountPlan->getPlan();
 
         $constraint = $plan->getConstraintNamed($constraintName);
@@ -142,7 +139,7 @@ class JobUserAccountPlanEnforcementService
         $endDateTime = new \DateTime('last day of this month');
 
         $currentCount = $this->jobRepository->getJobCountByUserAndJobTypeAndWebsiteForPeriod(
-            $this->user,
+            $user,
             $jobType,
             $website,
             $startDateTime->format('Y-m-01'),
@@ -163,7 +160,8 @@ class JobUserAccountPlanEnforcementService
             return false;
         }
 
-        $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+        $user = $this->tokenStorage->getToken()->getUser();
+        $userAccountPlan = $this->userAccountPlanService->getForUser($user);
         $plan = $userAccountPlan->getPlan();
 
         $constraint = $plan->getConstraintNamed(self::URLS_PER_JOB_CONSTRAINT_NAME);
@@ -183,8 +181,10 @@ class JobUserAccountPlanEnforcementService
         $startDateTime = new \DateTime('first day of this month');
         $endDateTime = new \DateTime('last day of this month');
 
+        $user = $this->tokenStorage->getToken()->getUser();
+
         return $this->taskRepository->getCountByUsersAndStatesForPeriod(
-            $this->teamService->getPeopleForUser($this->user),
+            $this->teamService->getPeopleForUser($user),
             $this->stateService->getCollection([
                 TaskService::COMPLETED_STATE,
                 TaskService::TASK_FAILED_NO_RETRY_AVAILABLE_STATE,
@@ -202,7 +202,8 @@ class JobUserAccountPlanEnforcementService
      */
     public function isUserCreditLimitReached()
     {
-        $userAccountPlan = $this->userAccountPlanService->getForUser($this->user);
+        $user = $this->tokenStorage->getToken()->getUser();
+        $userAccountPlan = $this->userAccountPlanService->getForUser($user);
         $plan = $userAccountPlan->getPlan();
 
         $constraint = $plan->getConstraintNamed(self::CREDITS_PER_MONTH_CONSTRAINT_NAME);
