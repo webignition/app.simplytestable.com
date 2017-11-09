@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services\TaskPostProcessor;
 
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor;
-use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory;
+use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class FactoryTest extends AbstractBaseTestCase
@@ -29,7 +29,7 @@ class FactoryTest extends AbstractBaseTestCase
 
         $this->assertInstanceOf(
             UrlDiscoveryTaskPostProcessor::class,
-            $this->factory->getPreprocessor($taskTypeService->getUrlDiscoveryTaskType())
+            $this->factory->getPostProcessor($taskTypeService->getUrlDiscoveryTaskType())
         );
     }
 }
