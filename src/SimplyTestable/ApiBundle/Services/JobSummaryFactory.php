@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Services;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Model\Job\Summary\CrawlSummary;
@@ -60,6 +61,11 @@ class JobSummaryFactory
     private $jobRejectionReasonRepository;
 
     /**
+     * @var CrawlJobUrlCollector
+     */
+    private $crawlJobUrlCollector;
+
+    /**
      * @param EntityManagerInterface $entityManager
      * @param TaskService $taskService
      * @param StateService $stateService
@@ -69,6 +75,7 @@ class JobSummaryFactory
      * @param UserAccountPlanService $userAccountPlanService
      * @param TaskRepository $taskRepository
      * @param EntityRepository $jobRejectionReasonRepository
+     * @param CrawlJobUrlCollector $crawlJobUrlCollector
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -79,7 +86,8 @@ class JobSummaryFactory
         CrawlJobContainerService $crawlJobContainerService,
         UserAccountPlanService $userAccountPlanService,
         TaskRepository $taskRepository,
-        EntityRepository $jobRejectionReasonRepository
+        EntityRepository $jobRejectionReasonRepository,
+        CrawlJobUrlCollector $crawlJobUrlCollector
     ) {
         $this->entityManager = $entityManager;
         $this->taskService = $taskService;
@@ -90,6 +98,7 @@ class JobSummaryFactory
         $this->userAccountPlanService = $userAccountPlanService;
         $this->taskRepository = $taskRepository;
         $this->jobRejectionReasonRepository = $jobRejectionReasonRepository;
+        $this->crawlJobUrlCollector = $crawlJobUrlCollector;
     }
 
     /**
@@ -125,6 +134,7 @@ class JobSummaryFactory
         );
 
         if (JobService::REJECTED_STATE === $job->getState()->getName()) {
+            /* @var RejectionReason $jobRejectionReason */
             $jobRejectionReason = $this->jobRejectionReasonRepository->findOneBy([
                 'job' => $job,
             ]);
@@ -148,10 +158,15 @@ class JobSummaryFactory
                 ? null
                 : $urlsPerJobConstraint->getLimit();
 
+            $processedUrls = $this->taskRepository->findUrlsByJobAndState(
+                $crawlJobContainer->getCrawlJob(),
+                $this->stateService->get(TaskService::COMPLETED_STATE)
+            );
+
             $crawlSummary = new CrawlSummary(
                 $crawlJob,
-                count($this->crawlJobContainerService->getProcessedUrls($crawlJobContainer)),
-                count($this->crawlJobContainerService->getDiscoveredUrls($crawlJobContainer)),
+                count($processedUrls),
+                count($this->crawlJobUrlCollector->getDiscoveredUrls($crawlJobContainer)),
                 $limit
             );
 

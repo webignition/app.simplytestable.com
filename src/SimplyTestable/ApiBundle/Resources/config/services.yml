@@ -164,6 +164,7 @@ services:
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         entityManager: "@doctrine.orm.entity_manager"
+        crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
   simplytestable.services.stripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
@@ -179,13 +180,10 @@ services:
     class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
-        taskService: "@simplytestable.services.taskservice"
-        taskTypeService: "@simplytestable.services.tasktypeservice"
         jobService: "@simplytestable.services.jobservice"
-        jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         stateService: '@simplytestable.services.stateservice'
-        userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         jobTypeService: '@simplytestable.services.jobtypeservice'
+        urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
 
   simplytestable.services.taskpreprocessor.linkintegrity:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
@@ -471,6 +469,7 @@ services:
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
       taskRepository: '@simplytestable.repository.task'
       jobRejectionReasonRepository: '@simplytestable.repository.jobrejectionreason'
+      crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
   simplytestable.services.joblistconfigurationfactory:
     class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory
@@ -479,3 +478,33 @@ services:
     class: SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator
     arguments:
       teamInviteRepository: '@simplytestable.repository.teaminvite'
+
+  simplytestable.services.task.urldiscovery:
+    class: SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService
+    arguments:
+      stateService: '@simplytestable.services.stateservice'
+      taskTypeService: '@simplytestable.services.tasktypeservice'
+
+  simplytestable.services.taskpostprocessor.urldiscovery:
+    class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor
+    arguments:
+      crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+      crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
+      jobUserAccountPlanEnforcementService: '@simplytestable.services.jobuseraccountplanenforcementservice'
+      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      jobService: '@simplytestable.services.jobservice'
+      entityManager: '@doctrine.orm.entity_manager'
+      urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
+
+  simplytestable.services.taskpostprocessor.factory:
+    class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory
+    arguments:
+      taskPreprocessors:
+        - '@simplytestable.services.taskpostprocessor.urldiscovery'
+
+  simplytestable.services.crawljoburlcollector:
+    class:   SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector
+    arguments:
+      stateService: '@simplytestable.services.stateservice'
+      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      taskRepository: '@simplytestable.repository.task'

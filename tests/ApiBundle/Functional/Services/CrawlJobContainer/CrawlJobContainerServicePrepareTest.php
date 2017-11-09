@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\StateFactory;
 
 class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServiceTest
@@ -105,26 +104,19 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         ];
     }
 
-    /**
-     * @dataProvider prepareDataProvider
-     *
-     * @param string $url
-     * @param string $jobParameters
-     * @param string[] $expectedUrlDiscoveryTaskParameters
-     */
-    public function testPrepare($url, $jobParameters, $expectedUrlDiscoveryTaskParameters)
+    public function testPrepare()
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $user = $this->userFactory->create();
-        $website = $websiteService->get($url);
+        $website = $websiteService->get('http://example.com/');
 
         $crawlJob = new Job();
         $crawlJob->setState($stateService->get(JobService::STARTING_STATE));
         $crawlJob->setUser($user);
         $crawlJob->setWebsite($website);
-        $crawlJob->setParameters($jobParameters);
 
         $parentJob = new Job();
         $parentJob->setUser($user);
@@ -147,42 +139,9 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
         $this->assertCount(1, $crawlJob->getTasks());
 
         /* @var Task $task */
-        $task = $crawlJob->getTasks()->first();
-        $this->assertEquals('URL discovery', $task->getType()->getName());
-        $this->assertEquals($crawlJob, $task->getJob());
-        $this->assertEquals(TaskService::QUEUED_STATE, $task->getState()->getName());
-        $this->assertEquals(
-            json_encode($expectedUrlDiscoveryTaskParameters),
-            $task->getParameters()
-        );
-    }
+        $urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
-    public function prepareDataProvider()
-    {
-        return [
-            'non-www' => [
-                'url' => 'http://example.com/',
-                'jobParameters' => null,
-                'expectedUrlDiscoveryTaskParameters' => [
-                    'scope' => [
-                        'http://example.com/',
-                        'http://www.example.com/',
-                    ],
-                ],
-            ],
-            'www' => [
-                'url' => 'http://www.example.com/',
-                'jobParameters' => json_encode([
-                    'foo' => 'bar',
-                ]),
-                'expectedUrlDiscoveryTaskParameters' => [
-                    'scope' => [
-                        'http://www.example.com/',
-                        'http://example.com/',
-                    ],
-                    'foo' => 'bar',
-                ],
-            ],
-        ];
+        $task = $crawlJob->getTasks()->first();
+        $this->assertEquals($urlDiscoveryTaskType, $task->getType());
     }
 }

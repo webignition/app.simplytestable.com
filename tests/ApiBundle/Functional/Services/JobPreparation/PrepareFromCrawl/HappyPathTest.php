@@ -98,7 +98,7 @@ class HappyPathTest extends AbstractBaseTestCase
 
     public function testHasTasks()
     {
-        $this->assertEquals($this->getExpectedTaskCount(), $this->getJob()->getTasks()->count());
+        $this->assertEquals(8, $this->getJob()->getTasks()->count());
     }
 
     public function testTaskStates()
@@ -114,16 +114,5 @@ class HappyPathTest extends AbstractBaseTestCase
     private function getJob()
     {
         return $this->crawlJobContainer->getParentJob();
-    }
-
-    /**
-     * @return int
-     */
-    private function getExpectedTaskCount()
-    {
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
-
-        $discoveredUrlsCount = count($crawlJobContainerService->getDiscoveredUrls($this->crawlJobContainer));
-        return self::EXPECTED_TASK_TYPE_COUNT * $discoveredUrlsCount;
     }
 }

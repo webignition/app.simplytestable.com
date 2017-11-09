@@ -77,6 +77,11 @@ class JobPreparationService
     private $entityManager;
 
     /**
+     * @var CrawlJobUrlCollector
+     */
+    private $crawlJobUrlCollector;
+
+    /**
      * @param JobService $jobService
      * @param TaskService $taskService
      * @param JobTypeService $jobTypeService
@@ -87,6 +92,7 @@ class JobPreparationService
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
      * @param EntityManagerInterface $entityManager
+     * @param CrawlJobUrlCollector $crawlJobUrlCollector
      */
     public function __construct(
         JobService $jobService,
@@ -98,7 +104,8 @@ class JobPreparationService
         UrlFinder $urlFinder,
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        CrawlJobUrlCollector $crawlJobUrlCollector
     ) {
         $this->jobService = $jobService;
         $this->taskService = $taskService;
@@ -110,6 +117,7 @@ class JobPreparationService
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->entityManager = $entityManager;
+        $this->crawlJobUrlCollector = $crawlJobUrlCollector;
     }
 
     /**
@@ -217,7 +225,8 @@ class JobPreparationService
         $this->entityManager->persist($job);
         $this->entityManager->flush();
 
-        $urls = $this->crawlJobContainerService->getDiscoveredUrls($crawlJobContainer, true);
+        $this->crawlJobUrlCollector->setConstrainToAccountPlan(true);
+        $urls = $this->crawlJobUrlCollector->getDiscoveredUrls($crawlJobContainer);
 
         if ($crawlJobContainer->getCrawlJob()->getAmmendments()->count()) {
             /* @var $ammendment \SimplyTestable\ApiBundle\Entity\Job\Ammendment */
