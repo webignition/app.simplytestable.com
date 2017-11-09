@@ -122,6 +122,9 @@ class UrlDiscoveryTaskPostProcessor implements TaskPostProcessorInterface
         $discoveredUrls = $this->crawlJobUrlCollector->getDiscoveredUrls($crawlJobContainer);
         $crawlDiscoveredUrlCount = count($discoveredUrls);
 
+        $user = $job->getUser();
+        $this->jobUserAccountPlanEnforcementService->setUser($user);
+
         if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($crawlDiscoveredUrlCount)) {
             if ($crawlJob->getAmmendments()->isEmpty()) {
                 $userAccountPlan = $this->userAccountPlanService->getForUser($crawlJob->getUser());
