@@ -77,6 +77,8 @@ class UserSummaryFactory
         $user = $this->tokenStorage->getToken()->getUser();
         $userAccountPlan = $this->userAccountPlanService->getForUser($user);
 
+        $this->jobUserAccountPlanEnforcementService->setUser($user);
+
         $stripeCustomerSummary = $this->createStripeCustomerSummary($userAccountPlan, $user);
         $planConstraintsSummary = $this->createPlanConstraintsSummary($userAccountPlan);
         $teamSummary = $this->createTeamSummary($userAccountPlan->getPlan(), $user);

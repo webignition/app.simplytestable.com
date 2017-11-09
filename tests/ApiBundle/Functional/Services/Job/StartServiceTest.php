@@ -64,6 +64,7 @@ class StartServiceTest extends AbstractBaseTestCase
      * @param string $isLimitReachedMethodName
      * @param $isLimitReachedReturnValue
      * @param $isUserCreditLimitReached
+     * @param string $constraintName
      * @param array $expectedException
      */
     public function testStartFailsAccountPlanEnforcement(
@@ -73,8 +74,13 @@ class StartServiceTest extends AbstractBaseTestCase
         $isLimitReachedMethodName,
         $isLimitReachedReturnValue,
         $isUserCreditLimitReached,
+        $constraintName,
         $expectedException
     ) {
+        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $jobUserAccountPlanEnforcementService = $this->container->get(
+            'simplytestable.services.jobuseraccountplanenforcementservice'
+        );
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $userFactory = new UserFactory($this->container);
@@ -83,11 +89,12 @@ class StartServiceTest extends AbstractBaseTestCase
             UserFactory::KEY_PLAN_NAME => $plan,
         ]);
 
-        $this->setUser($user);
+        $jobUserAccountPlanEnforcementService->setUser($user);
 
-        $jobType = $jobTypeService->get($jobTypeName);
+          $jobType = $jobTypeService->get($jobTypeName);
 
         $website = $this->websiteService->get('http://example.com');
+        $constraint = $userAccountPlanService->getForUser($user)->getPlan()->getConstraintNamed($constraintName);
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setWebsite($website);
@@ -127,6 +134,7 @@ class StartServiceTest extends AbstractBaseTestCase
                 'isLimitReachedMethodName' => 'isFullSiteJobLimitReachedForWebSite',
                 'isLimitReachedReturnValue' => true,
                 'isCreditLimitReached' => false,
+                'constraintName' => JobUserAccountPlanEnforcementService::FULL_SITE_JOBS_PER_SITE_CONSTRAINT_NAME,
                 'expectedException' => [
                     'class' => UserAccountPlanEnforcementException::class,
                     'message' => 'Full site job limit reached for website',
@@ -140,6 +148,7 @@ class StartServiceTest extends AbstractBaseTestCase
                 'isLimitReachedMethodName' => 'isSingleUrlLimitReachedForWebsite',
                 'isLimitReachedReturnValue' => true,
                 'isCreditLimitReached' => false,
+                'constraintName' => JobUserAccountPlanEnforcementService::SINGLE_URL_JOBS_PER_URL_CONSTRAINT_NAME,
                 'expectedException' => [
                     'class' => UserAccountPlanEnforcementException::class,
                     'message' => 'Single URL job limit reached for website',
@@ -153,6 +162,7 @@ class StartServiceTest extends AbstractBaseTestCase
                 'isLimitReachedMethodName' => 'isFullSiteJobLimitReachedForWebSite',
                 'isLimitReachedReturnValue' => false,
                 'isCreditLimitReached' => true,
+                'constraintName' => JobUserAccountPlanEnforcementService::CREDITS_PER_MONTH_CONSTRAINT_NAME,
                 'expectedException' => [
                     'class' => UserAccountPlanEnforcementException::class,
                     'message' => 'Credit limit reached',
@@ -176,7 +186,6 @@ class StartServiceTest extends AbstractBaseTestCase
         $jobConfiguration->setUser($user);
         $jobConfiguration->setType($jobType);
 
-        $this->setUser($user);
 
         $jobStartService = $this->createJobStartService();
 
@@ -214,8 +223,6 @@ class StartServiceTest extends AbstractBaseTestCase
         $jobConfiguration->setWebsite($website);
         $jobConfiguration->setUser($user);
         $jobConfiguration->setType($jobType);
-
-        $this->setUser($user);
 
         $jobStartService = $this->createJobStartService();
 
