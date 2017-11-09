@@ -181,12 +181,9 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
         jobService: "@simplytestable.services.jobservice"
-        jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         stateService: '@simplytestable.services.stateservice'
-        userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         jobTypeService: '@simplytestable.services.jobtypeservice'
         urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
-        crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
   simplytestable.services.taskpreprocessor.linkintegrity:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
@@ -500,7 +497,7 @@ services:
       urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
 
   simplytestable.services.taskpostprocessor.factory:
-    class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
+    class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory
     arguments:
       taskPreprocessors:
         - '@simplytestable.services.taskpostprocessor.urldiscovery'

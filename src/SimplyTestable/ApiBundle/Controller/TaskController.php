@@ -33,6 +33,7 @@ class TaskController extends Controller
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');
+        $taskPostProcessorFactory = $this->container->get('simplytestable.services.taskpostprocessor.factory');
 
         /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
         $crawlJobContainerRepository = $this->container->get('simplytestable.repository.crawljobcontainer');
@@ -79,8 +80,9 @@ class TaskController extends Controller
 
             $taskService->complete($task, $endDateTime, $output, $state);
 
-            if ($task->getType()->equals($urlDiscoveryTaskType)) {
-                $crawlJobContainerService->processTaskResults($task);
+            $taskPostProcessor = $taskPostProcessorFactory->getPostProcessor($task->getType());
+            if (!empty($taskPostProcessor)) {
+                $taskPostProcessor->process($task);
             }
 
             if (!$jobService->hasIncompleteTasks($task->getJob())) {

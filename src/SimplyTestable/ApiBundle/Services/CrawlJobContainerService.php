@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
-use webignition\NormalisedUrl\NormalisedUrl;
 
 class CrawlJobContainerService
 {
@@ -19,19 +18,9 @@ class CrawlJobContainerService
     private $jobService;
 
     /**
-     * @var JobUserAccountPlanEnforcementService
-     */
-    private $jobUserAccountPlanEnforcementService;
-
-    /**
      * @var StateService
      */
     private $stateService;
-
-    /**
-     * @var UserAccountPlanService
-     */
-    private $userAccountPlanService;
 
     /**
      * @var EntityManagerInterface
@@ -59,38 +48,24 @@ class CrawlJobContainerService
     private $urlDiscoveryTaskService;
 
     /**
-     * @var CrawlJobUrlCollector
-     */
-    private $crawlJobUrlCollector;
-
-    /**
      * @param EntityManagerInterface $entityManager
      * @param JobService $jobService
-     * @param JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService
      * @param StateService $stateService
-     * @param UserAccountPlanService $userAccountPlanService
      * @param JobTypeService $jobTypeService
      * @param UrlDiscoveryTaskService $urlDiscoveryTaskService
-     * @param CrawlJobUrlCollector $crawlJobUrlCollector
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         JobService $jobService,
-        JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService,
         StateService $stateService,
-        UserAccountPlanService $userAccountPlanService,
         JobTypeService $jobTypeService,
-        UrlDiscoveryTaskService $urlDiscoveryTaskService,
-        CrawlJobUrlCollector $crawlJobUrlCollector
+        UrlDiscoveryTaskService $urlDiscoveryTaskService
     ) {
         $this->entityManager = $entityManager;
         $this->jobService = $jobService;
-        $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
         $this->stateService = $stateService;
-        $this->userAccountPlanService = $userAccountPlanService;
         $this->jobTypeService = $jobTypeService;
         $this->urlDiscoveryTaskService = $urlDiscoveryTaskService;
-        $this->crawlJobUrlCollector = $crawlJobUrlCollector;
 
         $this->entityRepository = $entityManager->getRepository(CrawlJobContainer::class);
         $this->taskRepository = $entityManager->getRepository(Task::class);
@@ -165,102 +140,6 @@ class CrawlJobContainerService
     }
 
     /**
-     * @param Task $task
-     *
-     * @return bool
-     */
-    public function processTaskResults(Task $task)
-    {
-        if (TaskTypeService::URL_DISCOVERY_TYPE !== $task->getType()->getName()) {
-            return false;
-        }
-
-        if (TaskService::COMPLETED_STATE !== $task->getState()->getName()) {
-            return false;
-        }
-
-        if (empty($task->getOutput())) {
-            return false;
-        }
-
-        if ($task->getOutput()->getErrorCount() > 0) {
-            return false;
-        }
-
-        /* @var $crawlJobContainer CrawlJobContainer */
-        $crawlJobContainer = $this->entityRepository->getForJob($task->getJob());
-        $crawlJob = $crawlJobContainer->getCrawlJob();
-
-        $discoveredUrls = $this->crawlJobUrlCollector->getDiscoveredUrls($crawlJobContainer);
-        $crawlDiscoveredUrlCount = count($discoveredUrls);
-
-        if ($this->jobUserAccountPlanEnforcementService->isJobUrlLimitReached($crawlDiscoveredUrlCount)) {
-            if ($crawlJob->getAmmendments()->isEmpty()) {
-                $userAccountPlan = $this->userAccountPlanService->getForUser($crawlJob->getUser());
-                $plan = $userAccountPlan->getPlan();
-                $urlsPerJobConstraint = $plan->getConstraintNamed(
-                    JobUserAccountPlanEnforcementService::URLS_PER_JOB_CONSTRAINT_NAME
-                );
-
-                $this->jobService->addAmmendment(
-                    $crawlJob,
-                    'plan-url-limit-reached:discovered-url-count-' . $crawlDiscoveredUrlCount,
-                    $urlsPerJobConstraint
-                );
-
-                $this->entityManager->persist($crawlJob);
-                $this->entityManager->flush();
-            }
-
-            if (JobService::COMPLETED_STATE !== $crawlJob->getState()->getName()) {
-                $this->jobService->cancelIncompleteTasks($crawlJob);
-                $this->entityManager->flush();
-            }
-
-            return true;
-        }
-
-        $taskDiscoveredUrlSet = $this->getDiscoveredUrlsFromTask($task);
-        $isFlushRequired = false;
-
-        foreach ($taskDiscoveredUrlSet as $url) {
-            if (!$this->isTaskUrl($task->getJob(), $url)) {
-                $task = $this->urlDiscoveryTaskService->create(
-                    $crawlJob,
-                    $crawlJobContainer->getParentJob()->getWebsite()->getCanonicalUrl(),
-                    $url
-                );
-
-
-                $this->entityManager->persist($task);
-                $crawlJob->addTask($task);
-                $isFlushRequired = true;
-            }
-        }
-
-        if ($isFlushRequired) {
-            $this->entityManager->persist($crawlJob);
-            $this->entityManager->flush();
-        }
-
-        return true;
-    }
-
-    /**
-     * @param Task $task
-     *
-     * @return string[]
-     */
-    private function getDiscoveredUrlsFromTask(Task $task)
-    {
-        $taskDiscoveredUrlSet = json_decode($task->getOutput()->getOutput());
-
-        return is_array($taskDiscoveredUrlSet)
-            ? $taskDiscoveredUrlSet
-            : array();
-    }
-
-    /**
      * @param CrawlJobContainer $crawlJobContainer
      *
      * @return string[]
@@ -270,22 +149,6 @@ class CrawlJobContainerService
         return $this->taskRepository->findUrlsByJobAndState(
             $crawlJobContainer->getCrawlJob(),
             $this->stateService->get(TaskService::COMPLETED_STATE)
-        );
-    }
-
-    /**
-     * @param Job $job
-     * @param string $url
-     *
-     * @return bool
-     */
-    private function isTaskUrl(Job $job, $url)
-    {
-        $url = (string)new NormalisedUrl($url);
-
-        return $this->taskRepository->findUrlExistsByJobAndUrl(
-            $job,
-            $url
         );
     }
 

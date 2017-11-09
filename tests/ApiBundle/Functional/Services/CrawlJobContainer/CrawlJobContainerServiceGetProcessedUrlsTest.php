@@ -18,12 +18,12 @@ class CrawlJobContainerServiceGetProcessedUrlsTest extends AbstractCrawlJobConta
      */
     public function testGetProcessedUrls($discoveredUrlSets, $expectedProcessedUrls)
     {
-        $taskService = $this->container->get('simplytestable.services.taskservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
+        $urlDiscoveryTaskPostProcessor = $this->container->get(
+            'simplytestable.services.taskpostprocessor.urldiscovery'
+        );
 
         $user = $this->userFactory->create();
         $this->setUser($user);
@@ -59,7 +59,7 @@ class CrawlJobContainerServiceGetProcessedUrlsTest extends AbstractCrawlJobConta
             $entityManager->persist($task);
             $entityManager->flush();
 
-            $this->crawlJobContainerService->processTaskResults($task);
+            $urlDiscoveryTaskPostProcessor->process($task);
         }
 
         $this->assertEquals(
