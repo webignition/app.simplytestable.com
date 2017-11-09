@@ -4,11 +4,9 @@ namespace SimplyTestable\ApiBundle\Services;
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
-use SimplyTestable\ApiBundle\Repository\TaskRepository;
 
 class CrawlJobContainerService
 {
