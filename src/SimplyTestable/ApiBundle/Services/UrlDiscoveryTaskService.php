@@ -3,7 +3,6 @@ namespace SimplyTestable\ApiBundle\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use webignition\NormalisedUrl\NormalisedUrl;
 
 class UrlDiscoveryTaskService
@@ -14,9 +13,9 @@ class UrlDiscoveryTaskService
     private $stateService;
 
     /**
-     * @var Type
+     * @var TaskTypeService
      */
-    private $urlDiscoveryTaskType;
+    private $taskTypeService;
 
     /**
      * @param StateService $stateService
@@ -27,7 +26,7 @@ class UrlDiscoveryTaskService
         TaskTypeService $taskTypeService
     ) {
         $this->stateService = $stateService;
-        $this->urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
+        $this->taskTypeService = $taskTypeService;
     }
 
     /**
@@ -73,7 +72,7 @@ class UrlDiscoveryTaskService
         $task->setJob($crawlJob);
         $task->setParameters(json_encode($taskParameters));
         $task->setState($taskQueuedState);
-        $task->setType($this->urlDiscoveryTaskType);
+        $task->setType($this->taskTypeService->getUrlDiscoveryTaskType());
         $task->setUrl($taskUrl);
 
         return $task;
