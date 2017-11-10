@@ -33,7 +33,7 @@ class RunCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.cron.run');
+        $this->command = $this->container->get(RunCommand::class);
         $this->command->setContainer($this->container);
     }
 

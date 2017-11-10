@@ -30,7 +30,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.stripe.event.process');
+        $this->command = $this->container->get(ProcessCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()

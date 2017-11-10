@@ -31,7 +31,7 @@ class SetTokenFromActivationRequestCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.worker.settokenfromactivationrequest');
+        $this->command = $this->container->get(SetTokenFromActivationRequestCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()

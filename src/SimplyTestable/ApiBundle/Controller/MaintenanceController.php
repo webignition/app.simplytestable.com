@@ -2,6 +2,13 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand;
+use SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand;
+use SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand;
+use SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand;
+use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
+use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
+use SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -17,7 +24,7 @@ class MaintenanceController extends Controller
     public function enableBackupReadOnlyAction()
     {
         return $this->executeCommand(
-            $this->container->get('simplytestable.command.maintenance.enablebackupreadonly')
+            $this->container->get(EnableBackupReadOnlyCommand::class)
         );
     }
 
@@ -27,7 +34,7 @@ class MaintenanceController extends Controller
     public function enableReadOnlyAction()
     {
         return $this->executeCommand(
-            $this->container->get('simplytestable.command.maintenance.enablereadonly')
+            $this->container->get(EnableReadOnlyCommand::class)
         );
     }
 
@@ -37,7 +44,7 @@ class MaintenanceController extends Controller
     public function disableReadOnlyAction()
     {
         return $this->executeCommand(
-            $this->container->get('simplytestable.command.maintenance.disablereadonly')
+            $this->container->get(DisableReadOnlyCommand::class)
         );
     }
 
@@ -47,11 +54,11 @@ class MaintenanceController extends Controller
     public function leaveReadOnlyAction()
     {
         $commands = [
-            $this->container->get('simplytestable.command.maintenance.disablereadonly'),
-            $this->container->get('simplytestable.command.job.enqueueprepareall'),
-            $this->container->get('simplytestable.command.tasks.requeuequeuedforassignment'),
-            $this->container->get('simplytestable.command.worker.tasknotification'),
-            $this->container->get('simplytestable.command.task.enqueuecancellationforawaitingcancellationcommand'),
+            $this->container->get(DisableReadOnlyCommand::class),
+            $this->container->get(EnqueuePrepareAllCommand::class),
+            $this->container->get(RequeueQueuedForAssignmentCommand::class),
+            $this->container->get(TaskNotificationCommand::class),
+            $this->container->get(EnqueueCancellationForAwaitingCancellationCommand::class),
         ];
 
         $responseLines = [];

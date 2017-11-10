@@ -26,7 +26,7 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.stripe.event.updatedata');
+        $this->command = $this->container->get(UpdateDataCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()

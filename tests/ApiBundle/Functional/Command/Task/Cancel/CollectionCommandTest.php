@@ -36,7 +36,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.task.cancelcollection');
+        $this->command = $this->container->get(CollectionCommand::class);
 
         $this->workerFactory = new WorkerFactory($this->container);
         $this->jobFactory = new JobFactory($this->container);

@@ -22,7 +22,7 @@ class NormaliseJsLintOutputCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.migrate.normalisejslintoutput');
+        $this->command = $this->container->get(NormaliseJsLintOutputCommand::class);
     }
 
     public function testRunCommandInMaintenanceReadOnlyModeReturnsStatusCode1()

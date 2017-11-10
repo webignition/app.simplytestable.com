@@ -22,7 +22,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.user.addnonplanneduserstobascicplan');
+        $this->command = $this->container->get(AddNonPlannedUsersToBasicPlanCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyModeReturnsStatusCode1()

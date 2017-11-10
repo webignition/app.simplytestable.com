@@ -37,7 +37,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
         $this->jobFactory = new JobFactory($this->container);
 
-        $this->command = $this->container->get('simplytestable.command.job.resolvewebsite');
+        $this->command = $this->container->get(ResolveWebsiteCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()

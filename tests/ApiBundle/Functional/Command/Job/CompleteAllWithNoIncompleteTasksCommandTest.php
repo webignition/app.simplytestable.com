@@ -37,7 +37,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.job.completealwithnoincompletetasks');
+        $this->command = $this->container->get(CompleteAllWithNoIncompleteTasksCommand::class);
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
     }

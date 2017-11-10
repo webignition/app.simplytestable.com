@@ -36,7 +36,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
 
         $this->jobFactory = new JobFactory($this->container);
 
-        $this->prepareCommand = $this->container->get('simplytestable.command.job.prepare');
+        $this->prepareCommand = $this->container->get(PrepareCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()

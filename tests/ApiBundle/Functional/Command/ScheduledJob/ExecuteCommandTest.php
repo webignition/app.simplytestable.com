@@ -28,7 +28,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.scheduledjob.execute');
+        $this->command = $this->container->get(ExecuteCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()

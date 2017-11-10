@@ -26,7 +26,7 @@ class RemoveUnusedOutputCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.migrate.removeunusedoutput');
+        $this->command = $this->container->get(RemoveUnusedOutputCommand::class);
     }
 
     public function testRunCommandInMaintenanceReadOnlyMode()

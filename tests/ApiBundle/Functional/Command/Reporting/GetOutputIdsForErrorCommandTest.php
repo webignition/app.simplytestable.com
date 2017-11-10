@@ -24,7 +24,7 @@ class GetOutputIdsForErrorCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.reporting.getoutputidsforerror');
+        $this->command = $this->container->get(GetOutputIdsForErrorCommand::class);
     }
 
     /**

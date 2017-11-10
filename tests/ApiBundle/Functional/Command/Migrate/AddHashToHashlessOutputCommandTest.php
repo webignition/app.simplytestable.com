@@ -25,7 +25,7 @@ class AddHashToHashlessOutputCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.migrate.addhashtohashlessoutput');
+        $this->command = $this->container->get(AddHashToHashlessOutputCommand::class);
     }
 
     public function testRunCommandInMaintenanceReadOnlyMode()

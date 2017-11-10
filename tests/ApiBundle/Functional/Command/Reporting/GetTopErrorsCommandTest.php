@@ -25,7 +25,7 @@ class GetTopErrorsCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.reporting.gettoperrors');
+        $this->command = $this->container->get(GetTopErrorsCommand::class);
     }
 
     /**

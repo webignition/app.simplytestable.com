@@ -32,7 +32,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.worker.activateverify');
+        $this->command = $this->container->get(ActivateVerifyCommand::class);
         $this->workerFactory = new WorkerFactory($this->container);
     }
 

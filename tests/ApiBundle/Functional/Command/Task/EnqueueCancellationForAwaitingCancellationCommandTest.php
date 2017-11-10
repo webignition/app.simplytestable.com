@@ -25,9 +25,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends AbstractBase
     {
         parent::setUp();
 
-        $this->command = $this->container->get(
-            'simplytestable.command.task.enqueuecancellationforawaitingcancellationcommand'
-        );
+        $this->command = $this->container->get(EnqueueCancellationForAwaitingCancellationCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()

@@ -22,7 +22,7 @@ class EnqueueCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.scheduledjob.enqueue');
+        $this->command = $this->container->get(EnqueueCommand::class);
     }
 
     public function testRunEnqueuesScheduledJobExecute()

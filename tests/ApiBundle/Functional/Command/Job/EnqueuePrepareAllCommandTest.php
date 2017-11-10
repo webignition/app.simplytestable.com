@@ -25,7 +25,7 @@ class EnqueuePrepareAllCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.job.enqueueprepareall');
+        $this->command = $this->container->get(EnqueuePrepareAllCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()
