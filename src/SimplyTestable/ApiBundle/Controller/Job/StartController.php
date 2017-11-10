@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartS
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,7 @@ class StartController extends Controller
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $jobStartService = $this->container->get(StartService::class);
-        $jobStartRequestFactory = $this->container->get('simplytestable.services.request.factory.job.start');
+        $jobStartRequestFactory = $this->container->get(StartRequestFactory::class);
         $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
 
         if ($applicationStateService->isInReadOnlyMode()) {

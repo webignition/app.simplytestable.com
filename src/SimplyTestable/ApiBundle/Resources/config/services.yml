@@ -406,7 +406,7 @@ services:
   simplytestable.services.sitemapfactory:
     class:  webignition\WebResource\Sitemap\Factory
 
-  simplytestable.services.request.factory.job.start:
+  SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory:
     class:   SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory
     arguments:
         requestStack: '@request_stack'
