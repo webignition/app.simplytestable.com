@@ -205,7 +205,7 @@ services:
   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner
 
-  simplytestable.services.taskoutputjoiner.factory:
+  SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory
     arguments:
       taskPreprocessors:
