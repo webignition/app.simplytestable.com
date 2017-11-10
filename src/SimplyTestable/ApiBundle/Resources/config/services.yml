@@ -118,7 +118,7 @@ services:
   SimplyTestable\ApiBundle\Services\ApplicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
     arguments:
-      resourceLocator: '@simplytestable.services.resourcelocator'
+      resourceLocator: '@SimplyTestable\ApiBundle\Services\ResourceLocator'
       kernel: '@kernel'
 
   SimplyTestable\ApiBundle\Services\UserAccountPlanService:
@@ -398,7 +398,7 @@ services:
       teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
       entityManager: '@doctrine.orm.entity_manager'
 
-  simplytestable.services.resourcelocator:
+  SimplyTestable\ApiBundle\Services\ResourceLocator:
     class:  SimplyTestable\ApiBundle\Services\ResourceLocator
     arguments:
       kernel: '@kernel'
