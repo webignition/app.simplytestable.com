@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\TeamInvite;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
+use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
@@ -137,14 +138,16 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
         $jobConfigurationRepository = $this->container->get('simplytestable.repository.jobconfiguration');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
         $leader2 = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'leader2@example.com',
         ]);
 
-        $team2 = $teamService->create('Team2', $leader2);
+        $teamService->create('Team2', $leader2);
         $teamInviteService->get($leader2, $this->inviteeUser);
 
         $this->assertCount(2, $teamInviteService->getForUser($this->inviteeUser));

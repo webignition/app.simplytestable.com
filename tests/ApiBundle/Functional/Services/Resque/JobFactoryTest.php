@@ -316,7 +316,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'doctrine.orm.entity_manager',
                         'simplytestable.services.job.startservice',
                         'simplytestable.services.jobservice',
-                        'simplytestable.repository.scheduledjob',
                     ],
                 ],
             ],

@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Command\ScheduledJob;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -68,7 +69,6 @@ class ExecuteCommand extends Command
      * @param  EntityManager $entityManager
      * @param JobStartService $jobStartService
      * @param JobService $jobService
-     * @param EntityRepository $scheduledJobRepository
      * @param string|null $name
      */
     public function __construct(
@@ -78,7 +78,6 @@ class ExecuteCommand extends Command
         EntityManager $entityManager,
         JobStartService $jobStartService,
         JobService $jobService,
-        EntityRepository $scheduledJobRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -89,7 +88,7 @@ class ExecuteCommand extends Command
         $this->entityManager = $entityManager;
         $this->jobStartService = $jobStartService;
         $this->jobService = $jobService;
-        $this->scheduledJobRepository = $scheduledJobRepository;
+        $this->scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
     }
 
     /**

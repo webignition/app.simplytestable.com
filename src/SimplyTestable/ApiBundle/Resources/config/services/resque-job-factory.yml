@@ -100,4 +100,3 @@ services:
               - doctrine.orm.entity_manager
               - simplytestable.services.job.startservice
               - simplytestable.services.jobservice
-              - simplytestable.repository.scheduledjob
