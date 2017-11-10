@@ -32,9 +32,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobUserAccountPlanEnforcementService = $this->container->get(
-            'simplytestable.services.jobuseraccountplanenforcementservice'
-        );
+        $this->jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
     }
 
     /**

@@ -137,7 +137,7 @@ services:
         emailCanonicalizer: "@fos_user.util.email_canonicalizer"
         tokenGenerator: '@fos_user.util.token_generator'
 
-  simplytestable.services.jobUserAccountPlanEnforcementService:
+  SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService:
     class:   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
     arguments:
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
@@ -153,7 +153,7 @@ services:
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
         jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
-        jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
+        jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
         crawlJobContainerService: "@simplytestable.services.crawljobcontainerservice"
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
         urlFinder: '@simplytestable.services.urlfinder'
@@ -360,7 +360,7 @@ services:
   simplytestable.services.job.startservice:
     class:  SimplyTestable\ApiBundle\Services\Job\StartService
     arguments:
-        jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
+        jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
         jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
@@ -441,7 +441,7 @@ services:
       tokenStorage: '@security.token_storage'
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       stripeService: '@simplytestable.services.stripeservice'
-      jobUserAccountPlanEnforcementService: '@simplytestable.services.jobuseraccountplanenforcementservice'
+      jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
       teamInviteService: '@simplytestable.services.teaminviteservice'
       teamService: '@simplytestable.services.teamservice'
 
@@ -476,7 +476,7 @@ services:
     arguments:
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
-      jobUserAccountPlanEnforcementService: '@simplytestable.services.jobuseraccountplanenforcementservice'
+      jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       jobService: '@SimplyTestable\ApiBundle\Services\JobService'
       entityManager: '@doctrine.orm.entity_manager'

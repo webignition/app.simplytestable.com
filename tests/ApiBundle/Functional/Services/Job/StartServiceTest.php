@@ -82,9 +82,7 @@ class StartServiceTest extends AbstractBaseTestCase
         $constraintName,
         $expectedException
     ) {
-        $jobUserAccountPlanEnforcementService = $this->container->get(
-            'simplytestable.services.jobuseraccountplanenforcementservice'
-        );
+        $jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
         $jobTypeService = $this->container->get(JobTypeService::class);
 
         $userFactory = new UserFactory($this->container);
@@ -114,7 +112,7 @@ class StartServiceTest extends AbstractBaseTestCase
         );
 
         $jobStartService = $this->createJobStartService([
-            'simplytestable.services.jobuseraccountplanenforcementservice' => $mockJobUserAccountPlanEnforcementService
+            JobUserAccountPlanEnforcementService::class => $mockJobUserAccountPlanEnforcementService
         ]);
 
         $this->expectException($expectedException['class']);
@@ -302,7 +300,7 @@ class StartServiceTest extends AbstractBaseTestCase
     private function createJobStartService($services = [])
     {
         $requiredServiceIds = [
-            'simplytestable.services.jobuseraccountplanenforcementservice',
+            JobUserAccountPlanEnforcementService::class,
             JobTypeService::class,
             JobService::class,
             UserService::class,
@@ -326,7 +324,7 @@ class StartServiceTest extends AbstractBaseTestCase
         }
 
         return new StartService(
-            $requiredServices['simplytestable.services.jobuseraccountplanenforcementservice'],
+            $requiredServices[JobUserAccountPlanEnforcementService::class],
             $requiredServices[JobTypeService::class],
             $requiredServices[JobService::class],
             $requiredServices[UserService::class],

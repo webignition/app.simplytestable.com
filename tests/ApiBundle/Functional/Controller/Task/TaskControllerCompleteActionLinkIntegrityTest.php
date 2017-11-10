@@ -317,9 +317,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
 
     private function setJobTypeConstraintLimits()
     {
-        $jobUserAccountPlanEnforcementService = $this->container->get(
-            'simplytestable.services.jobuseraccountplanenforcementservice'
-        );
+        $jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
