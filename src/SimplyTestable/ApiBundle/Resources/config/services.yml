@@ -126,7 +126,7 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
-        stripeService: "@simplytestable.services.stripeservice"
+        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         teamService: "@simplytestable.services.teamservice"
         defaultTrialPeriod: "%default_trial_period%"
 
@@ -167,7 +167,7 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
 
-  simplytestable.services.stripeService:
+  SimplyTestable\ApiBundle\Services\StripeService:
     class:   SimplyTestable\ApiBundle\Services\StripeService
     arguments:
         apiKey: "%stripe_key%"
@@ -218,7 +218,7 @@ services:
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
-        stripeService: "@simplytestable.services.stripeservice"
+        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:
@@ -231,7 +231,7 @@ services:
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
-        stripeService: "@simplytestable.services.stripeservice"
+        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
@@ -243,7 +243,7 @@ services:
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
-        stripeService: "@simplytestable.services.stripeservice"
+        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
@@ -255,7 +255,7 @@ services:
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
-        stripeService: "@simplytestable.services.stripeservice"
+        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:
@@ -278,7 +278,7 @@ services:
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
-        stripeService: "@simplytestable.services.stripeservice"
+        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         dispatcher: "@event_dispatcher"
     tags:
@@ -440,7 +440,7 @@ services:
     arguments:
       tokenStorage: '@security.token_storage'
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-      stripeService: '@simplytestable.services.stripeservice'
+      stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
       jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
       teamInviteService: '@simplytestable.services.teaminviteservice'
       teamService: '@simplytestable.services.teamservice'
