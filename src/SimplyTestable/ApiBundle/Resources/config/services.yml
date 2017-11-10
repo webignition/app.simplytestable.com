@@ -418,7 +418,7 @@ services:
   SimplyTestable\ApiBundle\Services\JobConfigurationFactory:
     class:   SimplyTestable\ApiBundle\Services\JobConfigurationFactory
 
-  simplytestable.services.request.factory.job.list:
+  SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory:
     class:   SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory
     arguments:
         requestStack: '@request_stack'

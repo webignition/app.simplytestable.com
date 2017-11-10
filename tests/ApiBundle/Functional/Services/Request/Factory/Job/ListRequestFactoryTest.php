@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services\Request\Factory\Job;
 
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -37,7 +38,7 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
 
         $this->setUser($user);
 
-        $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
+        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
         $jobListRequest = $jobListRequestFactory->create();
 
         $this->assertEquals($expectedUrlFilter, $jobListRequest->getUrlFilter());
@@ -176,7 +177,7 @@ class ListRequestFactoryTest extends AbstractBaseTestCase
 
         $this->setUser($user);
 
-        $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
+        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
         $jobListRequest = $jobListRequestFactory->create();
 
         /* @var CrawlJobContainer[] $crawlJobContainers */

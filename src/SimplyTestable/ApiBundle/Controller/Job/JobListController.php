@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use SimplyTestable\ApiBundle\Services\JobListService;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,7 @@ class JobListController extends Controller
      */
     public function listAction($limit = null, $offset = null)
     {
-        $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
+        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
         $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
         $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
         $jobListService = $this->container->get(JobListService::class);
@@ -50,7 +51,7 @@ class JobListController extends Controller
      */
     public function countAction()
     {
-        $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
+        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
         $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
 
         $jobListRequest = $jobListRequestFactory->create();
@@ -67,7 +68,7 @@ class JobListController extends Controller
      */
     public function websitesAction()
     {
-        $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
+        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
         $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
 
         $jobListRequest = $jobListRequestFactory->create();
