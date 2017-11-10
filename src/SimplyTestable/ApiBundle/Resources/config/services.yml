@@ -44,7 +44,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-        taskTypeService: "@simplytestable.services.tasktypeservice"
+        taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
 
   SimplyTestable\ApiBundle\Services\JobListService:
     class:  SimplyTestable\ApiBundle\Services\JobListService
@@ -100,7 +100,7 @@ services:
         urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
 
-  simplytestable.services.tasktypeservice:
+  SimplyTestable\ApiBundle\Services\TaskTypeService:
     class:  SimplyTestable\ApiBundle\Services\TaskTypeService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
@@ -378,7 +378,7 @@ services:
     arguments:
         requestStack: "@request_stack"
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        taskTypeService: "@simplytestable.services.tasktypeservice"
+        taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
 
   simplytestable.services.urlresolver:
@@ -469,7 +469,7 @@ services:
     class: SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService
     arguments:
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      taskTypeService: '@simplytestable.services.tasktypeservice'
+      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
 
   simplytestable.services.taskpostprocessor.urldiscovery:
     class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor

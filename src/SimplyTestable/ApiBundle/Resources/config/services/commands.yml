@@ -87,7 +87,7 @@ services:
   simplytestable.command.reporting.getoutputidsforerror:
     class:  SimplyTestable\ApiBundle\Command\Reporting\GetOutputIdsForErrorCommand
     arguments:
-      taskTypeService: '@simplytestable.services.tasktypeservice'
+      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
@@ -95,7 +95,7 @@ services:
   simplytestable.command.reporting.gettoperrors:
     class:  SimplyTestable\ApiBundle\Command\Reporting\GetTopErrorsCommand
     arguments:
-      taskTypeService: '@simplytestable.services.tasktypeservice'
+      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
@@ -241,7 +241,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
-      taskTypeService: '@simplytestable.services.tasktypeservice'
+      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
     tags:
       - { name: console.command }
 

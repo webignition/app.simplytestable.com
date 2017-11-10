@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +33,7 @@ class TaskController extends Controller
         $resqueQueueService = $this->container->get(QueueService::class);
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $completeRequestFactory = $this->container->get('simplytestable.services.request.factory.task.complete');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
         $taskService = $this->container->get(TaskService::class);
         $jobService = $this->container->get(JobService::class);
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
@@ -144,7 +145,7 @@ class TaskController extends Controller
     public function taskTypeCountAction($task_type, $state_name)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         /* @var TaskRepository $taskRepository */
         $taskRepository = $entityManager->getRepository(Task::class);
