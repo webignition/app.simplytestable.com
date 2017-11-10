@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class JobFactoryTest extends AbstractBaseTestCase
@@ -248,7 +249,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'ids' => '1,2,3',
                     'serviceIds' => [
                         'simplytestable.services.applicationstateservice',
-                        'simplytestable.services.taskservice',
+                        TaskService::class,
                         'simplytestable.services.workertaskcancellationservice',
                         'logger',
                         'doctrine.orm.entity_manager',

@@ -39,7 +39,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskService = $this->container->get('simplytestable.services.taskservice');
+        $this->taskService = $this->container->get(TaskService::class);
 
         $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->createResolveAndPrepare();

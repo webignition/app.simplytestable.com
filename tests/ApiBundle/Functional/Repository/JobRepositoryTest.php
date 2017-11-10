@@ -553,7 +553,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
     private function createJobsForAllJobStatesWithTasksForAllTaskStates()
     {
         $jobService = $this->container->get('simplytestable.services.jobservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $taskService = $this->container->get(TaskService::class);
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

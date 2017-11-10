@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,7 +32,7 @@ class TaskController extends Controller
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $completeRequestFactory = $this->container->get('simplytestable.services.request.factory.task.complete');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $taskService = $this->container->get(TaskService::class);
         $jobService = $this->container->get('simplytestable.services.jobservice');
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');

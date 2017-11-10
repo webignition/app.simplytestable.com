@@ -310,7 +310,7 @@ class JobController extends Controller
      */
     public function tasksAction(Request $request, $site_root_url, $test_id)
     {
-        $taskService = $this->container->get('simplytestable.services.taskservice');
+        $taskService = $this->container->get(TaskService::class);
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

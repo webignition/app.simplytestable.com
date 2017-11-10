@@ -58,7 +58,7 @@ services:
               - ids
             serviceIds:
               - simplytestable.services.applicationstateservice
-              - simplytestable.services.taskservice
+              - SimplyTestable\ApiBundle\Services\TaskService
               - simplytestable.services.workertaskcancellationservice
               - logger
               - doctrine.orm.entity_manager
