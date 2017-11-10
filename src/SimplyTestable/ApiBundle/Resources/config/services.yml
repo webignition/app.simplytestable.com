@@ -179,7 +179,7 @@ services:
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
-        urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
+        urlDiscoveryTaskService: '@SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService'
 
   SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
@@ -464,7 +464,7 @@ services:
     arguments:
       entityManager: '@doctrine.orm.entity_manager'
 
-  simplytestable.services.task.urldiscovery:
+  SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService:
     class: SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService
     arguments:
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
@@ -479,7 +479,7 @@ services:
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       jobService: '@SimplyTestable\ApiBundle\Services\JobService'
       entityManager: '@doctrine.orm.entity_manager'
-      urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
+      urlDiscoveryTaskService: '@SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService'
 
   simplytestable.services.taskpostprocessor.factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory

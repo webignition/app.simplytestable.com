@@ -23,7 +23,7 @@ class UrlDiscoveryTaskServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->urlDiscoveryTaskService = $this->container->get('simplytestable.services.task.urldiscovery');
+        $this->urlDiscoveryTaskService = $this->container->get(UrlDiscoveryTaskService::class);
     }
 
     /**
