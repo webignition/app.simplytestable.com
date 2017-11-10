@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -100,7 +101,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
     public function testCancelCrawlJob()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
@@ -169,7 +170,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
 
     public function testCancelParentOfCrawlJob()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);

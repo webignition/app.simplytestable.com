@@ -14,6 +14,7 @@ use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -82,7 +83,7 @@ class JobFactory
     public function createResolveAndPrepare($jobValues = [], $httpFixtures = [], $domain = self::DEFAULT_DOMAIN)
     {
         $httpClientService = $this->container->get(HttpClientService::class);
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerRepository = $entityManager->getRepository(Worker::class);
 
@@ -188,7 +189,7 @@ class JobFactory
     {
         $websiteService = $this->container->get(WebSiteService::class);
         $jobStartService = $this->container->get('simplytestable.services.job.startservice');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $tokenStorage = $this->container->get('security.token_storage');
         $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');

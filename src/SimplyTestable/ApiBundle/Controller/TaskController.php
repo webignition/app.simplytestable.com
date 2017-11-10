@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Services\StateService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -37,6 +38,7 @@ class TaskController extends Controller
         $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');
         $taskPostProcessorFactory = $this->container->get('simplytestable.services.taskpostprocessor.factory');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stateService = $this->container->get(StateService::class);
 
         /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
         $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
@@ -93,8 +95,6 @@ class TaskController extends Controller
             }
 
             if ($task->getType()->equals($urlDiscoveryTaskType)) {
-                $stateService = $this->container->get('simplytestable.services.stateservice');
-
                 if (JobService::COMPLETED_STATE === $task->getJob()->getState()->getName()) {
                     $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
 

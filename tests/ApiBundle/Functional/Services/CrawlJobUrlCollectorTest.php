@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
@@ -53,7 +54,7 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $this->urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $this->taskCompletedState = $stateService->get(TaskService::COMPLETED_STATE);
 
         $this->crawlJobContainer = $this->createCrawlJobContainer();

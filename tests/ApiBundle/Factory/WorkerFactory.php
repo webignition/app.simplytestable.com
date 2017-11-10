@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Factory;
 
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Services\StateService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class WorkerFactory
@@ -44,7 +45,7 @@ class WorkerFactory
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerRepository = $entityManager->getRepository(Worker::class);
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         /* @var Worker $worker */
         $worker = $workerRepository->findOneBy([

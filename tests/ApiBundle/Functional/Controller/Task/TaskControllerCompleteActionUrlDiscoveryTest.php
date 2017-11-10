@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -73,7 +74,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $jobInProgressState = $stateService->get(JobService::IN_PROGRESS_STATE);
 
         $this->crawlJob->setState($jobInProgressState);

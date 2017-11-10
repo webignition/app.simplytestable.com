@@ -9,7 +9,7 @@ services:
     arguments:
       resqueQueueService: '@simplytestable.services.resque.queueservice'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-      stateService: '@simplytestable.services.stateservice'
+      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
@@ -149,7 +149,7 @@ services:
       taskPreProcessorFactory: '@simplytestable.services.taskpreprocessor.factory'
       resqueQueueService: '@simplytestable.services.resque.queueservice'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-      stateService: '@simplytestable.services.stateservice'
+      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       workerTaskAssignmentService: '@simplytestable.services.workertaskassignmentservice'
       logger: '@logger'
     tags:
@@ -171,7 +171,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
-      stateService: '@simplytestable.services.stateservice'
+      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       resqueQueueService: '@simplytestable.services.resque.queueservice'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
     tags:
@@ -181,7 +181,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
-      stateService: '@simplytestable.services.stateservice'
+      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }

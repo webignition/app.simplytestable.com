@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Controller\WorkerController;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Tests\ApiBundle\Factory\WorkerFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -176,7 +177,7 @@ class WorkerControllerTest extends AbstractBaseTestCase
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
 
         $this->assertEmpty($workerActivationRequestRepository->findAll());

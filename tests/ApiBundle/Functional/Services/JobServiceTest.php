@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -79,7 +80,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $userFactory = new UserFactory($this->container);
         $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $user = $userFactory->create([
@@ -310,7 +311,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testIsState($stateName, $expectedIsFinished, $expectedIsNew, $expectedIsPreparing)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $state = $stateService->get($stateName);
 
         $job = $this->jobFactory->create();
@@ -400,7 +401,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testCancelFinishedJob($stateName)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $job = $this->jobFactory->create();
         $job->setState($stateService->get($stateName));
@@ -439,7 +440,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testCancel($jobValues, $resolveAndPrepare)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($resolveAndPrepare) {
@@ -568,7 +569,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
     public function testCancelIncompleteTasks()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $finishedTaskStates = [
@@ -645,7 +646,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testCompleteFinishedJob($stateName)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $job = $this->jobFactory->create();
 
@@ -693,7 +694,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
     public function testComplete()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $job = $this->jobFactory->createResolveAndPrepare();
         $this->assertEquals(JobService::QUEUED_STATE, $job->getState()->getName());
@@ -736,7 +737,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
 
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         /* @var Job[] $jobs */
         $jobs = [];
@@ -788,7 +789,7 @@ class JobServiceTest extends AbstractBaseTestCase
      */
     public function testRejectInWrongState($stateName)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $jobRejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
 
         $job = $this->jobFactory->create();

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +28,7 @@ class WorkerController extends Controller
         $workerRequestActivationService = $this->container->get(
             'simplytestable.services.workeractivationrequestservice'
         );
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $workerRepository = $entityManager->getRepository(Worker::class);
         $activationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
 

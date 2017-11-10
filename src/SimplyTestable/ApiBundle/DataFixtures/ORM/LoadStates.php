@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use SimplyTestable\ApiBundle\Services\StateService;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use SimplyTestable\ApiBundle\Entity\State;
@@ -60,7 +61,7 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
     public function load(ObjectManager $manager)
     {
         $stateRepository = $manager->getRepository(State::class);
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         foreach ($this->stateDetails as $name => $nextStateName) {
             $state = $stateRepository->findOneBy([

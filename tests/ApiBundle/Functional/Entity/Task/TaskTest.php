@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Entity\Task;
 
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -29,7 +30,7 @@ class TaskTest extends AbstractBaseTestCase
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $taskRepository = $entityManager->getRepository(Task::class);
 

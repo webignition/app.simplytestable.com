@@ -8,11 +8,11 @@ use SimplyTestable\ApiBundle\Resque\Job\ScheduledJob\ExecuteJob;
 use SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob;
 use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
 use SimplyTestable\ApiBundle\Resque\Job\Task\CancelCollectionJob;
-use SimplyTestable\ApiBundle\Resque\Job\Task\CancelJob;
 use SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob;
 use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
+use SimplyTestable\ApiBundle\Services\StateService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class JobFactoryTest extends AbstractBaseTestCase
@@ -231,7 +231,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.taskpreprocessor.factory',
                         'simplytestable.services.resque.queueservice',
                         'simplytestable.services.resque.jobfactory',
-                        'simplytestable.services.stateservice',
+                        StateService::class,
                         'simplytestable.services.workertaskassignmentservice',
                         'logger',
                     ],

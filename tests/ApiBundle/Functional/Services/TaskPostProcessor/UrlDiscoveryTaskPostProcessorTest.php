@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Services\TaskPostProcessor;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -86,7 +87,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
      */
     public function testProcessFailure($taskStateName, $taskOutputValues)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
 
         $userFactory = new UserFactory($this->container);
@@ -147,7 +148,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $expectedAmmendmentReason,
         $expectedTaskStateNames
     ) {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
@@ -291,7 +292,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $taskValuesCollection,
         $expectedTaskValuesCollection
     ) {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');

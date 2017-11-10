@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -49,7 +50,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
     {
         $websiteService = $this->container->get(WebSiteService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
 
         $userFactory = new UserFactory($this->container);
@@ -155,8 +156,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $keyStatesNumerically,
         $expectedCrawlJobContainerIndices
     ) {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $stateService = $this->container->get(StateService::class);
         $websiteService = $this->container->get(WebSiteService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

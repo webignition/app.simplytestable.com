@@ -48,7 +48,7 @@ services:
               - simplytestable.services.taskpreprocessor.factory
               - simplytestable.services.resque.queueservice
               - simplytestable.services.resque.jobfactory
-              - simplytestable.services.stateservice
+              - SimplyTestable\ApiBundle\Services\StateService
               - simplytestable.services.workertaskassignmentservice
               - logger
           task-cancel-collection:
