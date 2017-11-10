@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Services\TaskPreProcessor;
 use Guzzle\Http\Message\Request;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -558,7 +559,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
 
     public function testProcessSettingHttpProperties()
     {
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
 
         $job = $this->jobFactory->createResolveAndPrepare([
             JobFactory::KEY_TEST_TYPES => [

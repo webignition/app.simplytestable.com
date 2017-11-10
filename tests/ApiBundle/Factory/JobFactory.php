@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Factory;
 
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Controller\Job\JobController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
@@ -9,6 +10,7 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -78,7 +80,7 @@ class JobFactory
      */
     public function createResolveAndPrepare($jobValues = [], $httpFixtures = [], $domain = self::DEFAULT_DOMAIN)
     {
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerRepository = $entityManager->getRepository(Worker::class);
@@ -197,6 +199,7 @@ class JobFactory
             }
         }
 
+        /* @var Mock|TokenInterface $token */
         $token = \Mockery::mock(TokenInterface::class);
         $token
             ->shouldReceive('getUser')
@@ -276,7 +279,7 @@ class JobFactory
      */
     public function resolve(Job $job, $httpFixtures = [])
     {
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
         $websiteResolutionService = $this->container->get('simplytestable.services.jobwebsiteresolutionservice');
 
         if (empty($httpFixtures)) {
@@ -299,7 +302,7 @@ class JobFactory
      */
     public function prepare(Job $job, $httpFixtures = [], $domain = null)
     {
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
 
         if (empty($httpFixtures)) {

@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Command;
 
 use Guzzle\Http\Message\EntityEnclosingRequest;
 use Guzzle\Http\Message\Response;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
@@ -79,7 +80,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
         $expectedResponses,
         $expectedTaskStateNames
     ) {
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->createResolveAndPrepare([

@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional;
 
 use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
@@ -42,7 +43,7 @@ abstract class AbstractBaseTestCase extends WebTestCase
      */
     protected function queueHttpFixtures($fixtures)
     {
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
 
         foreach ($fixtures as $fixture) {
             $httpClientService->queueFixture($fixture);

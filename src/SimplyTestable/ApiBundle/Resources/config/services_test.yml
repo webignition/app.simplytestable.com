@@ -1,5 +1,5 @@
 services:
-  simplytestable.services.httpClientService:
+  SimplyTestable\ApiBundle\Services\HttpClientService:
     class:  SimplyTestable\ApiBundle\Services\TestHttpClientService
     arguments:
         curlOptions: "%curl_options%"

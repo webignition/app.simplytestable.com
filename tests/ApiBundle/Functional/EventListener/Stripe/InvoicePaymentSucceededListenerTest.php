@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -24,7 +25,7 @@ class InvoicePaymentSucceededListenerTest extends AbstractStripeEventListenerTes
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
         $this->queueHttpFixtures($httpFixtures);

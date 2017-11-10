@@ -6,7 +6,7 @@ services:
   simplytestable.session.handler:
     class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
 
-  simplytestable.services.httpClientService:
+  SimplyTestable\ApiBundle\Services\HttpClientService:
     class:  SimplyTestable\ApiBundle\Services\HttpClientService
     arguments:
         curlOptions: "%curl_options%"
@@ -20,7 +20,7 @@ services:
     class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
     arguments:
         jobService: "@simplytestable.services.jobservice"
-        httpClientService: "@simplytestable.services.httpClientService"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
         urlResolver: '@simplytestable.services.urlresolver'
         stateService: '@simplytestable.services.stateservice'
@@ -67,7 +67,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         logger: "@logger"
         stateService: "@simplytestable.services.stateservice"
-        httpClientService: "@simplytestable.services.httpClientService"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         urlService: "@simplytestable.services.urlService"
 
   simplytestable.services.urlService:
@@ -86,7 +86,7 @@ services:
     arguments:
         logger: "@logger"
         stateService: "@simplytestable.services.stateservice"
-        httpClientService: "@simplytestable.services.httpClientService"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         urlService: "@simplytestable.services.urlService"
         taskService: "@simplytestable.services.taskservice"
         entityManager: "@doctrine.orm.entity_manager"
@@ -96,7 +96,7 @@ services:
     arguments:
         logger: "@logger"
         stateService: "@simplytestable.services.stateservice"
-        httpClientService: "@simplytestable.services.httpClientService"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         urlService: "@simplytestable.services.urlService"
         taskService: "@simplytestable.services.taskservice"
 
@@ -186,7 +186,7 @@ services:
     arguments:
       taskService: '@simplytestable.services.taskservice'
       webResourceService: '@simplytestable.services.webresourceservice'
-      httpClientService: '@simplytestable.services.httpclientservice'
+      httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
       logger: '@logger'
       stateService: '@simplytestable.services.stateservice'
       entityManager: "@doctrine.orm.entity_manager"
@@ -215,7 +215,7 @@ services:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
-        httpClientService: "@simplytestable.services.httpclientservice"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
@@ -228,7 +228,7 @@ services:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
-        httpClientService: "@simplytestable.services.httpclientservice"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
@@ -240,7 +240,7 @@ services:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
-        httpClientService: "@simplytestable.services.httpclientservice"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
@@ -252,7 +252,7 @@ services:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
-        httpClientService: "@simplytestable.services.httpclientservice"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
@@ -265,7 +265,7 @@ services:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
-        httpClientService: "@simplytestable.services.httpclientservice"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
     tags:
@@ -275,7 +275,7 @@ services:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener
     arguments:
         stripeEventService: "@simplytestable.services.stripeeventservice"
-        httpClientService: "@simplytestable.services.httpclientservice"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
@@ -337,7 +337,7 @@ services:
     arguments:
         entityManager: '@doctrine.orm.entity_manager'
         stateService: '@simplytestable.services.stateservice'
-        httpClientService: "@simplytestable.services.httpClientService"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         urlService: "@simplytestable.services.urlService"
         logger: "@logger"
 
@@ -384,12 +384,12 @@ services:
   simplytestable.services.urlresolver:
     class:  SimplyTestable\ApiBundle\Services\UrlResolver
     arguments:
-        httpClientService: "@simplytestable.services.httpClientService"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
 
   simplytestable.services.urlfinder:
     class:  SimplyTestable\ApiBundle\Services\UrlFinder
     arguments:
-        httpClientService: "@simplytestable.services.httpClientService"
+        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         webResourceService: "@simplytestable.services.webresourceservice"
         sitemapFactory: '@simplytestable.services.sitemapfactory'
 

@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Command;
 
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\UrlFinder;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\AtomFeedFactory;
@@ -38,7 +39,7 @@ class UrlFinderTest extends AbstractBaseTestCase
         $website = $websiteService->get($websiteUrl);
 
         $urlFinder = new UrlFinder(
-            $this->container->get('simplytestable.services.httpclientservice'),
+            $this->container->get(HttpClientService::class),
             $webResourceService,
             $this->container->get('simplytestable.services.sitemapfactory'),
             $sitemapRetrieverTimeout

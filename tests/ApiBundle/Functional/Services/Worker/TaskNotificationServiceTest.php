@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Services\Resque;
 use Guzzle\Http\Message\Request;
 use Guzzle\Http\Message\Response;
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService;
 use Tests\ApiBundle\Factory\CurlExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -49,7 +50,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
 
         $this->taskNotificationService->notify();
 
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
         $httpClientService->get();
 
         $httpTransactions = $httpClientService->getHistoryPlugin()->getAll();
