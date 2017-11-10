@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\ConstraintFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -240,7 +241,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
     {
         $jobFactory = new JobFactory($this->container);
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
@@ -338,7 +339,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $planFactory = new PlanFactory($this->container);
         $jobFactory = new JobFactory($this->container);
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');

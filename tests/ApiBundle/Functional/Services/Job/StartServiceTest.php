@@ -14,6 +14,7 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -175,7 +176,7 @@ class StartServiceTest extends AbstractBaseTestCase
 
     public function testReuseExistingJob()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $user = $userService->getPublicUser();
@@ -303,7 +304,7 @@ class StartServiceTest extends AbstractBaseTestCase
             'simplytestable.services.jobuseraccountplanenforcementservice',
             'simplytestable.services.jobtypeservice',
             JobService::class,
-            'simplytestable.services.userservice',
+            UserService::class,
             'simplytestable.services.resque.queueservice',
             StateService::class,
             'simplytestable.services.useraccountplanservice',
@@ -327,7 +328,7 @@ class StartServiceTest extends AbstractBaseTestCase
             $requiredServices['simplytestable.services.jobuseraccountplanenforcementservice'],
             $requiredServices['simplytestable.services.jobtypeservice'],
             $requiredServices[JobService::class],
-            $requiredServices['simplytestable.services.userservice'],
+            $requiredServices[UserService::class],
             $requiredServices['simplytestable.services.resque.queueservice'],
             $requiredServices[StateService::class],
             $requiredServices['simplytestable.services.useraccountplanservice'],

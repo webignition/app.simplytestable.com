@@ -319,7 +319,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
         $jobUserAccountPlanEnforcementService = $this->container->get(
             'simplytestable.services.jobuseraccountplanenforcementservice'
         );
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

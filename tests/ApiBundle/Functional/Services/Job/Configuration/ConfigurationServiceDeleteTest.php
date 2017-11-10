@@ -5,12 +5,13 @@ namespace Tests\ApiBundle\Functional\Services\Job\Configuration;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserService;
 
 class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
 {
     public function testDeleteInvalidLabel()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $this->expectException(JobConfigurationServiceException::class);
@@ -22,7 +23,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
 
     public function testDeleteInUseByScheduledJob()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
 
         $this->setUser($userService->getPublicUser());
@@ -52,7 +53,7 @@ class ConfigurationServiceDeleteTest extends AbstractConfigurationServiceTest
 
     public function testDeleteSuccess()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $this->setUser($userService->getPublicUser());
 

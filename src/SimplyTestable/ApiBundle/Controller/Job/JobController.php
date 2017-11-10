@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,7 +35,7 @@ class JobController extends Controller
     public function latestAction($site_root_url)
     {
         $websiteService = $this->get(WebSiteService::class);
-        $userService = $this->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $teamService = $this->get('simplytestable.services.teamservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
@@ -146,7 +147,7 @@ class JobController extends Controller
      */
     private function setIsPublic($siteRootUrl, $testId, $isPublic)
     {
-        $userService = $this->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

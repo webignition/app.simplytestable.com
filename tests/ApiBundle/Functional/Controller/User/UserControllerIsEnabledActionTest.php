@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\User;
 
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -9,7 +10,7 @@ class UserControllerIsEnabledActionTest extends AbstractUserControllerTest
 {
     public function testIsEnabledActionGetRequest()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser([

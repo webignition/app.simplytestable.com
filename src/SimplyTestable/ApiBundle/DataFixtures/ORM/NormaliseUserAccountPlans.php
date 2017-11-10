@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
@@ -30,7 +31,7 @@ class NormaliseUserAccountPlans extends AbstractFixture implements OrderedFixtur
     public function load(ObjectManager $manager)
     {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $userAccountPlanRepository = $manager->getRepository(UserAccountPlan::class);
 
         /* @var UserAccountPlan[] $userAccountPlans */

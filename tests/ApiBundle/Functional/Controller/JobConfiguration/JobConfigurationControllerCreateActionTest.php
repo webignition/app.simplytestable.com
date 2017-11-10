@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -140,7 +141,7 @@ class JobConfigurationControllerCreateActionTest extends AbstractBaseTestCase
      */
     public function testCreateActionSpecialUser($userEmail)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->findUserByEmail($userEmail);
         $this->setUser($user);

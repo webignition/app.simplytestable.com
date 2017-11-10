@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,7 +50,7 @@ class UserController extends Controller
      */
     public function getTokenAction($email_canonical)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->findUserByEmail($email_canonical);
         if (empty($user)) {
@@ -68,7 +69,7 @@ class UserController extends Controller
      */
     public function isEnabledAction($email_canonical)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $user = $userService->findUserByEmail($email_canonical);
 
         if (is_null($user)) {
@@ -89,7 +90,7 @@ class UserController extends Controller
      */
     public function existsAction($email_canonical)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         if ($userService->exists($email_canonical)) {
             return new Response('', 200);
         }
@@ -105,7 +106,7 @@ class UserController extends Controller
     public function hasInvitesAction($email_canonical)
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->findUserByEmail($email_canonical);
 

@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Command\ScheduledJob\ExecuteCommand;
 
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand;
@@ -87,7 +88,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
 
     public function testRunWithPlanConstraintLimitReached()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');

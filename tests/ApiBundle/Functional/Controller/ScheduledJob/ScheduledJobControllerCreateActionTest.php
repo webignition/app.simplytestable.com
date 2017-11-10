@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -123,7 +124,7 @@ class ScheduledJobControllerCreateActionTest extends AbstractBaseTestCase
      */
     public function testCreateActionSpecialUser($userEmail)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->findUserByEmail($userEmail);
         $this->setUser($user);

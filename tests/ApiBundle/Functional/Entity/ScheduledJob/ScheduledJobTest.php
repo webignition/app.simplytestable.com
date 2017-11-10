@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Entity\ScheduledJob;
 
+use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
@@ -43,7 +44,7 @@ abstract class ScheduledJobTest extends AbstractBaseTestCase
      */
     protected function getJobConfiguration()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $websiteService = $this->container->get(WebSiteService::class);
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 

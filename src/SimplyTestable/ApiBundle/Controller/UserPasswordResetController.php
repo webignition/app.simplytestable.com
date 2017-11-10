@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -20,7 +21,7 @@ class UserPasswordResetController extends UserController
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();

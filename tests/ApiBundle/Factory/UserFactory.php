@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Factory;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserFactory
@@ -55,7 +56,7 @@ class UserFactory
      */
     public function create($userValues = [])
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         foreach ($this->defaultUserValues as $key => $value) {
             if (!array_key_exists($key, $userValues)) {
@@ -128,7 +129,7 @@ class UserFactory
      */
     public function createPublicAndPrivateUserSet()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $users = [
             'public' => $userService->getPublicUser(),

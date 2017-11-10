@@ -53,7 +53,7 @@ services:
         teamService: "@simplytestable.services.teamservice"
         jobListQueryBuilderFactory: '@simplytestable.services.joblistquerybuilderfactory'
 
-  simplytestable.services.userservice:
+  SimplyTestable\ApiBundle\Services\UserService:
     class:  SimplyTestable\ApiBundle\Services\UserService
     arguments:
         userManager: '@fos_user.user_manager'
@@ -125,7 +125,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\UserAccountPlanService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
-        userService: "@simplytestable.services.userservice"
+        userService: '@SimplyTestable\ApiBundle\Services\UserService'
         stripeService: "@simplytestable.services.stripeservice"
         teamService: "@simplytestable.services.teamservice"
         defaultTrialPeriod: "%default_trial_period%"
@@ -155,7 +155,7 @@ services:
         jobTypeService: "@simplytestable.services.jobtypeservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         crawlJobContainerService: "@simplytestable.services.crawljobcontainerservice"
-        userService: "@simplytestable.services.userservice"
+        userService: '@SimplyTestable\ApiBundle\Services\UserService'
         urlFinder: '@simplytestable.services.urlfinder'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
@@ -363,7 +363,7 @@ services:
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         jobTypeService: "@simplytestable.services.jobtypeservice"
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        userService: "@simplytestable.services.userservice"
+        userService: '@SimplyTestable\ApiBundle\Services\UserService'
         resqueQueueService: "@simplytestable.services.resque.queueservice"
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'

@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\User;
 
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -10,7 +11,7 @@ class UserControllerHasInvitesActionTest extends AbstractUserControllerTest
     public function testHasInvitesActionGetRequest()
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();
@@ -44,7 +45,7 @@ class UserControllerHasInvitesActionTest extends AbstractUserControllerTest
     {
         $this->expectException(NotFoundHttpException::class);
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $publicUser = $userService->getPublicUser();
 
         $this->userController->hasInvitesAction($publicUser->getEmail());

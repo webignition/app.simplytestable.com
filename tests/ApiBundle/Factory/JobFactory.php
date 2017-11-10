@@ -16,6 +16,7 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -70,7 +71,7 @@ class JobFactory
     {
         $this->container = $container;
 
-        $userService = $container->get('simplytestable.services.userservice');
+        $userService = $container->get(UserService::class);
         $this->defaultJobValues[self::KEY_USER] = $userService->getPublicUser();
     }
 

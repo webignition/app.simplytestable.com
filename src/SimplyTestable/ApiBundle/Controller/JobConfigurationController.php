@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +27,7 @@ class JobConfigurationController extends Controller
     public function createAction(Request $request)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');

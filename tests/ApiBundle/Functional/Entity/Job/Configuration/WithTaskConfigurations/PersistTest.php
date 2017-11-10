@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Entity\Job\Configuration\WithTaskConfigurat
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
@@ -19,7 +20,7 @@ class PersistTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');

@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -27,7 +28,7 @@ class HappyPathTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
 

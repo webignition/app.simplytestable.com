@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\TeamInvite;
 
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -9,7 +10,7 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
 {
     public function testGetByTokenActionGetRequest()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         $invitee = $this->userFactory->create([
@@ -43,7 +44,7 @@ class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControl
 
     public function testGetByTokenActionSuccess()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         $invitee = $this->userFactory->create([

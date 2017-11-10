@@ -108,6 +108,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
     public function testCompleteActionNoMatchingTasks($postData, $routeParams)
     {
         $stateService = $this->container->get(StateService::class);
+        $userService = $this->container->get(UserService::class);
 
         $this->expectException(GoneHttpException::class);
 
@@ -117,7 +118,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
             'testTypes' => ['html validation',],
             'testTypeOptions' => [],
             'parameters' => [],
-            'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()
+            'user' => $userService->getPublicUser()
         ]);
 
         $this->setJobTaskStates(
@@ -702,7 +703,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
         $jobUserAccountPlanEnforcementService = $this->container->get(
             'simplytestable.services.jobuseraccountplanenforcementservice'
         );
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

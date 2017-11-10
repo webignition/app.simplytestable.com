@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +23,7 @@ class UserCreationController extends Controller
     public function createAction(Request $request)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $userPostActivationPropertiesService = $this->container->get(
             'simplytestable.services.job.userpostactivationpropertiesservice'
@@ -95,7 +96,7 @@ class UserCreationController extends Controller
     public function activateAction($token = null)
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');

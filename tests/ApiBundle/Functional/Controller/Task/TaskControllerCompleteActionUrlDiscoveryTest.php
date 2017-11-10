@@ -41,6 +41,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
         parent::setUp();
 
         $jobFactory = new JobFactory($this->container);
+        $userService = $this->container->get(UserService::class);
 
         $job = $jobFactory->createResolveAndPrepare([
             'type' => JobTypeService::FULL_SITE_NAME,
@@ -48,7 +49,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
             'testTypes' => ['css validation',],
             'testTypeOptions' => [],
             'parameters' => [],
-            'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()
+            'user' => $userService->getPublicUser()
         ], [
             'resolve' => [
                 Response::fromMessage('HTTP/1.1 200 OK'),

@@ -8,7 +8,7 @@ class UserControllerExistsActionTest extends AbstractUserControllerTest
 {
     public function testExistsActionGetRequest()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $publicUser = $userService->getPublicUser();
         $adminUser = $userService->getAdminUser();
 
@@ -37,7 +37,7 @@ class UserControllerExistsActionTest extends AbstractUserControllerTest
 
     public function testExistsActionSuccess()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $publicUser = $userService->getPublicUser();
 
         $response = $this->userController->existsAction($publicUser->getEmail());

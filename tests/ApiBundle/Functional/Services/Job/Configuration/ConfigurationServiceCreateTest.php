@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 
 class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
@@ -26,7 +27,7 @@ class ConfigurationServiceCreateTest extends AbstractConfigurationServiceTest
         $this->expectExceptionMessage($expectedExceptionMessage);
         $this->expectExceptionCode($expectedExceptionCode);
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $configurationValuesModel = $this->createJobConfigurationValuesModel($configurationValues);

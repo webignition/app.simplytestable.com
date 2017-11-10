@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -37,7 +38,7 @@ class UserEmailChangeRequestServiceTest extends AbstractBaseTestCase
             'simplytestable.services.useremailchangerequestservice'
         );
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->user = $userService->getPublicUser();
     }
 

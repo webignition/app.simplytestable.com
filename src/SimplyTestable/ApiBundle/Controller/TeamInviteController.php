@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,7 @@ class TeamInviteController extends Controller
      */
     public function getAction(Request $request, $invitee_email)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
@@ -190,7 +191,7 @@ class TeamInviteController extends Controller
      */
     public function removeAction($invitee_email)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -285,7 +286,7 @@ class TeamInviteController extends Controller
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $requestData = $request->request;

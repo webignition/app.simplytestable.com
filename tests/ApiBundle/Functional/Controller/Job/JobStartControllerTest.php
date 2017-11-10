@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -110,7 +111,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
 
     public function testStartActionUnroutableWebsite()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
@@ -141,7 +142,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
 
     public function testStartActionAccountPlanLimitReached()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
@@ -186,7 +187,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
 
     public function testStartActionSuccess()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
 
@@ -265,7 +266,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
      */
     public function testRetestAction($jobValues)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $jobFactory = new JobFactory($this->container);
 
         $jobValues[JobFactory::KEY_STATE] = JobService::COMPLETED_STATE;

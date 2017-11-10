@@ -52,7 +52,7 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
      */
     public function testRun($stripeApiResponses, $args, $expectedStripeEventData)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $stripeEventRepository = $entityManager->getRepository(Event::class);
 
