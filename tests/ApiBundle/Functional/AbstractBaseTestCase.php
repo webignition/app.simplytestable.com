@@ -151,7 +151,9 @@ abstract class AbstractBaseTestCase extends WebTestCase
     {
         parent::tearDown();
 
-        $this->container->get('doctrine')->getConnection()->close();
+        if (!is_null($this->container)) {
+            $this->container->get('doctrine')->getConnection()->close();
+        }
 
         $refl = new \ReflectionObject($this);
         foreach ($refl->getProperties() as $prop) {
