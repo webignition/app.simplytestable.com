@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -28,7 +29,7 @@ class JobConfigurationController extends Controller
      */
     public function createAction(Request $request)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $userService = $this->container->get(UserService::class);
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get(WebSiteService::class);
@@ -121,7 +122,7 @@ class JobConfigurationController extends Controller
      */
     public function deleteAction($label)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
@@ -193,7 +194,7 @@ class JobConfigurationController extends Controller
      */
     public function updateAction(Request $request, $label)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get(TaskTypeService::class);

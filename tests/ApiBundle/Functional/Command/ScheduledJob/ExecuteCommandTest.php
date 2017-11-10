@@ -31,7 +31,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $resqueQueueService = $this->container->get(QueueService::class);

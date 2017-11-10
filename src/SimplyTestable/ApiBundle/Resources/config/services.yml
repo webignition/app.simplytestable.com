@@ -115,7 +115,7 @@ services:
     arguments:
       entityManager: '@doctrine.orm.entity_manager'
 
-  simplytestable.services.applicationStateService:
+  SimplyTestable\ApiBundle\Services\ApplicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
     arguments:
       resourceLocator: '@simplytestable.services.resourcelocator'
@@ -431,7 +431,7 @@ services:
   simplytestable.services.applicationstatusfactory:
     class:   SimplyTestable\ApiBundle\Services\ApplicationStatusFactory
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       entityManager: '@doctrine.orm.entity_manager'
 

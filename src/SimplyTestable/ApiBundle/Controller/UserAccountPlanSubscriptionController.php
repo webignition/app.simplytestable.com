@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Stripe\Error\Card as StripeCardError;
 use Stripe\Error\Authentication as StripeAuthenticationError;
@@ -22,7 +23,7 @@ class UserAccountPlanSubscriptionController extends Controller
      */
     public function subscribeAction($email_canonical, $plan_name)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $accountPlanService = $this->container->get(AccountPlanService::class);
@@ -76,7 +77,7 @@ class UserAccountPlanSubscriptionController extends Controller
      */
     public function associateCardAction($email_canonical, $stripe_card_token)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $stripeService = $this->container->get('simplytestable.services.stripeservice');

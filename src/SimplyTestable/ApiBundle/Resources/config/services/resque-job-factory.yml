@@ -10,7 +10,7 @@ services:
             requiredArgs:
               - id
             serviceIds:
-              - simplytestable.services.applicationstateservice
+              - SimplyTestable\ApiBundle\Services\ApplicationStateService
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - simplytestable.services.jobpreparationservice
@@ -27,7 +27,7 @@ services:
             requiredArgs:
               - id
             serviceIds:
-              - simplytestable.services.applicationstateservice
+              - SimplyTestable\ApiBundle\Services\ApplicationStateService
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
@@ -43,7 +43,7 @@ services:
             requiredArgs:
               - ids
             serviceIds:
-              - simplytestable.services.applicationstateservice
+              - SimplyTestable\ApiBundle\Services\ApplicationStateService
               - doctrine.orm.entity_manager
               - simplytestable.services.taskpreprocessor.factory
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
@@ -57,7 +57,7 @@ services:
             requiredArgs:
               - ids
             serviceIds:
-              - simplytestable.services.applicationstateservice
+              - SimplyTestable\ApiBundle\Services\ApplicationStateService
               - SimplyTestable\ApiBundle\Services\TaskService
               - SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
               - logger
@@ -68,7 +68,7 @@ services:
             requiredArgs:
               - id
             serviceIds:
-              - simplytestable.services.applicationstateservice
+              - SimplyTestable\ApiBundle\Services\ApplicationStateService
               - SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
               - doctrine.orm.entity_manager
           stripe-event:
@@ -77,7 +77,7 @@ services:
             requiredArgs:
               - stripeId
             serviceIds:
-              - simplytestable.services.applicationstateservice
+              - SimplyTestable\ApiBundle\Services\ApplicationStateService
               - doctrine.orm.entity_manager
               - logger
               - event_dispatcher
@@ -92,7 +92,7 @@ services:
             requiredArgs:
               - id
             serviceIds:
-              - simplytestable.services.applicationstateservice
+              - SimplyTestable\ApiBundle\Services\ApplicationStateService
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - doctrine.orm.entity_manager

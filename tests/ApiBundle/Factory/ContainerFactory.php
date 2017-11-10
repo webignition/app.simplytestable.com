@@ -58,7 +58,7 @@ class ContainerFactory
             ->andReturn('test');
 
         return static::create([
-            'simplytestable.services.applicationstateservice' => $applicationStateService,
+            ApplicationStateService::class => $applicationStateService,
             'kernel' => $kernel,
         ]);
     }

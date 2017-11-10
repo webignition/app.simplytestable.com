@@ -33,7 +33,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([
@@ -81,7 +81,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
 
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var LoggerInterface $logger */

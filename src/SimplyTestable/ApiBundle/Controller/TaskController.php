@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -29,7 +30,7 @@ class TaskController extends Controller
      */
     public function completeAction()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $resqueQueueService = $this->container->get(QueueService::class);
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $completeRequestFactory = $this->container->get('simplytestable.services.request.factory.task.complete');

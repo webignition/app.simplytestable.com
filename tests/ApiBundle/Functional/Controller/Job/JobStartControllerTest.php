@@ -98,7 +98,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
         $request = new Request();
         $this->container->get('request_stack')->push($request);
 
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
