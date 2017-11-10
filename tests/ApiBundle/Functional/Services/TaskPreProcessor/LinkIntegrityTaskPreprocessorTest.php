@@ -46,9 +46,7 @@ class LinkIntegrityTaskPreprocessorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->linkIntegrityTaskPreProcessor = $this->container->get(
-            'simplytestable.services.taskpreprocessor.linkintegrity'
-        );
+        $this->linkIntegrityTaskPreProcessor = $this->container->get(LinkIntegrityTaskPreProcessor::class);
 
         $this->jobFactory = new JobFactory($this->container);
         $this->taskFactory = new TaskFactory($this->container);

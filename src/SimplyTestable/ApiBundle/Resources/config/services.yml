@@ -181,7 +181,7 @@ services:
         jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
         urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
 
-  simplytestable.services.taskpreprocessor.linkintegrity:
+  SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
     arguments:
       taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
@@ -195,7 +195,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
     arguments:
       taskPreprocessors:
-        - '@simplytestable.services.taskpreprocessor.linkintegrity'
+        - '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
 
   simplytestable.services.webResourceService:
     class:  webignition\WebResource\Service\Service
