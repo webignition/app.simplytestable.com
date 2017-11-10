@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Services\Team;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
+use SimplyTestable\ApiBundle\Services\Team\Service;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
@@ -27,7 +28,7 @@ class ServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->teamService = $this->container->get('simplytestable.services.teamservice');
+        $this->teamService = $this->container->get(Service::class);
         $this->userFactory = new UserFactory($this->container);
     }
 

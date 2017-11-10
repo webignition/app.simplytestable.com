@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -89,7 +90,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractBaseTestCase
 
     public function testDeleteActionInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
@@ -109,7 +110,7 @@ class JobConfigurationControllerDeleteActionTest extends AbstractBaseTestCase
 
     public function testDeleteActionJobConfigurationBelongsToScheduledJob()
     {
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $scheduledJobService->create(
             $this->jobConfiguration
         );

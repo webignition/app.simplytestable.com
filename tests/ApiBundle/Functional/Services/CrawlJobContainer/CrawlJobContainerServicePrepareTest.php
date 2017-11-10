@@ -5,7 +5,11 @@ namespace Tests\ApiBundle\Functional\Services\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\StateFactory;
 
 class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServiceTest
@@ -17,7 +21,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
      */
     public function testPrepareInWrongState($stateName)
     {
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
 
         $state = StateFactory::create($stateName);
 
@@ -106,9 +110,9 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
 
     public function testPrepare()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $stateService = $this->container->get(StateService::class);
+        $websiteService = $this->container->get(WebSiteService::class);
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         $user = $this->userFactory->create();
         $website = $websiteService->get('http://example.com/');

@@ -22,7 +22,7 @@ class ApplicationStateServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $this->applicationStateService = $this->container->get(ApplicationStateService::class);
     }
 
     /**

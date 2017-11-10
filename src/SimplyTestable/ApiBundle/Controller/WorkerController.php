@@ -4,6 +4,10 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,14 +24,12 @@ class WorkerController extends Controller
      */
     public function activateAction(Request $request)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-        $workerRequestActivationService = $this->container->get(
-            'simplytestable.services.workeractivationrequestservice'
-        );
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueJobFactory = $this->container->get(JobFactory::class);
+        $workerRequestActivationService = $this->container->get(WorkerActivationRequestService::class);
+        $stateService = $this->container->get(StateService::class);
         $workerRepository = $entityManager->getRepository(Worker::class);
         $activationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
 

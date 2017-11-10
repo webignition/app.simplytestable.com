@@ -6,6 +6,7 @@ use phpmock\mockery\PHPMockery;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -25,12 +26,12 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.stripe.event.updatedata');
+        $this->command = $this->container->get(UpdateDataCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
@@ -52,7 +53,7 @@ class UpdateDataCommandTest extends AbstractBaseTestCase
      */
     public function testRun($stripeApiResponses, $args, $expectedStripeEventData)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $stripeEventRepository = $entityManager->getRepository(Event::class);
 

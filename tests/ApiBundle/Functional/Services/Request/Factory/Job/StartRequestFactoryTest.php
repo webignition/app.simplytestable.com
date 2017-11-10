@@ -42,7 +42,7 @@ class StartRequestFactoryTest extends AbstractBaseTestCase
 
         $this->setUser($user);
 
-        $jobStartRequestFactory = $this->container->get('simplytestable.services.request.factory.job.start');
+        $jobStartRequestFactory = $this->container->get(StartRequestFactory::class);
         $jobStartRequest = $jobStartRequestFactory->create();
 
         $this->assertEquals($jobStartRequest->getUser(), $user);

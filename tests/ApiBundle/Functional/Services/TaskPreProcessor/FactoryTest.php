@@ -22,7 +22,7 @@ class FactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->factory = $this->container->get('simplytestable.services.taskpreprocessor.factory');
+        $this->factory = $this->container->get(Factory::class);
     }
 
     public function testGetLinkIntegrityTaskPreProcessor()

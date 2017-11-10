@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserAccountPlanFactory;
@@ -30,7 +31,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $this->userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $this->userFactory = new UserFactory($this->container);
     }
 
@@ -61,7 +62,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
         $expectedStripeCustomer,
         $expectedStartTrialPeriod
     ) {
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $accountPlanService = $this->container->get(AccountPlanService::class);
         $accountPlan = $accountPlanService->get($planName);
 
         StripeApiFixtureFactory::set($httpFixtures);
@@ -116,7 +117,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
      */
     public function testSubscribeActionNewPlanIsCurrentPlan($planName)
     {
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $accountPlanService = $this->container->get(AccountPlanService::class);
         $accountPlan = $accountPlanService->get($planName);
 
         $user = $this->userFactory->create([
@@ -153,7 +154,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
     public function testSubscribeActionChangePlan($httpFixtures, $currentPlanName, $planName, $expectedStartTrialPeriod)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $nonPremiumAccountPlan = new Plan();
         $nonPremiumAccountPlan->setName('non-premium');
@@ -438,7 +439,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
     public function testFindAllByPlan()
     {
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $this->userFactory->create([
             UserFactory::KEY_PLAN_NAME => 'personal',

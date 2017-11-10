@@ -6,7 +6,11 @@ use SimplyTestable\ApiBundle\Controller\UserCreationController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -54,7 +58,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
 
     public function testActivateActionInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
@@ -67,7 +71,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
 
     public function testCreateActionInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
@@ -145,7 +149,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
 
     public function testCreateActionExistingUserPasswordIsChanged()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
@@ -187,8 +191,8 @@ class UserCreationControllerTest extends AbstractBaseTestCase
         $expectedPlanName,
         $expectedPostActivationProperties
     ) {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userPostActivationPropertiesRepository = $entityManager->getRepository(UserPostActivationProperties::class);
 
@@ -318,7 +322,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
 
     public function testActivateActionPostRequest()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $publicUser = $userService->getPublicUser();
 
         $userFactory = new UserFactory($this->container);
@@ -390,12 +394,10 @@ class UserCreationControllerTest extends AbstractBaseTestCase
 
     public function testActivateActionSuccessHasPostActivationProperties()
     {
-        $userPostActivationPropertiesService = $this->container->get(
-            'simplytestable.services.job.userpostactivationpropertiesservice'
-        );
+        $userPostActivationPropertiesService = $this->container->get(UserPostActivationPropertiesService::class);
 
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $agencyAccountPlan = $accountPlanService->get('agency');
 

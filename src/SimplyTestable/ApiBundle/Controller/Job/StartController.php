@@ -5,6 +5,11 @@ namespace SimplyTestable\ApiBundle\Controller\Job;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstraint;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Job\StartService;
+use SimplyTestable\ApiBundle\Services\JobConfigurationFactory;
+use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,10 +27,10 @@ class StartController extends Controller
      */
     public function startAction()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $jobStartService = $this->container->get('simplytestable.services.job.startservice');
-        $jobStartRequestFactory = $this->container->get('simplytestable.services.request.factory.job.start');
-        $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $jobStartService = $this->container->get(StartService::class);
+        $jobStartRequestFactory = $this->container->get(StartRequestFactory::class);
+        $jobConfigurationFactory = $this->container->get(JobConfigurationFactory::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -60,7 +65,7 @@ class StartController extends Controller
      */
     public function retestAction(Request $request, $site_root_url, $test_id)
     {
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobService = $this->container->get(JobService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
 
@@ -129,13 +134,13 @@ class StartController extends Controller
         $reason,
         AccountPlanConstraint $constraint = null
     ) {
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobService = $this->container->get(JobService::class);
 
         $job = $jobService->create(
             $jobConfiguration
         );
 
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobService = $this->container->get(JobService::class);
 
         $jobService->reject($job, $reason, $constraint);
 

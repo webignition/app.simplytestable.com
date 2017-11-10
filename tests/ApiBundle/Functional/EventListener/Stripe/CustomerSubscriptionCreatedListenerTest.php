@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\CurlExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
@@ -23,8 +24,8 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
     public function testOnCustomerSubscriptionCreatedWebClientRequestFailure()
     {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $userService = $this->container->get(UserService::class);
 
         $this->queueHttpFixtures([
             CurlExceptionFactory::create('Operation timed out', 28),
@@ -58,7 +59,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
      */
     public function testOnCustomerSubscriptionCreatedWebClientSubscriberUrlInvalid($webClientProperties)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $user = $userService->getPublicUser();
 
         /* @var Mock|StripeService $stripeService */
@@ -147,8 +148,8 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $expectedWebClientRequestDataCollection
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 

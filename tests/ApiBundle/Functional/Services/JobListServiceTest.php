@@ -34,7 +34,7 @@ class JobListServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobListService = $this->container->get('simplytestable.services.joblistservice');
+        $this->jobListService = $this->container->get(JobListService::class);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();

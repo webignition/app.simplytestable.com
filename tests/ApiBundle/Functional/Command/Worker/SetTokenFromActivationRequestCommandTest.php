@@ -31,12 +31,12 @@ class SetTokenFromActivationRequestCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.worker.settokenfromactivationrequest');
+        $this->command = $this->container->get(SetTokenFromActivationRequestCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());

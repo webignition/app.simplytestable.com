@@ -22,12 +22,12 @@ class NormaliseJsLintOutputCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.migrate.normalisejslintoutput');
+        $this->command = $this->container->get(NormaliseJsLintOutputCommand::class);
     }
 
     public function testRunCommandInMaintenanceReadOnlyModeReturnsStatusCode1()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());

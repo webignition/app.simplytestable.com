@@ -5,6 +5,11 @@ namespace Tests\ApiBundle\Functional\Command\Cron;
 use Cron\CronBundle\Entity\CronReport;
 use SimplyTestable\ApiBundle\Command\Cron\RunCommand;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
@@ -28,7 +33,7 @@ class RunCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.cron.run');
+        $this->command = $this->container->get(RunCommand::class);
         $this->command->setContainer($this->container);
     }
 
@@ -49,7 +54,7 @@ class RunCommandTest extends AbstractBaseTestCase
         $expectedCronJobOutput
     ) {
         $userFactory = new UserFactory($this->container);
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $cronReportRepository = $entityManager->getRepository(CronReport::class);
 
@@ -141,10 +146,10 @@ class RunCommandTest extends AbstractBaseTestCase
      */
     private function createJobConfiguration($rawValues, User $user)
     {
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
+        $websiteService = $this->container->get(WebSiteService::class);
+        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $jobConfigurationValues = new JobConfigurationValues();
 

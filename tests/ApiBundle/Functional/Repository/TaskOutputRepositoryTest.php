@@ -59,7 +59,7 @@ class TaskOutputRepositoryTest extends AbstractBaseTestCase
         $offset,
         $expectedTaskOutputIndices
     ) {
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         $jobFactory = new JobFactory($this->container);
         $taskOutputFactory = new TaskOutputFactory($this->container);

@@ -10,8 +10,14 @@ use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -35,7 +41,7 @@ class StartServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $this->websiteService = $this->container->get(WebSiteService::class);
     }
 
     public function testStartWithUnroutableWebsite()
@@ -77,11 +83,8 @@ class StartServiceTest extends AbstractBaseTestCase
         $constraintName,
         $expectedException
     ) {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $jobUserAccountPlanEnforcementService = $this->container->get(
-            'simplytestable.services.jobuseraccountplanenforcementservice'
-        );
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create([
@@ -110,7 +113,7 @@ class StartServiceTest extends AbstractBaseTestCase
         );
 
         $jobStartService = $this->createJobStartService([
-            'simplytestable.services.jobuseraccountplanenforcementservice' => $mockJobUserAccountPlanEnforcementService
+            JobUserAccountPlanEnforcementService::class => $mockJobUserAccountPlanEnforcementService
         ]);
 
         $this->expectException($expectedException['class']);
@@ -173,8 +176,8 @@ class StartServiceTest extends AbstractBaseTestCase
 
     public function testReuseExistingJob()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $userService = $this->container->get(UserService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $user = $userService->getPublicUser();
         $jobType = $jobTypeService->getFullSiteType();
@@ -207,8 +210,8 @@ class StartServiceTest extends AbstractBaseTestCase
      */
     public function testStart($userEmail, $url, $jobTypeName, $expectedIsPublic)
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create([
@@ -298,14 +301,14 @@ class StartServiceTest extends AbstractBaseTestCase
     private function createJobStartService($services = [])
     {
         $requiredServiceIds = [
-            'simplytestable.services.jobuseraccountplanenforcementservice',
-            'simplytestable.services.jobtypeservice',
-            'simplytestable.services.jobservice',
-            'simplytestable.services.userservice',
-            'simplytestable.services.resque.queueservice',
-            'simplytestable.services.stateservice',
-            'simplytestable.services.useraccountplanservice',
-            'simplytestable.services.resque.jobfactory',
+            JobUserAccountPlanEnforcementService::class,
+            JobTypeService::class,
+            JobService::class,
+            UserService::class,
+            QueueService::class,
+            StateService::class,
+            UserAccountPlanService::class,
+            ResqueJobFactory::class,
             'doctrine.orm.entity_manager',
         ];
 
@@ -322,14 +325,14 @@ class StartServiceTest extends AbstractBaseTestCase
         }
 
         return new StartService(
-            $requiredServices['simplytestable.services.jobuseraccountplanenforcementservice'],
-            $requiredServices['simplytestable.services.jobtypeservice'],
-            $requiredServices['simplytestable.services.jobservice'],
-            $requiredServices['simplytestable.services.userservice'],
-            $requiredServices['simplytestable.services.resque.queueservice'],
-            $requiredServices['simplytestable.services.stateservice'],
-            $requiredServices['simplytestable.services.useraccountplanservice'],
-            $requiredServices['simplytestable.services.resque.jobfactory'],
+            $requiredServices[JobUserAccountPlanEnforcementService::class],
+            $requiredServices[JobTypeService::class],
+            $requiredServices[JobService::class],
+            $requiredServices[UserService::class],
+            $requiredServices[QueueService::class],
+            $requiredServices[StateService::class],
+            $requiredServices[UserAccountPlanService::class],
+            $requiredServices[ResqueJobFactory::class],
             $requiredServices['doctrine.orm.entity_manager']
         );
     }

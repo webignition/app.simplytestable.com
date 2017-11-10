@@ -5,6 +5,11 @@ namespace SimplyTestable\ApiBundle\Controller\Worker;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,17 +20,17 @@ class TasksController extends Controller
 {
     public function requestAction(Request $request)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $taskQueueService = $this->container->get('simplytestable.services.task.queueservice');
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
+        $resqueJobFactory = $this->container->get(JobFactory::class);
+        $stateService = $this->container->get(StateService::class);
+        $taskQueueService = $this->container->get(TaskQueueService::class);
 
         /* @var TaskRepository $taskRepository */
         $taskRepository = $entityManager->getRepository(Task::class);
@@ -80,6 +85,7 @@ class TasksController extends Controller
             return new Response();
         }
 
+        /* @var Task[] $tasks */
         $tasks = $taskRepository->findBy([
             'id' => $taskIds,
         ]);

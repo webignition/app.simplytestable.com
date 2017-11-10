@@ -7,6 +7,8 @@ use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use SimplyTestable\ApiBundle\Services\Postmark\Sender;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Factory\StripeEventFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -200,7 +202,7 @@ class WebHookControllerTest extends AbstractBaseTestCase
         $expectedResponseData
     ) {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $stripeEventRepository = $entityManager->getRepository(Event::class);
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
@@ -242,7 +244,7 @@ class WebHookControllerTest extends AbstractBaseTestCase
 
         $this->assertEquals($expectedResponseData, $responseData);
 
-        $mailSender = $this->container->get('simplytestable.services.postmark.sender');
+        $mailSender = $this->container->get(Sender::class);
 
         /* @var ArrayCollection $mailHistory */
         $mailHistory = $mailSender->getHistory();

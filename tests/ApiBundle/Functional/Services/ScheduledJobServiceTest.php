@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Repository\ScheduledJobRepository;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService as JobConfigurationService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\ScheduledJobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -32,7 +33,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $this->scheduledJobService = $this->container->get(ScheduledJobService::class);
     }
 
     public function testCreateMatchingScheduledJobExists()
@@ -144,7 +145,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetInvalidId()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $scheduledJob = $this->scheduledJobService->get(0);
@@ -154,7 +155,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testGetSuccessForNonTeamUser()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->getPublicUser();
         $this->setUser($user);
@@ -560,7 +561,7 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
 
     public function testRemoveAllSuccess()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $user = $userService->getPublicUser();
 
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);

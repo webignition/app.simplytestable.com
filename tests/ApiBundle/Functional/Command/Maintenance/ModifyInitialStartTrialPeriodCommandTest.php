@@ -20,7 +20,7 @@ class ModifyInitialStartTrialPeriodCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.maintenance.modifyinitialstarttrialperiod');
+        $this->command = $this->container->get(ModifyInitialStartTrialPeriodCommand::class);
     }
 
     /**

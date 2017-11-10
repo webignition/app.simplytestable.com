@@ -7,6 +7,9 @@ use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -27,12 +30,12 @@ class ProcessCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.stripe.event.process');
+        $this->command = $this->container->get(ProcessCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([
@@ -49,7 +52,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
 
     public function testRunForEventWithNoUser()
     {
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
+        $stripeEventService = $this->container->get(StripeEventService::class);
 
         $stripeEvent = $stripeEventService->create(
             'stripe_id',
@@ -77,10 +80,9 @@ class ProcessCommandTest extends AbstractBaseTestCase
      */
     public function testRunFoo($fixtureName, $expectedEventName)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $userService = $this->container->get(UserService::class);
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var LoggerInterface $logger */

@@ -27,7 +27,7 @@ class JobConfigurationFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
+        $this->jobConfigurationFactory = $this->container->get(JobConfigurationFactory::class);
     }
 
     /**

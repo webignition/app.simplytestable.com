@@ -7,10 +7,13 @@ use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
@@ -40,6 +43,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
         parent::setUp();
 
         $jobFactory = new JobFactory($this->container);
+        $userService = $this->container->get(UserService::class);
 
         $job = $jobFactory->createResolveAndPrepare([
             'type' => JobTypeService::FULL_SITE_NAME,
@@ -47,7 +51,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
             'testTypes' => ['css validation',],
             'testTypeOptions' => [],
             'parameters' => [],
-            'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()
+            'user' => $userService->getPublicUser()
         ], [
             'resolve' => [
                 Response::fromMessage('HTTP/1.1 200 OK'),
@@ -63,7 +67,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
             ],
         ]);
 
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
 
         $this->crawlJobContainer = $crawlJobContainerService->getForJob($job);
         $this->crawlJob = $this->crawlJobContainer->getCrawlJob();
@@ -73,7 +77,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $jobInProgressState = $stateService->get(JobService::IN_PROGRESS_STATE);
 
         $this->crawlJob->setState($jobInProgressState);
@@ -113,7 +117,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
             );
 
             $this->container->get('request_stack')->push($request);
-            $this->container->get('simplytestable.services.request.factory.task.complete')->init($request);
+            $this->container->get(CompleteRequestFactory::class)->init($request);
 
             $taskController->completeAction();
 

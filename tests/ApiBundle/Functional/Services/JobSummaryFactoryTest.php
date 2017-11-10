@@ -2,7 +2,10 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -47,7 +50,7 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
+        $this->jobSummaryFactory = $this->container->get(JobSummaryFactory::class);
         $this->jobFactory = new JobFactory($this->container);
 
         $this->userFactory = new UserFactory($this->container);
@@ -138,7 +141,7 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
      */
     public function testCreateForRejectedJob($reason, $constraintName, $expectedSerializedRejection)
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         $job = $this->jobFactory->create();
         $user = $job->getUser();
@@ -210,8 +213,8 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
      */
     public function testCreateForJobWithAmmendment($reason, $constraintName, $expectedSerializedAmmendments)
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $jobService = $this->container->get(JobService::class);
 
         $user = $this->userFactory->create();
 
@@ -263,7 +266,7 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
      */
     public function testCreateForCrawlJob($userValues, $expectedSerializedCrawl)
     {
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
 
         $user = $this->userFactory->create($userValues);
         $job = $this->jobFactory->createResolveAndPrepareStandardCrawlJob([

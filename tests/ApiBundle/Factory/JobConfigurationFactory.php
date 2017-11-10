@@ -4,6 +4,8 @@ namespace Tests\ApiBundle\Factory;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class JobConfigurationFactory
@@ -41,7 +43,7 @@ class JobConfigurationFactory
     {
         $this->container = $container;
 
-        $userService = $container->get('simplytestable.services.userservice');
+        $userService = $container->get(UserService::class);
         $this->defaultJobConfigurationValues[self::KEY_USER] = $userService->getPublicUser();
     }
 
@@ -58,8 +60,8 @@ class JobConfigurationFactory
             }
         }
 
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get(WebSiteService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $website = $websiteService->get($jobConfigurationValues[self::KEY_WEBSITE_URL]);
         $jobType = $jobTypeService->get($jobConfigurationValues[self::KEY_TYPE]);

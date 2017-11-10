@@ -1,36 +1,36 @@
 services:
-  simplytestable.command.cron.run:
+  SimplyTestable\ApiBundle\Command\Cron\RunCommand:
     class:  SimplyTestable\ApiBundle\Command\Cron\RunCommand
     tags:
       - { name: console.command }
 
-  simplytestable.command.job.enqueueprepareall:
+  SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand:
     class:  SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand
     arguments:
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-      stateService: '@simplytestable.services.stateservice'
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
+      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
-  simplytestable.command.job.completealwithnoincompletetasks:
+  SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand:
     class:  SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
-      jobService: '@simplytestable.services.jobservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
     tags:
       - { name: console.command }
 
-  simplytestable.command.job.prepare:
+  SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
     class:  SimplyTestable\ApiBundle\Command\Job\PrepareCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-      jobPreparationService: '@simplytestable.services.jobpreparationservice'
-      crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
+      jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
+      crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
       logger: '@logger'
       entityManager: '@doctrine.orm.entity_manager'
       predefinedDomainsToIgnore:
@@ -39,14 +39,14 @@ services:
     tags:
       - { name: console.command }
 
-  simplytestable.command.job.resolvewebsite:
+  SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand:
     class:  SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-      websiteResolutionService: '@simplytestable.services.jobwebsiteresolutionservice'
-      jobPreparationService: '@simplytestable.services.jobpreparationservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
+      websiteResolutionService: '@SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService'
+      jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
       entityManager: '@doctrine.orm.entity_manager'
       predefinedDomainsToIgnore:
         css-validation: '%css_validation_domains_to_ignore%'
@@ -54,201 +54,201 @@ services:
     tags:
       - { name: console.command }
 
-  simplytestable.command.maintenance.disablereadonly:
+  SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand:
     class:  SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
     tags:
       - { name: console.command }
 
-  simplytestable.command.maintenance.enablebackupreadonly:
+  SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand:
     class:  SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
     tags:
       - { name: console.command }
 
-  simplytestable.command.maintenance.enablereadonly:
+  SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand:
     class:  SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
     tags:
       - { name: console.command }
 
-  simplytestable.command.maintenance.modifyinitialstarttrialperiod:
+  SimplyTestable\ApiBundle\Command\Maintenance\ModifyInitialStartTrialPeriodCommand:
     class:  SimplyTestable\ApiBundle\Command\Maintenance\ModifyInitialStartTrialPeriodCommand
     arguments:
-      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       entityManager: '@doctrine.orm.entity_manager'
-      accountPlanService: '@simplytestable.services.accountplan'
+      accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:
       - { name: console.command }
 
-  simplytestable.command.reporting.getoutputidsforerror:
+  SimplyTestable\ApiBundle\Command\Reporting\GetOutputIdsForErrorCommand:
     class:  SimplyTestable\ApiBundle\Command\Reporting\GetOutputIdsForErrorCommand
     arguments:
-      taskTypeService: '@simplytestable.services.tasktypeservice'
+      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
-  simplytestable.command.reporting.gettoperrors:
+  SimplyTestable\ApiBundle\Command\Reporting\GetTopErrorsCommand:
     class:  SimplyTestable\ApiBundle\Command\Reporting\GetTopErrorsCommand
     arguments:
-      taskTypeService: '@simplytestable.services.tasktypeservice'
+      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
-  simplytestable.command.scheduledjob.enqueue:
+  SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand:
     class:  SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand
     arguments:
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
       logger: '@logger'
     tags:
       - { name: console.command }
 
-  simplytestable.command.scheduledjob.execute:
+  SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand:
     class:  SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
       entityManager: '@doctrine.orm.entity_manager'
-      jobStartService: '@simplytestable.services.job.startservice'
-      jobService: '@simplytestable.services.jobservice'
+      jobStartService: '@SimplyTestable\ApiBundle\Services\Job\StartService'
+      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
     tags:
       - { name: console.command }
 
-  simplytestable.command.stripe.event.process:
+  SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand:
     class:  SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
       logger: '@logger'
       eventDispatcher: '@event_dispatcher'
     tags:
       - { name: console.command }
 
-  simplytestable.command.stripe.event.updatedata:
+  SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand:
     class:  SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
-      stripeEventService: '@simplytestable.services.stripeeventservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+      stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
       entityManager: '@doctrine.orm.entity_manager'
       stripeKey: '%stripe_key%'
     tags:
       - { name: console.command }
 
-  simplytestable.command.task.assigncollection:
+  SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand:
     class:  SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
-      taskPreProcessorFactory: '@simplytestable.services.taskpreprocessor.factory'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-      stateService: '@simplytestable.services.stateservice'
-      workerTaskAssignmentService: '@simplytestable.services.workertaskassignmentservice'
+      taskPreProcessorFactory: '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
+      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
+      workerTaskAssignmentService: '@SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService'
       logger: '@logger'
     tags:
       - { name: console.command }
 
-  simplytestable.command.task.cancelcollection:
+  SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand:
     class:  SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
-      taskService: '@simplytestable.services.taskservice'
-      workerTaskCancellationService: '@simplytestable.services.workertaskcancellationservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+      taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
+      workerTaskCancellationService: '@SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService'
       logger: '@logger'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
-  simplytestable.command.task.enqueuecancellationforawaitingcancellationcommand:
+  SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand:
     class:  SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
-      stateService: '@simplytestable.services.stateservice'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
     tags:
       - { name: console.command }
 
-  simplytestable.command.tasks.requeuequeuedforassignment:
+  SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand:
     class:  SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
-      stateService: '@simplytestable.services.stateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
-  simplytestable.command.user.addnonplanneduserstobascicplan:
+  SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand:
     class:  SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
-      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       entityManager: '@doctrine.orm.entity_manager'
-      accountPlanService: '@simplytestable.services.accountplan'
+      accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:
       - { name: console.command }
 
-  simplytestable.command.worker.settokenfromactivationrequest:
+  SimplyTestable\ApiBundle\Command\Worker\SetTokenFromActivationRequestCommand:
     class:  SimplyTestable\ApiBundle\Command\Worker\SetTokenFromActivationRequestCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
-  simplytestable.command.worker.tasknotification:
+  SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand:
     class:  SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand
     arguments:
-      workerTaskNotificationService: '@simplytestable.services.worker.tasknotificationservice'
+      workerTaskNotificationService: '@SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService'
     tags:
       - { name: console.command }
 
-  simplytestable.command.worker.activateverify:
+  SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand:
     class:  SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
-      workerActivationRequestService: '@simplytestable.services.workeractivationrequestservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+      workerActivationRequestService: '@SimplyTestable\ApiBundle\Services\WorkerActivationRequestService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
-  simplytestable.command.migrate.addhashtohashlessoutput:
+  SimplyTestable\ApiBundle\Command\Migrate\AddHashToHashlessOutputCommand:
     class:  SimplyTestable\ApiBundle\Command\Migrate\AddHashToHashlessOutputCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
-  simplytestable.command.migrate.canonicalisetaskoutput:
+  SimplyTestable\ApiBundle\Command\Migrate\CanonicaliseTaskOutputCommand:
     class:  SimplyTestable\ApiBundle\Command\Migrate\CanonicaliseTaskOutputCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
-  simplytestable.command.migrate.normalisejslintoutput:
+  SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand:
     class:  SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
-      taskTypeService: '@simplytestable.services.tasktypeservice'
+      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
     tags:
       - { name: console.command }
 
-  simplytestable.command.migrate.removeunusedoutput:
+  SimplyTestable\ApiBundle\Command\Migrate\RemoveUnusedOutputCommand:
     class:  SimplyTestable\ApiBundle\Command\Migrate\RemoveUnusedOutputCommand
     arguments:
-      applicationStateService: '@simplytestable.services.applicationstateservice'
+      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }

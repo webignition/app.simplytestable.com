@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -38,7 +39,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskService = $this->container->get('simplytestable.services.taskservice');
+        $this->taskService = $this->container->get(TaskService::class);
 
         $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->createResolveAndPrepare();
@@ -48,7 +49,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testCancelFinishedTask()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $finishedStateNames = $this->taskService->getFinishedStateNames();
 
@@ -145,7 +146,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testSetAwaitingCancellationDisallowedStateName()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $disallowedStateNames = [
             TaskService::AWAITING_CANCELLATION_STATE,
@@ -170,7 +171,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testIsFinished()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $finishedStateNames = $this->taskService->getFinishedStateNames();
 
@@ -196,7 +197,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testIsCancellable()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $cancellableStateNames = $this->taskService->getCancellableStateNames();
 
@@ -293,7 +294,7 @@ class TaskServiceTest extends AbstractBaseTestCase
 
     public function testCompleteIncorrectState()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $completedState = $stateService->get(TaskService::COMPLETED_STATE);
 
         $incorrectStateNames = $this->taskService->getFinishedStateNames();
@@ -310,7 +311,7 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testCompleteHasExistingOutput()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $completedState = $stateService->get(TaskService::COMPLETED_STATE);
 
         $output = new Output();
@@ -355,7 +356,7 @@ class TaskServiceTest extends AbstractBaseTestCase
             $taskFactory->update($this->task, $taskValues);
         }
 
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $state = $stateService->get($stateName);
 
         $output = new Output();
@@ -434,8 +435,8 @@ class TaskServiceTest extends AbstractBaseTestCase
         $stateNames,
         $expectedEquivalentTaskIndices
     ) {
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $stateService = $this->container->get(StateService::class);
 
         $taskFactory = new TaskFactory($this->container);
 

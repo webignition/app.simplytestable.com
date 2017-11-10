@@ -4,6 +4,8 @@ namespace Tests\ApiBundle\Fixtures\Loader;
 
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -38,8 +40,8 @@ class JobLoader
      */
     public function load($fixture, $users)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $stateService = $this->container->get(StateService::class);
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
 
         $fixturePath = __DIR__ . '/../' . $fixture;
         $fixtureRealPath = realpath(__DIR__ . '/../' . $fixture);

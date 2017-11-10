@@ -3,6 +3,8 @@
 namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserSummaryFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -27,7 +29,7 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userSummaryFactory = $this->container->get('simplytestable.services.usersummaryfactory');
+        $this->userSummaryFactory = $this->container->get(UserSummaryFactory::class);
 
         $userFactory = new UserFactory($this->container);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
@@ -47,7 +49,7 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
             UserFactory::KEY_PLAN_NAME => 'basic',
         ]);
 
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
         $teamInviteService->get($this->users['leader'], $this->users['has-team-invite']);
     }
 
@@ -67,7 +69,7 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
         $expectedHasStripeCustomer,
         $expectedSerializedUserSummary
     ) {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);

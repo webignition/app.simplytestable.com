@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -32,7 +33,7 @@ class JobControllerStatusActionTest extends AbstractJobControllerTest
     {
         $job = $this->jobFactory->create();
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $response = $this->jobController->statusAction($job->getWebsite()->getCanonicalUrl(), $job->getId());

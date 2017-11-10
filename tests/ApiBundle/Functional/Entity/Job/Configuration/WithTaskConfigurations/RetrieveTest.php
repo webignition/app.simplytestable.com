@@ -4,7 +4,10 @@ namespace Tests\ApiBundle\Functional\Entity\Job\Configuration\WithTaskConfigurat
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class RetrieveTest extends AbstractBaseTestCase
@@ -28,10 +31,11 @@ class RetrieveTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
+        $websiteService = $this->container->get(WebSiteService::class);
 
         $configurationRepository = $entityManager->getRepository(Configuration::class);
 
@@ -40,9 +44,7 @@ class RetrieveTest extends AbstractBaseTestCase
         $this->originalConfiguration = new Configuration();
         $this->originalConfiguration->setLabel('foo');
         $this->originalConfiguration->setUser($userService->getPublicUser());
-        $this->originalConfiguration->setWebsite(
-            $this->container->get('simplytestable.services.websiteservice')->get('http://example.com/')
-        );
+        $this->originalConfiguration->setWebsite($websiteService->get('http://example.com/'));
         $this->originalConfiguration->setType($fullSiteJobType);
         $this->originalConfiguration->setParameters('bar');
 

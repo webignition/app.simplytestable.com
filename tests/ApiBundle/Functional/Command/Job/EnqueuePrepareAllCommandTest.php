@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Command\Job;
 use SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Tests\ApiBundle\Factory\JobFactory;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -24,7 +25,7 @@ class EnqueuePrepareAllCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.job.enqueueprepareall');
+        $this->command = $this->container->get(EnqueuePrepareAllCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()
@@ -45,7 +46,7 @@ class EnqueuePrepareAllCommandTest extends AbstractBaseTestCase
 
     public function testRun()
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $jobValuesCollection = [
             [

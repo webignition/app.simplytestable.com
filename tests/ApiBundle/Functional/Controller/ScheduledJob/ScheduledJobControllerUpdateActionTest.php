@@ -6,6 +6,8 @@ use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -50,7 +52,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
             JobConfigurationFactory::KEY_USER => $this->user,
         ]);
 
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $this->scheduledJob = $scheduledJobService->create(
             $jobConfiguration,
             '* * * * *',
@@ -96,7 +98,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
 
     public function testUpdateActionInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
@@ -142,8 +144,8 @@ class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
         }
 
         if (!empty($scheduledJobValuesCollection)) {
-            $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-            $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+            $scheduledJobService = $this->container->get(ScheduledJobService::class);
+            $jobConfigurationService = $this->container->get(ConfigurationService::class);
 
             foreach ($scheduledJobValuesCollection as $scheduledJobValues) {
                 $jobConfiguration = $jobConfigurationService->get($scheduledJobValues['job-configuration']);

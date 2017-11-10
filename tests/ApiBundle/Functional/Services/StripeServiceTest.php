@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\StripeService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -138,7 +139,7 @@ class StripeServiceTest extends AbstractBaseTestCase
 
     public function testSubscribe()
     {
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $accountPlanService = $this->container->get(AccountPlanService::class);
         $plan = $accountPlanService->get('personal');
 
         StripeApiFixtureFactory::set([

@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\User;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\Security\Core\Exception\DisabledException;
 
@@ -10,7 +11,7 @@ class UserControllerAuthenticateActionTest extends AbstractUserControllerTest
 {
     public function testAuthenticateActionGetRequest()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $user = $userService->getPublicUser();
 
         $this->createCrawler($user);

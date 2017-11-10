@@ -12,7 +12,7 @@ class TaskTypeOptionsTest extends AbstractBaseTestCase
     public function testUtf8Options()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
         $taskTypeOptionsRepository = $entityManager->getRepository(TaskTypeOptions::class);
 
         $jobFactory = new JobFactory($this->container);

@@ -26,8 +26,8 @@ class QueueServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->queueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $this->jobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+        $this->queueService = $this->container->get(QueueService::class);
+        $this->jobFactory = $this->container->get(JobFactory::class);
     }
 
     /**
@@ -152,7 +152,7 @@ class QueueServiceTest extends AbstractBaseTestCase
             $resque,
             'test',
             $this->container->get('logger'),
-            $this->container->get('simplytestable.services.resque.jobfactory')
+            $this->container->get(JobFactory::class)
         );
 
         $queueService->contains($queue);
@@ -184,7 +184,7 @@ class QueueServiceTest extends AbstractBaseTestCase
             $resque,
             'test',
             $this->container->get('logger'),
-            $this->container->get('simplytestable.services.resque.jobfactory')
+            $this->container->get(JobFactory::class)
         );
 
         $queue = 'tasks-notify';
@@ -206,7 +206,7 @@ class QueueServiceTest extends AbstractBaseTestCase
             $resque,
             'test',
             $this->container->get('logger'),
-            $this->container->get('simplytestable.services.resque.jobfactory')
+            $this->container->get(JobFactory::class)
         );
 
         $queue = 'tasks-notify';

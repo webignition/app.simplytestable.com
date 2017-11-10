@@ -5,6 +5,9 @@ namespace SimplyTestable\ApiBundle\Controller\Stripe;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Mail\Service as MailService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,8 +23,8 @@ class WebHookController extends Controller
     public function indexAction(Request $request)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
-        $mailService = $this->container->get('simplytestable.services.mail.service');
+        $stripeEventService = $this->container->get(StripeEventService::class);
+        $mailService = $this->container->get(MailService::class);
 
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
         $stripeEventRepository = $entityManager->getRepository(Event::class);
@@ -64,8 +67,8 @@ class WebHookController extends Controller
             $user
         );
 
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueJobFactory = $this->container->get(JobFactory::class);
 
         $resqueQueueService->enqueue(
             $resqueJobFactory->create(

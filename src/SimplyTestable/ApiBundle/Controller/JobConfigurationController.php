@@ -6,6 +6,12 @@ use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -24,12 +30,12 @@ class JobConfigurationController extends Controller
      */
     public function createAction(Request $request)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $userService = $this->container->get(UserService::class);
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
+        $websiteService = $this->container->get(WebSiteService::class);
+        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -117,8 +123,8 @@ class JobConfigurationController extends Controller
      */
     public function deleteAction($label)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
@@ -159,7 +165,7 @@ class JobConfigurationController extends Controller
      */
     public function getAction($label)
     {
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
 
         $label = trim($label);
 
@@ -176,7 +182,7 @@ class JobConfigurationController extends Controller
      */
     public function listAction()
     {
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
 
         return new JsonResponse($jobConfigurationService->getList());
     }
@@ -189,11 +195,11 @@ class JobConfigurationController extends Controller
      */
     public function updateAction(Request $request, $label)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
+        $websiteService = $this->container->get(WebSiteService::class);
+        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();

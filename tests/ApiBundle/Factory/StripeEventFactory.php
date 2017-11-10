@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Factory;
 
+use SimplyTestable\ApiBundle\Services\StripeEventService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -29,7 +30,7 @@ class StripeEventFactory
      */
     public function createEvents($stripeEventFixtures, $user)
     {
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
+        $stripeEventService = $this->container->get(StripeEventService::class);
 
         $stripeEvents = [];
 

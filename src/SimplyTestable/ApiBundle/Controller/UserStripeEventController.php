@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,8 +18,8 @@ class UserStripeEventController extends Controller
      */
     public function listAction($email_canonical, $type)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
+        $userService = $this->container->get(UserService::class);
+        $stripeEventService = $this->container->get(StripeEventService::class);
 
         if ($userService->isPublicUser($this->getUser())) {
             return Response::create('', 400);

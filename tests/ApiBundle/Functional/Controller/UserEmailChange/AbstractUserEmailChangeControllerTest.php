@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Controller\UserEmailChange;
 use SimplyTestable\ApiBundle\Controller\UserEmailChangeController;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
+use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -53,7 +54,7 @@ abstract class AbstractUserEmailChangeControllerTest extends AbstractBaseTestCas
      */
     protected function createEmailChangeRequest(User $user, $newEmail)
     {
-        $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
+        $userEmailChangeRequestService = $this->container->get(UserEmailChangeRequestService::class);
 
         return $userEmailChangeRequestService->create($user, $newEmail);
     }

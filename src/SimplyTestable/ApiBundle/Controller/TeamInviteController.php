@@ -4,6 +4,14 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
+use SimplyTestable\ApiBundle\Services\Team\MemberService;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,11 +30,11 @@ class TeamInviteController extends Controller
      */
     public function getAction(Request $request, $invitee_email)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $userService = $this->container->get(UserService::class);
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $teamInviteService = $this->container->get(InviteService::class);
+        $teamService = $this->container->get(TeamService::class);
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $inviter = $this->getUser();
 
@@ -85,11 +93,11 @@ class TeamInviteController extends Controller
      */
     public function acceptAction(Request $request)
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-        $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
-        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $teamInviteService = $this->container->get(InviteService::class);
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
+        $jobConfigurationService = $this->get(ConfigurationService::class);
+        $teamMemberService = $this->container->get(MemberService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $teamRepository = $entityManager->getRepository(Team::class);
@@ -143,9 +151,9 @@ class TeamInviteController extends Controller
      */
     public function listAction()
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $teamInviteService = $this->container->get(InviteService::class);
+        $teamService = $this->container->get(TeamService::class);
 
         if (!$teamService->hasTeam($this->getUser())) {
             return Response::create('', 400, [
@@ -173,8 +181,8 @@ class TeamInviteController extends Controller
      */
     public function userListAction()
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $teamInviteService = $this->container->get(InviteService::class);
 
         if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {
             return new JsonResponse([]);
@@ -190,9 +198,9 @@ class TeamInviteController extends Controller
      */
     public function removeAction($invitee_email)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $userService = $this->container->get(UserService::class);
+        $teamInviteService = $this->container->get(InviteService::class);
+        $teamService = $this->container->get(TeamService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if (!$teamService->hasTeam($this->getUser())) {
@@ -233,7 +241,7 @@ class TeamInviteController extends Controller
      */
     public function declineAction(Request $request)
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $teamRepository = $entityManager->getRepository(Team::class);
@@ -264,7 +272,7 @@ class TeamInviteController extends Controller
      */
     public function getByTokenAction($token)
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
 
         $invite = $teamInviteService->getForToken($token);
 
@@ -282,10 +290,10 @@ class TeamInviteController extends Controller
      */
     public function activateAndAcceptAction(Request $request)
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamInviteService = $this->container->get(InviteService::class);
+        $teamMemberService = $this->container->get(MemberService::class);
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $requestData = $request->request;

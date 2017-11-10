@@ -5,6 +5,8 @@ namespace Tests\ApiBundle\Functional\Controller\Worker;
 use SimplyTestable\ApiBundle\Controller\Worker\TasksController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -33,7 +35,7 @@ class TasksControllerTest extends AbstractBaseTestCase
 
     public function testRequestActionInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         try {
@@ -187,7 +189,7 @@ class TasksControllerTest extends AbstractBaseTestCase
 
     public function testRequestActionZeroLimit()
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -209,7 +211,7 @@ class TasksControllerTest extends AbstractBaseTestCase
 
     public function testRequestActionNoTasksToAssign()
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -233,8 +235,8 @@ class TasksControllerTest extends AbstractBaseTestCase
     {
         $jobFactory = new JobFactory($this->container);
 
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueJobFactory = $this->container->get(ResqueJobFactory::class);
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();
@@ -309,7 +311,7 @@ class TasksControllerTest extends AbstractBaseTestCase
             $tasks = array_merge($tasks, $job->getTasks()->toArray());
         }
 
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $workerFactory = new WorkerFactory($this->container);
         $worker = $workerFactory->create();

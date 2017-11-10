@@ -4,6 +4,10 @@ namespace Tests\ApiBundle\Functional\Entity\Job\TaskConfiguration;
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 
 class PersistTest extends TaskConfigurationTest
 {
@@ -16,19 +20,18 @@ class PersistTest extends TaskConfigurationTest
     {
         parent::setUp();
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
+        $websiteService = $this->container->get(WebSiteService::class);
 
         $fullSiteJobType = $jobTypeService->getFullSiteType();
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setLabel('foo');
         $jobConfiguration->setUser($userService->getPublicUser());
-        $jobConfiguration->setWebsite(
-            $this->container->get('simplytestable.services.websiteservice')->get('http://example.com/')
-        );
+        $jobConfiguration->setWebsite($websiteService->get('http://example.com/'));
         $jobConfiguration->setType($fullSiteJobType);
         $jobConfiguration->setParameters('bar');
 

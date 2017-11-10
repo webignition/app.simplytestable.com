@@ -7,6 +7,17 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\JobPreparationService;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
+use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
+use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,18 +36,19 @@ class TaskController extends Controller
      */
     public function completeAction()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-        $completeRequestFactory = $this->container->get('simplytestable.services.request.factory.task.complete');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
-        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
-        $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');
-        $taskPostProcessorFactory = $this->container->get('simplytestable.services.taskpostprocessor.factory');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueJobFactory = $this->container->get(JobFactory::class);
+        $completeRequestFactory = $this->container->get(CompleteRequestFactory::class);
+        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $taskService = $this->container->get(TaskService::class);
+        $jobService = $this->container->get(JobService::class);
+        $jobPreparationService = $this->container->get(JobPreparationService::class);
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $taskOutputJoinerFactory = $this->container->get(TaskOutputJoinerFactory::class);
+        $taskPostProcessorFactory = $this->container->get(TaskPostProcessorFactory::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $stateService = $this->container->get(StateService::class);
 
         /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
         $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
@@ -93,8 +105,6 @@ class TaskController extends Controller
             }
 
             if ($task->getType()->equals($urlDiscoveryTaskType)) {
-                $stateService = $this->container->get('simplytestable.services.stateservice');
-
                 if (JobService::COMPLETED_STATE === $task->getJob()->getState()->getName()) {
                     $jobFailedNoSitemapState = $stateService->get(JobService::FAILED_NO_SITEMAP_STATE);
 
@@ -142,7 +152,7 @@ class TaskController extends Controller
     public function taskTypeCountAction($task_type, $state_name)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         /* @var TaskRepository $taskRepository */
         $taskRepository = $entityManager->getRepository(Task::class);

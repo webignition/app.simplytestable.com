@@ -4,9 +4,11 @@ namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -43,8 +45,8 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $this->jobPreparationService = $this->container->get(JobPreparationService::class);
+        $taskTypeService = $this->container->get(TaskTypeService::class);
         $cssValidationTaskType = $taskTypeService->getCssValidationTaskType();
 
         $this->jobPreparationService->setPredefinedDomainsToIgnore($cssValidationTaskType, [
@@ -84,8 +86,8 @@ class JobPreparationServiceTest extends AbstractBaseTestCase
     ) {
         $this->queueHttpFixtures($httpFixtures);
 
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
+        $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $userFactory = new UserFactory($this->container);

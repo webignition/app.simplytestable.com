@@ -6,6 +6,8 @@ use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 
@@ -46,8 +48,8 @@ class CrawlJobContainerServiceTest extends AbstractCrawlJobContainerServiceTest
 
     public function testGetAllActiveForUser()
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $stateService = $this->container->get(StateService::class);
+        $websiteService = $this->container->get(WebSiteService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = [

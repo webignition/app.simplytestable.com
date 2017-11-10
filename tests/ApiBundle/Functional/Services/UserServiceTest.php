@@ -21,7 +21,7 @@ class UserServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userService = $this->container->get('simplytestable.services.userservice');
+        $this->userService = $this->container->get(UserService::class);
     }
 
     public function testGetPublicUser()

@@ -6,6 +6,7 @@ use Guzzle\Http\Exception\CurlException;
 use Guzzle\Http\Message\Request;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
@@ -45,7 +46,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->websiteResolutionService = $this->container->get('simplytestable.services.jobwebsiteresolutionservice');
+        $this->websiteResolutionService = $this->container->get(WebsiteResolutionService::class);
         $this->jobFactory = new JobFactory($this->container);
     }
 
@@ -124,7 +125,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
     public function testResolve($jobValues, $httpFixtures, $expectedResolvedUrl)
     {
         $this->queueHttpFixtures($httpFixtures);
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
 
         $job = $this->jobFactory->create($jobValues);
 

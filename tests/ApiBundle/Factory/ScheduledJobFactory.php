@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Factory;
 
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ScheduledJobFactory
@@ -32,7 +33,7 @@ class ScheduledJobFactory
      */
     public function create($scheduledJobValues = [])
     {
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
 
         if (!array_key_exists(self::KEY_SCHEDULE, $scheduledJobValues)) {
             $scheduledJobValues[self::KEY_SCHEDULE] = '* * * * *';

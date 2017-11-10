@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\TeamInvite;
 
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 
@@ -45,7 +46,7 @@ class TeamInviteControllerListActionTest extends AbstractTeamInviteControllerTes
 
     public function testListActionPremiumPlanUsersNotPresentInList()
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
 
         $inviter = $this->users['leader'];
 
@@ -86,7 +87,7 @@ class TeamInviteControllerListActionTest extends AbstractTeamInviteControllerTes
      */
     public function testListActionSuccess($userEmailsToInvite, $expectedInviteData)
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
 
         $inviter = $this->users['leader'];
 

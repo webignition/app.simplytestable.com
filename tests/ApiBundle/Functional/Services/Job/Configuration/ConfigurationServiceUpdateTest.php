@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
+use SimplyTestable\ApiBundle\Services\UserService;
 
 class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
 {
@@ -21,7 +22,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
         $expectedExceptionMessage,
         $expectedExceptionCode
     ) {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->getPublicUser();
         $this->setUser($user);
@@ -97,7 +98,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
      */
     public function testUpdateMatchesCurrentJobConfiguration($jobConfigurationValues, $updatedJobConfigurationValues)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->getPublicUser();
         $this->setUser($user);
@@ -180,7 +181,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
         $updatedJobConfigurationValues,
         $expectedSerializedUpdatedJobConfiguration
     ) {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->getPublicUser();
         $this->setUser($user);

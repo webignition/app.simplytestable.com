@@ -29,7 +29,7 @@ class MaintenanceControllerTest extends AbstractBaseTestCase
         $this->controller = new MaintenanceController();
         $this->controller->setContainer($this->container);
 
-        $this->applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $this->applicationStateService = $this->container->get(ApplicationStateService::class);
     }
 
     public function testEnableBackupReadOnlyAction()

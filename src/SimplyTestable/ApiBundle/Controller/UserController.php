@@ -2,6 +2,11 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\UserSummaryFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,8 +19,8 @@ class UserController extends Controller
      */
     public function getAction()
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $user = $this->getUser();
 
@@ -29,7 +34,7 @@ class UserController extends Controller
             );
         }
 
-        $userSummaryFactory = $this->container->get('simplytestable.services.usersummaryfactory');
+        $userSummaryFactory = $this->container->get(UserSummaryFactory::class);
 
         return new JsonResponse($userSummaryFactory->create());
     }
@@ -49,7 +54,7 @@ class UserController extends Controller
      */
     public function getTokenAction($email_canonical)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->findUserByEmail($email_canonical);
         if (empty($user)) {
@@ -68,7 +73,7 @@ class UserController extends Controller
      */
     public function isEnabledAction($email_canonical)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $user = $userService->findUserByEmail($email_canonical);
 
         if (is_null($user)) {
@@ -89,7 +94,7 @@ class UserController extends Controller
      */
     public function existsAction($email_canonical)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         if ($userService->exists($email_canonical)) {
             return new Response('', 200);
         }
@@ -104,8 +109,8 @@ class UserController extends Controller
      */
     public function hasInvitesAction($email_canonical)
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $teamInviteService = $this->container->get(InviteService::class);
+        $userService = $this->container->get(UserService::class);
 
         $user = $userService->findUserByEmail($email_canonical);
 

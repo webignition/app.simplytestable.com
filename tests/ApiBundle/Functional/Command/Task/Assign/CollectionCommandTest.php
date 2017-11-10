@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Command\Task\Assign;
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -37,7 +38,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.task.assigncollection');
+        $this->command = $this->container->get(CollectionCommand::class);
 
         $this->workerFactory = new WorkerFactory($this->container);
         $this->jobFactory = new JobFactory($this->container);
@@ -45,7 +46,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([
@@ -84,7 +85,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
         $expectedTaskValuesCollection,
         $expectedTaskAssignCollectionQueueIsEmpty
     ) {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $job = $this->jobFactory->createResolveAndPrepare();
 

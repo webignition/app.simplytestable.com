@@ -32,13 +32,13 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.worker.activateverify');
+        $this->command = $this->container->get(ActivateVerifyCommand::class);
         $this->workerFactory = new WorkerFactory($this->container);
     }
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([
@@ -61,9 +61,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
      */
     public function testRunHttpError($httpFixtures, $expectedReturnCode)
     {
-        $workerActivationRequestService = $this->container->get(
-            'simplytestable.services.workeractivationrequestservice'
-        );
+        $workerActivationRequestService = $this->container->get(WorkerActivationRequestService::class);
 
         $this->queueHttpFixtures($httpFixtures);
 
@@ -114,9 +112,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
 
     public function testRunSuccess()
     {
-        $workerActivationRequestService = $this->container->get(
-            'simplytestable.services.workeractivationrequestservice'
-        );
+        $workerActivationRequestService = $this->container->get(WorkerActivationRequestService::class);
 
         $this->queueHttpFixtures([
             HttpFixtureFactory::createSuccessResponse(),

@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Entity;
 
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 
@@ -9,7 +10,7 @@ class UserEmailChangeRequestTest extends AbstractBaseTestCase
 {
     public function testUtf8NewEmail()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $newEmail = 'foo-ɸ@example.com';

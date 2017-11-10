@@ -4,6 +4,8 @@ namespace Tests\ApiBundle\Functional;
 
 use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
@@ -42,7 +44,7 @@ abstract class AbstractBaseTestCase extends WebTestCase
      */
     protected function queueHttpFixtures($fixtures)
     {
-        $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
+        $httpClientService = $this->container->get(HttpClientService::class);
 
         foreach ($fixtures as $fixture) {
             $httpClientService->queueFixture($fixture);
@@ -77,7 +79,7 @@ abstract class AbstractBaseTestCase extends WebTestCase
         }
 
         if (!array_key_exists('user', $options)) {
-            $userService = $this->container->get('simplytestable.services.userservice');
+            $userService = $this->container->get(UserService::class);
 
             $options['user']  = $userService->getPublicUser();
         }

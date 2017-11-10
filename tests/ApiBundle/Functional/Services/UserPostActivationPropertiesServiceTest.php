@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -41,14 +42,12 @@ class UserPostActivationPropertiesServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userPostActivationPropertiesService = $this->container->get(
-            'simplytestable.services.job.userpostactivationpropertiesservice'
-        );
+        $this->userPostActivationPropertiesService = $this->container->get(UserPostActivationPropertiesService::class);
 
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->user = $userService->getPublicUser();
 
-        $this->accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $this->accountPlanService = $this->container->get(AccountPlanService::class);
     }
 
     public function testCreate()

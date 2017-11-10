@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Entity;
 
 use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Tests\ApiBundle\Factory\PlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -110,7 +111,7 @@ class UserAccountPlanTest extends AbstractBaseTestCase
 
     public function testDefaultStartTrialPeriod()
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         $defaultStartTrialPeriod = $this->container->getParameter('default_trial_period');
 

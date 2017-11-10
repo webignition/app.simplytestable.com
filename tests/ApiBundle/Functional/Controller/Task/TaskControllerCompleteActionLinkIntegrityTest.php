@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -316,11 +317,9 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
 
     private function setJobTypeConstraintLimits()
     {
-        $jobUserAccountPlanEnforcementService = $this->container->get(
-            'simplytestable.services.jobuseraccountplanenforcementservice'
-        );
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
+        $userService = $this->container->get(UserService::class);
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $user = $userService->getPublicUser();

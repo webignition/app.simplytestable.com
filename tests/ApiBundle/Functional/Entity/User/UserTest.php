@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Entity\User;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class UserTest extends AbstractBaseTestCase
@@ -10,7 +11,7 @@ class UserTest extends AbstractBaseTestCase
     public function testUtf8Email()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
 
         $userRepository = $entityManager->getRepository(User::class);
 

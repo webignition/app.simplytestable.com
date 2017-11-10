@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller;
 
 use SimplyTestable\ApiBundle\Controller\UserStripeEventController;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
@@ -92,7 +93,7 @@ class UserStripeEventControllerTest extends AbstractBaseTestCase
      */
     public function testListActionSuccess($stripeEventFixtures, $userName, $type, $expectedResponseData)
     {
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
+        $stripeEventService = $this->container->get(StripeEventService::class);
 
         $userFactory = new UserFactory($this->container);
         $users = $userFactory->createPublicPrivateAndTeamUserSet();

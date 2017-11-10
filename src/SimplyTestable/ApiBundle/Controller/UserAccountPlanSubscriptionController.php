@@ -3,6 +3,11 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\StripeService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Stripe\Error\Card as StripeCardError;
 use Stripe\Error\Authentication as StripeAuthenticationError;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,10 +25,10 @@ class UserAccountPlanSubscriptionController extends Controller
      */
     public function subscribeAction($email_canonical, $plan_name)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $userService = $this->container->get(UserService::class);
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -74,10 +79,10 @@ class UserAccountPlanSubscriptionController extends Controller
      */
     public function associateCardAction($email_canonical, $stripe_card_token)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $stripeService = $this->container->get('simplytestable.services.stripeservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $userService = $this->container->get(UserService::class);
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $stripeService = $this->container->get(StripeService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();

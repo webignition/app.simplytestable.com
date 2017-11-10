@@ -2,6 +2,10 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Services\JobListConfigurationFactory;
+use SimplyTestable\ApiBundle\Services\JobListService;
+use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +20,10 @@ class JobListController extends Controller
      */
     public function listAction($limit = null, $offset = null)
     {
-        $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
-        $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
-        $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
-        $jobListService = $this->container->get('simplytestable.services.joblistservice');
+        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
+        $jobListConfigurationFactory = $this->container->get(JobListConfigurationFactory::class);
+        $jobSummaryFactory = $this->container->get(JobSummaryFactory::class);
+        $jobListService = $this->container->get(JobListService::class);
 
         $jobListRequest = $jobListRequestFactory->create();
         $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
@@ -49,13 +53,13 @@ class JobListController extends Controller
      */
     public function countAction()
     {
-        $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
-        $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
+        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
+        $jobListConfigurationFactory = $this->container->get(JobListConfigurationFactory::class);
 
         $jobListRequest = $jobListRequestFactory->create();
         $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
 
-        $jobListService = $this->container->get('simplytestable.services.joblistservice');
+        $jobListService = $this->container->get(JobListService::class);
         $jobListService->setConfiguration($jobListConfiguration);
 
         return new JsonResponse($jobListService->getMaxResults());
@@ -66,13 +70,13 @@ class JobListController extends Controller
      */
     public function websitesAction()
     {
-        $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
-        $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
+        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
+        $jobListConfigurationFactory = $this->container->get(JobListConfigurationFactory::class);
 
         $jobListRequest = $jobListRequestFactory->create();
         $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
 
-        $jobListService = $this->container->get('simplytestable.services.joblistservice');
+        $jobListService = $this->container->get(JobListService::class);
         $jobListService->setConfiguration($jobListConfiguration);
 
         return new JsonResponse($jobListService->getWebsiteUrls());

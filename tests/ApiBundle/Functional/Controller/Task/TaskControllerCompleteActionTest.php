@@ -10,7 +10,9 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -50,7 +52,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
 
     public function testCompleteActionInReadOnlyMode()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $this->container->get('request_stack')->push(new Request());
@@ -106,7 +108,8 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
      */
     public function testCompleteActionNoMatchingTasks($postData, $routeParams)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
+        $userService = $this->container->get(UserService::class);
 
         $this->expectException(GoneHttpException::class);
 
@@ -116,7 +119,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
             'testTypes' => ['html validation',],
             'testTypeOptions' => [],
             'parameters' => [],
-            'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser()
+            'user' => $userService->getPublicUser()
         ]);
 
         $this->setJobTaskStates(
@@ -192,7 +195,7 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
         $expectedJobTaskStates,
         $expectedJobTaskOutputValues
     ) {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $this->setJobTypeConstraintLimits();
         $userFactory = new UserFactory($this->container);
@@ -698,11 +701,9 @@ class TaskControllerCompleteActionTest extends AbstractBaseTestCase
 
     private function setJobTypeConstraintLimits()
     {
-        $jobUserAccountPlanEnforcementService = $this->container->get(
-            'simplytestable.services.jobuseraccountplanenforcementservice'
-        );
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $jobUserAccountPlanEnforcementService = $this->container->get(JobUserAccountPlanEnforcementService::class);
+        $userService = $this->container->get(UserService::class);
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $user = $userService->getPublicUser();

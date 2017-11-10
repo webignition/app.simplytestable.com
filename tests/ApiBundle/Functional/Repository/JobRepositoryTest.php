@@ -8,7 +8,9 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -53,7 +55,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     public function testGetByStatesAndTaskStates($jobStateNames, $taskStateNames, $expectedJobIndices)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
 
         $jobs = $this->createJobsForAllJobStatesWithTasksForAllTaskStates();
 
@@ -132,7 +134,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     public function testGetIdsByState($jobValuesCollection, $stateName, $expectedJobIndices)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $state = $stateService->get($stateName);
 
         $jobs = $this->createJobs($jobValuesCollection);
@@ -184,7 +186,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     public function testGetCountByState($jobValuesCollection, $stateName, $expectedCount)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $state = $stateService->get($stateName);
 
         $this->createJobs($jobValuesCollection);
@@ -285,8 +287,8 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
 
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $websiteService = $this->container->get(WebSiteService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $jobType = $jobTypeService->get($jobTypeName);
         $website = $websiteService->get($websiteUrl);
@@ -550,9 +552,9 @@ class JobRepositoryTest extends AbstractBaseTestCase
      */
     private function createJobsForAllJobStatesWithTasksForAllTaskStates()
     {
-        $jobService = $this->container->get('simplytestable.services.jobservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $jobService = $this->container->get(JobService::class);
+        $taskService = $this->container->get(TaskService::class);
+        $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = array_merge($jobService->getFinishedStateNames(), $jobService->getIncompleteStateNames());

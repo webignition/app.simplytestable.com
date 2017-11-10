@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Command\User;
 use SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -21,12 +22,12 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->command = $this->container->get('simplytestable.command.user.addnonplanneduserstobascicplan');
+        $this->command = $this->container->get(AddNonPlannedUsersToBasicPlanCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyModeReturnsStatusCode1()
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
@@ -49,7 +50,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends AbstractBaseTestCase
     public function testRun($userValuesCollection, $args, $expectedUserPlanNames)
     {
         $userFactory = new UserFactory($this->container);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         /* @var User[] $users */
         $users = [];

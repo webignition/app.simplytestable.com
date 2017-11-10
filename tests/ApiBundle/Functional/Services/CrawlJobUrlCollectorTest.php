@@ -7,8 +7,11 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -48,12 +51,12 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->crawlJobUrlCollector = $this->container->get('simplytestable.services.crawljoburlcollector');
+        $this->crawlJobUrlCollector = $this->container->get(CrawlJobUrlCollector::class);
 
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
         $this->urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
 
-        $stateService = $this->container->get('simplytestable.services.stateservice');
+        $stateService = $this->container->get(StateService::class);
         $this->taskCompletedState = $stateService->get(TaskService::COMPLETED_STATE);
 
         $this->crawlJobContainer = $this->createCrawlJobContainer();
@@ -222,7 +225,7 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
      */
     private function createCrawlJobContainer()
     {
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();

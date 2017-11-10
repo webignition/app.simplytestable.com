@@ -29,7 +29,7 @@ class InviteServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->inviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $this->inviteService = $this->container->get(InviteService::class);
 
         $userFactory = new UserFactory($this->container);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();

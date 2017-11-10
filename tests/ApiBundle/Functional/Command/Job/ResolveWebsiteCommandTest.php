@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\CurlExceptionFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -36,7 +37,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
         $this->jobFactory = new JobFactory($this->container);
 
-        $this->command = $this->container->get('simplytestable.command.job.resolvewebsite');
+        $this->command = $this->container->get(ResolveWebsiteCommand::class);
     }
 
     public function testRunInMaintenanceReadOnlyMode()
@@ -132,7 +133,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
      */
     public function testRunForSingleUrlJob($jobValues, $expectedTaskParameters)
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $jobValues[JobFactory::KEY_TYPE] = JobTypeService::SINGLE_URL_NAME;
 
@@ -218,7 +219,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
     public function testRunForFullSiteJob()
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $job = $this->jobFactory->create();
 

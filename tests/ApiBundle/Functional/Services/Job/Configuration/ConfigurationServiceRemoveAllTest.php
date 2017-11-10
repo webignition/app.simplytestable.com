@@ -2,10 +2,11 @@
 
 namespace Tests\ApiBundle\Functional\Services\Job\Configuration;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 
 class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
@@ -47,8 +48,8 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
 
     public function testRemoveAllInUseByScheduledJob()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $userService = $this->container->get(UserService::class);
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
 
         $this->setUser($userService->getPublicUser());
 
@@ -77,7 +78,7 @@ class ConfigurationServiceRemoveAllTest extends AbstractConfigurationServiceTest
 
     public function testRemoveAllSuccess()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $jobConfigurationCollection = $this->createJobConfigurationCollection([

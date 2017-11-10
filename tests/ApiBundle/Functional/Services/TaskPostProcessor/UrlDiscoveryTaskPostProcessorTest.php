@@ -5,6 +5,8 @@ namespace Tests\ApiBundle\Functional\Services\TaskPostProcessor;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -27,9 +29,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->urlDiscoveryTaskPostProcessor = $this->container->get(
-            'simplytestable.services.taskpostprocessor.urldiscovery'
-        );
+        $this->urlDiscoveryTaskPostProcessor = $this->container->get(UrlDiscoveryTaskPostProcessor::class);
     }
 
     /**
@@ -86,8 +86,8 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
      */
     public function testProcessFailure($taskStateName, $taskOutputValues)
     {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $stateService = $this->container->get(StateService::class);
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();
@@ -147,10 +147,10 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $expectedAmmendmentReason,
         $expectedTaskStateNames
     ) {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $stateService = $this->container->get(StateService::class);
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         $userFactory = new UserFactory($this->container);
         $taskOutputFactory = new TaskOutputFactory($this->container);
@@ -291,10 +291,10 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
         $taskValuesCollection,
         $expectedTaskValuesCollection
     ) {
-        $stateService = $this->container->get('simplytestable.services.stateservice');
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $stateService = $this->container->get(StateService::class);
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         $userFactory = new UserFactory($this->container);
         $taskOutputFactory = new TaskOutputFactory($this->container);

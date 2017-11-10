@@ -2,7 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Services\Job\Retrieval;
 
-use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
+use SimplyTestable\ApiBundle\Services\Team\Service;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -39,8 +40,8 @@ class RetrievalServiceTest extends AbstractBaseTestCase
      */
     public function testRetrieveFailure($userTeamStatus, $jobOwnerTeamStatus)
     {
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $jobRetrievalService = $this->container->get(RetrievalService::class);
+        $teamService = $this->container->get(Service::class);
 
         $user = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'user@example.com',
@@ -128,7 +129,7 @@ class RetrievalServiceTest extends AbstractBaseTestCase
      */
     public function testRetrieveSuccess($owner, $requester, $callSetPublic)
     {
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $jobRetrievalService = $this->container->get(RetrievalService::class);
 
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $owner = $users[$owner];

@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -35,7 +36,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
     public function testNoOutputForIncompleteTasksWithPartialOutput()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare([
@@ -69,7 +70,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         $taskController = new TaskController();
         $taskController->setContainer($this->container);
         $this->container->get('request_stack')->push($taskCompleteRequest);
-        $this->container->get('simplytestable.services.request.factory.task.complete')->init($taskCompleteRequest);
+        $this->container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
 
         $taskController->completeAction();
 
@@ -92,7 +93,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
     public function testFailedNoRetryAvailableTaskOutputIsReturned()
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare();
@@ -115,7 +116,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             ]);
 
             $this->container->get('request_stack')->push($taskCompleteRequest);
-            $this->container->get('simplytestable.services.request.factory.task.complete')->init($taskCompleteRequest);
+            $this->container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
 
             $taskController->completeAction();
         }
@@ -214,7 +215,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
      */
     public function testWithRequestTaskIds($requestTaskIdIndices, $expectedTaskDataCollection)
     {
-        $userService = $this->container->get('simplytestable.services.userservice');
+        $userService = $this->container->get(UserService::class);
         $this->setUser($userService->getPublicUser());
 
         $job = $this->jobFactory->createResolveAndPrepare();

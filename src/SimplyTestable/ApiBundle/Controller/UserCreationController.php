@@ -3,6 +3,11 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,13 +26,11 @@ class UserCreationController extends Controller
      */
     public function createAction(Request $request)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $userPostActivationPropertiesService = $this->container->get(
-            'simplytestable.services.job.userpostactivationpropertiesservice'
-        );
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $userService = $this->container->get(UserService::class);
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
+        $userPostActivationPropertiesService = $this->container->get(UserPostActivationPropertiesService::class);
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -94,9 +97,9 @@ class UserCreationController extends Controller
      */
     public function activateAction($token = null)
     {
-        $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
-        $userService = $this->container->get('simplytestable.services.userservice');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $userService = $this->container->get(UserService::class);
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
         $userPostActivationPropertiesRepository = $entityManager->getRepository(UserPostActivationProperties::class);
