@@ -43,7 +43,8 @@ class UserAccountPlanTest extends AbstractBaseTestCase
 
     public function testUtf8StripeCustomer()
     {
-        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $stripeCustomer = 'test-ɸ';
 

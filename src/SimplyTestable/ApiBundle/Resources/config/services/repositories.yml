@@ -1,10 +1,4 @@
 services:
-  simplytestable.repository.useraccountplan:
-    class: Doctrine\ORM\EntityRepository
-    factory: ["@doctrine.orm.entity_manager", getRepository]
-    arguments:
-        - SimplyTestable\ApiBundle\Entity\UserAccountPlan
-
   simplytestable.repository.tasktypeclass:
     class: Doctrine\ORM\EntityRepository
     factory: ["@doctrine.orm.entity_manager", getRepository]
