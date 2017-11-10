@@ -202,14 +202,14 @@ services:
     calls:
       - [createConfiguration, [{allow-uknown-resource-types: "true", retry-with-url-encoding-disabled: "true", content-type-web-resource-map: "%content_type_web_resource_map%" }]]
 
-  simplytestable.services.taskputoutjoiner.linkintegrity:
+  SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner
 
   simplytestable.services.taskoutputjoiner.factory:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory
     arguments:
       taskPreprocessors:
-        - '@simplytestable.services.taskputoutjoiner.linkintegrity'
+        - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
 
   simplytestable.listener.stripe.customer.subscription.deleted.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener
