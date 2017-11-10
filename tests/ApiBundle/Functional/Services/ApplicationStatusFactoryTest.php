@@ -20,7 +20,7 @@ class ApplicationStatusFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->applicationStatusFactory = $this->container->get('simplytestable.services.applicationstatusfactory');
+        $this->applicationStatusFactory = $this->container->get(ApplicationStatusFactory::class);
     }
 
     public function testCreate()

@@ -427,7 +427,7 @@ services:
         crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
         tokenStorage: '@security.token_storage'
 
-  simplytestable.services.applicationstatusfactory:
+  SimplyTestable\ApiBundle\Services\ApplicationStatusFactory:
     class:   SimplyTestable\ApiBundle\Services\ApplicationStatusFactory
     arguments:
       applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
