@@ -13,7 +13,8 @@ use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
-use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory;
+use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
+use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -43,8 +44,8 @@ class TaskController extends Controller
         $jobService = $this->container->get(JobService::class);
         $jobPreparationService = $this->container->get(JobPreparationService::class);
         $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
-        $taskOutputJoinerFactory = $this->container->get(Factory::class);
-        $taskPostProcessorFactory = $this->container->get('simplytestable.services.taskpostprocessor.factory');
+        $taskOutputJoinerFactory = $this->container->get(TaskOutputJoinerFactory::class);
+        $taskPostProcessorFactory = $this->container->get(TaskPostProcessorFactory::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $stateService = $this->container->get(StateService::class);
 

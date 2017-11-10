@@ -481,7 +481,7 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
       urlDiscoveryTaskService: '@SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService'
 
-  simplytestable.services.taskpostprocessor.factory:
+  SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory
     arguments:
       taskPreprocessors:
