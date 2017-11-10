@@ -138,9 +138,9 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
         $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $jobConfigurationRepository = $this->container->get('simplytestable.repository.jobconfiguration');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
+        $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
         $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
         $leader2 = $this->userFactory->create([

@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
 use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
+use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -232,7 +233,8 @@ class JobConfigurationControllerCreateActionTest extends AbstractBaseTestCase
 
     public function testCreateAction()
     {
-        $jobConfigurationRepository = $this->container->get('simplytestable.repository.jobconfiguration');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();
