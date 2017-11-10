@@ -435,7 +435,7 @@ class TaskServiceTest extends AbstractBaseTestCase
         $stateNames,
         $expectedEquivalentTaskIndices
     ) {
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
         $stateService = $this->container->get(StateService::class);
 
         $taskFactory = new TaskFactory($this->container);

@@ -81,11 +81,10 @@ class StartServiceTest extends AbstractBaseTestCase
         $constraintName,
         $expectedException
     ) {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $jobUserAccountPlanEnforcementService = $this->container->get(
             'simplytestable.services.jobuseraccountplanenforcementservice'
         );
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create([
@@ -178,7 +177,7 @@ class StartServiceTest extends AbstractBaseTestCase
     public function testReuseExistingJob()
     {
         $userService = $this->container->get(UserService::class);
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $user = $userService->getPublicUser();
         $jobType = $jobTypeService->getFullSiteType();
@@ -212,7 +211,7 @@ class StartServiceTest extends AbstractBaseTestCase
     public function testStart($userEmail, $url, $jobTypeName, $expectedIsPublic)
     {
         $resqueQueueService = $this->container->get(QueueService::class);
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create([
@@ -303,7 +302,7 @@ class StartServiceTest extends AbstractBaseTestCase
     {
         $requiredServiceIds = [
             'simplytestable.services.jobuseraccountplanenforcementservice',
-            'simplytestable.services.jobtypeservice',
+            JobTypeService::class,
             JobService::class,
             UserService::class,
             QueueService::class,
@@ -327,7 +326,7 @@ class StartServiceTest extends AbstractBaseTestCase
 
         return new StartService(
             $requiredServices['simplytestable.services.jobuseraccountplanenforcementservice'],
-            $requiredServices['simplytestable.services.jobtypeservice'],
+            $requiredServices[JobTypeService::class],
             $requiredServices[JobService::class],
             $requiredServices[UserService::class],
             $requiredServices[QueueService::class],

@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -32,7 +33,7 @@ class JobConfigurationController extends Controller
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get(TaskTypeService::class);
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -196,7 +197,7 @@ class JobConfigurationController extends Controller
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get(TaskTypeService::class);
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();

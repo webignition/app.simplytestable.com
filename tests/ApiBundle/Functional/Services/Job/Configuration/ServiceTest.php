@@ -30,7 +30,7 @@ abstract class ServiceTest extends AbstractBaseTestCase {
      */
     protected function getStandardTaskConfigurationCollection()
     {
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         $taskConfiguration = new TaskConfiguration();
         $taskConfiguration->setType(
@@ -53,7 +53,7 @@ abstract class ServiceTest extends AbstractBaseTestCase {
      */
     protected function getTaskConfigurationCollection($taskConfigurationDetails)
     {
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         $taskConfigurationCollection = new TaskConfigurationCollection();
 

@@ -5,6 +5,8 @@ namespace Tests\ApiBundle\Functional\Command\Cron;
 use Cron\CronBundle\Entity\CronReport;
 use SimplyTestable\ApiBundle\Command\Cron\RunCommand;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -144,8 +146,8 @@ class RunCommandTest extends AbstractBaseTestCase
     {
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
         $websiteService = $this->container->get(WebSiteService::class);
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $jobConfigurationValues = new JobConfigurationValues();
 

@@ -288,7 +288,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $user = $users[$userName];
 
         $websiteService = $this->container->get(WebSiteService::class);
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $jobType = $jobTypeService->get($jobTypeName);
         $website = $websiteService->get($websiteUrl);

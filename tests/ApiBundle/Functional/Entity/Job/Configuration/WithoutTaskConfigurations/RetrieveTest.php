@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Entity\Job\Configuration\WithoutTaskConfigurations;
 
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -30,7 +31,7 @@ class RetrieveTest extends AbstractBaseTestCase
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userService = $this->container->get(UserService::class);
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobTypeService = $this->container->get(JobTypeService::class);
         $websiteService = $this->container->get(WebSiteService::class);
 
         $jobConfigurationRepository = $entityManager->getRepository(Configuration::class);

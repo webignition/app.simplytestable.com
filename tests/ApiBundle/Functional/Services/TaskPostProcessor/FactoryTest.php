@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Services\TaskPostProcessor;
 
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class FactoryTest extends AbstractBaseTestCase
@@ -25,7 +26,7 @@ class FactoryTest extends AbstractBaseTestCase
 
     public function testGetUrlDiscoveryTaskPostProcessor()
     {
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         $this->assertInstanceOf(
             UrlDiscoveryTaskPostProcessor::class,

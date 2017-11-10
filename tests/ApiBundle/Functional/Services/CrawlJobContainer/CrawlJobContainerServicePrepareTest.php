@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\StateFactory;
 
@@ -110,7 +111,7 @@ class CrawlJobContainerServicePrepareTest extends AbstractCrawlJobContainerServi
     {
         $stateService = $this->container->get(StateService::class);
         $websiteService = $this->container->get(WebSiteService::class);
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         $user = $this->userFactory->create();
         $website = $websiteService->get('http://example.com/');

@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Factory;
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class JobTaskConfigurationFactory
@@ -32,7 +33,7 @@ class JobTaskConfigurationFactory
     {
         $jobTaskConfiguration = new TaskConfiguration();
 
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
         $taskType = $taskTypeService->get($jobTaskConfigurationValues[self::KEY_TYPE]);
 
         $jobTaskConfiguration->setType($taskType);

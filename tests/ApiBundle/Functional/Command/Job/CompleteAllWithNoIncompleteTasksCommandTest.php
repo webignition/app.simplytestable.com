@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Command\Job;
 use SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -74,7 +75,7 @@ class CompleteAllWithNoIncompleteTasksCommandTest extends AbstractBaseTestCase
         $expectedJobStateNames
     ) {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 

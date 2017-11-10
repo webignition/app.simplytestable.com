@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Entity\CrawlJobContainer;
 
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -15,7 +16,7 @@ class PersistTest extends AbstractBaseTestCase
     {
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
+        $jobTypeService = $this->container->get(JobTypeService::class);
 
         $crawlJobType = $jobTypeService->getCrawlType();
 

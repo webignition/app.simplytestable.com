@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
@@ -211,7 +212,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $expectedCount
     ) {
         $stateService = $this->container->get(StateService::class);
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
 
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 
@@ -283,7 +284,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
     ) {
         $users = $this->userFactory->createPublicAndPrivateUserSet();
 
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
         $stateService = $this->container->get(StateService::class);
 
         $taskType = $taskTypeService->get($taskTypeName);
@@ -568,7 +569,7 @@ class TaskRepositoryTest extends AbstractBaseTestCase
         $taskTypeName,
         $expectedOutputIndices
     ) {
-        $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+        $taskTypeService = $this->container->get(TaskTypeService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskOutputRepository = $entityManager->getRepository(Output::class);
 
