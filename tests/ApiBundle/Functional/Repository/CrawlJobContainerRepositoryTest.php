@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
-use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -38,7 +37,9 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->crawlJobContainerRepository = $this->container->get('simplytestable.repository.crawljobcontainer');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
+
         $this->jobFactory = new JobFactory($this->container);
         $this->userFactory = new UserFactory($this->container);
     }
@@ -143,6 +144,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
      * @param string[] $userEmails
      * @param string $userEmail
      * @param string[] $stateNames
+     * @param bool $keyStatesNumerically
      * @param int[] $expectedCrawlJobContainerIndices
      */
     public function testGetAllForUserByCrawlJobStates(
@@ -153,7 +155,6 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $expectedCrawlJobContainerIndices
     ) {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
         $websiteService = $this->container->get('simplytestable.services.websiteservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

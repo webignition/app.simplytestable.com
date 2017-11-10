@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
@@ -35,9 +36,10 @@ class TaskController extends Controller
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');
         $taskPostProcessorFactory = $this->container->get('simplytestable.services.taskpostprocessor.factory');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
-        $crawlJobContainerRepository = $this->container->get('simplytestable.repository.crawljobcontainer');
+        $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
