@@ -4,5 +4,5 @@ services:
     arguments:
         curlOptions: "%curl_options%"
 
-  simplytestable.services.postmark.sender:
+  SimplyTestable\ApiBundle\Services\Postmark\Sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\TestSender

@@ -284,14 +284,14 @@ services:
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
 
-  simplytestable.services.postmark.sender:
+  SimplyTestable\ApiBundle\Services\Postmark\Sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\Sender
 
   simplytestable.services.mail.service:
     class:   SimplyTestable\ApiBundle\Services\Mail\Service
     arguments:
         postmarkMessage: "@postmark.message"
-        postmarkSender: "@simplytestable.services.postmark.sender"
+        postmarkSender: '@SimplyTestable\ApiBundle\Services\Postmark\Sender'
 
   simplytestable.services.teammemberservice:
     class:  SimplyTestable\ApiBundle\Services\Team\MemberService
