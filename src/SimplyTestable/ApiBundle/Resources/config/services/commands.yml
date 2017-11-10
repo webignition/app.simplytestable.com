@@ -45,7 +45,7 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       resqueQueueService: '@simplytestable.services.resque.queueservice'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-      websiteResolutionService: '@simplytestable.services.jobwebsiteresolutionservice'
+      websiteResolutionService: '@SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService'
       jobPreparationService: '@simplytestable.services.jobpreparationservice'
       entityManager: '@doctrine.orm.entity_manager'
       predefinedDomainsToIgnore:

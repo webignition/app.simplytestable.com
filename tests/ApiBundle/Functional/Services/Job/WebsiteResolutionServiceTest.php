@@ -46,7 +46,7 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->websiteResolutionService = $this->container->get('simplytestable.services.jobwebsiteresolutionservice');
+        $this->websiteResolutionService = $this->container->get(WebsiteResolutionService::class);
         $this->jobFactory = new JobFactory($this->container);
     }
 

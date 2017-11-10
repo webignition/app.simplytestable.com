@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -280,7 +281,7 @@ class JobFactory
     public function resolve(Job $job, $httpFixtures = [])
     {
         $httpClientService = $this->container->get(HttpClientService::class);
-        $websiteResolutionService = $this->container->get('simplytestable.services.jobwebsiteresolutionservice');
+        $websiteResolutionService = $this->container->get(WebsiteResolutionService::class);
 
         if (empty($httpFixtures)) {
             $httpFixtures = [

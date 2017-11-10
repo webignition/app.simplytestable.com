@@ -16,7 +16,7 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
 
-  simplytestable.services.jobwebsiteresolutionservice:
+  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
     class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
     arguments:
         jobService: "@simplytestable.services.jobservice"

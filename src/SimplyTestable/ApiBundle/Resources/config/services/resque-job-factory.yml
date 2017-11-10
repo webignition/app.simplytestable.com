@@ -30,7 +30,7 @@ services:
               - simplytestable.services.applicationstateservice
               - simplytestable.services.resque.queueservice
               - simplytestable.services.resque.jobfactory
-              - simplytestable.services.jobwebsiteresolutionservice
+              - SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
               - simplytestable.services.jobpreparationservice
               - doctrine.orm.entity_manager
             parameters:
