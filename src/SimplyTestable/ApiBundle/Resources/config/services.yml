@@ -434,7 +434,7 @@ services:
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       entityManager: '@doctrine.orm.entity_manager'
 
-  simplytestable.services.usersummaryfactory:
+  SimplyTestable\ApiBundle\Services\UserSummaryFactory:
     class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
     arguments:
       tokenStorage: '@security.token_storage'

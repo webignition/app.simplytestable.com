@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\UserSummaryFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +34,7 @@ class UserController extends Controller
             );
         }
 
-        $userSummaryFactory = $this->container->get('simplytestable.services.usersummaryfactory');
+        $userSummaryFactory = $this->container->get(UserSummaryFactory::class);
 
         return new JsonResponse($userSummaryFactory->create());
     }

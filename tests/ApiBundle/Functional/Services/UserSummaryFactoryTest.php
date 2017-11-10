@@ -29,7 +29,7 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userSummaryFactory = $this->container->get('simplytestable.services.usersummaryfactory');
+        $this->userSummaryFactory = $this->container->get(UserSummaryFactory::class);
 
         $userFactory = new UserFactory($this->container);
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();
