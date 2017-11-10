@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Worker;
 
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -27,8 +28,8 @@ class TasksController extends Controller
         $taskQueueService = $this->container->get('simplytestable.services.task.queueservice');
 
         /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->container->get('simplytestable.repository.task');
-        $workerRepository = $this->container->get('simplytestable.repository.worker');
+        $taskRepository = $entityManager->getRepository(Task::class);
+        $workerRepository = $entityManager->getRepository(Worker::class);
 
         $workerHostname = $request->request->get('worker_hostname');
 

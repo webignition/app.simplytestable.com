@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -78,9 +79,8 @@ class JobFactory
     {
         $httpClientService = $this->container->get('simplytestable.services.httpclientservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $taskService = $this->container->get('simplytestable.services.taskservice');
-        $workerRepository = $this->container->get('simplytestable.repository.worker');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $workerRepository = $entityManager->getRepository(Worker::class);
 
         $ignoreState = true;
 
@@ -374,7 +374,8 @@ class JobFactory
      */
     public function getFromResponse(Response $response)
     {
-        $jobRepository = $this->container->get('simplytestable.repository.job');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
 
         $locationHeader = $response->headers->get('location');
         $locationHeaderParts = explode('/', rtrim($locationHeader, '/'));

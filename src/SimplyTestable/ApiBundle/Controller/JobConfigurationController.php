@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
+use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -118,7 +119,9 @@ class JobConfigurationController extends Controller
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
-        $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();

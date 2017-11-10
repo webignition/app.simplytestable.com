@@ -1,10 +1,11 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Task\Assign;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -31,7 +32,7 @@ class CollectionCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -77,28 +78,24 @@ class CollectionCommand extends Command
 
     /**
      * @param ApplicationStateService $applicationStateService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param TaskPreProcessorFactory $taskPreProcessorFactory
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
      * @param StateService $stateService
      * @param WorkerTaskAssignmentService $workerTaskAssignmentService
      * @param LoggerInterface $logger
-     * @param TaskRepository $taskRepository
-     * @param EntityRepository $workerRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         TaskPreProcessorFactory $taskPreProcessorFactory,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
         StateService $stateService,
         WorkerTaskAssignmentService $workerTaskAssignmentService,
         LoggerInterface $logger,
-        TaskRepository $taskRepository,
-        EntityRepository $workerRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -111,8 +108,9 @@ class CollectionCommand extends Command
         $this->stateService = $stateService;
         $this->workerTaskAssignmentService = $workerTaskAssignmentService;
         $this->logger = $logger;
-        $this->taskRepository = $taskRepository;
-        $this->workerRepository = $workerRepository;
+
+        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->workerRepository = $entityManager->getRepository(Worker::class);
     }
 
     /**
@@ -143,6 +141,7 @@ class CollectionCommand extends Command
             return self::RETURN_CODE_OK;
         }
 
+        /* @var Task[] $tasks */
         $tasks = $this->taskRepository->findBy([
             'id' => $taskIds,
         ]);

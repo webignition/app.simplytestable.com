@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Entity\Job\TaskConfiguration;
 
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
-use SimplyTestable\ApiBundle\Services\TaskTypeService;
 
 class PersistTest extends TaskConfigurationTest
 {
@@ -52,7 +51,7 @@ class PersistTest extends TaskConfigurationTest
 
         $entityManager->clear();
 
-        $taskConfigurationRepository = $this->container->get('simplytestable.repository.taskconfiguration');
+        $taskConfigurationRepository = $entityManager->getRepository(TaskConfiguration::class);
 
         $this->taskConfiguration = $taskConfigurationRepository->find($taskConfigurationId);
     }

@@ -1,7 +1,6 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use FOS\UserBundle\Util\CanonicalizerInterface;
@@ -32,12 +31,12 @@ class UserEmailChangeRequestService
     private $userEmailChangeRequestRepository;
 
     /**
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param CanonicalizerInterface $emailCanonicalizer
      * @param TokenGeneratorInterface $tokenGenerator
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         CanonicalizerInterface $emailCanonicalizer,
         TokenGeneratorInterface $tokenGenerator
     ) {

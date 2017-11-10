@@ -1,7 +1,11 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Model\ApplicationStatus;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
@@ -36,23 +40,19 @@ class ApplicationStatusFactory
     /**
      * @param ApplicationStateService $applicationStateService
      * @param StateService $stateService
-     * @param TaskRepository $taskRepository
-     * @param EntityRepository $workerRepository
-     * @param JobRepository $jobRepository
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         StateService $stateService,
-        TaskRepository $taskRepository,
-        EntityRepository $workerRepository,
-        JobRepository $jobRepository
+        EntityManagerInterface $entityManager
     ) {
         $this->applicationStateService = $applicationStateService;
         $this->stateService = $stateService;
 
-        $this->workerRepository = $workerRepository;
-        $this->jobRepository = $jobRepository;
-        $this->taskRepository = $taskRepository;
+        $this->workerRepository = $entityManager->getRepository(Worker::class);
+        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**

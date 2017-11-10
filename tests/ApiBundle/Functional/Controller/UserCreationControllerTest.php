@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Controller;
 use SimplyTestable\ApiBundle\Controller\UserCreationController;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -188,9 +189,8 @@ class UserCreationControllerTest extends AbstractBaseTestCase
     ) {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $userService = $this->container->get('simplytestable.services.userservice');
-        $userPostActivationPropertiesRepository = $this->container->get(
-            'simplytestable.repository.userpostactivationproperties'
-        );
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userPostActivationPropertiesRepository = $entityManager->getRepository(UserPostActivationProperties::class);
 
         if ($createUser) {
             $userFactory = new UserFactory($this->container);

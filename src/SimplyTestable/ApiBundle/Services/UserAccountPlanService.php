@@ -53,7 +53,6 @@ class UserAccountPlanService
      * @param UserService $userService
      * @param StripeService $stripeService
      * @param TeamService $teamService
-     * @param UserRepository $userRepository
      * @param $defaultTrialPeriod
      */
     public function __construct(
@@ -61,15 +60,15 @@ class UserAccountPlanService
         UserService $userService,
         StripeService $stripeService,
         TeamService $teamService,
-        UserRepository $userRepository,
         $defaultTrialPeriod
     ) {
         $this->entityManager = $entityManager;
         $this->userService = $userService;
         $this->stripeService = $stripeService;
         $this->teamService = $teamService;
-        $this->userRepository = $userRepository;
         $this->defaultTrialPeriod = $defaultTrialPeriod;
+
+        $this->userRepository = $entityManager->getRepository(User::class);
 
         $this->userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
     }

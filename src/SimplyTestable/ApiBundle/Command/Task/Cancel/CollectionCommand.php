@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Task\Cancel;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
@@ -47,7 +48,7 @@ class CollectionCommand extends Command
      * @param TaskService $taskService
      * @param WorkerTaskCancellationService $workerTaskCancellationService
      * @param LoggerInterface $logger
-     * @param TaskRepository $taskRepository
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
@@ -55,7 +56,7 @@ class CollectionCommand extends Command
         TaskService $taskService,
         WorkerTaskCancellationService $workerTaskCancellationService,
         LoggerInterface $logger,
-        TaskRepository $taskRepository,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);
@@ -64,7 +65,8 @@ class CollectionCommand extends Command
         $this->taskService = $taskService;
         $this->workerTaskCancellationService = $workerTaskCancellationService;
         $this->logger = $logger;
-        $this->taskRepository = $taskRepository;
+
+        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**

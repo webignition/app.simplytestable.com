@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Mockery\MockInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
@@ -61,19 +61,19 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
         $userService = $this->container->get('simplytestable.services.userservice');
         $user = $userService->getPublicUser();
 
-        /* @var MockInterface|StripeService $stripeService */
+        /* @var Mock|StripeService $stripeService */
         $stripeService = \Mockery::mock(StripeService::class);
 
-        /* @var MockInterface|StripeEventService $stripeEventService */
+        /* @var Mock|StripeEventService $stripeEventService */
         $stripeEventService = \Mockery::mock(StripeEventService::class);
 
-        /* @var MockInterface|UserAccountPlanService $userAccountPlanService */
+        /* @var Mock|UserAccountPlanService $userAccountPlanService */
         $userAccountPlanService = \Mockery::mock(UserAccountPlanService::class);
 
-        /* @var MockInterface|HttpClientService $httpClientService */
+        /* @var Mock|HttpClientService $httpClientService */
         $httpClientService = \Mockery::mock(HttpClientService::class);
 
-        /* @var MockInterface|EntityManagerInterface $entityManager */
+        /* @var Mock|EntityManagerInterface $entityManager */
         $entityManager = \Mockery::mock(EntityManagerInterface::class);
 
         $entityManager

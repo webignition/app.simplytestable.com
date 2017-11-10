@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services\Job\Retrieval;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery\MockInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\Type;
@@ -94,7 +94,6 @@ class StartServiceTest extends AbstractBaseTestCase
           $jobType = $jobTypeService->get($jobTypeName);
 
         $website = $this->websiteService->get('http://example.com');
-        $constraint = $userAccountPlanService->getForUser($user)->getPlan()->getConstraintNamed($constraintName);
 
         $jobConfiguration = new JobConfiguration();
         $jobConfiguration->setWebsite($website);
@@ -268,10 +267,11 @@ class StartServiceTest extends AbstractBaseTestCase
      * @param Type $type
      * @param array $calls
      *
-     * @return MockInterface|JobUserAccountPlanEnforcementService
+     * @return Mock|JobUserAccountPlanEnforcementService
      */
     private function createJobUserAccountPlanEnforcementService(User $user, Type $type, $calls)
     {
+        /* @var Mock|JobUserAccountPlanEnforcementService $jobUserAccountPlanEnforcementService */
         $jobUserAccountPlanEnforcementService = \Mockery::mock(JobUserAccountPlanEnforcementService::class);
         $jobUserAccountPlanEnforcementService
             ->shouldReceive('setUser')
@@ -306,7 +306,6 @@ class StartServiceTest extends AbstractBaseTestCase
             'simplytestable.services.stateservice',
             'simplytestable.services.useraccountplanservice',
             'simplytestable.services.resque.jobfactory',
-            'simplytestable.repository.job',
             'doctrine.orm.entity_manager',
         ];
 
@@ -331,7 +330,6 @@ class StartServiceTest extends AbstractBaseTestCase
             $requiredServices['simplytestable.services.stateservice'],
             $requiredServices['simplytestable.services.useraccountplanservice'],
             $requiredServices['simplytestable.services.resque.jobfactory'],
-            $requiredServices['simplytestable.repository.job'],
             $requiredServices['doctrine.orm.entity_manager']
         );
     }

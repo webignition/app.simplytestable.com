@@ -33,7 +33,8 @@ class ScheduledJobControllerCreateActionTest extends AbstractBaseTestCase
 
     public function testCreateActionPostRequest()
     {
-        $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createAndActivateUser();
@@ -252,7 +253,8 @@ class ScheduledJobControllerCreateActionTest extends AbstractBaseTestCase
 
     public function testCreateActionSuccess()
     {
-        $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();

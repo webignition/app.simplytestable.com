@@ -28,8 +28,8 @@ class WorkerController extends Controller
             'simplytestable.services.workeractivationrequestservice'
         );
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $workerRepository = $this->container->get('simplytestable.repository.worker');
-        $activationRequestRepository = $this->container->get('simplytestable.repository.workeractivationrequest');
+        $workerRepository = $entityManager->getRepository(Worker::class);
+        $activationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();

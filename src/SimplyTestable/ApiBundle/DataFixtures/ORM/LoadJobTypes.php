@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Entity\Job\Type;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -41,10 +42,12 @@ class LoadJobTypes extends AbstractFixture implements OrderedFixtureInterface, C
      */
     public function load(ObjectManager $manager)
     {
-        $jobTypeRepository = $this->container->get('simplytestable.repository.jobtype');
+        $jobTypeRepository = $manager->getRepository(Type::class);
 
         foreach ($this->jobTypes as $name => $properties) {
-            $jobType = $jobTypeRepository->findOneByName($name);
+            $jobType = $jobTypeRepository->findOneBy([
+                'name' => $name,
+            ]);
 
             if (is_null($jobType)) {
                 $jobType = new JobType();

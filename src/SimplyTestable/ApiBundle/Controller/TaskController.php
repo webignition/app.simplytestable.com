@@ -2,7 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -34,9 +36,10 @@ class TaskController extends Controller
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');
         $taskPostProcessorFactory = $this->container->get('simplytestable.services.taskpostprocessor.factory');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var CrawlJobContainerRepository $crawlJobContainerRepository */
-        $crawlJobContainerRepository = $this->container->get('simplytestable.repository.crawljobcontainer');
+        $crawlJobContainerRepository = $entityManager->getRepository(CrawlJobContainer::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -138,10 +141,12 @@ class TaskController extends Controller
      */
     public function taskTypeCountAction($task_type, $state_name)
     {
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->container->get('simplytestable.repository.task');
-        $stateRepository = $this->container->get('simplytestable.repository.state');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $entityManager->getRepository(Task::class);
+        $stateRepository = $entityManager->getRepository(State::class);
 
         $taskType = $taskTypeService->get($task_type);
 

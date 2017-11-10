@@ -248,7 +248,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
     public function testGetForUser($userAccountPlansToCreate, $userName, $expectedUserAccountPlanIndex)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
@@ -268,6 +268,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
         $user = $users[$userName];
         $userAccountPlan = $this->userAccountPlanService->getForUser($user);
 
+        /* @var UserAccountPlan[] $userAccountPlans */
         $userAccountPlans = $userAccountPlanRepository->findAll();
         $expectedUserAccountPlan = $userAccountPlans[$expectedUserAccountPlanIndex];
 
@@ -381,7 +382,8 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
 
     public function testDeactivateAllForUser()
     {
-        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
         $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
 
         $user = $this->userFactory->create([

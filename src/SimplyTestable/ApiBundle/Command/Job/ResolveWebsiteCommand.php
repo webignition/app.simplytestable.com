@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\WebsiteResolutionException;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
@@ -64,8 +65,8 @@ class ResolveWebsiteCommand extends Command
      * @param ResqueJobFactory $resqueJobFactory
      * @param WebsiteResolutionService $websiteResolutionService
      * @param JobPreparationService $jobPreparationService
+     * @param EntityManagerInterface $entityManager
      * @param array $predefinedDomainsToIgnore
-     * @param JobRepository $jobRepository
      * @param string|null $name
      */
     public function __construct(
@@ -74,8 +75,8 @@ class ResolveWebsiteCommand extends Command
         ResqueJobFactory $resqueJobFactory,
         WebsiteResolutionService $websiteResolutionService,
         JobPreparationService $jobPreparationService,
+        EntityManagerInterface $entityManager,
         $predefinedDomainsToIgnore,
-        JobRepository $jobRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -86,7 +87,8 @@ class ResolveWebsiteCommand extends Command
         $this->websiteResolutionService = $websiteResolutionService;
         $this->jobPreparationService = $jobPreparationService;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
-        $this->jobRepository = $jobRepository;
+
+        $this->jobRepository = $entityManager->getRepository(Job::class);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\Worker;
 
 use SimplyTestable\ApiBundle\Controller\Worker\TasksController;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -293,7 +294,9 @@ class TasksControllerTest extends AbstractBaseTestCase
     {
         $userFactory = new UserFactory($this->container);
         $jobFactory = new JobFactory($this->container);
-        $taskRepository = $this->container->get('simplytestable.repository.task');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $taskRepository = $entityManager->getRepository(Task::class);
 
         $users = $userFactory->createPublicAndPrivateUserSet();
         $jobs = [];

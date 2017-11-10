@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 
@@ -14,12 +15,11 @@ class AccountPlanService
     private $accountPlanRepository;
 
     /**
-     * JobTypeService constructor.
-     * @param EntityRepository $accountPlanRepository
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityRepository $accountPlanRepository)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->accountPlanRepository = $accountPlanRepository;
+        $this->accountPlanRepository = $entityManager->getRepository(Plan::class);
     }
 
     /**

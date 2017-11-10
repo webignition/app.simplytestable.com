@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Command\Stripe\Event;
 
-use Mockery\MockInterface;
+use Mockery\Mock;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
@@ -75,7 +75,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
      * @param string $fixtureName
      * @param string $expectedEventName
      */
-    public function testRun($fixtureName, $expectedEventName)
+    public function testRunFoo($fixtureName, $expectedEventName)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
@@ -103,7 +103,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
             ]
         ], $user);
 
-        /* @var MockInterface|EventDispatcherInterface $eventDispatcher */
+        /* @var Mock|EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);
         $eventDispatcher
             ->shouldReceive('dispatch')
@@ -119,14 +119,11 @@ class ProcessCommandTest extends AbstractBaseTestCase
                 }),
             ]);
 
-        $stripeEventRepository = $this->container->get('simplytestable.repository.stripeevent');
-
         $command = new ProcessCommand(
             $applicationStateService,
             $entityManager,
             $logger,
-            $eventDispatcher,
-            $stripeEventRepository
+            $eventDispatcher
         );
 
         $returnCode = $command->run(new ArrayInput([

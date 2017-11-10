@@ -1,7 +1,8 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\User;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
@@ -25,7 +26,7 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
     private $userAccountPlanService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -37,14 +38,14 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
     /**
      * @param ApplicationStateService $applicationStateService
      * @param UserAccountPlanService $userAccountPlanService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param AccountPlanService $accountPlanService
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         UserAccountPlanService $userAccountPlanService,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         AccountPlanService $accountPlanService,
         $name = null
     ) {
@@ -87,6 +88,7 @@ class AddNonPlannedUsersToBasicPlanCommand extends BaseCommand
 
         $output->writeln('Finding users that have no plan ...');
 
+        /* @var User[] $users */
         $users = $this->userAccountPlanService->findUsersWithNoPlan();
 
         if (empty($users)) {

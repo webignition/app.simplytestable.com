@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Tasks;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Command\BaseCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
@@ -30,7 +30,7 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
     private $stateService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -42,15 +42,13 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
     /**
      * @param ApplicationStateService $applicationStateService
      * @param StateService $stateService
-     * @param EntityManager $entityManager
-     * @param TaskRepository $taskRepository
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         StateService $stateService,
-        EntityManager $entityManager,
-        TaskRepository $taskRepository,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);
@@ -58,7 +56,8 @@ class RequeueQueuedForAssignmentCommand extends BaseCommand
         $this->applicationStateService = $applicationStateService;
         $this->stateService = $stateService;
         $this->entityManager = $entityManager;
-        $this->taskRepository = $taskRepository;
+
+        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**

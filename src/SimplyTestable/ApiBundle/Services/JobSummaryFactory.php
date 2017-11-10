@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Model\Job\Summary\CrawlSummary;
 use SimplyTestable\ApiBundle\Model\Job\Summary\Summary as JobSummary;
@@ -73,8 +74,6 @@ class JobSummaryFactory
      * @param TeamService $teamService
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param UserAccountPlanService $userAccountPlanService
-     * @param TaskRepository $taskRepository
-     * @param EntityRepository $jobRejectionReasonRepository
      * @param CrawlJobUrlCollector $crawlJobUrlCollector
      */
     public function __construct(
@@ -85,8 +84,6 @@ class JobSummaryFactory
         TeamService $teamService,
         CrawlJobContainerService $crawlJobContainerService,
         UserAccountPlanService $userAccountPlanService,
-        TaskRepository $taskRepository,
-        EntityRepository $jobRejectionReasonRepository,
         CrawlJobUrlCollector $crawlJobUrlCollector
     ) {
         $this->entityManager = $entityManager;
@@ -96,9 +93,10 @@ class JobSummaryFactory
         $this->teamService = $teamService;
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->userAccountPlanService = $userAccountPlanService;
-        $this->taskRepository = $taskRepository;
-        $this->jobRejectionReasonRepository = $jobRejectionReasonRepository;
         $this->crawlJobUrlCollector = $crawlJobUrlCollector;
+
+        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
     }
 
     /**

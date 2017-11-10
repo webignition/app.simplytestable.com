@@ -1,8 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\ScheduledJob;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -42,7 +43,7 @@ class ExecuteCommand extends Command
     private $resqueJobFactory;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -65,20 +66,18 @@ class ExecuteCommand extends Command
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
-     * @param  EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param JobStartService $jobStartService
      * @param JobService $jobService
-     * @param EntityRepository $scheduledJobRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         JobStartService $jobStartService,
         JobService $jobService,
-        EntityRepository $scheduledJobRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -89,7 +88,7 @@ class ExecuteCommand extends Command
         $this->entityManager = $entityManager;
         $this->jobStartService = $jobStartService;
         $this->jobService = $jobService;
-        $this->scheduledJobRepository = $scheduledJobRepository;
+        $this->scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
     }
 
     /**
@@ -126,6 +125,7 @@ class ExecuteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
+        /* @var ScheduledJob $scheduledJob */
         $scheduledJob = $this->scheduledJobRepository->find($id);
 
         if (empty($scheduledJob)) {

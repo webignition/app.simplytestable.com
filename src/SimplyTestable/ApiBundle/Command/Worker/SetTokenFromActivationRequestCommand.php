@@ -1,8 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,7 +21,7 @@ class SetTokenFromActivationRequestCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -36,24 +37,21 @@ class SetTokenFromActivationRequestCommand extends Command
 
     /**
      * @param ApplicationStateService $applicationStateService
-     * @param EntityManager $entityManager
-     * @param EntityRepository $workerRepository
-     * @param EntityRepository $workerActivationRequestRepository
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManager $entityManager,
-        EntityRepository $workerRepository,
-        EntityRepository $workerActivationRequestRepository,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-        $this->workerRepository = $workerRepository;
-        $this->workerActivationRequestRepository = $workerActivationRequestRepository;
+
+        $this->workerRepository = $entityManager->getRepository(Worker::class);
+        $this->workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
     }
 
     /**
@@ -90,7 +88,7 @@ class SetTokenFromActivationRequestCommand extends Command
                 $worker->setToken($workerActivationRequest->getToken());
 
                 $this->entityManager->persist($worker);
-                $this->entityManager->flush($worker);
+                $this->entityManager->flush();
             }
         }
 

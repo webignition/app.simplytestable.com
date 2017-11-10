@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\RetrievalServiceException as JobRetrievalServiceException;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
@@ -25,18 +26,19 @@ class RetrievalService
     private $tokenStorage;
 
     /**
+     * @param EntityManagerInterface $entityManager
      * @param TeamService $teamService
-     * @param JobRepository $jobRepository
      * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
+        EntityManagerInterface $entityManager,
         TeamService $teamService,
-        JobRepository $jobRepository,
         TokenStorageInterface $tokenStorage
     ) {
         $this->teamService = $teamService;
-        $this->jobRepository = $jobRepository;
         $this->tokenStorage = $tokenStorage;
+
+        $this->jobRepository = $entityManager->getRepository(Job::class);
     }
 
     /**

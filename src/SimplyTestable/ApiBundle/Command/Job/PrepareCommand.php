@@ -1,7 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\JobPreparation\Exception as JobPreparationException;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -69,8 +71,8 @@ class PrepareCommand extends Command
      * @param JobPreparationService $jobPreparationService
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param LoggerInterface $logger
+     * @param EntityManagerInterface $entityManager,
      * @param array $predefinedDomainsToIgnore
-     * @param JobRepository $jobRepository
      * @param string|null $name
      */
     public function __construct(
@@ -80,8 +82,8 @@ class PrepareCommand extends Command
         JobPreparationService $jobPreparationService,
         CrawlJobContainerService $crawlJobContainerService,
         LoggerInterface $logger,
+        EntityManagerInterface $entityManager,
         $predefinedDomainsToIgnore,
-        JobRepository $jobRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -93,7 +95,8 @@ class PrepareCommand extends Command
         $this->crawlJobContainerService = $crawlJobContainerService;
         $this->logger = $logger;
         $this->predefinedDomainsToIgnore = $predefinedDomainsToIgnore;
-        $this->jobRepository = $jobRepository;
+
+        $this->jobRepository = $entityManager->getRepository(Job::class);
     }
 
     /**

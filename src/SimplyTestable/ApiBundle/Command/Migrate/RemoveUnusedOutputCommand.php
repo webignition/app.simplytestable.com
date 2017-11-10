@@ -2,7 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Command\Migrate;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
@@ -22,7 +23,7 @@ class RemoveUnusedOutputCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -33,21 +34,19 @@ class RemoveUnusedOutputCommand extends Command
 
     /**
      * @param ApplicationStateService $applicationStateService
-     * @param EntityManager $entityManager
-     * @param TaskOutputRepository $taskOutputRepository
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManager $entityManager,
-        TaskOutputRepository $taskOutputRepository,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-        $this->taskOutputRepository = $taskOutputRepository;
+        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**

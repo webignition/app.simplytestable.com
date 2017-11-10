@@ -788,7 +788,7 @@ class JobServiceTest extends AbstractBaseTestCase
     public function testRejectInWrongState($stateName)
     {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $jobRejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
+        $jobRejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
 
         $job = $this->jobFactory->create();
         $job->setState($stateService->get($stateName));
@@ -850,7 +850,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $user = $userFactory->createPublicAndPrivateUserSet()[$userName];
 
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $jobRejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
+        $jobRejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
 
         $job = $this->jobFactory->create([
             JobFactory::KEY_USER => $user,

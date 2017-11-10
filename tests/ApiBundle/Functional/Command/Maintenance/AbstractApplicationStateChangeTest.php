@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Command\Maintenance;
 
-use Mockery\MockInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Command\Maintenance\AbstractApplicationStateChangeCommand;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -13,10 +13,11 @@ abstract class AbstractApplicationStateChangeTest extends AbstractBaseTestCase
      * @param string $state
      * @param bool $setStateReturnValue
      *
-     * @return MockInterface|ApplicationStateService
+     * @return Mock|ApplicationStateService
      */
     protected function createApplicationStateService($state, $setStateReturnValue)
     {
+        /* @var Mock|ApplicationStateService $applicationStateService */
         $applicationStateService = \Mockery::mock(ApplicationStateService::class);
 
         $applicationStateService

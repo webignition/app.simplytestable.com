@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional;
 
-use Mockery\MockInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -135,7 +135,7 @@ abstract class AbstractBaseTestCase extends WebTestCase
     {
         $securityTokenStorage = $this->container->get('security.token_storage');
 
-        /* @var MockInterface|TokenInterface */
+        /* @var Mock|TokenInterface $token */
         $token = \Mockery::mock(TokenInterface::class);
         $token
             ->shouldReceive('getUser')
@@ -151,7 +151,9 @@ abstract class AbstractBaseTestCase extends WebTestCase
     {
         parent::tearDown();
 
-        $this->container->get('doctrine')->getConnection()->close();
+        if (!is_null($this->container)) {
+            $this->container->get('doctrine')->getConnection()->close();
+        }
 
         $refl = new \ReflectionObject($this);
         foreach ($refl->getProperties() as $prop) {

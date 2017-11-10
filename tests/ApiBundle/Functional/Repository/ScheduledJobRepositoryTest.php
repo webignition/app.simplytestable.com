@@ -23,7 +23,8 @@ class ScheduledJobRepositoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $this->scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
     }
 
     /**

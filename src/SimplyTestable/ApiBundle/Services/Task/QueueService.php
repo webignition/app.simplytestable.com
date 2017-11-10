@@ -1,7 +1,10 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Task;
 
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -44,19 +47,18 @@ class QueueService
      * @param JobService $jobService
      * @param TaskService $taskService
      * @param StateService $stateService
-     * @param JobRepository $jobRepository
-     * @param TaskRepository $taskRepository
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         JobService $jobService,
         TaskService $taskService,
         StateService $stateService,
-        JobRepository $jobRepository,
-        TaskRepository $taskRepository
+        EntityManagerInterface $entityManager
     ) {
         $this->taskService = $taskService;
-        $this->jobRepository = $jobRepository;
-        $this->taskRepository = $taskRepository;
+
+        $this->jobRepository = $entityManager->getRepository(Job::class);
+        $this->taskRepository = $entityManager->getRepository(Task::class);
 
         $this->incompleteJobStates = $stateService->getCollection($jobService->getIncompleteStateNames());
         $this->taskQueuedState = $stateService->get(TaskService::QUEUED_STATE);

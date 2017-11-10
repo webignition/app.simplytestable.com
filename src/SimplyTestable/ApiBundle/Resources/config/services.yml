@@ -1,7 +1,6 @@
 imports:
     - { resource: services/commands.yml }
     - { resource: services/resque-job-factory.yml }
-    - { resource: services/repositories.yml }
 
 services:
   simplytestable.session.handler:
@@ -109,12 +108,12 @@ services:
   simplytestable.services.jobtypeservice:
     class:  SimplyTestable\ApiBundle\Services\JobTypeService
     arguments:
-        jobTypeRepository: "@simplytestable.repository.jobtype"
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.accountplan:
     class:  SimplyTestable\ApiBundle\Services\AccountPlanService
     arguments:
-        accountPlanRepository: "@simplytestable.repository.accountplan"
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.applicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
@@ -129,7 +128,6 @@ services:
         userService: "@simplytestable.services.userservice"
         stripeService: "@simplytestable.services.stripeservice"
         teamService: "@simplytestable.services.teamservice"
-        userRepository: '@simplytestable.repository.user'
         defaultTrialPeriod: "%default_trial_period%"
 
   simplytestable.services.useremailchangerequestservice:
@@ -146,9 +144,8 @@ services:
         taskService: "@simplytestable.services.taskservice"
         teamService: "@simplytestable.services.teamservice"
         stateService: '@simplytestable.services.stateservice'
-        jobRepository: '@simplytestable.repository.job'
         jobTypeService: '@simplytestable.services.jobtypeservice'
-        taskRepository: '@simplytestable.repository.task'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
@@ -192,7 +189,6 @@ services:
       httpClientService: '@simplytestable.services.httpclientservice'
       logger: '@logger'
       stateService: '@simplytestable.services.stateservice'
-      taskRepository: '@simplytestable.repository.task'
       entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.taskpreprocessor.factory:
@@ -318,9 +314,9 @@ services:
   simplytestable.services.job.retrievalservice:
     class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
     arguments:
-        teamService: "@simplytestable.services.teamservice"
-        jobRepository: '@simplytestable.repository.job'
-        tokenStorage: '@security.token_storage'
+      entityManager: "@doctrine.orm.entity_manager"
+      teamService: "@simplytestable.services.teamservice"
+      tokenStorage: '@security.token_storage'
 
   simplytestable.services.job.UserPostActivationPropertiesService:
     class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
@@ -334,8 +330,7 @@ services:
         jobService: '@simplytestable.services.jobservice'
         taskService: "@simplytestable.services.taskservice"
         stateService: '@simplytestable.services.stateservice'
-        jobRepository: '@simplytestable.repository.job'
-        taskRepository: '@simplytestable.repository.task'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.worker.taskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
@@ -345,7 +340,6 @@ services:
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
         logger: "@logger"
-        workerRepository: '@simplytestable.repository.worker'
 
   simplytestable.services.job.configurationservice:
     class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService
@@ -374,7 +368,6 @@ services:
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-        jobRepository: '@simplytestable.repository.job'
         entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.scheduledjob.cronmodifier.validationservice:
@@ -404,7 +397,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
     arguments:
       teamService: '@simplytestable.services.teamservice'
-      jobRepository: '@simplytestable.repository.job'
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.resourcelocator:
     class:  SimplyTestable\ApiBundle\Services\ResourceLocator
@@ -434,17 +427,13 @@ services:
         jobService: '@simplytestable.services.jobservice'
         crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
         tokenStorage: '@security.token_storage'
-        stateRepository: '@simplytestable.repository.state'
-        jobTypeRepository: '@simplytestable.repository.jobtype'
 
   simplytestable.services.applicationstatusfactory:
     class:   SimplyTestable\ApiBundle\Services\ApplicationStatusFactory
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       stateService: '@simplytestable.services.stateservice'
-      taskRepository: '@simplytestable.repository.task'
-      workerRepository: '@simplytestable.repository.worker'
-      jobRepository: '@simplytestable.repository.job'
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.usersummaryfactory:
     class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
@@ -466,8 +455,6 @@ services:
       teamService: '@simplytestable.services.teamservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
-      taskRepository: '@simplytestable.repository.task'
-      jobRejectionReasonRepository: '@simplytestable.repository.jobrejectionreason'
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
   simplytestable.services.joblistconfigurationfactory:
@@ -476,7 +463,7 @@ services:
   simplytestable.services.invite.tokengenerator:
     class: SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator
     arguments:
-      teamInviteRepository: '@simplytestable.repository.teaminvite'
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.task.urldiscovery:
     class: SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService
@@ -506,4 +493,4 @@ services:
     arguments:
       stateService: '@simplytestable.services.stateservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
-      taskRepository: '@simplytestable.repository.task'
+      entityManager: '@doctrine.orm.entity_manager'

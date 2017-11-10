@@ -154,7 +154,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.jobpreparationservice',
                         'simplytestable.services.crawljobcontainerservice',
                         'logger',
-                        'simplytestable.repository.job',
+                        'doctrine.orm.entity_manager',
                     ],
                     'parameters' => [
                         'predefinedDomainsToIgnore' => [
@@ -192,7 +192,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.resque.jobfactory',
                         'simplytestable.services.jobwebsiteresolutionservice',
                         'simplytestable.services.jobpreparationservice',
-                        'simplytestable.repository.job',
+                        'doctrine.orm.entity_manager',
                     ],
                     'parameters' => [
                         'predefinedDomainsToIgnore' => [
@@ -233,8 +233,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.stateservice',
                         'simplytestable.services.workertaskassignmentservice',
                         'logger',
-                        'simplytestable.repository.task',
-                        'simplytestable.repository.worker',
                     ],
                 ],
             ],
@@ -252,7 +250,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.taskservice',
                         'simplytestable.services.workertaskcancellationservice',
                         'logger',
-                        'simplytestable.repository.task',
+                        'doctrine.orm.entity_manager',
                     ],
                 ],
             ],
@@ -268,8 +266,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'serviceIds' => [
                         'simplytestable.services.applicationstateservice',
                         'simplytestable.services.workeractivationrequestservice',
-                        'simplytestable.repository.worker',
-                        'simplytestable.repository.workeractivationrequest',
+                        'doctrine.orm.entity_manager',
                     ],
                 ],
             ],
@@ -287,7 +284,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'doctrine.orm.entity_manager',
                         'logger',
                         'event_dispatcher',
-                        'simplytestable.repository.stripeevent',
                     ],
                 ],
             ],
@@ -318,7 +314,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'doctrine.orm.entity_manager',
                         'simplytestable.services.job.startservice',
                         'simplytestable.services.jobservice',
-                        'simplytestable.repository.scheduledjob',
                     ],
                 ],
             ],

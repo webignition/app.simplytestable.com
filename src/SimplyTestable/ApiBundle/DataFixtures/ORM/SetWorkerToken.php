@@ -29,8 +29,7 @@ class SetWorkerToken extends AbstractFixture implements OrderedFixtureInterface,
      */
     public function load(ObjectManager $manager)
     {
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $workerRepository = $this->container->get('simplytestable.repository.worker');
+        $workerRepository = $manager->getRepository(Worker::class);
 
         /* @var Worker[] $workers */
         $workers = $workerRepository->findAll();
@@ -41,8 +40,8 @@ class SetWorkerToken extends AbstractFixture implements OrderedFixtureInterface,
             if (empty($workerToken)) {
                 $worker->setToken(md5(rand()));
 
-                $entityManager->persist($worker);
-                $entityManager->flush($worker);
+                $manager->persist($worker);
+                $manager->flush($worker);
             }
         }
     }

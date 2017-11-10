@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Controller\Stripe;
 use Doctrine\Common\Collections\ArrayCollection;
 use SimplyTestable\ApiBundle\Controller\Stripe\WebHookController;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
+use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use Tests\ApiBundle\Factory\StripeEventFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -31,7 +32,8 @@ class WebHookControllerTest extends AbstractBaseTestCase
 
     public function testIndexActionPostRequest()
     {
-        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $fixtureName = 'customer.subscription.created.active';
         $fixtureModifications = [
@@ -199,8 +201,9 @@ class WebHookControllerTest extends AbstractBaseTestCase
     ) {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
-        $stripeEventRepository = $this->container->get('simplytestable.repository.stripeevent');
-        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
+
+        $stripeEventRepository = $entityManager->getRepository(Event::class);
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
 
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->create();

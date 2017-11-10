@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Adapter\Job\TaskConfiguration\RequestAdapter;
 
-use Mockery\MockInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -140,10 +140,11 @@ class RequestAdapterTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $taskTypes
      *
-     * @return MockInterface|TaskTypeService
+     * @return Mock|TaskTypeService
      */
     private function createTaskTypeService($taskTypes = [])
     {
+        /* @var Mock|TaskTypeService $taskTypeService */
         $taskTypeService = \Mockery::mock(TaskTypeService::class);
 
         foreach ($taskTypes as $taskTypeName => $taskType) {

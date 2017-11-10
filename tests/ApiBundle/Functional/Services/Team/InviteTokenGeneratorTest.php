@@ -2,7 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Services\Team;
 
-use Mockery\MockInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Repository\TeamInviteRepository;
 use SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator;
@@ -12,10 +13,10 @@ class InviteTokenGeneratorTest extends AbstractBaseTestCase
 {
     public function testGenerateToken()
     {
-        /* @var Invite|MockInterface */
+        /* @var Invite|Mock */
         $invite = \Mockery::mock(Invite::class);
 
-        /* @var TeamInviteRepository|MockInterface $teamInviteRepository */
+        /* @var TeamInviteRepository|Mock $teamInviteRepository */
         $teamInviteRepository = \Mockery::mock(TeamInviteRepository::class);
         $teamInviteRepository
             ->shouldReceive('findOneBy')
@@ -24,7 +25,14 @@ class InviteTokenGeneratorTest extends AbstractBaseTestCase
                 null,
             ]);
 
-        $inviteTokenGenerator = new InviteTokenGenerator($teamInviteRepository);
+        /* @var EntityManagerInterface|Mock $entityManager */
+        $entityManager = \Mockery::mock(EntityManagerInterface::class);
+        $entityManager
+            ->shouldReceive('getRepository')
+            ->with(Invite::class)
+            ->andReturn($teamInviteRepository);
+
+        $inviteTokenGenerator = new InviteTokenGenerator($entityManager);
 
         $token = $inviteTokenGenerator->generateToken();
 

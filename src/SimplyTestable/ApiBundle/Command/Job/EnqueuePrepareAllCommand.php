@@ -1,6 +1,8 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -46,7 +48,7 @@ class EnqueuePrepareAllCommand extends Command
      * @param ResqueJobFactory $resqueJobFactory
      * @param StateService $stateService
      * @param ApplicationStateService $applicationStateService
-     * @param JobRepository $jobRepository
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
@@ -54,7 +56,7 @@ class EnqueuePrepareAllCommand extends Command
         ResqueJobFactory $resqueJobFactory,
         StateService $stateService,
         ApplicationStateService $applicationStateService,
-        JobRepository $jobRepository,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);
@@ -63,7 +65,7 @@ class EnqueuePrepareAllCommand extends Command
         $this->resqueJobFactory = $resqueJobFactory;
         $this->stateService = $stateService;
         $this->applicationStateService = $applicationStateService;
-        $this->jobRepository = $jobRepository;
+        $this->jobRepository = $entityManager->getRepository(Job::class);
     }
 
     /**

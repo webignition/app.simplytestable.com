@@ -36,7 +36,8 @@ class JobStartControllerTest extends AbstractBaseTestCase
     public function testStartActionRequest()
     {
         $router = $this->container->get('router');
-        $jobRepository = $this->container->get('simplytestable.repository.job');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
         $siteRootUrl = 'http://example.com/';
 
         $requestUrl = $router->generate('job_start_start', [
@@ -60,7 +61,8 @@ class JobStartControllerTest extends AbstractBaseTestCase
     public function testReTestActionRequest()
     {
         $router = $this->container->get('router');
-        $jobRepository = $this->container->get('simplytestable.repository.job');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
         $siteRootUrl = 'http://example.com/';
 
         $jobFactory = new JobFactory($this->container);
@@ -109,8 +111,9 @@ class JobStartControllerTest extends AbstractBaseTestCase
     public function testStartActionUnroutableWebsite()
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $jobRepository = $this->container->get('simplytestable.repository.job');
-        $jobRejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
+        $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
         $siteRootUrl = 'foo';
 
@@ -140,8 +143,9 @@ class JobStartControllerTest extends AbstractBaseTestCase
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $jobRepository = $this->container->get('simplytestable.repository.job');
-        $jobRejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
+        $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
         $user = $userService->getPublicUser();
         $this->setUser($user);
@@ -183,7 +187,8 @@ class JobStartControllerTest extends AbstractBaseTestCase
     public function testStartActionSuccess()
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $jobRepository = $this->container->get('simplytestable.repository.job');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
 
         $siteRootUrl = 'http://example.com/';
 

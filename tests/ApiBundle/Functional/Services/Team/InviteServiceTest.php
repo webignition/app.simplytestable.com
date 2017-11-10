@@ -98,7 +98,8 @@ class InviteServiceTest extends AbstractBaseTestCase
 
     public function testGetForTeam()
     {
-        $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
         $userFactory = new UserFactory($this->container);
 
         $leader = $this->users['leader'];
@@ -133,7 +134,8 @@ class InviteServiceTest extends AbstractBaseTestCase
 
     public function testGetForTeamAndUser()
     {
-        $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
 
         $leader = $this->users['leader'];
         $invitee = $this->users['private'];

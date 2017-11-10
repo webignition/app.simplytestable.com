@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Reporting;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -27,7 +27,7 @@ class GetTopErrorsCommand extends Command
     private $taskTypeService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -41,21 +41,19 @@ class GetTopErrorsCommand extends Command
 
     /**
      * @param TaskTypeService $taskTypeService
-     * @param EntityManager $entityManager
-     * @param TaskOutputRepository $taskOutputRepository
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
         TaskTypeService $taskTypeService,
-        EntityManager $entityManager,
-        TaskOutputRepository $taskOutputRepository,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->taskTypeService = $taskTypeService;
         $this->entityManager = $entityManager;
-        $this->taskOutputRepository = $taskOutputRepository;
+        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**

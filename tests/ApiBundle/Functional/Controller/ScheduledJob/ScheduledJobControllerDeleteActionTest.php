@@ -96,7 +96,8 @@ class ScheduledJobControllerDeleteActionTest extends AbstractBaseTestCase
 
     public function testDeleteSuccess()
     {
-        $scheduledJobRepository = $this->container->get('simplytestable.repository.scheduledjob');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
 
         $scheduledJobId = $this->scheduledJob->getId();
 

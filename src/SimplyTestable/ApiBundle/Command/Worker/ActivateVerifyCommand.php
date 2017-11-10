@@ -1,7 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
@@ -38,23 +40,22 @@ class ActivateVerifyCommand extends Command
     /**
      * @param ApplicationStateService $applicationStateService
      * @param WorkerActivationRequestService $workerActivationRequestService
-     * @param EntityRepository $workerRepository
-     * @param EntityRepository $workerActivationRequestRepository
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         WorkerActivationRequestService $workerActivationRequestService,
-        EntityRepository $workerRepository,
-        EntityRepository $workerActivationRequestRepository,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->workerActivationRequestService = $workerActivationRequestService;
-        $this->workerRepository = $workerRepository;
-        $this->workerActivationRequestRepository = $workerActivationRequestRepository;
+
+        $this->workerRepository = $entityManager->getRepository(Worker::class);
+        $this->workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
     }
 
     /**

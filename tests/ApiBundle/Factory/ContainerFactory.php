@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Factory;
 
-use Mockery\MockInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -12,10 +12,11 @@ class ContainerFactory
     /**
      * @param array $services
      *
-     * @return MockInterface|ContainerInterface
+     * @return Mock|ContainerInterface
      */
     public static function create($services)
     {
+        /* @var Mock|ContainerInterface $container */
         $container = \Mockery::mock(ContainerInterface::class);
 
         foreach ($services as $serviceId => $service) {
@@ -28,8 +29,14 @@ class ContainerFactory
         return $container;
     }
 
+    /**
+     * @param array $maintenanceStates
+     *
+     * @return Mock|ContainerInterface
+     */
     public static function createForMaintenanceReadOnlyModeControllerTest($maintenanceStates)
     {
+        /* @var Mock|ApplicationStateService $applicationStateService */
         $applicationStateService = \Mockery::mock(ApplicationStateService::class);
 
         $applicationStateService
@@ -40,6 +47,7 @@ class ContainerFactory
             ->shouldReceive('isInMaintenanceBackupReadOnlyState')
             ->andReturn($maintenanceStates['backup-read-only']);
 
+        /* @var Mock|KernelInterface $kernel */
         $kernel = \Mockery::mock(KernelInterface::class);
         $kernel
             ->shouldReceive('locateResource')

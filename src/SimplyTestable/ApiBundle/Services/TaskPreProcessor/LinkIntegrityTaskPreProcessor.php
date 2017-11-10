@@ -65,7 +65,6 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
      * @param HttpClientService $httpClientService
      * @param LoggerInterface $logger
      * @param StateService $stateService
-     * @param TaskRepository $taskRepository
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
@@ -74,7 +73,6 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         HttpClientService $httpClientService,
         LoggerInterface $logger,
         StateService $stateService,
-        TaskRepository $taskRepository,
         EntityManagerInterface $entityManager
     ) {
         $this->taskService = $taskService;
@@ -82,8 +80,9 @@ class LinkIntegrityTaskPreProcessor implements TaskPreprocessorInterface
         $this->httpClientService = $httpClientService;
         $this->logger = $logger;
         $this->stateService = $stateService;
-        $this->taskRepository = $taskRepository;
         $this->entityManager = $entityManager;
+
+        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**

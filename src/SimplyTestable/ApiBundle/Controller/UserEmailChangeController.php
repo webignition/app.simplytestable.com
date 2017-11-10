@@ -24,7 +24,9 @@ class UserEmailChangeController extends Controller
         $userService = $this->container->get('simplytestable.services.userservice');
         $emailCanonicalizer = $this->container->get('fos_user.util.email_canonicalizer');
         $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
-        $userEmailChangeRequestRepository = $this->container->get('simplytestable.repository.useremailchangerequest');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
 
         $new_email = $emailCanonicalizer->canonicalize($new_email);
         $user = $this->getUser();
@@ -74,7 +76,9 @@ class UserEmailChangeController extends Controller
     public function getAction($email_canonical)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
-        $userEmailChangeRequestRepository = $this->container->get('simplytestable.repository.useremailchangerequest');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+
+        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
 
         $user = $userService->findUserByEmail($email_canonical);
         if (empty($user)) {

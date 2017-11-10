@@ -2,6 +2,8 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Stripe;
 
+use SimplyTestable\ApiBundle\Entity\Stripe\Event;
+use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Mail\Service as MailService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,10 +19,12 @@ class WebHookController extends Controller
      */
     public function indexAction(Request $request)
     {
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
         $mailService = $this->container->get('simplytestable.services.mail.service');
-        $userAccountPlanRepository = $this->container->get('simplytestable.repository.useraccountplan');
-        $stripeEventRepository = $this->container->get('simplytestable.repository.stripeevent');
+
+        $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
+        $stripeEventRepository = $entityManager->getRepository(Event::class);
 
         $eventContent = $this->getEventContent($request);
 

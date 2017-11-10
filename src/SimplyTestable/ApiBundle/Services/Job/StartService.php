@@ -78,7 +78,6 @@ class StartService
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
      * @param ResqueJobFactory $resqueJobFactory
-     * @param JobRepository $jobRepository
      * @param EntityManagerInterface $entityManager
      */
     public function __construct(
@@ -90,7 +89,6 @@ class StartService
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
         ResqueJobFactory $resqueJobFactory,
-        JobRepository $jobRepository,
         EntityManagerInterface $entityManager
     ) {
         $this->jobUserAccountPlanEnforcementService = $jobUserAccountPlanEnforcementService;
@@ -101,8 +99,9 @@ class StartService
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
         $this->resqueJobFactory = $resqueJobFactory;
-        $this->jobRepository = $jobRepository;
         $this->entityManager = $entityManager;
+
+        $this->jobRepository = $entityManager->getRepository(Job::class);
     }
 
     /**
