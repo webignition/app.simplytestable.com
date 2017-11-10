@@ -146,9 +146,8 @@ services:
         taskService: "@simplytestable.services.taskservice"
         teamService: "@simplytestable.services.teamservice"
         stateService: '@simplytestable.services.stateservice'
-        jobRepository: '@simplytestable.repository.job'
         jobTypeService: '@simplytestable.services.jobtypeservice'
-        taskRepository: '@simplytestable.repository.task'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
@@ -192,7 +191,6 @@ services:
       httpClientService: '@simplytestable.services.httpclientservice'
       logger: '@logger'
       stateService: '@simplytestable.services.stateservice'
-      taskRepository: '@simplytestable.repository.task'
       entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.taskpreprocessor.factory:
@@ -334,8 +332,7 @@ services:
         jobService: '@simplytestable.services.jobservice'
         taskService: "@simplytestable.services.taskservice"
         stateService: '@simplytestable.services.stateservice'
-        jobRepository: '@simplytestable.repository.job'
-        taskRepository: '@simplytestable.repository.task'
+        entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.worker.taskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
@@ -442,9 +439,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       stateService: '@simplytestable.services.stateservice'
-      taskRepository: '@simplytestable.repository.task'
-      workerRepository: '@simplytestable.repository.worker'
-      jobRepository: '@simplytestable.repository.job'
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.usersummaryfactory:
     class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
@@ -466,8 +461,6 @@ services:
       teamService: '@simplytestable.services.teamservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
-      taskRepository: '@simplytestable.repository.task'
-      jobRejectionReasonRepository: '@simplytestable.repository.jobrejectionreason'
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
   simplytestable.services.joblistconfigurationfactory:
@@ -506,4 +499,4 @@ services:
     arguments:
       stateService: '@simplytestable.services.stateservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
-      taskRepository: '@simplytestable.repository.task'
+      entityManager: '@doctrine.orm.entity_manager'

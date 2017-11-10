@@ -2,6 +2,7 @@
 namespace SimplyTestable\ApiBundle\Command\Task;
 
 use Doctrine\ORM\EntityManager;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -53,7 +54,6 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
      * @param StateService $stateService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
-     * @param TaskRepository $taskRepository
      * @param string|null $name
      */
     public function __construct(
@@ -62,7 +62,6 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
         StateService $stateService,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
-        TaskRepository $taskRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -72,7 +71,8 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
         $this->stateService = $stateService;
         $this->resqueQueueService = $resqueQueueService;
         $this->resqueJobFactory = $resqueJobFactory;
-        $this->taskRepository = $taskRepository;
+
+        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**

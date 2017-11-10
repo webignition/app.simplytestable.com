@@ -1,7 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 
 class CrawlJobUrlCollector
@@ -29,16 +31,16 @@ class CrawlJobUrlCollector
     /**
      * @param StateService $stateService
      * @param UserAccountPlanService $userAccountPlanService
-     * @param TaskRepository $taskRepository
+     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         StateService $stateService,
         UserAccountPlanService $userAccountPlanService,
-        TaskRepository $taskRepository
+        EntityManagerInterface $entityManager
     ) {
         $this->stateService = $stateService;
         $this->userAccountPlanService = $userAccountPlanService;
-        $this->taskRepository = $taskRepository;
+        $this->taskRepository = $entityManager->getRepository(Task::class);
     }
 
     /**

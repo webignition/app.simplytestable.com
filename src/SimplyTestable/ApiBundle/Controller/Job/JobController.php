@@ -221,9 +221,10 @@ class JobController extends Controller
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $stateService = $this->get('simplytestable.services.stateservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->container->get('simplytestable.repository.task');
+        $taskRepository = $entityManager->getRepository(Task::class);
 
         try {
             $job = $jobRetrievalService->retrieve($test_id);
@@ -308,9 +309,10 @@ class JobController extends Controller
     {
         $taskService = $this->container->get('simplytestable.services.taskservice');
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->container->get('simplytestable.repository.task');
+        $taskRepository = $entityManager->getRepository(Task::class);
 
         try {
             $job = ($jobRetrievalService->retrieve($test_id));
@@ -351,9 +353,10 @@ class JobController extends Controller
     public function taskIdsAction($site_root_url, $test_id)
     {
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->container->get('simplytestable.repository.task');
+        $taskRepository = $entityManager->getRepository(Task::class);
 
         try {
             $job = ($jobRetrievalService->retrieve($test_id));
@@ -377,9 +380,10 @@ class JobController extends Controller
     public function listUrlsAction($site_root_url, $test_id)
     {
         $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->container->get('simplytestable.repository.task');
+        $taskRepository = $entityManager->getRepository(Task::class);
 
         try {
             $job = ($jobRetrievalService->retrieve($test_id));

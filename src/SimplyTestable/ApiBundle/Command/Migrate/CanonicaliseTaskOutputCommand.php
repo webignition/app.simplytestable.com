@@ -40,23 +40,20 @@ class CanonicaliseTaskOutputCommand extends Command
     /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
-     * @param TaskRepository $taskRepository
-     * @param TaskOutputRepository $taskOutputRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
-        TaskRepository $taskRepository,
-        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-        $this->taskRepository = $taskRepository;
-        $this->taskOutputRepository = $taskOutputRepository;
+
+        $this->taskRepository = $entityManager->getRepository(Task::class);
+        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**

@@ -56,12 +56,6 @@ class AssignCollectionJob extends CommandJob
         /* @var LoggerInterface $logger */
         $logger = $this->getContainer()->get($this->args['serviceIds'][7]);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->getContainer()->get($this->args['serviceIds'][8]);
-
-        /* @var EntityRepository $taskRepository */
-        $workerRepository = $this->getContainer()->get($this->args['serviceIds'][9]);
-
         return new CollectionCommand(
             $applicationStateService,
             $entityManager,
@@ -70,9 +64,7 @@ class AssignCollectionJob extends CommandJob
             $resqueJobFactory,
             $stateService,
             $workerTaskAssignmentService,
-            $logger,
-            $taskRepository,
-            $workerRepository
+            $logger
         );
     }
 

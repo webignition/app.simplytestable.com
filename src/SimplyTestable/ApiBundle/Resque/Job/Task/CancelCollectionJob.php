@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job\Task;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
@@ -39,15 +40,15 @@ class CancelCollectionJob extends CommandJob
         /* @var LoggerInterface $logger */
         $logger = $this->getContainer()->get($this->args['serviceIds'][3]);
 
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->getContainer()->get($this->args['serviceIds'][4]);
+        /* @var EntityManagerInterface $entityManager */
+        $entityManager = $this->getContainer()->get($this->args['serviceIds'][4]);
 
         return new CollectionCommand(
             $applicationStateService,
             $taskService,
             $workerTaskCancellationService,
             $logger,
-            $taskRepository
+            $entityManager
         );
     }
 

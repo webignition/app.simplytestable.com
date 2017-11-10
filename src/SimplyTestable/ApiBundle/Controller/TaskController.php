@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\State;
+use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -138,10 +139,12 @@ class TaskController extends Controller
      */
     public function taskTypeCountAction($task_type, $state_name)
     {
-        /* @var TaskRepository $taskRepository */
-        $taskRepository = $this->container->get('simplytestable.repository.task');
-        $stateRepository = $this->container->get('simplytestable.repository.state');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
+
+        /* @var TaskRepository $taskRepository */
+        $taskRepository = $entityManager->getRepository(Task::class);
+        $stateRepository = $entityManager->getRepository(State::class);
 
         $taskType = $taskTypeService->get($task_type);
 
