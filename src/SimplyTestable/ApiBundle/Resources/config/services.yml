@@ -13,8 +13,7 @@ services:
 
   SimplyTestable\ApiBundle\Services\WebSiteService:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
 
   SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
     class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
