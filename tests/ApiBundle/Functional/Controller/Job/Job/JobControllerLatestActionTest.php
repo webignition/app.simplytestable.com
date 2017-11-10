@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
+use SimplyTestable\ApiBundle\Services\JobService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,7 +42,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
      */
     public function testLatestAction($owner, $requester, $callSetPublic, $expectedResponseStatusCode)
     {
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobService = $this->container->get(JobService::class);
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
 
         $ownerUser = $users[$owner];

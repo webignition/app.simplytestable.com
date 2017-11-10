@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -211,7 +212,7 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
     public function testCreateForJobWithAmmendment($reason, $constraintName, $expectedSerializedAmmendments)
     {
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobService = $this->container->get(JobService::class);
 
         $user = $this->userFactory->create();
 

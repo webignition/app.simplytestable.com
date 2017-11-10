@@ -19,7 +19,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
-      jobService: '@simplytestable.services.jobservice'
+      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
     tags:
       - { name: console.command }
 
@@ -117,7 +117,7 @@ services:
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       entityManager: '@doctrine.orm.entity_manager'
       jobStartService: '@simplytestable.services.job.startservice'
-      jobService: '@simplytestable.services.jobservice'
+      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
     tags:
       - { name: console.command }
 

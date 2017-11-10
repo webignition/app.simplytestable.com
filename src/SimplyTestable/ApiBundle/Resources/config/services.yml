@@ -19,7 +19,7 @@ services:
   SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
     class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
     arguments:
-        jobService: "@simplytestable.services.jobservice"
+        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
         urlResolver: '@simplytestable.services.urlresolver'
@@ -38,7 +38,7 @@ services:
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         resqueQueueService: "@simplytestable.services.resque.queueService"
 
-  simplytestable.services.jobservice:
+  SimplyTestable\ApiBundle\Services\JobService:
     class:  SimplyTestable\ApiBundle\Services\JobService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
@@ -49,7 +49,7 @@ services:
   simplytestable.services.joblistservice:
     class:  SimplyTestable\ApiBundle\Services\JobListService
     arguments:
-        jobService: "@simplytestable.services.jobservice"
+        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         teamService: "@simplytestable.services.teamservice"
         jobListQueryBuilderFactory: '@simplytestable.services.joblistquerybuilderfactory'
 
@@ -150,7 +150,7 @@ services:
   simplytestable.services.jobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
     arguments:
-        jobService: "@simplytestable.services.jobservice"
+        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
         jobTypeService: "@simplytestable.services.jobtypeservice"
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
@@ -176,7 +176,7 @@ services:
     class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
-        jobService: "@simplytestable.services.jobservice"
+        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         jobTypeService: '@simplytestable.services.jobtypeservice'
         urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
@@ -327,7 +327,7 @@ services:
   simplytestable.services.task.queueService:
     class:  SimplyTestable\ApiBundle\Services\Task\QueueService
     arguments:
-        jobService: '@simplytestable.services.jobservice'
+        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         entityManager: "@doctrine.orm.entity_manager"
@@ -362,7 +362,7 @@ services:
     arguments:
         jobUserAccountPlanEnforcementService: "@simplytestable.services.jobUserAccountPlanEnforcementService"
         jobTypeService: "@simplytestable.services.jobtypeservice"
-        jobService: "@simplytestable.services.jobservice"
+        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         userService: "@simplytestable.services.userservice"
         resqueQueueService: "@simplytestable.services.resque.queueservice"
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
@@ -424,7 +424,7 @@ services:
     arguments:
         requestStack: '@request_stack'
         entityManager: '@doctrine.orm.entity_manager'
-        jobService: '@simplytestable.services.jobservice'
+        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
         tokenStorage: '@security.token_storage'
 
@@ -451,7 +451,7 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
       taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      jobService: '@simplytestable.services.jobservice'
+      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
       teamService: '@simplytestable.services.teamservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
@@ -478,7 +478,7 @@ services:
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
       jobUserAccountPlanEnforcementService: '@simplytestable.services.jobuseraccountplanenforcementservice'
       userAccountPlanService: '@simplytestable.services.useraccountplanservice'
-      jobService: '@simplytestable.services.jobservice'
+      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
       entityManager: '@doctrine.orm.entity_manager'
       urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
 

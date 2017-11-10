@@ -44,7 +44,7 @@ class JobServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobService = $this->container->get('simplytestable.services.jobservice');
+        $this->jobService = $this->container->get(JobService::class);
         $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
         $this->jobFactory = new JobFactory($this->container);
     }

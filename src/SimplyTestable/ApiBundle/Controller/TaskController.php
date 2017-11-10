@@ -33,7 +33,7 @@ class TaskController extends Controller
         $completeRequestFactory = $this->container->get('simplytestable.services.request.factory.task.complete');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $taskService = $this->container->get(TaskService::class);
-        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $jobService = $this->container->get(JobService::class);
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');

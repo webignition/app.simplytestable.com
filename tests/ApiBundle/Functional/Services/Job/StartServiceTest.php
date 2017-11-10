@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\WebSite;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -301,7 +302,7 @@ class StartServiceTest extends AbstractBaseTestCase
         $requiredServiceIds = [
             'simplytestable.services.jobuseraccountplanenforcementservice',
             'simplytestable.services.jobtypeservice',
-            'simplytestable.services.jobservice',
+            JobService::class,
             'simplytestable.services.userservice',
             'simplytestable.services.resque.queueservice',
             StateService::class,
@@ -325,7 +326,7 @@ class StartServiceTest extends AbstractBaseTestCase
         return new StartService(
             $requiredServices['simplytestable.services.jobuseraccountplanenforcementservice'],
             $requiredServices['simplytestable.services.jobtypeservice'],
-            $requiredServices['simplytestable.services.jobservice'],
+            $requiredServices[JobService::class],
             $requiredServices['simplytestable.services.userservice'],
             $requiredServices['simplytestable.services.resque.queueservice'],
             $requiredServices[StateService::class],
