@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -114,7 +115,7 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
 
     public function testAcceptActionUserHasPremiumPlan()
     {
-        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamMemberService = $this->container->get(MemberService::class);
 
         $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
 
@@ -135,7 +136,7 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
     public function testAcceptActionSuccess()
     {
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamMemberService = $this->container->get(MemberService::class);
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');

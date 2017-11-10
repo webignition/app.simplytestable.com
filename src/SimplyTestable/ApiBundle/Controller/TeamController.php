@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
+use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,7 +21,7 @@ class TeamController extends Controller
     public function getAction()
     {
         $teamService = $this->container->get('simplytestable.services.teamservice');
-        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamMemberService = $this->container->get(MemberService::class);
 
         $user = $this->getUser() ;
         $team = $teamService->getForUser($user);
@@ -129,7 +130,7 @@ class TeamController extends Controller
     public function leaveAction()
     {
         $teamService = $this->container->get('simplytestable.services.teamservice');
-        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamMemberService = $this->container->get(MemberService::class);
 
         if ($teamService->hasTeam($this->getUser())) {
             return Response::create('', 400, [

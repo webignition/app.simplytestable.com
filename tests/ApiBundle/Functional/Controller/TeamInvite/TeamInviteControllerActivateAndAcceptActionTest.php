@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\TeamInvite;
 
+use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -45,7 +46,7 @@ class TeamInviteControllerActivateAndAcceptActionTest extends AbstractTeamInvite
     public function testActivateAndAcceptActionSuccess()
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamMemberService = $this->container->get(MemberService::class);
 
         $inviteeUser = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',

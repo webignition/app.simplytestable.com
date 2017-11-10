@@ -293,7 +293,7 @@ services:
         postmarkMessage: "@postmark.message"
         postmarkSender: '@SimplyTestable\ApiBundle\Services\Postmark\Sender'
 
-  simplytestable.services.teammemberservice:
+  SimplyTestable\ApiBundle\Services\Team\MemberService:
     class:  SimplyTestable\ApiBundle\Services\Team\MemberService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
@@ -301,7 +301,7 @@ services:
   simplytestable.services.teamservice:
     class:  SimplyTestable\ApiBundle\Services\Team\Service
     arguments:
-        teamMemberService: "@simplytestable.services.teammemberservice"
+        teamMemberService: '@SimplyTestable\ApiBundle\Services\Team\MemberService'
         entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.teaminviteservice:

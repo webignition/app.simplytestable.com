@@ -29,7 +29,7 @@ class MemberServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->memberService = $this->container->get('simplytestable.services.teammemberservice');
+        $this->memberService = $this->container->get(MemberService::class);
         $userFactory = new UserFactory($this->container);
 
         $this->users = $userFactory->createPublicPrivateAndTeamUserSet();

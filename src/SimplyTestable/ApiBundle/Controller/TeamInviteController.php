@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -92,7 +93,7 @@ class TeamInviteController extends Controller
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
         $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
-        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamMemberService = $this->container->get(MemberService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $teamRepository = $entityManager->getRepository(Team::class);
@@ -286,7 +287,7 @@ class TeamInviteController extends Controller
     public function activateAndAcceptAction(Request $request)
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamMemberService = $this->container->get('simplytestable.services.teammemberservice');
+        $teamMemberService = $this->container->get(MemberService::class);
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
         $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
