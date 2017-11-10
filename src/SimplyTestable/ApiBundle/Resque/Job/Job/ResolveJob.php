@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
@@ -45,8 +46,8 @@ class ResolveJob extends CommandJob
 
         $predefinedDomainsToIgnore = $this->args['parameters']['predefinedDomainsToIgnore'];
 
-        /* @var JobRepository $jobRepository */
-        $jobRepository = $this->getContainer()->get($this->args['serviceIds'][5]);
+        /* @var EntityManagerInterface $entityManager */
+        $entityManager = $this->getContainer()->get($this->args['serviceIds'][5]);
 
         return new ResolveWebsiteCommand(
             $applicationStateService,
@@ -54,8 +55,8 @@ class ResolveJob extends CommandJob
             $resqueJobFactory,
             $websiteResolutionService,
             $jobPreparationService,
-            $predefinedDomainsToIgnore,
-            $jobRepository
+            $entityManager,
+            $predefinedDomainsToIgnore
         );
     }
 

@@ -11,7 +11,7 @@ services:
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       stateService: '@simplytestable.services.stateservice'
       applicationStateService: '@simplytestable.services.applicationstateservice'
-      jobRepository: '@simplytestable.repository.job'
+      entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 
@@ -32,10 +32,10 @@ services:
       jobPreparationService: '@simplytestable.services.jobpreparationservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       logger: '@logger'
+      entityManager: '@doctrine.orm.entity_manager'
       predefinedDomainsToIgnore:
         css-validation: '%css_validation_domains_to_ignore%'
         js-static-analysis: '%js_static_analysis_domains_to_ignore%'
-      jobRepository: '@simplytestable.repository.job'
     tags:
       - { name: console.command }
 
@@ -47,10 +47,10 @@ services:
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       websiteResolutionService: '@simplytestable.services.jobwebsiteresolutionservice'
       jobPreparationService: '@simplytestable.services.jobpreparationservice'
+      entityManager: '@doctrine.orm.entity_manager'
       predefinedDomainsToIgnore:
         css-validation: '%css_validation_domains_to_ignore%'
         js-static-analysis: '%js_static_analysis_domains_to_ignore%'
-      jobRepository: '@simplytestable.repository.job'
     tags:
       - { name: console.command }
 

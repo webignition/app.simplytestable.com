@@ -306,7 +306,6 @@ class StartServiceTest extends AbstractBaseTestCase
             'simplytestable.services.stateservice',
             'simplytestable.services.useraccountplanservice',
             'simplytestable.services.resque.jobfactory',
-            'simplytestable.repository.job',
             'doctrine.orm.entity_manager',
         ];
 
@@ -331,7 +330,6 @@ class StartServiceTest extends AbstractBaseTestCase
             $requiredServices['simplytestable.services.stateservice'],
             $requiredServices['simplytestable.services.useraccountplanservice'],
             $requiredServices['simplytestable.services.resque.jobfactory'],
-            $requiredServices['simplytestable.repository.job'],
             $requiredServices['doctrine.orm.entity_manager']
         );
     }

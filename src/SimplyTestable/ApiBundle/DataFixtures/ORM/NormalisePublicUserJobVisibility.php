@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -31,19 +32,17 @@ class NormalisePublicUserJobVisibility extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $jobRepository = $this->container->get('simplytestable.repository.job');
+        $jobRepository = $manager->getRepository(Job::class);
         $publicUserPrivateJobs = $jobRepository->findBy(array(
             'user' => $this->container->get('simplytestable.services.userservice')->getPublicUser(),
             'isPublic' => false
         ));
 
-        if (count($publicUserPrivateJobs) === 0) {
-            return true;
-        }
-
-        foreach ($publicUserPrivateJobs as $job) {
-            $job->setIsPublic(true);
-            $manager->persist($job);
+        if (!empty($publicUserPrivateJobs)) {
+            foreach ($publicUserPrivateJobs as $job) {
+                $job->setIsPublic(true);
+                $manager->persist($job);
+            }
         }
 
         $manager->flush();

@@ -61,7 +61,8 @@ class StartController extends Controller
     public function retestAction(Request $request, $site_root_url, $test_id)
     {
         $jobService = $this->container->get('simplytestable.services.jobservice');
-        $jobRepository = $this->container->get('simplytestable.repository.job');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
 
         /* @var Job $job */
         $job = $jobRepository->find($test_id);

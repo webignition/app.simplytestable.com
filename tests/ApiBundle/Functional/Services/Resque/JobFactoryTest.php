@@ -154,7 +154,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.jobpreparationservice',
                         'simplytestable.services.crawljobcontainerservice',
                         'logger',
-                        'simplytestable.repository.job',
+                        'doctrine.orm.entity_manager',
                     ],
                     'parameters' => [
                         'predefinedDomainsToIgnore' => [
@@ -192,7 +192,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.resque.jobfactory',
                         'simplytestable.services.jobwebsiteresolutionservice',
                         'simplytestable.services.jobpreparationservice',
-                        'simplytestable.repository.job',
+                        'doctrine.orm.entity_manager',
                     ],
                     'parameters' => [
                         'predefinedDomainsToIgnore' => [

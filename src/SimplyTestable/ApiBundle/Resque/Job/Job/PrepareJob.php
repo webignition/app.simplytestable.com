@@ -2,9 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job\Job;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
-use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
@@ -49,8 +49,8 @@ class PrepareJob extends CommandJob
 
         $predefinedDomainsToIgnore = $this->args['parameters']['predefinedDomainsToIgnore'];
 
-        /* @var JobRepository $jobRepository */
-        $jobRepository = $this->getContainer()->get($this->args['serviceIds'][6]);
+        /* @var EntityManagerInterface $entityManager */
+        $entityManager = $this->getContainer()->get($this->args['serviceIds'][6]);
 
         return new PrepareCommand(
             $applicationStateService,
@@ -59,8 +59,8 @@ class PrepareJob extends CommandJob
             $jobPreparationService,
             $crawlJobContainerService,
             $logger,
-            $predefinedDomainsToIgnore,
-            $jobRepository
+            $entityManager,
+            $predefinedDomainsToIgnore
         );
     }
 

@@ -33,7 +33,8 @@ class JobController extends Controller
         $websiteService = $this->get('simplytestable.services.websiteservice');
         $userService = $this->get('simplytestable.services.userservice');
         $teamService = $this->get('simplytestable.services.teamservice');
-        $jobRepository = $this->container->get('simplytestable.repository.job');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
 
         $website = $websiteService->get($site_root_url);
         $latestJob = null;
@@ -124,8 +125,8 @@ class JobController extends Controller
      */
     public function isPublicAction($site_root_url, $test_id)
     {
-        /* @var JobRepository $jobRepository */
-        $jobRepository = $this->container->get('simplytestable.repository.job');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRepository = $entityManager->getRepository(Job::class);
 
         return new Response(
             '',

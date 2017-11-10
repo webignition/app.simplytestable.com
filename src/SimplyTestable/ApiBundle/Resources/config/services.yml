@@ -315,9 +315,9 @@ services:
   simplytestable.services.job.retrievalservice:
     class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
     arguments:
-        teamService: "@simplytestable.services.teamservice"
-        jobRepository: '@simplytestable.repository.job'
-        tokenStorage: '@security.token_storage'
+      entityManager: "@doctrine.orm.entity_manager"
+      teamService: "@simplytestable.services.teamservice"
+      tokenStorage: '@security.token_storage'
 
   simplytestable.services.job.UserPostActivationPropertiesService:
     class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
@@ -370,7 +370,6 @@ services:
         stateService: '@simplytestable.services.stateservice'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-        jobRepository: '@simplytestable.repository.job'
         entityManager: "@doctrine.orm.entity_manager"
 
   simplytestable.services.scheduledjob.cronmodifier.validationservice:
@@ -400,7 +399,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
     arguments:
       teamService: '@simplytestable.services.teamservice'
-      jobRepository: '@simplytestable.repository.job'
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.resourcelocator:
     class:  SimplyTestable\ApiBundle\Services\ResourceLocator
