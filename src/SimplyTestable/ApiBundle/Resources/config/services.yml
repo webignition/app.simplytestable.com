@@ -109,7 +109,7 @@ services:
   simplytestable.services.jobtypeservice:
     class:  SimplyTestable\ApiBundle\Services\JobTypeService
     arguments:
-        jobTypeRepository: "@simplytestable.repository.jobtype"
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.accountplan:
     class:  SimplyTestable\ApiBundle\Services\AccountPlanService

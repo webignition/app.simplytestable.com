@@ -1,6 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Type;
 
@@ -17,12 +18,11 @@ class JobTypeService
     private $jobTypeRepository;
 
     /**
-     * JobTypeService constructor.
-     * @param EntityRepository $jobTypeRepository
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityRepository $jobTypeRepository)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->jobTypeRepository = $jobTypeRepository;
+        $this->jobTypeRepository = $entityManager->getRepository(Type::class);
     }
 
     /**
