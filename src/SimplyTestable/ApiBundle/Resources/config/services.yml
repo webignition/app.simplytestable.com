@@ -444,7 +444,7 @@ services:
       teamInviteService: '@SimplyTestable\ApiBundle\Services\Team\InviteService'
       teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
 
-  simplytestable.services.jobsummaryfactory:
+  SimplyTestable\ApiBundle\Services\JobSummaryFactory:
     class:   SimplyTestable\ApiBundle\Services\JobSummaryFactory
     arguments:
       entityManager: '@doctrine.orm.entity_manager'

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
 use SimplyTestable\ApiBundle\Services\JobListService;
+use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +21,7 @@ class JobListController extends Controller
     {
         $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
         $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
-        $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
+        $jobSummaryFactory = $this->container->get(JobSummaryFactory::class);
         $jobListService = $this->container->get(JobListService::class);
 
         $jobListRequest = $jobListRequestFactory->create();

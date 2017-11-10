@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -192,7 +193,7 @@ class JobController extends Controller
     public function statusAction($site_root_url, $test_id)
     {
         $jobRetrievalService = $this->container->get(RetrievalService::class);
-        $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
+        $jobSummaryFactory = $this->container->get(JobSummaryFactory::class);
 
         try {
             $job = $jobRetrievalService->retrieve($test_id);

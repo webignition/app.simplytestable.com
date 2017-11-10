@@ -50,7 +50,7 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
+        $this->jobSummaryFactory = $this->container->get(JobSummaryFactory::class);
         $this->jobFactory = new JobFactory($this->container);
 
         $this->userFactory = new UserFactory($this->container);
