@@ -50,22 +50,21 @@ class TaskNotificationService
      * @param HttpClientService $httpClientService
      * @param UrlService $urlService
      * @param LoggerInterface $logger
-     * @param EntityRepository $workerRepository
      */
     public function __construct(
         EntityManager $entityManager,
         StateService $stateService,
         HttpClientService $httpClientService,
         UrlService $urlService,
-        LoggerInterface $logger,
-        EntityRepository $workerRepository
+        LoggerInterface $logger
     ) {
         $this->entityManager = $entityManager;
         $this->stateService = $stateService;
         $this->httpClientService = $httpClientService;
         $this->urlService = $urlService;
         $this->logger = $logger;
-        $this->workerRepository = $workerRepository;
+
+        $this->workerRepository = $entityManager->getRepository(Worker::class);
     }
 
     public function notify()

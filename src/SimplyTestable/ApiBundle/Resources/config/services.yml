@@ -340,7 +340,6 @@ services:
         httpClientService: "@simplytestable.services.httpClientService"
         urlService: "@simplytestable.services.urlService"
         logger: "@logger"
-        workerRepository: '@simplytestable.repository.worker'
 
   simplytestable.services.job.configurationservice:
     class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService
