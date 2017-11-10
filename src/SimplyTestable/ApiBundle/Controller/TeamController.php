@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
 use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use SimplyTestable\ApiBundle\Services\Team\Service;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +21,7 @@ class TeamController extends Controller
      */
     public function getAction()
     {
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
         $teamMemberService = $this->container->get(MemberService::class);
 
         $user = $this->getUser() ;
@@ -51,7 +52,7 @@ class TeamController extends Controller
     public function createAction(Request $request)
     {
         $userService = $this->container->get(UserService::class);
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
@@ -101,7 +102,7 @@ class TeamController extends Controller
     public function removeAction($member_email)
     {
         $userService = $this->container->get(UserService::class);
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
 
         if (!$userService->exists($member_email)) {
             return Response::create('', 400, [
@@ -129,7 +130,7 @@ class TeamController extends Controller
      */
     public function leaveAction()
     {
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
         $teamMemberService = $this->container->get(MemberService::class);
 
         if ($teamService->hasTeam($this->getUser())) {

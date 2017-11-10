@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInvi
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\Team\MemberService;
+use SimplyTestable\ApiBundle\Services\Team\Service;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,7 +30,7 @@ class TeamInviteController extends Controller
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
         $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $inviter = $this->getUser();
@@ -149,7 +150,7 @@ class TeamInviteController extends Controller
     {
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
 
         if (!$teamService->hasTeam($this->getUser())) {
             return Response::create('', 400, [
@@ -196,7 +197,7 @@ class TeamInviteController extends Controller
     {
         $userService = $this->container->get(UserService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if (!$teamService->hasTeam($this->getUser())) {

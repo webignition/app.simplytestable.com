@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\Team\Service;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -127,7 +128,7 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
 
     public function testForLeaderInTeamWhereLatestTestDoesNotExist()
     {
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
 
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',

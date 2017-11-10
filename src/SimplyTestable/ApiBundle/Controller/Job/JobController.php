@@ -14,6 +14,7 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\Team\Service;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -39,7 +40,7 @@ class JobController extends Controller
     {
         $websiteService = $this->get(WebSiteService::class);
         $userService = $this->container->get(UserService::class);
-        $teamService = $this->get('simplytestable.services.teamservice');
+        $teamService = $this->get(Service::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
 

@@ -2,6 +2,8 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Team;
 
+use SimplyTestable\ApiBundle\Services\Team\Service;
+
 class TeamControllerLeaveActionTest extends AbstractTeamControllerTest
 {
     public function testLeaveActionPostRequest()
@@ -48,7 +50,7 @@ class TeamControllerLeaveActionTest extends AbstractTeamControllerTest
      */
     public function testLeaveActionSuccess($userName)
     {
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
 
         $user = $this->users[$userName];
         $this->setUser($user);

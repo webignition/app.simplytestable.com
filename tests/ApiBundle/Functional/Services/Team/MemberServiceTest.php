@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Team\Member;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\Team\MemberService;
+use SimplyTestable\ApiBundle\Services\Team\Service;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Exception\Services\TeamMember\Exception as TeamMemberServiceException;
@@ -74,7 +75,7 @@ class MemberServiceTest extends AbstractBaseTestCase
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $teamRepository = $entityManager->getRepository(Team::class);
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
 
         /* @var Team $team */
         $team = $teamRepository->findOneBy([

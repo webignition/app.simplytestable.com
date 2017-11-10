@@ -50,7 +50,7 @@ services:
     class:  SimplyTestable\ApiBundle\Services\JobListService
     arguments:
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        teamService: "@simplytestable.services.teamservice"
+        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         jobListQueryBuilderFactory: '@simplytestable.services.joblistquerybuilderfactory'
 
   SimplyTestable\ApiBundle\Services\UserService:
@@ -127,7 +127,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
         stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
-        teamService: "@simplytestable.services.teamservice"
+        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         defaultTrialPeriod: "%default_trial_period%"
 
   SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService:
@@ -142,7 +142,7 @@ services:
     arguments:
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-        teamService: "@simplytestable.services.teamservice"
+        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
         entityManager: "@doctrine.orm.entity_manager"
@@ -298,7 +298,7 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
 
-  simplytestable.services.teamservice:
+  SimplyTestable\ApiBundle\Services\Team\Service:
     class:  SimplyTestable\ApiBundle\Services\Team\Service
     arguments:
         teamMemberService: '@SimplyTestable\ApiBundle\Services\Team\MemberService'
@@ -307,7 +307,7 @@ services:
   simplytestable.services.teaminviteservice:
     class:  SimplyTestable\ApiBundle\Services\Team\InviteService
     arguments:
-        teamService: "@simplytestable.services.teamservice"
+        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         entityManager: "@doctrine.orm.entity_manager"
         tokenGenerator: '@simplytestable.services.invite.tokengenerator'
 
@@ -315,7 +315,7 @@ services:
     class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
     arguments:
       entityManager: "@doctrine.orm.entity_manager"
-      teamService: "@simplytestable.services.teamservice"
+      teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
       tokenStorage: '@security.token_storage'
 
   simplytestable.services.job.UserPostActivationPropertiesService:
@@ -345,7 +345,7 @@ services:
     class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
-        teamService: "@simplytestable.services.teamservice"
+        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         tokenStorage: '@security.token_storage'
 
   simplytestable.services.scheduledjob.service:
@@ -353,7 +353,7 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
         jobConfigurationService: "@simplytestable.services.job.configurationservice"
-        teamService: "@simplytestable.services.teamservice"
+        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         cronManager: "@cron.manager"
         tokenStorage: '@security.token_storage'
 
@@ -396,7 +396,7 @@ services:
   simplytestable.services.joblistquerybuilderfactory:
     class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
     arguments:
-      teamService: '@simplytestable.services.teamservice'
+      teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
       entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.resourcelocator:
@@ -443,7 +443,7 @@ services:
       stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
       jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
       teamInviteService: '@simplytestable.services.teaminviteservice'
-      teamService: '@simplytestable.services.teamservice'
+      teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
 
   simplytestable.services.jobsummaryfactory:
     class:   SimplyTestable\ApiBundle\Services\JobSummaryFactory
@@ -452,7 +452,7 @@ services:
       taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-      teamService: '@simplytestable.services.teamservice'
+      teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
       crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'

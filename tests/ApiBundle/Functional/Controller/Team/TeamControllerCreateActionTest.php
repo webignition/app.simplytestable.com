@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Team;
 
+use SimplyTestable\ApiBundle\Services\Team\Service;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -137,7 +138,7 @@ class TeamControllerCreateActionTest extends AbstractTeamControllerTest
     public function testCreateActionNoExistingTeam()
     {
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
-        $teamService = $this->container->get('simplytestable.services.teamservice');
+        $teamService = $this->container->get(Service::class);
 
         $user = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'new-user@example.com',
