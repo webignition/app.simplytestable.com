@@ -1,10 +1,4 @@
 services:
-  simplytestable.repository.tasktypeclass:
-    class: Doctrine\ORM\EntityRepository
-    factory: ["@doctrine.orm.entity_manager", getRepository]
-    arguments:
-        - SimplyTestable\ApiBundle\Entity\Task\Type\TaskTypeClass
-
   simplytestable.repository.team:
     class: Doctrine\ORM\EntityRepository
     factory: ["@doctrine.orm.entity_manager", getRepository]
