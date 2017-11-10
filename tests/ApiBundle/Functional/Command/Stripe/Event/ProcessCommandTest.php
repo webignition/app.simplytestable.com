@@ -76,7 +76,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
      * @param string $fixtureName
      * @param string $expectedEventName
      */
-    public function testRun($fixtureName, $expectedEventName)
+    public function testRunFoo($fixtureName, $expectedEventName)
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
@@ -120,14 +120,11 @@ class ProcessCommandTest extends AbstractBaseTestCase
                 }),
             ]);
 
-        $stripeEventRepository = $entityManager->getRepository(Event::class);
-
         $command = new ProcessCommand(
             $applicationStateService,
             $entityManager,
             $logger,
-            $eventDispatcher,
-            $stripeEventRepository
+            $eventDispatcher
         );
 
         $returnCode = $command->run(new ArrayInput([
