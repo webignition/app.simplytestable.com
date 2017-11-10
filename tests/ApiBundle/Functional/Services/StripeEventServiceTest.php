@@ -21,7 +21,7 @@ class StripeEventServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
+        $this->stripeEventService = $this->container->get(StripeEventService::class);
     }
 
     public function testCreateWithExistingEvent()

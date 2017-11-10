@@ -135,7 +135,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand
     arguments:
       applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      stripeEventService: '@simplytestable.services.stripeeventservice'
+      stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
       entityManager: '@doctrine.orm.entity_manager'
       stripeKey: '%stripe_key%'
     tags:

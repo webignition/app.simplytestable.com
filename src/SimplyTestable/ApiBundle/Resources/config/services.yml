@@ -162,7 +162,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
-  simplytestable.services.stripeEventService:
+  SimplyTestable\ApiBundle\Services\StripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
@@ -214,7 +214,7 @@ services:
   simplytestable.listener.stripe.customer.subscription.deleted.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener
     arguments:
-        stripeEventService: "@simplytestable.services.stripeeventservice"
+        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
@@ -227,7 +227,7 @@ services:
   simplytestable.listener.stripe.customer.subscription.created.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener
     arguments:
-        stripeEventService: "@simplytestable.services.stripeeventservice"
+        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
@@ -239,7 +239,7 @@ services:
   simplytestable.listener.stripe.customer.subscription.trial_will_end.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener
     arguments:
-        stripeEventService: "@simplytestable.services.stripeeventservice"
+        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
@@ -251,7 +251,7 @@ services:
   simplytestable.listener.stripe.customer.subscription.updated.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener
     arguments:
-        stripeEventService: "@simplytestable.services.stripeeventservice"
+        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
@@ -264,7 +264,7 @@ services:
   simplytestable.listener.stripe.invoice.succeeded.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener
     arguments:
-        stripeEventService: "@simplytestable.services.stripeeventservice"
+        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
@@ -274,7 +274,7 @@ services:
   simplytestable.listener.stripe.invoice.payment_failed.eventProcessor:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener
     arguments:
-        stripeEventService: "@simplytestable.services.stripeeventservice"
+        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"

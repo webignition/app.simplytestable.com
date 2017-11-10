@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeEventFactory;
@@ -51,7 +52,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
 
     public function testRunForEventWithNoUser()
     {
-        $stripeEventService = $this->container->get('simplytestable.services.stripeeventservice');
+        $stripeEventService = $this->container->get(StripeEventService::class);
 
         $stripeEvent = $stripeEventService->create(
             'stripe_id',
