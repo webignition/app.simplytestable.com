@@ -15,7 +15,7 @@ class InviteTest extends AbstractBaseTestCase
     public function testPersist()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $teamInviteRepository = $this->container->get('simplytestable.repository.teaminvite');
+        $teamInviteRepository = $entityManager->getRepository(Invite::class);
 
         $userFactory = new UserFactory($this->container);
 

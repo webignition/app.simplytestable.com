@@ -1,7 +1,6 @@
 imports:
     - { resource: services/commands.yml }
     - { resource: services/resque-job-factory.yml }
-    - { resource: services/repositories.yml }
 
 services:
   simplytestable.session.handler:

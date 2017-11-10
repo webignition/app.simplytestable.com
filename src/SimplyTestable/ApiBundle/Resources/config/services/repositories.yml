@@ -1,6 +1,0 @@
-services:
-  simplytestable.repository.teaminvite:
-    class: Doctrine\ORM\EntityRepository
-    factory: ["@doctrine.orm.entity_manager", getRepository]
-    arguments:
-        - SimplyTestable\ApiBundle\Entity\Team\Invite
