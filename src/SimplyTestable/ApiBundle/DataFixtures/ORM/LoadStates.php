@@ -59,7 +59,7 @@ class LoadStates extends AbstractFixture implements OrderedFixtureInterface, Con
      */
     public function load(ObjectManager $manager)
     {
-        $stateRepository = $this->container->get('simplytestable.repository.state');
+        $stateRepository = $manager->getRepository(State::class);
         $stateService = $this->container->get('simplytestable.services.stateservice');
 
         foreach ($this->stateDetails as $name => $nextStateName) {

@@ -431,8 +431,6 @@ services:
         jobService: '@simplytestable.services.jobservice'
         crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
         tokenStorage: '@security.token_storage'
-        stateRepository: '@simplytestable.repository.state'
-        jobTypeRepository: '@simplytestable.repository.jobtype'
 
   simplytestable.services.applicationstatusfactory:
     class:   SimplyTestable\ApiBundle\Services\ApplicationStatusFactory
