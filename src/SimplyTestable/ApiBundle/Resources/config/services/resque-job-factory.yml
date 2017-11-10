@@ -59,7 +59,7 @@ services:
             serviceIds:
               - simplytestable.services.applicationstateservice
               - SimplyTestable\ApiBundle\Services\TaskService
-              - simplytestable.services.workertaskcancellationservice
+              - SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
               - logger
               - doctrine.orm.entity_manager
           worker-activate-verify:

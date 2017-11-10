@@ -160,7 +160,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-      workerTaskCancellationService: '@simplytestable.services.workertaskcancellationservice'
+      workerTaskCancellationService: '@SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService'
       logger: '@logger'
       entityManager: '@doctrine.orm.entity_manager'
     tags:

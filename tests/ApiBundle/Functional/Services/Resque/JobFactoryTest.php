@@ -18,6 +18,7 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
+use SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class JobFactoryTest extends AbstractBaseTestCase
@@ -254,7 +255,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'serviceIds' => [
                         'simplytestable.services.applicationstateservice',
                         TaskService::class,
-                        'simplytestable.services.workertaskcancellationservice',
+                        WorkerTaskCancellationService::class,
                         'logger',
                         'doctrine.orm.entity_manager',
                     ],
