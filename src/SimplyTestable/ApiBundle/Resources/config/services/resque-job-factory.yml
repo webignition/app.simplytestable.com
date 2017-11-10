@@ -45,7 +45,7 @@ services:
             serviceIds:
               - SimplyTestable\ApiBundle\Services\ApplicationStateService
               - doctrine.orm.entity_manager
-              - simplytestable.services.taskpreprocessor.factory
+              - SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - SimplyTestable\ApiBundle\Services\StateService

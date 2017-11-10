@@ -191,7 +191,7 @@ services:
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       entityManager: "@doctrine.orm.entity_manager"
 
-  simplytestable.services.taskpreprocessor.factory:
+  SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
     arguments:
       taskPreprocessors:

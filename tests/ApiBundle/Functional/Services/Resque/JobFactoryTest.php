@@ -18,6 +18,7 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
@@ -237,7 +238,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'serviceIds' => [
                         ApplicationStateService::class,
                         'doctrine.orm.entity_manager',
-                        'simplytestable.services.taskpreprocessor.factory',
+                        Factory::class,
                         QueueService::class,
                         'simplytestable.services.resque.jobfactory',
                         StateService::class,
