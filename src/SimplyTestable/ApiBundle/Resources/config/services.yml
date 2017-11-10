@@ -1,19 +1,13 @@
 imports:
+    - { resource: services/autowired.yml }
     - { resource: services/commands.yml }
     - { resource: services/resque-job-factory.yml }
 
 services:
-  simplytestable.session.handler:
-    class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
-
   SimplyTestable\ApiBundle\Services\HttpClientService:
     class:  SimplyTestable\ApiBundle\Services\HttpClientService
     arguments:
         curlOptions: '%curl_options%'
-
-  SimplyTestable\ApiBundle\Services\WebSiteService:
-    class:  SimplyTestable\ApiBundle\Services\WebSiteService
-    autowire: true
 
   SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
     class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
@@ -25,22 +19,6 @@ services:
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         entityManager: '@doctrine.orm.entity_manager'
 
-  SimplyTestable\ApiBundle\Services\StateService:
-    class:  SimplyTestable\ApiBundle\Services\StateService
-    autowire: true
-
-  SimplyTestable\ApiBundle\Services\TaskService:
-    class:  SimplyTestable\ApiBundle\Services\TaskService
-    autowire: true
-
-  SimplyTestable\ApiBundle\Services\JobService:
-    class:  SimplyTestable\ApiBundle\Services\JobService
-    autowire: true
-
-  SimplyTestable\ApiBundle\Services\JobListService:
-    class:  SimplyTestable\ApiBundle\Services\JobListService
-    autowire: true
-
   SimplyTestable\ApiBundle\Services\UserService:
     class:  SimplyTestable\ApiBundle\Services\UserService
     arguments:
@@ -48,15 +26,6 @@ services:
         entityManager: '@doctrine.orm.entity_manager'
         tokenGenerator: '@fos_user.util.token_generator'
         emailCanonicalizer: '@fos_user.util.email_canonicalizer'
-
-  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService:
-    class:  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-        logger: '@logger'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
 
   SimplyTestable\ApiBundle\Services\UrlService:
     class:  SimplyTestable\ApiBundle\Services\UrlService
@@ -68,40 +37,6 @@ services:
       environment: '%kernel.environment%'
       logger: '@logger'
       jobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
-
-  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService:
-    class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
-    arguments:
-        logger: '@logger'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
-        taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-        entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService:
-    class:  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
-    arguments:
-        logger: '@logger'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
-        taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-
-  SimplyTestable\ApiBundle\Services\TaskTypeService:
-    class:  SimplyTestable\ApiBundle\Services\TaskTypeService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\JobTypeService:
-    class:  SimplyTestable\ApiBundle\Services\JobTypeService
-    arguments:
-      entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\AccountPlanService:
-    class:  SimplyTestable\ApiBundle\Services\AccountPlanService
-    arguments:
-      entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\ApplicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
@@ -125,59 +60,10 @@ services:
         emailCanonicalizer: '@fos_user.util.email_canonicalizer'
         tokenGenerator: '@fos_user.util.token_generator'
 
-  SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService:
-    class:   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
-    arguments:
-        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-        taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
-        entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\JobPreparationService:
-    class:   SimplyTestable\ApiBundle\Services\JobPreparationService
-    arguments:
-        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-        jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
-        jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
-        crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
-        userService: '@SimplyTestable\ApiBundle\Services\UserService'
-        urlFinder: '@SimplyTestable\ApiBundle\Services\UrlFinder'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-        entityManager: '@doctrine.orm.entity_manager'
-        crawlJobUrlCollector: '@SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector'
-
-  SimplyTestable\ApiBundle\Services\StripeEventService:
-    class:   SimplyTestable\ApiBundle\Services\StripeEventService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-
   SimplyTestable\ApiBundle\Services\StripeService:
     class:   SimplyTestable\ApiBundle\Services\StripeService
     arguments:
         apiKey: '%stripe_key%'
-
-  SimplyTestable\ApiBundle\Services\CrawlJobContainerService:
-    class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
-        urlDiscoveryTaskService: '@SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService'
-
-  SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor:
-    class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
-    arguments:
-      taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-      webResourceService: '@simplytestable.services.webresourceservice'
-      httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-      logger: '@logger'
-      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
@@ -189,9 +75,6 @@ services:
     class:  webignition\WebResource\Service\Service
     calls:
       - [createConfiguration, [{allow-uknown-resource-types: 'true', retry-with-url-encoding-disabled: 'true', content-type-web-resource-map: '%content_type_web_resource_map%' }]]
-
-  SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner:
-    class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner
 
   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory
@@ -272,26 +155,6 @@ services:
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
 
-  SimplyTestable\ApiBundle\Services\Postmark\Sender:
-    class:   SimplyTestable\ApiBundle\Services\Postmark\Sender
-
-  SimplyTestable\ApiBundle\Services\Mail\Service:
-    class:   SimplyTestable\ApiBundle\Services\Mail\Service
-    arguments:
-        postmarkMessage: '@postmark.message'
-        postmarkSender: '@SimplyTestable\ApiBundle\Services\Postmark\Sender'
-
-  SimplyTestable\ApiBundle\Services\Team\MemberService:
-    class:  SimplyTestable\ApiBundle\Services\Team\MemberService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\Team\Service:
-    class:  SimplyTestable\ApiBundle\Services\Team\Service
-    arguments:
-        teamMemberService: '@SimplyTestable\ApiBundle\Services\Team\MemberService'
-        entityManager: '@doctrine.orm.entity_manager'
-
   SimplyTestable\ApiBundle\Services\Team\InviteService:
     class:  SimplyTestable\ApiBundle\Services\Team\InviteService
     arguments:
@@ -299,185 +162,13 @@ services:
         entityManager: '@doctrine.orm.entity_manager'
         tokenGenerator: '@SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator'
 
-  SimplyTestable\ApiBundle\Services\Job\RetrievalService:
-    class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
-    arguments:
-      entityManager: '@doctrine.orm.entity_manager'
-      teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-      tokenStorage: '@security.token_storage'
-
-  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService:
-    class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\Task\QueueService:
-    class:  SimplyTestable\ApiBundle\Services\Task\QueueService
-    arguments:
-        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService:
-    class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
-        logger: '@logger'
-
-  SimplyTestable\ApiBundle\Services\Job\ConfigurationService:
-    class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-        tokenStorage: '@security.token_storage'
-
-  SimplyTestable\ApiBundle\Services\ScheduledJob\Service:
-    class: SimplyTestable\ApiBundle\Services\ScheduledJob\Service
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-        jobConfigurationService: '@SimplyTestable\ApiBundle\Services\Job\ConfigurationService'
-        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-        cronManager: '@cron.manager'
-        tokenStorage: '@security.token_storage'
-
-  SimplyTestable\ApiBundle\Services\Job\StartService:
-    class:  SimplyTestable\ApiBundle\Services\Job\StartService
-    arguments:
-        jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
-        jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
-        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        userService: '@SimplyTestable\ApiBundle\Services\UserService'
-        resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-        resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
-        entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
-    class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService
-
-  SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory:
-    class:   SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory
-    arguments:
-        requestStack: '@request_stack'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
-        taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-
-  SimplyTestable\ApiBundle\Services\UrlResolver:
-    class:  SimplyTestable\ApiBundle\Services\UrlResolver
-    arguments:
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-
-  SimplyTestable\ApiBundle\Services\UrlFinder:
-    class:  SimplyTestable\ApiBundle\Services\UrlFinder
-    arguments:
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        webResourceService: '@simplytestable.services.webresourceservice'
-        sitemapFactory: '@simplytestable.services.sitemapfactory'
-
-  SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory:
-    class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
-    arguments:
-      teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-      entityManager: '@doctrine.orm.entity_manager'
-
   SimplyTestable\ApiBundle\Services\ResourceLocator:
     class:  SimplyTestable\ApiBundle\Services\ResourceLocator
     arguments:
       kernel: '@kernel'
-
-  simplytestable.services.sitemapfactory:
-    class:  webignition\WebResource\Sitemap\Factory
-
-  SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory:
-    class:   SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory
-    arguments:
-        requestStack: '@request_stack'
-        tokenStorage: '@security.token_storage'
-        entityManager: '@doctrine.orm.entity_manager'
-        websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
-        jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
-
-  SimplyTestable\ApiBundle\Services\JobConfigurationFactory:
-    class:   SimplyTestable\ApiBundle\Services\JobConfigurationFactory
-
-  SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory:
-    class:   SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory
-    arguments:
-        requestStack: '@request_stack'
-        entityManager: '@doctrine.orm.entity_manager'
-        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
-        tokenStorage: '@security.token_storage'
-
-  SimplyTestable\ApiBundle\Services\ApplicationStatusFactory:
-    class:   SimplyTestable\ApiBundle\Services\ApplicationStatusFactory
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\UserSummaryFactory:
-    class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
-    arguments:
-      tokenStorage: '@security.token_storage'
-      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-      stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
-      jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
-      teamInviteService: '@SimplyTestable\ApiBundle\Services\Team\InviteService'
-      teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-
-  SimplyTestable\ApiBundle\Services\JobSummaryFactory:
-    class:   SimplyTestable\ApiBundle\Services\JobSummaryFactory
-    arguments:
-      entityManager: '@doctrine.orm.entity_manager'
-      taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-      teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-      crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
-      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-      crawlJobUrlCollector: '@SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector'
-
-  SimplyTestable\ApiBundle\Services\JobListConfigurationFactory:
-    class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory
-
-  SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator:
-    class: SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator
-    arguments:
-      entityManager: '@doctrine.orm.entity_manager'
-
-  SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService:
-    class: SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService
-    arguments:
-      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
-
-  SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor:
-    class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor
-    arguments:
-      crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
-      crawlJobUrlCollector: '@SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector'
-      jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
-      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-      entityManager: '@doctrine.orm.entity_manager'
-      urlDiscoveryTaskService: '@SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService'
 
   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory
     arguments:
       taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
-
-  SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector:
-    class:   SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector
-    arguments:
-      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-      entityManager: '@doctrine.orm.entity_manager'
