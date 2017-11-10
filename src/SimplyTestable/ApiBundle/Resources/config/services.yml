@@ -114,7 +114,7 @@ services:
   simplytestable.services.accountplan:
     class:  SimplyTestable\ApiBundle\Services\AccountPlanService
     arguments:
-        accountPlanRepository: "@simplytestable.repository.accountplan"
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.applicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService

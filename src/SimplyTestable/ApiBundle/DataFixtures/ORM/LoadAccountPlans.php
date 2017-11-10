@@ -171,7 +171,7 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
      */
     public function load(ObjectManager $manager)
     {
-        $this->planRepository = $this->container->get('simplytestable.repository.accountplan');
+        $this->planRepository = $manager->getRepository(Plan::class);
 
         foreach ($this->planDetails as $planDetails) {
             $plan = $this->findPlanByNameHistory($planDetails['names']);
@@ -226,29 +226,43 @@ class LoadAccountPlans extends AbstractFixture implements OrderedFixtureInterfac
         }
     }
 
-    private function findPlanByNameHistory($names) {
+    /**
+     * @param $names
+     *
+     * @return Plan|null
+     */
+    private function findPlanByNameHistory($names)
+    {
         foreach ($names as $name) {
-            $plan = $this->planRepository->findOneByName($name);
+            /* @var Plan $plan */
+            $plan = $this->planRepository->findOneBy([
+                'name' => $name,
+            ]);
+
             if (!is_null($plan)) {
                 return $plan;
             }
         }
+
+        return null;
     }
 
-
     /**
-     *
-     * @param \SimplyTestable\ApiBundle\Entity\Account\Plan\Plan $plan
+     * @param Plan $plan
      * @param string $constraintName
-     * @return Constraint
+     *
+     * @return Constraint|null
      */
-    private function getConstraintFromPlanByName(Plan $plan, $constraintName) {
+    private function getConstraintFromPlanByName(Plan $plan, $constraintName)
+    {
         foreach ($plan->getConstraints() as $constraint) {
             /* @var $constraint Constraint */
             if ($constraint->getName() == $constraintName) {
                 return $constraint;
             }
         }
+
+        return null;
     }
 
     /**
