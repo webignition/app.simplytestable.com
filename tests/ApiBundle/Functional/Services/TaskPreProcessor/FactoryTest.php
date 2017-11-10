@@ -27,7 +27,8 @@ class FactoryTest extends AbstractBaseTestCase
 
     public function testGetLinkIntegrityTaskPreProcessor()
     {
-        $taskTypeRepository = $this->container->get('simplytestable.repository.tasktype');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $taskTypeRepository = $entityManager->getRepository(Type::class);
 
         /* @var Type $linkIntegrityTaskType */
         $linkIntegrityTaskType = $taskTypeRepository->findOneBy([
