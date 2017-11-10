@@ -37,20 +37,18 @@ class GetOutputIdsForErrorCommand extends Command
     /**
      * @param TaskTypeService $taskTypeService
      * @param EntityManager $entityManager
-     * @param TaskOutputRepository $taskOutputRepository
      * @param string|null $name
      */
     public function __construct(
         TaskTypeService $taskTypeService,
         EntityManager $entityManager,
-        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->taskTypeService = $taskTypeService;
         $this->entityManager = $entityManager;
-        $this->taskOutputRepository = $taskOutputRepository;
+        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**

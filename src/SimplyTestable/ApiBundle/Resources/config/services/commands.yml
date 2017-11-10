@@ -89,7 +89,6 @@ services:
     arguments:
       taskTypeService: '@simplytestable.services.tasktypeservice'
       entityManager: '@doctrine.orm.entity_manager'
-      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }
 
@@ -98,7 +97,6 @@ services:
     arguments:
       taskTypeService: '@simplytestable.services.tasktypeservice'
       entityManager: '@doctrine.orm.entity_manager'
-      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }
 
@@ -232,7 +230,6 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
-      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }
 
@@ -258,6 +255,5 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
-      taskOutputRepository: '@simplytestable.repository.taskoutput'
     tags:
       - { name: console.command }

@@ -28,7 +28,7 @@ class TaskTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $this->taskOutputRepository = $this->container->get('simplytestable.repository.taskoutput');
+        $this->taskOutputRepository = $this->entityManager->getRepository(Output::class);
     }
 
     public function testUtf8Output()

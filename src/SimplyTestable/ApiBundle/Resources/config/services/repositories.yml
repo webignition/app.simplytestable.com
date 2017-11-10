@@ -1,10 +1,4 @@
 services:
-  simplytestable.repository.taskoutput:
-    class: Doctrine\ORM\EntityRepository
-    factory: ["@doctrine.orm.entity_manager", getRepository]
-    arguments:
-        - SimplyTestable\ApiBundle\Entity\Task\Output
-
   simplytestable.repository.scheduledjob:
     class: Doctrine\ORM\EntityRepository
     factory: ["@doctrine.orm.entity_manager", getRepository]

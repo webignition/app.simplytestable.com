@@ -34,20 +34,18 @@ class AddHashToHashlessOutputCommand extends Command
     /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
-     * @param TaskOutputRepository $taskOutputRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
-        TaskOutputRepository $taskOutputRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-        $this->taskOutputRepository = $taskOutputRepository;
+        $this->taskOutputRepository = $entityManager->getRepository(Output::class);
     }
 
     /**
