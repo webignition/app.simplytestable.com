@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Command;
 
 use Guzzle\Http\Exception\CurlException;
+use SimplyTestable\ApiBundle\Services\UrlResolver;
 use Tests\ApiBundle\Factory\CurlExceptionFactory;
 use Tests\ApiBundle\Factory\HtmlDocumentFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -30,7 +31,7 @@ class UrlResolverTest extends AbstractBaseTestCase
             CurlExceptionFactory::create('', $curlCode)
         ]);
 
-        $resolver = $this->container->get('simplytestable.services.urlresolver');
+        $resolver = $this->container->get(UrlResolver::class);
 
         try {
             $resolver->resolve('http://example.com/');
@@ -64,7 +65,7 @@ class UrlResolverTest extends AbstractBaseTestCase
     {
         $this->queueHttpFixtures($httpFixtures);
 
-        $resolver = $this->container->get('simplytestable.services.urlresolver');
+        $resolver = $this->container->get(UrlResolver::class);
         $resolvedUrl = $resolver->resolve('http://example.com/');
 
         $this->assertEquals($expectedResolvedUrl, $resolvedUrl);

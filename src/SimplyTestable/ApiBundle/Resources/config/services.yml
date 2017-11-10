@@ -22,7 +22,7 @@ services:
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
-        urlResolver: '@simplytestable.services.urlresolver'
+        urlResolver: '@SimplyTestable\ApiBundle\Services\UrlResolver'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         entityManager: "@doctrine.orm.entity_manager"
 
@@ -380,7 +380,7 @@ services:
         taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
 
-  simplytestable.services.urlresolver:
+  SimplyTestable\ApiBundle\Services\UrlResolver:
     class:  SimplyTestable\ApiBundle\Services\UrlResolver
     arguments:
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
