@@ -470,7 +470,7 @@ services:
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
 
-  simplytestable.services.taskpostprocessor.urldiscovery:
+  SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor:
     class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor
     arguments:
       crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
@@ -485,7 +485,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory
     arguments:
       taskPreprocessors:
-        - '@simplytestable.services.taskpostprocessor.urldiscovery'
+        - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
 
   simplytestable.services.crawljoburlcollector:
     class:   SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector

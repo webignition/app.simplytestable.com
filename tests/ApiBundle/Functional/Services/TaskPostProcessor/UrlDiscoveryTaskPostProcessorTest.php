@@ -29,9 +29,7 @@ class UrlDiscoveryTaskPostProcessorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->urlDiscoveryTaskPostProcessor = $this->container->get(
-            'simplytestable.services.taskpostprocessor.urldiscovery'
-        );
+        $this->urlDiscoveryTaskPostProcessor = $this->container->get(UrlDiscoveryTaskPostProcessor::class);
     }
 
     /**
