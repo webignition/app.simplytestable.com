@@ -49,7 +49,7 @@ class UserPostActivationPropertiesServiceTest extends AbstractBaseTestCase
         $userService = $this->container->get(UserService::class);
         $this->user = $userService->getPublicUser();
 
-        $this->accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $this->accountPlanService = $this->container->get(AccountPlanService::class);
     }
 
     public function testCreate()

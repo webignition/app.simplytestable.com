@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +29,7 @@ class UserCreationController extends Controller
         $userPostActivationPropertiesService = $this->container->get(
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();

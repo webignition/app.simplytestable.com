@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Factory;
 
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserAccountPlanFactory
@@ -31,7 +32,7 @@ class UserAccountPlanFactory
     public function create(User $user, $planName, $stripeCustomerId = null)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $plan = $accountPlanService->get($planName);
 

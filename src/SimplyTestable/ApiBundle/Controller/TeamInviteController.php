@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,7 +28,7 @@ class TeamInviteController extends Controller
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $inviter = $this->getUser();
 

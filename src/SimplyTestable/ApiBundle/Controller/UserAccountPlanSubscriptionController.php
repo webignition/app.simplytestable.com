@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Stripe\Error\Card as StripeCardError;
 use Stripe\Error\Authentication as StripeAuthenticationError;
@@ -24,7 +25,7 @@ class UserAccountPlanSubscriptionController extends Controller
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-        $accountPlanService = $this->container->get('simplytestable.services.accountplan');
+        $accountPlanService = $this->container->get(AccountPlanService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
