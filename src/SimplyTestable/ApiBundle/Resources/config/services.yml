@@ -9,12 +9,12 @@ services:
   SimplyTestable\ApiBundle\Services\HttpClientService:
     class:  SimplyTestable\ApiBundle\Services\HttpClientService
     arguments:
-        curlOptions: "%curl_options%"
+        curlOptions: '%curl_options%'
 
   SimplyTestable\ApiBundle\Services\WebSiteService:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
     class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
@@ -24,24 +24,24 @@ services:
         websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
         urlResolver: '@SimplyTestable\ApiBundle\Services\UrlResolver'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\StateService:
     class:  SimplyTestable\ApiBundle\Services\StateService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\TaskService:
     class:  SimplyTestable\ApiBundle\Services\TaskService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
 
   SimplyTestable\ApiBundle\Services\JobService:
     class:  SimplyTestable\ApiBundle\Services\JobService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
         taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
@@ -57,15 +57,15 @@ services:
     class:  SimplyTestable\ApiBundle\Services\UserService
     arguments:
         userManager: '@fos_user.user_manager'
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
         tokenGenerator: '@fos_user.util.token_generator'
         emailCanonicalizer: '@fos_user.util.email_canonicalizer'
 
   SimplyTestable\ApiBundle\Services\WorkerActivationRequestService:
     class:  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
-        logger: "@logger"
+        entityManager: '@doctrine.orm.entity_manager'
+        logger: '@logger'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
@@ -76,25 +76,25 @@ services:
   SimplyTestable\ApiBundle\Services\Resque\QueueService:
     class:   SimplyTestable\ApiBundle\Services\Resque\QueueService
     arguments:
-      resque: "@resque"
-      environment: "%kernel.environment%"
-      logger: "@logger"
+      resque: '@resque'
+      environment: '%kernel.environment%'
+      logger: '@logger'
       jobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
 
   SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
     arguments:
-        logger: "@logger"
+        logger: '@logger'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
     arguments:
-        logger: "@logger"
+        logger: '@logger'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
@@ -103,7 +103,7 @@ services:
   SimplyTestable\ApiBundle\Services\TaskTypeService:
     class:  SimplyTestable\ApiBundle\Services\TaskTypeService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\JobTypeService:
     class:  SimplyTestable\ApiBundle\Services\JobTypeService
@@ -124,17 +124,17 @@ services:
   SimplyTestable\ApiBundle\Services\UserAccountPlanService:
     class:   SimplyTestable\ApiBundle\Services\UserAccountPlanService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
         stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-        defaultTrialPeriod: "%default_trial_period%"
+        defaultTrialPeriod: '%default_trial_period%'
 
   SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService:
     class:  SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
-        emailCanonicalizer: "@fos_user.util.email_canonicalizer"
+        entityManager: '@doctrine.orm.entity_manager'
+        emailCanonicalizer: '@fos_user.util.email_canonicalizer'
         tokenGenerator: '@fos_user.util.token_generator'
 
   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService:
@@ -145,7 +145,7 @@ services:
         teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\JobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
@@ -159,23 +159,23 @@ services:
         urlFinder: '@SimplyTestable\ApiBundle\Services\UrlFinder'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
         crawlJobUrlCollector: '@SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector'
 
   SimplyTestable\ApiBundle\Services\StripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\StripeService:
     class:   SimplyTestable\ApiBundle\Services\StripeService
     arguments:
-        apiKey: "%stripe_key%"
+        apiKey: '%stripe_key%'
 
   SimplyTestable\ApiBundle\Services\CrawlJobContainerService:
     class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
@@ -189,7 +189,7 @@ services:
       httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
       logger: '@logger'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      entityManager: "@doctrine.orm.entity_manager"
+      entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
@@ -200,7 +200,7 @@ services:
   simplytestable.services.webresourceservice:
     class:  webignition\WebResource\Service\Service
     calls:
-      - [createConfiguration, [{allow-uknown-resource-types: "true", retry-with-url-encoding-disabled: "true", content-type-web-resource-map: "%content_type_web_resource_map%" }]]
+      - [createConfiguration, [{allow-uknown-resource-types: 'true', retry-with-url-encoding-disabled: 'true', content-type-web-resource-map: '%content_type_web_resource_map%' }]]
 
   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner
@@ -216,8 +216,8 @@ services:
     arguments:
         stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: "@doctrine.orm.entity_manager"
-        webClientProperties: "%web_client%"
+        entityManager: '@doctrine.orm.entity_manager'
+        webClientProperties: '%web_client%'
         stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
@@ -229,8 +229,8 @@ services:
     arguments:
         stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: "@doctrine.orm.entity_manager"
-        webClientProperties: "%web_client%"
+        entityManager: '@doctrine.orm.entity_manager'
+        webClientProperties: '%web_client%'
         stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
     tags:
@@ -241,8 +241,8 @@ services:
     arguments:
         stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: "@doctrine.orm.entity_manager"
-        webClientProperties: "%web_client%"
+        entityManager: '@doctrine.orm.entity_manager'
+        webClientProperties: '%web_client%'
         stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
     tags:
@@ -253,8 +253,8 @@ services:
     arguments:
         stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: "@doctrine.orm.entity_manager"
-        webClientProperties: "%web_client%"
+        entityManager: '@doctrine.orm.entity_manager'
+        webClientProperties: '%web_client%'
         stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
@@ -266,8 +266,8 @@ services:
     arguments:
         stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: "@doctrine.orm.entity_manager"
-        webClientProperties: "%web_client%"
+        entityManager: '@doctrine.orm.entity_manager'
+        webClientProperties: '%web_client%'
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
 
@@ -276,11 +276,11 @@ services:
     arguments:
         stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: "@doctrine.orm.entity_manager"
-        webClientProperties: "%web_client%"
+        entityManager: '@doctrine.orm.entity_manager'
+        webClientProperties: '%web_client%'
         stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-        dispatcher: "@event_dispatcher"
+        dispatcher: '@event_dispatcher'
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
 
@@ -290,38 +290,38 @@ services:
   SimplyTestable\ApiBundle\Services\Mail\Service:
     class:   SimplyTestable\ApiBundle\Services\Mail\Service
     arguments:
-        postmarkMessage: "@postmark.message"
+        postmarkMessage: '@postmark.message'
         postmarkSender: '@SimplyTestable\ApiBundle\Services\Postmark\Sender'
 
   SimplyTestable\ApiBundle\Services\Team\MemberService:
     class:  SimplyTestable\ApiBundle\Services\Team\MemberService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\Team\Service:
     class:  SimplyTestable\ApiBundle\Services\Team\Service
     arguments:
         teamMemberService: '@SimplyTestable\ApiBundle\Services\Team\MemberService'
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\Team\InviteService:
     class:  SimplyTestable\ApiBundle\Services\Team\InviteService
     arguments:
         teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
         tokenGenerator: '@SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator'
 
   SimplyTestable\ApiBundle\Services\Job\RetrievalService:
     class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
     arguments:
-      entityManager: "@doctrine.orm.entity_manager"
+      entityManager: '@doctrine.orm.entity_manager'
       teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
       tokenStorage: '@security.token_storage'
 
   SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService:
     class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\Task\QueueService:
     class:  SimplyTestable\ApiBundle\Services\Task\QueueService
@@ -329,7 +329,7 @@ services:
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
@@ -338,22 +338,22 @@ services:
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
         urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
-        logger: "@logger"
+        logger: '@logger'
 
   SimplyTestable\ApiBundle\Services\Job\ConfigurationService:
     class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
         teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         tokenStorage: '@security.token_storage'
 
   SimplyTestable\ApiBundle\Services\ScheduledJob\Service:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\Service
     arguments:
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
         jobConfigurationService: '@SimplyTestable\ApiBundle\Services\Job\ConfigurationService'
         teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-        cronManager: "@cron.manager"
+        cronManager: '@cron.manager'
         tokenStorage: '@security.token_storage'
 
   SimplyTestable\ApiBundle\Services\Job\StartService:
@@ -367,7 +367,7 @@ services:
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
-        entityManager: "@doctrine.orm.entity_manager"
+        entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService
@@ -375,7 +375,7 @@ services:
   SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory:
     class:   SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory
     arguments:
-        requestStack: "@request_stack"
+        requestStack: '@request_stack'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
