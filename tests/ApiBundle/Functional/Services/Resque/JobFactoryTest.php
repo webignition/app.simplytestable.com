@@ -20,6 +20,7 @@ use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 use SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService;
@@ -305,7 +306,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                 'expectedQueue' => 'tasks-notify',
                 'expectedArgs' => [
                     'serviceIds' => [
-                        'simplytestable.services.worker.tasknotificationservice',
+                        TaskNotificationService::class,
                     ],
                 ],
             ],

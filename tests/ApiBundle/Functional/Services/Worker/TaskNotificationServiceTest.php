@@ -26,9 +26,7 @@ class TaskNotificationServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskNotificationService = $this->container->get(
-            'simplytestable.services.worker.tasknotificationservice'
-        );
+        $this->taskNotificationService = $this->container->get(TaskNotificationService::class);
     }
 
     /**

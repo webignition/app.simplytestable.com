@@ -207,7 +207,7 @@ services:
   simplytestable.command.worker.tasknotification:
     class:  SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand
     arguments:
-      workerTaskNotificationService: '@simplytestable.services.worker.tasknotificationservice'
+      workerTaskNotificationService: '@SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService'
     tags:
       - { name: console.command }
 

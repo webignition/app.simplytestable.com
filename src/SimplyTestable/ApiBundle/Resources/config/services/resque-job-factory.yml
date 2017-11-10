@@ -85,7 +85,7 @@ services:
             queue: tasks-notify
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob
             serviceIds:
-              - simplytestable.services.worker.tasknotificationservice
+              - SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
           scheduledjob-execute:
             queue: scheduledjob-execute
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\ScheduledJob\ExecuteJob

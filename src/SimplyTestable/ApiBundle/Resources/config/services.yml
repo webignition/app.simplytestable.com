@@ -331,7 +331,7 @@ services:
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         entityManager: "@doctrine.orm.entity_manager"
 
-  simplytestable.services.worker.taskNotificationService:
+  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService:
     class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
     arguments:
         entityManager: '@doctrine.orm.entity_manager'
