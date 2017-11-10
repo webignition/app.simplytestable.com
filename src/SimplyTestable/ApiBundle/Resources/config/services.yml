@@ -197,7 +197,7 @@ services:
       taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
 
-  simplytestable.services.webResourceService:
+  simplytestable.services.webresourceservice:
     class:  webignition\WebResource\Service\Service
     calls:
       - [createConfiguration, [{allow-uknown-resource-types: "true", retry-with-url-encoding-disabled: "true", content-type-web-resource-map: "%content_type_web_resource_map%" }]]
@@ -390,7 +390,7 @@ services:
     class:  SimplyTestable\ApiBundle\Services\UrlFinder
     arguments:
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        webResourceService: "@simplytestable.services.webresourceservice"
+        webResourceService: '@simplytestable.services.webresourceservice'
         sitemapFactory: '@simplytestable.services.sitemapfactory'
 
   simplytestable.services.joblistquerybuilderfactory:
