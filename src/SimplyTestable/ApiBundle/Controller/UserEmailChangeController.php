@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use Egulias\EmailValidator\EmailValidator;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
+use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,7 +25,7 @@ class UserEmailChangeController extends Controller
     {
         $userService = $this->container->get(UserService::class);
         $emailCanonicalizer = $this->container->get('fos_user.util.email_canonicalizer');
-        $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
+        $userEmailChangeRequestService = $this->container->get(UserEmailChangeRequestService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
@@ -104,7 +105,7 @@ class UserEmailChangeController extends Controller
      */
     public function cancelAction($email_canonical)
     {
-        $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
+        $userEmailChangeRequestService = $this->container->get(UserEmailChangeRequestService::class);
 
         $user = $this->getUser();
 
@@ -122,7 +123,7 @@ class UserEmailChangeController extends Controller
     public function confirmAction($email_canonical, $token)
     {
         $userService = $this->container->get(UserService::class);
-        $userEmailChangeRequestService = $this->container->get('simplytestable.services.useremailchangerequestservice');
+        $userEmailChangeRequestService = $this->container->get(UserEmailChangeRequestService::class);
         $user = $this->getUser();
 
         $emailChangeRequest = $userEmailChangeRequestService->getForUser($user);

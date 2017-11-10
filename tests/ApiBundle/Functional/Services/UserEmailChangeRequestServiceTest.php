@@ -34,9 +34,7 @@ class UserEmailChangeRequestServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userEmailChangeRequestService = $this->container->get(
-            'simplytestable.services.useremailchangerequestservice'
-        );
+        $this->userEmailChangeRequestService = $this->container->get(UserEmailChangeRequestService::class);
 
         $userService = $this->container->get(UserService::class);
         $this->user = $userService->getPublicUser();
