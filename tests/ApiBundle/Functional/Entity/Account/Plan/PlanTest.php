@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Entity\Account\Plan;
 
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -28,7 +29,7 @@ class PlanTest extends AbstractBaseTestCase
         parent::setUp();
 
         $this->entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $this->planRepository = $this->container->get('simplytestable.repository.accountplan');
+        $this->planRepository = $this->entityManager->getRepository(Plan::class);
     }
 
     public function testUtf8Name()
@@ -115,7 +116,7 @@ class PlanTest extends AbstractBaseTestCase
         try {
             $this->entityManager->flush();
             $this->fail('\Doctrine\DBAL\DBALException not raised for non-unique name');
-        } catch (\Doctrine\DBAL\DBALException $doctrineDbalException) {
+        } catch (DBALException $doctrineDbalException) {
             $this->assertEquals(23000, $doctrineDbalException->getPrevious()->getCode());
         }
     }
