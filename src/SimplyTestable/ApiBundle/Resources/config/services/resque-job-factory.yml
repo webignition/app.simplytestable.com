@@ -70,8 +70,7 @@ services:
             serviceIds:
               - simplytestable.services.applicationstateservice
               - simplytestable.services.workeractivationrequestservice
-              - simplytestable.repository.worker
-              - simplytestable.repository.workeractivationrequest
+              - doctrine.orm.entity_manager
           stripe-event:
             queue: stripe-event
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Stripe\ProcessEventJob

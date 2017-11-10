@@ -201,8 +201,6 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
-      workerRepository: '@simplytestable.repository.worker'
-      workerActivationRequestRepository: '@simplytestable.repository.workeractivationrequest'
     tags:
       - { name: console.command }
 
@@ -218,8 +216,7 @@ services:
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       workerActivationRequestService: '@simplytestable.services.workeractivationrequestservice'
-      workerRepository: '@simplytestable.repository.worker'
-      workerActivationRequestRepository: '@simplytestable.repository.workeractivationrequest'
+      entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }
 

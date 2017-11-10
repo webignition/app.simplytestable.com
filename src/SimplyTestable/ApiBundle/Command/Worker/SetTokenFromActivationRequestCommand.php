@@ -3,6 +3,7 @@ namespace SimplyTestable\ApiBundle\Command\Worker;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,23 +38,20 @@ class SetTokenFromActivationRequestCommand extends Command
     /**
      * @param ApplicationStateService $applicationStateService
      * @param EntityManager $entityManager
-     * @param EntityRepository $workerRepository
-     * @param EntityRepository $workerActivationRequestRepository
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
         EntityManager $entityManager,
-        EntityRepository $workerRepository,
-        EntityRepository $workerActivationRequestRepository,
         $name = null
     ) {
         parent::__construct($name);
 
         $this->applicationStateService = $applicationStateService;
         $this->entityManager = $entityManager;
-        $this->workerRepository = $workerRepository;
-        $this->workerActivationRequestRepository = $workerActivationRequestRepository;
+
+        $this->workerRepository = $entityManager->getRepository(Worker::class);
+        $this->workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
     }
 
     /**
