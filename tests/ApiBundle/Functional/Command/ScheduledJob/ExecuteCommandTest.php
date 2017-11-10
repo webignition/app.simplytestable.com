@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Command\ScheduledJob\ExecuteCommand;
 
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -33,7 +34,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => 1,

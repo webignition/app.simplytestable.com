@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Command\Task;
 
 use SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -53,7 +54,7 @@ class EnqueueCancellationForAwaitingCancellationCommandTest extends AbstractBase
      */
     public function testRun($jobValues, $expectedResqueQueueIsEmpty, $expectedTaskIndices)
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->createResolveAndPrepare($jobValues);

@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Controller\WorkerController;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Tests\ApiBundle\Factory\WorkerFactory;
@@ -124,7 +125,7 @@ class WorkerControllerTest extends AbstractBaseTestCase
      */
     public function testActivateActionSuccessWorkerInWrongState($stateName)
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
 
@@ -176,7 +177,7 @@ class WorkerControllerTest extends AbstractBaseTestCase
     public function testActivateActionSuccess($existingActivationRequestStateName)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
         $stateService = $this->container->get(StateService::class);
         $workerActivationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
 

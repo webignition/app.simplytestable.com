@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
@@ -153,7 +154,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'id' => 1,
                     'serviceIds' => [
                         'simplytestable.services.applicationstateservice',
-                        'simplytestable.services.resque.queueservice',
+                        QueueService::class,
                         'simplytestable.services.resque.jobfactory',
                         'simplytestable.services.jobpreparationservice',
                         'simplytestable.services.crawljobcontainerservice',
@@ -192,7 +193,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'id' => 1,
                     'serviceIds' => [
                         'simplytestable.services.applicationstateservice',
-                        'simplytestable.services.resque.queueservice',
+                        QueueService::class,
                         'simplytestable.services.resque.jobfactory',
                         WebsiteResolutionService::class,
                         'simplytestable.services.jobpreparationservice',
@@ -232,7 +233,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'simplytestable.services.applicationstateservice',
                         'doctrine.orm.entity_manager',
                         'simplytestable.services.taskpreprocessor.factory',
-                        'simplytestable.services.resque.queueservice',
+                        QueueService::class,
                         'simplytestable.services.resque.jobfactory',
                         StateService::class,
                         'simplytestable.services.workertaskassignmentservice',
@@ -313,7 +314,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'id' => 1,
                     'serviceIds' => [
                         'simplytestable.services.applicationstateservice',
-                        'simplytestable.services.resque.queueservice',
+                        QueueService::class,
                         'simplytestable.services.resque.jobfactory',
                         'doctrine.orm.entity_manager',
                         'simplytestable.services.job.startservice',

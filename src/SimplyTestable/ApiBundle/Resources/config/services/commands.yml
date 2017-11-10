@@ -7,7 +7,7 @@ services:
   simplytestable.command.job.enqueueprepareall:
     class:  SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand
     arguments:
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       applicationStateService: '@simplytestable.services.applicationstateservice'
@@ -27,7 +27,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\Job\PrepareCommand
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       jobPreparationService: '@simplytestable.services.jobpreparationservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
@@ -43,7 +43,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       websiteResolutionService: '@SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService'
       jobPreparationService: '@simplytestable.services.jobpreparationservice'
@@ -103,7 +103,7 @@ services:
   simplytestable.command.scheduledjob.enqueue:
     class:  SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand
     arguments:
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       logger: '@logger'
     tags:
@@ -113,7 +113,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       entityManager: '@doctrine.orm.entity_manager'
       jobStartService: '@simplytestable.services.job.startservice'
@@ -147,7 +147,7 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
       taskPreProcessorFactory: '@simplytestable.services.taskpreprocessor.factory'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       workerTaskAssignmentService: '@simplytestable.services.workertaskassignmentservice'
@@ -172,7 +172,7 @@ services:
       applicationStateService: '@simplytestable.services.applicationstateservice'
       entityManager: '@doctrine.orm.entity_manager'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      resqueQueueService: '@simplytestable.services.resque.queueservice'
+      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
     tags:
       - { name: console.command }

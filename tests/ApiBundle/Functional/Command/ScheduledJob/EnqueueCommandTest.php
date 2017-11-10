@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Command\ScheduledJob;
 
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -26,7 +27,7 @@ class EnqueueCommandTest extends AbstractBaseTestCase
 
     public function testRunEnqueuesScheduledJobExecute()
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => 1,
@@ -41,7 +42,7 @@ class EnqueueCommandTest extends AbstractBaseTestCase
 
     public function testRunIsIdempotent()
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $this->command->run(new ArrayInput([
             'id' => 1,

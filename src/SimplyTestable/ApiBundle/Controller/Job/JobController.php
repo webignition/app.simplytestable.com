@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -223,7 +224,7 @@ class JobController extends Controller
         $jobService = $this->container->get(JobService::class);
         $crawlJobContainerService = $this->get('simplytestable.services.crawljobcontainerservice');
         $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');

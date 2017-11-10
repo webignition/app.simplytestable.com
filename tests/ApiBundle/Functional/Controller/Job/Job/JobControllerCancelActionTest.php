@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -162,7 +163,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
             json_decode($jsStaticAnalysisTask->getParameters())->{'domains-to-ignore'}
         );
 
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueService');
+        $resqueQueueService = $this->container->get(QueueService::class);
         $this->assertFalse($resqueQueueService->isEmpty(
             'tasks-notify'
         ));

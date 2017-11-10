@@ -11,7 +11,7 @@ services:
               - id
             serviceIds:
               - simplytestable.services.applicationstateservice
-              - simplytestable.services.resque.queueservice
+              - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - simplytestable.services.jobpreparationservice
               - simplytestable.services.crawljobcontainerservice
@@ -28,7 +28,7 @@ services:
               - id
             serviceIds:
               - simplytestable.services.applicationstateservice
-              - simplytestable.services.resque.queueservice
+              - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
               - simplytestable.services.jobpreparationservice
@@ -46,7 +46,7 @@ services:
               - simplytestable.services.applicationstateservice
               - doctrine.orm.entity_manager
               - simplytestable.services.taskpreprocessor.factory
-              - simplytestable.services.resque.queueservice
+              - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - SimplyTestable\ApiBundle\Services\StateService
               - simplytestable.services.workertaskassignmentservice
@@ -93,7 +93,7 @@ services:
               - id
             serviceIds:
               - simplytestable.services.applicationstateservice
-              - simplytestable.services.resque.queueservice
+              - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - doctrine.orm.entity_manager
               - simplytestable.services.job.startservice

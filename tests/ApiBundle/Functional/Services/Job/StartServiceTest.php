@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -210,7 +211,7 @@ class StartServiceTest extends AbstractBaseTestCase
      */
     public function testStart($userEmail, $url, $jobTypeName, $expectedIsPublic)
     {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $userFactory = new UserFactory($this->container);
@@ -305,7 +306,7 @@ class StartServiceTest extends AbstractBaseTestCase
             'simplytestable.services.jobtypeservice',
             JobService::class,
             UserService::class,
-            'simplytestable.services.resque.queueservice',
+            QueueService::class,
             StateService::class,
             'simplytestable.services.useraccountplanservice',
             'simplytestable.services.resque.jobfactory',
@@ -329,7 +330,7 @@ class StartServiceTest extends AbstractBaseTestCase
             $requiredServices['simplytestable.services.jobtypeservice'],
             $requiredServices[JobService::class],
             $requiredServices[UserService::class],
-            $requiredServices['simplytestable.services.resque.queueservice'],
+            $requiredServices[QueueService::class],
             $requiredServices[StateService::class],
             $requiredServices['simplytestable.services.useraccountplanservice'],
             $requiredServices['simplytestable.services.resque.jobfactory'],

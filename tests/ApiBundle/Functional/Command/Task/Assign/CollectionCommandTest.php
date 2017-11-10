@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Command\Task\Assign;
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\JobFactory;
@@ -84,7 +85,7 @@ class CollectionCommandTest extends AbstractBaseTestCase
         $expectedTaskValuesCollection,
         $expectedTaskAssignCollectionQueueIsEmpty
     ) {
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
 
         $job = $this->jobFactory->createResolveAndPrepare();
 

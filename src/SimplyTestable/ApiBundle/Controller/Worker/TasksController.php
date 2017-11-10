@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller\Worker;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -23,7 +24,7 @@ class TasksController extends Controller
         }
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
+        $resqueQueueService = $this->container->get(QueueService::class);
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $stateService = $this->container->get(StateService::class);
         $taskQueueService = $this->container->get('simplytestable.services.task.queueservice');

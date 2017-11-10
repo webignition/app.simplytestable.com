@@ -36,7 +36,7 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        resqueQueueService: "@simplytestable.services.resque.queueService"
+        resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
 
   SimplyTestable\ApiBundle\Services\JobService:
     class:  SimplyTestable\ApiBundle\Services\JobService
@@ -73,7 +73,7 @@ services:
   SimplyTestable\ApiBundle\Services\UrlService:
     class:  SimplyTestable\ApiBundle\Services\UrlService
 
-  simplytestable.services.resque.queueService:
+  SimplyTestable\ApiBundle\Services\Resque\QueueService:
     class:   SimplyTestable\ApiBundle\Services\Resque\QueueService
     arguments:
       resque: "@resque"
@@ -364,7 +364,7 @@ services:
         jobTypeService: "@simplytestable.services.jobtypeservice"
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
-        resqueQueueService: "@simplytestable.services.resque.queueservice"
+        resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         userAccountPlanService: '@simplytestable.services.useraccountplanservice'
         resqueJobFactory: '@simplytestable.services.resque.jobfactory'
