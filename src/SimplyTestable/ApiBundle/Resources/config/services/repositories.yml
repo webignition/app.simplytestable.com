@@ -1,10 +1,4 @@
 services:
-  simplytestable.repository.userpostactivationproperties:
-    class: Doctrine\ORM\EntityRepository
-    factory: ["@doctrine.orm.entity_manager", getRepository]
-    arguments:
-        - SimplyTestable\ApiBundle\Entity\UserPostActivationProperties
-
   simplytestable.repository.workeractivationrequest:
     class: Doctrine\ORM\EntityRepository
     factory: ["@doctrine.orm.entity_manager", getRepository]
