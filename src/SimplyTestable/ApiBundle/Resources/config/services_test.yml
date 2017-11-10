@@ -6,9 +6,3 @@ services:
 
   simplytestable.services.postmark.sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\TestSender
-
-  simplytestable.repository.website:
-    class: Doctrine\ORM\EntityRepository
-    factory: ["@doctrine.orm.entity_manager", getRepository]
-    arguments:
-        - SimplyTestable\ApiBundle\Entity\WebSite

@@ -37,7 +37,7 @@ class CanonicalUrlTest extends AbstractBaseTestCase
 
     public function testUtf8()
     {
-        $websiteRepository = $this->container->get('simplytestable.repository.website');
+        $websiteRepository = $this->entityManager->getRepository(WebSite::class);
 
         $sourceUrl = 'http://example.com/ɸ';
 
@@ -59,7 +59,7 @@ class CanonicalUrlTest extends AbstractBaseTestCase
 
     public function testUrlGreaterThanVarcharLength()
     {
-        $websiteRepository = $this->container->get('simplytestable.repository.website');
+        $websiteRepository = $this->entityManager->getRepository(WebSite::class);
 
         $canonicalUrl = str_repeat('+', 1280);
 
