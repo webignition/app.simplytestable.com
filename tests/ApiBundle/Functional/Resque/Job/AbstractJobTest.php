@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Resque\Job;
 
 use SimplyTestable\ApiBundle\Resque\Job\Job;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 abstract class AbstractJobTest extends AbstractBaseTestCase
@@ -15,7 +16,7 @@ abstract class AbstractJobTest extends AbstractBaseTestCase
      */
     public function createJob($args, $queue)
     {
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+        $resqueJobFactory = $this->container->get(ResqueJobFactory::class);
 
         $job = $resqueJobFactory->create($queue, $args);
 

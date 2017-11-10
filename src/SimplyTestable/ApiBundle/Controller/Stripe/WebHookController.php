@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller\Stripe;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Mail\Service as MailService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -67,7 +68,7 @@ class WebHookController extends Controller
         );
 
         $resqueQueueService = $this->container->get(QueueService::class);
-        $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+        $resqueJobFactory = $this->container->get(JobFactory::class);
 
         $resqueQueueService->enqueue(
             $resqueJobFactory->create(

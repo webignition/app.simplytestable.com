@@ -8,7 +8,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand
     arguments:
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       entityManager: '@doctrine.orm.entity_manager'
@@ -28,7 +28,7 @@ services:
     arguments:
       applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
       jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
       crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
       logger: '@logger'
@@ -44,7 +44,7 @@ services:
     arguments:
       applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
       websiteResolutionService: '@SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService'
       jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
       entityManager: '@doctrine.orm.entity_manager'
@@ -104,7 +104,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand
     arguments:
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
       logger: '@logger'
     tags:
       - { name: console.command }
@@ -114,7 +114,7 @@ services:
     arguments:
       applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
       entityManager: '@doctrine.orm.entity_manager'
       jobStartService: '@SimplyTestable\ApiBundle\Services\Job\StartService'
       jobService: '@SimplyTestable\ApiBundle\Services\JobService'
@@ -148,7 +148,7 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
       taskPreProcessorFactory: '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory'
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       workerTaskAssignmentService: '@SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService'
       logger: '@logger'
@@ -173,7 +173,7 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@simplytestable.services.resque.jobfactory'
+      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
     tags:
       - { name: console.command }
 

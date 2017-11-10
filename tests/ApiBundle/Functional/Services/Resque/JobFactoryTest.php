@@ -41,7 +41,7 @@ class JobFactoryTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
+        $this->jobFactory = $this->container->get(JobFactory::class);
     }
 
     public function testCreateWithInvalidQueue()
@@ -163,7 +163,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'serviceIds' => [
                         ApplicationStateService::class,
                         QueueService::class,
-                        'simplytestable.services.resque.jobfactory',
+                        JobFactory::class,
                         JobPreparationService::class,
                         CrawlJobContainerService::class,
                         'logger',
@@ -202,7 +202,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'serviceIds' => [
                         ApplicationStateService::class,
                         QueueService::class,
-                        'simplytestable.services.resque.jobfactory',
+                        JobFactory::class,
                         WebsiteResolutionService::class,
                         JobPreparationService::class,
                         'doctrine.orm.entity_manager',
@@ -242,7 +242,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'doctrine.orm.entity_manager',
                         Factory::class,
                         QueueService::class,
-                        'simplytestable.services.resque.jobfactory',
+                        JobFactory::class,
                         StateService::class,
                         WorkerTaskAssignmentService::class,
                         'logger',
@@ -323,7 +323,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'serviceIds' => [
                         ApplicationStateService::class,
                         QueueService::class,
-                        'simplytestable.services.resque.jobfactory',
+                        JobFactory::class,
                         'doctrine.orm.entity_manager',
                         StartService::class,
                         JobService::class,

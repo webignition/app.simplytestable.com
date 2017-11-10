@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
@@ -307,7 +308,7 @@ class StartServiceTest extends AbstractBaseTestCase
             QueueService::class,
             StateService::class,
             UserAccountPlanService::class,
-            'simplytestable.services.resque.jobfactory',
+            ResqueJobFactory::class,
             'doctrine.orm.entity_manager',
         ];
 
@@ -331,7 +332,7 @@ class StartServiceTest extends AbstractBaseTestCase
             $requiredServices[QueueService::class],
             $requiredServices[StateService::class],
             $requiredServices[UserAccountPlanService::class],
-            $requiredServices['simplytestable.services.resque.jobfactory'],
+            $requiredServices[ResqueJobFactory::class],
             $requiredServices['doctrine.orm.entity_manager']
         );
     }
