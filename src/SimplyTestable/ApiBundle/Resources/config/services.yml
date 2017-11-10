@@ -309,7 +309,7 @@ services:
     arguments:
         teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         entityManager: "@doctrine.orm.entity_manager"
-        tokenGenerator: '@simplytestable.services.invite.tokengenerator'
+        tokenGenerator: '@SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator'
 
   SimplyTestable\ApiBundle\Services\Job\RetrievalService:
     class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
@@ -459,7 +459,7 @@ services:
   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory:
     class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory
 
-  simplytestable.services.invite.tokengenerator:
+  SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator:
     class: SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator
     arguments:
       entityManager: '@doctrine.orm.entity_manager'
