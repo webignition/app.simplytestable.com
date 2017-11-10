@@ -156,7 +156,7 @@ services:
         jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
         crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
-        urlFinder: '@simplytestable.services.urlfinder'
+        urlFinder: '@SimplyTestable\ApiBundle\Services\UrlFinder'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         entityManager: "@doctrine.orm.entity_manager"
@@ -385,7 +385,7 @@ services:
     arguments:
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
 
-  simplytestable.services.urlfinder:
+  SimplyTestable\ApiBundle\Services\UrlFinder:
     class:  SimplyTestable\ApiBundle\Services\UrlFinder
     arguments:
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
