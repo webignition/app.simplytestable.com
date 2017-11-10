@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Services\JobListService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +20,7 @@ class JobListController extends Controller
         $jobListRequestFactory = $this->container->get('simplytestable.services.request.factory.job.list');
         $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
         $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
-        $jobListService = $this->container->get('simplytestable.services.joblistservice');
+        $jobListService = $this->container->get(JobListService::class);
 
         $jobListRequest = $jobListRequestFactory->create();
         $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
@@ -55,7 +56,7 @@ class JobListController extends Controller
         $jobListRequest = $jobListRequestFactory->create();
         $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
 
-        $jobListService = $this->container->get('simplytestable.services.joblistservice');
+        $jobListService = $this->container->get(JobListService::class);
         $jobListService->setConfiguration($jobListConfiguration);
 
         return new JsonResponse($jobListService->getMaxResults());
@@ -72,7 +73,7 @@ class JobListController extends Controller
         $jobListRequest = $jobListRequestFactory->create();
         $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
 
-        $jobListService = $this->container->get('simplytestable.services.joblistservice');
+        $jobListService = $this->container->get(JobListService::class);
         $jobListService->setConfiguration($jobListConfiguration);
 
         return new JsonResponse($jobListService->getWebsiteUrls());
