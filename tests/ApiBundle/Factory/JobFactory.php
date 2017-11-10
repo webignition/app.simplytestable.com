@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
+use SimplyTestable\ApiBundle\Services\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
@@ -195,7 +196,7 @@ class JobFactory
         $jobStartService = $this->container->get(StartService::class);
         $stateService = $this->container->get(StateService::class);
         $tokenStorage = $this->container->get('security.token_storage');
-        $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
+        $jobConfigurationFactory = $this->container->get(JobConfigurationFactory::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobTypeService = $this->container->get(JobTypeService::class);
 

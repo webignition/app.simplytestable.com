@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
+use SimplyTestable\ApiBundle\Services\JobConfigurationFactory;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -29,7 +30,7 @@ class StartController extends Controller
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $jobStartService = $this->container->get(StartService::class);
         $jobStartRequestFactory = $this->container->get(StartRequestFactory::class);
-        $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
+        $jobConfigurationFactory = $this->container->get(JobConfigurationFactory::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
