@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -30,7 +31,7 @@ class JobController extends Controller
      */
     public function latestAction($site_root_url)
     {
-        $websiteService = $this->get('simplytestable.services.websiteservice');
+        $websiteService = $this->get(WebSiteService::class);
         $userService = $this->get('simplytestable.services.userservice');
         $teamService = $this->get('simplytestable.services.teamservice');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');

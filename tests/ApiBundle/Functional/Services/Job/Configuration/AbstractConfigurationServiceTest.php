@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as ConfigurationValues;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
@@ -34,7 +35,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
      */
     protected function createJobConfigurationValuesModel($jobConfigurationValues)
     {
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 

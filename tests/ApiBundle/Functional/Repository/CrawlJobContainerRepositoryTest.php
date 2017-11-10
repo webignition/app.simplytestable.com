@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -46,7 +47,7 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
 
     public function testDoesCrawlTaskParentStateMatchState()
     {
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
@@ -155,7 +156,8 @@ class CrawlJobContainerRepositoryTest extends AbstractBaseTestCase
         $expectedCrawlJobContainerIndices
     ) {
         $stateService = $this->container->get('simplytestable.services.stateservice');
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $jobService = $this->container->get('simplytestable.services.jobservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobStateNames = [

@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Adapter\Job\TaskConfiguration\RequestAdapter;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -27,7 +28,7 @@ class JobConfigurationController extends Controller
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $userService = $this->container->get('simplytestable.services.userservice');
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
@@ -191,7 +192,7 @@ class JobConfigurationController extends Controller
     {
         $applicationStateService = $this->container->get('simplytestable.services.applicationstateservice');
         $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 

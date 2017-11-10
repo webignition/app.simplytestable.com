@@ -11,7 +11,7 @@ services:
     arguments:
         curlOptions: "%curl_options%"
 
-  simplytestable.services.websiteservice:
+  SimplyTestable\ApiBundle\Services\WebSiteService:
     class:  SimplyTestable\ApiBundle\Services\WebSiteService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
@@ -21,7 +21,7 @@ services:
     arguments:
         jobService: "@simplytestable.services.jobservice"
         httpClientService: "@simplytestable.services.httpClientService"
-        websiteService: "@simplytestable.services.websiteservice"
+        websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
         urlResolver: '@simplytestable.services.urlresolver'
         stateService: '@simplytestable.services.stateservice'
         entityManager: "@doctrine.orm.entity_manager"
@@ -413,7 +413,7 @@ services:
         requestStack: '@request_stack'
         tokenStorage: '@security.token_storage'
         entityManager: '@doctrine.orm.entity_manager'
-        websiteService: '@simplytestable.services.websiteservice'
+        websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
         jobTypeService: '@simplytestable.services.jobtypeservice'
 
   simplytestable.services.jobconfiguration.factory:

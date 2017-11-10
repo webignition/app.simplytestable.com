@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -285,7 +286,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
         $user = $users[$userName];
 
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
 
         $jobType = $jobTypeService->get($jobTypeName);

@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\ConstraintFactory;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\PlanFactory;
@@ -53,7 +54,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $users = $userFactory->createPublicAndPrivateUserSet();
         $user = $users[$userName];
 
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $jobFactory = new JobFactory($this->container);

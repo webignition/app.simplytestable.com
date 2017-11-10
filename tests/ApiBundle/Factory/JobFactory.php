@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Guzzle\Http\Message\Response as GuzzleResponse;
@@ -182,7 +183,7 @@ class JobFactory
      */
     public function create($jobValues = [], $ignoreState = false)
     {
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $jobStartService = $this->container->get('simplytestable.services.job.startservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $tokenStorage = $this->container->get('security.token_storage');

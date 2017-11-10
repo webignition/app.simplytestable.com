@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Command;
 
 use SimplyTestable\ApiBundle\Services\UrlFinder;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\AtomFeedFactory;
 use Tests\ApiBundle\Factory\HtmlDocumentFactory;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -33,7 +34,7 @@ class UrlFinderTest extends AbstractBaseTestCase
         $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
         $webResourceService->getConfiguration()->disableRetryWithUrlEncodingDisabled();
 
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $website = $websiteService->get($websiteUrl);
 
         $urlFinder = new UrlFinder(

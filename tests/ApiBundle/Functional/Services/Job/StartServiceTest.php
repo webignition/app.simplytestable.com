@@ -35,7 +35,7 @@ class StartServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $this->websiteService = $this->container->get(WebSiteService::class);
     }
 
     public function testStartWithUnroutableWebsite()

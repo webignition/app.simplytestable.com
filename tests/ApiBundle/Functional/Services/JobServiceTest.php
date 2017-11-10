@@ -13,6 +13,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -76,7 +77,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $expectedJobTaskTypeOptions
     ) {
         $userFactory = new UserFactory($this->container);
-        $websiteService = $this->container->get('simplytestable.services.websiteservice');
+        $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get('simplytestable.services.tasktypeservice');
         $stateService = $this->container->get('simplytestable.services.stateservice');
         $jobTypeService = $this->container->get('simplytestable.services.jobtypeservice');
