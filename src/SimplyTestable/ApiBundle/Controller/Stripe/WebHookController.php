@@ -24,7 +24,7 @@ class WebHookController extends Controller
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $stripeEventService = $this->container->get(StripeEventService::class);
-        $mailService = $this->container->get('simplytestable.services.mail.service');
+        $mailService = $this->container->get(MailService::class);
 
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
         $stripeEventRepository = $entityManager->getRepository(Event::class);

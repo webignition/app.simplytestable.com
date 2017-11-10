@@ -287,7 +287,7 @@ services:
   SimplyTestable\ApiBundle\Services\Postmark\Sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\Sender
 
-  simplytestable.services.mail.service:
+  SimplyTestable\ApiBundle\Services\Mail\Service:
     class:   SimplyTestable\ApiBundle\Services\Mail\Service
     arguments:
         postmarkMessage: "@postmark.message"
