@@ -234,7 +234,8 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testPersist()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskRepository = $this->container->get('simplytestable.repository.task');
+
+        $taskRepository = $entityManager->getRepository(Task::class);
 
         $originalTaskUrl = $this->task->getUrl();
 
@@ -252,7 +253,8 @@ class TaskServiceTest extends AbstractBaseTestCase
     public function testPersistAndFlush()
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $taskRepository = $this->container->get('simplytestable.repository.task');
+
+        $taskRepository = $entityManager->getRepository(Task::class);
 
         $this->task->setUrl('foo');
 
