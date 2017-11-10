@@ -25,9 +25,7 @@ class WorkerController extends Controller
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $resqueQueueService = $this->container->get('simplytestable.services.resque.queueservice');
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
-        $workerRequestActivationService = $this->container->get(
-            'simplytestable.services.workeractivationrequestservice'
-        );
+        $workerRequestActivationService = $this->container->get(WorkerActivationRequestService::class);
         $stateService = $this->container->get(StateService::class);
         $workerRepository = $entityManager->getRepository(Worker::class);
         $activationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);

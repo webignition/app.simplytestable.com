@@ -61,9 +61,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
      */
     public function testRunHttpError($httpFixtures, $expectedReturnCode)
     {
-        $workerActivationRequestService = $this->container->get(
-            'simplytestable.services.workeractivationrequestservice'
-        );
+        $workerActivationRequestService = $this->container->get(WorkerActivationRequestService::class);
 
         $this->queueHttpFixtures($httpFixtures);
 
@@ -114,9 +112,7 @@ class ActivateVerifyCommandTest extends AbstractBaseTestCase
 
     public function testRunSuccess()
     {
-        $workerActivationRequestService = $this->container->get(
-            'simplytestable.services.workeractivationrequestservice'
-        );
+        $workerActivationRequestService = $this->container->get(WorkerActivationRequestService::class);
 
         $this->queueHttpFixtures([
             HttpFixtureFactory::createSuccessResponse(),

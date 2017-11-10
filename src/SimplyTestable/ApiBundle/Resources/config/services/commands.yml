@@ -215,7 +215,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand
     arguments:
       applicationStateService: '@simplytestable.services.applicationstateservice'
-      workerActivationRequestService: '@simplytestable.services.workeractivationrequestservice'
+      workerActivationRequestService: '@SimplyTestable\ApiBundle\Services\WorkerActivationRequestService'
       entityManager: '@doctrine.orm.entity_manager'
     tags:
       - { name: console.command }

@@ -61,7 +61,7 @@ services:
         tokenGenerator: '@fos_user.util.token_generator'
         emailCanonicalizer: '@fos_user.util.email_canonicalizer'
 
-  simplytestable.services.workeractivationrequestservice:
+  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService:
     class:  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"

@@ -15,6 +15,7 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class JobFactoryTest extends AbstractBaseTestCase
@@ -268,7 +269,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                     'id' => 1,
                     'serviceIds' => [
                         'simplytestable.services.applicationstateservice',
-                        'simplytestable.services.workeractivationrequestservice',
+                        WorkerActivationRequestService::class,
                         'doctrine.orm.entity_manager',
                     ],
                 ],
