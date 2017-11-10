@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -393,9 +394,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
 
     public function testActivateActionSuccessHasPostActivationProperties()
     {
-        $userPostActivationPropertiesService = $this->container->get(
-            'simplytestable.services.job.userpostactivationpropertiesservice'
-        );
+        $userPostActivationPropertiesService = $this->container->get(UserPostActivationPropertiesService::class);
 
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $accountPlanService = $this->container->get(AccountPlanService::class);

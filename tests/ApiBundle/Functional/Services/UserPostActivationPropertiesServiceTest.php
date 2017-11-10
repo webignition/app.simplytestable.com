@@ -42,9 +42,7 @@ class UserPostActivationPropertiesServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userPostActivationPropertiesService = $this->container->get(
-            'simplytestable.services.job.userpostactivationpropertiesservice'
-        );
+        $this->userPostActivationPropertiesService = $this->container->get(UserPostActivationPropertiesService::class);
 
         $userService = $this->container->get(UserService::class);
         $this->user = $userService->getPublicUser();

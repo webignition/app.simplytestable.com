@@ -318,11 +318,10 @@ services:
       teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
       tokenStorage: '@security.token_storage'
 
-  simplytestable.services.job.UserPostActivationPropertiesService:
+  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService:
     class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
-
 
   simplytestable.services.task.queueService:
     class:  SimplyTestable\ApiBundle\Services\Task\QueueService

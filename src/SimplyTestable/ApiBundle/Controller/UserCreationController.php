@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,9 +29,7 @@ class UserCreationController extends Controller
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
-        $userPostActivationPropertiesService = $this->container->get(
-            'simplytestable.services.job.userpostactivationpropertiesservice'
-        );
+        $userPostActivationPropertiesService = $this->container->get(UserPostActivationPropertiesService::class);
         $accountPlanService = $this->container->get(AccountPlanService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
