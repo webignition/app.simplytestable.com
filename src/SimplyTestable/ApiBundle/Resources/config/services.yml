@@ -456,7 +456,7 @@ services:
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
-  simplytestable.services.joblistconfigurationfactory:
+  SimplyTestable\ApiBundle\Services\JobListConfigurationFactory:
     class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory
 
   simplytestable.services.invite.tokengenerator:

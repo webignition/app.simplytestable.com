@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller\Job;
 
+use SimplyTestable\ApiBundle\Services\JobListConfigurationFactory;
 use SimplyTestable\ApiBundle\Services\JobListService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory;
@@ -20,7 +21,7 @@ class JobListController extends Controller
     public function listAction($limit = null, $offset = null)
     {
         $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
-        $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
+        $jobListConfigurationFactory = $this->container->get(JobListConfigurationFactory::class);
         $jobSummaryFactory = $this->container->get(JobSummaryFactory::class);
         $jobListService = $this->container->get(JobListService::class);
 
@@ -53,7 +54,7 @@ class JobListController extends Controller
     public function countAction()
     {
         $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
-        $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
+        $jobListConfigurationFactory = $this->container->get(JobListConfigurationFactory::class);
 
         $jobListRequest = $jobListRequestFactory->create();
         $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
@@ -70,7 +71,7 @@ class JobListController extends Controller
     public function websitesAction()
     {
         $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
-        $jobListConfigurationFactory = $this->container->get('simplytestable.services.joblistconfigurationfactory');
+        $jobListConfigurationFactory = $this->container->get(JobListConfigurationFactory::class);
 
         $jobListRequest = $jobListRequestFactory->create();
         $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
