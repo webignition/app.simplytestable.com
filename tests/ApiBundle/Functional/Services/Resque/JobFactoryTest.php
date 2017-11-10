@@ -285,7 +285,6 @@ class JobFactoryTest extends AbstractBaseTestCase
                         'doctrine.orm.entity_manager',
                         'logger',
                         'event_dispatcher',
-                        'simplytestable.repository.stripeevent',
                     ],
                 ],
             ],

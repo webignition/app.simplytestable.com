@@ -128,7 +128,6 @@ services:
       entityManager: '@doctrine.orm.entity_manager'
       logger: '@logger'
       eventDispatcher: '@event_dispatcher'
-      stripeEventRepository: '@simplytestable.repository.stripeevent'
     tags:
       - { name: console.command }
 

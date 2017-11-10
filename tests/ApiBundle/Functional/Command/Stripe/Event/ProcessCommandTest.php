@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Command\Stripe\Event;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
+use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\StripeEventFactory;
@@ -119,7 +120,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
                 }),
             ]);
 
-        $stripeEventRepository = $this->container->get('simplytestable.repository.stripeevent');
+        $stripeEventRepository = $entityManager->getRepository(Event::class);
 
         $command = new ProcessCommand(
             $applicationStateService,

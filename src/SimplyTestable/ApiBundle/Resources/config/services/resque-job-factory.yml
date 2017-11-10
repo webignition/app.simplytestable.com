@@ -82,7 +82,6 @@ services:
               - doctrine.orm.entity_manager
               - logger
               - event_dispatcher
-              - simplytestable.repository.stripeevent
           tasks-notify:
             queue: tasks-notify
             jobClassName: SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob

@@ -5,6 +5,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
+use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Symfony\Component\Console\Command\Command;
@@ -49,7 +50,6 @@ class ProcessCommand extends Command
      * @param EntityManager $entityManager
      * @param LoggerInterface $logger
      * @param EventDispatcherInterface $eventDispatcher
-     * @param EntityRepository $stripeEventRepository
      * @param string|null $name
      */
     public function __construct(
@@ -57,7 +57,6 @@ class ProcessCommand extends Command
         EntityManager $entityManager,
         LoggerInterface $logger,
         EventDispatcherInterface $eventDispatcher,
-        EntityRepository $stripeEventRepository,
         $name = null
     ) {
         parent::__construct($name);
@@ -66,7 +65,8 @@ class ProcessCommand extends Command
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
-        $this->stripeEventRepository = $stripeEventRepository;
+
+        $this->stripeEventRepository = $entityManager->getRepository(Event::class);
     }
 
     /**
