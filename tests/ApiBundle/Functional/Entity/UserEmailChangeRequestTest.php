@@ -26,7 +26,7 @@ class UserEmailChangeRequestTest extends AbstractBaseTestCase
 
         $entityManager->clear();
 
-        $userEmailChangeRequestRepository = $this->container->get('simplytestable.repository.useremailchangerequest');
+        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
 
         $this->assertEquals(
             $newEmail,
