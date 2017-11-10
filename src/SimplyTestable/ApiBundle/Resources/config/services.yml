@@ -369,7 +369,7 @@ services:
         resqueJobFactory: '@simplytestable.services.resque.jobfactory'
         entityManager: "@doctrine.orm.entity_manager"
 
-  simplytestable.services.scheduledjob.cronmodifier.validationservice:
+  SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService
 
   simplytestable.services.request.factory.task.complete:

@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -33,9 +34,7 @@ class ScheduledJobController extends Controller
         $userService = $this->container->get(UserService::class);
         $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $jobConfigurationService = $this->container->get(ConfigurationService::class);
-        $cronModifierValidationService = $this->container->get(
-            'simplytestable.services.scheduledjob.cronmodifier.validationservice'
-        );
+        $cronModifierValidationService = $this->container->get(CronModifierValidationService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
@@ -184,9 +183,7 @@ class ScheduledJobController extends Controller
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $jobConfigurationService = $this->container->get(ConfigurationService::class);
-        $cronModifierValidationService = $this->get(
-            'simplytestable.services.scheduledjob.cronmodifier.validationservice'
-        );
+        $cronModifierValidationService = $this->get(CronModifierValidationService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
