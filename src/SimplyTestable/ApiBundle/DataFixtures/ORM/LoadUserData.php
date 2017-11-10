@@ -37,7 +37,7 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface, C
     {
         $userService = $this->container->get('simplytestable.services.userservice');
         $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-        $userRepository = $this->container->get('simplytestable.repository.user');
+        $userRepository = $manager->getRepository(User::class);
 
         $publicUser = $userRepository->findOneBy([
             'email' => self::PUBLIC_USER_EMAIL,

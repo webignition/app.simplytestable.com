@@ -129,7 +129,6 @@ services:
         userService: "@simplytestable.services.userservice"
         stripeService: "@simplytestable.services.stripeservice"
         teamService: "@simplytestable.services.teamservice"
-        userRepository: '@simplytestable.repository.user'
         defaultTrialPeriod: "%default_trial_period%"
 
   simplytestable.services.useremailchangerequestservice:
