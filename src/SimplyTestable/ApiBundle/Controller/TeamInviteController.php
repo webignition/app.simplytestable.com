@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,7 +26,7 @@ class TeamInviteController extends Controller
     public function getAction(Request $request, $invitee_email)
     {
         $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
         $accountPlanService = $this->container->get(AccountPlanService::class);
@@ -87,7 +88,7 @@ class TeamInviteController extends Controller
      */
     public function acceptAction(Request $request)
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
         $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
@@ -145,7 +146,7 @@ class TeamInviteController extends Controller
      */
     public function listAction()
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
         $teamService = $this->container->get('simplytestable.services.teamservice');
 
@@ -175,7 +176,7 @@ class TeamInviteController extends Controller
      */
     public function userListAction()
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
 
         if ($userAccountPlanService->getForUser($this->getUser())->getPlan()->getIsPremium()) {

@@ -15,6 +15,7 @@ use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskOutputFactory;
@@ -517,7 +518,7 @@ class JobServiceTest extends AbstractBaseTestCase
 
         $job = $this->jobFactory->create($jobValues);
 
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $userAccountPlan = $userAccountPlanService->getForUser($job->getUser());
 
         $constraint = empty($constraintName)
@@ -852,7 +853,7 @@ class JobServiceTest extends AbstractBaseTestCase
         $userFactory = new UserFactory($this->container);
         $user = $userFactory->createPublicAndPrivateUserSet()[$userName];
 
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $jobRejectionReasonRepository = $this->entityManager->getRepository(RejectionReason::class);
 
         $job = $this->jobFactory->create([

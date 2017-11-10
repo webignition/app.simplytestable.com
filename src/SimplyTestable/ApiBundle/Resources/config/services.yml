@@ -121,7 +121,7 @@ services:
       resourceLocator: '@simplytestable.services.resourcelocator'
       kernel: '@kernel'
 
-  simplytestable.services.userAccountPlanService:
+  SimplyTestable\ApiBundle\Services\UserAccountPlanService:
     class:   SimplyTestable\ApiBundle\Services\UserAccountPlanService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
@@ -140,7 +140,7 @@ services:
   simplytestable.services.jobUserAccountPlanEnforcementService:
     class:   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
     arguments:
-        userAccountPlanService: "@simplytestable.services.userAccountPlanService"
+        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
         teamService: "@simplytestable.services.teamservice"
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
@@ -158,7 +158,7 @@ services:
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
         urlFinder: '@simplytestable.services.urlfinder'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         entityManager: "@doctrine.orm.entity_manager"
         crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
@@ -219,7 +219,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
-        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
@@ -232,7 +232,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
-        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
 
@@ -244,7 +244,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
-        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
 
@@ -256,7 +256,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
-        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
@@ -279,7 +279,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         webClientProperties: "%web_client%"
         stripeService: "@simplytestable.services.stripeservice"
-        userAccountPlanService: "@simplytestable.services.useraccountplanservice"
+        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         dispatcher: "@event_dispatcher"
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
@@ -366,7 +366,7 @@ services:
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
         resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         resqueJobFactory: '@simplytestable.services.resque.jobfactory'
         entityManager: "@doctrine.orm.entity_manager"
 
@@ -439,7 +439,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
     arguments:
       tokenStorage: '@security.token_storage'
-      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       stripeService: '@simplytestable.services.stripeservice'
       jobUserAccountPlanEnforcementService: '@simplytestable.services.jobuseraccountplanenforcementservice'
       teamInviteService: '@simplytestable.services.teaminviteservice'
@@ -454,7 +454,7 @@ services:
       jobService: '@SimplyTestable\ApiBundle\Services\JobService'
       teamService: '@simplytestable.services.teamservice'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
-      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
   simplytestable.services.joblistconfigurationfactory:
@@ -477,7 +477,7 @@ services:
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
       jobUserAccountPlanEnforcementService: '@simplytestable.services.jobuseraccountplanenforcementservice'
-      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       jobService: '@SimplyTestable\ApiBundle\Services\JobService'
       entityManager: '@doctrine.orm.entity_manager'
       urlDiscoveryTaskService: '@simplytestable.services.task.urldiscovery'
@@ -492,5 +492,5 @@ services:
     class:   SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector
     arguments:
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       entityManager: '@doctrine.orm.entity_manager'

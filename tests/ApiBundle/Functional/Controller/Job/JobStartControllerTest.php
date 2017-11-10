@@ -10,6 +10,7 @@ use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -143,7 +144,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
     public function testStartActionAccountPlanLimitReached()
     {
         $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $jobRepository = $entityManager->getRepository(Job::class);
         $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);

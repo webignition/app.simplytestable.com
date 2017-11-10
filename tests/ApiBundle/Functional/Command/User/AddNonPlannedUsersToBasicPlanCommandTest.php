@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Command\User;
 use SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -49,7 +50,7 @@ class AddNonPlannedUsersToBasicPlanCommandTest extends AbstractBaseTestCase
     public function testRun($userValuesCollection, $args, $expectedUserPlanNames)
     {
         $userFactory = new UserFactory($this->container);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         /* @var User[] $users */
         $users = [];

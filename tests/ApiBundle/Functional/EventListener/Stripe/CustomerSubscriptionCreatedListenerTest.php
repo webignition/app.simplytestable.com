@@ -24,7 +24,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
     public function testOnCustomerSubscriptionCreatedWebClientRequestFailure()
     {
         $eventDispatcher = $this->container->get('event_dispatcher');
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $userService = $this->container->get(UserService::class);
 
         $this->queueHttpFixtures([
@@ -149,7 +149,7 @@ class CustomerSubscriptionCreatedListenerTest extends AbstractStripeEventListene
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
         $httpClientService = $this->container->get(HttpClientService::class);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 

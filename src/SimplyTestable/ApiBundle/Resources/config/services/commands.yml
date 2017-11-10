@@ -78,7 +78,7 @@ services:
   simplytestable.command.maintenance.modifyinitialstarttrialperiod:
     class:  SimplyTestable\ApiBundle\Command\Maintenance\ModifyInitialStartTrialPeriodCommand
     arguments:
-      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       entityManager: '@doctrine.orm.entity_manager'
       accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:
@@ -190,7 +190,7 @@ services:
     class:  SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand
     arguments:
       applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      userAccountPlanService: '@simplytestable.services.useraccountplanservice'
+      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       entityManager: '@doctrine.orm.entity_manager'
       accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:

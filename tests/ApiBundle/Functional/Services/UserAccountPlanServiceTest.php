@@ -31,7 +31,7 @@ class UserAccountPlanServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $this->userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $this->userFactory = new UserFactory($this->container);
     }
 

@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Controller\UserAccountPlanSubscription;
 
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use SimplyTestable\ApiBundle\Exception\Services\UserAccountPlan\Exception as UserAccountPlanServiceException;
@@ -175,7 +176,7 @@ class UserAccountPlanSubscriptionControllerSubscribeActionTest extends AbstractU
 
     public function testSubscribeActionSuccess()
     {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set([
             StripeApiFixtureFactory::load('customer-nocard-hassub'),

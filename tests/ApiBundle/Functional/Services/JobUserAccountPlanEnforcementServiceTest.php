@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\ConstraintFactory;
@@ -177,7 +178,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $user = $users[$userName];
 
         if ($removeLimit) {
-            $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+            $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
             $userAccountPlan = $userAccountPlanService->getForUser($user);
             $plan = $userAccountPlan->getPlan();
 
@@ -340,7 +341,7 @@ class JobUserAccountPlanEnforcementServiceTest extends AbstractBaseTestCase
         $jobFactory = new JobFactory($this->container);
 
         $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $stateService = $this->container->get(StateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

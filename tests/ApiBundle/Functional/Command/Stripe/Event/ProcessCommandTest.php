@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -79,8 +80,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
     public function testRunFoo($fixtureName, $expectedEventName)
     {
         $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
-
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

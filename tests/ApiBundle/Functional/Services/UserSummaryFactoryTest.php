@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserSummaryFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -67,7 +68,7 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
         $expectedHasStripeCustomer,
         $expectedSerializedUserSummary
     ) {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);

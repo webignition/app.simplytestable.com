@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Services\JobPreparation\PrepareFromCrawl;
 
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -16,7 +17,7 @@ class ServiceTest extends AbstractBaseTestCase
     public function testCrawlJobAmmendmentsArePassedToParentJob()
     {
         $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         $this->setUser($userService->getPublicUser());
 

@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\EventListener\Stripe;
 
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\StripeEventFactory;
@@ -29,7 +30,7 @@ class CustomerSubscriptionUpdatedTest extends AbstractStripeEventListenerTest
     ) {
         $eventDispatcher = $this->container->get('event_dispatcher');
         $httpClientService = $this->container->get(HttpClientService::class);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
 
         StripeApiFixtureFactory::set($stripeApiHttpFixtures);
 

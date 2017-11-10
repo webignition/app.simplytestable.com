@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -189,7 +190,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
         $expectedPlanName,
         $expectedPostActivationProperties
     ) {
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $userService = $this->container->get(UserService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $userPostActivationPropertiesRepository = $entityManager->getRepository(UserPostActivationProperties::class);
@@ -396,7 +397,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
             'simplytestable.services.job.userpostactivationpropertiesservice'
         );
 
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $agencyAccountPlan = $accountPlanService->get('agency');

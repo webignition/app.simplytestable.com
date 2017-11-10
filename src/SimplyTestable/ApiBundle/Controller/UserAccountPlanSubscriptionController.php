@@ -25,7 +25,7 @@ class UserAccountPlanSubscriptionController extends Controller
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $accountPlanService = $this->container->get(AccountPlanService::class);
 
         if ($applicationStateService->isInReadOnlyMode()) {
@@ -79,7 +79,7 @@ class UserAccountPlanSubscriptionController extends Controller
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $userService = $this->container->get(UserService::class);
-        $userAccountPlanService = $this->container->get('simplytestable.services.useraccountplanservice');
+        $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $stripeService = $this->container->get('simplytestable.services.stripeservice');
 
         if ($applicationStateService->isInReadOnlyMode()) {
