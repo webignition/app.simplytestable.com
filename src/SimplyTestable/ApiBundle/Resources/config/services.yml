@@ -160,7 +160,7 @@ services:
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
         entityManager: "@doctrine.orm.entity_manager"
-        crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
+        crawlJobUrlCollector: '@SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector'
 
   SimplyTestable\ApiBundle\Services\StripeEventService:
     class:   SimplyTestable\ApiBundle\Services\StripeEventService
@@ -454,7 +454,7 @@ services:
       teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
       crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-      crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
+      crawlJobUrlCollector: '@SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector'
 
   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory:
     class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory
@@ -474,7 +474,7 @@ services:
     class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor
     arguments:
       crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
-      crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
+      crawlJobUrlCollector: '@SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector'
       jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       jobService: '@SimplyTestable\ApiBundle\Services\JobService'
@@ -487,7 +487,7 @@ services:
       taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
 
-  simplytestable.services.crawljoburlcollector:
+  SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector:
     class:   SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector
     arguments:
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'

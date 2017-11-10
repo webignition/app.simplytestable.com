@@ -51,7 +51,7 @@ class CrawlJobUrlCollectorTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->crawlJobUrlCollector = $this->container->get('simplytestable.services.crawljoburlcollector');
+        $this->crawlJobUrlCollector = $this->container->get(CrawlJobUrlCollector::class);
 
         $taskTypeService = $this->container->get(TaskTypeService::class);
         $this->urlDiscoveryTaskType = $taskTypeService->getUrlDiscoveryTaskType();
