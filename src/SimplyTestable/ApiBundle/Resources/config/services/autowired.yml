@@ -1,0 +1,180 @@
+services:
+  simplytestable.session.handler:
+    class: Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler
+
+  SimplyTestable\ApiBundle\Services\WebSiteService:
+    class:  SimplyTestable\ApiBundle\Services\WebSiteService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\StateService:
+    class:  SimplyTestable\ApiBundle\Services\StateService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\TaskService:
+    class:  SimplyTestable\ApiBundle\Services\TaskService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\JobService:
+    class:  SimplyTestable\ApiBundle\Services\JobService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\JobListService:
+    class:  SimplyTestable\ApiBundle\Services\JobListService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService:
+    class:  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\UrlService:
+    class:  SimplyTestable\ApiBundle\Services\UrlService
+
+  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService:
+    class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService:
+    class:  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\TaskTypeService:
+    class:  SimplyTestable\ApiBundle\Services\TaskTypeService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\JobTypeService:
+    class:  SimplyTestable\ApiBundle\Services\JobTypeService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\AccountPlanService:
+    class:  SimplyTestable\ApiBundle\Services\AccountPlanService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService:
+    class:   SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\JobPreparationService:
+    class:   SimplyTestable\ApiBundle\Services\JobPreparationService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\StripeEventService:
+    class:   SimplyTestable\ApiBundle\Services\StripeEventService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\CrawlJobContainerService:
+    class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor:
+    class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner:
+    class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner
+
+  SimplyTestable\ApiBundle\Services\Postmark\Sender:
+    class:   SimplyTestable\ApiBundle\Services\Postmark\Sender
+
+  SimplyTestable\ApiBundle\Services\Mail\Service:
+    class:   SimplyTestable\ApiBundle\Services\Mail\Service
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\Team\MemberService:
+    class:  SimplyTestable\ApiBundle\Services\Team\MemberService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\Team\Service:
+    class:  SimplyTestable\ApiBundle\Services\Team\Service
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\Job\RetrievalService:
+    class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService:
+    class:  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\Task\QueueService:
+    class:  SimplyTestable\ApiBundle\Services\Task\QueueService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService:
+    class:  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\Job\ConfigurationService:
+    class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\ScheduledJob\Service:
+    class: SimplyTestable\ApiBundle\Services\ScheduledJob\Service
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\Job\StartService:
+    class:  SimplyTestable\ApiBundle\Services\Job\StartService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
+    class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService
+
+  SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory:
+    class:   SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\UrlResolver:
+    class:  SimplyTestable\ApiBundle\Services\UrlResolver
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\UrlFinder:
+    class:  SimplyTestable\ApiBundle\Services\UrlFinder
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory:
+    class:   SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory
+    autowire: true
+
+  simplytestable.services.sitemapfactory:
+    class:  webignition\WebResource\Sitemap\Factory
+
+  SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory:
+    class:   SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\JobConfigurationFactory:
+    class:   SimplyTestable\ApiBundle\Services\JobConfigurationFactory
+
+  SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory:
+    class:   SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\ApplicationStatusFactory:
+    class:   SimplyTestable\ApiBundle\Services\ApplicationStatusFactory
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\UserSummaryFactory:
+    class:   SimplyTestable\ApiBundle\Services\UserSummaryFactory
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\JobSummaryFactory:
+    class:   SimplyTestable\ApiBundle\Services\JobSummaryFactory
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\JobListConfigurationFactory:
+    class:   SimplyTestable\ApiBundle\Services\JobListConfigurationFactory
+
+  SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator:
+    class: SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService:
+    class: SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor:
+    class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor
+    autowire: true
+
+  SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector:
+    class:   SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector
+    autowire: true

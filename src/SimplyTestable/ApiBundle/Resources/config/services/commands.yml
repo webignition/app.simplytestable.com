@@ -6,20 +6,13 @@ services:
 
   SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand:
     class:  SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand
-    arguments:
-      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
-      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand:
     class:  SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
+    autowire: true
     tags:
       - { name: console.command }
 
@@ -56,68 +49,49 @@ services:
 
   SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand:
     class:  SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand:
     class:  SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand:
     class:  SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Maintenance\ModifyInitialStartTrialPeriodCommand:
     class:  SimplyTestable\ApiBundle\Command\Maintenance\ModifyInitialStartTrialPeriodCommand
-    arguments:
-      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-      entityManager: '@doctrine.orm.entity_manager'
-      accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Reporting\GetOutputIdsForErrorCommand:
     class:  SimplyTestable\ApiBundle\Command\Reporting\GetOutputIdsForErrorCommand
-    arguments:
-      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Reporting\GetTopErrorsCommand:
     class:  SimplyTestable\ApiBundle\Command\Reporting\GetTopErrorsCommand
-    arguments:
-      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand:
     class:  SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand
-    arguments:
-      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
-      logger: '@logger'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand:
     class:  SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
-      entityManager: '@doctrine.orm.entity_manager'
-      jobStartService: '@SimplyTestable\ApiBundle\Services\Job\StartService'
-      jobService: '@SimplyTestable\ApiBundle\Services\JobService'
+    autowire: true
     tags:
       - { name: console.command }
 
@@ -143,112 +117,72 @@ services:
 
   SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand:
     class:  SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      entityManager: '@doctrine.orm.entity_manager'
-      taskPreProcessorFactory: '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory'
-      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
-      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      workerTaskAssignmentService: '@SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService'
-      logger: '@logger'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand:
     class:  SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-      workerTaskCancellationService: '@SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService'
-      logger: '@logger'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand:
     class:  SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      entityManager: '@doctrine.orm.entity_manager'
-      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
-      resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand:
     class:  SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand:
     class:  SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-      entityManager: '@doctrine.orm.entity_manager'
-      accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Worker\SetTokenFromActivationRequestCommand:
     class:  SimplyTestable\ApiBundle\Command\Worker\SetTokenFromActivationRequestCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand:
     class:  SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand
-    arguments:
-      workerTaskNotificationService: '@SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand:
     class:  SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      workerActivationRequestService: '@SimplyTestable\ApiBundle\Services\WorkerActivationRequestService'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Migrate\AddHashToHashlessOutputCommand:
     class:  SimplyTestable\ApiBundle\Command\Migrate\AddHashToHashlessOutputCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Migrate\CanonicaliseTaskOutputCommand:
     class:  SimplyTestable\ApiBundle\Command\Migrate\CanonicaliseTaskOutputCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand:
     class:  SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      entityManager: '@doctrine.orm.entity_manager'
-      taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
+    autowire: true
     tags:
       - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Migrate\RemoveUnusedOutputCommand:
     class:  SimplyTestable\ApiBundle\Command\Migrate\RemoveUnusedOutputCommand
-    arguments:
-      applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-      entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
     tags:
       - { name: console.command }
