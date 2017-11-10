@@ -16,7 +16,7 @@ class ConstraintTest extends AbstractBaseTestCase
     public function testPersist($name)
     {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $constraintRepository = $this->container->get('simplytestable.repository.accountplanconstraint');
+        $constraintRepository = $entityManager->getRepository(Constraint::class);
 
         $planFactory = new PlanFactory($this->container);
         $plan = $planFactory->create();
