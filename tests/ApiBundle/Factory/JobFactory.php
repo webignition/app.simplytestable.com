@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
+use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
@@ -307,7 +308,7 @@ class JobFactory
     public function prepare(Job $job, $httpFixtures = [], $domain = null)
     {
         $httpClientService = $this->container->get(HttpClientService::class);
-        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
+        $jobPreparationService = $this->container->get(JobPreparationService::class);
 
         if (empty($httpFixtures)) {
             $httpFixtures = [

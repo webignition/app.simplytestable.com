@@ -224,7 +224,7 @@ class JobController extends Controller
         $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
         $jobService = $this->container->get(JobService::class);
         $crawlJobContainerService = $this->get('simplytestable.services.crawljobcontainerservice');
-        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
+        $jobPreparationService = $this->container->get(JobPreparationService::class);
         $resqueQueueService = $this->container->get(QueueService::class);
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $stateService = $this->container->get(StateService::class);

@@ -29,7 +29,7 @@ services:
       applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
-      jobPreparationService: '@simplytestable.services.jobpreparationservice'
+      jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
       crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
       logger: '@logger'
       entityManager: '@doctrine.orm.entity_manager'
@@ -46,7 +46,7 @@ services:
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       websiteResolutionService: '@SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService'
-      jobPreparationService: '@simplytestable.services.jobpreparationservice'
+      jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
       entityManager: '@doctrine.orm.entity_manager'
       predefinedDomainsToIgnore:
         css-validation: '%css_validation_domains_to_ignore%'

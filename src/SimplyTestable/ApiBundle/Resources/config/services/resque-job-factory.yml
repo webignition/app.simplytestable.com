@@ -13,7 +13,7 @@ services:
               - SimplyTestable\ApiBundle\Services\ApplicationStateService
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
-              - simplytestable.services.jobpreparationservice
+              - SimplyTestable\ApiBundle\Services\JobPreparationService
               - simplytestable.services.crawljobcontainerservice
               - logger
               - doctrine.orm.entity_manager
@@ -31,7 +31,7 @@ services:
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
-              - simplytestable.services.jobpreparationservice
+              - SimplyTestable\ApiBundle\Services\JobPreparationService
               - doctrine.orm.entity_manager
             parameters:
               predefinedDomainsToIgnore:

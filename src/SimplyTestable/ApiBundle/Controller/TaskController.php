@@ -8,6 +8,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\CrawlJobContainerRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -37,7 +38,7 @@ class TaskController extends Controller
         $taskTypeService = $this->container->get(TaskTypeService::class);
         $taskService = $this->container->get(TaskService::class);
         $jobService = $this->container->get(JobService::class);
-        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
+        $jobPreparationService = $this->container->get(JobPreparationService::class);
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
         $taskOutputJoinerFactory = $this->container->get('simplytestable.services.taskoutputjoiner.factory');
         $taskPostProcessorFactory = $this->container->get('simplytestable.services.taskpostprocessor.factory');

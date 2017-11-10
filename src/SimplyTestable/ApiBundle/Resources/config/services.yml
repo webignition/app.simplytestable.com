@@ -147,7 +147,7 @@ services:
         jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
         entityManager: "@doctrine.orm.entity_manager"
 
-  simplytestable.services.jobPreparationService:
+  SimplyTestable\ApiBundle\Services\JobPreparationService:
     class:   SimplyTestable\ApiBundle\Services\JobPreparationService
     arguments:
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'

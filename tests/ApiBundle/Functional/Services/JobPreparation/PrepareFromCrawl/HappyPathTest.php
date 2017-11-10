@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Services\JobPreparation\PrepareFromCrawl;
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -30,7 +31,7 @@ class HappyPathTest extends AbstractBaseTestCase
 
         $userService = $this->container->get(UserService::class);
         $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
-        $jobPreparationService = $this->container->get('simplytestable.services.jobpreparationservice');
+        $jobPreparationService = $this->container->get(JobPreparationService::class);
 
         $this->setUser($userService->getPublicUser());
 
