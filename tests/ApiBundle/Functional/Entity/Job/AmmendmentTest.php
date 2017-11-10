@@ -34,7 +34,7 @@ class AmmendmentTest extends AbstractBaseTestCase
 
     public function testUtf8Reason()
     {
-        $ammendmentRepository = $this->container->get('simplytestable.repository.jobammendment');
+        $ammendmentRepository = $this->entityManager->getRepository(Ammendment::class);
 
         $reason = 'ɸ';
 
