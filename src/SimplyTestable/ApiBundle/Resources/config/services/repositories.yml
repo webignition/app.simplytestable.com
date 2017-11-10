@@ -1,10 +1,4 @@
 services:
-  simplytestable.repository.jobrejectionreason:
-    class: Doctrine\ORM\EntityRepository
-    factory: ["@doctrine.orm.entity_manager", getRepository]
-    arguments:
-        - SimplyTestable\ApiBundle\Entity\Job\RejectionReason
-
   simplytestable.repository.teaminvite:
     class: Doctrine\ORM\EntityRepository
     factory: ["@doctrine.orm.entity_manager", getRepository]

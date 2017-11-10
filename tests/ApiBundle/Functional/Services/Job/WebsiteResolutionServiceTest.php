@@ -69,7 +69,8 @@ class WebsiteResolutionServiceTest extends AbstractBaseTestCase
      */
     public function testResolveRejectionDueToCurlException($curlCode, $expectedRejectionReason)
     {
-        $jobRejectionReasonRepository = $this->container->get('simplytestable.repository.jobrejectionreason');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $jobRejectionReasonRepository = $entityManager->getRepository(RejectionReason::class);
 
         $curlException = new CurlException();
         $curlException->setError('', $curlCode);
