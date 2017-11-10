@@ -1,7 +1,9 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Team;
 
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Util\TokenGeneratorInterface;
+use SimplyTestable\ApiBundle\Entity\Team\Invite;
 use SimplyTestable\ApiBundle\Repository\TeamInviteRepository;
 
 class InviteTokenGenerator implements TokenGeneratorInterface
@@ -12,11 +14,12 @@ class InviteTokenGenerator implements TokenGeneratorInterface
     private $teamInviteRepository;
 
     /**
-     * @param TeamInviteRepository $teamInviteRepository
+
+     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(TeamInviteRepository $teamInviteRepository)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->teamInviteRepository = $teamInviteRepository;
+        $this->teamInviteRepository = $entityManager->getRepository(Invite::class);
     }
 
     /**

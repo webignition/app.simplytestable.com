@@ -467,7 +467,7 @@ services:
   simplytestable.services.invite.tokengenerator:
     class: SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator
     arguments:
-      teamInviteRepository: '@simplytestable.repository.teaminvite'
+      entityManager: '@doctrine.orm.entity_manager'
 
   simplytestable.services.task.urldiscovery:
     class: SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService

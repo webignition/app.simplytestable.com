@@ -53,7 +53,8 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testAddSuccess()
     {
-        $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
 
         /* @var Team $team */
         $team = $teamRepository->findOneBy([
@@ -71,7 +72,8 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testRemove()
     {
-        $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
         $teamService = $this->container->get('simplytestable.services.teamservice');
 
         /* @var Team $team */
@@ -103,7 +105,8 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testContains()
     {
-        $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
 
         /* @var Team $team */
         $team = $teamRepository->findOneBy([
@@ -117,7 +120,8 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testGetTeamByMember()
     {
-        $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
 
         /* @var Team $team */
         $team = $teamRepository->findOneBy([
@@ -132,7 +136,8 @@ class MemberServiceTest extends AbstractBaseTestCase
 
     public function testGetMembers()
     {
-        $teamRepository = $this->container->get('simplytestable.repository.team');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $teamRepository = $entityManager->getRepository(Team::class);
 
         /* @var Team $team */
         $team = $teamRepository->findOneBy([
