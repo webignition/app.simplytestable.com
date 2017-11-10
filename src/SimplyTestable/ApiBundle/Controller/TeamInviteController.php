@@ -6,9 +6,10 @@ use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInvi
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\Team\MemberService;
-use SimplyTestable\ApiBundle\Services\Team\Service;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -32,7 +33,7 @@ class TeamInviteController extends Controller
         $userService = $this->container->get(UserService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get(InviteService::class);
-        $teamService = $this->container->get(Service::class);
+        $teamService = $this->container->get(TeamService::class);
         $accountPlanService = $this->container->get(AccountPlanService::class);
 
         $inviter = $this->getUser();
@@ -94,7 +95,7 @@ class TeamInviteController extends Controller
     {
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get(InviteService::class);
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $jobConfigurationService = $this->get(ConfigurationService::class);
         $teamMemberService = $this->container->get(MemberService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -152,7 +153,7 @@ class TeamInviteController extends Controller
     {
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get(InviteService::class);
-        $teamService = $this->container->get(Service::class);
+        $teamService = $this->container->get(TeamService::class);
 
         if (!$teamService->hasTeam($this->getUser())) {
             return Response::create('', 400, [
@@ -199,7 +200,7 @@ class TeamInviteController extends Controller
     {
         $userService = $this->container->get(UserService::class);
         $teamInviteService = $this->container->get(InviteService::class);
-        $teamService = $this->container->get(Service::class);
+        $teamService = $this->container->get(TeamService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if (!$teamService->hasTeam($this->getUser())) {

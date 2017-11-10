@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Command\Cron\RunCommand;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -53,7 +54,7 @@ class RunCommandTest extends AbstractBaseTestCase
         $expectedCronJobOutput
     ) {
         $userFactory = new UserFactory($this->container);
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $cronReportRepository = $entityManager->getRepository(CronReport::class);
 

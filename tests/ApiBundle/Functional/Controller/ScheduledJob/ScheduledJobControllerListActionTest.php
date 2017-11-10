@@ -52,7 +52,7 @@ class ScheduledJobControllerListActionTest extends AbstractBaseTestCase
             JobConfigurationFactory::KEY_USER => $this->user,
         ]);
 
-        $this->scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $this->scheduledJobService = $this->container->get(ScheduledJobService::class);
     }
 
     public function testListActionGetRequest()

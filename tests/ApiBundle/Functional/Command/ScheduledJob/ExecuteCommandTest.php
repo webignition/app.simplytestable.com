@@ -5,6 +5,7 @@ namespace Tests\ApiBundle\Functional\Command\ScheduledJob\ExecuteCommand;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
@@ -68,7 +69,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
 
     public function testRunForUnroutableWebsite()
     {
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
 
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
 
@@ -91,7 +92,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
     public function testRunWithPlanConstraintLimitReached()
     {
         $userService = $this->container->get(UserService::class);
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
@@ -128,7 +129,7 @@ class ExecuteCommandTest extends AbstractBaseTestCase
 
     public function testRunSuccess()
     {
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
 
         $jobConfigurationFactory = new JobConfigurationFactory($this->container);
 

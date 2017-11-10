@@ -4,6 +4,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +31,7 @@ class ScheduledJobController extends Controller
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $userService = $this->container->get(UserService::class);
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $jobConfigurationService = $this->container->get(ConfigurationService::class);
         $cronModifierValidationService = $this->container->get(
             'simplytestable.services.scheduledjob.cronmodifier.validationservice'
@@ -131,7 +132,7 @@ class ScheduledJobController extends Controller
      */
     public function deleteAction($id)
     {
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
 
         $scheduledJob = $scheduledJobService->get($id);
 
@@ -151,7 +152,7 @@ class ScheduledJobController extends Controller
      */
     public function getAction($id)
     {
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
 
         $scheduledJob = $scheduledJobService->get($id);
 
@@ -167,7 +168,7 @@ class ScheduledJobController extends Controller
      */
     public function listAction()
     {
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
 
         return new JsonResponse($scheduledJobService->getList());
     }
@@ -181,7 +182,7 @@ class ScheduledJobController extends Controller
     public function updateAction(Request $request, $id)
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
+        $scheduledJobService = $this->container->get(ScheduledJobService::class);
         $jobConfigurationService = $this->container->get(ConfigurationService::class);
         $cronModifierValidationService = $this->get(
             'simplytestable.services.scheduledjob.cronmodifier.validationservice'

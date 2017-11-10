@@ -347,7 +347,7 @@ services:
         teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         tokenStorage: '@security.token_storage'
 
-  simplytestable.services.scheduledjob.service:
+  SimplyTestable\ApiBundle\Services\ScheduledJob\Service:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\Service
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
