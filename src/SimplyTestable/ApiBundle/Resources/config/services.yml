@@ -372,7 +372,7 @@ services:
   SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService
 
-  simplytestable.services.request.factory.task.complete:
+  SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory:
     class:   SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory
     arguments:
         requestStack: "@request_stack"

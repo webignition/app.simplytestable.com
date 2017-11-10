@@ -117,7 +117,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
             );
 
             $this->container->get('request_stack')->push($request);
-            $this->container->get('simplytestable.services.request.factory.task.complete')->init($request);
+            $this->container->get(CompleteRequestFactory::class)->init($request);
 
             $taskController->completeAction();
 

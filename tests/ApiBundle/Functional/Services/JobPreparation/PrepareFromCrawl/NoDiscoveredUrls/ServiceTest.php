@@ -68,7 +68,7 @@ class ServiceTest extends AbstractBaseTestCase
         $taskController->setContainer($this->container);
 
         $this->container->get('request_stack')->push($taskCompleteRequest);
-        $this->container->get('simplytestable.services.request.factory.task.complete')->init($taskCompleteRequest);
+        $this->container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
 
         $taskController->completeAction();
     }
