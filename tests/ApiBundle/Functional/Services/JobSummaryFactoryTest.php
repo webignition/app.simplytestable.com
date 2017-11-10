@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services;
 
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
@@ -265,7 +266,7 @@ class JobSummaryFactoryTest extends AbstractBaseTestCase
      */
     public function testCreateForCrawlJob($userValues, $expectedSerializedCrawl)
     {
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
 
         $user = $this->userFactory->create($userValues);
         $job = $this->jobFactory->createResolveAndPrepareStandardCrawlJob([

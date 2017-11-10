@@ -154,7 +154,7 @@ services:
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
         jobTypeService: '@SimplyTestable\ApiBundle\Services\JobTypeService'
         jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
-        crawlJobContainerService: "@simplytestable.services.crawljobcontainerservice"
+        crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
         userService: '@SimplyTestable\ApiBundle\Services\UserService'
         urlFinder: '@simplytestable.services.urlfinder'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
@@ -172,7 +172,7 @@ services:
     arguments:
         apiKey: "%stripe_key%"
 
-  simplytestable.services.crawljobcontainerservice:
+  SimplyTestable\ApiBundle\Services\CrawlJobContainerService:
     class:  SimplyTestable\ApiBundle\Services\CrawlJobContainerService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
@@ -425,7 +425,7 @@ services:
         requestStack: '@request_stack'
         entityManager: '@doctrine.orm.entity_manager'
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+        crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
         tokenStorage: '@security.token_storage'
 
   simplytestable.services.applicationstatusfactory:
@@ -453,7 +453,7 @@ services:
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
       jobService: '@SimplyTestable\ApiBundle\Services\JobService'
       teamService: '@simplytestable.services.teamservice'
-      crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+      crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
 
@@ -474,7 +474,7 @@ services:
   simplytestable.services.taskpostprocessor.urldiscovery:
     class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor
     arguments:
-      crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+      crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
       crawlJobUrlCollector: '@simplytestable.services.crawljoburlcollector'
       jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'

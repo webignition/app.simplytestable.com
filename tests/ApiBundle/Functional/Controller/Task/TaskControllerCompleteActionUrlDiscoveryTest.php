@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
@@ -66,7 +67,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
             ],
         ]);
 
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
 
         $this->crawlJobContainer = $crawlJobContainerService->getForJob($job);
         $this->crawlJob = $this->crawlJobContainer->getCrawlJob();

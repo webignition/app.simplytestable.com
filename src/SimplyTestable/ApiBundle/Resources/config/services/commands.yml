@@ -30,7 +30,7 @@ services:
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
-      crawlJobContainerService: '@simplytestable.services.crawljobcontainerservice'
+      crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
       logger: '@logger'
       entityManager: '@doctrine.orm.entity_manager'
       predefinedDomainsToIgnore:

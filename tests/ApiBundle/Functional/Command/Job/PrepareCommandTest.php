@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\PrepareCommand;
 use SimplyTestable\ApiBundle\Controller\MaintenanceController;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use Tests\ApiBundle\Factory\HttpFixtureFactory;
@@ -87,7 +88,7 @@ class PrepareCommandTest extends AbstractBaseTestCase
         $webResourceService = $this->container->get('simplytestable.services.webresourceservice');
         $webResourceService->getConfiguration()->disableRetryWithUrlEncodingDisabled();
 
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
         $resqueQueueService = $this->container->get(QueueService::class);
 
         $userFactory = new UserFactory($this->container);

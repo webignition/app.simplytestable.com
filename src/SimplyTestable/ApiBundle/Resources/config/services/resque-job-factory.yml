@@ -14,7 +14,7 @@ services:
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - SimplyTestable\ApiBundle\Services\JobPreparationService
-              - simplytestable.services.crawljobcontainerservice
+              - SimplyTestable\ApiBundle\Services\CrawlJobContainerService
               - logger
               - doctrine.orm.entity_manager
             parameters:

@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Services\JobPreparation\PrepareFromCrawl\No
 
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -45,7 +46,7 @@ class ServiceTest extends AbstractBaseTestCase
             'prepare' => HttpFixtureFactory::createStandardCrawlPrepareResponses(),
         ]);
 
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
 
         $crawlJobContainer = $crawlJobContainerService->getForJob($this->job);
         $urlDiscoveryTask = $crawlJobContainer->getCrawlJob()->getTasks()->first();

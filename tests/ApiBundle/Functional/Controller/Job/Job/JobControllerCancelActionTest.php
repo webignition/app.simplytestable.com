@@ -4,6 +4,7 @@ namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -126,7 +127,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $entityManager->persist($parentJob);
         $entityManager->flush();
 
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
         $crawlJobContainer = $crawlJobContainerService->getForJob($parentJob);
         $crawlJobContainerService->prepare($crawlJobContainer);
         $crawlJob = $crawlJobContainer->getCrawlJob();
@@ -194,7 +195,7 @@ class JobControllerCancelActionTest extends AbstractJobControllerTest
         $entityManager->persist($parentJob);
         $entityManager->flush();
 
-        $crawlJobContainerService = $this->container->get('simplytestable.services.crawljobcontainerservice');
+        $crawlJobContainerService = $this->container->get(CrawlJobContainerService::class);
         $crawlJobContainer = $crawlJobContainerService->getForJob($parentJob);
         $crawlJobContainerService->prepare($crawlJobContainer);
         $crawlJob = $crawlJobContainer->getCrawlJob();
