@@ -39,10 +39,7 @@ services:
 
   SimplyTestable\ApiBundle\Services\JobListService:
     class:  SimplyTestable\ApiBundle\Services\JobListService
-    arguments:
-        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-        jobListQueryBuilderFactory: '@SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory'
+    autowire: true
 
   SimplyTestable\ApiBundle\Services\UserService:
     class:  SimplyTestable\ApiBundle\Services\UserService
