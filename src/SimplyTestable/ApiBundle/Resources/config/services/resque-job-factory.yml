@@ -96,5 +96,5 @@ services:
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - doctrine.orm.entity_manager
-              - simplytestable.services.job.startservice
+              - SimplyTestable\ApiBundle\Services\Job\StartService
               - SimplyTestable\ApiBundle\Services\JobService

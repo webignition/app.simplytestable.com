@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint as AccountPlanConstr
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Start\Exception as JobStartServiceException;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,7 +26,7 @@ class StartController extends Controller
     public function startAction()
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $jobStartService = $this->container->get('simplytestable.services.job.startservice');
+        $jobStartService = $this->container->get(StartService::class);
         $jobStartRequestFactory = $this->container->get('simplytestable.services.request.factory.job.start');
         $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');
 

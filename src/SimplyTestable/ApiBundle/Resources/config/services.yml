@@ -356,7 +356,7 @@ services:
         cronManager: "@cron.manager"
         tokenStorage: '@security.token_storage'
 
-  simplytestable.services.job.startservice:
+  SimplyTestable\ApiBundle\Services\Job\StartService:
     class:  SimplyTestable\ApiBundle\Services\Job\StartService
     arguments:
         jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'

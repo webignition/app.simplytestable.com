@@ -11,6 +11,7 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
+use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -191,7 +192,7 @@ class JobFactory
     public function create($jobValues = [], $ignoreState = false)
     {
         $websiteService = $this->container->get(WebSiteService::class);
-        $jobStartService = $this->container->get('simplytestable.services.job.startservice');
+        $jobStartService = $this->container->get(StartService::class);
         $stateService = $this->container->get(StateService::class);
         $tokenStorage = $this->container->get('security.token_storage');
         $jobConfigurationFactory = $this->container->get('simplytestable.services.jobconfiguration.factory');

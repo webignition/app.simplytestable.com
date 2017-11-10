@@ -12,6 +12,7 @@ use SimplyTestable\ApiBundle\Resque\Job\Worker\ActivateVerifyJob;
 use SimplyTestable\ApiBundle\Resque\Job\Worker\Tasks\NotifyJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
@@ -324,7 +325,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         QueueService::class,
                         'simplytestable.services.resque.jobfactory',
                         'doctrine.orm.entity_manager',
-                        'simplytestable.services.job.startservice',
+                        StartService::class,
                         JobService::class,
                     ],
                 ],

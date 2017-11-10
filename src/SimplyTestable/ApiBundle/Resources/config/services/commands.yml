@@ -116,7 +116,7 @@ services:
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       entityManager: '@doctrine.orm.entity_manager'
-      jobStartService: '@simplytestable.services.job.startservice'
+      jobStartService: '@SimplyTestable\ApiBundle\Services\Job\StartService'
       jobService: '@SimplyTestable\ApiBundle\Services\JobService'
     tags:
       - { name: console.command }
