@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Services\Worker;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
@@ -15,7 +15,7 @@ use \Psr\Log\LoggerInterface;
 class TaskNotificationService
 {
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -45,14 +45,14 @@ class TaskNotificationService
     private $workerRepository;
 
     /**
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param StateService $stateService
      * @param HttpClientService $httpClientService
      * @param UrlService $urlService
      * @param LoggerInterface $logger
      */
     public function __construct(
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         StateService $stateService,
         HttpClientService $httpClientService,
         UrlService $urlService,

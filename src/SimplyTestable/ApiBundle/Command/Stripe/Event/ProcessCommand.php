@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Stripe\Event;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
@@ -26,7 +26,7 @@ class ProcessCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -47,14 +47,14 @@ class ProcessCommand extends Command
 
     /**
      * @param ApplicationStateService $applicationStateService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param LoggerInterface $logger
      * @param EventDispatcherInterface $eventDispatcher
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         LoggerInterface $logger,
         EventDispatcherInterface $eventDispatcher,
         $name = null

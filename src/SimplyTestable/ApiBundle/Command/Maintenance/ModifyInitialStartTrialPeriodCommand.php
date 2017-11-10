@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Maintenance;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use Symfony\Component\Console\Command\Command;
@@ -21,7 +21,7 @@ class ModifyInitialStartTrialPeriodCommand extends Command
     private $userAccountPlanService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -32,13 +32,13 @@ class ModifyInitialStartTrialPeriodCommand extends Command
 
     /**
      * @param UserAccountPlanService $userAccountPlanService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param AccountPlanService $accountPlanService
      * @param null $name
      */
     public function __construct(
         UserAccountPlanService $userAccountPlanService,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         AccountPlanService $accountPlanService,
         $name = null
     ) {
@@ -138,7 +138,7 @@ class ModifyInitialStartTrialPeriodCommand extends Command
 
                 $userAccountPlan->setStartTrialPeriod($new);
                 $this->entityManager->persist($userAccountPlan);
-                $this->entityManager->flush($userAccountPlan);
+                $this->entityManager->flush();
             }
         }
 

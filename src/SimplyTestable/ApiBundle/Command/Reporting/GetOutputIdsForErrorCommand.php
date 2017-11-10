@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Reporting;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
@@ -25,7 +25,7 @@ class GetOutputIdsForErrorCommand extends Command
     private $taskTypeService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -36,12 +36,12 @@ class GetOutputIdsForErrorCommand extends Command
 
     /**
      * @param TaskTypeService $taskTypeService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
         TaskTypeService $taskTypeService,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);

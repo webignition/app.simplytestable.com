@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Worker;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -21,7 +21,7 @@ class SetTokenFromActivationRequestCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -37,12 +37,12 @@ class SetTokenFromActivationRequestCommand extends Command
 
     /**
      * @param ApplicationStateService $applicationStateService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);
@@ -88,7 +88,7 @@ class SetTokenFromActivationRequestCommand extends Command
                 $worker->setToken($workerActivationRequest->getToken());
 
                 $this->entityManager->persist($worker);
-                $this->entityManager->flush($worker);
+                $this->entityManager->flush();
             }
         }
 

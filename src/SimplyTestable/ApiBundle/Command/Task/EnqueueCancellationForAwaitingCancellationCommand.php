@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\Task;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -24,7 +24,7 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -50,7 +50,7 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
 
     /**
      * @param ApplicationStateService $applicationStateService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param StateService $stateService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
@@ -58,7 +58,7 @@ class EnqueueCancellationForAwaitingCancellationCommand extends Command
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         StateService $stateService,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,

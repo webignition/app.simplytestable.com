@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services;
 
 use Cron\CronBundle\Entity\CronJob;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Exception\Services\ScheduledJob\Exception as ScheduledJobServiceException;
@@ -42,8 +42,8 @@ class ScheduledJobServiceTest extends AbstractBaseTestCase
             ->shouldReceive('has')
             ->andReturn(true);
 
-        /* @var EntityManager $entityManager */
-        $entityManager = \Mockery::mock(EntityManager::class);
+        /* @var EntityManagerInterface $entityManager */
+        $entityManager = \Mockery::mock(EntityManagerInterface::class);
         $entityManager
             ->shouldReceive('getRepository')
             ->with(ScheduledJob::class)

@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Command\Migrate;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
@@ -24,7 +24,7 @@ class NormaliseJsLintOutputCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -45,13 +45,13 @@ class NormaliseJsLintOutputCommand extends Command
 
     /**
      * @param ApplicationStateService $applicationStateService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param TaskTypeService $taskTypeService
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         TaskTypeService $taskTypeService,
         $name = null
     ) {

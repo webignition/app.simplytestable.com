@@ -1,7 +1,7 @@
 <?php
 namespace SimplyTestable\ApiBundle\Command\ScheduledJob;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
@@ -43,7 +43,7 @@ class ExecuteCommand extends Command
     private $resqueJobFactory;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -66,7 +66,7 @@ class ExecuteCommand extends Command
      * @param ApplicationStateService $applicationStateService
      * @param ResqueQueueService $resqueQueueService
      * @param ResqueJobFactory $resqueJobFactory
-     * @param  EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param JobStartService $jobStartService
      * @param JobService $jobService
      * @param string|null $name
@@ -75,7 +75,7 @@ class ExecuteCommand extends Command
         ApplicationStateService $applicationStateService,
         ResqueQueueService $resqueQueueService,
         ResqueJobFactory $resqueJobFactory,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         JobStartService $jobStartService,
         JobService $jobService,
         $name = null
@@ -125,6 +125,7 @@ class ExecuteCommand extends Command
             return self::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE;
         }
 
+        /* @var ScheduledJob $scheduledJob */
         $scheduledJob = $this->scheduledJobRepository->find($id);
 
         if (empty($scheduledJob)) {

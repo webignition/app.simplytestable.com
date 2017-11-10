@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Services\Request\Factory\Job;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use SimplyTestable\ApiBundle\Entity\Job\Type;
 use SimplyTestable\ApiBundle\Repository\StateRepository;
@@ -29,7 +29,7 @@ class ListRequestFactory
     private $requestPayload;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -70,14 +70,14 @@ class ListRequestFactory
 
     /**
      * @param RequestStack $requestStack
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param JobService $jobService
      * @param CrawlJobContainerService $crawlJobContainerService
      * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
         RequestStack $requestStack,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         JobService $jobService,
         CrawlJobContainerService $crawlJobContainerService,
         TokenStorageInterface $tokenStorage

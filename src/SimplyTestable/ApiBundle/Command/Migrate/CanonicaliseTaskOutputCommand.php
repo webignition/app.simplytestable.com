@@ -2,7 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Command\Migrate;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Repository\TaskOutputRepository;
@@ -23,7 +23,7 @@ class CanonicaliseTaskOutputCommand extends Command
     private $applicationStateService;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
 
@@ -39,12 +39,12 @@ class CanonicaliseTaskOutputCommand extends Command
 
     /**
      * @param ApplicationStateService $applicationStateService
-     * @param EntityManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param string|null $name
      */
     public function __construct(
         ApplicationStateService $applicationStateService,
-        EntityManager $entityManager,
+        EntityManagerInterface $entityManager,
         $name = null
     ) {
         parent::__construct($name);
@@ -144,7 +144,7 @@ class CanonicaliseTaskOutputCommand extends Command
                             if (!$isDryRun) {
                                 $task->setOutput($sourceOutput);
                                 $this->entityManager->persist($task);
-                                $this->entityManager->flush($task);
+                                $this->entityManager->flush();
                             }
                         }
                     }

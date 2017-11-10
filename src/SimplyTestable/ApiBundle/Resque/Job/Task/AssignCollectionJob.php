@@ -2,11 +2,9 @@
 
 namespace SimplyTestable\ApiBundle\Resque\Job\Task;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
-use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Resque\Job\CommandJob;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
@@ -35,7 +33,7 @@ class AssignCollectionJob extends CommandJob
         /* @var ApplicationStateService $applicationStateService */
         $applicationStateService = $this->getContainer()->get($this->args['serviceIds'][0]);
 
-        /* @var EntityManager $entityManager */
+        /* @var EntityManagerInterface $entityManager */
         $entityManager = $this->getContainer()->get($this->args['serviceIds'][1]);
 
         /* @var TaskPreProcessorFactory $taskPreProcessorFactory */
