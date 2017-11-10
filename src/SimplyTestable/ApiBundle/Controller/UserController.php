@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -107,7 +108,7 @@ class UserController extends Controller
      */
     public function hasInvitesAction($email_canonical)
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
         $userService = $this->container->get(UserService::class);
 
         $user = $userService->findUserByEmail($email_canonical);

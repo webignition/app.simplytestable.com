@@ -2,13 +2,14 @@
 
 namespace Tests\ApiBundle\Functional\Controller\TeamInvite;
 
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use Tests\ApiBundle\Factory\UserFactory;
 
 class TeamInviteControllerRemoveActionTest extends AbstractTeamInviteControllerTest
 {
     public function testRemoveActionGetRequest()
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
 
         $invitee = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',
@@ -92,7 +93,7 @@ class TeamInviteControllerRemoveActionTest extends AbstractTeamInviteControllerT
 
     public function testRemoveActionSuccess()
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
 
         $invitee = $this->userFactory->create([
             UserFactory::KEY_EMAIL => 'invitee@example.com',

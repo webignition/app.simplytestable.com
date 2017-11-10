@@ -304,7 +304,7 @@ services:
         teamMemberService: '@SimplyTestable\ApiBundle\Services\Team\MemberService'
         entityManager: "@doctrine.orm.entity_manager"
 
-  simplytestable.services.teaminviteservice:
+  SimplyTestable\ApiBundle\Services\Team\InviteService:
     class:  SimplyTestable\ApiBundle\Services\Team\InviteService
     arguments:
         teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
@@ -442,7 +442,7 @@ services:
       userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
       stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
       jobUserAccountPlanEnforcementService: '@SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService'
-      teamInviteService: '@simplytestable.services.teaminviteservice'
+      teamInviteService: '@SimplyTestable\ApiBundle\Services\Team\InviteService'
       teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
 
   simplytestable.services.jobsummaryfactory:

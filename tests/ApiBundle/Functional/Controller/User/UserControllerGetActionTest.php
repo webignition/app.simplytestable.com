@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Controller\User;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
 use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -48,7 +49,7 @@ class UserControllerGetActionTest extends AbstractUserControllerTest
         $userAccountPlanFactory->create($this->users['basic-with-stripe-customer'], 'personal', 'cus_aaaaaaaaaaaaa2');
         $userAccountPlanFactory->create($this->users['basic-with-stripe-customer'], 'basic', 'cus_aaaaaaaaaaaaa2');
 
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
         $teamInviteService->get($this->users['leader'], $this->users['invitee']);
         $teamInviteService->get($this->users['leader'], $this->users['premium']);
     }

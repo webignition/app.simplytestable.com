@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services;
 
 use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserSummaryFactory;
 use Tests\ApiBundle\Factory\StripeApiFixtureFactory;
@@ -48,7 +49,7 @@ class UserSummaryFactoryTest extends AbstractBaseTestCase
             UserFactory::KEY_PLAN_NAME => 'basic',
         ]);
 
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
         $teamInviteService->get($this->users['leader'], $this->users['has-team-invite']);
     }
 

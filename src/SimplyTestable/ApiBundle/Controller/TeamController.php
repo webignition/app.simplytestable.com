@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Exception\Services\Team\Exception as TeamServiceException;
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Services\Team\Service;
@@ -53,7 +54,7 @@ class TeamController extends Controller
     {
         $userService = $this->container->get(UserService::class);
         $teamService = $this->container->get(Service::class);
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($userService->isSpecialUser($this->getUser())) {

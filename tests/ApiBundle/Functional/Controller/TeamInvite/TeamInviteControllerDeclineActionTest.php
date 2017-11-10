@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\TeamInvite;
 
+use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -9,7 +10,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
 {
     public function testDeclineActionPostRequest()
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
 
         $invitee = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'invitee@example.com',
@@ -36,7 +37,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
 
     public function testDeclineActionInvalidTeam()
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
 
         $user = $this->users['private'];
         $this->setUser($user);
@@ -55,7 +56,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
 
     public function testDeclineActionValidTeamNoInvite()
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
 
         $user = $this->users['private'];
         $this->setUser($user);
@@ -74,7 +75,7 @@ class TeamInviteControllerDeclineActionTest extends AbstractTeamInviteController
 
     public function testDeclineActionValidTeamValidInvite()
     {
-        $teamInviteService = $this->container->get('simplytestable.services.teaminviteservice');
+        $teamInviteService = $this->container->get(InviteService::class);
 
         $user = $this->users['private'];
         $this->setUser($user);
