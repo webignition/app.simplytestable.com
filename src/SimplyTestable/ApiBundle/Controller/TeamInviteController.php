@@ -5,6 +5,7 @@ namespace SimplyTestable\ApiBundle\Controller;
 use SimplyTestable\ApiBundle\Exception\Services\TeamInvite\Exception as TeamInviteServiceException;
 use SimplyTestable\ApiBundle\Entity\Team\Team;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\Team\MemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service;
@@ -94,7 +95,7 @@ class TeamInviteController extends Controller
         $userAccountPlanService = $this->container->get(UserAccountPlanService::class);
         $teamInviteService = $this->container->get(InviteService::class);
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-        $jobConfigurationService = $this->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->get(ConfigurationService::class);
         $teamMemberService = $this->container->get(MemberService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 

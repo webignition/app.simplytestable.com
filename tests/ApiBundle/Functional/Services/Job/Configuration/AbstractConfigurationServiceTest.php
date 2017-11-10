@@ -27,7 +27,7 @@ abstract class AbstractConfigurationServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $this->jobConfigurationService = $this->container->get(ConfigurationService::class);
     }
 
     /**

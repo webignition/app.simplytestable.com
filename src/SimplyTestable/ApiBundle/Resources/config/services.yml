@@ -340,7 +340,7 @@ services:
         urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
         logger: "@logger"
 
-  simplytestable.services.job.configurationservice:
+  SimplyTestable\ApiBundle\Services\Job\ConfigurationService:
     class:  SimplyTestable\ApiBundle\Services\Job\ConfigurationService
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
@@ -351,7 +351,7 @@ services:
     class: SimplyTestable\ApiBundle\Services\ScheduledJob\Service
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
-        jobConfigurationService: "@simplytestable.services.job.configurationservice"
+        jobConfigurationService: '@SimplyTestable\ApiBundle\Services\Job\ConfigurationService'
         teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
         cronManager: "@cron.manager"
         tokenStorage: '@security.token_storage'

@@ -3,6 +3,7 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +31,7 @@ class ScheduledJobController extends Controller
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $userService = $this->container->get(UserService::class);
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
         $cronModifierValidationService = $this->container->get(
             'simplytestable.services.scheduledjob.cronmodifier.validationservice'
         );
@@ -181,7 +182,7 @@ class ScheduledJobController extends Controller
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
         $cronModifierValidationService = $this->get(
             'simplytestable.services.scheduledjob.cronmodifier.validationservice'
         );

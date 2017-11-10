@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Services\Job\Configuration;
 
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
@@ -13,7 +14,7 @@ abstract class ServiceTest extends AbstractBaseTestCase {
      * @return \SimplyTestable\ApiBundle\Services\Job\ConfigurationService
      */
     protected function getJobConfigurationService() {
-        return $this->container->get('simplytestable.services.job.configurationservice');
+        return $this->container->get(ConfigurationService::class);
     }
 
 

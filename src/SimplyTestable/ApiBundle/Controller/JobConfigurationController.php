@@ -7,6 +7,7 @@ use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Exception\Services\Job\Configuration\Exception as JobConfigurationServiceException;
 use SimplyTestable\ApiBundle\Model\Job\Configuration\Values as JobConfigurationValues;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -31,7 +32,7 @@ class JobConfigurationController extends Controller
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
         $userService = $this->container->get(UserService::class);
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
         $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get(TaskTypeService::class);
         $jobTypeService = $this->container->get(JobTypeService::class);
@@ -123,7 +124,7 @@ class JobConfigurationController extends Controller
     public function deleteAction($label)
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         $scheduledJobRepository = $entityManager->getRepository(ScheduledJob::class);
@@ -164,7 +165,7 @@ class JobConfigurationController extends Controller
      */
     public function getAction($label)
     {
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
 
         $label = trim($label);
 
@@ -181,7 +182,7 @@ class JobConfigurationController extends Controller
      */
     public function listAction()
     {
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
 
         return new JsonResponse($jobConfigurationService->getList());
     }
@@ -195,7 +196,7 @@ class JobConfigurationController extends Controller
     public function updateAction(Request $request, $label)
     {
         $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+        $jobConfigurationService = $this->container->get(ConfigurationService::class);
         $websiteService = $this->container->get(WebSiteService::class);
         $taskTypeService = $this->container->get(TaskTypeService::class);
         $jobTypeService = $this->container->get(JobTypeService::class);

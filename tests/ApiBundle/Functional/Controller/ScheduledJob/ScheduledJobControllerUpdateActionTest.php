@@ -6,6 +6,7 @@ use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -143,7 +144,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
 
         if (!empty($scheduledJobValuesCollection)) {
             $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-            $jobConfigurationService = $this->container->get('simplytestable.services.job.configurationservice');
+            $jobConfigurationService = $this->container->get(ConfigurationService::class);
 
             foreach ($scheduledJobValuesCollection as $scheduledJobValues) {
                 $jobConfiguration = $jobConfigurationService->get($scheduledJobValues['job-configuration']);
