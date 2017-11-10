@@ -50,7 +50,8 @@ class RunCommandTest extends AbstractBaseTestCase
     ) {
         $userFactory = new UserFactory($this->container);
         $scheduledJobService = $this->container->get('simplytestable.services.scheduledjob.service');
-        $cronReportRepository = $this->container->get('simplytestable.repository.cronreport');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $cronReportRepository = $entityManager->getRepository(CronReport::class);
 
         $user = $userFactory->createAndActivateUser();
 
