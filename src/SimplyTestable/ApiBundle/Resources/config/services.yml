@@ -27,23 +27,15 @@ services:
 
   SimplyTestable\ApiBundle\Services\StateService:
     class:  SimplyTestable\ApiBundle\Services\StateService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
+    autowire: true
 
   SimplyTestable\ApiBundle\Services\TaskService:
     class:  SimplyTestable\ApiBundle\Services\TaskService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+    autowire: true
 
   SimplyTestable\ApiBundle\Services\JobService:
     class:  SimplyTestable\ApiBundle\Services\JobService
-    arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
-        taskTypeService: '@SimplyTestable\ApiBundle\Services\TaskTypeService'
+    autowire: true
 
   SimplyTestable\ApiBundle\Services\JobListService:
     class:  SimplyTestable\ApiBundle\Services\JobListService
