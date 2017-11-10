@@ -2,10 +2,9 @@
 
 namespace Tests\ApiBundle\Functional\Command\Stripe\Event;
 
-use Mockery\MockInterface;
+use Mockery\Mock;
 use Psr\Log\LoggerInterface;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand;
-use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Event\Stripe\DispatchableEvent;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\StripeEventFactory;
@@ -104,7 +103,7 @@ class ProcessCommandTest extends AbstractBaseTestCase
             ]
         ], $user);
 
-        /* @var MockInterface|EventDispatcherInterface $eventDispatcher */
+        /* @var Mock|EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = \Mockery::mock(EventDispatcherInterface::class);
         $eventDispatcher
             ->shouldReceive('dispatch')

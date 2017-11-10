@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Functional\Services\Request\Factory\Task;
 
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery\MockInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
@@ -211,7 +211,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
      * @param Task[] $equivalentTasks
      * @param array $getEquivalentTasksArgs
      *
-     * @return MockInterface|TaskService
+     * @return Mock|TaskService
      */
     private function createTaskService($equivalentTasks, $getEquivalentTasksArgs)
     {
@@ -221,6 +221,7 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
             StateFactory::create(TaskService::QUEUED_FOR_ASSIGNMENT_STATE),
         ];
 
+        /* @var Mock|TaskService $taskService */
         $taskService = \Mockery::mock(TaskService::class);
         $taskService
             ->shouldReceive('getIncompleteStateNames')
@@ -245,10 +246,11 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @param State $stateToFetch
      *
-     * @return MockInterface|StateService
+     * @return Mock|StateService
      */
     private function createStateService(State $stateToFetch)
     {
+        /* @var Mock|StateService $stateService */
         $stateService = \Mockery::mock(StateService::class);
         $stateService
             ->shouldReceive('get')
@@ -274,10 +276,11 @@ class CompleteRequestFactoryTest extends \PHPUnit_Framework_TestCase
      * @param string $name
      * @param TaskType $taskType
      *
-     * @return MockInterface|TaskTypeService
+     * @return Mock|TaskTypeService
      */
     private function createTaskTypeService($name, $taskType)
     {
+        /* @var Mock|TaskTypeService $taskTypeService */
         $taskTypeService = \Mockery::mock(TaskTypeService::class);
         $taskTypeService
             ->shouldReceive('get')

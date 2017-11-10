@@ -3,7 +3,7 @@
 namespace Tests\ApiBundle\Unit\Services\Job;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Mockery\MockInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
@@ -21,28 +21,29 @@ class RetrievalServiceTest extends \PHPUnit_Framework_TestCase
             ModelFactory::USER_EMAIL => 'user1@example.com',
         ]);
 
-        /* @var TeamService $teamService */
+        /* @var Mock|TeamService $teamService */
         $teamService = \Mockery::mock(TeamService::class);
 
-        /* @var JobRepository $jobRepository */
+        /* @var Mock|JobRepository $jobRepository */
         $jobRepository = \Mockery::mock(JobRepository::class);
         $jobRepository
             ->shouldReceive('find')
             ->andReturnNull();
 
-        /* @var EntityManagerInterface $entityManager */
+        /* @var Mock|EntityManagerInterface $entityManager */
         $entityManager = \Mockery::mock(EntityManagerInterface::class);
         $entityManager
             ->shouldReceive('getRepository')
             ->with(Job::class)
             ->andReturn($jobRepository);
 
+        /* @var Mock|TokenInterface $token */
         $token = \Mockery::mock(TokenInterface::class);
         $token
             ->shouldReceive('getUser')
             ->andReturn($user);
 
-        /* @var TokenStorageInterface|MockInterface $tokenStorage */
+        /* @var TokenStorageInterface|Mock $tokenStorage */
         $tokenStorage = \Mockery::mock(TokenStorageInterface::class);
         $tokenStorage
             ->shouldReceive('getToken')

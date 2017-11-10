@@ -2,7 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Command\Worker;
 
-use Mockery\MockInterface;
+use Mockery\Mock;
 use SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand;
 use SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
@@ -13,7 +13,7 @@ class TaskNotificationCommandTest extends AbstractBaseTestCase
 {
     public function testRun()
     {
-        /* @var MockInterface|TaskNotificationService $workerTaskNotificationService */
+        /* @var Mock|TaskNotificationService $workerTaskNotificationService */
         $workerTaskNotificationService = \Mockery::mock(TaskNotificationService::class);
         $workerTaskNotificationService
             ->shouldReceive('notify')
