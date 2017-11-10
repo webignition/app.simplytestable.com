@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Functional\Controller\User;
 
+use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class UserControllerExistsActionTest extends AbstractUserControllerTest

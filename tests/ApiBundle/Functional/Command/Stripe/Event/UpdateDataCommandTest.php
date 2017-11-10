@@ -6,6 +6,7 @@ use phpmock\mockery\PHPMockery;
 use SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\StripeEventFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
