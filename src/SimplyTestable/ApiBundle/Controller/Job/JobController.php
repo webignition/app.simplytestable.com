@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
@@ -152,7 +153,7 @@ class JobController extends Controller
     private function setIsPublic($siteRootUrl, $testId, $isPublic)
     {
         $userService = $this->container->get(UserService::class);
-        $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
+        $jobRetrievalService = $this->get(RetrievalService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         if ($userService->isPublicUser($this->getUser())) {
@@ -190,7 +191,7 @@ class JobController extends Controller
      */
     public function statusAction($site_root_url, $test_id)
     {
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $jobRetrievalService = $this->container->get(RetrievalService::class);
         $jobSummaryFactory = $this->container->get('simplytestable.services.jobsummaryfactory');
 
         try {
@@ -223,7 +224,7 @@ class JobController extends Controller
             throw new ServiceUnavailableHttpException();
         }
 
-        $jobRetrievalService = $this->get('simplytestable.services.job.retrievalservice');
+        $jobRetrievalService = $this->get(RetrievalService::class);
         $jobService = $this->container->get(JobService::class);
         $crawlJobContainerService = $this->get(CrawlJobContainerService::class);
         $jobPreparationService = $this->container->get(JobPreparationService::class);
@@ -317,7 +318,7 @@ class JobController extends Controller
     public function tasksAction(Request $request, $site_root_url, $test_id)
     {
         $taskService = $this->container->get(TaskService::class);
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $jobRetrievalService = $this->container->get(RetrievalService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var TaskRepository $taskRepository */
@@ -361,7 +362,7 @@ class JobController extends Controller
      */
     public function taskIdsAction($site_root_url, $test_id)
     {
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $jobRetrievalService = $this->container->get(RetrievalService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var TaskRepository $taskRepository */
@@ -388,7 +389,7 @@ class JobController extends Controller
      */
     public function listUrlsAction($site_root_url, $test_id)
     {
-        $jobRetrievalService = $this->container->get('simplytestable.services.job.retrievalservice');
+        $jobRetrievalService = $this->container->get(RetrievalService::class);
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
 
         /* @var TaskRepository $taskRepository */

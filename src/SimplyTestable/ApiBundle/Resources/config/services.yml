@@ -311,7 +311,7 @@ services:
         entityManager: "@doctrine.orm.entity_manager"
         tokenGenerator: '@simplytestable.services.invite.tokengenerator'
 
-  simplytestable.services.job.retrievalservice:
+  SimplyTestable\ApiBundle\Services\Job\RetrievalService:
     class:  SimplyTestable\ApiBundle\Services\Job\RetrievalService
     arguments:
       entityManager: "@doctrine.orm.entity_manager"
