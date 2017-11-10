@@ -323,7 +323,7 @@ services:
     arguments:
         entityManager: "@doctrine.orm.entity_manager"
 
-  simplytestable.services.task.queueService:
+  SimplyTestable\ApiBundle\Services\Task\QueueService:
     class:  SimplyTestable\ApiBundle\Services\Task\QueueService
     arguments:
         jobService: '@SimplyTestable\ApiBundle\Services\JobService'

@@ -30,7 +30,7 @@ class QueueServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskQueueService = $this->container->get('simplytestable.services.task.queueservice');
+        $this->taskQueueService = $this->container->get(QueueService::class);
         $this->jobFactory = new JobFactory($this->container);
     }
 

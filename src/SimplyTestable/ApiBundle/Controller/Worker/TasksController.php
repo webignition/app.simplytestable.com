@@ -6,8 +6,9 @@ use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,10 +26,10 @@ class TasksController extends Controller
         }
 
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
         $resqueJobFactory = $this->container->get('simplytestable.services.resque.jobfactory');
         $stateService = $this->container->get(StateService::class);
-        $taskQueueService = $this->container->get('simplytestable.services.task.queueservice');
+        $taskQueueService = $this->container->get(TaskQueueService::class);
 
         /* @var TaskRepository $taskRepository */
         $taskRepository = $entityManager->getRepository(Task::class);
@@ -83,6 +84,7 @@ class TasksController extends Controller
             return new Response();
         }
 
+        /* @var Task[] $tasks */
         $tasks = $taskRepository->findBy([
             'id' => $taskIds,
         ]);
