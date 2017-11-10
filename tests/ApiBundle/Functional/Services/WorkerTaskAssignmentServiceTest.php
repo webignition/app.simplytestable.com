@@ -33,9 +33,7 @@ class WorkerTaskAssignmentServiceTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->workerTaskAssignmentService = $this->container->get(
-            'simplytestable.services.workertaskassignmentservice'
-        );
+        $this->workerTaskAssignmentService = $this->container->get(WorkerTaskAssignmentService::class);
 
         $this->workerFactory = new WorkerFactory($this->container);
     }

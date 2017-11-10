@@ -49,7 +49,7 @@ services:
               - SimplyTestable\ApiBundle\Services\Resque\QueueService
               - simplytestable.services.resque.jobfactory
               - SimplyTestable\ApiBundle\Services\StateService
-              - simplytestable.services.workertaskassignmentservice
+              - SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
               - logger
           task-cancel-collection:
             queue: task-cancel-collection

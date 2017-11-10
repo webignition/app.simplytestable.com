@@ -150,7 +150,7 @@ services:
       resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
       resqueJobFactory: '@simplytestable.services.resque.jobfactory'
       stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-      workerTaskAssignmentService: '@simplytestable.services.workertaskassignmentservice'
+      workerTaskAssignmentService: '@SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService'
       logger: '@logger'
     tags:
       - { name: console.command }

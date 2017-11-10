@@ -81,7 +81,7 @@ services:
       logger: "@logger"
       jobFactory: "@simplytestable.services.resque.jobfactory"
 
-  simplytestable.services.workertaskassignmentservice:
+  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService:
     class:  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService
     arguments:
         logger: "@logger"

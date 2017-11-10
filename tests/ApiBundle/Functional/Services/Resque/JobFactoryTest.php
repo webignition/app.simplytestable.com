@@ -17,6 +17,7 @@ use SimplyTestable\ApiBundle\Services\Resque\QueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
+use SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 class JobFactoryTest extends AbstractBaseTestCase
@@ -236,7 +237,7 @@ class JobFactoryTest extends AbstractBaseTestCase
                         QueueService::class,
                         'simplytestable.services.resque.jobfactory',
                         StateService::class,
-                        'simplytestable.services.workertaskassignmentservice',
+                        WorkerTaskAssignmentService::class,
                         'logger',
                     ],
                 ],
