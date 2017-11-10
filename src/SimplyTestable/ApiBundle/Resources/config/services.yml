@@ -68,9 +68,9 @@ services:
         logger: "@logger"
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        urlService: "@simplytestable.services.urlService"
+        urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
 
-  simplytestable.services.urlService:
+  SimplyTestable\ApiBundle\Services\UrlService:
     class:  SimplyTestable\ApiBundle\Services\UrlService
 
   simplytestable.services.resque.queueService:
@@ -87,7 +87,7 @@ services:
         logger: "@logger"
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        urlService: "@simplytestable.services.urlService"
+        urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
         entityManager: "@doctrine.orm.entity_manager"
 
@@ -97,7 +97,7 @@ services:
         logger: "@logger"
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        urlService: "@simplytestable.services.urlService"
+        urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
         taskService: '@SimplyTestable\ApiBundle\Services\TaskService'
 
   simplytestable.services.tasktypeservice:
@@ -338,7 +338,7 @@ services:
         entityManager: '@doctrine.orm.entity_manager'
         stateService: '@SimplyTestable\ApiBundle\Services\StateService'
         httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        urlService: "@simplytestable.services.urlService"
+        urlService: '@SimplyTestable\ApiBundle\Services\UrlService'
         logger: "@logger"
 
   simplytestable.services.job.configurationservice:
