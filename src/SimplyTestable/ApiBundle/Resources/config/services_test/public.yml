@@ -1,18 +1,42 @@
 ## Services that need to be public to allow them to be retrieved from the container in functional tests
-#services:
-#  _defaults:
-#    autowire: true
-#    autoconfigure: true
-#    public: true
-#
-#  SimplyTestable\ApiBundle\Services\ScheduledJob\Service:
-#
-#  SimplyTestable\ApiBundle\Services\Job\ConfigurationService:
-#
-#  SimplyTestable\ApiBundle\Services\WebSiteService:
-#
-#  SimplyTestable\ApiBundle\Services\Job\StartService:
-#
-#  SimplyTestable\ApiBundle\Services\JobConfigurationFactory:
-#
-#  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService:
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  SimplyTestable\ApiBundle\Services\ScheduledJob\Service:
+
+  SimplyTestable\ApiBundle\Services\Job\ConfigurationService:
+
+  SimplyTestable\ApiBundle\Services\WebSiteService:
+
+  SimplyTestable\ApiBundle\Services\Job\StartService:
+
+  SimplyTestable\ApiBundle\Services\JobConfigurationFactory:
+
+  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
+
+  SimplyTestable\ApiBundle\Services\StripeEventService:
+
+  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService:
+
+  SimplyTestable\ApiBundle\Services\UserService:
+
+  SimplyTestable\ApiBundle\Services\StateService:
+
+  SimplyTestable\ApiBundle\Services\JobTypeService:
+
+  SimplyTestable\ApiBundle\Services\JobPreparationService:
+
+  SimplyTestable\ApiBundle\Services\AccountPlanService:
+
+  SimplyTestable\ApiBundle\Services\ApplicationStateService:
+
+  SimplyTestable\ApiBundle\Services\Resque\QueueService:
+
+  SimplyTestable\ApiBundle\Services\CrawlJobContainerService:
+
+  SimplyTestable\ApiBundle\Services\TaskTypeService:
+
+  SimplyTestable\ApiBundle\Services\Team\Service:
