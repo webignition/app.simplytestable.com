@@ -1,0 +1,43 @@
+## Define all commands as public to allow them to be retrieved from the container in functional tests
+#services:
+#  SimplyTestable\ApiBundle\Command\:
+#      resource: '../../../Command'
+#      public: true
+#      autowire: true
+#      autoconfigure: true
+#      tags: ['console.command']
+#
+#  SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
+#    class:  SimplyTestable\ApiBundle\Command\Job\PrepareCommand
+#    arguments:
+#      $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+#      $resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+#      $resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
+#      $jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
+#      $crawlJobContainerService: '@SimplyTestable\ApiBundle\Services\CrawlJobContainerService'
+#      $logger: '@logger'
+#      $entityManager: '@doctrine.orm.entity_manager'
+#      $predefinedDomainsToIgnore:
+#        css-validation: '%css_validation_domains_to_ignore%'
+#        js-static-analysis: '%js_static_analysis_domains_to_ignore%'
+#
+#  SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand:
+#    class:  SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand
+#    arguments:
+#      $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+#      $resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
+#      $resqueJobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
+#      $websiteResolutionService: '@SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService'
+#      $jobPreparationService: '@SimplyTestable\ApiBundle\Services\JobPreparationService'
+#      $entityManager: '@doctrine.orm.entity_manager'
+#      $predefinedDomainsToIgnore:
+#        css-validation: '%css_validation_domains_to_ignore%'
+#        js-static-analysis: '%js_static_analysis_domains_to_ignore%'
+#
+#  SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand:
+#    class:  SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand
+#    arguments:
+#      $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
+#      $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+#      $entityManager: '@doctrine.orm.entity_manager'
+#      $stripeKey: '%stripe_key%'

@@ -1,0 +1,18 @@
+## Services that need to be public to allow them to be retrieved from the container in functional tests
+#services:
+#  _defaults:
+#    autowire: true
+#    autoconfigure: true
+#    public: true
+#
+#  SimplyTestable\ApiBundle\Services\ScheduledJob\Service:
+#
+#  SimplyTestable\ApiBundle\Services\Job\ConfigurationService:
+#
+#  SimplyTestable\ApiBundle\Services\WebSiteService:
+#
+#  SimplyTestable\ApiBundle\Services\Job\StartService:
+#
+#  SimplyTestable\ApiBundle\Services\JobConfigurationFactory:
+#
+#  SimplyTestable\ApiBundle\Services\WorkerActivationRequestService:
