@@ -201,7 +201,7 @@ class Configuration implements \JsonSerializable
     /**
      * Get taskConfigurations
      *
-     * @return TaskConfiguration[]
+     * @return DoctrineCollection|null
      */
     public function getTaskConfigurations()
     {
