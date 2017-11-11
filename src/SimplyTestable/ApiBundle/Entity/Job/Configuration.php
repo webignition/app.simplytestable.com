@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
 use SimplyTestable\ApiBundle\Model\Job\TaskConfiguration\Collection as TaskConfigurationCollection;
 
 /**
- *
  * @ORM\Entity
  * @ORM\Table(
  *     name="JobConfiguration"
@@ -202,7 +201,7 @@ class Configuration implements \JsonSerializable
     /**
      * Get taskConfigurations
      *
-     * @return TaskConfiguration[]
+     * @return DoctrineCollection|null
      */
     public function getTaskConfigurations()
     {
@@ -229,7 +228,7 @@ class Configuration implements \JsonSerializable
      */
     public function matches(Configuration $configuration)
     {
-        if ($this->getWebsite() != $configuration->getWebsite()) {
+        if ($this->getWebsite() !== $configuration->getWebsite()) {
             return false;
         }
 
