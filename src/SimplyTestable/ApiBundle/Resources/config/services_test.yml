@@ -2,3 +2,16 @@ imports:
     - { resource: services_test/commands.yml }
     - { resource: services_test/public.yml }
     - { resource: services_test/test_services.yml }
+
+#services:
+#  SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory:
+#    class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory
+#    arguments:
+#      $taskPreprocessors:
+#        - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
+#
+#  SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory:
+#    class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory
+#    arguments:
+#      $taskPreprocessors:
+#        - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'

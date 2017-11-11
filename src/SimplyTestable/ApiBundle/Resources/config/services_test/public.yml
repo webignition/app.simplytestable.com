@@ -40,3 +40,55 @@ services:
   SimplyTestable\ApiBundle\Services\TaskTypeService:
 
   SimplyTestable\ApiBundle\Services\Team\Service:
+
+  SimplyTestable\ApiBundle\Services\ApplicationStatusFactory:
+
+  SimplyTestable\ApiBundle\Services\CrawlJobUrlCollector:
+
+  SimplyTestable\ApiBundle\Services\Job\RetrievalService:
+
+  SimplyTestable\ApiBundle\Services\JobListService:
+
+  SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory:
+
+  SimplyTestable\ApiBundle\Services\JobSummaryFactory:
+
+  SimplyTestable\ApiBundle\Services\JobService:
+
+  SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService:
+
+  SimplyTestable\ApiBundle\Services\QueryBuilderFactory\JobListQueryBuilderFactory:
+
+  SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory:
+
+  SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory:
+
+  SimplyTestable\ApiBundle\Services\ResourceLocator:
+
+  SimplyTestable\ApiBundle\Services\Task\QueueService:
+
+  SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner:
+
+  SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor:
+
+  SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor:
+
+  SimplyTestable\ApiBundle\Services\Team\InviteService:
+
+  SimplyTestable\ApiBundle\Services\Team\MemberService:
+
+  SimplyTestable\ApiBundle\Services\UrlResolver:
+
+  SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService:
+
+  SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService:
+
+  SimplyTestable\ApiBundle\Services\TaskService:
+
+  SimplyTestable\ApiBundle\Services\UserSummaryFactory:
+
+  SimplyTestable\ApiBundle\Services\Worker\TaskNotificationService:
+
+  SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService:
+
+  SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService:
