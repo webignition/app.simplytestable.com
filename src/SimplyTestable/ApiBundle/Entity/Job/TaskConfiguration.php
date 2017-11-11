@@ -4,7 +4,6 @@ namespace SimplyTestable\ApiBundle\Entity\Job;
 use Doctrine\ORM\Mapping as ORM;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection as DoctrineCollection;
 
 /**
  * @ORM\Entity
@@ -40,7 +39,7 @@ class TaskConfiguration implements \JsonSerializable
     protected $type;
 
     /**
-     * @var DoctrineCollection
+     * @var array
      *
      * @ORM\Column(type="array", name="options", nullable=false)
      */
@@ -55,7 +54,7 @@ class TaskConfiguration implements \JsonSerializable
 
     public function __construct()
     {
-        $this->options = new ArrayCollection();
+        $this->options = [];
     }
 
     /**
