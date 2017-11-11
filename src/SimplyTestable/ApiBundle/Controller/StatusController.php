@@ -3,19 +3,19 @@
 namespace SimplyTestable\ApiBundle\Controller;
 
 use SimplyTestable\ApiBundle\Services\ApplicationStatusFactory;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class StatusController extends Controller
+class StatusController extends AbstractController
 {
     /**
+     * @param ApplicationStatusFactory $applicationStatusFactory
+     *
      * @return Response
      */
-    public function indexAction()
+    public function indexAction(ApplicationStatusFactory $applicationStatusFactory)
     {
-        $applicationStatusFactory = $this->container->get(ApplicationStatusFactory::class);
-
         return new JsonResponse($applicationStatusFactory->create());
     }
 }
