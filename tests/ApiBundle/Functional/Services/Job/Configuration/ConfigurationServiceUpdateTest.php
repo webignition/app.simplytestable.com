@@ -227,7 +227,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'task_configurations' => [
                         [
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                            'options' => new ArrayCollection(),
+                            'options' => [],
                             'is_enabled' => true,
                         ],
                     ],
@@ -257,7 +257,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'task_configurations' => [
                         [
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                            'options' => new ArrayCollection(),
+                            'options' => [],
                             'is_enabled' => true,
                         ],
                     ],
@@ -287,7 +287,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'task_configurations' => [
                         [
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                            'options' => new ArrayCollection(),
+                            'options' => [],
                             'is_enabled' => true,
                         ],
                     ],
@@ -321,7 +321,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'task_configurations' => [
                         [
                             'type' => TaskTypeService::CSS_VALIDATION_TYPE,
-                            'options' => new ArrayCollection(),
+                            'options' => [],
                             'is_enabled' => true,
                         ],
                     ],
@@ -351,7 +351,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'task_configurations' => [
                         [
                             'type' => TaskTypeService::HTML_VALIDATION_TYPE,
-                            'options' => new ArrayCollection(),
+                            'options' => [],
                             'is_enabled' => true,
                         ],
                     ],
@@ -388,7 +388,7 @@ class ConfigurationServiceUpdateTest extends AbstractConfigurationServiceTest
                     'task_configurations' => [
                         [
                             'type' => TaskTypeService::CSS_VALIDATION_TYPE,
-                            'options' => new ArrayCollection(),
+                            'options' => [],
                             'is_enabled' => true,
                         ],
                     ],
