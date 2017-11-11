@@ -2,7 +2,7 @@ services:
   SimplyTestable\ApiBundle\Services\HttpClientService:
     class:  SimplyTestable\ApiBundle\Services\TestHttpClientService
     arguments:
-        curlOptions: '%curl_options%'
+        $curlOptions: '%curl_options%'
 
   SimplyTestable\ApiBundle\Services\Postmark\Sender:
     class:   SimplyTestable\ApiBundle\Services\Postmark\TestSender

@@ -43,18 +43,18 @@ class QueueService
      * @param Resque $resque
      * @param string $environment
      * @param LoggerInterface $logger
-     * @param JobFactory $jobFactoryService
+     * @param JobFactory $jobFactory
      */
     public function __construct(
         Resque $resque,
         $environment = 'prod',
         LoggerInterface $logger,
-        JobFactory $jobFactoryService
+        JobFactory $jobFactory
     ) {
         $this->resque = $resque;
         $this->environment = $environment;
         $this->logger = $logger;
-        $this->jobFactory = $jobFactoryService;
+        $this->jobFactory = $jobFactory;
     }
 
     /**

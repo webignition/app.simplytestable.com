@@ -7,25 +7,25 @@ services:
   SimplyTestable\ApiBundle\Services\HttpClientService:
     class:  SimplyTestable\ApiBundle\Services\HttpClientService
     arguments:
-        curlOptions: '%curl_options%'
+        $curlOptions: '%curl_options%'
 
   SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
     class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
     arguments:
-        jobService: '@SimplyTestable\ApiBundle\Services\JobService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
-        urlResolver: '@SimplyTestable\ApiBundle\Services\UrlResolver'
-        stateService: '@SimplyTestable\ApiBundle\Services\StateService'
-        entityManager: '@doctrine.orm.entity_manager'
+        $jobService: '@SimplyTestable\ApiBundle\Services\JobService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $websiteService: '@SimplyTestable\ApiBundle\Services\WebSiteService'
+        $urlResolver: '@SimplyTestable\ApiBundle\Services\UrlResolver'
+        $stateService: '@SimplyTestable\ApiBundle\Services\StateService'
+        $entityManager: '@doctrine.orm.entity_manager'
 
   SimplyTestable\ApiBundle\Services\UserService:
     class:  SimplyTestable\ApiBundle\Services\UserService
     arguments:
-        userManager: '@fos_user.user_manager'
-        entityManager: '@doctrine.orm.entity_manager'
-        tokenGenerator: '@fos_user.util.token_generator'
-        emailCanonicalizer: '@fos_user.util.email_canonicalizer'
+        $userManager: '@fos_user.user_manager'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $tokenGenerator: '@fos_user.util.token_generator'
+        $canonicalizer: '@fos_user.util.email_canonicalizer'
 
   SimplyTestable\ApiBundle\Services\UrlService:
     class:  SimplyTestable\ApiBundle\Services\UrlService
@@ -33,42 +33,42 @@ services:
   SimplyTestable\ApiBundle\Services\Resque\QueueService:
     class:   SimplyTestable\ApiBundle\Services\Resque\QueueService
     arguments:
-      resque: '@resque'
-      environment: '%kernel.environment%'
-      logger: '@logger'
-      jobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
+      $resque: '@resque'
+      $environment: '%kernel.environment%'
+      $logger: '@logger'
+      $jobFactory: '@SimplyTestable\ApiBundle\Services\Resque\JobFactory'
 
   SimplyTestable\ApiBundle\Services\ApplicationStateService:
     class:  SimplyTestable\ApiBundle\Services\ApplicationStateService
     arguments:
-      resourceLocator: '@SimplyTestable\ApiBundle\Services\ResourceLocator'
-      kernel: '@kernel'
+      $resourceLocator: '@SimplyTestable\ApiBundle\Services\ResourceLocator'
+      $kernel: '@kernel'
 
   SimplyTestable\ApiBundle\Services\UserAccountPlanService:
     class:   SimplyTestable\ApiBundle\Services\UserAccountPlanService
     arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-        userService: '@SimplyTestable\ApiBundle\Services\UserService'
-        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
-        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-        defaultTrialPeriod: '%default_trial_period%'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $userService: '@SimplyTestable\ApiBundle\Services\UserService'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
+        $defaultTrialPeriod: '%default_trial_period%'
 
   SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService:
     class:  SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService
     arguments:
-        entityManager: '@doctrine.orm.entity_manager'
-        emailCanonicalizer: '@fos_user.util.email_canonicalizer'
-        tokenGenerator: '@fos_user.util.token_generator'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $emailCanonicalizer: '@fos_user.util.email_canonicalizer'
+        $tokenGenerator: '@fos_user.util.token_generator'
 
   SimplyTestable\ApiBundle\Services\StripeService:
     class:   SimplyTestable\ApiBundle\Services\StripeService
     arguments:
-        apiKey: '%stripe_key%'
+        $apiKey: '%stripe_key%'
 
   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPreProcessor\Factory
     arguments:
-      taskPreprocessors:
+      $taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskPreProcessor\LinkIntegrityTaskPreProcessor'
 
   simplytestable.services.webresourceservice:
@@ -79,96 +79,96 @@ services:
   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory
     arguments:
-      taskPreprocessors:
+      $taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskOutputJoiner\LinkIntegrityTaskOutputJoiner'
 
   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionDeletedListener
     arguments:
-        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: '@doctrine.orm.entity_manager'
-        webClientProperties: '%web_client%'
-        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
-        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-        accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+        $accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.deleted, method: onCustomerSubscriptionDeleted }
 
   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionCreatedListener
     arguments:
-        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: '@doctrine.orm.entity_manager'
-        webClientProperties: '%web_client%'
-        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
-        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.created, method: onCustomerSubscriptionCreated }
 
   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionTrialWillEndListener
     arguments:
-        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: '@doctrine.orm.entity_manager'
-        webClientProperties: '%web_client%'
-        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
-        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.trial_will_end, method: onCustomerSubscriptionTrialWillEnd }
 
   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\CustomerSubscriptionUpdatedListener
     arguments:
-        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: '@doctrine.orm.entity_manager'
-        webClientProperties: '%web_client%'
-        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
-        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-        accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+        $accountPlanService: '@SimplyTestable\ApiBundle\Services\AccountPlanService'
     tags:
       - { name: kernel.event_listener, event: stripe_process.customer.subscription.updated, method: onCustomerSubscriptionUpdated }
 
   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentSucceededListener
     arguments:
-        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: '@doctrine.orm.entity_manager'
-        webClientProperties: '%web_client%'
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_succeeded, method: onInvoicePaymentSucceeded }
 
   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener:
     class:   SimplyTestable\ApiBundle\EventListener\Stripe\InvoicePaymentFailedListener
     arguments:
-        stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
-        httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
-        entityManager: '@doctrine.orm.entity_manager'
-        webClientProperties: '%web_client%'
-        stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
-        userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
-        dispatcher: '@event_dispatcher'
+        $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
+        $httpClientService: '@SimplyTestable\ApiBundle\Services\HttpClientService'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $webClientProperties: '%web_client%'
+        $stripeService: '@SimplyTestable\ApiBundle\Services\StripeService'
+        $userAccountPlanService: '@SimplyTestable\ApiBundle\Services\UserAccountPlanService'
+        $dispatcher: '@event_dispatcher'
     tags:
       - { name: kernel.event_listener, event: stripe_process.invoice.payment_failed, method: onInvoicePaymentFailed }
 
   SimplyTestable\ApiBundle\Services\Team\InviteService:
     class:  SimplyTestable\ApiBundle\Services\Team\InviteService
     arguments:
-        teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
-        entityManager: '@doctrine.orm.entity_manager'
-        tokenGenerator: '@SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator'
+        $teamService: '@SimplyTestable\ApiBundle\Services\Team\Service'
+        $entityManager: '@doctrine.orm.entity_manager'
+        $tokenGenerator: '@SimplyTestable\ApiBundle\Services\Team\InviteTokenGenerator'
 
   SimplyTestable\ApiBundle\Services\ResourceLocator:
     class:  SimplyTestable\ApiBundle\Services\ResourceLocator
     arguments:
-      kernel: '@kernel'
+      $kernel: '@kernel'
 
   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory:
     class:   SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory
     arguments:
-      taskPreprocessors:
+      $taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
