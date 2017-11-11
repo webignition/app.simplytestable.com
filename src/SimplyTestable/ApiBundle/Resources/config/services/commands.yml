@@ -1,23 +1,9 @@
 services:
-#  SimplyTestable\ApiBundle\Command\Cron\RunCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Cron\RunCommand
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Job\EnqueuePrepareAllCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Job\CompleteAllWithNoIncompleteTasksCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
   SimplyTestable\ApiBundle\Command\Job\PrepareCommand:
-    class:  SimplyTestable\ApiBundle\Command\Job\PrepareCommand
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       $resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
@@ -29,11 +15,8 @@ services:
       $predefinedDomainsToIgnore:
         css-validation: '%css_validation_domains_to_ignore%'
         js-static-analysis: '%js_static_analysis_domains_to_ignore%'
-    tags:
-      - { name: console.command }
 
   SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand:
-    class:  SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       $resqueQueueService: '@SimplyTestable\ApiBundle\Services\Resque\QueueService'
@@ -44,145 +27,10 @@ services:
       $predefinedDomainsToIgnore:
         css-validation: '%css_validation_domains_to_ignore%'
         js-static-analysis: '%js_static_analysis_domains_to_ignore%'
-    tags:
-      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Maintenance\DisableReadOnlyCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Maintenance\EnableBackupReadOnlyCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Maintenance\EnableReadOnlyCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Maintenance\ModifyInitialStartTrialPeriodCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Maintenance\ModifyInitialStartTrialPeriodCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Reporting\GetOutputIdsForErrorCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Reporting\GetOutputIdsForErrorCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Reporting\GetTopErrorsCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Reporting\GetTopErrorsCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand:
-#    class:  SimplyTestable\ApiBundle\Command\ScheduledJob\EnqueueCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand:
-#    class:  SimplyTestable\ApiBundle\Command\ScheduledJob\ExecuteCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Stripe\Event\ProcessCommand
-#    arguments:
-#      $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
-#      $entityManager: '@doctrine.orm.entity_manager'
-#      $logger: '@logger'
-#      $eventDispatcher: '@event_dispatcher'
-#    tags:
-#      - { name: console.command }
-#
+
   SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand:
-    class:  SimplyTestable\ApiBundle\Command\Stripe\Event\UpdateDataCommand
     arguments:
       $applicationStateService: '@SimplyTestable\ApiBundle\Services\ApplicationStateService'
       $stripeEventService: '@SimplyTestable\ApiBundle\Services\StripeEventService'
       $entityManager: '@doctrine.orm.entity_manager'
       $stripeKey: '%stripe_key%'
-    tags:
-      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Task\Cancel\CollectionCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Task\EnqueueCancellationForAwaitingCancellationCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand:
-#    class:  SimplyTestable\ApiBundle\Command\User\AddNonPlannedUsersToBasicPlanCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Worker\SetTokenFromActivationRequestCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Worker\SetTokenFromActivationRequestCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Worker\TaskNotificationCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Worker\ActivateVerifyCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Migrate\AddHashToHashlessOutputCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Migrate\AddHashToHashlessOutputCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Migrate\CanonicaliseTaskOutputCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Migrate\CanonicaliseTaskOutputCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Migrate\NormaliseJsLintOutputCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
-#
-#  SimplyTestable\ApiBundle\Command\Migrate\RemoveUnusedOutputCommand:
-#    class:  SimplyTestable\ApiBundle\Command\Migrate\RemoveUnusedOutputCommand
-#    autowire: true
-#    tags:
-#      - { name: console.command }
