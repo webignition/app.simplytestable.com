@@ -1,11 +1,10 @@
 <?php
 
-namespace Tests\ApiBundle\Functional\Controller\User;
+namespace Tests\ApiBundle\Unit\Controller\User;
 
 use SimplyTestable\ApiBundle\Controller\UserController;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
-abstract class AbstractUserControllerTest extends AbstractBaseTestCase
+abstract class AbstractUserControllerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UserController

@@ -3,8 +3,10 @@
 namespace Tests\ApiBundle\Functional\Controller\User;
 
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * @group Controller/UserController
+ */
 class UserControllerGetTokenActionTest extends AbstractUserControllerTest
 {
     public function testGetTokenActionGetRequest()
@@ -27,27 +29,5 @@ class UserControllerGetTokenActionTest extends AbstractUserControllerTest
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());
-    }
-
-    public function testGetTokenActionUserNotFound()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->userController->getTokenAction('foo@example.com');
-    }
-
-    public function testGetTokenActionSuccess()
-    {
-        $userService = $this->container->get(UserService::class);
-        $publicUser = $userService->getPublicUser();
-
-        $response = $this->userController->getTokenAction($publicUser->getEmail());
-
-        $this->assertTrue($response->isSuccessful());
-
-        $this->assertEquals(
-            $userService->getConfirmationToken($publicUser),
-            json_decode($response->getContent())
-        );
     }
 }
