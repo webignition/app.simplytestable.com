@@ -55,6 +55,13 @@ services:
       $taskPreprocessors:
         - '@SimplyTestable\ApiBundle\Services\TaskPostProcessor\UrlDiscoveryTaskPostProcessor'
 
+  SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:
+    class:   SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService
+    arguments:
+      $domainsToIgnoreByTaskType:
+        "css validation": '%css_validation_domains_to_ignore%'
+        "js static analysis": '%js_static_analysis_domains_to_ignore%'
+
 #  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
 #    class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
 #    arguments:

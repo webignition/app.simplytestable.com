@@ -2,10 +2,12 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
-use SimplyTestable\ApiBundle\Entity\Task\Task;
 use Tests\ApiBundle\Factory\JobFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * @group Controller/Job/JobController
+ */
 class JobControllerListUrlsActionTest extends AbstractJobControllerTest
 {
     public function testRequest()
@@ -25,92 +27,5 @@ class JobControllerListUrlsActionTest extends AbstractJobControllerTest
         $response = $this->getClientResponse();
 
         $this->assertEquals(200, $response->getStatusCode());
-    }
-
-    /**
-     * @dataProvider accessDataProvider
-     *
-     * @param string $owner
-     * @param string $requester
-     * @param bool $callSetPublic
-     * @param int $expectedResponseStatusCode
-     */
-    public function testListUrlsAction($owner, $requester, $callSetPublic, $expectedResponseStatusCode)
-    {
-        $users = $this->userFactory->createPublicAndPrivateUserSet();
-
-        $ownerUser = $users[$owner];
-        $requesterUser = $users[$requester];
-
-        $this->setUser($ownerUser);
-        $canonicalUrl = 'http://example.com/';
-
-        $job = $this->jobFactory->createResolveAndPrepare([
-            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
-            JobFactory::KEY_USER => $ownerUser,
-        ]);
-
-        if ($callSetPublic) {
-            $this->jobController->setPublicAction($canonicalUrl, $job->getId());
-        }
-
-        $this->setUser($requesterUser);
-
-        $response = $this->jobController->listUrlsAction($canonicalUrl, $job->getId());
-
-        $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
-
-        if ($expectedResponseStatusCode === 200) {
-            $expectedUrls = [];
-
-            foreach ($job->getTasks() as $task) {
-                /* @var Task $task */
-                $expectedUrls[] = [
-                    'url' => $task->getUrl(),
-                ];
-            }
-
-            $responseData = json_decode($response->getContent(), 200);
-            $this->assertEquals($expectedUrls, $responseData);
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function accessDataProvider()
-    {
-        return [
-            'public owner, public requester' => [
-                'owner' => 'public',
-                'requester' => 'public',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 200,
-            ],
-            'public owner, private requester' => [
-                'owner' => 'public',
-                'requester' => 'private',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 200,
-            ],
-            'private owner, private requester' => [
-                'owner' => 'private',
-                'requester' => 'private',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 200,
-            ],
-            'private owner, public requester' => [
-                'owner' => 'private',
-                'requester' => 'public',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 403,
-            ],
-            'private owner, public requester, public test' => [
-                'owner' => 'private',
-                'requester' => 'public',
-                'callSetPublic' => true,
-                'expectedStatusCode' => 200,
-            ],
-        ];
     }
 }

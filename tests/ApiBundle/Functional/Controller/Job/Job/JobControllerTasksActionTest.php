@@ -6,13 +6,17 @@ use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\UserService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
-use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group Controller/Job/JobController
+ */
 class JobControllerTasksActionTest extends AbstractJobControllerTest
 {
     public function testRequest()
@@ -74,11 +78,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
         $taskController->completeAction();
 
-        $tasksActionResponse = $this->jobController->tasksAction(
-            new Request(),
-            $job->getWebsite()->getCanonicalUrl(),
-            $job->getId()
-        );
+        $tasksActionResponse = $this->callTasksAction(new Request(), $job);
 
         $tasksResponseData = json_decode($tasksActionResponse->getContent(), true);
 
@@ -121,90 +121,13 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             $taskController->completeAction();
         }
 
-        $tasksActionResponse = $this->jobController->tasksAction(
-            new Request(),
-            $job->getWebsite()->getCanonicalUrl(),
-            $job->getId()
-        );
+        $tasksActionResponse = $this->callTasksAction(new Request(), $job);
 
         $tasksResponseObject = json_decode($tasksActionResponse->getContent());
 
         foreach ($tasksResponseObject as $taskResponse) {
             $this->assertTrue(isset($taskResponse->output));
         }
-    }
-
-    /**
-     * @dataProvider accessDataProvider
-     *
-     * @param string $owner
-     * @param string $requester
-     * @param bool $callSetPublic
-     * @param int $expectedResponseStatusCode
-     */
-    public function testAccess($owner, $requester, $callSetPublic, $expectedResponseStatusCode)
-    {
-        $users = $this->userFactory->createPublicAndPrivateUserSet();
-
-        $ownerUser = $users[$owner];
-        $requesterUser = $users[$requester];
-
-        $this->setUser($ownerUser);
-        $canonicalUrl = 'http://example.com/';
-
-        $job = $this->jobFactory->create([
-            JobFactory::KEY_SITE_ROOT_URL => $canonicalUrl,
-            JobFactory::KEY_USER => $ownerUser,
-        ]);
-
-        if ($callSetPublic) {
-            $this->jobController->setPublicAction($canonicalUrl, $job->getId());
-        }
-
-        $this->setUser($requesterUser);
-
-        $response = $this->jobController->tasksAction(new Request(), $canonicalUrl, $job->getId());
-
-        $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
-    }
-
-    /**
-     * @return array
-     */
-    public function accessDataProvider()
-    {
-        return [
-            'public owner, public requester' => [
-                'owner' => 'public',
-                'requester' => 'public',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 200,
-            ],
-            'public owner, private requester' => [
-                'owner' => 'public',
-                'requester' => 'private',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 200,
-            ],
-            'private owner, private requester' => [
-                'owner' => 'private',
-                'requester' => 'private',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 200,
-            ],
-            'private owner, public requester' => [
-                'owner' => 'private',
-                'requester' => 'public',
-                'callSetPublic' => false,
-                'expectedStatusCode' => 403,
-            ],
-            'private owner, public requester, public test' => [
-                'owner' => 'private',
-                'requester' => 'public',
-                'callSetPublic' => true,
-                'expectedStatusCode' => 200,
-            ],
-        ];
     }
 
     /**
@@ -225,10 +148,9 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             $requestData['taskIds'] = $this->createRequestTaskIdsFromRequestTaskIndices($job, $requestTaskIdIndices);
         }
 
-        $tasksActionResponse = $this->jobController->tasksAction(
+        $tasksActionResponse = $this->callTasksAction(
             new Request([], $requestData),
-            $job->getWebsite()->getCanonicalUrl(),
-            $job->getId()
+            $job
         );
 
         $tasksResponseData = json_decode($tasksActionResponse->getContent(), true);
@@ -373,5 +295,21 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
         }
 
         return (string)$taskIds[$requestTaskIndices];
+    }
+
+    /**
+     * @param Request $request
+     * @param Job $job
+     *
+     * @return JsonResponse
+     */
+    private function callTasksAction(Request $request, Job $job)
+    {
+        return $this->jobController->tasksAction(
+            $this->container->get(TaskService::class),
+            $request,
+            $job->getWebsite()->getCanonicalUrl(),
+            $job->getId()
+        );
     }
 }

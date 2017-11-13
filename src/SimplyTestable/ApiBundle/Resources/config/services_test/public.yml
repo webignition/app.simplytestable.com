@@ -92,3 +92,5 @@ services:
   SimplyTestable\ApiBundle\Services\WorkerTaskAssignmentService:
 
   SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService:
+
+  SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:

@@ -2,12 +2,19 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 
+use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Services\JobService;
-use SimplyTestable\ApiBundle\Services\Team\Service;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+/**
+ * @group Controller/Job/JobController
+ */
 class JobControllerLatestActionTest extends AbstractJobControllerTest
 {
     public function testRequest()
@@ -39,15 +46,22 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
      * @param string $owner
      * @param string $requester
      * @param bool $callSetPublic
-     * @param int $expectedResponseStatusCode
+     * @param bool $expectedIsNotFound
      */
-    public function testLatestAction($owner, $requester, $callSetPublic, $expectedResponseStatusCode)
-    {
+    public function testLatestAction(
+        $owner,
+        $requester,
+        $callSetPublic,
+        $expectedIsNotFound
+    ) {
         $jobService = $this->container->get(JobService::class);
         $users = $this->userFactory->createPublicPrivateAndTeamUserSet();
 
         $ownerUser = $users[$owner];
         $requesterUser = $users[$requester];
+
+        /* @var Job $job */
+        $job = null;
 
         $this->setUser($ownerUser);
 
@@ -61,18 +75,27 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         }
 
         if ($callSetPublic) {
-            $this->jobController->setPublicAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+            $this->callSetPublicAction($ownerUser, $job);
         }
 
         $this->setUser($requesterUser);
-        $response = $this->jobController->latestAction($job->getWebsite()->getCanonicalUrl());
 
-        $this->assertEquals($expectedResponseStatusCode, $response->getStatusCode());
-
-        if ($expectedResponseStatusCode === 302) {
-            $jobFromResponse = $this->jobFactory->getFromResponse($response);
-            $this->assertEquals($job->getId(), $jobFromResponse->getId());
+        if ($expectedIsNotFound) {
+            $this->expectException(NotFoundHttpException::class);
         }
+
+        $response = $this->jobController->latestAction(
+            $this->container->get(WebSiteService::class),
+            $this->container->get(UserService::class),
+            $this->container->get(TeamService::class),
+            $requesterUser,
+            $job->getWebsite()->getCanonicalUrl()
+        );
+
+        $this->assertTrue($response->isRedirect());
+
+        $jobFromResponse = $this->jobFactory->getFromResponse($response);
+        $this->assertEquals($job->getId(), $jobFromResponse->getId());
     }
 
     /**
@@ -85,50 +108,50 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
                 'owner' => 'public',
                 'requester' => 'public',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 302,
+                'expectIsNotFound' => false,
             ],
             'public owner, private requester' => [
                 'owner' => 'public',
                 'requester' => 'private',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 302,
+                'expectIsNotFound' => false,
             ],
             'private owner, private requester' => [
                 'owner' => 'private',
                 'requester' => 'private',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 302,
+                'expectIsNotFound' => false,
             ],
             'private owner, public requester, private test' => [
                 'owner' => 'private',
                 'requester' => 'public',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 404,
+                'expectIsNotFound' => true,
             ],
             'private owner, public requester, public test' => [
                 'owner' => 'private',
                 'requester' => 'public',
                 'callSetPublic' => true,
-                'expectedStatusCode' => 404,
+                'expectIsNotFound' => true,
             ],
             'leader owner, leader requester' => [
                 'owner' => 'leader',
                 'requester' => 'leader',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 302,
+                'expectIsNotFound' => false,
             ],
             'leader owner, member1 requester' => [
                 'owner' => 'leader',
                 'requester' => 'member1',
                 'callSetPublic' => false,
-                'expectedStatusCode' => 302,
+                'expectIsNotFound' => false,
             ],
         ];
     }
 
     public function testForLeaderInTeamWhereLatestTestDoesNotExist()
     {
-        $teamService = $this->container->get(Service::class);
+        $teamService = $this->container->get(TeamService::class);
 
         $leader = $this->userFactory->createAndActivateUser([
             UserFactory::KEY_EMAIL => 'leader@example.com',
@@ -140,8 +163,15 @@ class JobControllerLatestActionTest extends AbstractJobControllerTest
         );
 
         $this->setUser($leader);
-        $response = $this->jobController->latestAction('http://example.com');
 
-        $this->assertEquals(404, $response->getStatusCode());
+        $this->expectException(NotFoundHttpException::class);
+
+        $this->jobController->latestAction(
+            $this->container->get(WebSiteService::class),
+            $this->container->get(UserService::class),
+            $this->container->get(TeamService::class),
+            $leader,
+            'http://example.com'
+        );
     }
 }

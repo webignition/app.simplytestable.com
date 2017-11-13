@@ -537,7 +537,7 @@ class JobRepositoryTest extends AbstractBaseTestCase
                 'callSetPublic' => false,
                 'expectedIsPublic' => false,
             ],
-            'private job made public is not public' => [
+            'private job made public is public' => [
                 'jobValuesCollection' => [
                     JobFactory::KEY_USER => 'private',
                 ],
