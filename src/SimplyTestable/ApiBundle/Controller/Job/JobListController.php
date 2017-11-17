@@ -6,34 +6,61 @@ use SimplyTestable\ApiBundle\Services\JobListConfigurationFactory;
 use SimplyTestable\ApiBundle\Services\JobListService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\ListRequestFactory;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 
-class JobListController extends Controller
+class JobListController
 {
     /**
+     * @var JobListService
+     */
+    private $jobListService;
+
+    /**
+     * @var ListRequestFactory
+     */
+    private $jobListRequestFactory;
+
+    /**
+     * @var JobListConfigurationFactory
+     */
+    private $jobListConfigurationFactory;
+
+    /**
+     * @param JobListService $jobListService
+     * @param ListRequestFactory $jobListRequestFactory
+     * @param JobListConfigurationFactory $jobListConfigurationFactory
+     */
+    public function __construct(
+        JobListService $jobListService,
+        ListRequestFactory $jobListRequestFactory,
+        JobListConfigurationFactory $jobListConfigurationFactory
+    ) {
+        $this->jobListService = $jobListService;
+        $this->jobListRequestFactory = $jobListRequestFactory;
+        $this->jobListConfigurationFactory = $jobListConfigurationFactory;
+    }
+
+    /**
+     * @param JobSummaryFactory $jobSummaryFactory
      * @param int $limit
      * @param int $offset
      *
-     * @return Response
+     * @return JsonResponse
      */
-    public function listAction($limit = null, $offset = null)
-    {
-        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
-        $jobListConfigurationFactory = $this->container->get(JobListConfigurationFactory::class);
-        $jobSummaryFactory = $this->container->get(JobSummaryFactory::class);
-        $jobListService = $this->container->get(JobListService::class);
-
-        $jobListRequest = $jobListRequestFactory->create();
-        $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
+    public function listAction(
+        JobSummaryFactory $jobSummaryFactory,
+        $limit = null,
+        $offset = null
+    ) {
+        $jobListRequest = $this->jobListRequestFactory->create();
+        $jobListConfiguration = $this->jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
 
         $jobListConfiguration->setLimit($limit);
         $jobListConfiguration->setOffset($offset);
 
-        $jobListService->setConfiguration($jobListConfiguration);
+        $this->jobListService->setConfiguration($jobListConfiguration);
 
-        $jobs = $jobListService->get();
+        $jobs = $this->jobListService->get();
 
         $serializedJobSummaries = [];
         foreach ($jobs as $job) {
@@ -41,7 +68,7 @@ class JobListController extends Controller
         }
 
         return new JsonResponse([
-            'max_results' => $jobListService->getMaxResults(),
+            'max_results' => $this->jobListService->getMaxResults(),
             'limit' => $jobListConfiguration->getLimit(),
             'offset' => $jobListConfiguration->getOffset(),
             'jobs' => $serializedJobSummaries,
@@ -49,36 +76,28 @@ class JobListController extends Controller
     }
 
     /**
-     * @return Response
+     * @return JsonResponse
      */
     public function countAction()
     {
-        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
-        $jobListConfigurationFactory = $this->container->get(JobListConfigurationFactory::class);
+        $jobListRequest = $this->jobListRequestFactory->create();
+        $jobListConfiguration = $this->jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
 
-        $jobListRequest = $jobListRequestFactory->create();
-        $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
+        $this->jobListService->setConfiguration($jobListConfiguration);
 
-        $jobListService = $this->container->get(JobListService::class);
-        $jobListService->setConfiguration($jobListConfiguration);
-
-        return new JsonResponse($jobListService->getMaxResults());
+        return new JsonResponse($this->jobListService->getMaxResults());
     }
 
     /**
-     * @return Response
+     * @return JsonResponse
      */
     public function websitesAction()
     {
-        $jobListRequestFactory = $this->container->get(ListRequestFactory::class);
-        $jobListConfigurationFactory = $this->container->get(JobListConfigurationFactory::class);
+        $jobListRequest = $this->jobListRequestFactory->create();
+        $jobListConfiguration = $this->jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
 
-        $jobListRequest = $jobListRequestFactory->create();
-        $jobListConfiguration = $jobListConfigurationFactory->createFromJobListRequest($jobListRequest);
+        $this->jobListService->setConfiguration($jobListConfiguration);
 
-        $jobListService = $this->container->get(JobListService::class);
-        $jobListService->setConfiguration($jobListConfiguration);
-
-        return new JsonResponse($jobListService->getWebsiteUrls());
+        return new JsonResponse($this->jobListService->getWebsiteUrls());
     }
 }
