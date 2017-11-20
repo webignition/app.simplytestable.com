@@ -3,8 +3,8 @@
 namespace Tests\ApiBundle\Functional\Command\Job;
 
 use SimplyTestable\ApiBundle\Command\Job\ResolveWebsiteCommand;
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService;
@@ -42,9 +42,8 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableReadOnlyAction();
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([
             'id' => 1,
@@ -52,7 +51,7 @@ class ResolveWebsiteCommandTest extends AbstractBaseTestCase
 
         $this->assertEquals(ResolveWebsiteCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
 
-        $maintenanceController->disableReadOnlyAction();
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**

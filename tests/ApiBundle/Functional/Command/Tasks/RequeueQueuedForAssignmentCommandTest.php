@@ -3,8 +3,8 @@
 namespace Tests\ApiBundle\Functional\Command\Tasks;
 
 use SimplyTestable\ApiBundle\Command\Tasks\RequeueQueuedForAssignmentCommand;
-use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\UserFactory;
@@ -31,9 +31,8 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
 
     public function testRunInMaintenanceReadOnlyMode()
     {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableReadOnlyAction();
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
 
@@ -42,14 +41,13 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
             $returnCode
         );
 
-        $maintenanceController->disableReadOnlyAction();
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     public function testRunInMaintenanceBackupReadOnlyMode()
     {
-        $maintenanceController = new MaintenanceController();
-        $maintenanceController->setContainer($this->container);
-        $maintenanceController->enableBackupReadOnlyAction();
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_BACKUP_READ_ONLY);
 
         $returnCode = $this->command->run(new ArrayInput([]), new BufferedOutput());
 
@@ -58,7 +56,7 @@ class RequeueQueuedForAssignmentCommandTest extends AbstractBaseTestCase
             $returnCode
         );
 
-        $maintenanceController->disableReadOnlyAction();
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**
