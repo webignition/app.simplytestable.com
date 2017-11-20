@@ -8,12 +8,19 @@ use SimplyTestable\ApiBundle\Entity\Stripe\Event as StripeEvent;
 use SimplyTestable\ApiBundle\Entity\Stripe\Event;
 use SimplyTestable\ApiBundle\Entity\UserAccountPlan;
 use SimplyTestable\ApiBundle\Services\Postmark\Sender;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Tests\ApiBundle\Factory\StripeEventFixtureFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group Controller/Stripe/WebHookController
+ */
 class WebHookControllerTest extends AbstractBaseTestCase
 {
     /**
@@ -28,8 +35,7 @@ class WebHookControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->webHookController = new WebHookController();
-        $this->webHookController->setContainer($this->container);
+        $this->webHookController = $this->container->get(WebHookController::class);
     }
 
     public function testIndexActionPostRequest()
@@ -82,68 +88,7 @@ class WebHookControllerTest extends AbstractBaseTestCase
         ]);
 
         $response = $this->getClientResponse();
-
         $this->assertTrue($response->isSuccessful());
-    }
-
-    /**
-     * @dataProvider indexActionNoEventContentDataProvider
-     *
-     * @param array $postData
-     * @param string $requestContent
-     */
-    public function testIndexActionNoEventContent($postData, $requestContent)
-    {
-        $request = new Request(
-            [],
-            $postData,
-            [],
-            [],
-            [],
-            [],
-            $requestContent
-        );
-
-        $response = $this->webHookController->indexAction($request);
-
-        $this->assertTrue($response->isClientError());
-    }
-
-    /**
-     * @return array
-     */
-    public function indexActionNoEventContentDataProvider()
-    {
-        return [
-            'empty request' => [
-                'postData' => [],
-                'requestContent' => '',
-            ],
-            'request content is not json' => [
-                'postData' => [],
-                'requestContent' => '{id}',
-            ],
-            'request content lacks object' => [
-                'postData' => [],
-                'requestContent' => json_encode([
-                    'foo' => 'bar',
-                ]),
-            ],
-            'event parameter is not json' => [
-                'postData' => [
-                    'event' => '{id}',
-                ],
-                'requestContent' => '',
-            ],
-            'event parameter lacks object' => [
-                'postData' => [
-                    'event' => json_encode([
-                        'foo' => 'bar',
-                    ]),
-                ],
-                'requestContent' => '',
-            ],
-        ];
     }
 
     public function testIndexActionStripeEventAlreadyExists()
@@ -167,7 +112,7 @@ class WebHookControllerTest extends AbstractBaseTestCase
         ));
 
         $request = new Request([], [], [], [], [], [], $requestContent);
-        $response = $this->webHookController->indexAction($request);
+        $response = $this->callIndexAction($request);
 
         $this->assertTrue($response->isSuccessful());
         $decodedResponseData = json_decode($response->getContent(), true);
@@ -180,7 +125,7 @@ class WebHookControllerTest extends AbstractBaseTestCase
         $request = new Request([], [
             'event' => json_encode(StripeEventFixtureFactory::load('customer.updated')),
         ]);
-        $response = $this->webHookController->indexAction($request);
+        $response = $this->callIndexAction($request);
 
         $this->assertTrue($response->isSuccessful());
     }
@@ -202,7 +147,7 @@ class WebHookControllerTest extends AbstractBaseTestCase
         $expectedResponseData
     ) {
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get(QueueService::class);
+        $resqueQueueService = $this->container->get(ResqueQueueService::class);
 
         $stripeEventRepository = $entityManager->getRepository(Event::class);
         $userAccountPlanRepository = $entityManager->getRepository(UserAccountPlan::class);
@@ -226,7 +171,7 @@ class WebHookControllerTest extends AbstractBaseTestCase
         $requestContent = json_encode(StripeEventFixtureFactory::load($fixtureName, $fixtureModifications));
 
         $request = new Request([], [], [], [], [], [], $requestContent);
-        $response = $this->webHookController->indexAction($request);
+        $response = $this->callIndexAction($request);
 
         $this->assertTrue($response->isSuccessful());
 
@@ -415,5 +360,22 @@ class WebHookControllerTest extends AbstractBaseTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    private function callIndexAction(Request $request)
+    {
+        return $this->webHookController->indexAction(
+            $this->container->get('doctrine.orm.entity_manager'),
+            $this->container->get(StripeEventService::class),
+            $this->container->get(ResqueQueueService::class),
+            $this->container->get(ResqueJobFactory::class),
+            $this->container->get(StripeWebHookMailNotificationSender::class),
+            $request
+        );
     }
 }

@@ -62,6 +62,12 @@ services:
         "css validation": '%css_validation_domains_to_ignore%'
         "js static analysis": '%js_static_analysis_domains_to_ignore%'
 
+  SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender:
+    class:   SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender
+    arguments:
+      $mailService: '@SimplyTestable\ApiBundle\Services\Mail\Service'
+      $parameters: "%stripe_webhook_developer_notification%"
+
 #  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService:
 #    class:  SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService
 #    arguments:

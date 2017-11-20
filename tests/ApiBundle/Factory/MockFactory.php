@@ -14,6 +14,10 @@ use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -470,5 +474,49 @@ class MockFactory
         }
 
         return $jobService;
+    }
+
+    /**
+     * @return Mock|StripeEventService
+     */
+    public static function createStripeEventService()
+    {
+        /* @var Mock|StripeEventService $stripeEventService */
+        $stripeEventService = \Mockery::mock(StripeEventService::class);
+
+        return $stripeEventService;
+    }
+
+    /**
+     * @return Mock|ResqueQueueService
+     */
+    public static function createResqueQueueService()
+    {
+        /* @var Mock|ResqueQueueService $resqueQueueService */
+        $resqueQueueService = \Mockery::mock(ResqueQueueService::class);
+
+        return $resqueQueueService;
+    }
+
+    /**
+     * @return Mock|ResqueJobFactory
+     */
+    public static function createResqueJobFactory()
+    {
+        /* @var Mock|ResqueJobFactory $resqueJobFactory */
+        $resqueJobFactory = \Mockery::mock(ResqueJobFactory::class);
+
+        return $resqueJobFactory;
+    }
+
+    /**
+     * @return Mock|StripeWebHookMailNotificationSender
+     */
+    public static function createStripeWebHookMailNotificationSender()
+    {
+        /* @var Mock|StripeWebHookMailNotificationSender $sender */
+        $sender = \Mockery::mock(StripeWebHookMailNotificationSender::class);
+
+        return $sender;
     }
 }
