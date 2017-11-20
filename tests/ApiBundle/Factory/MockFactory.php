@@ -16,8 +16,10 @@ use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
+use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -518,5 +520,27 @@ class MockFactory
         $sender = \Mockery::mock(StripeWebHookMailNotificationSender::class);
 
         return $sender;
+    }
+
+    /**
+     * @return Mock|StateService
+     */
+    public static function createStateService()
+    {
+        /* @var Mock|StateService $stateService */
+        $stateService = \Mockery::mock(StateService::class);
+
+        return $stateService;
+    }
+
+    /**
+     * @return Mock|TaskQueueService
+     */
+    public static function createTaskQueueService()
+    {
+        /* @var Mock|TaskQueueService $taskQueueService */
+        $taskQueueService = \Mockery::mock(TaskQueueService::class);
+
+        return $taskQueueService;
     }
 }
