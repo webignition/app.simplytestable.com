@@ -2,36 +2,23 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Entity\User;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class JobConfigurationControllerCreateActionTest extends AbstractBaseTestCase
+/**
+ * @group Controller/JobConfiguration
+ */
+class JobConfigurationControllerCreateActionTest extends AbstractJobConfigurationControllerTest
 {
-    /**
-     * @var JobConfigurationController
-     */
-    private $jobConfigurationController;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->jobConfigurationController = new JobConfigurationController();
-        $this->jobConfigurationController->setContainer($this->container);
-    }
-
     public function testCreateActionPostRequest()
     {
         $userFactory = new UserFactory($this->container);
@@ -57,126 +44,7 @@ class JobConfigurationControllerCreateActionTest extends AbstractBaseTestCase
         /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
-        $this->assertTrue($response->isRedirect('/jobconfiguration/label/'));
-    }
-
-    public function testCreateActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->jobConfigurationController->createAction(new Request());
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    /**
-     * @dataProvider createActionBadRequestDataProvider
-     *
-     * @param string $label
-     * @param string $website
-     * @param string $type
-     * @param array $taskConfiguration
-     * @param string $expectedExceptionMessage
-     */
-    public function testCreateActionBadRequest($label, $website, $type, $taskConfiguration, $expectedExceptionMessage)
-    {
-        $request = new Request([], [
-            'label' => $label,
-            'website' => $website,
-            'type' => $type,
-            'task-configuration' => $taskConfiguration,
-        ]);
-
-        $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage($expectedExceptionMessage);
-
-        $this->jobConfigurationController->createAction($request);
-    }
-
-    /**
-     * @return array
-     */
-    public function createActionBadRequestDataProvider()
-    {
-        return [
-            'label missing' => [
-                'label' => null,
-                'website' => null,
-                'type' => null,
-                'taskConfiguration' => null,
-                'expectedExceptionMessage' => '"label" missing',
-            ],
-            'website missing' => [
-                'label' => 'label value',
-                'website' => null,
-                'type' => null,
-                'taskConfiguration' => null,
-                'expectedExceptionMessage' => '"website" missing',
-            ],
-            'type missing' => [
-                'label' => 'label value',
-                'website' => 'http://example.com',
-                'type' => null,
-                'taskConfiguration' => null,
-                'expectedExceptionMessage' => '"type" missing',
-            ],
-            'task-configuration missing' => [
-                'label' => 'label value',
-                'website' => 'http://example.com',
-                'type' => 'full site',
-                'taskConfiguration' => null,
-                'expectedExceptionMessage' => '"task-configuration" missing',
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider createActionSpecialUserDataProvider
-     *
-     * @param string $userEmail
-     */
-    public function testCreateActionSpecialUser($userEmail)
-    {
-        $userService = $this->container->get(UserService::class);
-
-        $user = $userService->findUserByEmail($userEmail);
-        $this->setUser($user);
-
-        $request = new Request([], [
-            'label' => 'label value',
-            'website' => 'website value',
-            'type' => 'type value',
-            'task-configuration' => [
-                'HTML Validation' => [],
-            ],
-        ]);
-
-        $response = $this->jobConfigurationController->createAction($request);
-
-        $this->assertTrue($response->isClientError());
-        $this->assertEquals(
-            '{"code":99,"message":"Special users cannot create job configurations"}',
-            $response->headers->get('x-jobconfigurationcreate-error')
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function createActionSpecialUserDataProvider()
-    {
-        return [
-            'public' => [
-                'userEmail' => 'public@simplytestable.com',
-            ],
-            'admin' => [
-                'userEmail' => 'admin@simplytestable.com',
-            ],
-        ];
+        $this->assertTrue($response->isRedirect('http://localhost/jobconfiguration/label/'));
     }
 
     public function testCreateActionFailureLabelNotUnique()
@@ -194,8 +62,8 @@ class JobConfigurationControllerCreateActionTest extends AbstractBaseTestCase
             ],
         ]);
 
-        $this->jobConfigurationController->createAction($request);
-        $response = $this->jobConfigurationController->createAction($request);
+        $this->callCreateAction($request, $user);
+        $response = $this->callCreateAction($request, $user);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(
@@ -219,11 +87,11 @@ class JobConfigurationControllerCreateActionTest extends AbstractBaseTestCase
             ],
         ]);
 
-        $this->jobConfigurationController->createAction($request);
+        $this->callCreateAction($request, $user);
 
         $request->request->set('label', 'different label value');
 
-        $response = $this->jobConfigurationController->createAction($request);
+        $response = $this->callCreateAction($request, $user);
 
         $this->assertTrue($response->isClientError());
         $this->assertEquals(
@@ -253,17 +121,32 @@ class JobConfigurationControllerCreateActionTest extends AbstractBaseTestCase
         ]);
 
         /* @var RedirectResponse $response */
-        $response = $this->jobConfigurationController->createAction($request);
+        $response = $this->callCreateAction($request, $user);
 
-        $this->assertEquals(
-            '/jobconfiguration/label%20value/',
-            $response->getTargetUrl()
-        );
+        $this->assertTrue($response->isRedirect('http://localhost/jobconfiguration/label%20value/'));
 
         $jobConfiguration = $jobConfigurationRepository->findOneBy([
             'label' => $label,
         ]);
 
         $this->assertInstanceOf(JobConfiguration::class, $jobConfiguration);
+    }
+
+    /**
+     * @param Request $request
+     * @param User $user
+     *
+     * @return RedirectResponse|Response
+     */
+    private function callCreateAction(Request $request, User $user)
+    {
+        return $this->jobConfigurationController->createAction(
+            $this->container->get(UserService::class),
+            $this->container->get(WebSiteService::class),
+            $this->container->get(TaskTypeService::class),
+            $this->container->get(JobTypeService::class),
+            $user,
+            $request
+        );
     }
 }

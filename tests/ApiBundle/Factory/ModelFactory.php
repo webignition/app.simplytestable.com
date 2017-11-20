@@ -6,6 +6,7 @@ use ReflectionClass;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
 use SimplyTestable\ApiBundle\Entity\Job\Ammendment;
+use SimplyTestable\ApiBundle\Entity\Job\Configuration;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
@@ -71,15 +72,25 @@ class ModelFactory
     const JOB_LIST_REQUEST_JOB_IDS_TO_EXCLUDE = 'job-ids-to-exclude';
     const JOB_LIST_REQUEST_JOB_IDS_TO_INCLUDE = 'job-ids-to-include';
     const JOB_LIST_REQUEST_USER = 'user';
+    const JOB_CONFIGURATION_USER = 'user';
+    const JOB_CONFIGURATION_WEBSITE = 'website';
+    const JOB_CONFIGURATION_LABEL = 'label';
+    const JOB_CONFIGURATION_PARAMETERS = 'parameters';
+    const JOB_CONFIGURATION_TYPE = 'type';
+    const JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION = 'task-configuration-collection';
 
     /**
      * @param array $userValues
      *
      * @return User
      */
-    public static function createUser($userValues)
+    public static function createUser($userValues = [])
     {
         $user = new User();
+
+        if (!isset($userValues[self::USER_EMAIL])) {
+            $userValues[self::USER_EMAIL] = 'user@example.com';
+        }
 
         $user->setEmail($userValues[self::USER_EMAIL]);
         $user->setEmailCanonical($userValues[self::USER_EMAIL]);
@@ -463,5 +474,45 @@ class ModelFactory
         );
 
         return $jobListRequest;
+    }
+
+    /**
+     * @param array $jobConfigurationValues
+     *
+     * @return Configuration
+     */
+    public static function createJobConfiguration($jobConfigurationValues = [])
+    {
+        $jobConfiguration = new Configuration();
+
+        $jobConfiguration->setLabel($jobConfigurationValues[self::JOB_CONFIGURATION_LABEL]);
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_USER])) {
+            $jobConfiguration->setUser($jobConfigurationValues[self::JOB_CONFIGURATION_USER]);
+        }
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_WEBSITE])) {
+            $jobConfiguration->setWebsite($jobConfigurationValues[self::JOB_CONFIGURATION_WEBSITE]);
+        }
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_PARAMETERS])) {
+            $jobConfiguration->setParameters($jobConfigurationValues[self::JOB_CONFIGURATION_PARAMETERS]);
+        }
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_TYPE])) {
+            $jobConfiguration->setType($jobConfigurationValues[self::JOB_CONFIGURATION_TYPE]);
+        }
+
+        if (isset($jobConfigurationValues[self::JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION])) {
+            $taskConfigurationCollection = $jobConfigurationValues[
+                self::JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION
+            ];
+
+            foreach ($taskConfigurationCollection as $taskConfiguration) {
+                $jobConfiguration->addTaskConfiguration($taskConfiguration);
+            }
+        }
+
+        return $jobConfiguration;
     }
 }

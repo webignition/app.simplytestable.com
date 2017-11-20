@@ -2,30 +2,27 @@
 
 namespace Tests\ApiBundle\Functional\Controller\JobConfiguration;
 
-use SimplyTestable\ApiBundle\Controller\JobConfigurationController;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class JobConfigurationControllerUpdateActionTest extends AbstractBaseTestCase
+/**
+ * @group Controller/JobConfiguration
+ */
+class JobConfigurationControllerUpdateActionTest extends AbstractJobConfigurationControllerTest
 {
     const LABEL_ONE = 'job-configuration-label-one';
     const LABEL_TWO = 'job-configuration-label-two';
 
     const WEBSITE_URL_ONE = 'http://one.example.com/';
     const WEBSITE_URL_TWO = 'http://two.example.com/';
-
-    /**
-     * @var JobConfigurationController
-     */
-    private $jobConfigurationController;
 
     /**
      * @var JobConfigurationFactory
@@ -48,9 +45,6 @@ class JobConfigurationControllerUpdateActionTest extends AbstractBaseTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->jobConfigurationController = new JobConfigurationController();
-        $this->jobConfigurationController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -106,27 +100,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractBaseTestCase
         /* @var RedirectResponse $response */
         $response = $this->getClientResponse();
 
-        $this->assertTrue($response->isRedirect('/jobconfiguration/new-label/'));
-    }
-
-    public function testUpdateActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->jobConfigurationController->updateAction(new Request(), 'foo');
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    public function testUpdateActionJobConfigurationNotFound()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->jobConfigurationController->updateAction(new Request(), 'foo');
+        $this->assertTrue($response->isRedirect('http://localhost/jobconfiguration/new-label/'));
     }
 
     /**
@@ -137,10 +111,7 @@ class JobConfigurationControllerUpdateActionTest extends AbstractBaseTestCase
      */
     public function testUpdateActionFailureException($postData, $expectedResponseHeaderError)
     {
-        $response = $this->jobConfigurationController->updateAction(
-            new Request([], $postData),
-            $this->jobConfiguration->getLabel()
-        );
+        $response = $this->callUpdateAction($postData);
 
         $this->assertTrue($response->isClientError());
 
@@ -179,14 +150,27 @@ class JobConfigurationControllerUpdateActionTest extends AbstractBaseTestCase
 
     public function testUpdateActionSuccess()
     {
-        $response = $this->jobConfigurationController->updateAction(
-            new Request([], [
-                'parameters' => 'foo',
-            ]),
+        $response = $this->callUpdateAction([
+            'parameters' => 'foo',
+        ]);
+
+        $this->assertTrue($response->isRedirect('http://localhost/jobconfiguration/job-configuration-label-one/'));
+        $this->assertEquals('foo', $this->jobConfiguration->getParameters());
+    }
+
+    /**
+     * @param array $postData
+     *
+     * @return RedirectResponse|Response
+     */
+    private function callUpdateAction($postData)
+    {
+        return $this->jobConfigurationController->updateAction(
+            $this->container->get(WebSiteService::class),
+            $this->container->get(TaskTypeService::class),
+            $this->container->get(JobTypeService::class),
+            new Request([], $postData),
             $this->jobConfiguration->getLabel()
         );
-
-        $this->assertTrue($response->isRedirect('/jobconfiguration/job-configuration-label-one/'));
-        $this->assertEquals('foo', $this->jobConfiguration->getParameters());
     }
 }

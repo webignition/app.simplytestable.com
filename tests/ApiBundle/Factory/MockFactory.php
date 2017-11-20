@@ -7,12 +7,15 @@ use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
+use SimplyTestable\ApiBundle\Repository\ScheduledJobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
+use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
@@ -21,9 +24,11 @@ use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
 use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\JobConfigurationFactory as JobConfigurationFactoryService;
+use SimplyTestable\ApiBundle\Services\WebSiteService;
 
 class MockFactory
 {
@@ -81,6 +86,18 @@ class MockFactory
 
             $userService
                 ->shouldReceive('isPublicUser')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        if (isset($calls['isSpecialUser'])) {
+            $callValues = $calls['isSpecialUser'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $userService
+                ->shouldReceive('isSpecialUser')
                 ->with($with)
                 ->andReturn($return);
         }
@@ -542,5 +559,88 @@ class MockFactory
         $taskQueueService = \Mockery::mock(TaskQueueService::class);
 
         return $taskQueueService;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|ConfigurationService
+     */
+    public static function createJobConfigurationService($calls = [])
+    {
+        /* @var Mock|ConfigurationService $jobConfigurationService */
+        $jobConfigurationService = \Mockery::mock(ConfigurationService::class);
+
+        if (isset($calls['get'])) {
+            $callValues = $calls['get'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $jobConfigurationService
+                ->shouldReceive('get')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        return $jobConfigurationService;
+    }
+
+    /**
+     * @return Mock|WebSiteService
+     */
+    public static function createWebSiteService()
+    {
+        /* @var Mock|WebSiteService $websiteService */
+        $websiteService = \Mockery::mock(WebSiteService::class);
+
+        return $websiteService;
+    }
+
+    /**
+     * @return Mock|TaskTypeService
+     */
+    public static function createTaskTypeService()
+    {
+        /* @var Mock|TaskTypeService $taskTypeService */
+        $taskTypeService = \Mockery::mock(TaskTypeService::class);
+
+        return $taskTypeService;
+    }
+
+    /**
+     * @return Mock|JobTypeService
+     */
+    public static function createJobTypeService()
+    {
+        /* @var Mock|JobTypeService $jobTypeService */
+        $jobTypeService = \Mockery::mock(JobTypeService::class);
+
+        return $jobTypeService;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|ScheduledJobRepository
+     */
+    public static function createScheduledJobRepository($calls = [])
+    {
+        /* @var Mock|ScheduledJobRepository $scheduledJobRepository */
+        $scheduledJobRepository = \Mockery::mock(ScheduledJobRepository::class);
+
+        if (isset($calls['findOneBy'])) {
+            $callValues = $calls['findOneBy'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $scheduledJobRepository
+                ->shouldReceive('findOneBy')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        return $scheduledJobRepository;
     }
 }

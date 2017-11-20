@@ -4,14 +4,14 @@ namespace Tests\ApiBundle\Unit\Controller\Worker;
 
 use SimplyTestable\ApiBundle\Controller\Worker\TasksController;
 use Tests\ApiBundle\Factory\MockFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 /**
  * @group Controller/Worker/TasksController
  */
-class TasksControllerTest extends AbstractBaseTestCase
+class TasksControllerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var TasksController
