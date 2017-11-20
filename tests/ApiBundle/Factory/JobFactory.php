@@ -10,6 +10,8 @@ use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\TimePeriod;
 use SimplyTestable\ApiBundle\Entity\Worker;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\HttpClientService;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
 use SimplyTestable\ApiBundle\Services\Job\WebsiteResolutionService;
@@ -19,14 +21,16 @@ use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use SimplyTestable\ApiBundle\Services\StateService;
+use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Guzzle\Http\Message\Response as GuzzleResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 
 class JobFactory
 {
@@ -223,18 +227,14 @@ class JobFactory
             'site_root_url' => $jobValues[self::KEY_SITE_ROOT_URL],
         ]);
 
-        $requestStack = new RequestStack();
-        $requestStack->push($request);
-
         $jobStartRequestFactory = new StartRequestFactory(
-            $requestStack,
             $this->container->get('security.token_storage'),
             $this->container->get('doctrine.orm.entity_manager'),
             $websiteService,
             $jobTypeService
         );
 
-        $jobStartRequest = $jobStartRequestFactory->create();
+        $jobStartRequest = $jobStartRequestFactory->create($request);
         $jobConfiguration = $jobConfigurationFactory->createFromJobStartRequest($jobStartRequest);
 
         $job = $jobStartService->start($jobConfiguration);
@@ -373,9 +373,20 @@ class JobFactory
      */
     public function cancel(Job $job)
     {
-        $jobController = new JobController();
-        $jobController->setContainer($this->container);
-        $jobController->cancelAction($job->getWebsite()->getCanonicalUrl(), $job->getId());
+        $jobController = $this->container->get(JobController::class);
+
+        $jobController->cancelAction(
+            $this->container->get(ApplicationStateService::class),
+            $this->container->get(JobService::class),
+            $this->container->get(CrawlJobContainerService::class),
+            $this->container->get(JobPreparationService::class),
+            $this->container->get(ResqueQueueService::class),
+            $this->container->get(ResqueJobFactory::class),
+            $this->container->get(StateService::class),
+            $this->container->get(TaskTypeDomainsToIgnoreService::class),
+            $job->getWebsite()->getCanonicalUrl(),
+            $job->getId()
+        );
     }
 
     /**

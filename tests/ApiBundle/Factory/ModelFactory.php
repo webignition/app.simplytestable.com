@@ -354,7 +354,7 @@ class ModelFactory
      *
      * @return Job
      */
-    public static function createJob($jobValues)
+    public static function createJob($jobValues = [])
     {
         $job = new Job();
 
@@ -366,10 +366,21 @@ class ModelFactory
             $reflectionProperty->setValue($job, $jobValues[self::JOB_ID]);
         }
 
-        $job->setUser($jobValues[self::JOB_USER]);
-        $job->setWebsite($jobValues[self::JOB_WEBSITE]);
-        $job->setState($jobValues[self::JOB_STATE]);
-        $job->setUrlCount($jobValues[self::JOB_URL_COUNT]);
+        if (isset($jobValues[self::JOB_USER])) {
+            $job->setUser($jobValues[self::JOB_USER]);
+        }
+
+        if (isset($jobValues[self::JOB_WEBSITE])) {
+            $job->setWebsite($jobValues[self::JOB_WEBSITE]);
+        }
+
+        if (isset($jobValues[self::JOB_STATE])) {
+            $job->setState($jobValues[self::JOB_STATE]);
+        }
+
+        if (isset($jobValues[self::JOB_URL_COUNT])) {
+            $job->setUrlCount($jobValues[self::JOB_URL_COUNT]);
+        }
 
         if (isset($jobValues[self::JOB_REQUESTED_TASK_TYPES])) {
             $requestedTaskTypes = $jobValues[self::JOB_REQUESTED_TASK_TYPES];
@@ -387,7 +398,9 @@ class ModelFactory
             }
         }
 
-        $job->setType($jobValues[self::JOB_TYPE]);
+        if (isset($jobValues[self::JOB_TYPE])) {
+            $job->setType($jobValues[self::JOB_TYPE]);
+        }
 
         if (isset($jobValues[self::JOB_TIME_PERIOD])) {
             $job->setTimePeriod($jobValues[self::JOB_TIME_PERIOD]);

@@ -6,7 +6,6 @@ use SimplyTestable\ApiBundle\Controller\Job\StartController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
@@ -15,8 +14,10 @@ use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
+/**
+ * @group Controller/Job/StartController
+ */
 class JobStartControllerTest extends AbstractBaseTestCase
 {
     /**
@@ -31,11 +32,10 @@ class JobStartControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->jobStartController = new StartController();
-        $this->jobStartController->setContainer($this->container);
+        $this->jobStartController = $this->container->get(StartController::class);
     }
 
-    public function testStartActionRequest()
+    public function testStartActionGetRequest()
     {
         $router = $this->container->get('router');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -56,11 +56,11 @@ class JobStartControllerTest extends AbstractBaseTestCase
         /* @var Job $job */
         $job = $jobRepository->findAll()[0];
 
-        $this->assertTrue($response->isRedirect('/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
         $this->assertEquals(JobService::STARTING_STATE, $job->getState()->getName());
     }
 
-    public function testReTestActionRequest()
+    public function testReTestActionGetRequest()
     {
         $router = $this->container->get('router');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
@@ -85,29 +85,13 @@ class JobStartControllerTest extends AbstractBaseTestCase
 
         $response = $this->getClientResponse();
 
-        /* @var Job $job */
+        /* @var Job $newJob */
         $newJob = $jobRepository->findAll()[1];
 
         $this->assertNotEquals($job->getId(), $newJob->getId());
 
-        $this->assertTrue($response->isRedirect('/job/' . $siteRootUrl . '/' . $newJob->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $newJob->getId() . '/'));
         $this->assertEquals(JobService::STARTING_STATE, $newJob->getState()->getName());
-    }
-
-    public function testStartActionInMaintenanceReadOnlyMode()
-    {
-        $request = new Request();
-        $this->container->get('request_stack')->push($request);
-
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->jobStartController->startAction();
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
     }
 
     public function testStartActionUnroutableWebsite()
@@ -121,11 +105,10 @@ class JobStartControllerTest extends AbstractBaseTestCase
 
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
-        $this->container->get('request_stack')->push($request);
 
         $this->setUser($userService->getPublicUser());
 
-        $response = $this->jobStartController->startAction();
+        $response = $this->jobStartController->startAction($request);
 
         /* @var Job $job */
         $job = $jobRepository->findAll()[0];
@@ -135,7 +118,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
             'job' => $job,
         ]);
 
-        $this->assertTrue($response->isRedirect('/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
         $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
         $this->assertEquals('unroutable', $jobRejectionReason->getReason());
         $this->assertNull($jobRejectionReason->getConstraint());
@@ -162,7 +145,6 @@ class JobStartControllerTest extends AbstractBaseTestCase
 
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
-        $this->container->get('request_stack')->push($request);
 
         $jobFactory = new JobFactory($this->container);
         $job = $jobFactory->create([
@@ -170,7 +152,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
         ]);
         $jobFactory->cancel($job);
 
-        $response = $this->jobStartController->startAction();
+        $response = $this->jobStartController->startAction($request);
 
         /* @var Job $job */
         $job = $jobRepository->findAll()[1];
@@ -180,7 +162,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
             'job' => $job,
         ]);
 
-        $this->assertTrue($response->isRedirect('/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
         $this->assertEquals(JobService::REJECTED_STATE, $job->getState()->getName());
         $this->assertEquals('plan-constraint-limit-reached', $jobRejectionReason->getReason());
         $this->assertEquals($constraint, $jobRejectionReason->getConstraint());
@@ -196,41 +178,16 @@ class JobStartControllerTest extends AbstractBaseTestCase
 
         $request = new Request();
         $request->attributes->set('site_root_url', $siteRootUrl);
-        $this->container->get('request_stack')->push($request);
 
         $this->setUser($userService->getPublicUser());
 
-        $response = $this->jobStartController->startAction();
+        $response = $this->jobStartController->startAction($request);
 
         /* @var Job $job */
         $job = $jobRepository->findAll()[0];
 
-        $this->assertTrue($response->isRedirect('/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/job/' . $siteRootUrl . '/' . $job->getId() . '/'));
         $this->assertEquals(JobService::STARTING_STATE, $job->getState()->getName());
-    }
-
-    public function testRetestActionInvalidJobId()
-    {
-        $response = $this->jobStartController->retestAction(new Request(), 'foo', 1);
-
-        $this->assertTrue($response->isClientError());
-    }
-
-    /**
-     * @dataProvider retestActionForUnfinishedJobDataProvider
-     *
-     * @param string $stateName
-     */
-    public function testRetestActionForUnfinishedJob($stateName)
-    {
-        $jobFactory = new JobFactory($this->container);
-        $job = $jobFactory->create([
-            JobFactory::KEY_STATE => $stateName,
-        ]);
-
-        $response = $this->jobStartController->retestAction(new Request(), 'foo', $job->getId());
-
-        $this->assertTrue($response->isClientError());
     }
 
     /**
@@ -265,7 +222,7 @@ class JobStartControllerTest extends AbstractBaseTestCase
      *
      * @param array $jobValues
      */
-    public function testRetestAction($jobValues)
+    public function testRetestActionFoo($jobValues)
     {
         $userService = $this->container->get(UserService::class);
         $jobFactory = new JobFactory($this->container);
@@ -275,7 +232,6 @@ class JobStartControllerTest extends AbstractBaseTestCase
         $job = $jobFactory->create($jobValues);
 
         $request = new Request();
-        $this->container->get('request_stack')->push($request);
 
         $this->setUser($userService->getPublicUser());
 

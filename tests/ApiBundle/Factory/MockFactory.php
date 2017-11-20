@@ -10,10 +10,14 @@ use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
+use SimplyTestable\ApiBundle\Services\Job\StartService;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserService;
+use SimplyTestable\ApiBundle\Services\JobConfigurationFactory as JobConfigurationFactoryService;
 
 class MockFactory
 {
@@ -148,6 +152,18 @@ class MockFactory
                 ->andReturn($return);
         }
 
+        if (isset($calls['find'])) {
+            $callValues = $calls['find'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $jobRepository
+                ->shouldReceive('find')
+                ->with($with)
+                ->andReturn($return);
+        }
+
         return $jobRepository;
     }
 
@@ -274,9 +290,11 @@ class MockFactory
     }
 
     /**
+     * @param array $calls
+     *
      * @return Mock|TaskService
      */
-    public static function createTaskService()
+    public static function createTaskService($calls = [])
     {
         /* @var Mock|TaskService $taskService */
         $taskService = \Mockery::mock(TaskService::class);
@@ -287,7 +305,7 @@ class MockFactory
             $with = $callValues['with'];
             $return = $callValues['return'];
 
-            $jobSummaryFactory
+            $taskService
                 ->shouldReceive('create')
                 ->with($with)
                 ->andReturn($return);
@@ -308,9 +326,11 @@ class MockFactory
     }
 
     /**
+     * @param bool $isReadOnly
+     *
      * @return Mock|ApplicationStateService
      */
-    public static function createApplicationStateService($isReadOnly)
+    public static function createApplicationStateService($isReadOnly = false)
     {
         /* @var Mock|ApplicationStateService $applicationStateService */
         $applicationStateService = \Mockery::mock(ApplicationStateService::class);
@@ -320,5 +340,135 @@ class MockFactory
             ->andReturn($isReadOnly);
 
         return $applicationStateService;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|StartService
+     */
+    public static function createJobStartService($calls = [])
+    {
+        /* @var Mock|StartService $jobStartService */
+        $jobStartService = \Mockery::mock(StartService::class);
+
+        if (isset($calls['start'])) {
+            $callValues = $calls['start'];
+
+            $with = $callValues['with'];
+
+            if (isset($callValues['return'])) {
+                $return = $callValues['return'];
+
+                $jobStartService
+                    ->shouldReceive('start')
+                    ->with($with)
+                    ->andReturn($return);
+            } elseif (isset($callValues['throw'])) {
+                $exception = $callValues['throw'];
+
+                $jobStartService
+                    ->shouldReceive('start')
+                    ->with($with)
+                    ->andThrow($exception);
+            }
+        }
+
+        return $jobStartService;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|StartRequestFactory
+     */
+    public static function createJobStartRequestFactory($calls = [])
+    {
+        /* @var Mock|StartRequestFactory $jobStartRequestFactory */
+        $jobStartRequestFactory = \Mockery::mock(StartRequestFactory::class);
+
+        if (isset($calls['create'])) {
+            $callValues = $calls['create'];
+
+            $return = $callValues['return'];
+
+            $jobStartRequestFactory
+                ->shouldReceive('create')
+                ->andReturn($return);
+        }
+
+        return $jobStartRequestFactory;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|JobConfigurationFactoryService
+     */
+    public static function createJobConfigurationFactory($calls = [])
+    {
+        /* @var Mock|JobConfigurationFactoryService $jobConfigurationFactory */
+        $jobConfigurationFactory = \Mockery::mock(JobConfigurationFactoryService::class);
+
+        if (isset($calls['createFromJobStartRequest'])) {
+            $callValues = $calls['createFromJobStartRequest'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $jobConfigurationFactory
+                ->shouldReceive('createFromJobStartRequest')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        return $jobConfigurationFactory;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|JobService
+     */
+    public static function createJobService($calls = [])
+    {
+        /* @var Mock|JobService $jobService */
+        $jobService = \Mockery::mock(JobService::class);
+
+        if (isset($calls['create'])) {
+            $callValues = $calls['create'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $jobService
+                ->shouldReceive('create')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        if (isset($calls['reject'])) {
+            $callValues = $calls['reject'];
+
+            $withArgs = $callValues['withArgs'];
+
+            $jobService
+                ->shouldReceive('reject')
+                ->withArgs($withArgs);
+        }
+
+        if (isset($calls['isFinished'])) {
+            $callValues = $calls['isFinished'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $jobService
+                ->shouldReceive('isFinished')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        return $jobService;
     }
 }
