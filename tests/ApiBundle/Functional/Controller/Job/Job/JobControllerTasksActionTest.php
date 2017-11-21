@@ -5,14 +5,24 @@ namespace Tests\ApiBundle\Functional\Controller\Job\Job;
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
+use SimplyTestable\ApiBundle\Services\JobPreparationService;
+use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
+use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Tests\ApiBundle\Factory\JobFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
+use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
+use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
 
 /**
  * @group Controller/Job/JobController
@@ -71,12 +81,11 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => $tasks[0]->getParametersHash(),
         ]);
 
-        $taskController = new TaskController();
-        $taskController->setContainer($this->container);
+        $taskController = $this->container->get(TaskController::class);
         $this->container->get('request_stack')->push($taskCompleteRequest);
         $this->container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
 
-        $taskController->completeAction();
+        $this->callTaskControllerCompleteAction($taskController);
 
         $tasksActionResponse = $this->callTasksAction(new Request(), $job);
 
@@ -98,8 +107,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
 
         $job = $this->jobFactory->createResolveAndPrepare();
 
-        $taskController = new TaskController();
-        $taskController->setContainer($this->container);
+        $taskController = $this->container->get(TaskController::class);
 
         foreach ($job->getTasks() as $task) {
             $taskCompleteRequest = TaskControllerCompleteActionRequestFactory::create([
@@ -118,7 +126,7 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             $this->container->get('request_stack')->push($taskCompleteRequest);
             $this->container->get(CompleteRequestFactory::class)->init($taskCompleteRequest);
 
-            $taskController->completeAction();
+            $this->callTaskControllerCompleteAction($taskController);
         }
 
         $tasksActionResponse = $this->callTasksAction(new Request(), $job);
@@ -310,6 +318,24 @@ class JobControllerTasksActionTest extends AbstractJobControllerTest
             $request,
             $job->getWebsite()->getCanonicalUrl(),
             $job->getId()
+        );
+    }
+
+    private function callTaskControllerCompleteAction(TaskController $taskController)
+    {
+        return $taskController->completeAction(
+            $this->container->get(ApplicationStateService::class),
+            $this->container->get(ResqueQueueService::class),
+            $this->container->get(ResqueJobFactory::class),
+            $this->container->get(CompleteRequestFactory::class),
+            $this->container->get(TaskService::class),
+            $this->container->get(JobService::class),
+            $this->container->get(JobPreparationService::class),
+            $this->container->get(CrawlJobContainerService::class),
+            $this->container->get(TaskOutputJoinerFactory::class),
+            $this->container->get(TaskPostProcessorFactory::class),
+            $this->container->get(StateService::class),
+            $this->container->get(TaskTypeDomainsToIgnoreService::class)
         );
     }
 }
