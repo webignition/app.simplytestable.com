@@ -7,6 +7,9 @@ use SimplyTestable\ApiBundle\Services\StripeEventService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
+/**
+ * @group Controller/UserStripeEventController
+ */
 class UserStripeEventControllerTest extends AbstractBaseTestCase
 {
     /**
@@ -21,8 +24,7 @@ class UserStripeEventControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userStripeEventController = new UserStripeEventController();
-        $this->userStripeEventController->setContainer($this->container);
+        $this->userStripeEventController = $this->container->get(UserStripeEventController::class);
     }
 
     public function testListActionGetRequest()
@@ -38,49 +40,13 @@ class UserStripeEventControllerTest extends AbstractBaseTestCase
 
         $this->getCrawler([
             'url' => $requestUrl,
-            'method' => 'POST',
+            'method' => 'GET',
             'user' => $user
         ]);
 
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());
-    }
-
-    /**
-     * @dataProvider listActionClientFailureDataProvider
-     *
-     * @param string $userName
-     * @param string $emailCanonical
-     */
-    public function testListActionClientFailure($userName, $emailCanonical)
-    {
-        $userFactory = new UserFactory($this->container);
-        $users = $userFactory->createPublicAndPrivateUserSet();
-
-        $user = $users[$userName];
-        $this->setUser($user);
-
-        $response = $this->userStripeEventController->listAction($emailCanonical, 'foo');
-
-        $this->assertTrue($response->isClientError());
-    }
-
-    /**
-     * @return array
-     */
-    public function listActionClientFailureDataProvider()
-    {
-        return [
-            'public user' => [
-                'userName' => 'public',
-                'emailCanonical' => 'foo@example.com',
-            ],
-            'incorrect user' => [
-                'userName' => 'private',
-                'emailCanonical' => 'foo@example.com',
-            ],
-        ];
     }
 
     /**
@@ -113,7 +79,7 @@ class UserStripeEventControllerTest extends AbstractBaseTestCase
             );
         }
 
-        $response = $this->userStripeEventController->listAction($user->getEmailCanonical(), $type);
+        $response = $this->userStripeEventController->listAction($user, $user->getEmailCanonical(), $type);
 
         $this->assertTrue($response->isSuccessful());
 

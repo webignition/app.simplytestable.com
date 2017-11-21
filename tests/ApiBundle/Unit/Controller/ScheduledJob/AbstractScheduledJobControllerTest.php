@@ -33,12 +33,12 @@ abstract class AbstractScheduledJobControllerTest extends \PHPUnit_Framework_Tes
             $services[ApplicationStateService::class] = MockFactory::createApplicationStateService();
         }
 
-        $jobConfigurationController = new ScheduledJobController(
+        $scheduledJobController = new ScheduledJobController(
             $services['router'],
             $services[ApplicationStateService::class],
             $services[ScheduledJobService::class]
         );
 
-        return $jobConfigurationController;
+        return $scheduledJobController;
     }
 }

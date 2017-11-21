@@ -165,7 +165,7 @@ class UserCreationControllerTest extends \PHPUnit_Framework_TestCase
             $services[UserManipulator::class] = MockFactory::createUserManipulator();
         }
 
-        $jobConfigurationController = new UserCreationController(
+        $userCreationController = new UserCreationController(
             $services['router'],
             $services[ApplicationStateService::class],
             $services[UserService::class],
@@ -176,6 +176,6 @@ class UserCreationControllerTest extends \PHPUnit_Framework_TestCase
             $services[UserManipulator::class]
         );
 
-        return $jobConfigurationController;
+        return $userCreationController;
     }
 }

@@ -24,11 +24,11 @@ abstract class AbstractTaskControllerTest extends \PHPUnit_Framework_TestCase
             $services[TaskTypeService::class] = MockFactory::createTaskTypeService();
         }
 
-        $jobConfigurationController = new TaskController(
+        $taskController = new TaskController(
             $services[EntityManagerInterface::class],
             $services[TaskTypeService::class]
         );
 
-        return $jobConfigurationController;
+        return $taskController;
     }
 }
