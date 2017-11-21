@@ -14,6 +14,9 @@ use SimplyTestable\ApiBundle\Controller\MaintenanceController;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
+/**
+ * @group Controller/Maintenance
+ */
 class MaintenanceControllerTest extends AbstractBaseTestCase
 {
     /**
