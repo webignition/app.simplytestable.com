@@ -4,6 +4,9 @@ namespace Tests\ApiBundle\Functional\Controller\Team;
 
 use SimplyTestable\ApiBundle\Services\Team\Service;
 
+/**
+ * @group Controller/TeamController
+ */
 class TeamControllerLeaveActionTest extends AbstractTeamControllerTest
 {
     public function testLeaveActionPostRequest()
@@ -27,7 +30,7 @@ class TeamControllerLeaveActionTest extends AbstractTeamControllerTest
         $user = $this->users['leader'];
         $this->setUser($user);
 
-        $response = $this->teamController->leaveAction();
+        $response = $this->teamController->leaveAction($user);
 
         $this->assertTrue($response->isClientError());
 
@@ -55,7 +58,7 @@ class TeamControllerLeaveActionTest extends AbstractTeamControllerTest
         $user = $this->users[$userName];
         $this->setUser($user);
 
-        $response = $this->teamController->leaveAction();
+        $response = $this->teamController->leaveAction($user);
 
         $this->assertTrue($response->isSuccessful());
 

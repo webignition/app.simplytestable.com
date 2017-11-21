@@ -6,9 +6,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use Tests\ApiBundle\Factory\MockFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
-abstract class AbstractTaskControllerTest extends AbstractBaseTestCase
+abstract class AbstractTaskControllerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @param array $services

@@ -29,7 +29,9 @@ use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
-use SimplyTestable\ApiBundle\Services\Team\InviteService;
+use SimplyTestable\ApiBundle\Services\Team\InviteService as TeamInviteService;
+use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
+use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\JobConfigurationFactory as JobConfigurationFactoryService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -139,12 +141,48 @@ class MockFactory
     /**
      * @param array $calls
      *
-     * @return Mock|InviteService
+     * @return Mock|TeamService
+     */
+    public static function createTeamService($calls = [])
+    {
+        /* @var Mock|TeamService $teamService */
+        $teamService = \Mockery::mock(TeamService::class);
+
+        if (isset($calls['getForUser'])) {
+            $callValues = $calls['getForUser'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $teamService
+                ->shouldReceive('getForUser')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        return $teamService;
+    }
+
+    /**
+     * @return Mock|TeamMemberService
+     */
+    public static function createTeamMemberService()
+    {
+        /* @var Mock|TeamMemberService $teamMemberService */
+        $teamMemberService = \Mockery::mock(TeamMemberService::class);
+
+        return $teamMemberService;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|TeamInviteService
      */
     public static function createTeamInviteService($calls = [])
     {
-        /* @var Mock|InviteService $teamInviteService */
-        $teamInviteService = \Mockery::mock(InviteService::class);
+        /* @var Mock|TeamInviteService $teamInviteService */
+        $teamInviteService = \Mockery::mock(TeamInviteService::class);
 
         if (isset($calls['hasAnyForUser'])) {
             $callValues = $calls['hasAnyForUser'];
