@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Factory;
 
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\UserBundle\Util\CanonicalizerInterface;
 use FOS\UserBundle\Util\UserManipulator;
 use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -36,6 +37,7 @@ use SimplyTestable\ApiBundle\Services\Team\InviteService as TeamInviteService;
 use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\JobConfigurationFactory as JobConfigurationFactoryService;
@@ -912,5 +914,51 @@ class MockFactory
         $userManipulator = \Mockery::mock(UserManipulator::class);
 
         return $userManipulator;
+    }
+
+    /**
+     * @return Mock|CanonicalizerInterface
+     */
+    public static function createCanonicalizer()
+    {
+        /* @var Mock|CanonicalizerInterface $canonicalizer */
+        $canonicalizer = \Mockery::mock(CanonicalizerInterface::class);
+
+        return $canonicalizer;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|UserEmailChangeRequestService
+     */
+    public static function createUserEmailChangeRequestService($calls = [])
+    {
+        /* @var Mock|UserEmailChangeRequestService $userEmailChangeRequestService */
+        $userEmailChangeRequestService = \Mockery::mock(UserEmailChangeRequestService::class);
+
+        if (isset($calls['getForUser'])) {
+            $callValues = $calls['getForUser'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $userEmailChangeRequestService
+                ->shouldReceive('getForUser')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        if (isset($calls['removeForUser'])) {
+            $callValues = $calls['removeForUser'];
+
+            $with = $callValues['with'];
+
+            $userEmailChangeRequestService
+                ->shouldReceive('removeForUser')
+                ->with($with);
+        }
+
+        return $userEmailChangeRequestService;
     }
 }

@@ -5,6 +5,9 @@ namespace Tests\ApiBundle\Functional\Controller\UserEmailChange;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use Tests\ApiBundle\Factory\UserFactory;
 
+/**
+ * @group Controller/UserEmailChangeController
+ */
 class UserEmailChangeControllerCancelActionTest extends AbstractUserEmailChangeControllerTest
 {
     public function testCancelActionPostRequest()
@@ -33,9 +36,7 @@ class UserEmailChangeControllerCancelActionTest extends AbstractUserEmailChangeC
             UserFactory::KEY_EMAIL => 'no-request@example.com',
         ]);
 
-        $this->setUser($user);
-
-        $response = $this->userEmailChangeController->cancelAction($user->getEmail());
+        $response = $this->userEmailChangeController->cancelAction($user, $user->getEmail());
 
         $this->assertTrue($response->isSuccessful());
     }
@@ -51,7 +52,7 @@ class UserEmailChangeControllerCancelActionTest extends AbstractUserEmailChangeC
             'user' => $this->user,
         ]);
 
-        $response = $this->userEmailChangeController->cancelAction($this->user->getEmail());
+        $response = $this->userEmailChangeController->cancelAction($this->user, $this->user->getEmail());
 
         $this->assertTrue($response->isSuccessful());
         $this->assertNull($emailChangeRequest->getId());

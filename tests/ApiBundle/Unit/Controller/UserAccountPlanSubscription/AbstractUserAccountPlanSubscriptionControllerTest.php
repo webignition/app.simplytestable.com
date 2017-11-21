@@ -9,7 +9,6 @@ use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\MockFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
 abstract class AbstractUserAccountPlanSubscriptionControllerTest extends \PHPUnit_Framework_TestCase
 {

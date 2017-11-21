@@ -2,36 +2,71 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Egulias\EmailValidator\EmailValidator;
+use FOS\UserBundle\Util\CanonicalizerInterface;
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserEmailChangeRequest;
 use SimplyTestable\ApiBundle\Services\UserEmailChangeRequestService;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class UserEmailChangeController extends Controller
+class UserEmailChangeController
 {
     /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
+     * @var CanonicalizerInterface
+     */
+    private $emailCanonicalizer;
+
+    /**
+     * @var UserEmailChangeRequestService
+     */
+    private $userEmailChangeRequestService;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @param UserService $userService
+     * @param CanonicalizerInterface $canonicalizer
+     * @param UserEmailChangeRequestService $userEmailChangeRequestService
+     * @param EntityManagerInterface $entityManager
+     */
+    public function __construct(
+        UserService $userService,
+        CanonicalizerInterface $canonicalizer,
+        UserEmailChangeRequestService $userEmailChangeRequestService,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->userService = $userService;
+        $this->emailCanonicalizer = $canonicalizer;
+        $this->userEmailChangeRequestService = $userEmailChangeRequestService;
+        $this->entityManager = $entityManager;
+    }
+
+    /**
+     * @param UserInterface|User $user
      * @param string $email_canonical
      * @param string $new_email
-     *
      * @return Response
      */
-    public function createAction($email_canonical, $new_email)
+    public function createAction(UserInterface $user, $email_canonical, $new_email)
     {
-        $userService = $this->container->get(UserService::class);
-        $emailCanonicalizer = $this->container->get('fos_user.util.email_canonicalizer');
-        $userEmailChangeRequestService = $this->container->get(UserEmailChangeRequestService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
+        $userEmailChangeRequestRepository = $this->entityManager->getRepository(UserEmailChangeRequest::class);
 
-        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
-
-        $new_email = $emailCanonicalizer->canonicalize($new_email);
-        $user = $this->getUser();
+        $new_email = $this->emailCanonicalizer->canonicalize($new_email);
 
         /* @var UserEmailChangeRequest|null $existingRequest */
         $existingUserRequest = $userEmailChangeRequestRepository->findOneBy([
@@ -53,7 +88,7 @@ class UserEmailChangeController extends Controller
             throw new BadRequestHttpException();
         }
 
-        if ($userService->exists($new_email)) {
+        if ($this->userService->exists($new_email)) {
             throw new ConflictHttpException();
         }
 
@@ -65,7 +100,7 @@ class UserEmailChangeController extends Controller
             throw new ConflictHttpException();
         }
 
-        $userEmailChangeRequestService->create($user, $new_email);
+        $this->userEmailChangeRequestService->create($user, $new_email);
 
         return new Response();
     }
@@ -77,16 +112,12 @@ class UserEmailChangeController extends Controller
      */
     public function getAction($email_canonical)
     {
-        $userService = $this->container->get(UserService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-
-        $userEmailChangeRequestRepository = $entityManager->getRepository(UserEmailChangeRequest::class);
-
-        $user = $userService->findUserByEmail($email_canonical);
+        $user = $this->userService->findUserByEmail($email_canonical);
         if (empty($user)) {
             throw new NotFoundHttpException();
         }
 
+        $userEmailChangeRequestRepository = $this->entityManager->getRepository(UserEmailChangeRequest::class);
         $emailChangeRequest = $userEmailChangeRequestRepository->findOneBy([
             'user' => $user,
         ]);
@@ -99,34 +130,27 @@ class UserEmailChangeController extends Controller
     }
 
     /**
-     * @param $email_canonical
+     * @param UserInterface|User $user
+     * @param string $email_canonical
      *
      * @return Response
      */
-    public function cancelAction($email_canonical)
+    public function cancelAction(UserInterface $user, $email_canonical)
     {
-        $userEmailChangeRequestService = $this->container->get(UserEmailChangeRequestService::class);
-
-        $user = $this->getUser();
-
-        $userEmailChangeRequestService->removeForUser($user);
+        $this->userEmailChangeRequestService->removeForUser($user);
 
         return new Response();
     }
 
     /**
+     * @param UserInterface|User $user
      * @param string $email_canonical
      * @param string $token
-     *
      * @return Response
      */
-    public function confirmAction($email_canonical, $token)
+    public function confirmAction(UserInterface $user, $email_canonical, $token)
     {
-        $userService = $this->container->get(UserService::class);
-        $userEmailChangeRequestService = $this->container->get(UserEmailChangeRequestService::class);
-        $user = $this->getUser();
-
-        $emailChangeRequest = $userEmailChangeRequestService->getForUser($user);
+        $emailChangeRequest = $this->userEmailChangeRequestService->getForUser($user);
         if (empty($emailChangeRequest)) {
             throw new NotFoundHttpException();
         }
@@ -135,8 +159,8 @@ class UserEmailChangeController extends Controller
             throw new BadRequestHttpException();
         }
 
-        if ($userService->exists($emailChangeRequest->getNewEmail())) {
-            $userEmailChangeRequestService->removeForUser($user);
+        if ($this->userService->exists($emailChangeRequest->getNewEmail())) {
+            $this->userEmailChangeRequestService->removeForUser($user);
             throw new ConflictHttpException();
         }
 
@@ -147,9 +171,9 @@ class UserEmailChangeController extends Controller
         $user->setUsername($newEmail);
         $user->setUsernameCanonical($newEmail);
 
-        $userService->updateUser($user);
+        $this->userService->updateUser($user);
 
-        $userEmailChangeRequestService->removeForUser($user);
+        $this->userEmailChangeRequestService->removeForUser($user);
 
         return new Response();
     }
