@@ -1,5 +1,6 @@
 imports:
 #    - { resource: services/autowired.yml }
+    - { resource: services/event-listeners.yml }
     - { resource: services/commands.yml }
     - { resource: services/resque-job-factory.yml }
 
