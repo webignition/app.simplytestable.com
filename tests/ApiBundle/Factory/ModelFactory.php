@@ -2,6 +2,7 @@
 
 namespace Tests\ApiBundle\Factory;
 
+use Cron\CronBundle\Entity\CronJob;
 use ReflectionClass;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Constraint;
 use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan as AccountPlan;
@@ -12,6 +13,7 @@ use SimplyTestable\ApiBundle\Entity\Job\RejectionReason;
 use SimplyTestable\ApiBundle\Entity\Job\TaskConfiguration;
 use SimplyTestable\ApiBundle\Entity\Job\TaskTypeOptions;
 use SimplyTestable\ApiBundle\Entity\Job\Type as JobType;
+use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Type\Type as TaskType;
@@ -78,6 +80,11 @@ class ModelFactory
     const JOB_CONFIGURATION_PARAMETERS = 'parameters';
     const JOB_CONFIGURATION_TYPE = 'type';
     const JOB_CONFIGURATION_TASK_CONFIGURATION_COLLECTION = 'task-configuration-collection';
+    const SCHEDULED_JOB_JOB_CONFIGURATION = 'job-configuration';
+    const SCHEDULED_JOB_SCHEDULE = 'schedule';
+    const SCHEDULED_JOB_ID = 'id';
+    const SCHEDULED_JOB_IS_RECURRING = 'is-recurring';
+    const SCHEDULED_JOB_SCHEDULE_MODIFIER = 'schedule-modifier';
 
     /**
      * @param array $userValues
@@ -514,5 +521,40 @@ class ModelFactory
         }
 
         return $jobConfiguration;
+    }
+
+    /**
+     * @param array $scheduledJobValues
+     *
+     * @return ScheduledJob
+     */
+    public static function createScheduledJob($scheduledJobValues = [])
+    {
+        $scheduledJob = new ScheduledJob();
+
+        if (isset($scheduledJobValues[self::SCHEDULED_JOB_ID])) {
+            $reflectionClass = new ReflectionClass(ScheduledJob::class);
+
+            $reflectionProperty = $reflectionClass->getProperty('id');
+            $reflectionProperty->setAccessible(true);
+            $reflectionProperty->setValue($scheduledJob, $scheduledJobValues[self::SCHEDULED_JOB_ID]);
+        }
+
+        $scheduledJob->setJobConfiguration($scheduledJobValues[self::SCHEDULED_JOB_JOB_CONFIGURATION]);
+
+        if (isset($scheduledJobValues[self::SCHEDULED_JOB_IS_RECURRING])) {
+            $scheduledJob->setIsRecurring($scheduledJobValues[self::SCHEDULED_JOB_IS_RECURRING]);
+        }
+
+        $cronJob = new CronJob();
+        $cronJob->setSchedule($scheduledJobValues[self::SCHEDULED_JOB_SCHEDULE]);
+
+        $scheduledJob->setCronJob($cronJob);
+
+        if (isset($scheduledJobValues[self::SCHEDULED_JOB_SCHEDULE_MODIFIER])) {
+            $scheduledJob->setCronModifier($scheduledJobValues[self::SCHEDULED_JOB_SCHEDULE_MODIFIER]);
+        }
+
+        return $scheduledJob;
     }
 }

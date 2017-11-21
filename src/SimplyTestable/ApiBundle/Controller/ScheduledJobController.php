@@ -2,12 +2,12 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\UserService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,23 +20,59 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use SimplyTestable\ApiBundle\Exception\Controller\ScheduledJob\Update\Exception
     as ScheduledJobControllerUpdateException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
-class ScheduledJobController extends Controller
+class ScheduledJobController
 {
     /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var ScheduledJobService
+     */
+    private $scheduledJobService;
+
+    /**
+     * @param RouterInterface $router
+     * @param ApplicationStateService $applicationStateService
+     * @param ScheduledJobService $scheduledJobService
+     */
+    public function __construct(
+        RouterInterface $router,
+        ApplicationStateService $applicationStateService,
+        ScheduledJobService $scheduledJobService
+    ) {
+        $this->scheduledJobService = $scheduledJobService;
+        $this->applicationStateService = $applicationStateService;
+        $this->router = $router;
+    }
+
+    /**
+     * @param UserService $userService
+     * @param ConfigurationService $jobConfigurationService
+     * @param CronModifierValidationService $cronModifierValidationService
+     * @param UserInterface|User $user
      * @param Request $request
      *
      * @return RedirectResponse|Response
      */
-    public function createAction(Request $request)
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $userService = $this->container->get(UserService::class);
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-        $jobConfigurationService = $this->container->get(ConfigurationService::class);
-        $cronModifierValidationService = $this->container->get(CronModifierValidationService::class);
-
-        if ($applicationStateService->isInReadOnlyMode()) {
+    public function createAction(
+        UserService $userService,
+        ConfigurationService $jobConfigurationService,
+        CronModifierValidationService $cronModifierValidationService,
+        UserInterface $user,
+        Request $request
+    ) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
@@ -53,8 +89,6 @@ class ScheduledJobController extends Controller
         if (empty($requestSchedule)) {
             throw new BadRequestHttpException('"schedule" missing');
         }
-
-        $user = $this->getUser();
 
         if ($userService->isSpecialUser($user)) {
             return Response::create('', 400, [
@@ -103,17 +137,17 @@ class ScheduledJobController extends Controller
         }
 
         try {
-            $scheduledJob = $scheduledJobService->create(
+            $scheduledJob = $this->scheduledJobService->create(
                 $jobConfiguration,
                 $request->request->get('schedule'),
                 $request->request->get('schedule-modifier'),
                 $requestData->getBoolean('is-recurring')
             );
 
-            return $this->redirect($this->generateUrl(
+            return $this->redirect(
                 'scheduledjob_get',
                 ['id' => $scheduledJob->getId()]
-            ));
+            );
         } catch (ScheduledJobException $scheduledJobException) {
             return Response::create('', 400, [
                 'X-ScheduledJobCreate-Error' => json_encode([
@@ -131,15 +165,17 @@ class ScheduledJobController extends Controller
      */
     public function deleteAction($id)
     {
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
+        if ($this->applicationStateService->isInReadOnlyMode()) {
+            throw new ServiceUnavailableHttpException();
+        }
 
-        $scheduledJob = $scheduledJobService->get($id);
+        $scheduledJob = $this->scheduledJobService->get($id);
 
         if (empty($scheduledJob)) {
             throw new NotFoundHttpException();
         }
 
-        $scheduledJobService->delete($scheduledJob);
+        $this->scheduledJobService->delete($scheduledJob);
 
         return new Response();
     }
@@ -151,9 +187,7 @@ class ScheduledJobController extends Controller
      */
     public function getAction($id)
     {
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-
-        $scheduledJob = $scheduledJobService->get($id);
+        $scheduledJob = $this->scheduledJobService->get($id);
 
         if (empty($scheduledJob)) {
             throw new NotFoundHttpException();
@@ -167,29 +201,28 @@ class ScheduledJobController extends Controller
      */
     public function listAction()
     {
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-
-        return new JsonResponse($scheduledJobService->getList());
+        return new JsonResponse($this->scheduledJobService->getList());
     }
 
     /**
+     * @param ConfigurationService $jobConfigurationService
+     * @param CronModifierValidationService $cronModifierValidationService
      * @param Request $request
      * @param int $id
      *
      * @return RedirectResponse|Response
      */
-    public function updateAction(Request $request, $id)
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $scheduledJobService = $this->container->get(ScheduledJobService::class);
-        $jobConfigurationService = $this->container->get(ConfigurationService::class);
-        $cronModifierValidationService = $this->get(CronModifierValidationService::class);
-
-        if ($applicationStateService->isInReadOnlyMode()) {
+    public function updateAction(
+        ConfigurationService $jobConfigurationService,
+        CronModifierValidationService $cronModifierValidationService,
+        Request $request,
+        $id
+    ) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $scheduledJob = $scheduledJobService->get($id);
+        $scheduledJob = $this->scheduledJobService->get($id);
 
         if (empty($scheduledJob)) {
             throw new NotFoundHttpException();
@@ -249,7 +282,7 @@ class ScheduledJobController extends Controller
         }
 
         try {
-            $scheduledJobService->update(
+            $this->scheduledJobService->update(
                 $scheduledJob,
                 $jobConfiguration,
                 $schedule,
@@ -265,9 +298,26 @@ class ScheduledJobController extends Controller
             ]);
         }
 
-        return $this->redirect($this->generateUrl(
+        return $this->redirect(
             'scheduledjob_get',
             ['id' => $scheduledJob->getId()]
-        ));
+        );
+    }
+
+    /**
+     * @param string  $routeName
+     * @param array $routeParameters
+     *
+     * @return RedirectResponse
+     */
+    private function redirect($routeName, $routeParameters = [])
+    {
+        $url = $this->router->generate(
+            $routeName,
+            $routeParameters,
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        return new RedirectResponse($url);
     }
 }

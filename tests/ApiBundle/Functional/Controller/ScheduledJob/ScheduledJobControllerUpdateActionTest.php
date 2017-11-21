@@ -2,26 +2,22 @@
 
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
-use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\ScheduledJob;
 use SimplyTestable\ApiBundle\Entity\User;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 
-class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
+/**
+ * @group Controller/ScheduledJob
+ */
+class ScheduledJobControllerUpdateActionTest extends AbstractScheduledJobControllerTest
 {
-    /**
-     * @var ScheduledJobController
-     */
-    private $scheduledJobController;
-
     /**
      * @var ScheduledJob
      */
@@ -38,9 +34,6 @@ class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->scheduledJobController = new ScheduledJobController();
-        $this->scheduledJobController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -93,27 +86,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
 
         $response = $this->getClientResponse();
 
-        $this->assertTrue($response->isRedirect('/scheduledjob/' . $this->scheduledJob->getId() . '/'));
-    }
-
-    public function testUpdateActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->scheduledJobController->updateAction(new Request(), 0);
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    public function testUpdateActionScheduledJobNotFound()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->scheduledJobController->updateAction(new Request(), 0);
+        $this->assertTrue($response->isRedirect('http://localhost/scheduledjob/' . $this->scheduledJob->getId() . '/'));
     }
 
     /**
@@ -159,10 +132,7 @@ class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
             }
         }
 
-        $response = $this->scheduledJobController->updateAction(
-            new Request([], $postData),
-            $this->scheduledJob->getId()
-        );
+        $response = $this->callUpdateAction($postData);
 
         $this->assertTrue($response->isClientError());
 
@@ -285,12 +255,9 @@ class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
             }
         }
 
-        $response = $this->scheduledJobController->updateAction(
-            new Request([], $postData),
-            $this->scheduledJob->getId()
-        );
+        $response = $this->callUpdateAction($postData);
 
-        $this->assertTrue($response->isRedirect('/scheduledjob/' . $this->scheduledJob->getId() . '/'));
+        $this->assertTrue($response->isRedirect('http://localhost/scheduledjob/' . $this->scheduledJob->getId() . '/'));
 
         $this->assertEquals(
             $expectedScheduledJobValues['job-configuration'],
@@ -364,5 +331,20 @@ class ScheduledJobControllerUpdateActionTest extends AbstractBaseTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param array $postData
+     *
+     * @return RedirectResponse|Response
+     */
+    private function callUpdateAction($postData)
+    {
+        return $this->scheduledJobController->updateAction(
+            $this->container->get(ConfigurationService::class),
+            $this->container->get(CronModifierValidationService::class),
+            new Request([], $postData),
+            $this->scheduledJob->getId()
+        );
     }
 }

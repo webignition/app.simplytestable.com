@@ -29,6 +29,8 @@ use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\JobConfigurationFactory as JobConfigurationFactoryService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
+use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 
 class MockFactory
 {
@@ -642,5 +644,51 @@ class MockFactory
         }
 
         return $scheduledJobRepository;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|ScheduledJobService
+     */
+    public static function createScheduledJobService($calls = [])
+    {
+        /* @var Mock|ScheduledJobService $scheduledJobService */
+        $scheduledJobService = \Mockery::mock(ScheduledJobService::class);
+
+        if (isset($calls['get'])) {
+            $callValues = $calls['get'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $scheduledJobService
+                ->shouldReceive('get')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        if (isset($calls['delete'])) {
+            $callValues = $calls['delete'];
+
+            $with = $callValues['with'];
+
+            $scheduledJobService
+                ->shouldReceive('delete')
+                ->with($with);
+        }
+
+        return $scheduledJobService;
+    }
+
+    /**
+     * @return Mock|CronModifierValidationService
+     */
+    public static function createCronModifierValidationService()
+    {
+        /* @var Mock|CronModifierValidationService $validationService */
+        $validationService = \Mockery::mock(CronModifierValidationService::class);
+
+        return $validationService;
     }
 }

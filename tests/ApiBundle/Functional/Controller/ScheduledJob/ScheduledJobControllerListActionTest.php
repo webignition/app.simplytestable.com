@@ -2,21 +2,17 @@
 
 namespace Tests\ApiBundle\Functional\Controller\ScheduledJob;
 
-use SimplyTestable\ApiBundle\Controller\ScheduledJobController;
 use SimplyTestable\ApiBundle\Entity\Job\Configuration as JobConfiguration;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use Tests\ApiBundle\Factory\JobConfigurationFactory;
 use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
-class ScheduledJobControllerListActionTest extends AbstractBaseTestCase
+/**
+ * @group Controller/ScheduledJob
+ */
+class ScheduledJobControllerListActionTest extends AbstractScheduledJobControllerTest
 {
-    /**
-     * @var ScheduledJobController
-     */
-    private $scheduledJobController;
-
     /**
      * @var ScheduledJobService
      */
@@ -38,9 +34,6 @@ class ScheduledJobControllerListActionTest extends AbstractBaseTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->scheduledJobController = new ScheduledJobController();
-        $this->scheduledJobController->setContainer($this->container);
 
         $userFactory = new UserFactory($this->container);
         $this->user = $userFactory->createAndActivateUser();
@@ -71,17 +64,6 @@ class ScheduledJobControllerListActionTest extends AbstractBaseTestCase
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());
-    }
-
-    public function testListActionEmptyList()
-    {
-        $response = $this->scheduledJobController->listAction();
-
-        $this->assertTrue($response->isSuccessful());
-
-        $responseData = json_decode($response->getContent(), true);
-
-        $this->assertEquals([], $responseData);
     }
 
     /**

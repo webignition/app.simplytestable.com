@@ -94,3 +94,5 @@ services:
   SimplyTestable\ApiBundle\Services\UrlDiscoveryTaskService:
 
   SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:
+
+  SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
