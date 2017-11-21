@@ -15,6 +15,9 @@ use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @group Controller/TeamInviteController
+ */
 class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerTest
 {
     /**
@@ -74,7 +77,7 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
         $this->setUser($user);
 
         $request = new Request([], $postData);
-        $response = $this->teamInviteController->acceptAction($request);
+        $response = $this->teamInviteController->acceptAction($request, $user);
 
         $this->assertTrue($response->isClientError());
 
@@ -129,7 +132,7 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
         $request = new Request([], [
             'team' => 'Foo',
         ]);
-        $response = $this->teamInviteController->acceptAction($request);
+        $response = $this->teamInviteController->acceptAction($request, $this->inviteeUser);
 
         $this->assertTrue($response->isSuccessful());
 
@@ -181,7 +184,7 @@ class TeamInviteControllerAcceptActionTest extends AbstractTeamInviteControllerT
         $request = new Request([], [
             'team' => 'Foo',
         ]);
-        $response = $this->teamInviteController->acceptAction($request);
+        $response = $this->teamInviteController->acceptAction($request, $this->inviteeUser);
 
         $this->assertTrue($response->isSuccessful());
         $this->assertTrue($teamMemberService->belongsToTeam($this->inviteeUser));

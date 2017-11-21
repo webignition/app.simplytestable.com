@@ -7,6 +7,9 @@ use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * @group Controller/TeamInviteController
+ */
 class TeamInviteControllerGetByTokenActionTest extends AbstractTeamInviteControllerTest
 {
     public function testGetByTokenActionGetRequest()

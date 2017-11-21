@@ -5,6 +5,9 @@ namespace Tests\ApiBundle\Functional\Controller\TeamInvite;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use Tests\ApiBundle\Factory\UserFactory;
 
+/**
+ * @group Controller/TeamInviteController
+ */
 class TeamInviteControllerRemoveActionTest extends AbstractTeamInviteControllerTest
 {
     public function testRemoveActionGetRequest()
@@ -43,9 +46,8 @@ class TeamInviteControllerRemoveActionTest extends AbstractTeamInviteControllerT
     public function testRemoveActionClientFailure($userName, $inviteeEmail, $expectedResponseError)
     {
         $user = $this->users[$userName];
-        $this->setUser($user);
 
-        $response = $this->teamInviteController->removeAction($inviteeEmail);
+        $response = $this->teamInviteController->removeAction($user, $inviteeEmail);
 
         $this->assertTrue($response->isClientError());
 
@@ -102,9 +104,8 @@ class TeamInviteControllerRemoveActionTest extends AbstractTeamInviteControllerT
         $teamInviteService->get($this->users['leader'], $invitee);
 
         $user = $this->users['leader'];
-        $this->setUser($user);
 
-        $response = $this->teamInviteController->removeAction($invitee->getEmail());
+        $response = $this->teamInviteController->removeAction($user, $invitee->getEmail());
 
         $this->assertTrue($response->isSuccessful());
 

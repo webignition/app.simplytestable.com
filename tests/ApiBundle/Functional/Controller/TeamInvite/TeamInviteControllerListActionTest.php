@@ -6,6 +6,9 @@ use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use Tests\ApiBundle\Factory\UserAccountPlanFactory;
 use Tests\ApiBundle\Factory\UserFactory;
 
+/**
+ * @group Controller/TeamInviteController
+ */
 class TeamInviteControllerListActionTest extends AbstractTeamInviteControllerTest
 {
     public function testListActionGetRequest()
@@ -26,9 +29,7 @@ class TeamInviteControllerListActionTest extends AbstractTeamInviteControllerTes
 
     public function testListActionClientFailure()
     {
-        $this->setUser($this->users['private']);
-
-        $response = $this->teamInviteController->listAction();
+        $response = $this->teamInviteController->listAction($this->users['private']);
 
         $this->assertTrue($response->isClientError());
 
@@ -56,9 +57,7 @@ class TeamInviteControllerListActionTest extends AbstractTeamInviteControllerTes
 
         $teamInviteService->get($inviter, $invitee);
 
-        $this->setUser($inviter);
-
-        $response = $this->teamInviteController->listAction();
+        $response = $this->teamInviteController->listAction($inviter);
 
         $this->assertTrue($response->isSuccessful());
 
@@ -70,7 +69,7 @@ class TeamInviteControllerListActionTest extends AbstractTeamInviteControllerTes
         $userAccountPlanFactory = new UserAccountPlanFactory($this->container);
         $userAccountPlanFactory->create($invitee, 'agency');
 
-        $response = $this->teamInviteController->listAction();
+        $response = $this->teamInviteController->listAction($inviter);
 
         $this->assertTrue($response->isSuccessful());
 
@@ -99,9 +98,7 @@ class TeamInviteControllerListActionTest extends AbstractTeamInviteControllerTes
             $teamInviteService->get($inviter, $invitee);
         }
 
-        $this->setUser($inviter);
-
-        $response = $this->teamInviteController->listAction();
+        $response = $this->teamInviteController->listAction($inviter);
 
         $this->assertTrue($response->isSuccessful());
 

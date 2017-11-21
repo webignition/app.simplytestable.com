@@ -33,8 +33,7 @@ abstract class AbstractTeamInviteControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->teamInviteController = new TeamInviteController();
-        $this->teamInviteController->setContainer($this->container);
+        $this->teamInviteController = $this->container->get(TeamInviteController::class);
 
         $this->userFactory = new UserFactory($this->container);
         $this->users = $this->userFactory->createPublicPrivateAndTeamUserSet();
