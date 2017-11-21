@@ -3,11 +3,9 @@
 namespace Tests\ApiBundle\Functional\Controller;
 
 use SimplyTestable\ApiBundle\Controller\UserCreationController;
-use SimplyTestable\ApiBundle\Entity\Account\Plan\Plan;
 use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Entity\UserPostActivationProperties;
 use SimplyTestable\ApiBundle\Services\AccountPlanService;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -17,8 +15,10 @@ use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
+/**
+ * @group Controller/UserCreationController
+ */
 class UserCreationControllerTest extends AbstractBaseTestCase
 {
     /**
@@ -33,8 +33,7 @@ class UserCreationControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userCreationController = new UserCreationController();
-        $this->userCreationController->setContainer($this->container);
+        $this->userCreationController = $this->container->get(UserCreationController::class);
     }
 
     public function testCreateActionPostRequest()
@@ -54,76 +53,6 @@ class UserCreationControllerTest extends AbstractBaseTestCase
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());
-    }
-
-    public function testActivateActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->userCreationController->activateAction(new Request());
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    public function testCreateActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->userCreationController->createAction(new Request());
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    /**
-     * @dataProvider createActionBadRequestDataProvider
-     *
-     * @param string $email
-     * @param string $password
-     * @param string $expectedExceptionMessage
-     */
-    public function testCreateActionBadRequest($email, $password, $expectedExceptionMessage)
-    {
-        $request = new Request([], [
-            'email' => $email,
-            'password' => $password,
-        ]);
-
-        $this->expectException(BadRequestHttpException::class);
-        $this->expectExceptionMessage($expectedExceptionMessage);
-
-        $this->userCreationController->createAction($request);
-    }
-
-    /**
-     * @return array
-     */
-    public function createActionBadRequestDataProvider()
-    {
-        return [
-            'no email no password' => [
-                'email' => null,
-                'password' => null,
-                'expectedExceptionMessage' => '"email" missing',
-            ],
-            'has email no password' => [
-                'email' => 'user@example.com',
-                'password' => null,
-                'expectedExceptionMessage' => '"password" missing',
-            ],
-            'no email has password' => [
-                'email' => null,
-                'password' => 'password',
-                'expectedExceptionMessage' => '"email" missing',
-            ],
-        ];
     }
 
     public function testCreateActionUserAlreadyActivated()
@@ -342,36 +271,6 @@ class UserCreationControllerTest extends AbstractBaseTestCase
         $response = $this->getClientResponse();
 
         $this->assertTrue($response->isSuccessful());
-    }
-
-    /**
-     * @dataProvider activateActionEmptyTokenDataProvider
-     *
-     * @param string $token
-     */
-    public function testActivateActionEmptyToken($token)
-    {
-        $this->expectException(BadRequestHttpException::class);
-
-        $this->userCreationController->activateAction($token);
-    }
-
-    /**
-     * @return array
-     */
-    public function activateActionEmptyTokenDataProvider()
-    {
-        return [
-            'null' => [
-                'token' => null,
-            ],
-            'empty string' => [
-                'token' => '',
-            ],
-            'whitespace string' => [
-                'token' => ' ',
-            ],
-        ];
     }
 
     public function testActivateActionInvalidToken()

@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Factory;
 
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\UserBundle\Util\UserManipulator;
 use Mockery\Mock;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
 use SimplyTestable\ApiBundle\Entity\User;
@@ -35,6 +36,7 @@ use SimplyTestable\ApiBundle\Services\Team\InviteService as TeamInviteService;
 use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
+use SimplyTestable\ApiBundle\Services\UserPostActivationPropertiesService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\JobConfigurationFactory as JobConfigurationFactoryService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -888,5 +890,27 @@ class MockFactory
         $stripeService = \Mockery::mock(StripeService::class);
 
         return $stripeService;
+    }
+
+    /**
+     * @return Mock|UserPostActivationPropertiesService
+     */
+    public static function createUserPostActivationPropertiesService()
+    {
+        /* @var Mock|UserPostActivationPropertiesService $userPostActivationPropertiesService */
+        $userPostActivationPropertiesService = \Mockery::mock(UserPostActivationPropertiesService::class);
+
+        return $userPostActivationPropertiesService;
+    }
+
+    /**
+     * @return Mock|UserManipulator
+     */
+    public static function createUserManipulator()
+    {
+        /* @var Mock|UserManipulator $userManipulator */
+        $userManipulator = \Mockery::mock(UserManipulator::class);
+
+        return $userManipulator;
     }
 }
