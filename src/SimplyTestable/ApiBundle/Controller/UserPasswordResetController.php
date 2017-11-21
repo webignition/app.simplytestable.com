@@ -2,6 +2,7 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use FOS\UserBundle\Util\UserManipulator;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,8 +11,38 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class UserPasswordResetController extends UserController
+class UserPasswordResetController
 {
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var UserManipulator
+     */
+    private $userManipulator;
+
+    /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param UserService $userService
+     * @param UserManipulator $userManipulator
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        UserService $userService,
+        UserManipulator $userManipulator
+    ) {
+        $this->applicationStateService = $applicationStateService;
+        $this->userService = $userService;
+        $this->userManipulator = $userManipulator;
+    }
+
     /**
      * @param Request $request
      * @param string $token
@@ -20,16 +51,11 @@ class UserPasswordResetController extends UserController
      */
     public function resetPasswordAction(Request $request, $token)
     {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $userManipulator = $this->container->get('fos_user.util.user_manipulator');
-        $userService = $this->container->get(UserService::class);
-
-        if ($applicationStateService->isInReadOnlyMode()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
-        $user = $userService->findUserByConfirmationToken($token);
-
+        $user = $this->userService->findUserByConfirmationToken($token);
         if (empty($user)) {
             throw new NotFoundHttpException();
         }
@@ -43,14 +69,14 @@ class UserPasswordResetController extends UserController
         }
 
         if (!$user->isEnabled()) {
-            $userManipulator->activate($user->getUsername());
+            $this->userManipulator->activate($user->getUsername());
         }
 
         $user->setPlainPassword($password);
         $user->setConfirmationToken(null);
         $user->setPasswordRequestedAt(null);
 
-        $userService->updateUser($user);
+        $this->userService->updateUser($user);
 
         return new Response();
     }

@@ -83,6 +83,18 @@ class MockFactory
                 ->andReturn($return);
         }
 
+        if (isset($calls['findUserByConfirmationToken'])) {
+            $callValues = $calls['findUserByConfirmationToken'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $userService
+                ->shouldReceive('findUserByConfirmationToken')
+                ->with($with)
+                ->andReturn($return);
+        }
+
         if (isset($calls['getConfirmationToken'])) {
             $callValues = $calls['getConfirmationToken'];
 

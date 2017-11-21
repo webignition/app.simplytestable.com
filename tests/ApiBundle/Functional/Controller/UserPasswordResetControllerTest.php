@@ -3,14 +3,14 @@
 namespace Tests\ApiBundle\Functional\Controller;
 
 use SimplyTestable\ApiBundle\Controller\UserPasswordResetController;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Factory\UserFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
+/**
+ * @group Controller/UserPasswordResetController
+ */
 class UserPasswordResetControllerTest extends AbstractBaseTestCase
 {
     /**
@@ -25,8 +25,7 @@ class UserPasswordResetControllerTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->userPasswordResetController = new UserPasswordResetController();
-        $this->userPasswordResetController->setContainer($this->container);
+        $this->userPasswordResetController = $this->container->get(UserPasswordResetController::class);
     }
 
     public function testRequest()
@@ -52,27 +51,6 @@ class UserPasswordResetControllerTest extends AbstractBaseTestCase
 
         $this->assertTrue($response->isSuccessful());
     }
-
-    public function testResetPasswordActionInMaintenanceReadOnlyMode()
-    {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
-        try {
-            $this->userPasswordResetController->resetPasswordAction(new Request(), 'foo');
-            $this->fail('ServiceUnavailableHttpException not thrown');
-        } catch (ServiceUnavailableHttpException $serviceUnavailableHttpException) {
-            $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
-        }
-    }
-
-    public function testResetPasswordActionInvalidUser()
-    {
-        $this->expectException(NotFoundHttpException::class);
-
-        $this->userPasswordResetController->resetPasswordAction(new Request(), 'invalid token');
-    }
-
 
     public function testResetPasswordActionBadRequest()
     {
