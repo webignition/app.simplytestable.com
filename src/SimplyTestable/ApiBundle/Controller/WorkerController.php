@@ -2,21 +2,75 @@
 
 namespace SimplyTestable\ApiBundle\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use SimplyTestable\ApiBundle\Entity\Worker;
 use SimplyTestable\ApiBundle\Entity\WorkerActivationRequest;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
-use SimplyTestable\ApiBundle\Services\Resque\JobFactory;
-use SimplyTestable\ApiBundle\Services\Resque\QueueService;
+use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
+use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
-class WorkerController extends Controller
+class WorkerController
 {
+    /**
+     * @var ApplicationStateService
+     */
+    private $applicationStateService;
+
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
+    /**
+     * @var ResqueQueueService
+     */
+    private $resqueQueueService;
+
+    /**
+     * @var ResqueJobFactory
+     */
+    private $resqueJobFactory;
+
+    /**
+     * @var WorkerActivationRequestService
+     */
+    private $workerActivationRequestService;
+
+    /**
+     * @var StateService
+     */
+    private $stateService;
+
+    /**
+     * @param ApplicationStateService $applicationStateService
+     * @param EntityManagerInterface $entityManager
+     * @param ResqueQueueService $resqueQueueService
+     * @param ResqueJobFactory $resqueJobFactory
+     * @param WorkerActivationRequestService $workerActivationRequestService
+     * @param StateService $stateService
+     */
+    public function __construct(
+        ApplicationStateService $applicationStateService,
+        EntityManagerInterface $entityManager,
+        ResqueQueueService $resqueQueueService,
+        ResqueJobFactory $resqueJobFactory,
+        WorkerActivationRequestService $workerActivationRequestService,
+        StateService $stateService
+    ) {
+        $this->applicationStateService = $applicationStateService;
+        $this->entityManager = $entityManager;
+        $this->resqueQueueService = $resqueQueueService;
+        $this->resqueJobFactory = $resqueJobFactory;
+        $this->workerActivationRequestService = $workerActivationRequestService;
+        $this->stateService = $stateService;
+    }
+
     /**
      * @param Request $request
      *
@@ -24,16 +78,7 @@ class WorkerController extends Controller
      */
     public function activateAction(Request $request)
     {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $resqueQueueService = $this->container->get(QueueService::class);
-        $resqueJobFactory = $this->container->get(JobFactory::class);
-        $workerRequestActivationService = $this->container->get(WorkerActivationRequestService::class);
-        $stateService = $this->container->get(StateService::class);
-        $workerRepository = $entityManager->getRepository(Worker::class);
-        $activationRequestRepository = $entityManager->getRepository(WorkerActivationRequest::class);
-
-        if ($applicationStateService->isInReadOnlyMode()) {
+        if ($this->applicationStateService->isInReadOnlyMode()) {
             throw new ServiceUnavailableHttpException();
         }
 
@@ -51,6 +96,9 @@ class WorkerController extends Controller
             throw new BadRequestHttpException('"token" missing');
         }
 
+        $workerRepository = $this->entityManager->getRepository(Worker::class);
+        $activationRequestRepository = $this->entityManager->getRepository(WorkerActivationRequest::class);
+
         $worker = $workerRepository->findOneBy([
             'hostname' => $hostname,
         ]);
@@ -58,10 +106,10 @@ class WorkerController extends Controller
         if (empty($worker)) {
             $worker = new Worker();
             $worker->setHostname($hostname);
-            $worker->setState($stateService->get(Worker::STATE_UNACTIVATED));
+            $worker->setState($this->stateService->get(Worker::STATE_UNACTIVATED));
 
-            $entityManager->persist($worker);
-            $entityManager->flush($worker);
+            $this->entityManager->persist($worker);
+            $this->entityManager->flush();
         }
 
         if (Worker::STATE_UNACTIVATED !== $worker->getState()->getName()) {
@@ -73,17 +121,17 @@ class WorkerController extends Controller
         ]);
 
         if (empty($activationRequest)) {
-            $activationRequest = $workerRequestActivationService->create($worker, $token);
+            $activationRequest = $this->workerActivationRequestService->create($worker, $token);
         }
 
-        $activationRequestStartingState = $stateService->get(WorkerActivationRequestService::STARTING_STATE);
+        $activationRequestStartingState = $this->stateService->get(WorkerActivationRequestService::STARTING_STATE);
         $activationRequest->setState($activationRequestStartingState);
 
-        $entityManager->persist($activationRequest);
-        $entityManager->flush();
+        $this->entityManager->persist($activationRequest);
+        $this->entityManager->flush();
 
-        $resqueQueueService->enqueue(
-            $resqueJobFactory->create(
+        $this->resqueQueueService->enqueue(
+            $this->resqueJobFactory->create(
                 'worker-activate-verify',
                 ['id' => $activationRequest->getWorker()->getId()]
             )

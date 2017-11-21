@@ -46,6 +46,7 @@ use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobServic
 use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
 use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
 use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
+use SimplyTestable\ApiBundle\Services\WorkerActivationRequestService;
 
 class MockFactory
 {
@@ -972,5 +973,16 @@ class MockFactory
         }
 
         return $userEmailChangeRequestService;
+    }
+
+    /**
+     * @return Mock|WorkerActivationRequestService
+     */
+    public static function createWorkerActivationRequestService()
+    {
+        /* @var Mock|WorkerActivationRequestService $workerActivationRequestService */
+        $workerActivationRequestService = \Mockery::mock(WorkerActivationRequestService::class);
+
+        return $workerActivationRequestService;
     }
 }
