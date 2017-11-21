@@ -96,3 +96,5 @@ services:
   SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService:
 
   SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService:
+
+  SimplyTestable\ApiBundle\Services\WorkerTaskCancellationService:

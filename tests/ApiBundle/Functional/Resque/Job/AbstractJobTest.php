@@ -3,6 +3,7 @@
 namespace Tests\ApiBundle\Functional\Resque\Job;
 
 use SimplyTestable\ApiBundle\Resque\Job\Job;
+use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 
@@ -26,5 +27,22 @@ abstract class AbstractJobTest extends AbstractBaseTestCase
         ]);
 
         return $job;
+    }
+
+    /**
+     * @param Job $job
+     *
+     * @return int
+     */
+    public function runInMaintenanceReadOnlyMode(Job $job)
+    {
+        $applicationStateService = $this->container->get(ApplicationStateService::class);
+        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
+
+        $returnCode = $job->run([]);
+
+        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
+
+        return $returnCode;
     }
 }

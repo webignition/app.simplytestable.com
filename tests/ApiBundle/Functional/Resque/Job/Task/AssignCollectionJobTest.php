@@ -4,7 +4,6 @@ namespace Tests\ApiBundle\Functional\Resque\Job\Task;
 
 use SimplyTestable\ApiBundle\Command\Task\Assign\CollectionCommand;
 use SimplyTestable\ApiBundle\Resque\Job\Task\AssignCollectionJob;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use Tests\ApiBundle\Functional\Resque\Job\AbstractJobTest;
 
 class AssignCollectionJobTest extends AbstractJobTest
@@ -18,17 +17,12 @@ class AssignCollectionJobTest extends AbstractJobTest
      */
     public function testRunInMaintenanceReadOnlyMode($args)
     {
-        $applicationStateService = $this->container->get(ApplicationStateService::class);
-        $applicationStateService->setState(ApplicationStateService::STATE_MAINTENANCE_READ_ONLY);
-
         $job = $this->createJob($args, self::QUEUE);
         $this->assertInstanceOf(AssignCollectionJob::class, $job);
 
-        $returnCode = $job->run([]);
+        $returnCode = $this->runInMaintenanceReadOnlyMode($job);
 
         $this->assertEquals(CollectionCommand::RETURN_CODE_IN_MAINTENANCE_READ_ONLY_MODE, $returnCode);
-
-        $applicationStateService->setState(ApplicationStateService::STATE_ACTIVE);
     }
 
     /**
