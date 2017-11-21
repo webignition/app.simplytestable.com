@@ -9,6 +9,7 @@ use SimplyTestable\ApiBundle\Entity\User;
 use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\ScheduledJobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
+use SimplyTestable\ApiBundle\Services\AccountPlanService;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
@@ -24,6 +25,7 @@ use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\StripeEventService;
+use SimplyTestable\ApiBundle\Services\StripeService;
 use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
 use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
@@ -32,6 +34,7 @@ use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService as TeamInviteService;
 use SimplyTestable\ApiBundle\Services\Team\MemberService as TeamMemberService;
 use SimplyTestable\ApiBundle\Services\Team\Service as TeamService;
+use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use SimplyTestable\ApiBundle\Services\JobConfigurationFactory as JobConfigurationFactoryService;
 use SimplyTestable\ApiBundle\Services\WebSiteService;
@@ -826,5 +829,64 @@ class MockFactory
         $taskTypeDomainsToIgnoreService = \Mockery::mock(TaskTypeDomainsToIgnoreService::class);
 
         return $taskTypeDomainsToIgnoreService;
+    }
+
+    /**
+     * @return Mock|AccountPlanService
+     */
+    public static function createAccountPlanService($calls = [])
+    {
+        /* @var Mock|AccountPlanService $accountPlanService */
+        $accountPlanService = \Mockery::mock(AccountPlanService::class);
+
+        if (isset($calls['get'])) {
+            $callValues = $calls['get'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $accountPlanService
+                ->shouldReceive('get')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        return $accountPlanService;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|UserAccountPlanService
+     */
+    public static function createUserAccountPlanService($calls = [])
+    {
+        /* @var Mock|UserAccountPlanService $userAccountPlanService */
+        $userAccountPlanService = \Mockery::mock(UserAccountPlanService::class);
+
+        if (isset($calls['getForUser'])) {
+            $callValues = $calls['getForUser'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $userAccountPlanService
+                ->shouldReceive('getForUser')
+                ->with($with)
+                ->andReturn($return);
+        }
+
+        return $userAccountPlanService;
+    }
+
+    /**
+     * @return Mock|StripeService
+     */
+    public static function createStripeService()
+    {
+        /* @var Mock|StripeService $stripeService */
+        $stripeService = \Mockery::mock(StripeService::class);
+
+        return $stripeService;
     }
 }
