@@ -322,7 +322,7 @@ class JobController
                 $parentJob = $crawlJobContainerService->getForJob($job)->getParentJob();
 
                 foreach ($parentJob->getRequestedTaskTypes() as $taskType) {
-                     $taskTypeDomainsToIgnore = $taskTypeDomainsToIgnoreService->getForTaskType($taskType);
+                    $taskTypeDomainsToIgnore = $taskTypeDomainsToIgnoreService->getForTaskType($taskType);
 
                     if (!empty($taskTypeDomainsToIgnore)) {
                         $jobPreparationService->setPredefinedDomainsToIgnore(

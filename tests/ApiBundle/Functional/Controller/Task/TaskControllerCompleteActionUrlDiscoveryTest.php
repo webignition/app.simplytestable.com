@@ -3,7 +3,6 @@
 namespace Tests\ApiBundle\Functional\Controller\Task;
 
 use Guzzle\Http\Message\Response;
-use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\CrawlJobContainer;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
@@ -15,10 +14,12 @@ use SimplyTestable\ApiBundle\Services\StateService;
 use SimplyTestable\ApiBundle\Services\TaskService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
 
-class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
+/**
+ * @group Controller/TaskController
+ */
+class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractTaskControllerTest
 {
     /**
      * @var CrawlJobContainer
@@ -101,9 +102,6 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
             CompleteRequestFactory::ROUTE_PARAM_PARAMETER_HASH => '8ffe6fe0d3ad5707d2d89f845727e75a',
         ];
 
-        $taskController = new TaskController();
-        $taskController->setContainer($this->container);
-
         foreach ($completeActionCalls as $callIndex => $completeActionCall) {
             $postData = $completeActionCall['postData'];
             $routeParams = $completeActionCall['routeParams'];
@@ -119,7 +117,7 @@ class TaskControllerCompleteActionUrlDiscoveryTest extends AbstractBaseTestCase
             $this->container->get('request_stack')->push($request);
             $this->container->get(CompleteRequestFactory::class)->init($request);
 
-            $taskController->completeAction();
+            $this->callCompleteAction();
 
             $this->assertEquals($expectedCrawlJobState, $this->crawlJob->getState());
             $this->assertEquals($expectedParentJobState, $this->parentJob->getState());

@@ -10,13 +10,16 @@ use SimplyTestable\ApiBundle\Repository\JobRepository;
 use SimplyTestable\ApiBundle\Repository\ScheduledJobRepository;
 use SimplyTestable\ApiBundle\Repository\TaskRepository;
 use SimplyTestable\ApiBundle\Services\ApplicationStateService;
+use SimplyTestable\ApiBundle\Services\CrawlJobContainerService;
 use SimplyTestable\ApiBundle\Services\Job\ConfigurationService;
 use SimplyTestable\ApiBundle\Services\Job\RetrievalService;
 use SimplyTestable\ApiBundle\Services\Job\StartService;
+use SimplyTestable\ApiBundle\Services\JobPreparationService;
 use SimplyTestable\ApiBundle\Services\JobService;
 use SimplyTestable\ApiBundle\Services\JobSummaryFactory;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Job\StartRequestFactory;
+use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\Resque\JobFactory as ResqueJobFactory;
 use SimplyTestable\ApiBundle\Services\Resque\QueueService as ResqueQueueService;
 use SimplyTestable\ApiBundle\Services\StateService;
@@ -24,6 +27,7 @@ use SimplyTestable\ApiBundle\Services\StripeEventService;
 use SimplyTestable\ApiBundle\Services\StripeWebHookMailNotificationSender;
 use SimplyTestable\ApiBundle\Services\Task\QueueService as TaskQueueService;
 use SimplyTestable\ApiBundle\Services\TaskService;
+use SimplyTestable\ApiBundle\Services\TaskTypeDomainsToIgnoreService;
 use SimplyTestable\ApiBundle\Services\TaskTypeService;
 use SimplyTestable\ApiBundle\Services\Team\InviteService;
 use SimplyTestable\ApiBundle\Services\UserService;
@@ -31,6 +35,8 @@ use SimplyTestable\ApiBundle\Services\JobConfigurationFactory as JobConfiguratio
 use SimplyTestable\ApiBundle\Services\WebSiteService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\Service as ScheduledJobService;
 use SimplyTestable\ApiBundle\Services\ScheduledJob\CronModifier\ValidationService as CronModifierValidationService;
+use SimplyTestable\ApiBundle\Services\TaskOutputJoiner\Factory as TaskOutputJoinerFactory;
+use SimplyTestable\ApiBundle\Services\TaskPostProcessor\Factory as TaskPostProcessorFactory;
 
 class MockFactory
 {
@@ -600,12 +606,26 @@ class MockFactory
     }
 
     /**
+     * @param array $calls
+     *
      * @return Mock|TaskTypeService
      */
-    public static function createTaskTypeService()
+    public static function createTaskTypeService($calls = [])
     {
         /* @var Mock|TaskTypeService $taskTypeService */
         $taskTypeService = \Mockery::mock(TaskTypeService::class);
+
+        if (isset($calls['get'])) {
+            $callValues = $calls['get'];
+
+            $with = $callValues['with'];
+            $return = $callValues['return'];
+
+            $taskTypeService
+                ->shouldReceive('get')
+                ->with($with)
+                ->andReturn($return);
+        }
 
         return $taskTypeService;
     }
@@ -690,5 +710,83 @@ class MockFactory
         $validationService = \Mockery::mock(CronModifierValidationService::class);
 
         return $validationService;
+    }
+
+    /**
+     * @param array $calls
+     *
+     * @return Mock|CompleteRequestFactory
+     */
+    public static function createCompleteRequestFactory($calls = [])
+    {
+        /* @var Mock|CompleteRequestFactory $completeRequestFactory */
+        $completeRequestFactory = \Mockery::mock(CompleteRequestFactory::class);
+
+        if (isset($calls['create'])) {
+            $callValues = $calls['create'];
+
+            $return = $callValues['return'];
+
+            $completeRequestFactory
+                ->shouldReceive('create')
+                ->andReturn($return);
+        }
+
+        return $completeRequestFactory;
+    }
+
+    /**
+     * @return Mock|JobPreparationService
+     */
+    public static function createJobPreparationService()
+    {
+        /* @var Mock|JobPreparationService $jobPreparationService */
+        $jobPreparationService = \Mockery::mock(JobPreparationService::class);
+
+        return $jobPreparationService;
+    }
+
+    /**
+     * @return Mock|CrawlJobContainerService
+     */
+    public static function createCrawlJobContainerService()
+    {
+        /* @var Mock|CrawlJobContainerService $crawlJobContainerService */
+        $crawlJobContainerService = \Mockery::mock(CrawlJobContainerService::class);
+
+        return $crawlJobContainerService;
+    }
+
+    /**
+     * @return Mock|TaskOutputJoinerFactory
+     */
+    public static function createTaskOutputJoinerFactory()
+    {
+        /* @var Mock|TaskOutputJoinerFactory $taskOutputJoinerFactory */
+        $taskOutputJoinerFactory = \Mockery::mock(TaskOutputJoinerFactory::class);
+
+        return $taskOutputJoinerFactory;
+    }
+
+    /**
+     * @return Mock|TaskPostProcessorFactory
+     */
+    public static function createTaskPostProcessorFactory()
+    {
+        /* @var Mock|TaskPostProcessorFactory $taskPostProcessorFactory */
+        $taskPostProcessorFactory = \Mockery::mock(TaskPostProcessorFactory::class);
+
+        return $taskPostProcessorFactory;
+    }
+
+    /**
+     * @return Mock|TaskTypeDomainsToIgnoreService
+     */
+    public static function createTaskTypeDomainsToIgnoreService()
+    {
+        /* @var Mock|TaskTypeDomainsToIgnoreService $taskTypeDomainsToIgnoreService */
+        $taskTypeDomainsToIgnoreService = \Mockery::mock(TaskTypeDomainsToIgnoreService::class);
+
+        return $taskTypeDomainsToIgnoreService;
     }
 }

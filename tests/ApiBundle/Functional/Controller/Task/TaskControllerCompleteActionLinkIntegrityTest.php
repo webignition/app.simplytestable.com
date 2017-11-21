@@ -2,41 +2,23 @@
 
 namespace Tests\ApiBundle\Functional\Controller\Task;
 
-use SimplyTestable\ApiBundle\Controller\TaskController;
 use SimplyTestable\ApiBundle\Entity\Job\Job;
-use SimplyTestable\ApiBundle\Entity\State;
 use SimplyTestable\ApiBundle\Entity\Task\Output;
 use SimplyTestable\ApiBundle\Entity\Task\Task;
-use SimplyTestable\ApiBundle\Services\ApplicationStateService;
 use SimplyTestable\ApiBundle\Services\JobTypeService;
 use SimplyTestable\ApiBundle\Services\JobUserAccountPlanEnforcementService;
 use SimplyTestable\ApiBundle\Services\Request\Factory\Task\CompleteRequestFactory;
 use SimplyTestable\ApiBundle\Services\UserAccountPlanService;
 use SimplyTestable\ApiBundle\Services\UserService;
 use Tests\ApiBundle\Factory\JobFactory;
-use Tests\ApiBundle\Factory\UserFactory;
-use Tests\ApiBundle\Functional\AbstractBaseTestCase;
-use Tests\ApiBundle\Factory\InternetMediaTypeFactory;
 use Tests\ApiBundle\Factory\TaskControllerCompleteActionRequestFactory;
-use Tests\ApiBundle\Factory\TaskTypeFactory;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\GoneHttpException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 use webignition\InternetMediaType\InternetMediaType;
 
-class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
+/**
+ * @group Controller/TaskController
+ */
+class TaskControllerCompleteActionLinkIntegrityTest extends AbstractTaskControllerTest
 {
-    /**
-     * @var TaskController
-     */
-    private $taskController;
-
-    /**
-     * @var JobFactory
-     */
-    private $jobFactory;
-
     /**
      * @var Job
      */
@@ -49,20 +31,12 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
     {
         parent::setUp();
 
-        $this->taskController = new TaskController();
-        $this->taskController->setContainer($this->container);
-
         $jobFactory = new JobFactory($this->container);
         $this->job = $jobFactory->createResolveAndPrepare([
             'siteRootUrl' => 'http://example.com/',
             'type' => JobTypeService::FULL_SITE_NAME,
             'testTypes' => ['link integrity'],
         ]);
-
-//        foreach ($this->job->getTasks() as $task) {
-//            var_dump($task->getUrl());
-//        }
-//        exit();
     }
 
     /**
@@ -112,7 +86,7 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
         $request = TaskControllerCompleteActionRequestFactory::create($postData, $routeParams);
         $this->container->get('request_stack')->push($request);
 
-        $response = $this->taskController->completeAction();
+        $response = $this->callCompleteAction();
 
         $this->assertTrue($response->isSuccessful());
 
@@ -301,18 +275,6 @@ class TaskControllerCompleteActionLinkIntegrityTest extends AbstractBaseTestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @param Job $job
-     * @param State $state
-     */
-    private function setJobTaskStates(Job $job, State $state)
-    {
-        $this->jobFactory->setTaskStates(
-            $job,
-            $state
-        );
     }
 
     private function setJobTypeConstraintLimits()
